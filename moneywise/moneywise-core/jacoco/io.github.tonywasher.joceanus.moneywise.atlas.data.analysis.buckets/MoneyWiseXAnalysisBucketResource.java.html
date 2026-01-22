@@ -1,0 +1,367 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseXAnalysisBucketResource.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets</a> &gt; <span class="el_source">MoneyWiseXAnalysisBucketResource.java</span></div><h1>MoneyWiseXAnalysisBucketResource.java</h1><pre class="source lang-java linenums">/*
+ * MoneyWise: Finance Application
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets;
+
+import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleId;
+import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleLoader;
+import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
+import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseStaticResource;
+
+import java.util.EnumMap;
+import java.util.Map;
+import java.util.ResourceBundle;
+
+/**
+ * Resource IDs for MoneyWise Analysis Fields.
+ */
+<span class="fc" id="L32">public enum MoneyWiseXAnalysisBucketResource</span>
+        implements OceanusBundleId, MetisDataFieldId {
+    /**
+     * Analysis Name.
+     */
+<span class="fc" id="L37">    ANALYSIS_NAME(&quot;Analysis.Name&quot;),</span>
+
+    /**
+     * Analysis Analyser Name.
+     */
+<span class="fc" id="L42">    ANALYSIS_ANALYSER(&quot;Analysis.Analyser&quot;),</span>
+
+    /**
+     * Analysis Manager Name.
+     */
+<span class="fc" id="L47">    ANALYSIS_MANAGER(&quot;Analysis.Manager&quot;),</span>
+
+    /**
+     * Analysis Chargeable Events.
+     */
+<span class="fc" id="L52">    ANALYSIS_CHARGES(&quot;Analysis.Charges&quot;),</span>
+
+    /**
+     * Analysis Dilution Events.
+     */
+<span class="fc" id="L57">    ANALYSIS_DILUTIONS(&quot;Analysis.Dilutions&quot;),</span>
+
+    /**
+     * Analysis Totals.
+     */
+<span class="fc" id="L62">    ANALYSIS_TOTALS(&quot;Analysis.Totals&quot;),</span>
+
+    /**
+     * Bucket Account.
+     */
+<span class="fc" id="L67">    BUCKET_ACCOUNT(&quot;Bucket.Account&quot;),</span>
+
+    /**
+     * Bucket BaseValues.
+     */
+<span class="fc" id="L72">    BUCKET_BASEVALUES(&quot;Bucket.BaseValues&quot;),</span>
+
+    /**
+     * Bucket History.
+     */
+<span class="fc" id="L77">    BUCKET_HISTORY(&quot;Bucket.History&quot;),</span>
+
+    /**
+     * Bucket SnapShot.
+     */
+<span class="fc" id="L82">    BUCKET_SNAPSHOT(&quot;Bucket.SnapShot&quot;),</span>
+
+    /**
+     * Bucket Values.
+     */
+<span class="fc" id="L87">    BUCKET_VALUES(&quot;Bucket.Values&quot;),</span>
+
+    /**
+     * Bucket Previous Values.
+     */
+<span class="fc" id="L92">    BUCKET_PREVIOUS(&quot;Bucket.Previous&quot;),</span>
+
+    /**
+     * Filter All.
+     */
+<span class="fc" id="L97">    FILTER_ALL(&quot;Filter.All&quot;),</span>
+
+    /**
+     * TransTag Name.
+     */
+<span class="fc" id="L102">    TRANSTAG_NAME(&quot;TransTag.Name&quot;),</span>
+
+    /**
+     * TransTag List.
+     */
+<span class="fc" id="L107">    TRANSTAG_LIST(&quot;TransTag.List&quot;),</span>
+
+    /**
+     * Cash Name.
+     */
+<span class="fc" id="L112">    CASH_NAME(&quot;Cash.Name&quot;),</span>
+
+    /**
+     * Cash List.
+     */
+<span class="fc" id="L117">    CASH_LIST(&quot;Cash.List&quot;),</span>
+
+    /**
+     * CashCategory Name.
+     */
+<span class="fc" id="L122">    CASHCATEGORY_NAME(&quot;CashCategory.Name&quot;),</span>
+
+    /**
+     * CashCategory List.
+     */
+<span class="fc" id="L127">    CASHCATEGORY_LIST(&quot;CashCategory.List&quot;),</span>
+
+    /**
+     * Deposit Name.
+     */
+<span class="fc" id="L132">    DEPOSIT_NAME(&quot;Deposit.Name&quot;),</span>
+
+    /**
+     * Deposit List.
+     */
+<span class="fc" id="L137">    DEPOSIT_LIST(&quot;Deposit.List&quot;),</span>
+
+    /**
+     * DepositCategory Name.
+     */
+<span class="fc" id="L142">    DEPOSITCATEGORY_NAME(&quot;DepositCategory.Name&quot;),</span>
+
+    /**
+     * DepositCategory List.
+     */
+<span class="fc" id="L147">    DEPOSITCATEGORY_LIST(&quot;DepositCategory.List&quot;),</span>
+
+    /**
+     * Loan Name.
+     */
+<span class="fc" id="L152">    LOAN_NAME(&quot;Loan.Name&quot;),</span>
+
+    /**
+     * Loan List.
+     */
+<span class="fc" id="L157">    LOAN_LIST(&quot;Loan.List&quot;),</span>
+
+    /**
+     * Loan isCreditCard.
+     */
+<span class="fc" id="L162">    LOAN_CREDITCARD(&quot;Loan.isCreditCard&quot;),</span>
+
+    /**
+     * LoanCategory Name.
+     */
+<span class="fc" id="L167">    LOANCATEGORY_NAME(&quot;LoanCategory.Name&quot;),</span>
+
+    /**
+     * LoanCategory List.
+     */
+<span class="fc" id="L172">    LOANCATEGORY_LIST(&quot;LoanCategory.List&quot;),</span>
+
+    /**
+     * TransactionCategory Name.
+     */
+<span class="fc" id="L177">    TRANSCATEGORY_NAME(&quot;TransCategory.Name&quot;),</span>
+
+    /**
+     * TransactionCategory List.
+     */
+<span class="fc" id="L182">    TRANSCATEGORY_LIST(&quot;TransCategory.List&quot;),</span>
+
+    /**
+     * Payee Name.
+     */
+<span class="fc" id="L187">    PAYEE_NAME(&quot;Payee.Name&quot;),</span>
+
+    /**
+     * Payee List.
+     */
+<span class="fc" id="L192">    PAYEE_LIST(&quot;Payee.List&quot;),</span>
+
+    /**
+     * Portfolio Name.
+     */
+<span class="fc" id="L197">    PORTFOLIO_NAME(&quot;Portfolio.Name&quot;),</span>
+
+    /**
+     * Portfolio List.
+     */
+<span class="fc" id="L202">    PORTFOLIO_LIST(&quot;Portfolio.List&quot;),</span>
+
+    /**
+     * Portfolio Cash Name.
+     */
+<span class="fc" id="L207">    PORTFOLIOCASH_NAME(&quot;Portfolio.Cash.Name&quot;),</span>
+
+    /**
+     * Security Name.
+     */
+<span class="fc" id="L212">    SECURITY_NAME(&quot;Security.Name&quot;),</span>
+
+    /**
+     * Security List.
+     */
+<span class="fc" id="L217">    SECURITY_LIST(&quot;Security.List&quot;),</span>
+
+    /**
+     * TaxBasis Name.
+     */
+<span class="fc" id="L222">    TAXBASIS_NAME(&quot;TaxBasis.Name&quot;),</span>
+
+    /**
+     * TaxBasis List.
+     */
+<span class="fc" id="L227">    TAXBASIS_LIST(&quot;TaxBasis.List&quot;),</span>
+
+    /**
+     * TaxBasisAccount Name.
+     */
+<span class="fc" id="L232">    TAXBASIS_ACCOUNTNAME(&quot;TaxBasis.AccountName&quot;),</span>
+
+    /**
+     * TaxBasisAccount List.
+     */
+<span class="fc" id="L237">    TAXBASIS_ACCOUNTLIST(&quot;TaxBasis.AccountList&quot;),</span>
+
+    /**
+     * Dilution Name.
+     */
+<span class="fc" id="L242">    DILUTION_NAME(&quot;Dilution.Name&quot;),</span>
+
+    /**
+     * Dilution List.
+     */
+<span class="fc" id="L247">    DILUTION_LIST(&quot;Dilution.List&quot;),</span>
+
+    /**
+     * Charge Name.
+     */
+<span class="fc" id="L252">    CHARGE_NAME(&quot;Charge.Name&quot;),</span>
+
+    /**
+     * Charge List.
+     */
+<span class="fc" id="L257">    CHARGE_LIST(&quot;Charge.List&quot;),</span>
+
+    /**
+     * Charge Slice.
+     */
+<span class="fc" id="L262">    CHARGE_SLICE(&quot;Charge.Slice&quot;),</span>
+
+    /**
+     * Charge Tax.
+     */
+<span class="fc" id="L267">    CHARGE_TAX(&quot;Charge.Tax&quot;),</span>
+
+    /**
+     * TaxCalculation.
+     */
+<span class="fc" id="L272">    TAX_CALCULATION(&quot;Tax.Calculation&quot;),</span>
+
+    /**
+     * TaxYears.
+     */
+<span class="fc" id="L277">    TAX_YEARS(&quot;Tax.Years&quot;);</span>
+
+    /**
+     * The AnalysisType Map.
+     */
+<span class="fc" id="L282">    private static final Map&lt;MoneyWiseXAnalysisType, OceanusBundleId&gt; ANALYSIS_MAP = buildAnalysisMap();</span>
+
+    /**
+     * The Resource Loader.
+     */
+<span class="fc" id="L287">    private static final OceanusBundleLoader LOADER = OceanusBundleLoader.getLoader(MoneyWiseXAnalysisBucketResource.class.getCanonicalName(),</span>
+            ResourceBundle::getBundle);
+
+    /**
+     * The Id.
+     */
+    private final String theKeyName;
+
+    /**
+     * The Value.
+     */
+    private String theValue;
+
+    /**
+     * Constructor.
+     *
+     * @param pKeyName the key name
+     */
+<span class="fc" id="L305">    MoneyWiseXAnalysisBucketResource(final String pKeyName) {</span>
+<span class="fc" id="L306">        theKeyName = pKeyName;</span>
+<span class="fc" id="L307">    }</span>
+
+    @Override
+    public String getKeyName() {
+<span class="fc" id="L311">        return theKeyName;</span>
+    }
+
+    @Override
+    public String getNameSpace() {
+<span class="fc" id="L316">        return &quot;MoneyWise.analysis&quot;;</span>
+    }
+
+    @Override
+    public String getValue() {
+        /* If we have not initialised the value */
+<span class="fc bfc" id="L322" title="All 2 branches covered.">        if (theValue == null) {</span>
+            /* Derive the value */
+<span class="fc" id="L324">            theValue = LOADER.getValue(this);</span>
+        }
+
+        /* return the value */
+<span class="fc" id="L328">        return theValue;</span>
+    }
+
+    @Override
+    public String getId() {
+<span class="fc" id="L333">        return getValue();</span>
+    }
+
+    /**
+     * Build analysis map.
+     *
+     * @return the map
+     */
+    private static Map&lt;MoneyWiseXAnalysisType, OceanusBundleId&gt; buildAnalysisMap() {
+        /* Create the map and return it */
+<span class="fc" id="L343">        final Map&lt;MoneyWiseXAnalysisType, OceanusBundleId&gt; myMap = new EnumMap&lt;&gt;(MoneyWiseXAnalysisType.class);</span>
+<span class="fc" id="L344">        myMap.put(MoneyWiseXAnalysisType.DEPOSIT, MoneyWiseBasicResource.DEPOSIT_NAME);</span>
+<span class="fc" id="L345">        myMap.put(MoneyWiseXAnalysisType.CASH, MoneyWiseBasicResource.CASH_NAME);</span>
+<span class="fc" id="L346">        myMap.put(MoneyWiseXAnalysisType.LOAN, MoneyWiseBasicResource.LOAN_NAME);</span>
+<span class="fc" id="L347">        myMap.put(MoneyWiseXAnalysisType.PAYEE, MoneyWiseBasicResource.PAYEE_NAME);</span>
+<span class="fc" id="L348">        myMap.put(MoneyWiseXAnalysisType.SECURITY, MoneyWiseBasicResource.SECURITY_NAME);</span>
+<span class="fc" id="L349">        myMap.put(MoneyWiseXAnalysisType.PORTFOLIO, MoneyWiseBasicResource.PORTFOLIO_NAME);</span>
+<span class="fc" id="L350">        myMap.put(MoneyWiseXAnalysisType.CATEGORY, MoneyWiseBasicResource.TRANSCAT_NAME);</span>
+<span class="fc" id="L351">        myMap.put(MoneyWiseXAnalysisType.TAXBASIS, MoneyWiseStaticResource.TAXBASIS_NAME);</span>
+<span class="fc" id="L352">        myMap.put(MoneyWiseXAnalysisType.TRANSTAG, MoneyWiseBasicResource.TRANSTAG_NAME);</span>
+<span class="fc" id="L353">        myMap.put(MoneyWiseXAnalysisType.ALL, FILTER_ALL);</span>
+<span class="fc" id="L354">        return myMap;</span>
+    }
+
+    /**
+     * Obtain key for analysisType.
+     *
+     * @param pValue the Value
+     * @return the resource key
+     */
+    static OceanusBundleId getKeyForAnalysisType(final MoneyWiseXAnalysisType pValue) {
+<span class="nc" id="L364">        return OceanusBundleLoader.getKeyForEnum(ANALYSIS_MAP, pValue);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

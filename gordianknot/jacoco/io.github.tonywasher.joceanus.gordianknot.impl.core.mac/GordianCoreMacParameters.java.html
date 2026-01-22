@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianCoreMacParameters.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.impl.core.mac</a> &gt; <span class="el_source">GordianCoreMacParameters.java</span></div><h1>GordianCoreMacParameters.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.gordianknot.impl.core.mac;
+
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKey;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacFactory;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacParameters;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianRandomSource;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.key.GordianCoreKeyGenerator;
+
+/**
+ * Core Mac parameters implementation.
+ */
+public class GordianCoreMacParameters {
+    /**
+     * The factory.
+     */
+    private final GordianBaseFactory theFactory;
+
+    /**
+     * The macSpec.
+     */
+    private final GordianMacSpec theSpec;
+
+    /**
+     * The secureRandom.
+     */
+    private final GordianRandomSource theRandom;
+
+    /**
+     * The KeyGenerator.
+     */
+    private GordianCoreKeyGenerator&lt;GordianMacSpec&gt; theGenerator;
+
+    /**
+     * Key.
+     */
+    private GordianKey&lt;GordianMacSpec&gt; theKey;
+
+    /**
+     * InitialisationVector.
+     */
+    private byte[] theInitVector;
+
+    /**
+     * Constructor.
+     *
+     * @param pFactory the factory
+     * @param pMacSpec the CipherSpec
+     */
+    GordianCoreMacParameters(final GordianBaseFactory pFactory,
+<span class="fc" id="L69">                             final GordianMacSpec pMacSpec) {</span>
+<span class="fc" id="L70">        theFactory = pFactory;</span>
+<span class="fc" id="L71">        theSpec = pMacSpec;</span>
+<span class="fc" id="L72">        theRandom = theFactory.getRandomSource();</span>
+<span class="fc" id="L73">    }</span>
+
+    /**
+     * Obtain the key.
+     *
+     * @return the key
+     */
+    public GordianKey&lt;GordianMacSpec&gt; getKey() {
+<span class="fc" id="L81">        return theKey;</span>
+    }
+
+    /**
+     * Obtain the initVector.
+     *
+     * @return the initVector
+     */
+    byte[] getInitVector() {
+<span class="fc" id="L90">        return theInitVector;</span>
+    }
+
+    /**
+     * Process macParameters.
+     *
+     * @param pParams the mac parameters
+     * @throws GordianException on error
+     */
+    void processParameters(final GordianMacParameters pParams) throws GordianException {
+        /* Access the key details */
+<span class="fc" id="L101">        theKey = pParams.getKey();</span>
+<span class="fc" id="L102">        theInitVector = obtainNonceFromParameters(pParams);</span>
+<span class="fc" id="L103">    }</span>
+
+    /**
+     * Build a key from bytes.
+     *
+     * @param pKeyBytes the bytes to use
+     * @return the key
+     * @throws GordianException on error
+     */
+    GordianKey&lt;GordianMacSpec&gt; buildKeyFromBytes(final byte[] pKeyBytes) throws GordianException {
+        /* Create generator if needed */
+<span class="fc bfc" id="L114" title="All 2 branches covered.">        if (theGenerator == null) {</span>
+<span class="fc" id="L115">            final GordianMacFactory myFactory = theFactory.getMacFactory();</span>
+<span class="fc" id="L116">            theGenerator = (GordianCoreKeyGenerator&lt;GordianMacSpec&gt;) myFactory.getKeyGenerator(theSpec);</span>
+        }
+
+        /* Create the key */
+<span class="fc" id="L120">        return theGenerator.buildKeyFromBytes(pKeyBytes);</span>
+    }
+
+    /**
+     * Obtain Nonce from MacParameters.
+     *
+     * @param pParams parameters
+     * @return the nonce
+     */
+    private byte[] obtainNonceFromParameters(final GordianMacParameters pParams) {
+        /* Access IV */
+<span class="fc" id="L131">        byte[] myIV = pParams.getNonce();</span>
+<span class="fc" id="L132">        final int myIVLen = theSpec.getIVLen();</span>
+
+        /* If we need a random nonce */
+<span class="fc bfc" id="L135" title="All 4 branches covered.">        if (pParams.randomNonce() &amp;&amp; myIVLen != 0) {</span>
+            /* Create a random IV */
+<span class="fc" id="L137">            myIV = new byte[myIVLen];</span>
+<span class="fc" id="L138">            theRandom.getRandom().nextBytes(myIV);</span>
+        }
+
+        /* return the IV */
+<span class="fc" id="L142">        return myIV;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

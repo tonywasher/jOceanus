@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PrometheusMapsDateInstance.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Prometheus Core Application Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.prometheus.maps</a> &gt; <span class="el_source">PrometheusMapsDateInstance.java</span></div><h1>PrometheusMapsDateInstance.java</h1><pre class="source lang-java linenums">/*
+ * Prometheus: Application Framework
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.prometheus.maps;
+
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
+import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldItem;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
+import io.github.tonywasher.joceanus.metis.list.MetisListKey;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataResource;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+/**
+ * Instance maps for dates.
+ */
+public class PrometheusMapsDateInstance
+        implements MetisFieldItem {
+    /**
+     * Report fields.
+     */
+<span class="nc" id="L39">    private static final MetisFieldSet&lt;PrometheusMapsDateInstance&gt; FIELD_DEFS</span>
+<span class="nc" id="L40">            = MetisFieldSet.newFieldSet(PrometheusMapsDateInstance.class);</span>
+
+    /*
+     * Declare Fields.
+     */
+    static {
+<span class="nc" id="L46">        FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAITEM_TYPE, PrometheusMapsDateInstance::getListKey);</span>
+<span class="nc" id="L47">        FIELD_DEFS.declareLocalField(PrometheusMapsResource.MAPS_FIELD, PrometheusMapsDateInstance::getOwnerId);</span>
+<span class="nc" id="L48">        FIELD_DEFS.declareLocalField(PrometheusMapsResource.MAPS_INSTANCEMAP, PrometheusMapsDateInstance::getMap);</span>
+<span class="nc" id="L49">    }</span>
+
+    /**
+     * listKey.
+     */
+    private final MetisListKey theListKey;
+
+    /**
+     * The owner fieldId.
+     */
+    private final MetisDataFieldId theOwnerId;
+
+    /**
+     * The date fieldId.
+     */
+    private final MetisDataFieldId theDateId;
+
+    /**
+     * The map of owner to dateMap.
+     */
+    private final Map&lt;PrometheusDataItem, PrometheusMapsFieldInstance&gt; theMap;
+
+    /**
+     * Do we allow null value?
+     */
+    private final boolean allowNull;
+
+    /**
+     * Constructor.
+     *
+     * @param pListKey   the listKey
+     * @param pOwnerId   the ownerFieldId
+     * @param pDateId    the date fieldId
+     * @param pAllowNull do we allow null value?
+     */
+    PrometheusMapsDateInstance(final MetisListKey pListKey,
+                               final MetisDataFieldId pOwnerId,
+                               final MetisDataFieldId pDateId,
+<span class="nc" id="L87">                               final boolean pAllowNull) {</span>
+<span class="nc" id="L88">        theListKey = pListKey;</span>
+<span class="nc" id="L89">        theOwnerId = pOwnerId;</span>
+<span class="nc" id="L90">        theDateId = pDateId;</span>
+<span class="nc" id="L91">        allowNull = pAllowNull;</span>
+<span class="nc" id="L92">        theMap = new LinkedHashMap&lt;&gt;();</span>
+<span class="nc" id="L93">    }</span>
+
+    /**
+     * Constructor.
+     *
+     * @param pSource the source map
+     */
+<span class="nc" id="L100">    PrometheusMapsDateInstance(final PrometheusMapsDateInstance pSource) {</span>
+<span class="nc" id="L101">        theListKey = pSource.getListKey();</span>
+<span class="nc" id="L102">        theOwnerId = pSource.getOwnerId();</span>
+<span class="nc" id="L103">        theDateId = pSource.getDateId();</span>
+<span class="nc" id="L104">        theMap = new LinkedHashMap&lt;&gt;();</span>
+<span class="nc" id="L105">        allowNull = pSource.allowNull;</span>
+<span class="nc" id="L106">    }</span>
+
+    @Override
+    public MetisFieldSetDef getDataFieldSet() {
+<span class="nc" id="L110">        return FIELD_DEFS;</span>
+    }
+
+    @Override
+    public String formatObject(final OceanusDataFormatter pFormatter) {
+<span class="nc" id="L115">        return PrometheusMapsDateInstance.class.getSimpleName();</span>
+    }
+
+    /**
+     * Obtain the listKey.
+     *
+     * @return the listKey
+     */
+    MetisListKey getListKey() {
+<span class="nc" id="L124">        return theListKey;</span>
+    }
+
+    /**
+     * Obtain the ownerId.
+     *
+     * @return the ownerId
+     */
+    MetisDataFieldId getOwnerId() {
+<span class="nc" id="L133">        return theOwnerId;</span>
+    }
+
+    /**
+     * Obtain the dateId.
+     *
+     * @return the dateId
+     */
+    MetisDataFieldId getDateId() {
+<span class="nc" id="L142">        return theDateId;</span>
+    }
+
+    /**
+     * Obtain the map.
+     *
+     * @return the fieldId
+     */
+    Map&lt;PrometheusDataItem, PrometheusMapsFieldInstance&gt; getMap() {
+<span class="nc" id="L151">        return theMap;</span>
+    }
+
+    /**
+     * add item to map.
+     *
+     * @param pItem the item
+     */
+    void addItemToMap(final PrometheusDataItem pItem) {
+        /* Access the owner */
+<span class="nc" id="L161">        final MetisFieldSetDef myFieldSet = pItem.getDataFieldSet();</span>
+<span class="nc" id="L162">        final MetisFieldDef myField = myFieldSet.getField(theOwnerId);</span>
+<span class="nc" id="L163">        final PrometheusDataItem myOwner = myField.getFieldValue(pItem, PrometheusDataItem.class);</span>
+
+        /* Add to the date map */
+<span class="nc" id="L166">        final PrometheusMapsFieldInstance myMap = theMap.computeIfAbsent(myOwner,</span>
+<span class="nc" id="L167">                r -&gt; new PrometheusMapsFieldInstance(theListKey, theDateId, allowNull));</span>
+<span class="nc" id="L168">        myMap.addItemToMap(pItem);</span>
+<span class="nc" id="L169">    }</span>
+
+    /**
+     * Is the date duplicate?
+     *
+     * @param pItem the item
+     * @return true/false
+     */
+    boolean isDateDuplicate(final PrometheusDataItem pItem) {
+        /* Access the owner */
+<span class="nc" id="L179">        final MetisFieldSetDef myFieldSet = pItem.getDataFieldSet();</span>
+<span class="nc" id="L180">        MetisFieldDef myField = myFieldSet.getField(theOwnerId);</span>
+<span class="nc" id="L181">        final PrometheusDataItem myOwner = myField.getFieldValue(pItem, PrometheusDataItem.class);</span>
+
+        /* Check the map for duplicate */
+<span class="nc" id="L184">        final PrometheusMapsFieldInstance myMap = theMap.get(myOwner);</span>
+<span class="nc bnc" id="L185" title="All 2 branches missed.">        if (myMap != null) {</span>
+<span class="nc" id="L186">            myField = myFieldSet.getField(theDateId);</span>
+<span class="nc" id="L187">            final Object myDate = myField.getFieldValue(pItem);</span>
+<span class="nc" id="L188">            return myMap.isKeyDuplicate(myDate);</span>
+        }
+<span class="nc" id="L190">        return false;</span>
+    }
+
+    /**
+     * Is the date available?
+     *
+     * @param pOwner the owner
+     * @param pDate  the date
+     * @return true/false
+     */
+    boolean isDateAvailable(final PrometheusDataItem pOwner,
+                            final OceanusDate pDate) {
+<span class="nc" id="L202">        final PrometheusMapsFieldInstance myMap = theMap.get(pOwner);</span>
+<span class="nc bnc" id="L203" title="All 4 branches missed.">        return myMap == null || myMap.isKeyAvailable(pDate);</span>
+    }
+
+    /**
+     * Reset Maps.
+     */
+    void resetMap() {
+<span class="nc" id="L210">        theMap.clear();</span>
+<span class="nc" id="L211">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

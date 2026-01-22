@@ -1,0 +1,305 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianSkeinXof.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.impl.ext.digests</a> &gt; <span class="el_source">GordianSkeinXof.java</span></div><h1>GordianSkeinXof.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.gordianknot.impl.ext.digests;
+
+import io.github.tonywasher.joceanus.gordianknot.impl.ext.digests.GordianSkeinBase.Configuration;
+import io.github.tonywasher.joceanus.gordianknot.impl.ext.params.GordianSkeinParameters;
+import org.bouncycastle.crypto.ExtendedDigest;
+import org.bouncycastle.crypto.Xof;
+import org.bouncycastle.util.Memoable;
+
+/**
+ * SkeinXof implementation.
+ * &lt;p&gt;This implementation supports the following elements of SkeinXParameters
+ * &lt;ul&gt;
+ *     &lt;li&gt;Key
+ *     &lt;li&gt;Nonce
+ *     &lt;li&gt;Personalisation
+ *     &lt;li&gt;PublicKey
+ *     &lt;li&gt;Key Identifier
+ *     &lt;li&gt;Max Output length
+ * &lt;/ul&gt;
+ * &lt;p&gt;If OutputLen is set to zero, then SkeinXof defaults to the underlying digestLength.
+ */
+public class GordianSkeinXof
+        implements ExtendedDigest, Memoable, Xof {
+    /**
+     * The maximum Xof length.
+     */
+    private static final int MAX_XOFLEN = -2;
+
+    /**
+     * The underlying Skein instance.
+     */
+    private final GordianSkeinBase theUnderlying;
+
+    /**
+     * The single byte buffer.
+     */
+<span class="fc" id="L53">    private final byte[] singleByte = new byte[1];</span>
+
+    /**
+     * The next output index.
+     */
+    private byte[] outputCache;
+
+    /**
+     * The XofLen.
+     */
+    private long theXofLen;
+
+    /**
+     * The XofRemaining.
+     */
+    private long theXofRemaining;
+
+    /**
+     * The next output index.
+     */
+    private long nextOutputIdx;
+
+    /**
+     * Bytes in cache.
+     */
+    private int bytesInCache;
+
+    /**
+     * Constructor.
+     *
+     * @param pDigest the underlying digest.
+     */
+<span class="fc" id="L85">    public GordianSkeinXof(final GordianSkeinBase pDigest) {</span>
+        /* Store the digest */
+<span class="fc" id="L87">        theUnderlying = pDigest;</span>
+<span class="fc" id="L88">        outputCache = new byte[theUnderlying.getBlockSize()];</span>
+
+        /* Clear outputting flag */
+<span class="fc" id="L91">        theXofRemaining = -1L;</span>
+<span class="fc" id="L92">        theXofLen = -1;</span>
+<span class="fc" id="L93">    }</span>
+
+    /**
+     * Constructor.
+     *
+     * @param pSource the source digest.
+     */
+<span class="fc" id="L100">    public GordianSkeinXof(final GordianSkeinXof pSource) {</span>
+        /* Create hashes */
+<span class="fc" id="L102">        theUnderlying = (GordianSkeinBase) pSource.theUnderlying.copy();</span>
+<span class="fc" id="L103">        outputCache = new byte[theUnderlying.getBlockSize()];</span>
+
+        /* Initialise from source */
+<span class="fc" id="L106">        reset(pSource);</span>
+<span class="fc" id="L107">    }</span>
+
+    /**
+     * Constructor.
+     *
+     * @param pDigest the underlying digest.
+     */
+    public GordianSkeinXof(final GordianSkeinDigest pDigest) {
+<span class="fc" id="L115">        this(pDigest.getBase());</span>
+<span class="fc" id="L116">    }</span>
+
+    /**
+     * Initialise.
+     *
+     * @param pParams the parameters.
+     */
+    public void init(final GordianSkeinParameters pParams) {
+        /* Reject a negative Xof length */
+<span class="fc" id="L125">        final long myXofLen = pParams.getMaxOutputLength();</span>
+<span class="pc bpc" id="L126" title="1 of 2 branches missed.">        if (myXofLen &lt; -1) {</span>
+<span class="nc" id="L127">            throw new IllegalArgumentException(&quot;Invalid output length&quot;);</span>
+        }
+<span class="fc" id="L129">        theXofLen = myXofLen;</span>
+
+        /* Declare the configuration */
+<span class="fc" id="L132">        declareConfig();</span>
+
+        /* Pass selective parameters to the underlying hash */
+<span class="fc" id="L135">        theUnderlying.init(pParams);</span>
+<span class="fc" id="L136">        theXofRemaining = -1L;</span>
+<span class="fc" id="L137">    }</span>
+
+    /**
+     * Declare extended configuration.
+     */
+    private void declareConfig() {
+        /* Declare the configuration */
+<span class="fc bfc" id="L144" title="All 2 branches covered.">        long myLen = theXofLen == 0 ? theUnderlying.getOutputSize() : theXofLen;</span>
+<span class="fc bfc" id="L145" title="All 2 branches covered.">        myLen = myLen == -1 ? -1L : myLen * Byte.SIZE;</span>
+<span class="fc" id="L146">        final Configuration myConfig = new Configuration(myLen);</span>
+<span class="fc" id="L147">        theUnderlying.setConfiguration(myConfig);</span>
+<span class="fc" id="L148">    }</span>
+
+    @Override
+    public String getAlgorithmName() {
+<span class="fc" id="L152">        final String myBase = &quot;SkeinXof&quot;;</span>
+<span class="pc bpc" id="L153" title="1 of 2 branches missed.">        if (theXofLen == -1) {</span>
+<span class="fc" id="L154">            return myBase;</span>
+        }
+<span class="nc bnc" id="L156" title="All 2 branches missed.">        final long myLen = theXofLen == 0 ? theUnderlying.getOutputSize() : theXofLen;</span>
+<span class="nc" id="L157">        return myBase + &quot;-&quot; + (theUnderlying.getBlockSize() * Byte.SIZE) + &quot;-&quot; + (myLen * Byte.SIZE);</span>
+    }
+
+    @Override
+    public int getDigestSize() {
+<span class="fc bfc" id="L162" title="All 4 branches covered.">        return (theXofLen == 0 || theXofLen == -1) ? theUnderlying.getOutputSize() : (int) theXofLen;</span>
+    }
+
+    @Override
+    public int getByteLength() {
+<span class="fc" id="L167">        return theUnderlying.getBlockSize();</span>
+    }
+
+    @Override
+    public void update(final byte b) {
+<span class="fc" id="L172">        singleByte[0] = b;</span>
+<span class="fc" id="L173">        update(singleByte, 0, 1);</span>
+<span class="fc" id="L174">    }</span>
+
+    @Override
+    public void update(final byte[] pMessage,
+                       final int pOffset,
+                       final int pLen) {
+<span class="pc bpc" id="L180" title="1 of 2 branches missed.">        if (theXofRemaining != -1) {</span>
+<span class="nc" id="L181">            throw new IllegalStateException(&quot;Already outputting&quot;);</span>
+        }
+<span class="fc" id="L183">        theUnderlying.update(pMessage, pOffset, pLen);</span>
+<span class="fc" id="L184">    }</span>
+
+    @Override
+    public int doFinal(final byte[] pOut,
+                       final int pOutOffset) {
+<span class="fc" id="L189">        return doFinal(pOut, pOutOffset, getDigestSize());</span>
+    }
+
+    @Override
+    public int doFinal(final byte[] pOut,
+                       final int pOutOffset,
+                       final int pOutLen) {
+        /* Build the required output */
+<span class="fc" id="L197">        final int length = doOutput(pOut, pOutOffset, pOutLen);</span>
+
+        /* reset the underlying digest and return the length */
+<span class="fc" id="L200">        reset();</span>
+<span class="fc" id="L201">        return length;</span>
+    }
+
+    @Override
+    public int doOutput(final byte[] pOut,
+                        final int pOutOffset,
+                        final int pOutLen) {
+        /* If wa are switching to output */
+<span class="fc bfc" id="L209" title="All 2 branches covered.">        if (theXofRemaining == -1) {</span>
+            /* Initialise values */
+<span class="fc" id="L211">            nextOutputIdx = 0;</span>
+<span class="fc" id="L212">            bytesInCache = 0;</span>
+
+            /* If we have a null Xof */
+<span class="fc bfc" id="L215" title="All 2 branches covered.">            if (theXofLen == 0) {</span>
+                /* Calculate the number of bytes available */
+<span class="fc" id="L217">                theXofRemaining = theUnderlying.getOutputSize();</span>
+
+                /* Else we are handling a normal Xof */
+            } else {
+                /* Calculate the number of bytes available */
+<span class="fc bfc" id="L222" title="All 2 branches covered.">                theXofRemaining = theXofLen == -1</span>
+<span class="fc" id="L223">                        ? MAX_XOFLEN</span>
+<span class="fc" id="L224">                        : theXofLen;</span>
+            }
+
+            /* Initiate output */
+<span class="fc" id="L228">            theUnderlying.initiateOutput();</span>
+        }
+
+        /* Reject if there is insufficient Xof remaining */
+<span class="pc bpc" id="L232" title="2 of 6 branches missed.">        if (pOutLen &lt; 0</span>
+                || (theXofRemaining &gt; 0 &amp;&amp; pOutLen &gt; theXofRemaining)) {
+<span class="nc" id="L234">            throw new IllegalArgumentException(&quot;Insufficient bytes remaining&quot;);</span>
+        }
+
+        /* If we have some remaining data in the cache */
+<span class="fc" id="L238">        int dataLeft = pOutLen;</span>
+<span class="fc" id="L239">        int outPos = pOutOffset;</span>
+<span class="fc bfc" id="L240" title="All 2 branches covered.">        if (bytesInCache &gt; 0) {</span>
+            /* Copy data from current hash */
+<span class="fc" id="L242">            final int dataToCopy = Math.min(dataLeft, bytesInCache);</span>
+<span class="fc" id="L243">            System.arraycopy(outputCache, outputCache.length - bytesInCache, pOut, outPos, dataToCopy);</span>
+
+            /* Adjust counters */
+<span class="fc" id="L246">            theXofRemaining -= dataToCopy;</span>
+<span class="fc" id="L247">            bytesInCache -= dataToCopy;</span>
+<span class="fc" id="L248">            outPos += dataToCopy;</span>
+<span class="fc" id="L249">            dataLeft -= dataToCopy;</span>
+        }
+
+        /* Loop until we have completed the request */
+<span class="fc bfc" id="L253" title="All 2 branches covered.">        while (dataLeft &gt; 0) {</span>
+            /* Obtain the next set of output bytes */
+<span class="fc" id="L255">            theUnderlying.output(nextOutputIdx++, outputCache, 0, outputCache.length);</span>
+<span class="fc" id="L256">            bytesInCache = outputCache.length;</span>
+
+            /* Copy data from current hash */
+<span class="fc" id="L259">            final int dataToCopy = Math.min(dataLeft, outputCache.length);</span>
+<span class="fc" id="L260">            System.arraycopy(outputCache, 0, pOut, outPos, dataToCopy);</span>
+
+            /* Adjust counters */
+<span class="fc" id="L263">            theXofRemaining -= dataToCopy;</span>
+<span class="fc" id="L264">            bytesInCache -= dataToCopy;</span>
+<span class="fc" id="L265">            outPos += dataToCopy;</span>
+<span class="fc" id="L266">            dataLeft -= dataToCopy;</span>
+<span class="fc" id="L267">        }</span>
+
+        /* Return the number of bytes transferred */
+<span class="fc" id="L270">        return pOutLen;</span>
+    }
+
+    @Override
+    public void reset() {
+<span class="fc" id="L275">        theUnderlying.reset();</span>
+<span class="fc" id="L276">        theXofRemaining = -1L;</span>
+<span class="fc" id="L277">    }</span>
+
+    @Override
+    public void reset(final Memoable pSource) {
+        /* Access source */
+<span class="fc" id="L282">        final GordianSkeinXof mySource = (GordianSkeinXof) pSource;</span>
+
+        /* Reset digests */
+<span class="fc" id="L285">        theUnderlying.reset(mySource.theUnderlying);</span>
+
+        /* Copy state */
+<span class="fc" id="L288">        theXofLen = mySource.theXofLen;</span>
+<span class="fc" id="L289">        theXofRemaining = mySource.theXofRemaining;</span>
+<span class="fc" id="L290">        bytesInCache = mySource.bytesInCache;</span>
+<span class="fc" id="L291">        nextOutputIdx = mySource.nextOutputIdx;</span>
+
+        /* Copy cache */
+<span class="fc" id="L294">        System.arraycopy(mySource.outputCache, 0, outputCache, 0, outputCache.length);</span>
+
+        /* Declare extended configuration */
+<span class="fc" id="L297">        declareConfig();</span>
+<span class="fc" id="L298">    }</span>
+
+    @Override
+    public GordianSkeinXof copy() {
+<span class="fc" id="L302">        return new GordianSkeinXof(this);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

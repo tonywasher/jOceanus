@@ -1,0 +1,739 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseBaseTable.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.moneywise.ui.base</a> &gt; <span class="el_source">MoneyWiseBaseTable.java</span></div><h1>MoneyWiseBaseTable.java</h1><pre class="source lang-java linenums">/*
+ * MoneyWise: Finance Application
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.moneywise.ui.base;
+
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventManager;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
+import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogManager;
+import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogger;
+import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
+import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataNamedItem;
+import io.github.tonywasher.joceanus.metis.list.MetisListKey;
+import io.github.tonywasher.joceanus.metis.ui.MetisErrorPanel;
+import io.github.tonywasher.joceanus.metis.viewer.MetisViewerEntry;
+import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
+import io.github.tonywasher.joceanus.moneywise.views.MoneyWiseView;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataInfoClass;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValues.PrometheusInfoSetItem;
+import io.github.tonywasher.joceanus.prometheus.views.PrometheusDataEvent;
+import io.github.tonywasher.joceanus.prometheus.views.PrometheusEditEntry;
+import io.github.tonywasher.joceanus.prometheus.views.PrometheusEditSet;
+import io.github.tonywasher.joceanus.tethys.api.base.TethysUIComponent;
+import io.github.tonywasher.joceanus.tethys.api.dialog.TethysUIFileSelector;
+import io.github.tonywasher.joceanus.tethys.api.factory.TethysUIFactory;
+import io.github.tonywasher.joceanus.tethys.api.pane.TethysUIBorderPaneManager;
+import io.github.tonywasher.joceanus.tethys.api.table.TethysUITableColumn;
+import io.github.tonywasher.joceanus.tethys.api.table.TethysUITableColumn.TethysUIOnCellCommit;
+import io.github.tonywasher.joceanus.tethys.api.table.TethysUITableManager;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
+import java.util.Iterator;
+
+/**
+ * MoneyWise Base Table.
+ *
+ * @param &lt;T&gt; the data type
+ */
+public abstract class MoneyWiseBaseTable&lt;T extends PrometheusDataItem&gt;
+        implements OceanusEventProvider&lt;PrometheusDataEvent&gt;, TethysUIComponent {
+    /**
+     * The logger.
+     */
+<span class="nc" id="L62">    private static final OceanusLogger LOGGER = OceanusLogManager.getLogger(MoneyWiseBaseTable.class);</span>
+
+    /**
+     * Date column standard width.
+     */
+    protected static final int WIDTH_DATE = 100;
+
+    /**
+     * Money column standard width.
+     */
+    protected static final int WIDTH_MONEY = 100;
+
+    /**
+     * Rate column standard width.
+     */
+    protected static final int WIDTH_RATE = 90;
+
+    /**
+     * Price column standard width.
+     */
+    protected static final int WIDTH_PRICE = 90;
+
+    /**
+     * Units column standard width.
+     */
+    protected static final int WIDTH_UNITS = 90;
+
+    /**
+     * Dilution column standard width.
+     */
+    protected static final int WIDTH_DILUTION = 90;
+
+    /**
+     * Name column standard width.
+     */
+    protected static final int WIDTH_NAME = 130;
+
+    /**
+     * Description column standard width.
+     */
+    protected static final int WIDTH_DESC = 200;
+
+    /**
+     * Icon column width.
+     */
+    protected static final int WIDTH_ICON = 20;
+
+    /**
+     * Integer column width.
+     */
+    protected static final int WIDTH_INT = 30;
+
+    /**
+     * Currency column width.
+     */
+    protected static final int WIDTH_CURR = 50;
+
+    /**
+     * The view.
+     */
+    private final MoneyWiseView theView;
+
+    /**
+     * The ItemType.
+     */
+    private final MetisListKey theItemType;
+
+    /**
+     * The Event Manager.
+     */
+    private final OceanusEventManager&lt;PrometheusDataEvent&gt; theEventManager;
+
+    /**
+     * The EditSet associated with the table.
+     */
+    private final PrometheusEditSet theEditSet;
+
+    /**
+     * The EditEntry.
+     */
+    private final PrometheusEditEntry&lt;T&gt; theEditEntry;
+
+    /**
+     * The error panel.
+     */
+    private final MetisErrorPanel theError;
+
+    /**
+     * The panel.
+     */
+    private final TethysUIBorderPaneManager thePanel;
+
+    /**
+     * The underlying table.
+     */
+    private final TethysUITableManager&lt;MetisDataFieldId, T&gt; theTable;
+
+    /**
+     * The selection control.
+     */
+    private final MoneyWiseTableSelect&lt;T&gt; theSelect;
+
+    /**
+     * is the table editing?
+     */
+    private boolean isEditing;
+
+    /**
+     * Constructor.
+     *
+     * @param pView     the view
+     * @param pEditSet  the editSet
+     * @param pError    the error panel
+     * @param pDataType the dataType
+     */
+    protected MoneyWiseBaseTable(final MoneyWiseView pView,
+                                 final PrometheusEditSet pEditSet,
+                                 final MetisErrorPanel pError,
+<span class="nc" id="L180">                                 final MetisListKey pDataType) {</span>
+        /* Store parameters */
+<span class="nc" id="L182">        theView = pView;</span>
+<span class="nc" id="L183">        theError = pError;</span>
+<span class="nc" id="L184">        theItemType = pDataType;</span>
+
+        /* Create the event manager */
+<span class="nc" id="L187">        theEventManager = new OceanusEventManager&lt;&gt;();</span>
+
+        /* Build the Edit set */
+<span class="nc" id="L190">        theEditSet = pEditSet;</span>
+<span class="nc" id="L191">        theEditEntry = theEditSet.registerType(pDataType);</span>
+
+        /* Create the panel */
+<span class="nc" id="L194">        final TethysUIFactory&lt;?&gt; myGuiFactory = pView.getGuiFactory();</span>
+<span class="nc" id="L195">        thePanel = myGuiFactory.paneFactory().newBorderPane();</span>
+
+        /* Create the table */
+<span class="nc" id="L198">        theTable = myGuiFactory.tableFactory().newTable();</span>
+<span class="nc" id="L199">        thePanel.setCentre(theTable);</span>
+
+        /* Set table configuration */
+<span class="nc" id="L202">        theTable.setOnCommitError(this::setError)</span>
+<span class="nc" id="L203">                .setOnValidateError(this::showValidateError)</span>
+<span class="nc" id="L204">                .setOnCellEditState(this::handleEditState)</span>
+<span class="nc" id="L205">                .setChanged(this::isFieldChanged)</span>
+<span class="nc" id="L206">                .setError(this::isFieldInError)</span>
+<span class="nc" id="L207">                .setFilter(this::isFiltered)</span>
+<span class="nc" id="L208">                .setOnSelect(this::selectItem)</span>
+<span class="nc" id="L209">                .setRepaintRowOnCommit(true)</span>
+<span class="nc" id="L210">                .setEditable(true);</span>
+
+        /* Add listeners */
+<span class="nc" id="L213">        theEditSet.getEventRegistrar().addEventListener(e -&gt; handleRewind());</span>
+
+        /* Create the selection control */
+<span class="nc" id="L216">        theSelect = new MoneyWiseTableSelect&lt;&gt;(theTable, this::isFiltered);</span>
+<span class="nc" id="L217">    }</span>
+
+    /**
+     * Declare item panel.
+     *
+     * @param pPanel the item panel
+     */
+    protected void declareItemPanel(final MoneyWiseItemPanel&lt;T&gt; pPanel) {
+<span class="nc" id="L225">        theSelect.declareItemPanel(pPanel);</span>
+<span class="nc" id="L226">        thePanel.setSouth(pPanel);</span>
+<span class="nc" id="L227">        pPanel.getEventRegistrar().addEventListener(PrometheusDataEvent.GOTOWINDOW, theEventManager::cascadeEvent);</span>
+<span class="nc bnc" id="L228" title="All 2 branches missed.">        pPanel.getEventRegistrar().addEventListener(PrometheusDataEvent.ADJUSTVISIBILITY, e -&gt; setTableEnabled(!pPanel.isEditing()));</span>
+<span class="nc" id="L229">        pPanel.setPreferredSize();</span>
+<span class="nc" id="L230">    }</span>
+
+    @Override
+    public OceanusEventRegistrar&lt;PrometheusDataEvent&gt; getEventRegistrar() {
+<span class="nc" id="L234">        return theEventManager.getEventRegistrar();</span>
+    }
+
+    @Override
+    public TethysUIComponent getUnderlying() {
+<span class="nc" id="L239">        return thePanel;</span>
+    }
+
+    /**
+     * Obtain the error panel.
+     *
+     * @return the error panel
+     */
+    public MetisErrorPanel getErrorPanel() {
+<span class="nc" id="L248">        return theError;</span>
+    }
+
+    /**
+     * Set the table enabled status.
+     *
+     * @param pEnabled true/false
+     */
+    public void setTableEnabled(final boolean pEnabled) {
+<span class="nc" id="L257">        theTable.setEnabled(pEnabled);</span>
+<span class="nc" id="L258">    }</span>
+
+    /**
+     * Obtain the item type.
+     *
+     * @return the item type
+     */
+    public MetisListKey getItemType() {
+<span class="nc" id="L266">        return theItemType;</span>
+    }
+
+    /**
+     * Obtain the view.
+     *
+     * @return the view
+     */
+    protected MoneyWiseView getView() {
+<span class="nc" id="L275">        return theView;</span>
+    }
+
+    /**
+     * Obtain the table.
+     *
+     * @return the table
+     */
+    protected TethysUITableManager&lt;MetisDataFieldId, T&gt; getTable() {
+<span class="nc" id="L284">        return theTable;</span>
+    }
+
+    /**
+     * Obtain the editSet.
+     *
+     * @return the set
+     */
+    protected PrometheusEditSet getEditSet() {
+<span class="nc" id="L293">        return theEditSet;</span>
+    }
+
+    /**
+     * Obtain the editEntry.
+     *
+     * @return the entry
+     */
+    protected PrometheusEditEntry&lt;T&gt; getEditEntry() {
+<span class="nc" id="L302">        return theEditEntry;</span>
+    }
+
+    /**
+     * Refresh data.
+     *
+     * @throws OceanusException on error
+     */
+    protected abstract void refreshData() throws OceanusException;
+
+    /**
+     * Cancel editing.
+     */
+    public void cancelEditing() {
+<span class="nc" id="L316">        theTable.cancelEditing();</span>
+<span class="nc" id="L317">    }</span>
+
+    /**
+     * Is the table editing?
+     *
+     * @return true/false
+     */
+    public boolean isEditing() {
+<span class="nc" id="L325">        return isEditing;</span>
+    }
+
+    /**
+     * Determine Focus.
+     *
+     * @param pEntry the master data entry
+     */
+    public void determineFocus(final MetisViewerEntry pEntry) {
+        /* Request the focus */
+<span class="nc" id="L335">        theTable.requestFocus();</span>
+
+        /* Set the required focus */
+<span class="nc" id="L338">        pEntry.setFocus(theEditEntry.getName());</span>
+<span class="nc" id="L339">    }</span>
+
+    /**
+     * Handle updateSet rewind.
+     */
+    protected void handleRewind() {
+<span class="nc" id="L345">        updateTableData();</span>
+<span class="nc" id="L346">    }</span>
+
+    /**
+     * Handle updateSet rewind.
+     */
+    protected void updateTableData() {
+<span class="nc" id="L352">        theSelect.updateTableData();</span>
+<span class="nc" id="L353">    }</span>
+
+    /**
+     * Delete row.
+     *
+     * @param pRow   the row
+     * @param pValue the value (ignored)
+     * @throws OceanusException on error
+     */
+    protected void deleteRow(final T pRow,
+                             final Object pValue) throws OceanusException {
+<span class="nc" id="L364">        pRow.setDeleted(true);</span>
+<span class="nc" id="L365">    }</span>
+
+    /**
+     * Handle updateSet rewind.
+     */
+    protected void restoreSelected() {
+<span class="nc" id="L371">        theSelect.restoreSelected();</span>
+<span class="nc" id="L372">    }</span>
+
+    /**
+     * Select an item.
+     *
+     * @param pItem the item
+     */
+    protected void selectItem(final T pItem) {
+<span class="nc" id="L380">        theSelect.recordSelection(pItem);</span>
+<span class="nc" id="L381">    }</span>
+
+    /**
+     * Update value.
+     *
+     * @param &lt;V&gt;       the value type
+     * @param pOnCommit the update function
+     * @param pRow      the row to update
+     * @param pValue    the value
+     * @throws OceanusException on error
+     */
+    protected &lt;V&gt; void updateField(final TethysUIOnCellCommit&lt;T, V&gt; pOnCommit,
+                                   final T pRow,
+                                   final V pValue) throws OceanusException {
+        /* Push history */
+<span class="nc" id="L396">        pRow.pushHistory();</span>
+
+        /* Protect against Exceptions */
+        try {
+            /* Set the item value */
+<span class="nc" id="L401">            pOnCommit.commitCell(pRow, pValue);</span>
+
+            /* Handle Exceptions */
+<span class="nc" id="L404">        } catch (OceanusException e) {</span>
+            /* Reset values */
+<span class="nc" id="L406">            pRow.popHistory();</span>
+
+            /* Throw the error */
+<span class="nc" id="L409">            throw new MoneyWiseDataException(&quot;Failed to update field&quot;, e);</span>
+<span class="nc" id="L410">        }</span>
+
+        /* Check for changes */
+<span class="nc bnc" id="L413" title="All 2 branches missed.">        if (pRow.checkForHistory()) {</span>
+            /* Increment data version */
+<span class="nc" id="L415">            theEditSet.incrementVersion();</span>
+
+            /* Update components to reflect changes */
+<span class="nc" id="L418">            updateTableData();</span>
+<span class="nc" id="L419">            notifyChanges();</span>
+        }
+<span class="nc" id="L421">    }</span>
+
+    /**
+     * Set the error.
+     *
+     * @param pError the error
+     */
+    protected void setError(final OceanusException pError) {
+<span class="nc" id="L429">        theError.addError(pError);</span>
+<span class="nc" id="L430">    }</span>
+
+    /**
+     * Notify that there have been changes to this list.
+     */
+    protected void notifyChanges() {
+        /* Notify listeners */
+<span class="nc" id="L437">        theEventManager.fireEvent(PrometheusDataEvent.ADJUSTVISIBILITY);</span>
+<span class="nc" id="L438">    }</span>
+
+    /**
+     * Does the panel have updates?
+     *
+     * @return true/false
+     */
+    public boolean hasUpdates() {
+<span class="nc" id="L446">        return theEditSet.hasUpdates();</span>
+    }
+
+    /**
+     * Does the panel have a session?
+     *
+     * @return true/false
+     */
+    public boolean hasSession() {
+<span class="nc bnc" id="L455" title="All 4 branches missed.">        return hasUpdates() || isItemEditing();</span>
+    }
+
+    /**
+     * Does the panel have errors?
+     *
+     * @return true/false
+     */
+    public boolean hasErrors() {
+<span class="nc" id="L464">        return theEditSet.hasErrors();</span>
+    }
+
+    /**
+     * Are we in the middle of an item edit?
+     *
+     * @return true/false
+     */
+    protected boolean isItemEditing() {
+<span class="nc" id="L473">        return false;</span>
+    }
+
+    /**
+     * is field in error?
+     *
+     * @param pField the field
+     * @param pItem  the item
+     * @return true/false
+     */
+    private boolean isFieldInError(final MetisDataFieldId pField,
+                                   final T pItem) {
+<span class="nc bnc" id="L485" title="All 4 branches missed.">        return pField != null &amp;&amp; pItem.getFieldErrors(pField) != null;</span>
+    }
+
+    /**
+     * is field changed?
+     *
+     * @param pField the field
+     * @param pItem  the item
+     * @return true/false
+     */
+    public boolean isFieldChanged(final MetisDataFieldId pField,
+                                  final T pItem) {
+        /* Header is never changed */
+<span class="nc bnc" id="L498" title="All 2 branches missed.">        if (pItem.isHeader()) {</span>
+<span class="nc" id="L499">            return false;</span>
+        }
+
+        /* If the field is a dataInfoClass as part of an infoSetItem */
+<span class="nc bnc" id="L503" title="All 4 branches missed.">        if (pField instanceof PrometheusDataInfoClass myClass</span>
+<span class="nc" id="L504">                &amp;&amp; pItem instanceof PrometheusInfoSetItem myItem) {</span>
+            /* Check with the infoSet whether the field has changed */
+<span class="nc" id="L506">            return myItem.getInfoSet().fieldChanged(myClass).isDifferent();</span>
+        }
+
+        /* Handle standard fields */
+<span class="nc bnc" id="L510" title="All 2 branches missed.">        return pField != null</span>
+<span class="nc bnc" id="L511" title="All 2 branches missed.">                &amp;&amp; pItem.fieldChanged(pField).isDifferent();</span>
+    }
+
+    /**
+     * isFiltered?
+     *
+     * @param pRow the row
+     * @return true/false
+     */
+    protected boolean isFiltered(final T pRow) {
+<span class="nc bnc" id="L521" title="All 2 branches missed.">        return !pRow.isDeleted();</span>
+    }
+
+    /**
+     * is Valid name?
+     *
+     * @param pNewName the new name
+     * @param pRow     the row
+     * @return error message or null
+     */
+    public String isValidName(final String pNewName,
+                              final T pRow) {
+        /* Reject null name */
+<span class="nc bnc" id="L534" title="All 2 branches missed.">        if (pNewName == null) {</span>
+<span class="nc" id="L535">            return &quot;Null Name not allowed&quot;;</span>
+        }
+
+        /* Reject invalid name */
+<span class="nc bnc" id="L539" title="All 2 branches missed.">        if (!PrometheusDataItem.validString(pNewName, getInvalidNameChars())) {</span>
+<span class="nc" id="L540">            return &quot;Invalid characters in name&quot;;</span>
+        }
+
+        /* Reject name that is too long */
+<span class="nc bnc" id="L544" title="All 2 branches missed.">        if (PrometheusDataItem.byteLength(pNewName) &gt; PrometheusDataItem.NAMELEN) {</span>
+<span class="nc" id="L545">            return &quot;Name too long&quot;;</span>
+        }
+
+        /* Loop through the existing values */
+<span class="nc" id="L549">        final Iterator&lt;PrometheusDataItem&gt; myIterator = nameSpaceIterator();</span>
+<span class="nc bnc" id="L550" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L551">            final PrometheusDataItem myValue = myIterator.next();</span>
+
+            /* Ignore self and deleted */
+<span class="nc bnc" id="L554" title="All 2 branches missed.">            if (!(myValue instanceof MetisDataNamedItem)</span>
+<span class="nc bnc" id="L555" title="All 2 branches missed.">                    || myValue.isDeleted()</span>
+<span class="nc bnc" id="L556" title="All 2 branches missed.">                    || myValue.equals(pRow)) {</span>
+<span class="nc" id="L557">                continue;</span>
+            }
+
+            /* Check for duplicate */
+<span class="nc" id="L561">            final MetisDataNamedItem myNamed = (MetisDataNamedItem) myValue;</span>
+<span class="nc bnc" id="L562" title="All 2 branches missed.">            if (isDuplicateName(pNewName, pRow, myNamed)) {</span>
+<span class="nc" id="L563">                return &quot;Duplicate name&quot;;</span>
+            }
+<span class="nc" id="L565">        }</span>
+
+        /* Valid name */
+<span class="nc" id="L568">        return null;</span>
+    }
+
+    /**
+     * is name a match?
+     *
+     * @param pNewName the new name
+     * @param pRow     the row
+     * @param pCheck   the item to check against
+     * @return true/false
+     */
+    protected boolean isDuplicateName(final String pNewName,
+                                      final T pRow,
+                                      final MetisDataNamedItem pCheck) {
+        /* Check for duplicate */
+<span class="nc" id="L583">        return pNewName.equals(pCheck.getName());</span>
+    }
+
+    /**
+     * Obtain the nameSpace iterator.
+     *
+     * @return the iterator
+     */
+    protected Iterator&lt;PrometheusDataItem&gt; nameSpaceIterator() {
+<span class="nc" id="L592">        return new MoneyWiseNameSpaceIterator(theEditSet, theItemType);</span>
+    }
+
+    /**
+     * Obtain the string of illegal name characters.
+     *
+     * @return the invalid characters
+     */
+    protected String getInvalidNameChars() {
+<span class="nc" id="L601">        return null;</span>
+    }
+
+    /**
+     * is Valid description?
+     *
+     * @param pNewDesc the new description
+     * @param pRow     the row
+     * @return error message or null
+     */
+    protected String isValidDesc(final String pNewDesc,
+                                 final T pRow) {
+        /* Reject description that is too long */
+<span class="nc bnc" id="L614" title="All 2 branches missed.">        if (pNewDesc != null</span>
+<span class="nc bnc" id="L615" title="All 2 branches missed.">                &amp;&amp; PrometheusDataItem.byteLength(pNewDesc) &gt; PrometheusDataItem.DESCLEN) {</span>
+<span class="nc" id="L616">            return &quot;Description too long&quot;;</span>
+        }
+
+        /* Valid description */
+<span class="nc" id="L620">        return null;</span>
+    }
+
+    /**
+     * Show validation error.
+     *
+     * @param pError the error message
+     */
+    public void showValidateError(final String pError) {
+<span class="nc" id="L629">        theError.showValidateError(pError);</span>
+<span class="nc" id="L630">    }</span>
+
+    /**
+     * Check edit state.
+     *
+     * @param pState the new state
+     */
+    private void handleEditState(final Boolean pState) {
+<span class="nc" id="L638">        isEditing = pState;</span>
+<span class="nc" id="L639">        notifyChanges();</span>
+<span class="nc" id="L640">    }</span>
+
+    /**
+     * build CSV representation of Model.
+     *
+     * @return the CSV text
+     */
+    private String createCSV() {
+        /* Create the stringBuilder */
+<span class="nc" id="L649">        final TethysUITableManager&lt;MetisDataFieldId, T&gt; myTable = getTable();</span>
+<span class="nc" id="L650">        final StringBuilder myBuilder = new StringBuilder();</span>
+
+        /* Loop through the columns */
+<span class="nc" id="L653">        Iterator&lt;MetisDataFieldId&gt; myColIterator = myTable.columnIterator();</span>
+<span class="nc" id="L654">        boolean bDoneFirst = false;</span>
+<span class="nc bnc" id="L655" title="All 2 branches missed.">        while (myColIterator.hasNext()) {</span>
+<span class="nc" id="L656">            final MetisDataFieldId myColId = myColIterator.next();</span>
+<span class="nc" id="L657">            final TethysUITableColumn&lt;?, MetisDataFieldId, T&gt; myCol = myTable.getColumn(myColId);</span>
+
+            /* Add the column name */
+<span class="nc bnc" id="L660" title="All 2 branches missed.">            if (bDoneFirst) {</span>
+<span class="nc" id="L661">                myBuilder.append(&quot;,&quot;);</span>
+            }
+<span class="nc" id="L663">            bDoneFirst = true;</span>
+<span class="nc" id="L664">            myBuilder.append(myCol.getName());</span>
+<span class="nc" id="L665">        }</span>
+<span class="nc" id="L666">        myBuilder.append(&quot;\n&quot;);</span>
+
+        /* Loop through the rows */
+<span class="nc" id="L669">        final Iterator&lt;T&gt; myRowIterator = myTable.viewIterator();</span>
+<span class="nc bnc" id="L670" title="All 2 branches missed.">        while (myRowIterator.hasNext()) {</span>
+<span class="nc" id="L671">            final T myRow = myRowIterator.next();</span>
+
+            /* Loop through the columns */
+<span class="nc" id="L674">            myColIterator = myTable.columnIterator();</span>
+<span class="nc" id="L675">            bDoneFirst = false;</span>
+<span class="nc bnc" id="L676" title="All 2 branches missed.">            while (myColIterator.hasNext()) {</span>
+<span class="nc" id="L677">                final MetisDataFieldId myColId = myColIterator.next();</span>
+<span class="nc" id="L678">                final TethysUITableColumn&lt;?, MetisDataFieldId, T&gt; myCol = myTable.getColumn(myColId);</span>
+
+                /* Output the column value */
+<span class="nc" id="L681">                final Object myVar = myCol.getValueForRow(myRow);</span>
+<span class="nc bnc" id="L682" title="All 2 branches missed.">                if (bDoneFirst) {</span>
+<span class="nc" id="L683">                    myBuilder.append(&quot;,&quot;);</span>
+                }
+<span class="nc" id="L685">                bDoneFirst = true;</span>
+<span class="nc bnc" id="L686" title="All 2 branches missed.">                if (myVar != null) {</span>
+<span class="nc" id="L687">                    myBuilder.append(myVar);</span>
+                }
+<span class="nc" id="L689">            }</span>
+<span class="nc" id="L690">            myBuilder.append(&quot;\n&quot;);</span>
+<span class="nc" id="L691">        }</span>
+
+        /* Return the CSV file */
+<span class="nc" id="L694">        return myBuilder.toString();</span>
+    }
+
+    /**
+     * Write CSV to file.
+     *
+     * @param pFactory the gui factory
+     */
+    public void writeCSVToFile(final TethysUIFactory&lt;?&gt; pFactory) {
+        try {
+            /* Create a file selector */
+<span class="nc" id="L705">            final TethysUIFileSelector mySelector = pFactory.dialogFactory().newFileSelector();</span>
+
+            /* Select File */
+<span class="nc" id="L708">            mySelector.setUseSave(true);</span>
+<span class="nc" id="L709">            final File myFile = mySelector.selectFile();</span>
+<span class="nc bnc" id="L710" title="All 2 branches missed.">            if (myFile != null) {</span>
+<span class="nc" id="L711">                final String myCSV = createCSV();</span>
+<span class="nc" id="L712">                writeToFile(myFile, myCSV);</span>
+            }
+
+<span class="nc" id="L715">        } catch (OceanusException e) {</span>
+<span class="nc" id="L716">            LOGGER.error(&quot;Failed to write to file&quot;, e);</span>
+<span class="nc" id="L717">        }</span>
+<span class="nc" id="L718">    }</span>
+
+    /**
+     * Write CSV to file.
+     *
+     * @param pFile the file to write to
+     * @param pData the data to write
+     * @throws OceanusException on error
+     */
+    private static void writeToFile(final File pFile,
+                                    final String pData) throws OceanusException {
+        /* Protect the writeToFile */
+<span class="nc" id="L730">        try (PrintWriter myWriter = new PrintWriter(pFile, StandardCharsets.UTF_8)) {</span>
+            /* Write data to file */
+<span class="nc" id="L732">            myWriter.print(pData);</span>
+
+<span class="nc" id="L734">        } catch (IOException e) {</span>
+<span class="nc" id="L735">            throw new MoneyWiseDataException(&quot;Failed to output CSV&quot;, e);</span>
+<span class="nc" id="L736">        }</span>
+<span class="nc" id="L737">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

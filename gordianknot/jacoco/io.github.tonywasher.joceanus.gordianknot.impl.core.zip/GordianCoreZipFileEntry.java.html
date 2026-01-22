@@ -1,0 +1,393 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianCoreZipFileEntry.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.impl.core.zip</a> &gt; <span class="el_source">GordianCoreZipFileEntry.java</span></div><h1>GordianCoreZipFileEntry.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.gordianknot.impl.core.zip;
+
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.zip.GordianZipFileContents;
+import io.github.tonywasher.joceanus.gordianknot.api.zip.GordianZipFileEntry;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.stream.GordianStreamDefinition;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+import java.util.zip.ZipEntry;
+
+/**
+ * Class represents an encrypted file in the Zip file.
+ */
+public class GordianCoreZipFileEntry
+        implements GordianZipFileEntry {
+    /**
+     * The NonHeader Error text.
+     */
+    private static final String ERROR_NONHEADER = &quot;Entry is not a header&quot;;
+
+    /**
+     * The User property prefix.
+     */
+    private static final String PROP_USERPFIX = &quot;User&quot;;
+
+    /**
+     * The Name property of a file.
+     */
+    private static final String PROP_NAME = &quot;Name&quot;;
+
+    /**
+     * The Zip Name property of a file.
+     */
+    private static final String PROP_ZIPNAME = &quot;ZipName&quot;;
+
+    /**
+     * The Hash property name of a file.
+     */
+    private static final String PROP_HASH = &quot;Hash&quot;;
+
+    /**
+     * The Header property name of a file.
+     */
+    private static final String PROP_HEADER = &quot;Header&quot;;
+
+    /**
+     * The Stream Type property.
+     */
+    private static final String PROP_TYPE = &quot;StreamType&quot;;
+
+    /**
+     * The Stream Vector property.
+     */
+    private static final String PROP_VECTOR = &quot;StreamVector&quot;;
+
+    /**
+     * The Stream Value property.
+     */
+    private static final String PROP_VALUE = &quot;StreamValue&quot;;
+
+    /**
+     * The parent contents.
+     */
+    private GordianZipFileContents theParent;
+
+    /**
+     * The properties.
+     */
+    private final GordianZipFileProperties theProperties;
+
+    /**
+     * The file name.
+     */
+    private final String theFileName;
+
+    /**
+     * The zip name.
+     */
+    private String theZipName;
+
+    /**
+     * The original file size.
+     */
+    private Long theFileSize;
+
+    /**
+     * The compressed file size.
+     */
+    private Long theCompressedSize;
+
+    /**
+     * The Hash.
+     */
+    private byte[] theHash;
+
+    /**
+     * Is this the header.
+     */
+    private boolean isHeader;
+
+    /**
+     * Standard constructor from filename.
+     *
+     * @param pFileName the file name
+     */
+<span class="fc" id="L125">    GordianCoreZipFileEntry(final String pFileName) {</span>
+        /* Store the file name */
+<span class="fc" id="L127">        theFileName = pFileName;</span>
+
+        /* Allocate the properties */
+<span class="fc" id="L130">        theProperties = new GordianZipFileProperties();</span>
+<span class="fc" id="L131">    }</span>
+
+    /**
+     * Standard constructor from properties.
+     *
+     * @param pProperties the properties
+     */
+<span class="fc" id="L138">    GordianCoreZipFileEntry(final GordianZipFileProperties pProperties) {</span>
+        /* Store the properties */
+<span class="fc" id="L140">        theProperties = pProperties;</span>
+
+        /* Access the top-level details */
+<span class="fc" id="L143">        theFileName = pProperties.getStringProperty(PROP_NAME);</span>
+<span class="fc" id="L144">        theZipName = pProperties.getStringProperty(PROP_ZIPNAME);</span>
+
+        /* Determine whether this is a header */
+<span class="fc bfc" id="L147" title="All 2 branches covered.">        isHeader = pProperties.getLongProperty(PROP_HEADER) != null;</span>
+
+        /* If this is the header */
+<span class="fc bfc" id="L150" title="All 2 branches covered.">        if (isHeader) {</span>
+            /* Set hash keys */
+<span class="fc" id="L152">            theHash = pProperties.getByteProperty(PROP_HASH);</span>
+
+            /* Else standard entry */
+        } else {
+            /* Access file sizes */
+<span class="fc" id="L157">            theFileSize = pProperties.getLongProperty(PROP_NAME);</span>
+<span class="fc" id="L158">            theCompressedSize = pProperties.getLongProperty(PROP_ZIPNAME);</span>
+        }
+<span class="fc" id="L160">    }</span>
+
+    @Override
+    public String getFileName() {
+<span class="fc" id="L164">        return theFileName;</span>
+    }
+
+    /**
+     * Obtain the parent contents.
+     *
+     * @return the parent of the fileEntry
+     */
+    public GordianZipFileContents getParent() {
+<span class="fc" id="L173">        return theParent;</span>
+    }
+
+    /**
+     * Obtain the Zip name of the file.
+     *
+     * @return the Zip name of the file
+     */
+    public String getZipName() {
+<span class="fc" id="L182">        return theZipName;</span>
+    }
+
+    /**
+     * Obtain the original size of a file.
+     *
+     * @return the original size
+     */
+    public Long getSize() {
+<span class="nc" id="L191">        return theFileSize;</span>
+    }
+
+    /**
+     * Obtain the compressed size of a file.
+     *
+     * @return the compressed size
+     */
+    public Long getCompressedSize() {
+<span class="nc" id="L200">        return theCompressedSize;</span>
+    }
+
+    /**
+     * Obtain the public key.
+     *
+     * @return the public key
+     */
+    protected byte[] getHash() {
+<span class="fc" id="L209">        return theHash;</span>
+    }
+
+    /**
+     * Is this entry the header.
+     *
+     * @return true/false
+     */
+    protected boolean isHeader() {
+<span class="fc" id="L218">        return isHeader;</span>
+    }
+
+    /**
+     * Set the properties of the file.
+     *
+     * @return the properties
+     */
+    protected GordianZipFileProperties allocateProperties() {
+        /* Set the top-level details */
+<span class="fc" id="L228">        theProperties.setProperty(PROP_NAME, theFileName);</span>
+<span class="fc" id="L229">        theProperties.setProperty(PROP_NAME, theFileSize);</span>
+<span class="fc" id="L230">        theProperties.setProperty(PROP_ZIPNAME, theZipName);</span>
+<span class="fc" id="L231">        theProperties.setProperty(PROP_ZIPNAME, theCompressedSize);</span>
+
+        /* If this is the header */
+<span class="fc bfc" id="L234" title="All 2 branches covered.">        if (isHeader) {</span>
+            /* Note the header */
+<span class="fc" id="L236">            theProperties.setProperty(PROP_HEADER, 1L);</span>
+
+            /* Set private/public keys */
+<span class="fc" id="L239">            theProperties.setProperty(PROP_HASH, theHash);</span>
+        }
+
+        /* Return the properties */
+<span class="fc" id="L243">        return theProperties;</span>
+    }
+
+    @Override
+    public void setUserStringProperty(final String pPropertyName,
+                                      final String pPropertyValue) {
+        /* Set the property */
+<span class="nc" id="L250">        theProperties.setProperty(PROP_USERPFIX</span>
+                + pPropertyName, pPropertyValue);
+<span class="nc" id="L252">    }</span>
+
+    @Override
+    public void setUserLongProperty(final String pPropertyName,
+                                    final Long pPropertyValue) {
+        /* Set the property */
+<span class="nc" id="L258">        theProperties.setProperty(PROP_USERPFIX</span>
+                + pPropertyName, pPropertyValue);
+<span class="nc" id="L260">    }</span>
+
+    @Override
+    public String getUserStringProperty(final String pPropertyName) {
+        /* Set the property */
+<span class="nc" id="L265">        return theProperties.getStringProperty(PROP_USERPFIX</span>
+                + pPropertyName);
+    }
+
+    @Override
+    public Long getUserLongProperty(final String pPropertyName) {
+        /* Set the property */
+<span class="nc" id="L272">        return theProperties.getLongProperty(PROP_USERPFIX</span>
+                + pPropertyName);
+    }
+
+    /**
+     * Set parent.
+     *
+     * @param pParent the parent
+     */
+    protected void setParent(final GordianZipFileContents pParent) {
+<span class="fc" id="L282">        theParent = pParent;</span>
+<span class="fc" id="L283">    }</span>
+
+    /**
+     * Set the ZipEntry for the file.
+     *
+     * @param pEntry the zip entry
+     */
+    protected void setZipEntry(final ZipEntry pEntry) {
+<span class="fc" id="L291">        theZipName = pEntry.getName();</span>
+<span class="fc" id="L292">        theFileSize = pEntry.getSize();</span>
+<span class="fc" id="L293">        theCompressedSize = pEntry.getCompressedSize();</span>
+<span class="fc" id="L294">    }</span>
+
+    /**
+     * Set the hash.
+     *
+     * @param pHash the hash value
+     */
+    protected void setHash(final byte[] pHash) {
+<span class="pc bpc" id="L302" title="1 of 2 branches missed.">        if (!isHeader) {</span>
+<span class="nc" id="L303">            throw new IllegalArgumentException(ERROR_NONHEADER);</span>
+        }
+<span class="fc" id="L305">        theHash = Arrays.copyOf(pHash, pHash.length);</span>
+<span class="fc" id="L306">    }</span>
+
+    /**
+     * Set header indication.
+     */
+    protected void setHeader() {
+<span class="fc" id="L312">        isHeader = true;</span>
+<span class="fc" id="L313">    }</span>
+
+    /**
+     * Build the properties.
+     *
+     * @param pStreams the stream definitions
+     */
+    public void buildProperties(final List&lt;GordianStreamDefinition&gt; pStreams) {
+        /* Loop through the streams */
+<span class="fc" id="L322">        int iIndex = 0;</span>
+<span class="fc" id="L323">        final Iterator&lt;GordianStreamDefinition&gt; myIterator = pStreams.iterator();</span>
+<span class="fc bfc" id="L324" title="All 2 branches covered.">        while (myIterator.hasNext()) {</span>
+<span class="fc" id="L325">            final GordianStreamDefinition myStream = myIterator.next();</span>
+<span class="fc" id="L326">            iIndex++;</span>
+
+            /* Set the type property */
+<span class="fc" id="L329">            theProperties.setProperty(PROP_TYPE</span>
+<span class="fc" id="L330">                    + iIndex, myStream.getExternalId());</span>
+<span class="fc" id="L331">            theProperties.setProperty(PROP_TYPE</span>
+<span class="fc" id="L332">                    + iIndex, myStream.getTypeDefinition());</span>
+
+            /* Set the initVector property */
+<span class="fc" id="L335">            theProperties.setProperty(PROP_VECTOR</span>
+<span class="fc" id="L336">                    + iIndex, myStream.getInitVector());</span>
+
+            /* Set the value property */
+<span class="fc" id="L339">            theProperties.setProperty(PROP_VALUE</span>
+<span class="fc" id="L340">                    + iIndex, myStream.getValue());</span>
+
+            /* Handle extras */
+<span class="fc bfc" id="L343" title="All 3 branches covered.">            switch (myStream.getType()) {</span>
+                case MAC:
+<span class="fc" id="L345">                    theCompressedSize = myStream.getDataLength();</span>
+<span class="fc" id="L346">                    break;</span>
+                case DIGEST:
+<span class="fc" id="L348">                    theFileSize = myStream.getDataLength();</span>
+<span class="fc" id="L349">                    break;</span>
+                default:
+                    break;
+            }
+<span class="fc" id="L353">        }</span>
+<span class="fc" id="L354">    }</span>
+
+    /**
+     * Build input list.
+     *
+     * @return the new input list
+     * @throws GordianException on error
+     */
+    public List&lt;GordianStreamDefinition&gt; buildInputList() throws GordianException {
+        /* Create list */
+<span class="fc" id="L364">        final List&lt;GordianStreamDefinition&gt; myList = new ArrayList&lt;&gt;();</span>
+
+        /* Loop through the streamProperties */
+<span class="fc" id="L367">        int myIndex = 1;</span>
+        while (true) {
+            /* Check for property and break loop if not found */
+<span class="fc" id="L370">            final Long myType = theProperties.getLongProperty(PROP_TYPE</span>
+                    + myIndex);
+<span class="fc bfc" id="L372" title="All 2 branches covered.">            if (myType == null) {</span>
+<span class="fc" id="L373">                break;</span>
+            }
+
+            /* Access remaining properties */
+<span class="fc" id="L377">            final byte[] myTypeDef = theProperties.getByteProperty(PROP_TYPE</span>
+                    + myIndex);
+<span class="fc" id="L379">            final byte[] myVector = theProperties.getByteProperty(PROP_VECTOR</span>
+                    + myIndex);
+<span class="fc" id="L381">            final byte[] myValue = theProperties.getByteProperty(PROP_VALUE</span>
+                    + myIndex);
+
+            /* Define the stream */
+<span class="fc" id="L385">            myList.add(new GordianStreamDefinition(myType, myTypeDef, myVector, myValue));</span>
+<span class="fc" id="L386">            myIndex++;</span>
+<span class="fc" id="L387">        }</span>
+
+        /* Return the list */
+<span class="fc" id="L390">        return myList;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

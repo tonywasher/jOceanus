@@ -1,0 +1,853 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianSkeinTree.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.impl.ext.digests</a> &gt; <span class="el_source">GordianSkeinTree.java</span></div><h1>GordianSkeinTree.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.gordianknot.impl.ext.digests;
+
+import io.github.tonywasher.joceanus.gordianknot.impl.ext.digests.GordianSkeinBase.Configuration;
+import io.github.tonywasher.joceanus.gordianknot.impl.ext.params.GordianSkeinParameters;
+import io.github.tonywasher.joceanus.gordianknot.impl.ext.params.GordianSkeinParameters.GordianSkeinParametersBuilder;
+import org.bouncycastle.crypto.DataLengthException;
+import org.bouncycastle.crypto.Digest;
+import org.bouncycastle.crypto.OutputLengthException;
+import org.bouncycastle.util.Arrays;
+
+import java.util.Enumeration;
+import java.util.NoSuchElementException;
+
+/**
+ * Skein Tree Hash.
+ * &lt;p&gt;This implementation will support all elements of SkeinXParameters except for Maximum OutputLength.
+ * This is restricted to the output length of the underlying digest.
+ * &lt;p&gt;Tree configuration is required and defaults to unlimited fanOut, maxDepth of 2 and 4K leafLength.
+ * &lt;p&gt;The implementation consumes a large message as a standard digest and builds the lowest level of the tree on the fly.
+ * On the {@link #doFinal(byte[], int)} call, the remainder of the tree is calculated and the topmost tree node is returned as the hash.
+ * This tree is retained until an explicit {@link #reset()} is called. Further update calls are disabled while the tree is retained.
+ * &lt;p&gt;While the tree is retained, each leaf may be explicitly replaced via {@link #updateLeaf(int, byte[], int, int)}, leading to a recalculation
+ * of the tree node which may be obtained via {@link #obtainResult(byte[], int)}.
+ * &lt;p&gt;The last leaf at the bottom level of the tree can be any length from 1 to leafLen. It may be replaced by data that is between 1 to leafLen using the
+ * {@link #updateLeaf(int, byte[], int, int)} method where the new length does not have to be the same as the old length.
+ * Other leaves must be replaced by data of length leafLen.
+ * &lt;p&gt;The number of leaves cannot be increased/decreased once the tree has been built. If the length of data is changed, a new tree should be built.
+ * &lt;p&gt;TODO
+ * &lt;ul&gt;
+ * &lt;li&gt;Replacing a leaf should not automatically trigger a recalculation of the tree. Instead the updated leaves should be left in an update list.
+ * This update list will be processed only when the final result is requested, allowing several leaves to be replaced before the tree is recalculated.
+ * &lt;li&gt;A duplicate leaf in the update list will replace the earlier leaf.
+ * &lt;li&gt;On recalculation the updateList will be validated. The tree can be extended if all additional leaves are present in the update list and the previously last
+ * leaf was either leafLen long or is now present as a full leaf in the update list. Only the last leaf may be shorter than the leafLen.
+ * &lt;li&gt;A new call should be provided to truncate the tree at a total length. This must be shorter than the current length and will form part of the update list
+ * to be processed when calculating the result.
+ * &lt;/ul&gt;
+ */
+public class GordianSkeinTree
+        implements Digest {
+    /**
+     * The maximum Byte.
+     */
+    private static final int MAXBYTE = 255;
+
+    /**
+     * The base for the treeConfig.
+     */
+    private static final int CONFIGBASE = 16;
+
+    /**
+     * The underlying Skein instance.
+     */
+    private final GordianSkeinBase theDigest;
+
+    /**
+     * The TreeStore.
+     */
+    private final GordianSkeinTreeStore theStore;
+
+    /**
+     * Hash buffer.
+     */
+    private final byte[] theHash;
+
+    /**
+     * The single byte buffer.
+     */
+<span class="fc" id="L85">    private final byte[] singleByte = new byte[1];</span>
+
+    /**
+     * The leafLength.
+     */
+    private int theLeafLen;
+
+    /**
+     * The shift.
+     */
+    private int theShift;
+
+    /**
+     * The leaf index.
+     */
+    private int theLeafIdx;
+
+    /**
+     * The data processed on current leaf.
+     */
+    private int theProcessed;
+
+    /**
+     * Constructor.
+     *
+     * @param pDigest the underlying digest.
+     */
+<span class="fc" id="L112">    public GordianSkeinTree(final GordianSkeinBase pDigest) {</span>
+        /* Store parameters and initialise store */
+<span class="fc" id="L114">        theDigest = pDigest;</span>
+<span class="fc" id="L115">        theStore = new GordianSkeinTreeStore(pDigest);</span>
+<span class="fc" id="L116">        theHash = new byte[theDigest.getOutputSize()];</span>
+
+        /* Initialise to default values */
+<span class="fc" id="L119">        final GordianSkeinParametersBuilder myBuilder = new GordianSkeinParametersBuilder();</span>
+<span class="fc" id="L120">        myBuilder.setTreeConfig(1, MAXBYTE, 1);</span>
+<span class="fc" id="L121">        init(myBuilder.build());</span>
+<span class="fc" id="L122">    }</span>
+
+    @Override
+    public String getAlgorithmName() {
+<span class="nc" id="L126">        return &quot;SkeinTree-&quot; + (theDigest.getOutputSize() * Byte.SIZE);</span>
+    }
+
+    @Override
+    public int getDigestSize() {
+<span class="fc" id="L131">        return theDigest.getOutputSize();</span>
+    }
+
+    @Override
+    public void update(final byte pIn) {
+<span class="nc" id="L136">        singleByte[0] = pIn;</span>
+<span class="nc" id="L137">        update(singleByte, 0, 1);</span>
+<span class="nc" id="L138">    }</span>
+
+    @Override
+    public void update(final byte[] pIn,
+                       final int pInOff,
+                       final int pLen) {
+<span class="fc" id="L144">        processData(pIn, pInOff, pLen);</span>
+<span class="fc" id="L145">    }</span>
+
+    @Override
+    public int doFinal(final byte[] pOut,
+                       final int pOutOffset) {
+        /* Finalise the leaf and process the result */
+<span class="fc" id="L151">        theDigest.calculateNode(theHash, 0);</span>
+<span class="fc" id="L152">        theStore.addElement(Arrays.clone(theHash));</span>
+<span class="fc" id="L153">        return theStore.calculateTree(pOut, pOutOffset);</span>
+    }
+
+    @Override
+    public void reset() {
+<span class="fc" id="L158">        theLeafIdx = 0;</span>
+<span class="fc" id="L159">        theProcessed = 0;</span>
+<span class="fc" id="L160">        theDigest.initTreeNode(1, theLeafIdx, theShift);</span>
+<span class="fc" id="L161">        theStore.reset();</span>
+<span class="fc" id="L162">    }</span>
+
+    /**
+     * Obtain the tree result.
+     *
+     * @param pOut       the output buffer
+     * @param pOutOffset the offset into the output buffer
+     * @return the number of bytes returned
+     */
+    public int obtainResult(final byte[] pOut,
+                            final int pOutOffset) {
+        /* Access result from store */
+<span class="fc" id="L174">        return theStore.obtainResult(pOut, pOutOffset);</span>
+    }
+
+    /**
+     * Obtain the leaf length.
+     *
+     * @return the leafLength.
+     */
+    public int getLeafLen() {
+<span class="fc" id="L183">        return theDigest.getOutputSize() &lt;&lt; theLeafLen;</span>
+    }
+
+    /**
+     * Process data.
+     *
+     * @param pIn       the input buffer
+     * @param pInOffSet the starting offset in the input buffer
+     * @param pLen      the length of data to process
+     */
+    private void processData(final byte[] pIn,
+                             final int pInOffSet,
+                             final int pLen) {
+        /* Cannot process further data once tree is built */
+<span class="pc bpc" id="L197" title="1 of 2 branches missed.">        if (theStore.treeBuilt()) {</span>
+<span class="nc" id="L198">            throw new IllegalStateException(&quot;Tree has been built&quot;);</span>
+        }
+
+        /* Determine space in current block */
+<span class="fc" id="L202">        final int blkSize = getLeafLen();</span>
+<span class="fc" id="L203">        final int mySpace = blkSize - theProcessed;</span>
+
+        /* If all data can be processed by the current leaf */
+<span class="fc bfc" id="L206" title="All 2 branches covered.">        if (mySpace &gt;= pLen) {</span>
+            /* Update and return */
+<span class="fc" id="L208">            theDigest.update(pIn, pInOffSet, pLen);</span>
+<span class="fc" id="L209">            theProcessed += pLen;</span>
+<span class="fc" id="L210">            return;</span>
+        }
+
+        /* Process as much as possible into current leaf */
+<span class="pc bpc" id="L214" title="1 of 2 branches missed.">        if (mySpace &gt; 0) {</span>
+<span class="nc" id="L215">            theDigest.update(pIn, pInOffSet, mySpace);</span>
+<span class="nc" id="L216">            theProcessed += mySpace;</span>
+        }
+
+        /* Loop while we have data remaining */
+<span class="fc" id="L220">        int myProcessed = mySpace;</span>
+<span class="fc bfc" id="L221" title="All 2 branches covered.">        while (myProcessed &lt; pLen) {</span>
+            /* If the current leaf is full */
+<span class="pc bpc" id="L223" title="1 of 2 branches missed.">            if (theProcessed == blkSize) {</span>
+                /* Finalise the leaf and process the result */
+<span class="fc" id="L225">                theDigest.calculateNode(theHash, 0);</span>
+<span class="fc" id="L226">                theStore.addElement(theHash);</span>
+<span class="fc" id="L227">                theDigest.initTreeNode(1, ++theLeafIdx, theShift);</span>
+<span class="fc" id="L228">                theProcessed = 0;</span>
+            }
+
+            /* Process next block */
+<span class="fc" id="L232">            final int myDataLen = Math.min(pLen - myProcessed, blkSize);</span>
+<span class="fc" id="L233">            theDigest.update(pIn, pInOffSet + myProcessed, myDataLen);</span>
+<span class="fc" id="L234">            theProcessed += myDataLen;</span>
+<span class="fc" id="L235">            myProcessed += myDataLen;</span>
+<span class="fc" id="L236">        }</span>
+<span class="fc" id="L237">    }</span>
+
+    /**
+     * Initialise.
+     *
+     * @param pParams the parameters.
+     */
+    public void init(final GordianSkeinParameters pParams) {
+        /* Reject a bad leaf length length */
+<span class="fc" id="L246">        final int myLeafLen = pParams.getTreeLeafLen();</span>
+<span class="pc bpc" id="L247" title="2 of 4 branches missed.">        if (myLeafLen &lt; 1 || myLeafLen &gt; MAXBYTE) {</span>
+<span class="nc" id="L248">            throw new IllegalArgumentException(&quot;Invalid leaf length&quot;);</span>
+        }
+
+        /* Reject a bad fanOut */
+<span class="fc" id="L252">        final short myFanOut = pParams.getTreeFanOut();</span>
+<span class="pc bpc" id="L253" title="2 of 4 branches missed.">        if (myFanOut &lt; 1 || myFanOut &gt; MAXBYTE) {</span>
+<span class="nc" id="L254">            throw new IllegalArgumentException(&quot;Invalid fanOut&quot;);</span>
+        }
+
+        /* Reject a bad maxDepth */
+<span class="fc" id="L258">        final short myMaxDepth = pParams.getTreeMaxDepth();</span>
+<span class="pc bpc" id="L259" title="2 of 4 branches missed.">        if (myMaxDepth &lt; 2 || myMaxDepth &gt; MAXBYTE) {</span>
+<span class="nc" id="L260">            throw new IllegalArgumentException(&quot;Invalid maxDepth&quot;);</span>
+        }
+
+        /* Record the values */
+<span class="fc" id="L264">        theLeafLen = myLeafLen;</span>
+<span class="fc" id="L265">        theShift = highestBitSet(theDigest.getOutputSize()) + theLeafLen - 1;</span>
+
+        /* Declare the configuration */
+<span class="fc" id="L268">        declareConfig(myFanOut, myMaxDepth);</span>
+
+        /* Pass selective parameters to the underlying hash */
+<span class="fc" id="L271">        theDigest.init(pParams);</span>
+
+        /* Reset everything */
+<span class="fc" id="L274">        reset();</span>
+<span class="fc" id="L275">    }</span>
+
+    /**
+     * Declare extended configuration.
+     *
+     * @param pFanOut   the fanOut
+     * @param pMaxDepth the max depth
+     */
+    private void declareConfig(final int pFanOut,
+                               final int pMaxDepth) {
+        /* Declare the configuration */
+<span class="fc" id="L286">        final long myLen = theDigest.getOutputSize() * 8L;</span>
+<span class="fc" id="L287">        final Configuration myConfig = new TreeConfiguration(myLen, theLeafLen, pFanOut, pMaxDepth);</span>
+<span class="fc" id="L288">        theDigest.setConfiguration(myConfig);</span>
+
+        /* Update the store */
+<span class="fc" id="L291">        theStore.declareConfig(pFanOut, pMaxDepth);</span>
+<span class="fc" id="L292">    }</span>
+
+    /**
+     * Update leaf.
+     *
+     * @param pIndex    the index of the leaf
+     * @param pInput    the input buffer
+     * @param pInOffSet the starting offset the the input buffer
+     */
+    public void updateLeaf(final int pIndex,
+                           final byte[] pInput,
+                           final int pInOffSet) {
+        /* Full leafLen */
+<span class="fc" id="L305">        updateLeaf(pIndex, pInput, pInOffSet, getLeafLen());</span>
+<span class="fc" id="L306">    }</span>
+
+    /**
+     * Update leaf.
+     *
+     * @param pIndex    the index of the leaf
+     * @param pInput    the input buffer
+     * @param pInOffSet the starting offset the the input buffer
+     * @param pLen      the length of data
+     */
+    public void updateLeaf(final int pIndex,
+                           final byte[] pInput,
+                           final int pInOffSet,
+                           final int pLen) {
+        /* Check index validity */
+<span class="fc" id="L321">        final boolean bLast = theStore.checkLeafIndex(pIndex);</span>
+
+        /* Validate the leaf length */
+<span class="fc" id="L324">        final int myLeafLen = getLeafLen();</span>
+<span class="pc bpc" id="L325" title="2 of 4 branches missed.">        if (pLen &lt; 0 || pLen &gt; myLeafLen) {</span>
+<span class="nc" id="L326">            throw new DataLengthException(&quot;Invalid length&quot;);</span>
+        }
+
+        /* Any leaf that is not the last must be leafLen in length */
+<span class="pc bpc" id="L330" title="1 of 4 branches missed.">        if (!bLast &amp;&amp; pLen != myLeafLen) {</span>
+<span class="nc" id="L331">            throw new DataLengthException(&quot;All but the last leaf must have byteLength &quot; + myLeafLen);</span>
+        }
+
+        /* Make sure that the buffer is valid */
+<span class="pc bpc" id="L335" title="1 of 2 branches missed.">        if (pLen + pInOffSet &gt; pInput.length) {</span>
+<span class="nc" id="L336">            throw new DataLengthException(&quot;Invalid input buffer&quot;);</span>
+        }
+
+        /* Initialise the treeNode */
+<span class="fc" id="L340">        theDigest.initTreeNode(1, pIndex, theShift);</span>
+
+        /* Recalculate the digest */
+<span class="fc" id="L343">        theDigest.update(pInput, pInOffSet, pLen);</span>
+<span class="fc" id="L344">        theDigest.calculateNode(theHash, 0);</span>
+
+        /* Replace the hash */
+<span class="fc" id="L347">        theStore.replaceElement(pIndex, theHash);</span>
+<span class="fc" id="L348">    }</span>
+
+    /**
+     * Calculate highestBitSet.
+     *
+     * @param pValue the value to examine
+     * @return the index of the highest but set
+     */
+    private static int highestBitSet(final int pValue) {
+<span class="fc" id="L357">        int highestBit = 0;</span>
+<span class="fc" id="L358">        int myValue = pValue;</span>
+<span class="fc bfc" id="L359" title="All 2 branches covered.">        while (myValue != 0) {</span>
+<span class="fc" id="L360">            highestBit++;</span>
+<span class="fc" id="L361">            myValue = myValue &gt;&gt;&gt; 1;</span>
+        }
+<span class="fc" id="L363">        return highestBit;</span>
+    }
+
+    /**
+     * The Skein tree.
+     */
+    private static class GordianSkeinTreeStore {
+        /**
+         * The underlying Skein instance.
+         */
+        private final GordianSkeinBase theDigest;
+
+        /**
+         * The Hash Result.
+         */
+        private final byte[] theResult;
+
+        /**
+         * The Array of Hashes.
+         */
+        private final SimpleVector theHashes;
+
+        /**
+         * The fanOut.
+         */
+        private short theFanOut;
+
+        /**
+         * The maxDepth.
+         */
+        private short theMaxDepth;
+
+        /**
+         * The shift.
+         */
+        private int theShift;
+
+        /**
+         * Has the tree been built?.
+         */
+        private boolean treeBuilt;
+
+        /**
+         * Constructor.
+         *
+         * @param pDigest the underlying digest.
+         */
+<span class="fc" id="L410">        GordianSkeinTreeStore(final GordianSkeinBase pDigest) {</span>
+            /* Store details */
+<span class="fc" id="L412">            theDigest = pDigest;</span>
+<span class="fc" id="L413">            theResult = new byte[theDigest.getOutputSize()];</span>
+<span class="fc" id="L414">            theHashes = new SimpleVector();</span>
+<span class="fc" id="L415">        }</span>
+
+        /**
+         * Declare extended configuration.
+         *
+         * @param pFanOut   the fanOut
+         * @param pMaxDepth the max depth
+         */
+        void declareConfig(final int pFanOut,
+                           final int pMaxDepth) {
+<span class="fc" id="L425">            theFanOut = (short) pFanOut;</span>
+<span class="fc" id="L426">            theMaxDepth = (short) pMaxDepth;</span>
+<span class="fc" id="L427">            theShift = highestBitSet(theDigest.getOutputSize()) + theFanOut - 1;</span>
+<span class="fc" id="L428">        }</span>
+
+        /**
+         * Has the tree been built?
+         *
+         * @return true/false
+         */
+        boolean treeBuilt() {
+<span class="fc" id="L436">            return treeBuilt;</span>
+        }
+
+        /**
+         * Reset the store.
+         */
+        void reset() {
+<span class="fc" id="L443">            theHashes.clear();</span>
+<span class="fc" id="L444">            treeBuilt = false;</span>
+<span class="fc" id="L445">        }</span>
+
+        /**
+         * Add intermediate node.
+         *
+         * @param pHash the intermediate hash
+         */
+        void addElement(final byte[] pHash) {
+            /* Access the base level */
+<span class="fc bfc" id="L454" title="All 2 branches covered.">            if (theHashes.isEmpty()) {</span>
+<span class="fc" id="L455">                theHashes.addElement(new SimpleVector());</span>
+            }
+<span class="fc" id="L457">            final SimpleVector myLevel = (SimpleVector) theHashes.firstElement();</span>
+
+            /* Add the element to the vector */
+<span class="fc" id="L460">            myLevel.addElement(Arrays.clone(pHash));</span>
+<span class="fc" id="L461">        }</span>
+
+        /**
+         * Obtain the tree result.
+         *
+         * @param pOut       the output buffer
+         * @param pOutOffset the offset into the output buffer
+         * @return the number of bytes returned
+         */
+        int obtainResult(final byte[] pOut,
+                         final int pOutOffset) {
+            /* Check parameters */
+<span class="pc bpc" id="L473" title="1 of 2 branches missed.">            if (pOut.length &lt; pOutOffset + theResult.length) {</span>
+<span class="nc" id="L474">                throw new OutputLengthException(&quot;Insufficient output buffer&quot;);</span>
+            }
+<span class="pc bpc" id="L476" title="1 of 2 branches missed.">            if (!treeBuilt) {</span>
+<span class="nc" id="L477">                throw new IllegalStateException(&quot;tree has not been built&quot;);</span>
+            }
+
+            /* Access the final level */
+<span class="fc" id="L481">            final SimpleVector myLevel = (SimpleVector) theHashes.lastElement();</span>
+<span class="fc" id="L482">            final byte[] myState = (byte[]) myLevel.firstElement();</span>
+
+            /* Process the output */
+<span class="fc" id="L485">            theDigest.restoreForOutput(myState);</span>
+<span class="fc" id="L486">            theDigest.output(0, pOut, pOutOffset, theResult.length);</span>
+
+            /* Return the length */
+<span class="fc" id="L489">            return theResult.length;</span>
+        }
+
+        /**
+         * Calculate tree result.
+         *
+         * @param pOut       the output buffer
+         * @param pOutOffset the offset into the output buffer
+         * @return the number of bytes returned
+         */
+        int calculateTree(final byte[] pOut,
+                          final int pOutOffset) {
+            /* Check parameters */
+<span class="pc bpc" id="L502" title="1 of 2 branches missed.">            if (pOut.length &lt; pOutOffset + theResult.length) {</span>
+<span class="nc" id="L503">                throw new OutputLengthException(&quot;Insufficient output buffer&quot;);</span>
+            }
+<span class="pc bpc" id="L505" title="1 of 2 branches missed.">            if (treeBuilt) {</span>
+<span class="nc" id="L506">                throw new IllegalStateException(&quot;tree already built&quot;);</span>
+            }
+
+            /* Access the only level */
+<span class="fc" id="L510">            SimpleVector myLevel = (SimpleVector) theHashes.lastElement();</span>
+
+            /* While we have elements that must be reduced */
+<span class="fc bfc" id="L513" title="All 2 branches covered.">            while (myLevel.size() &gt; 1) {</span>
+                /* Calculate the next set of hashes */
+<span class="fc" id="L515">                myLevel = calculateNextLevel(myLevel);</span>
+<span class="fc" id="L516">                theHashes.addElement(myLevel);</span>
+            }
+
+            /* Note that the tree has been built */
+<span class="fc" id="L520">            treeBuilt = true;</span>
+
+            /* Return the final hash */
+<span class="fc" id="L523">            return obtainResult(pOut, pOutOffset);</span>
+        }
+
+        /**
+         * Calculate next level.
+         *
+         * @param pInput the current set of hashes
+         * @return the next level
+         */
+        private SimpleVector calculateNextLevel(final SimpleVector pInput) {
+            /* Set the depth of the tree */
+<span class="fc" id="L534">            final int myCurDepth = theHashes.size() + 1;</span>
+<span class="fc" id="L535">            theDigest.initTreeNode(myCurDepth, 0, theShift);</span>
+
+            /* Create the new level */
+<span class="fc" id="L538">            final SimpleVector myResults = new SimpleVector();</span>
+
+            /* Determine the number of nodes to combine */
+<span class="fc" id="L541">            final int myFanOut = 1 &lt;&lt; theFanOut;</span>
+
+            /* Determine whether we are calculating the root node */
+<span class="fc bfc" id="L544" title="All 4 branches covered.">            final boolean lastStage = pInput.size() &lt;= myFanOut</span>
+                    || myCurDepth == theMaxDepth;
+
+            /* Loop through all the elements */
+<span class="fc" id="L548">            int myCount = 0;</span>
+<span class="fc" id="L549">            int myOffSet = 0;</span>
+<span class="fc" id="L550">            final Enumeration&lt;?&gt; myEnumeration = pInput.elements();</span>
+<span class="fc bfc" id="L551" title="All 2 branches covered.">            while (myEnumeration.hasMoreElements()) {</span>
+                /* If we need to move to the next node  */
+<span class="fc bfc" id="L553" title="All 4 branches covered.">                if (!lastStage &amp;&amp; myCount == myFanOut) {</span>
+                    /* Calculate node and add to level */
+<span class="fc" id="L555">                    theDigest.calculateNode(theResult, 0);</span>
+<span class="fc" id="L556">                    myResults.addElement(Arrays.clone(theResult));</span>
+
+                    /* Switch to next node */
+<span class="fc" id="L559">                    theDigest.initTreeNode(myCurDepth, ++myOffSet, theShift);</span>
+<span class="fc" id="L560">                    myCount = 0;</span>
+                }
+
+                /* Fold hash into current node */
+<span class="fc" id="L564">                final byte[] myHash = (byte[]) myEnumeration.nextElement();</span>
+<span class="fc" id="L565">                theDigest.update(myHash, 0, myHash.length);</span>
+<span class="fc" id="L566">                myCount++;</span>
+<span class="fc" id="L567">            }</span>
+
+            /* Calculate final node at this level */
+<span class="fc" id="L570">            theDigest.calculateNode(theResult, 0);</span>
+<span class="fc" id="L571">            myResults.addElement(Arrays.clone(theResult));</span>
+
+            /* Return the results */
+<span class="fc" id="L574">            return myResults;</span>
+        }
+
+        /**
+         * Check the leaf index.
+         *
+         * @param pIndex the index of the element
+         * @return is this the last element in the tree? true/false
+         */
+        boolean checkLeafIndex(final int pIndex) {
+            /* Cannot replace leaf if not built */
+<span class="pc bpc" id="L585" title="1 of 2 branches missed.">            if (!treeBuilt) {</span>
+<span class="nc" id="L586">                throw new IllegalStateException(&quot;Tree has not been built&quot;);</span>
+            }
+
+            /* Check that the index is valid */
+<span class="fc" id="L590">            final SimpleVector myLevel = (SimpleVector) theHashes.firstElement();</span>
+<span class="pc bpc" id="L591" title="2 of 4 branches missed.">            if (pIndex &lt; 0 || pIndex &gt;= myLevel.size()) {</span>
+<span class="nc" id="L592">                throw new IllegalArgumentException(&quot;Invalid index&quot;);</span>
+            }
+
+            /* Return whether this is the last index */
+<span class="fc bfc" id="L596" title="All 2 branches covered.">            return pIndex == myLevel.size() - 1;</span>
+        }
+
+        /**
+         * Replace the hash for a leaf node.
+         *
+         * @param pIndex the index of the element
+         * @param pHash  the new hashValue
+         */
+        void replaceElement(final int pIndex,
+                            final byte[] pHash) {
+            /* Check that the index is correct */
+<span class="fc" id="L608">            final SimpleVector myLevel = (SimpleVector) theHashes.firstElement();</span>
+<span class="pc bpc" id="L609" title="2 of 4 branches missed.">            if (pIndex &lt; 0 || pIndex &gt;= myLevel.size()) {</span>
+<span class="nc" id="L610">                throw new IllegalArgumentException(&quot;Invalid index&quot;);</span>
+            }
+
+            /* Replace the element */
+<span class="fc" id="L614">            myLevel.setElementAt(Arrays.clone(pHash), pIndex);</span>
+
+            /* Loop through the levels */
+<span class="fc" id="L617">            int myIndex = pIndex;</span>
+<span class="fc bfc" id="L618" title="All 2 branches covered.">            for (int i = 2; i &lt;= theHashes.size(); i++) {</span>
+                /* Recalculate the parent node */
+<span class="fc" id="L620">                myIndex = recalculateParent(i, myIndex);</span>
+            }
+<span class="fc" id="L622">        }</span>
+
+        /**
+         * Recalculate Node.
+         *
+         * @param pLevel the tree level of the node
+         * @param pIndex of the node
+         * @return the parent index
+         */
+        private int recalculateParent(final int pLevel,
+                                      final int pIndex) {
+            /* Make sure that the level is reasonable */
+<span class="pc bpc" id="L634" title="2 of 4 branches missed.">            if (pLevel &lt; 2 || pLevel &gt; theHashes.size()) {</span>
+<span class="nc" id="L635">                throw new IllegalArgumentException(&quot;Invalid level&quot;);</span>
+            }
+
+            /* Access the Vector for the parent and input levels */
+<span class="fc" id="L639">            final SimpleVector myInput = (SimpleVector) theHashes.elementAt(pLevel - 2);</span>
+<span class="fc" id="L640">            final SimpleVector myLevel = (SimpleVector) theHashes.elementAt(pLevel - 1);</span>
+
+            /* Determine the number of nodes to combine */
+<span class="fc" id="L643">            final int myFanOut = 1 &lt;&lt; theFanOut;</span>
+
+            /* Determine whether we are calculating the root node */
+<span class="fc bfc" id="L646" title="All 4 branches covered.">            final boolean lastStage = myInput.size() &lt;= myFanOut</span>
+                    || pLevel == theMaxDepth;
+
+            /* Calculate bounds */
+<span class="fc bfc" id="L650" title="All 2 branches covered.">            final int myParentIndex = lastStage</span>
+<span class="fc" id="L651">                    ? 0</span>
+<span class="fc" id="L652">                    : pIndex / myFanOut;</span>
+<span class="fc" id="L653">            final int myIndex = myParentIndex * myFanOut;</span>
+<span class="fc" id="L654">            final int myNumHashes = myInput.size();</span>
+<span class="fc bfc" id="L655" title="All 2 branches covered.">            final int myMaxHash = lastStage ? myNumHashes : Math.min(myFanOut, myNumHashes - myIndex);</span>
+
+            /* Initialise the digest */
+<span class="fc" id="L658">            theDigest.initTreeNode(pLevel, myParentIndex, theShift);</span>
+
+            /* Loop through the input hashes */
+<span class="fc bfc" id="L661" title="All 2 branches covered.">            for (int i = 0; i &lt; myMaxHash; i++) {</span>
+                /* Fold into new hash */
+<span class="fc" id="L663">                final byte[] myHash = (byte[]) myInput.elementAt(i + myIndex);</span>
+<span class="fc" id="L664">                theDigest.update(myHash, 0, myHash.length);</span>
+            }
+
+            /* Calculate new digest and replace it */
+<span class="fc" id="L668">            theDigest.calculateNode(theResult, 0);</span>
+<span class="fc" id="L669">            myLevel.setElementAt(Arrays.clone(theResult), myParentIndex);</span>
+<span class="fc" id="L670">            return myParentIndex;</span>
+        }
+    }
+
+    /**
+     * Simple Vector class.
+     * &lt;p&gt;This is a cut down version of the java Vector class to avoid use of synchronised.
+     */
+    private static class SimpleVector {
+        /**
+         * The initial capacity.
+         */
+        private static final int INITCAPACITY = 8;
+
+        /**
+         * The array buffer holding elements.
+         */
+        private Object[] elementData;
+
+        /**
+         * The number of valid components in this {@code SimpleVector} object.
+         */
+        private int elementCount;
+
+        /**
+         * Constructor.
+         */
+<span class="fc" id="L697">        SimpleVector() {</span>
+<span class="fc" id="L698">            elementData = new Object[INITCAPACITY];</span>
+<span class="fc" id="L699">        }</span>
+
+        /**
+         * Returns the number of components in this vector.
+         *
+         * @return the vector size
+         */
+        int size() {
+<span class="fc" id="L707">            return elementCount;</span>
+        }
+
+        /**
+         * Tests if this vector has no components.
+         *
+         * @return true/false
+         */
+        boolean isEmpty() {
+<span class="fc bfc" id="L716" title="All 2 branches covered.">            return elementCount == 0;</span>
+        }
+
+        /**
+         * Returns the first component of the vector.
+         *
+         * @return the first component of the vector
+         * @throws NoSuchElementException if this vector is empty
+         */
+        Object firstElement() {
+<span class="pc bpc" id="L726" title="1 of 2 branches missed.">            if (elementCount == 0) {</span>
+<span class="nc" id="L727">                throw new NoSuchElementException();</span>
+            }
+<span class="fc" id="L729">            return elementData[0];</span>
+        }
+
+        /**
+         * Returns the last component of the vector.
+         *
+         * @return the last component of the vector, i.e., the component at index
+         * &lt;code&gt;size()&amp;nbsp;-&amp;nbsp;1&lt;/code&gt;.
+         * @throws NoSuchElementException if this vector is empty
+         */
+        Object lastElement() {
+<span class="pc bpc" id="L740" title="1 of 2 branches missed.">            if (elementCount == 0) {</span>
+<span class="nc" id="L741">                throw new NoSuchElementException();</span>
+            }
+<span class="fc" id="L743">            return elementData[elementCount - 1];</span>
+        }
+
+        /**
+         * Returns the component at the specified index.
+         *
+         * @param index an index into this vector
+         * @return the component at the specified index
+         * @throws ArrayIndexOutOfBoundsException if the index is out of range
+         *                                        ({@code index &lt; 0 || index &gt;= size()})
+         */
+        Object elementAt(final int index) {
+<span class="pc bpc" id="L755" title="1 of 2 branches missed.">            if (index &gt;= elementCount) {</span>
+<span class="nc" id="L756">                throw new ArrayIndexOutOfBoundsException(index + &quot; &gt;= &quot; + elementCount);</span>
+            }
+
+<span class="fc" id="L759">            return elementData[index];</span>
+        }
+
+        /**
+         * Sets the component at the specified {@code index} of this
+         * vector to be the specified object. The previous component at that
+         * position is discarded.
+         *
+         * &lt;p&gt;The index must be a value greater than or equal to {@code 0}
+         * and less than the current size of the vector.
+         *
+         * @param obj   what the component is to be set to
+         * @param index the specified index
+         * @throws ArrayIndexOutOfBoundsException if the index is out of range
+         *                                        ({@code index &lt; 0 || index &gt;= size()})
+         */
+        void setElementAt(final Object obj,
+                          final int index) {
+<span class="pc bpc" id="L777" title="1 of 2 branches missed.">            if (index &gt;= elementCount) {</span>
+<span class="nc" id="L778">                throw new ArrayIndexOutOfBoundsException(index + &quot; &gt;= &quot; + elementCount);</span>
+            }
+<span class="fc" id="L780">            elementData[index] = obj;</span>
+<span class="fc" id="L781">        }</span>
+
+        /**
+         * Adds the specified component to the end of this vector,
+         * increasing its size by one. The capacity of this vector is
+         * increased if its size becomes greater than its capacity.
+         *
+         * @param obj the component to be added
+         */
+        void addElement(final Object obj) {
+<span class="fc bfc" id="L791" title="All 2 branches covered.">            if (elementCount == elementData.length) {</span>
+<span class="fc" id="L792">                final Object[] newData = new Object[elementData.length &lt;&lt; 1];</span>
+<span class="fc" id="L793">                System.arraycopy(elementData, 0, newData, 0, elementCount);</span>
+<span class="fc" id="L794">                elementData = newData;</span>
+            }
+<span class="fc" id="L796">            elementData[elementCount++] = obj;</span>
+<span class="fc" id="L797">        }</span>
+
+        /**
+         * Removes all of the elements from this Vector.  The Vector will
+         * be empty after this call returns (unless it throws an exception).
+         */
+        void clear() {
+<span class="pc bpc" id="L804" title="1 of 2 branches missed.">            for (int i = 0; i &lt; elementCount; i++) {</span>
+<span class="nc" id="L805">                elementData[i] = null;</span>
+            }
+<span class="fc" id="L807">            elementCount = 0;</span>
+<span class="fc" id="L808">        }</span>
+
+        /**
+         * Returns an enumeration of the components of this vector.
+         *
+         * @return the enumeration
+         */
+        Enumeration&lt;Object&gt; elements() {
+<span class="fc" id="L816">            return new Enumeration&lt;&gt;() {</span>
+                private int count;
+
+                public boolean hasMoreElements() {
+<span class="fc bfc" id="L820" title="All 2 branches covered.">                    return count &lt; elementCount;</span>
+                }
+
+                public Object nextElement() {
+<span class="pc bpc" id="L824" title="1 of 2 branches missed.">                    if (count &lt; elementCount) {</span>
+<span class="fc" id="L825">                        return elementData[count++];</span>
+                    }
+<span class="nc" id="L827">                    throw new NoSuchElementException(&quot;Vector Enumeration&quot;);</span>
+                }
+            };
+        }
+    }
+
+    /**
+     * Extended configuration to include Tree details.
+     */
+    private static class TreeConfiguration
+            extends Configuration {
+        TreeConfiguration(final long outputSizeBits,
+                          final int treeLeafLen,
+                          final int treeFanOut,
+                          final int treeMaxDepth) {
+            /* Initialise main part of config */
+<span class="fc" id="L843">            super(outputSizeBits);</span>
+
+            // 16..18 treeConfig
+<span class="fc" id="L846">            final byte[] bytes = getBytes();</span>
+<span class="fc" id="L847">            bytes[CONFIGBASE] = (byte) treeLeafLen;</span>
+<span class="fc" id="L848">            bytes[CONFIGBASE + 1] = (byte) treeFanOut;</span>
+<span class="fc" id="L849">            bytes[CONFIGBASE + 2] = (byte) treeMaxDepth;</span>
+<span class="fc" id="L850">        }</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

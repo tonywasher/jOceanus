@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PrometheusPreferenceSet.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Prometheus Core Application Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.prometheus.preference</a> &gt; <span class="el_source">PrometheusPreferenceSet.java</span></div><h1>PrometheusPreferenceSet.java</h1><pre class="source lang-java linenums">/*
+ * Prometheus: Application Framework
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.prometheus.preference;
+
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleId;
+import io.github.tonywasher.joceanus.metis.preference.MetisPreferenceKey;
+import io.github.tonywasher.joceanus.metis.preference.MetisPreferenceSet;
+
+/**
+ * Prometheus PreferenceSet.
+ */
+public abstract class PrometheusPreferenceSet
+        extends MetisPreferenceSet {
+    /**
+     * The Security Manager.
+     */
+    private PrometheusPreferenceSecurity theSecurity;
+
+    /**
+     * Constructor.
+     *
+     * @param pManager the preference manager
+     * @param pId      the Id
+     * @throws OceanusException on error
+     */
+    protected PrometheusPreferenceSet(final PrometheusPreferenceManager pManager,
+                                      final OceanusBundleId pId) throws OceanusException {
+<span class="nc" id="L43">        this(pManager, pId.getValue());</span>
+<span class="nc" id="L44">    }</span>
+
+    /**
+     * Constructor.
+     *
+     * @param pManager the preference manager
+     * @param pName    the name
+     * @throws OceanusException on error
+     */
+    protected PrometheusPreferenceSet(final PrometheusPreferenceManager pManager,
+                                      final String pName) throws OceanusException {
+        /* Initialize super-class */
+<span class="nc" id="L56">        super(pManager, pName);</span>
+<span class="nc" id="L57">    }</span>
+
+    @Override
+    public PrometheusPreferenceManager getPreferenceManager() {
+<span class="nc" id="L61">        return (PrometheusPreferenceManager) super.getPreferenceManager();</span>
+    }
+
+    /**
+     * Obtain the security.
+     *
+     * @return the security
+     * @throws OceanusException on error
+     */
+    public PrometheusPreferenceSecurity getSecurity() throws OceanusException {
+<span class="nc bnc" id="L71" title="All 2 branches missed.">        if (theSecurity == null) {</span>
+<span class="nc" id="L72">            theSecurity = getPreferenceManager().getSecurity();</span>
+        }
+<span class="nc" id="L74">        return theSecurity;</span>
+    }
+
+    /**
+     * Define new ByteArray preference.
+     *
+     * @param pKey the key for the preference
+     * @return the preference item
+     */
+    protected PrometheusByteArrayPreference defineByteArrayPreference(final MetisPreferenceKey pKey) {
+        /* Define the preference */
+<span class="nc" id="L85">        final PrometheusByteArrayPreference myPref = new PrometheusByteArrayPreference(this, pKey);</span>
+
+        /* Add it to the list of preferences */
+<span class="nc" id="L88">        definePreference(myPref);</span>
+
+        /* Return the preference */
+<span class="nc" id="L91">        return myPref;</span>
+    }
+
+    /**
+     * Define new CharArray preference.
+     *
+     * @param pKey the key for the preference
+     * @return the preference item
+     * @throws OceanusException on error
+     */
+    protected PrometheusCharArrayPreference defineCharArrayPreference(final MetisPreferenceKey pKey) throws OceanusException {
+        /* Define the preference */
+<span class="nc" id="L103">        final PrometheusCharArrayPreference myPref = new PrometheusCharArrayPreference(this, pKey);</span>
+
+        /* Add it to the list of preferences */
+<span class="nc" id="L106">        definePreference(myPref);</span>
+
+        /* Return the preference */
+<span class="nc" id="L109">        return myPref;</span>
+    }
+
+    /**
+     * Obtain ByteArray preference.
+     *
+     * @param pKey the key of the preference
+     * @return the ByteArray preference
+     */
+    public PrometheusByteArrayPreference getByteArrayPreference(final MetisPreferenceKey pKey) {
+        /* Access preference */
+<span class="nc" id="L120">        final MetisPreferenceItem myPref = getPreference(pKey);</span>
+
+        /* Reject if not found */
+<span class="nc bnc" id="L123" title="All 2 branches missed.">        if (myPref == null) {</span>
+<span class="nc" id="L124">            throw new IllegalArgumentException(ERROR_UNKNOWN</span>
+                    + pKey);
+        }
+
+        /* Reject if wrong type */
+<span class="nc bnc" id="L129" title="All 2 branches missed.">        if (!(myPref instanceof PrometheusByteArrayPreference)) {</span>
+<span class="nc" id="L130">            throw new IllegalArgumentException(ERROR_INVALID</span>
+                    + pKey);
+        }
+
+        /* Return the preference */
+<span class="nc" id="L135">        return (PrometheusByteArrayPreference) myPref;</span>
+    }
+
+    /**
+     * Obtain ByteArray value.
+     *
+     * @param pKey the key of the preference
+     * @return the ByteArray value
+     */
+    public byte[] getByteArrayValue(final MetisPreferenceKey pKey) {
+        /* Access preference */
+<span class="nc" id="L146">        final PrometheusByteArrayPreference myPref = getByteArrayPreference(pKey);</span>
+
+        /* Return the value */
+<span class="nc" id="L149">        return myPref.getValue();</span>
+    }
+
+    /**
+     * Obtain CharArray preference.
+     *
+     * @param pKey the key of the preference
+     * @return the CharArray preference
+     */
+    public PrometheusCharArrayPreference getCharArrayPreference(final MetisPreferenceKey pKey) {
+        /* Access preference */
+<span class="nc" id="L160">        final MetisPreferenceItem myPref = getPreference(pKey);</span>
+
+        /* Reject if not found */
+<span class="nc bnc" id="L163" title="All 2 branches missed.">        if (myPref == null) {</span>
+<span class="nc" id="L164">            throw new IllegalArgumentException(ERROR_UNKNOWN</span>
+                    + pKey);
+        }
+
+        /* Reject if wrong type */
+<span class="nc bnc" id="L169" title="All 2 branches missed.">        if (!(myPref instanceof PrometheusCharArrayPreference)) {</span>
+<span class="nc" id="L170">            throw new IllegalArgumentException(ERROR_INVALID</span>
+                    + pKey);
+        }
+
+        /* Return the preference */
+<span class="nc" id="L175">        return (PrometheusCharArrayPreference) myPref;</span>
+    }
+
+    /**
+     * Obtain CharArray value.
+     *
+     * @param pKey the key of the preference
+     * @return the CharArray value
+     */
+    public char[] getCharArrayValue(final MetisPreferenceKey pKey) {
+        /* Access preference */
+<span class="nc" id="L186">        final PrometheusCharArrayPreference myPref = getCharArrayPreference(pKey);</span>
+
+        /* Return the value */
+<span class="nc" id="L189">        return myPref.getValue();</span>
+    }
+
+    /**
+     * ByteArray preference.
+     */
+    public static class PrometheusByteArrayPreference
+            extends MetisPreferenceItem {
+        /**
+         * Constructor.
+         *
+         * @param pSet the preference Set
+         * @param pKey the key of the preference
+         */
+        protected PrometheusByteArrayPreference(final PrometheusPreferenceSet pSet,
+                                                final MetisPreferenceKey pKey) {
+            /* Store name */
+<span class="nc" id="L206">            super(pSet, pKey, PrometheusPreferenceType.BYTEARRAY);</span>
+
+            /* Check whether we have an existing value */
+<span class="nc bnc" id="L209" title="All 2 branches missed.">            if (pSet.checkExists(pKey)) {</span>
+                /* Access the value */
+<span class="nc" id="L211">                final byte[] myValue = getHandle().getByteArray(getPreferenceName(), null);</span>
+
+                /* Set as initial value */
+<span class="nc" id="L214">                setTheValue(myValue);</span>
+            }
+<span class="nc" id="L216">        }</span>
+
+        @Override
+        public byte[] getValue() {
+<span class="nc" id="L220">            return (byte[]) super.getValue();</span>
+        }
+
+        /**
+         * Set value.
+         *
+         * @param pNewValue the new value
+         */
+        public void setValue(final byte[] pNewValue) {
+<span class="nc" id="L229">            setNewValue(pNewValue);</span>
+<span class="nc" id="L230">        }</span>
+
+        @Override
+        protected void storeThePreference(final Object pNewValue) {
+<span class="nc" id="L234">            getHandle().putByteArray(getPreferenceName(), (byte[]) pNewValue);</span>
+<span class="nc" id="L235">        }</span>
+    }
+
+    /**
+     * CharArray preference.
+     */
+    public static class PrometheusCharArrayPreference
+            extends MetisPreferenceItem {
+        /**
+         * Constructor.
+         *
+         * @param pSet the preference Set
+         * @param pKey the key of the preference
+         * @throws OceanusException on error
+         */
+        protected PrometheusCharArrayPreference(final PrometheusPreferenceSet pSet,
+                                                final MetisPreferenceKey pKey) throws OceanusException {
+            /* Store name */
+<span class="nc" id="L253">            super(pSet, pKey, PrometheusPreferenceType.CHARARRAY);</span>
+
+            /* Check whether we have an existing value */
+<span class="nc bnc" id="L256" title="All 2 branches missed.">            if (pSet.checkExists(pKey)) {</span>
+                /* Access the value */
+<span class="nc" id="L258">                final byte[] myBytes = getHandle().getByteArray(getPreferenceName(), null);</span>
+<span class="nc" id="L259">                final PrometheusPreferenceSecurity mySecurity = getSet().getSecurity();</span>
+
+                /* Decrypt the value */
+<span class="nc bnc" id="L262" title="All 2 branches missed.">                final char[] myValue = myBytes == null</span>
+<span class="nc" id="L263">                        ? null</span>
+<span class="nc" id="L264">                        : mySecurity.decryptValue(myBytes);</span>
+
+                /* Set as initial value */
+<span class="nc" id="L267">                setTheValue(myValue);</span>
+            }
+<span class="nc" id="L269">        }</span>
+
+        @Override
+        protected PrometheusPreferenceSet getSet() {
+<span class="nc" id="L273">            return (PrometheusPreferenceSet) super.getSet();</span>
+        }
+
+        @Override
+        public char[] getValue() {
+<span class="nc" id="L278">            return (char[]) super.getValue();</span>
+        }
+
+        /**
+         * Set value.
+         *
+         * @param pNewValue the new value
+         */
+        public void setValue(final char[] pNewValue) {
+<span class="nc" id="L287">            setNewValue(pNewValue);</span>
+<span class="nc" id="L288">        }</span>
+
+        @Override
+        protected void storeThePreference(final Object pNewValue) throws OceanusException {
+            /* Store the value */
+<span class="nc" id="L293">            final PrometheusPreferenceSecurity mySecurity = getSet().getSecurity();</span>
+<span class="nc" id="L294">            getHandle().putByteArray(getPreferenceName(), mySecurity.encryptValue((char[]) pNewValue));</span>
+<span class="nc" id="L295">        }</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

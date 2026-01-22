@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseTableTransaction.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.moneywise.database</a> &gt; <span class="el_source">MoneyWiseTableTransaction.java</span></div><h1>MoneyWiseTableTransaction.java</h1><pre class="source lang-java linenums">/*
+ * MoneyWise: Finance Application
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.moneywise.database;
+
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDataSet;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransaction;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataSet;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValues;
+import io.github.tonywasher.joceanus.prometheus.database.PrometheusColumnDefinition;
+import io.github.tonywasher.joceanus.prometheus.database.PrometheusDataStore;
+import io.github.tonywasher.joceanus.prometheus.database.PrometheusTableDefinition;
+import io.github.tonywasher.joceanus.prometheus.database.PrometheusTableDefinition.PrometheusSortOrder;
+import io.github.tonywasher.joceanus.prometheus.database.PrometheusTableEncrypted;
+
+/**
+ * TableEncrypted extension for Transaction.
+ *
+ * @author Tony Washer
+ */
+public class MoneyWiseTableTransaction
+        extends PrometheusTableEncrypted&lt;MoneyWiseTransaction&gt; {
+    /**
+     * The name of the Transactions table.
+     */
+<span class="fc" id="L44">    protected static final String TABLE_NAME = MoneyWiseTransaction.LIST_NAME;</span>
+
+    /**
+     * Constructor.
+     *
+     * @param pDatabase the database control
+     */
+    protected MoneyWiseTableTransaction(final PrometheusDataStore pDatabase) {
+<span class="fc" id="L52">        super(pDatabase, TABLE_NAME);</span>
+<span class="fc" id="L53">        final PrometheusTableDefinition myTableDef = getTableDef();</span>
+
+        /* Define the columns */
+<span class="fc" id="L56">        final PrometheusColumnDefinition myDateCol = myTableDef.addDateColumn(MoneyWiseBasicResource.MONEYWISEDATA_FIELD_DATE);</span>
+<span class="fc" id="L57">        myTableDef.addBooleanColumn(MoneyWiseBasicResource.TRANSACTION_DIRECTION);</span>
+<span class="fc" id="L58">        myTableDef.addLongColumn(MoneyWiseBasicResource.TRANSACTION_ACCOUNT);</span>
+<span class="fc" id="L59">        myTableDef.addLongColumn(MoneyWiseBasicResource.TRANSACTION_PARTNER);</span>
+<span class="fc" id="L60">        myTableDef.addNullEncryptedColumn(MoneyWiseBasicResource.TRANSACTION_AMOUNT, OceanusMoney.BYTE_LEN);</span>
+<span class="fc" id="L61">        myTableDef.addReferenceColumn(MoneyWiseBasicDataType.TRANSCATEGORY, MoneyWiseTableTransCategory.TABLE_NAME);</span>
+<span class="fc" id="L62">        myTableDef.addBooleanColumn(MoneyWiseBasicResource.TRANSACTION_RECONCILED);</span>
+
+        /* Declare the sort order */
+<span class="fc" id="L65">        myDateCol.setSortOrder(PrometheusSortOrder.ASCENDING);</span>
+<span class="fc" id="L66">    }</span>
+
+    @Override
+    protected void declareData(final PrometheusDataSet pData) {
+<span class="fc" id="L70">        final MoneyWiseDataSet myData = (MoneyWiseDataSet) pData;</span>
+<span class="fc" id="L71">        setList(myData.getTransactions());</span>
+<span class="fc" id="L72">    }</span>
+
+    /* Load the event */
+    @Override
+    protected PrometheusDataValues loadValues() throws OceanusException {
+        /* Access the table definition */
+<span class="fc" id="L78">        final PrometheusTableDefinition myTableDef = getTableDef();</span>
+
+        /* Build data values */
+<span class="fc" id="L81">        final PrometheusDataValues myValues = getRowValues(MoneyWiseTransaction.OBJECT_NAME);</span>
+<span class="fc" id="L82">        myValues.addValue(MoneyWiseBasicResource.MONEYWISEDATA_FIELD_DATE, myTableDef.getDateValue(MoneyWiseBasicResource.MONEYWISEDATA_FIELD_DATE));</span>
+<span class="fc" id="L83">        myValues.addValue(MoneyWiseBasicResource.TRANSACTION_DIRECTION, myTableDef.getBooleanValue(MoneyWiseBasicResource.TRANSACTION_DIRECTION));</span>
+<span class="fc" id="L84">        myValues.addValue(MoneyWiseBasicDataType.TRANSCATEGORY, myTableDef.getIntegerValue(MoneyWiseBasicDataType.TRANSCATEGORY));</span>
+<span class="fc" id="L85">        myValues.addValue(MoneyWiseBasicResource.TRANSACTION_ACCOUNT, myTableDef.getLongValue(MoneyWiseBasicResource.TRANSACTION_ACCOUNT));</span>
+<span class="fc" id="L86">        myValues.addValue(MoneyWiseBasicResource.TRANSACTION_PARTNER, myTableDef.getLongValue(MoneyWiseBasicResource.TRANSACTION_PARTNER));</span>
+<span class="fc" id="L87">        myValues.addValue(MoneyWiseBasicResource.TRANSACTION_AMOUNT, myTableDef.getBinaryValue(MoneyWiseBasicResource.TRANSACTION_AMOUNT));</span>
+<span class="fc" id="L88">        myValues.addValue(MoneyWiseBasicResource.TRANSACTION_RECONCILED, myTableDef.getBooleanValue(MoneyWiseBasicResource.TRANSACTION_RECONCILED));</span>
+
+        /* Return the values */
+<span class="fc" id="L91">        return myValues;</span>
+    }
+
+    @Override
+    protected void setFieldValue(final MoneyWiseTransaction pItem,
+                                 final MetisDataFieldId iField) throws OceanusException {
+        /* Switch on field id */
+<span class="fc" id="L98">        final PrometheusTableDefinition myTableDef = getTableDef();</span>
+<span class="fc bfc" id="L99" title="All 2 branches covered.">        if (MoneyWiseBasicResource.MONEYWISEDATA_FIELD_DATE.equals(iField)) {</span>
+<span class="fc" id="L100">            myTableDef.setDateValue(iField, pItem.getDate());</span>
+<span class="fc bfc" id="L101" title="All 2 branches covered.">        } else if (MoneyWiseBasicResource.TRANSACTION_DIRECTION.equals(iField)) {</span>
+<span class="fc" id="L102">            myTableDef.setBooleanValue(iField, pItem.getDirection().isFrom());</span>
+<span class="fc bfc" id="L103" title="All 2 branches covered.">        } else if (MoneyWiseBasicResource.TRANSACTION_AMOUNT.equals(iField)) {</span>
+<span class="fc" id="L104">            myTableDef.setBinaryValue(iField, pItem.getAmountBytes());</span>
+<span class="fc bfc" id="L105" title="All 2 branches covered.">        } else if (MoneyWiseBasicResource.TRANSACTION_ACCOUNT.equals(iField)) {</span>
+<span class="fc" id="L106">            myTableDef.setLongValue(iField, pItem.getAccountId());</span>
+<span class="fc bfc" id="L107" title="All 2 branches covered.">        } else if (MoneyWiseBasicResource.TRANSACTION_PARTNER.equals(iField)) {</span>
+<span class="fc" id="L108">            myTableDef.setLongValue(iField, pItem.getPartnerId());</span>
+<span class="fc bfc" id="L109" title="All 2 branches covered.">        } else if (MoneyWiseBasicDataType.TRANSCATEGORY.equals(iField)) {</span>
+<span class="fc" id="L110">            myTableDef.setIntegerValue(iField, pItem.getCategoryId());</span>
+<span class="fc bfc" id="L111" title="All 2 branches covered.">        } else if (MoneyWiseBasicResource.TRANSACTION_RECONCILED.equals(iField)) {</span>
+<span class="fc" id="L112">            myTableDef.setBooleanValue(iField, pItem.isReconciled());</span>
+        } else {
+<span class="fc" id="L114">            super.setFieldValue(pItem, iField);</span>
+        }
+<span class="fc" id="L116">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

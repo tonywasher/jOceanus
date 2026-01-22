@@ -1,0 +1,416 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianCoreAgreementAlgId.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.impl.core.agree</a> &gt; <span class="el_source">GordianCoreAgreementAlgId.java</span></div><h1>GordianCoreAgreementAlgId.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.gordianknot.impl.core.agree;
+
+import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementKDF;
+import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementType;
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactory;
+import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactoryType;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianDSAElliptic;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianDSTU4145Elliptic;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianGOSTElliptic;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairType;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianNTRUPrimeSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianSM2Elliptic;
+import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySetSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianASN1Util;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseData;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.cipher.GordianCoreCipherFactory;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.keyset.GordianKeySetSpecASN1;
+import org.bouncycastle.asn1.ASN1EncodableVector;
+import org.bouncycastle.asn1.ASN1GeneralString;
+import org.bouncycastle.asn1.ASN1Integer;
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.ASN1Sequence;
+import org.bouncycastle.asn1.DERGeneralString;
+import org.bouncycastle.asn1.DERSequence;
+import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
+
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * Mappings from EncodedId to AgreementSpec.
+ */
+public class GordianCoreAgreementAlgId {
+    /**
+     * AgreementOID branch.
+     */
+<span class="fc" id="L65">    private static final ASN1ObjectIdentifier AGREEOID = GordianASN1Util.ASYMOID.branch(&quot;2&quot;);</span>
+
+    /**
+     * AgreementSpec OID branch.
+     */
+<span class="fc" id="L70">    private static final ASN1ObjectIdentifier AGREESPECOID = AGREEOID.branch(&quot;1&quot;);</span>
+
+    /**
+     * AgreementKeyPairSpec OID branch.
+     */
+<span class="fc" id="L75">    private static final ASN1ObjectIdentifier KEYPAIRSPECOID = AGREEOID.branch(&quot;2&quot;);</span>
+
+    /**
+     * Byte Result OID branch.
+     */
+<span class="fc" id="L80">    static final ASN1ObjectIdentifier BYTERESULTOID = AGREEOID.branch(&quot;3&quot;);</span>
+
+    /**
+     * Error Result OID branch.
+     */
+<span class="fc" id="L85">    static final ASN1ObjectIdentifier ERRORRESULTOID = AGREEOID.branch(&quot;4&quot;);</span>
+
+    /**
+     * Null KeyPairSpec for Partial AgreementSpec.
+     */
+<span class="fc" id="L90">    private static final GordianKeyPairSpec NULLKEYPAIRSPEC = GordianKeyPairSpecBuilder.ed448();</span>
+
+    /**
+     * The factory.
+     */
+    private final GordianFactory theFactory;
+
+    /**
+     * Map of AgreementSpec to ObjectIdentifier.
+     */
+    private final Map&lt;GordianAgreementSpec, ASN1ObjectIdentifier&gt; theAgree2IdMap;
+
+    /**
+     * Map of Identifier to AgreementSpec.
+     */
+    private final Map&lt;ASN1ObjectIdentifier, GordianAgreementSpec&gt; theId2AgreeMap;
+
+    /**
+     * Map of KeyPairSpec to ObjectIdentifier.
+     */
+    private final Map&lt;GordianKeyPairSpec, ASN1ObjectIdentifier&gt; theKeyPair2IdMap;
+
+    /**
+     * Map of Identifier to AgreementSpec.
+     */
+    private final Map&lt;ASN1ObjectIdentifier, GordianKeyPairSpec&gt; theId2KeyPairMap;
+
+    /**
+     * Constructor.
+     *
+     * @param pFactory the factory
+     */
+<span class="fc" id="L122">    GordianCoreAgreementAlgId(final GordianFactory pFactory) {</span>
+        /* Store parameters */
+<span class="fc" id="L124">        theFactory = pFactory;</span>
+
+        /* Create the maps */
+<span class="fc" id="L127">        theId2AgreeMap = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L128">        theId2KeyPairMap = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L129">        theAgree2IdMap = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L130">        theKeyPair2IdMap = new HashMap&lt;&gt;();</span>
+
+        /* Add all agreement types and keyPairs */
+<span class="fc" id="L133">        addAllAgreements();</span>
+<span class="fc" id="L134">        addAllKeyPairs();</span>
+<span class="fc" id="L135">    }</span>
+
+    /**
+     * Add all agreements to the maps.
+     */
+    private void addAllAgreements() {
+        /* Loop through all the Agreement types */
+<span class="fc bfc" id="L142" title="All 2 branches covered.">        for (GordianAgreementType myType : GordianAgreementType.values()) {</span>
+            /* Loop through all the KDF types */
+<span class="fc bfc" id="L144" title="All 2 branches covered.">            for (GordianAgreementKDF myKDF : GordianAgreementKDF.values()) {</span>
+                /* Add agreements */
+<span class="fc" id="L146">                addAgreement(new GordianAgreementSpec(NULLKEYPAIRSPEC, myType, myKDF));</span>
+<span class="fc" id="L147">                addAgreement(new GordianAgreementSpec(NULLKEYPAIRSPEC, myType, myKDF, Boolean.TRUE));</span>
+            }
+        }
+<span class="fc" id="L150">    }</span>
+
+    /**
+     * Add the agreement to the maps.
+     *
+     * @param pSpec the agreementSpec
+     */
+    private void addAgreement(final GordianAgreementSpec pSpec) {
+        /* Add branch for agreementType */
+<span class="fc" id="L159">        final GordianAgreementType myType = pSpec.getAgreementType();</span>
+<span class="fc" id="L160">        ASN1ObjectIdentifier myId = AGREESPECOID.branch(Integer.toString(myType.ordinal() + 1));</span>
+
+        /* Add branch for kdfType */
+<span class="fc" id="L163">        final GordianAgreementKDF myKDFType = pSpec.getKDFType();</span>
+<span class="fc" id="L164">        myId = myId.branch(Integer.toString(myKDFType.ordinal() + 1));</span>
+
+        /* Add branch for confirm (if present) */
+<span class="fc bfc" id="L167" title="All 2 branches covered.">        if (Boolean.TRUE.equals(pSpec.withConfirm())) {</span>
+<span class="fc" id="L168">            myId = myId.branch(&quot;1&quot;);</span>
+        }
+
+        /* Add the spec to the maps */
+<span class="fc" id="L172">        addToMaps(pSpec, myId);</span>
+<span class="fc" id="L173">    }</span>
+
+    /**
+     * Add all keyPairSpecs to the maps.
+     */
+    private void addAllKeyPairs() {
+        /* Loop through all the Agreement types */
+<span class="fc bfc" id="L180" title="All 2 branches covered.">        for (GordianKeyPairSpec mySpec : theFactory.getAsyncFactory().getKeyPairFactory().listPossibleKeySpecs()) {</span>
+            /* Add agreements */
+<span class="fc" id="L182">            addKeyPair(mySpec);</span>
+<span class="fc" id="L183">        }</span>
+<span class="fc" id="L184">        addKeyPair(GordianKeyPairSpecBuilder.composite());</span>
+<span class="fc" id="L185">    }</span>
+
+    /**
+     * Add the keyPairSpec to the maps.
+     *
+     * @param pSpec the keyPairSpec
+     */
+    private void addKeyPair(final GordianKeyPairSpec pSpec) {
+        /* Add branch for agreementType */
+<span class="fc" id="L194">        final GordianKeyPairType myType = pSpec.getKeyPairType();</span>
+<span class="fc" id="L195">        ASN1ObjectIdentifier myId = KEYPAIRSPECOID.branch(Integer.toString(myType.ordinal() + 1));</span>
+
+        /* switch on type */
+<span class="fc bfc" id="L198" title="All 16 branches covered.">        switch (myType) {</span>
+            case RSA:
+<span class="fc" id="L200">                myId = myId.branch(Integer.toString(pSpec.getRSAModulus().ordinal() + 1));</span>
+<span class="fc" id="L201">                break;</span>
+            case DH:
+<span class="fc" id="L203">                myId = myId.branch(Integer.toString(pSpec.getDHGroup().ordinal() + 1));</span>
+<span class="fc" id="L204">                break;</span>
+            case XDH:
+<span class="fc" id="L206">                myId = myId.branch(Integer.toString(pSpec.getEdwardsElliptic().ordinal() + 1));</span>
+<span class="fc" id="L207">                break;</span>
+            case EC:
+<span class="fc" id="L209">                myId = myId.branch(Integer.toString(((GordianDSAElliptic) pSpec.getElliptic()).ordinal() + 1));</span>
+<span class="fc" id="L210">                break;</span>
+            case SM2:
+<span class="fc" id="L212">                myId = myId.branch(Integer.toString(((GordianSM2Elliptic) pSpec.getElliptic()).ordinal() + 1));</span>
+<span class="fc" id="L213">                break;</span>
+            case GOST2012:
+<span class="fc" id="L215">                myId = myId.branch(Integer.toString(((GordianGOSTElliptic) pSpec.getElliptic()).ordinal() + 1));</span>
+<span class="fc" id="L216">                break;</span>
+            case DSTU4145:
+<span class="fc" id="L218">                myId = myId.branch(Integer.toString(((GordianDSTU4145Elliptic) pSpec.getElliptic()).ordinal() + 1));</span>
+<span class="fc" id="L219">                break;</span>
+            case CMCE:
+<span class="fc" id="L221">                myId = myId.branch(Integer.toString(pSpec.getCMCEKeySpec().ordinal() + 1));</span>
+<span class="fc" id="L222">                break;</span>
+            case FRODO:
+<span class="fc" id="L224">                myId = myId.branch(Integer.toString(pSpec.getFRODOKeySpec().ordinal() + 1));</span>
+<span class="fc" id="L225">                break;</span>
+            case SABER:
+<span class="fc" id="L227">                myId = myId.branch(Integer.toString(pSpec.getSABERKeySpec().ordinal() + 1));</span>
+<span class="fc" id="L228">                break;</span>
+            case MLKEM:
+<span class="fc" id="L230">                myId = myId.branch(Integer.toString(pSpec.getMLKEMKeySpec().ordinal() + 1));</span>
+<span class="fc" id="L231">                break;</span>
+            case HQC:
+<span class="fc" id="L233">                myId = myId.branch(Integer.toString(pSpec.getHQCKeySpec().ordinal() + 1));</span>
+<span class="fc" id="L234">                break;</span>
+            case BIKE:
+<span class="fc" id="L236">                myId = myId.branch(Integer.toString(pSpec.getBIKEKeySpec().ordinal() + 1));</span>
+<span class="fc" id="L237">                break;</span>
+            case NTRU:
+<span class="fc" id="L239">                myId = myId.branch(Integer.toString(pSpec.getNTRUKeySpec().ordinal() + 1));</span>
+<span class="fc" id="L240">                break;</span>
+            case NTRUPRIME:
+<span class="fc" id="L242">                final GordianNTRUPrimeSpec myNTRUPrime = pSpec.getNTRUPrimeKeySpec();</span>
+<span class="fc" id="L243">                myId = myId.branch(Integer.toString(myNTRUPrime.getType().ordinal() + 1));</span>
+<span class="fc" id="L244">                myId = myId.branch(Integer.toString(myNTRUPrime.getParams().ordinal() + 1));</span>
+<span class="fc" id="L245">                break;</span>
+            case NEWHOPE:
+            case COMPOSITE:
+            default:
+                break;
+        }
+
+        /* Add the spec to the maps */
+<span class="fc" id="L253">        addToMaps(pSpec, myId);</span>
+<span class="fc" id="L254">    }</span>
+
+    /**
+     * Determine Identifier for an agreementSpec.
+     *
+     * @param pSpec the agreementSpec
+     * @return the identifier
+     */
+    public AlgorithmIdentifier determineIdentifier(final GordianAgreementSpec pSpec) {
+        /* Add branch for agreementType */
+<span class="fc" id="L264">        final GordianAgreementSpec myPartial = new GordianAgreementSpec(NULLKEYPAIRSPEC, pSpec.getAgreementType(),</span>
+<span class="fc" id="L265">                pSpec.getKDFType(), pSpec.withConfirm());</span>
+<span class="fc" id="L266">        final ASN1ObjectIdentifier myAgreeId = theAgree2IdMap.get(myPartial);</span>
+
+        /* Handle composite keyPairSpec */
+<span class="fc" id="L269">        final GordianKeyPairSpec mySpec = pSpec.getKeyPairSpec();</span>
+<span class="fc bfc" id="L270" title="All 2 branches covered.">        if (mySpec.getKeyPairType() == GordianKeyPairType.COMPOSITE) {</span>
+<span class="fc" id="L271">            final ASN1EncodableVector v = new ASN1EncodableVector();</span>
+<span class="fc" id="L272">            final ASN1ObjectIdentifier myId = theKeyPair2IdMap.get(GordianKeyPairSpecBuilder.composite());</span>
+<span class="fc" id="L273">            final Iterator&lt;GordianKeyPairSpec&gt; myIterator = mySpec.keySpecIterator();</span>
+<span class="fc bfc" id="L274" title="All 2 branches covered.">            while (myIterator.hasNext()) {</span>
+<span class="fc" id="L275">                final GordianKeyPairSpec myPair = myIterator.next();</span>
+<span class="fc" id="L276">                v.add(theKeyPair2IdMap.get(myPair));</span>
+<span class="fc" id="L277">            }</span>
+<span class="fc" id="L278">            final AlgorithmIdentifier myPairId = new AlgorithmIdentifier(myId, new DERSequence(v));</span>
+<span class="fc" id="L279">            return new AlgorithmIdentifier(myAgreeId, myPairId);</span>
+
+        } else {
+<span class="fc" id="L282">            return new AlgorithmIdentifier(myAgreeId, new AlgorithmIdentifier(theKeyPair2IdMap.get(pSpec.getKeyPairSpec())));</span>
+        }
+    }
+
+    /**
+     * DetermineIdentifier the agreementSpec for an AlgorithmIdentifier.
+     *
+     * @param pId the identifier
+     * @return the agreementSpec
+     */
+    public GordianAgreementSpec determineAgreementSpec(final AlgorithmIdentifier pId) {
+        /* Obtain the ObjectIdentifiers */
+<span class="fc" id="L294">        final ASN1ObjectIdentifier myId = pId.getAlgorithm();</span>
+<span class="fc" id="L295">        final AlgorithmIdentifier myPairId = AlgorithmIdentifier.getInstance(pId.getParameters());</span>
+
+        /* Derive the specs */
+<span class="fc" id="L298">        final GordianAgreementSpec mySpec = theId2AgreeMap.get(myId);</span>
+<span class="fc" id="L299">        final GordianKeyPairSpec myPairSpec = theId2KeyPairMap.get(myPairId.getAlgorithm());</span>
+<span class="fc bfc" id="L300" title="All 2 branches covered.">        if (myPairSpec.getKeyPairType() == GordianKeyPairType.COMPOSITE) {</span>
+<span class="fc" id="L301">            final ASN1Sequence myPairs = ASN1Sequence.getInstance(myPairId.getParameters());</span>
+<span class="fc" id="L302">            final List&lt;GordianKeyPairSpec&gt; mySpecs = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L303">            final Enumeration&lt;?&gt; en = myPairs.getObjects();</span>
+<span class="fc bfc" id="L304" title="All 2 branches covered.">            while (en.hasMoreElements()) {</span>
+<span class="fc" id="L305">                mySpecs.add(theId2KeyPairMap.get(ASN1ObjectIdentifier.getInstance(en.nextElement())));</span>
+            }
+<span class="fc" id="L307">            return new GordianAgreementSpec(GordianKeyPairSpecBuilder.composite(mySpecs), mySpec.getAgreementType(), mySpec.getKDFType(), mySpec.withConfirm());</span>
+        }
+
+        /* Return the AgreementSpec */
+<span class="fc" id="L311">        return new GordianAgreementSpec(myPairSpec, mySpec.getAgreementType(), mySpec.getKDFType(), mySpec.withConfirm());</span>
+    }
+
+    /**
+     * Add agreement to maps.
+     *
+     * @param pSpec       the agreementSpec
+     * @param pIdentifier the identifier
+     */
+    private void addToMaps(final GordianAgreementSpec pSpec,
+                           final ASN1ObjectIdentifier pIdentifier) {
+<span class="fc" id="L322">        theAgree2IdMap.put(pSpec, pIdentifier);</span>
+<span class="fc" id="L323">        theId2AgreeMap.put(pIdentifier, pSpec);</span>
+<span class="fc" id="L324">    }</span>
+
+    /**
+     * Add keyPair to maps.
+     *
+     * @param pSpec       the keyPairSpec
+     * @param pIdentifier the identifier
+     */
+    private void addToMaps(final GordianKeyPairSpec pSpec,
+                           final ASN1ObjectIdentifier pIdentifier) {
+<span class="fc" id="L334">        theKeyPair2IdMap.put(pSpec, pIdentifier);</span>
+<span class="fc" id="L335">        theId2KeyPairMap.put(pIdentifier, pSpec);</span>
+<span class="fc" id="L336">    }</span>
+
+    /**
+     * Obtain identifier for result.
+     *
+     * @param pResultType the result type
+     * @return the identifier
+     * @throws GordianException on error
+     */
+    protected AlgorithmIdentifier getIdentifierForResult(final Object pResultType) throws GordianException {
+<span class="fc bfc" id="L346" title="All 2 branches covered.">        if (pResultType instanceof GordianFactoryType) {</span>
+<span class="pc bpc" id="L347" title="1 of 2 branches missed.">            final ASN1ObjectIdentifier myOID = pResultType == GordianFactoryType.BC</span>
+<span class="fc" id="L348">                    ? GordianBaseData.BCFACTORYOID</span>
+<span class="pc" id="L349">                    : GordianBaseData.JCAFACTORYOID;</span>
+<span class="fc" id="L350">            return new AlgorithmIdentifier(myOID, null);</span>
+        }
+<span class="fc bfc" id="L352" title="All 2 branches covered.">        if (pResultType instanceof GordianKeySetSpec mySpec) {</span>
+<span class="fc" id="L353">            final GordianKeySetSpecASN1 myParms = new GordianKeySetSpecASN1(mySpec);</span>
+<span class="fc" id="L354">            return myParms.getAlgorithmId();</span>
+        }
+<span class="fc bfc" id="L356" title="All 2 branches covered.">        if (pResultType instanceof GordianSymCipherSpec mySpec) {</span>
+<span class="fc" id="L357">            final GordianCoreCipherFactory myCipherFactory = (GordianCoreCipherFactory) theFactory.getCipherFactory();</span>
+<span class="fc" id="L358">            return myCipherFactory.getIdentifierForSpec(mySpec);</span>
+        }
+<span class="fc bfc" id="L360" title="All 2 branches covered.">        if (pResultType instanceof GordianStreamCipherSpec mySpec) {</span>
+<span class="fc" id="L361">            final GordianCoreCipherFactory myCipherFactory = (GordianCoreCipherFactory) theFactory.getCipherFactory();</span>
+<span class="fc" id="L362">            return myCipherFactory.getIdentifierForSpec(mySpec);</span>
+        }
+<span class="fc bfc" id="L364" title="All 2 branches covered.">        if (pResultType instanceof Integer myInt) {</span>
+<span class="fc" id="L365">            return new AlgorithmIdentifier(BYTERESULTOID, new ASN1Integer(myInt));</span>
+        }
+<span class="pc bpc" id="L367" title="1 of 2 branches missed.">        if (pResultType instanceof String myError) {</span>
+<span class="fc" id="L368">            return new AlgorithmIdentifier(ERRORRESULTOID, new DERGeneralString(myError));</span>
+        }
+<span class="nc" id="L370">        throw new GordianDataException(&quot;Illegal resultType set&quot;);</span>
+    }
+
+    /**
+     * process result algorithmId.
+     *
+     * @param pResId the result algorithmId.
+     * @return the resultType
+     * @throws GordianException on error
+     */
+    public Object processResultIdentifier(final AlgorithmIdentifier pResId) throws GordianException {
+        /* Look for a Factory */
+<span class="fc" id="L382">        final ASN1ObjectIdentifier myAlgId = pResId.getAlgorithm();</span>
+<span class="fc bfc" id="L383" title="All 2 branches covered.">        if (GordianBaseData.BCFACTORYOID.equals(myAlgId)) {</span>
+<span class="fc" id="L384">            return GordianFactoryType.BC;</span>
+        }
+<span class="pc bpc" id="L386" title="1 of 2 branches missed.">        if (GordianBaseData.JCAFACTORYOID.equals(myAlgId)) {</span>
+<span class="nc" id="L387">            return GordianFactoryType.JCA;</span>
+        }
+
+        /* Look for a keySet Spec */
+<span class="fc bfc" id="L391" title="All 2 branches covered.">        if (GordianKeySetSpecASN1.KEYSETALGID.equals(myAlgId)) {</span>
+<span class="fc" id="L392">            return GordianKeySetSpecASN1.getInstance(pResId.getParameters()).getSpec();</span>
+        }
+
+        /* Look for a cipher Spec */
+<span class="fc" id="L396">        final GordianCoreCipherFactory myCipherFactory = (GordianCoreCipherFactory) theFactory.getCipherFactory();</span>
+<span class="fc" id="L397">        final GordianCipherSpec&lt;?&gt; mySpec = myCipherFactory.getCipherSpecForIdentifier(pResId);</span>
+<span class="fc bfc" id="L398" title="All 2 branches covered.">        if (mySpec != null) {</span>
+<span class="fc" id="L399">            return mySpec;</span>
+        }
+
+        /* Look for a Byte Type */
+<span class="fc bfc" id="L403" title="All 2 branches covered.">        if (BYTERESULTOID.equals(myAlgId)) {</span>
+<span class="fc" id="L404">            return ASN1Integer.getInstance(pResId.getParameters()).intValueExact();</span>
+        }
+
+        /* Look for an error */
+<span class="pc bpc" id="L408" title="1 of 2 branches missed.">        if (ERRORRESULTOID.equals(myAlgId)) {</span>
+<span class="fc" id="L409">            return ASN1GeneralString.getInstance(pResId.getParameters()).getString();</span>
+        }
+
+        /* Unrecognised */
+<span class="nc" id="L413">        throw new GordianDataException(&quot;Unrecognised resultType&quot;);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

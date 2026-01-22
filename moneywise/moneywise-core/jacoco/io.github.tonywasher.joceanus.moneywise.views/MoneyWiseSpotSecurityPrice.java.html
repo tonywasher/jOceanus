@@ -1,0 +1,448 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseSpotSecurityPrice.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.moneywise.views</a> &gt; <span class="el_source">MoneyWiseSpotSecurityPrice.java</span></div><h1>MoneyWiseSpotSecurityPrice.java</h1><pre class="source lang-java linenums">/*
+ * MoneyWise: Finance Application
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.moneywise.views;
+
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
+import io.github.tonywasher.joceanus.metis.data.MetisDataEditState;
+import io.github.tonywasher.joceanus.metis.data.MetisDataState;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDataSet;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePortfolio;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurity;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurityPrice;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysis;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisManager;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisPortfolioBucket;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisPortfolioBucket.MoneyWiseAnalysisPortfolioBucketList;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisSecurityBucket;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisSecurityBucket.MoneyWiseAnalysisSecurityBucketList;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValues;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusEncryptedValues;
+
+import java.util.Iterator;
+import java.util.ListIterator;
+
+/**
+ * Extension of SecurityPrice to cater for spot prices.
+ *
+ * @author Tony Washer
+ */
+public final class MoneyWiseSpotSecurityPrice
+        extends MoneyWiseSecurityPrice {
+    /**
+     * Object name.
+     */
+<span class="nc" id="L53">    public static final String OBJECT_NAME = MoneyWiseSpotSecurityPrice.class.getSimpleName();</span>
+
+    /**
+     * List name.
+     */
+<span class="nc" id="L58">    public static final String LIST_NAME = OBJECT_NAME + &quot;s&quot;;</span>
+
+    /**
+     * Report fields.
+     */
+    @SuppressWarnings(&quot;rawtypes&quot;)
+<span class="nc" id="L64">    private static final MetisFieldSet&lt;MoneyWiseSpotSecurityPrice&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseSpotSecurityPrice.class);</span>
+
+    /*
+     * The fields.
+     */
+    static {
+<span class="nc" id="L70">        FIELD_DEFS.declareLocalField(MoneyWiseViewResource.SPOTEVENT_PREVDATE, MoneyWiseSpotSecurityPrice::getPrevDate);</span>
+<span class="nc" id="L71">        FIELD_DEFS.declareLocalField(MoneyWiseViewResource.SPOTPRICE_PREVPRICE, MoneyWiseSpotSecurityPrice::getPrevPrice);</span>
+<span class="nc" id="L72">    }</span>
+
+    /**
+     * the previous date.
+     */
+    private OceanusDate thePrevDate;
+
+    /**
+     * the previous price.
+     */
+    private OceanusPrice thePrevPrice;
+
+    /**
+     * isDisabled.
+     */
+    private boolean isDisabled;
+
+    /**
+     * Constructor for a new SpotPrice where no price data exists.
+     *
+     * @param pList     the Spot Price List
+     * @param pSecurity the price for the date
+     */
+    private MoneyWiseSpotSecurityPrice(final MoneyWiseSpotSecurityList pList,
+                                       final MoneyWiseSecurity pSecurity) {
+<span class="nc" id="L97">        super(pList);</span>
+
+        /* Store base values */
+<span class="nc" id="L100">        setSecurity(pSecurity);</span>
+<span class="nc" id="L101">    }</span>
+
+    @Override
+    public MetisFieldSetDef getDataFieldSet() {
+<span class="nc" id="L105">        return FIELD_DEFS;</span>
+    }
+
+    /**
+     * Obtain previous price.
+     *
+     * @return the price.
+     */
+    public OceanusPrice getPrevPrice() {
+<span class="nc" id="L114">        return thePrevPrice;</span>
+    }
+
+    /**
+     * Set previous price.
+     *
+     * @param pPrice the price
+     */
+    protected void setPrevPrice(final OceanusPrice pPrice) {
+<span class="nc" id="L123">        thePrevPrice = pPrice;</span>
+<span class="nc" id="L124">    }</span>
+
+    /**
+     * Obtain previous date.
+     *
+     * @return the date.
+     */
+    public OceanusDate getPrevDate() {
+<span class="nc" id="L132">        return thePrevDate;</span>
+    }
+
+    /**
+     * Set previous date.
+     *
+     * @param pDate the date
+     */
+    protected void setPrevDate(final OceanusDate pDate) {
+<span class="nc" id="L141">        thePrevDate = pDate;</span>
+<span class="nc" id="L142">    }</span>
+
+    @Override
+    public boolean isDisabled() {
+<span class="nc" id="L146">        return isDisabled;</span>
+    }
+
+    /**
+     * Set disabled.
+     *
+     * @param pDisabled the flag
+     */
+    protected void setDisabled(final boolean pDisabled) {
+<span class="nc" id="L155">        isDisabled = pDisabled;</span>
+<span class="nc" id="L156">    }</span>
+
+    /**
+     * Validate the line.
+     */
+    @Override
+    public void validate() {
+<span class="nc" id="L163">        setValidEdit();</span>
+<span class="nc" id="L164">    }</span>
+
+    /* Is this row locked */
+    @Override
+    public boolean isLocked() {
+<span class="nc" id="L169">        return isDeleted();</span>
+    }
+
+    /**
+     * Note that this item has been validated.
+     */
+    @Override
+    public void setValidEdit() {
+<span class="nc bnc" id="L177" title="All 2 branches missed.">        setEditState(hasHistory()</span>
+<span class="nc" id="L178">                ? MetisDataEditState.VALID</span>
+<span class="nc" id="L179">                : MetisDataEditState.CLEAN);</span>
+<span class="nc" id="L180">    }</span>
+
+    @Override
+    public OceanusPrice getPrice() {
+        /* Switch on state */
+<span class="nc bnc" id="L185" title="All 2 branches missed.">        switch (getState()) {</span>
+            case NEW:
+            case CHANGED:
+            case RECOVERED:
+            case CLEAN:
+<span class="nc" id="L190">                return super.getPrice();</span>
+            default:
+<span class="nc" id="L192">                return null;</span>
+        }
+    }
+
+    @Override
+    public MetisDataState getState() {
+<span class="nc" id="L198">        final PrometheusEncryptedValues myCurr = getValues();</span>
+<span class="nc" id="L199">        final PrometheusEncryptedValues myBase = getOriginalValues();</span>
+
+        /* If we have no changes we are CLEAN */
+<span class="nc bnc" id="L202" title="All 2 branches missed.">        if (myCurr.getVersion() == 0) {</span>
+<span class="nc" id="L203">            return MetisDataState.CLEAN;</span>
+        }
+
+        /* If the original price is Null */
+<span class="nc bnc" id="L207" title="All 2 branches missed.">        if (myBase.getValue(MoneyWiseBasicResource.MONEYWISEDATA_FIELD_PRICE) == null) {</span>
+            /* Return status */
+<span class="nc bnc" id="L209" title="All 2 branches missed.">            return myCurr.getValue(MoneyWiseBasicResource.MONEYWISEDATA_FIELD_PRICE) == null</span>
+<span class="nc" id="L210">                    ? MetisDataState.DELNEW</span>
+<span class="nc" id="L211">                    : MetisDataState.NEW;</span>
+        }
+
+        /* If we are deleted return so */
+<span class="nc bnc" id="L215" title="All 2 branches missed.">        return myCurr.getValue(MoneyWiseBasicResource.MONEYWISEDATA_FIELD_PRICE) == null</span>
+<span class="nc" id="L216">                ? MetisDataState.DELETED</span>
+<span class="nc" id="L217">                : MetisDataState.CHANGED;</span>
+    }
+
+    /**
+     * The Spot Prices List class.
+     */
+    public static class MoneyWiseSpotSecurityList
+            extends MoneyWiseSecurityPriceBaseList&lt;MoneyWiseSpotSecurityPrice&gt; {
+        /**
+         * Report fields.
+         */
+        @SuppressWarnings(&quot;rawtypes&quot;)
+<span class="nc" id="L229">        private static final MetisFieldSet&lt;MoneyWiseSpotSecurityList&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseSpotSecurityList.class);</span>
+
+        /*
+         * The fields.
+         */
+        static {
+<span class="nc" id="L235">            FIELD_DEFS.declareLocalField(MoneyWiseBasicDataType.PORTFOLIO, MoneyWiseSpotSecurityList::getPortfolio);</span>
+<span class="nc" id="L236">            FIELD_DEFS.declareLocalField(MoneyWiseBasicResource.MONEYWISEDATA_FIELD_DATE, MoneyWiseSpotSecurityList::getDate);</span>
+<span class="nc" id="L237">            FIELD_DEFS.declareLocalField(MoneyWiseViewResource.SPOTEVENT_NEXTDATE, MoneyWiseSpotSecurityList::getNext);</span>
+<span class="nc" id="L238">            FIELD_DEFS.declareLocalField(MoneyWiseViewResource.SPOTEVENT_PREVDATE, MoneyWiseSpotSecurityList::getPrev);</span>
+<span class="nc" id="L239">        }</span>
+
+        /**
+         * The date.
+         */
+        private final OceanusDate theDate;
+
+        /**
+         * The view.
+         */
+        private final MoneyWiseView theView;
+
+        /**
+         * The portfolio.
+         */
+        private final MoneyWisePortfolio thePortfolio;
+
+        /**
+         * The next date.
+         */
+        private OceanusDate theNext;
+
+        /**
+         * The previous date.
+         */
+        private OceanusDate thePrev;
+
+        /**
+         * Constructor.
+         *
+         * @param pView      the view
+         * @param pPortfolio the portfolio
+         * @param pDate      the date
+         */
+        public MoneyWiseSpotSecurityList(final MoneyWiseView pView,
+                                         final MoneyWisePortfolio pPortfolio,
+                                         final OceanusDate pDate) {
+            /* Build initial list */
+<span class="nc" id="L277">            super(pView.getData(), MoneyWiseSpotSecurityPrice.class, MoneyWiseBasicDataType.SECURITYPRICE);</span>
+<span class="nc" id="L278">            setStyle(PrometheusListStyle.EDIT);</span>
+<span class="nc" id="L279">            ensureMap();</span>
+
+            /* Store parameters */
+<span class="nc" id="L282">            theDate = pDate;</span>
+<span class="nc" id="L283">            theView = pView;</span>
+<span class="nc" id="L284">            thePortfolio = pPortfolio;</span>
+
+            /* Obtain the portfolio bucket */
+<span class="nc" id="L287">            final MoneyWiseAnalysisManager myManager = theView.getAnalysisManager();</span>
+<span class="nc" id="L288">            final MoneyWiseAnalysis myAnalysis = myManager.getAnalysis();</span>
+<span class="nc" id="L289">            final MoneyWiseAnalysisPortfolioBucketList myPortfolios = myAnalysis.getPortfolios();</span>
+<span class="nc" id="L290">            final MoneyWiseAnalysisPortfolioBucket myBucket = myPortfolios.findItemById(thePortfolio.getIndexedId());</span>
+<span class="nc bnc" id="L291" title="All 2 branches missed.">            if (myBucket == null) {</span>
+<span class="nc" id="L292">                return;</span>
+            }
+<span class="nc" id="L294">            final MoneyWiseAnalysisSecurityBucketList mySecurities = myBucket.getSecurities();</span>
+
+            /* Loop through the Securities */
+<span class="nc" id="L297">            final OceanusDate myDate = new OceanusDate(theDate);</span>
+<span class="nc" id="L298">            final Iterator&lt;MoneyWiseAnalysisSecurityBucket&gt; mySecIterator = mySecurities.iterator();</span>
+<span class="nc bnc" id="L299" title="All 2 branches missed.">            while (mySecIterator.hasNext()) {</span>
+<span class="nc" id="L300">                final MoneyWiseAnalysisSecurityBucket mySecBucket = mySecIterator.next();</span>
+<span class="nc" id="L301">                final MoneyWiseSecurity mySecurity = mySecBucket.getSecurity();</span>
+
+                /* Ignore Options */
+<span class="nc bnc" id="L304" title="All 2 branches missed.">                if (mySecurity.getCategoryClass().isOption()) {</span>
+<span class="nc" id="L305">                    continue;</span>
+                }
+
+                /* Create a SpotPrice entry */
+<span class="nc" id="L309">                final MoneyWiseSpotSecurityPrice mySpot = new MoneyWiseSpotSecurityPrice(this, mySecurity);</span>
+<span class="nc" id="L310">                mySpot.setIndexedId(mySecurity.getIndexedId());</span>
+<span class="nc" id="L311">                mySpot.setDate(myDate);</span>
+<span class="nc bnc" id="L312" title="All 2 branches missed.">                mySpot.setDisabled(!mySecBucket.isActive());</span>
+<span class="nc" id="L313">                add(mySpot);</span>
+<span class="nc" id="L314">            }</span>
+
+            /* Set the base for this list */
+<span class="nc" id="L317">            final MoneyWiseDataSet myData = theView.getData();</span>
+<span class="nc" id="L318">            final MoneyWiseSecurityPriceList myPrices = myData.getSecurityPrices();</span>
+<span class="nc" id="L319">            setBase(myPrices);</span>
+
+            /* Loop through the prices */
+<span class="nc" id="L322">            final ListIterator&lt;MoneyWiseSecurityPrice&gt; myIterator = myPrices.listIterator(myPrices.size());</span>
+<span class="nc bnc" id="L323" title="All 2 branches missed.">            while (myIterator.hasPrevious()) {</span>
+<span class="nc" id="L324">                final MoneyWiseSecurityPrice myPrice = myIterator.previous();</span>
+
+                /* Access the Spot Price and ignore if not relevant/deleted */
+<span class="nc" id="L327">                final MoneyWiseSecurity mySecurity = myPrice.getSecurity();</span>
+<span class="nc" id="L328">                final MoneyWiseSpotSecurityPrice mySpot = findItemById(mySecurity.getIndexedId());</span>
+<span class="nc bnc" id="L329" title="All 4 branches missed.">                if (mySpot == null || myPrice.isDeleted()) {</span>
+<span class="nc" id="L330">                    continue;</span>
+                }
+
+                /* Test the Date */
+<span class="nc" id="L334">                final int iDiff = theDate.compareTo(myPrice.getDate());</span>
+
+                /* If we are past the date */
+<span class="nc bnc" id="L337" title="All 2 branches missed.">                if (iDiff &lt; 0) {</span>
+                    /* Record the next date and break the loop */
+<span class="nc" id="L339">                    theNext = myPrice.getDate();</span>
+<span class="nc" id="L340">                    break;</span>
+                }
+
+                /* If we are exactly the date */
+<span class="nc bnc" id="L344" title="All 2 branches missed.">                if (iDiff == 0) {</span>
+                    /* Set price */
+<span class="nc" id="L346">                    mySpot.setValuePrice(myPrice.getPriceField());</span>
+
+                    /* Link to base and re-establish state */
+<span class="nc" id="L349">                    mySpot.setBase(myPrice);</span>
+
+                    /* else we are a previous date */
+                } else {
+                    /* Set previous date and value */
+<span class="nc" id="L354">                    mySpot.setPrevDate(myPrice.getDate());</span>
+<span class="nc" id="L355">                    mySpot.setPrevPrice(myPrice.getPrice());</span>
+
+                    /* Record the latest previous date */
+<span class="nc" id="L358">                    thePrev = myPrice.getDate();</span>
+                }
+<span class="nc" id="L360">            }</span>
+<span class="nc" id="L361">        }</span>
+
+        @SuppressWarnings(&quot;rawtypes&quot;)
+        @Override
+        public MetisFieldSet&lt;MoneyWiseSpotSecurityList&gt; getDataFieldSet() {
+<span class="nc" id="L366">            return FIELD_DEFS;</span>
+        }
+
+        @Override
+        public String listName() {
+<span class="nc" id="L371">            return MoneyWiseSpotSecurityList.class.getSimpleName();</span>
+        }
+
+        @Override
+        public MetisFieldSetDef getItemFields() {
+<span class="nc" id="L376">            return MoneyWiseSpotSecurityPrice.FIELD_DEFS;</span>
+        }
+
+        @Override
+        protected MoneyWiseSpotSecurityList getEmptyList(final PrometheusListStyle pStyle) {
+<span class="nc" id="L381">            throw new UnsupportedOperationException();</span>
+        }
+
+        @Override
+        public MoneyWiseDataSet getDataSet() {
+<span class="nc" id="L386">            return (MoneyWiseDataSet) super.getDataSet();</span>
+        }
+
+        /**
+         * Obtain the portfolio.
+         *
+         * @return the portfolio
+         */
+        private MoneyWisePortfolio getPortfolio() {
+<span class="nc" id="L395">            return thePortfolio;</span>
+        }
+
+        /**
+         * Obtain the date.
+         *
+         * @return the date
+         */
+        private OceanusDate getDate() {
+<span class="nc" id="L404">            return theDate;</span>
+        }
+
+        /**
+         * Obtain the next date.
+         *
+         * @return the date
+         */
+        public OceanusDate getNext() {
+<span class="nc" id="L413">            return theNext;</span>
+        }
+
+        /**
+         * Obtain the previous date.
+         *
+         * @return the date
+         */
+        public OceanusDate getPrev() {
+<span class="nc" id="L422">            return thePrev;</span>
+        }
+
+        /* Is this list locked */
+        @Override
+        public boolean isLocked() {
+<span class="nc" id="L428">            return false;</span>
+        }
+
+        /* Disable Add a new item */
+        @Override
+        public MoneyWiseSpotSecurityPrice addCopyItem(final PrometheusDataItem pElement) {
+<span class="nc" id="L434">            throw new UnsupportedOperationException();</span>
+        }
+
+        @Override
+        public MoneyWiseSpotSecurityPrice addNewItem() {
+<span class="nc" id="L439">            throw new UnsupportedOperationException();</span>
+        }
+
+        @Override
+        public MoneyWiseSpotSecurityPrice addValuesItem(final PrometheusDataValues pValues) {
+<span class="nc" id="L444">            throw new UnsupportedOperationException();</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

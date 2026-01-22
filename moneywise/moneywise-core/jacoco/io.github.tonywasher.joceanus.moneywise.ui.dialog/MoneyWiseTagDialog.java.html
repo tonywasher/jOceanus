@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseTagDialog.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.moneywise.ui.dialog</a> &gt; <span class="el_source">MoneyWiseTagDialog.java</span></div><h1>MoneyWiseTagDialog.java</h1><pre class="source lang-java linenums">/*
+ * MoneyWise: Finance Application
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.moneywise.ui.dialog;
+
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransTag;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransTag.MoneyWiseTransTagList;
+import io.github.tonywasher.joceanus.moneywise.ui.base.MoneyWiseBaseTable;
+import io.github.tonywasher.joceanus.moneywise.ui.base.MoneyWiseItemPanel;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataResource;
+import io.github.tonywasher.joceanus.prometheus.ui.fieldset.PrometheusFieldSet;
+import io.github.tonywasher.joceanus.prometheus.ui.fieldset.PrometheusFieldSetEvent;
+import io.github.tonywasher.joceanus.prometheus.views.PrometheusEditSet;
+import io.github.tonywasher.joceanus.tethys.api.factory.TethysUIFactory;
+import io.github.tonywasher.joceanus.tethys.api.field.TethysUIDataEditField.TethysUIStringEditField;
+import io.github.tonywasher.joceanus.tethys.api.field.TethysUIFieldFactory;
+
+/**
+ * Panel to display/edit/create a TransactionTag.
+ */
+public class MoneyWiseTagDialog
+        extends MoneyWiseItemPanel&lt;MoneyWiseTransTag&gt; {
+    /**
+     * Constructor.
+     *
+     * @param pFactory the GUI factory
+     * @param pEditSet the edit set
+     * @param pOwner   the owning table
+     */
+    public MoneyWiseTagDialog(final TethysUIFactory&lt;?&gt; pFactory,
+                              final PrometheusEditSet pEditSet,
+                              final MoneyWiseBaseTable&lt;MoneyWiseTransTag&gt; pOwner) {
+        /* Initialise the panel */
+<span class="nc" id="L50">        super(pFactory, pEditSet, pOwner);</span>
+
+        /* Access the fieldSet */
+<span class="nc" id="L53">        final PrometheusFieldSet&lt;MoneyWiseTransTag&gt; myFieldSet = getFieldSet();</span>
+
+        /* Create the text fields */
+<span class="nc" id="L56">        final TethysUIFieldFactory myFields = pFactory.fieldFactory();</span>
+<span class="nc" id="L57">        final TethysUIStringEditField myName = myFields.newStringField();</span>
+<span class="nc" id="L58">        final TethysUIStringEditField myDesc = myFields.newStringField();</span>
+
+        /* Assign the fields to the panel */
+<span class="nc" id="L61">        myFieldSet.addField(PrometheusDataResource.DATAITEM_FIELD_NAME, myName, MoneyWiseTransTag::getName);</span>
+<span class="nc" id="L62">        myFieldSet.addField(PrometheusDataResource.DATAITEM_FIELD_DESC, myDesc, MoneyWiseTransTag::getDesc);</span>
+
+        /* Configure name checks */
+<span class="nc" id="L65">        myName.setValidator(this::isValidName);</span>
+<span class="nc" id="L66">        myName.setReporter(pOwner::showValidateError);</span>
+
+        /* Configure description checks */
+<span class="nc" id="L69">        myDesc.setValidator(this::isValidDesc);</span>
+<span class="nc" id="L70">        myDesc.setReporter(pOwner::showValidateError);</span>
+<span class="nc" id="L71">    }</span>
+
+    @Override
+    public void refreshData() {
+        /* If we have an item */
+<span class="nc" id="L76">        final MoneyWiseTransTag myItem = getItem();</span>
+<span class="nc bnc" id="L77" title="All 2 branches missed.">        if (myItem != null) {</span>
+<span class="nc" id="L78">            final MoneyWiseTransTagList myTags = getDataList(MoneyWiseBasicDataType.TRANSTAG, MoneyWiseTransTagList.class);</span>
+<span class="nc" id="L79">            setItem(myTags.findItemById(myItem.getIndexedId()));</span>
+        }
+
+        /* Make sure that the item is not editable */
+<span class="nc" id="L83">        setEditable(false);</span>
+<span class="nc" id="L84">    }</span>
+
+    @Override
+    protected void adjustFields(final boolean isEditable) {
+        /* Access the fieldSet */
+<span class="nc" id="L89">        final PrometheusFieldSet&lt;MoneyWiseTransTag&gt; myFieldSet = getFieldSet();</span>
+
+        /* Determine whether the description field should be visible */
+<span class="nc bnc" id="L92" title="All 4 branches missed.">        final boolean bShowDesc = isEditable || getItem().getDesc() != null;</span>
+<span class="nc" id="L93">        myFieldSet.setFieldVisible(PrometheusDataResource.DATAITEM_FIELD_DESC, bShowDesc);</span>
+<span class="nc" id="L94">    }</span>
+
+    @Override
+    protected void updateField(final PrometheusFieldSetEvent pUpdate) throws OceanusException {
+        /* Access the field */
+<span class="nc" id="L99">        final MetisDataFieldId myField = pUpdate.getFieldId();</span>
+<span class="nc" id="L100">        final MoneyWiseTransTag myTag = getItem();</span>
+
+        /* Process updates */
+<span class="nc bnc" id="L103" title="All 2 branches missed.">        if (PrometheusDataResource.DATAITEM_FIELD_NAME.equals(myField)) {</span>
+            /* Update the Name */
+<span class="nc" id="L105">            myTag.setName(pUpdate.getValue(String.class));</span>
+<span class="nc bnc" id="L106" title="All 2 branches missed.">        } else if (PrometheusDataResource.DATAITEM_FIELD_DESC.equals(myField)) {</span>
+            /* Update the Description */
+<span class="nc" id="L108">            myTag.setDescription(pUpdate.getValue(String.class));</span>
+        }
+<span class="nc" id="L110">    }</span>
+
+    @Override
+    protected void declareGoToItems(final boolean pUpdates) {
+        /* No GoTo items */
+<span class="nc" id="L115">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

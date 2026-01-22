@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseMaps.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.moneywise.views</a> &gt; <span class="el_source">MoneyWiseMaps.java</span></div><h1>MoneyWiseMaps.java</h1><pre class="source lang-java linenums">/*
+ * MoneyWise: Finance Application
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.moneywise.views;
+
+import io.github.tonywasher.joceanus.metis.list.MetisListKey;
+import io.github.tonywasher.joceanus.metis.viewer.MetisViewerEntry;
+import io.github.tonywasher.joceanus.metis.viewer.MetisViewerManager;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePayee;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePortfolio;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurity;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurityHolding;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransCategory;
+import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseAccountInfoClass;
+import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataResource;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataSet;
+import io.github.tonywasher.joceanus.prometheus.maps.PrometheusMapsCtl;
+import io.github.tonywasher.joceanus.prometheus.views.PrometheusEditSet;
+import io.github.tonywasher.joceanus.prometheus.views.PrometheusViewerEntryId;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * MoneyWise Maps.
+ */
+public class MoneyWiseMaps {
+    /**
+     * The Map control.
+     */
+    private final PrometheusMapsCtl theMaps;
+
+    /**
+     * Constructor.
+     *
+     * @param pView the view
+     */
+<span class="fc" id="L55">    MoneyWiseMaps(final MoneyWiseView pView) {</span>
+        /* Create the control */
+<span class="fc" id="L57">        theMaps = new PrometheusMapsCtl(MoneyWiseMaps::deconstructPair);</span>
+
+        /* Build the maps */
+<span class="fc" id="L60">        buildMaps();</span>
+
+        /* Create the top level viewer entry for this view */
+<span class="fc" id="L63">        final MetisViewerManager myViewer = pView.getViewerManager();</span>
+<span class="fc" id="L64">        final MetisViewerEntry mySection = pView.getViewerEntry(PrometheusViewerEntryId.ANALYSIS);</span>
+<span class="fc" id="L65">        final MetisViewerEntry myEntry = myViewer.newEntry(mySection, &quot;NewMaps&quot;);</span>
+<span class="fc" id="L66">        myEntry.setObject(theMaps);</span>
+<span class="fc" id="L67">    }</span>
+
+    /**
+     * Adjust for DataSet.
+     *
+     * @param pDataSet the dataSet
+     */
+    public void adjustForDataSet(final PrometheusDataSet pDataSet) {
+<span class="nc" id="L75">        theMaps.resetMaps();</span>
+<span class="nc" id="L76">        theMaps.adjustForDataSet(pDataSet);</span>
+<span class="nc" id="L77">    }</span>
+
+    /**
+     * Adjust for EditSet.
+     *
+     * @param pEditSet the editSet
+     */
+    public void adjustForEditSet(final PrometheusEditSet pEditSet) {
+<span class="nc" id="L85">        theMaps.resetMaps();</span>
+<span class="nc" id="L86">        theMaps.adjustForEditSet(pEditSet);</span>
+<span class="nc" id="L87">    }</span>
+
+    /**
+     * Build the maps.
+     */
+    private void buildMaps() {
+        /* Build static maps */
+<span class="fc" id="L94">        buildStaticMaps(MoneyWiseStaticDataType.DEPOSITTYPE);</span>
+<span class="fc" id="L95">        buildStaticMaps(MoneyWiseStaticDataType.CASHTYPE);</span>
+<span class="fc" id="L96">        buildStaticMaps(MoneyWiseStaticDataType.LOANTYPE);</span>
+<span class="fc" id="L97">        buildStaticMaps(MoneyWiseStaticDataType.PAYEETYPE);</span>
+<span class="fc" id="L98">        buildStaticMaps(MoneyWiseStaticDataType.SECURITYTYPE);</span>
+<span class="fc" id="L99">        buildStaticMaps(MoneyWiseStaticDataType.PORTFOLIOTYPE);</span>
+<span class="fc" id="L100">        buildStaticMaps(MoneyWiseStaticDataType.TRANSTYPE);</span>
+<span class="fc" id="L101">        buildStaticMaps(MoneyWiseStaticDataType.CURRENCY);</span>
+<span class="fc" id="L102">        buildStaticMaps(MoneyWiseStaticDataType.TAXBASIS);</span>
+<span class="fc" id="L103">        buildStaticMaps(MoneyWiseStaticDataType.ACCOUNTINFOTYPE);</span>
+<span class="fc" id="L104">        buildStaticMaps(MoneyWiseStaticDataType.TRANSINFOTYPE);</span>
+
+        /* Build transTag and region maps */
+<span class="fc" id="L107">        theMaps.declareFieldIdMap(MoneyWiseBasicDataType.TRANSTAG, PrometheusDataResource.DATAITEM_FIELD_NAME);</span>
+<span class="fc" id="L108">        theMaps.declareFieldIdMap(MoneyWiseBasicDataType.REGION, PrometheusDataResource.DATAITEM_FIELD_NAME);</span>
+
+        /* Build category maps */
+<span class="fc" id="L111">        theMaps.declareFieldIdMap(MoneyWiseBasicDataType.DEPOSITCATEGORY, PrometheusDataResource.DATAITEM_FIELD_NAME);</span>
+<span class="fc" id="L112">        theMaps.declareFieldIdMap(MoneyWiseBasicDataType.CASHCATEGORY, PrometheusDataResource.DATAITEM_FIELD_NAME);</span>
+<span class="fc" id="L113">        theMaps.declareFieldIdMap(MoneyWiseBasicDataType.LOANCATEGORY, PrometheusDataResource.DATAITEM_FIELD_NAME);</span>
+<span class="fc" id="L114">        theMaps.declareFieldIdMap(MoneyWiseBasicDataType.TRANSCATEGORY, PrometheusDataResource.DATAITEM_FIELD_NAME);</span>
+<span class="fc" id="L115">        theMaps.declareFieldIdMap(MoneyWiseBasicDataType.TRANSCATEGORY, MoneyWiseStaticDataType.TRANSTYPE,</span>
+<span class="nc" id="L116">                t -&gt; ((MoneyWiseTransCategory) t).getCategoryType().getCategoryClass().isSingular());</span>
+
+        /* Build asset maps */
+<span class="fc" id="L119">        theMaps.declareFieldIdMap(MoneyWiseBasicDataType.PAYEE, PrometheusDataResource.DATAITEM_FIELD_NAME);</span>
+<span class="fc" id="L120">        theMaps.declareFieldIdMap(MoneyWiseBasicDataType.PAYEE, MoneyWiseBasicResource.CATEGORY_NAME,</span>
+<span class="nc" id="L121">                t -&gt; ((MoneyWisePayee) t).getCategoryClass().isSingular());</span>
+<span class="fc" id="L122">        theMaps.declareFieldIdMap(MoneyWiseBasicDataType.DEPOSIT, PrometheusDataResource.DATAITEM_FIELD_NAME, MoneyWiseBasicDataType.PAYEE);</span>
+<span class="fc" id="L123">        theMaps.declareFieldIdMap(MoneyWiseBasicDataType.CASH, PrometheusDataResource.DATAITEM_FIELD_NAME, MoneyWiseBasicDataType.PAYEE);</span>
+<span class="fc" id="L124">        theMaps.declareFieldIdMap(MoneyWiseBasicDataType.LOAN, PrometheusDataResource.DATAITEM_FIELD_NAME, MoneyWiseBasicDataType.PAYEE);</span>
+<span class="fc" id="L125">        theMaps.declareFieldIdMap(MoneyWiseBasicDataType.PORTFOLIO, PrometheusDataResource.DATAITEM_FIELD_NAME, MoneyWiseBasicDataType.PAYEE);</span>
+<span class="fc" id="L126">        theMaps.declareFieldIdMap(MoneyWiseBasicDataType.PORTFOLIO, MoneyWiseBasicResource.CATEGORY_NAME,</span>
+<span class="nc" id="L127">                t -&gt; ((MoneyWisePortfolio) t).getCategoryClass().isSingular());</span>
+<span class="fc" id="L128">        theMaps.declareFieldIdMap(MoneyWiseBasicDataType.SECURITY, PrometheusDataResource.DATAITEM_FIELD_NAME);</span>
+<span class="fc" id="L129">        theMaps.declareFieldIdMap(MoneyWiseBasicDataType.SECURITY, MoneyWiseBasicResource.CATEGORY_NAME,</span>
+<span class="nc" id="L130">                t -&gt; ((MoneyWiseSecurity) t).getCategoryClass().isSingular());</span>
+<span class="fc" id="L131">        theMaps.declareFieldIdMap(MoneyWiseBasicDataType.SECURITY, MoneyWiseAccountInfoClass.SYMBOL,</span>
+<span class="nc" id="L132">                t -&gt; ((MoneyWiseSecurity) t).getCategoryClass().needsSymbol());</span>
+
+        /* Build date maps */
+<span class="fc" id="L135">        theMaps.declareDateIdMap(MoneyWiseBasicDataType.EXCHANGERATE, MoneyWiseBasicResource.XCHGRATE_TO,</span>
+                MoneyWiseBasicResource.MONEYWISEDATA_FIELD_DATE);
+<span class="fc" id="L137">        theMaps.declareDateIdMap(MoneyWiseBasicDataType.SECURITYPRICE, MoneyWiseBasicDataType.SECURITY,</span>
+                MoneyWiseBasicResource.MONEYWISEDATA_FIELD_DATE);
+<span class="fc" id="L139">        theMaps.declareDateIdMap(MoneyWiseBasicDataType.DEPOSITRATE, MoneyWiseBasicDataType.DEPOSIT,</span>
+                MoneyWiseBasicResource.DEPOSITRATE_ENDDATE, true);
+<span class="fc" id="L141">    }</span>
+
+    /**
+     * Build the static map.
+     *
+     * @param pKey the key
+     */
+    private void buildStaticMaps(final MetisListKey pKey) {
+<span class="fc" id="L149">        theMaps.declareFieldIdMap(pKey, PrometheusDataResource.DATAITEM_FIELD_NAME);</span>
+<span class="fc" id="L150">        theMaps.declareFieldIdMap(pKey, PrometheusDataResource.STATICDATA_SORT);</span>
+<span class="fc" id="L151">    }</span>
+
+    /**
+     * Deconstruct linkedPair.
+     *
+     * @param pPair the linked pair
+     * @return the deconstructed items
+     */
+    private static List&lt;PrometheusDataItem&gt; deconstructPair(final Object pPair) {
+<span class="nc" id="L160">        final List&lt;PrometheusDataItem&gt; myList = new ArrayList&lt;&gt;();</span>
+<span class="nc bnc" id="L161" title="All 2 branches missed.">        if (pPair instanceof MoneyWiseSecurityHolding myHolding) {</span>
+<span class="nc" id="L162">            myList.add(myHolding.getPortfolio());</span>
+<span class="nc" id="L163">            myList.add(myHolding.getSecurity());</span>
+        }
+<span class="nc" id="L165">        return myList;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

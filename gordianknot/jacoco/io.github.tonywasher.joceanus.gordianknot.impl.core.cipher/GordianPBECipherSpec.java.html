@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianPBECipherSpec.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.impl.core.cipher</a> &gt; <span class="el_source">GordianPBECipherSpec.java</span></div><h1>GordianPBECipherSpec.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.gordianknot.impl.core.cipher;
+
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianPBESpec;
+
+import java.util.Objects;
+
+/**
+ * PBE Cipher Specification.
+ *
+ * @param &lt;T&gt; the cipher type
+ */
+public class GordianPBECipherSpec&lt;T extends GordianKeySpec&gt; {
+    /**
+     * The PBESpec.
+     */
+    private final GordianPBESpec thePBESpec;
+
+    /**
+     * The CipherSpec.
+     */
+    private final GordianCipherSpec&lt;T&gt; theCipherSpec;
+
+    /**
+     * Is the Spec valid?
+     */
+    private boolean isValid;
+
+    /**
+     * Constructor.
+     *
+     * @param pPBESpec    the PBE Spec
+     * @param pCipherSpec the CipherSpec
+     */
+    public GordianPBECipherSpec(final GordianPBESpec pPBESpec,
+<span class="fc" id="L53">                                final GordianCipherSpec&lt;T&gt; pCipherSpec) {</span>
+<span class="fc" id="L54">        thePBESpec = pPBESpec;</span>
+<span class="fc" id="L55">        theCipherSpec = pCipherSpec;</span>
+<span class="pc bpc" id="L56" title="3 of 6 branches missed.">        isValid = pPBESpec != null &amp;&amp; pPBESpec.isValid()</span>
+<span class="pc bpc" id="L57" title="1 of 2 branches missed.">                &amp;&amp; pCipherSpec != null &amp;&amp; pCipherSpec.isValid();</span>
+<span class="fc" id="L58">    }</span>
+
+    /**
+     * Obtain the pbeSpec.
+     *
+     * @return the pbeSpec
+     */
+    public GordianPBESpec getPBESpec() {
+<span class="fc" id="L66">        return thePBESpec;</span>
+    }
+
+    /**
+     * Obtain the CipherSpec.
+     *
+     * @return the cipherSpec
+     */
+    public GordianCipherSpec&lt;T&gt; getCipherSpec() {
+<span class="nc" id="L75">        return theCipherSpec;</span>
+    }
+
+    /**
+     * is the pbeCipherSpec valid?
+     *
+     * @return true/false
+     */
+    public boolean isValid() {
+<span class="fc" id="L84">        return isValid;</span>
+    }
+
+    @Override
+    public String toString() {
+<span class="nc" id="L89">        return &quot;&quot; + theCipherSpec + &quot;:&quot; + thePBESpec;</span>
+    }
+
+    @Override
+    public boolean equals(final Object pThat) {
+        /* Handle trivial cases */
+<span class="nc bnc" id="L95" title="All 2 branches missed.">        if (this == pThat) {</span>
+<span class="nc" id="L96">            return true;</span>
+        }
+<span class="nc bnc" id="L98" title="All 2 branches missed.">        if (pThat == null) {</span>
+<span class="nc" id="L99">            return false;</span>
+        }
+
+        /* Make sure that the classes are the same */
+<span class="nc bnc" id="L103" title="All 2 branches missed.">        if (!(pThat instanceof GordianPBECipherSpec)) {</span>
+<span class="nc" id="L104">            return false;</span>
+        }
+<span class="nc" id="L106">        final GordianPBECipherSpec&lt;?&gt; myThat = (GordianPBECipherSpec&lt;?&gt;) pThat;</span>
+
+        /* Check that the fields are equal */
+<span class="nc bnc" id="L109" title="All 2 branches missed.">        return Objects.equals(theCipherSpec, myThat.getCipherSpec())</span>
+<span class="nc bnc" id="L110" title="All 2 branches missed.">                &amp;&amp; Objects.equals(thePBESpec, myThat.getPBESpec());</span>
+    }
+
+    @Override
+    public int hashCode() {
+<span class="nc" id="L115">        return theCipherSpec.hashCode() + thePBESpec.hashCode();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

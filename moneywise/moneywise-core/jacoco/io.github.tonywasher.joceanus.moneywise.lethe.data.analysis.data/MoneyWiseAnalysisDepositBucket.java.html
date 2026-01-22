@@ -1,0 +1,490 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseAnalysisDepositBucket.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data</a> &gt; <span class="el_source">MoneyWiseAnalysisDepositBucket.java</span></div><h1>MoneyWiseAnalysisDepositBucket.java</h1><pre class="source lang-java linenums">/*
+ * MoneyWise: Finance Application
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data;
+
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.metis.data.MetisDataDifference;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDataSet;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDeposit;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDepositCategory;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDepositRate;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDepositRate.MoneyWiseDepositRateDataMap;
+import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseDepositCategoryClass;
+import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTransCategoryClass;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisAccountAttr;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisAccountValues;
+
+import java.util.Currency;
+import java.util.Iterator;
+
+/**
+ * The Deposit Bucket class.
+ */
+public final class MoneyWiseAnalysisDepositBucket
+        extends MoneyWiseAnalysisAccountBucket&lt;MoneyWiseDeposit&gt; {
+    /**
+     * Local Report fields.
+     */
+<span class="nc" id="L46">    private static final MetisFieldSet&lt;MoneyWiseAnalysisDepositBucket&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseAnalysisDepositBucket.class);</span>
+
+    /*
+     * Declare Fields.
+     */
+    static {
+<span class="nc" id="L52">        FIELD_DEFS.declareLocalField(MoneyWiseBasicDataType.DEPOSITCATEGORY, MoneyWiseAnalysisDepositBucket::getCategory);</span>
+<span class="nc" id="L53">    }</span>
+
+    /**
+     * The analysis.
+     */
+    private final MoneyWiseAnalysis theAnalysis;
+
+    /**
+     * The deposit category.
+     */
+    private final MoneyWiseDepositCategory theCategory;
+
+    /**
+     * Is this a peer2peer?
+     */
+    private final Boolean isPeer2Peer;
+
+    /**
+     * Constructor.
+     *
+     * @param pAnalysis the analysis
+     * @param pDeposit  the deposit
+     */
+    private MoneyWiseAnalysisDepositBucket(final MoneyWiseAnalysis pAnalysis,
+                                           final MoneyWiseDeposit pDeposit) {
+        /* Call super-constructor */
+<span class="nc" id="L79">        super(pAnalysis, pDeposit);</span>
+
+        /* Obtain category */
+<span class="nc" id="L82">        theAnalysis = pAnalysis;</span>
+<span class="nc" id="L83">        theCategory = pDeposit.getCategory();</span>
+
+        /* Determine whether this is a peer2peer */
+<span class="nc" id="L86">        isPeer2Peer = theCategory.isCategoryClass(MoneyWiseDepositCategoryClass.PEER2PEER);</span>
+<span class="nc" id="L87">    }</span>
+
+    /**
+     * Constructor.
+     *
+     * @param pAnalysis the analysis
+     * @param pBase     the underlying bucket
+     */
+    private MoneyWiseAnalysisDepositBucket(final MoneyWiseAnalysis pAnalysis,
+                                           final MoneyWiseAnalysisDepositBucket pBase) {
+        /* Call super-constructor */
+<span class="nc" id="L98">        super(pAnalysis, pBase);</span>
+
+        /* Copy details from base */
+<span class="nc" id="L101">        theAnalysis = pAnalysis;</span>
+<span class="nc" id="L102">        theCategory = pBase.getCategory();</span>
+<span class="nc" id="L103">        isPeer2Peer = pBase.isPeer2Peer();</span>
+<span class="nc" id="L104">    }</span>
+
+    /**
+     * Constructor.
+     *
+     * @param pAnalysis the analysis
+     * @param pBase     the underlying bucket
+     * @param pDate     the date for the bucket
+     */
+    private MoneyWiseAnalysisDepositBucket(final MoneyWiseAnalysis pAnalysis,
+                                           final MoneyWiseAnalysisDepositBucket pBase,
+                                           final OceanusDate pDate) {
+        /* Call super-constructor */
+<span class="nc" id="L117">        super(pAnalysis, pBase, pDate);</span>
+
+        /* Obtain category */
+<span class="nc" id="L120">        theAnalysis = pAnalysis;</span>
+<span class="nc" id="L121">        theCategory = pBase.getCategory();</span>
+<span class="nc" id="L122">        isPeer2Peer = pBase.isPeer2Peer();</span>
+<span class="nc" id="L123">    }</span>
+
+    /**
+     * Constructor.
+     *
+     * @param pAnalysis the analysis
+     * @param pBase     the underlying bucket
+     * @param pRange    the range for the bucket
+     */
+    private MoneyWiseAnalysisDepositBucket(final MoneyWiseAnalysis pAnalysis,
+                                           final MoneyWiseAnalysisDepositBucket pBase,
+                                           final OceanusDateRange pRange) {
+        /* Call super-constructor */
+<span class="nc" id="L136">        super(pAnalysis, pBase, pRange);</span>
+
+        /* Copy details from base */
+<span class="nc" id="L139">        theAnalysis = pAnalysis;</span>
+<span class="nc" id="L140">        theCategory = pBase.getCategory();</span>
+<span class="nc" id="L141">        isPeer2Peer = pBase.isPeer2Peer();</span>
+<span class="nc" id="L142">    }</span>
+
+    @Override
+    public MetisFieldSet&lt;MoneyWiseAnalysisDepositBucket&gt; getDataFieldSet() {
+<span class="nc" id="L146">        return FIELD_DEFS;</span>
+    }
+
+    /**
+     * Obtain the deposit category.
+     *
+     * @return the deposit category
+     */
+    public MoneyWiseDepositCategory getCategory() {
+<span class="nc" id="L155">        return theCategory;</span>
+    }
+
+    /**
+     * Is this a peer2peer?
+     *
+     * @return true/false
+     */
+    public Boolean isPeer2Peer() {
+<span class="nc" id="L164">        return isPeer2Peer;</span>
+    }
+
+    @Override
+    protected MoneyWiseAnalysisAccountValues allocateStandardValues(final Currency pCurrency) {
+<span class="nc bnc" id="L169" title="All 2 branches missed.">        return getAccount().isDepositClass(MoneyWiseDepositCategoryClass.PEER2PEER)</span>
+<span class="nc" id="L170">                ? new MoneyWiseAnalysisPeer2PeerValues(pCurrency)</span>
+<span class="nc" id="L171">                : super.allocateStandardValues(pCurrency);</span>
+    }
+
+    @Override
+    protected MoneyWiseAnalysisAccountValues allocateForeignValues(final Currency pCurrency,
+                                                                   final Currency pReportingCurrency) {
+<span class="nc bnc" id="L177" title="All 2 branches missed.">        return getAccount().isDepositClass(MoneyWiseDepositCategoryClass.PEER2PEER)</span>
+<span class="nc" id="L178">                ? new MoneyWiseAnalysisPeer2PeerValues(pCurrency, pReportingCurrency)</span>
+<span class="nc" id="L179">                : super.allocateForeignValues(pCurrency, pReportingCurrency);</span>
+    }
+
+    @Override
+    protected void recordRate(final OceanusDate pDate) {
+        /* Obtain the appropriate rate record */
+<span class="nc" id="L185">        final MoneyWiseDataSet myData = theAnalysis.getData();</span>
+<span class="nc" id="L186">        final MoneyWiseDepositRateDataMap myRateMap = myData.getDepositRateDataMap();</span>
+<span class="nc" id="L187">        final MoneyWiseDeposit myDeposit = getAccount();</span>
+<span class="nc" id="L188">        final MoneyWiseDepositRate myRate = myRateMap.getRateForDate(myDeposit, pDate);</span>
+<span class="nc" id="L189">        OceanusDate myDate = myDeposit.getMaturity();</span>
+
+        /* If we have a rate */
+<span class="nc bnc" id="L192" title="All 2 branches missed.">        if (myRate != null) {</span>
+            /* Use Rate date instead */
+<span class="nc bnc" id="L194" title="All 2 branches missed.">            if (myDate == null) {</span>
+<span class="nc" id="L195">                myDate = myRate.getDate();</span>
+            }
+
+            /* Store the rate */
+<span class="nc" id="L199">            setValue(MoneyWiseAnalysisAccountAttr.DEPOSITRATE, myRate.getRate());</span>
+        }
+
+        /* Store the maturity */
+<span class="nc bnc" id="L203" title="All 2 branches missed.">        if (myDate != null) {</span>
+<span class="nc" id="L204">            setValue(MoneyWiseAnalysisAccountAttr.MATURITY, myDate);</span>
+        }
+<span class="nc" id="L206">    }</span>
+
+    @Override
+    public void adjustForDebit(final MoneyWiseAnalysisTransactionHelper pHelper) {
+        /* If this is a peer2peer and a bad debt transaction */
+<span class="nc bnc" id="L211" title="All 2 branches missed.">        if (Boolean.TRUE.equals(isPeer2Peer)</span>
+<span class="nc bnc" id="L212" title="All 2 branches missed.">                &amp;&amp; isBadDebt(pHelper)) {</span>
+            /* Access the amount */
+<span class="nc" id="L214">            final OceanusMoney myAmount = pHelper.getDebitAmount();</span>
+<span class="nc" id="L215">            final MoneyWiseAnalysisAccountAttr myAttr = badDebtAttr(pHelper);</span>
+
+            /* If we have a non-zero amount */
+<span class="nc bnc" id="L218" title="All 2 branches missed.">            if (myAmount.isNonZero()) {</span>
+                /* Adjust counter */
+<span class="nc" id="L220">                adjustCounter(myAttr, myAmount);</span>
+            }
+        }
+
+        /* Pass call on */
+<span class="nc" id="L225">        super.adjustForDebit(pHelper);</span>
+<span class="nc" id="L226">    }</span>
+
+    @Override
+    public void adjustForCredit(final MoneyWiseAnalysisTransactionHelper pHelper) {
+        /* If this is a peer2peer and a bad debt transaction */
+<span class="nc bnc" id="L231" title="All 2 branches missed.">        if (Boolean.TRUE.equals(isPeer2Peer)</span>
+<span class="nc bnc" id="L232" title="All 2 branches missed.">                &amp;&amp; isBadDebt(pHelper)) {</span>
+            /* Access the amount */
+<span class="nc" id="L234">            OceanusMoney myAmount = pHelper.getCreditAmount();</span>
+<span class="nc" id="L235">            final MoneyWiseAnalysisAccountAttr myAttr = badDebtAttr(pHelper);</span>
+
+            /* If we have a non-zero amount */
+<span class="nc bnc" id="L238" title="All 2 branches missed.">            if (myAmount.isNonZero()) {</span>
+                /* Adjust bad debt */
+<span class="nc" id="L240">                myAmount = new OceanusMoney(myAmount);</span>
+<span class="nc" id="L241">                myAmount.negate();</span>
+<span class="nc" id="L242">                adjustCounter(myAttr, myAmount);</span>
+            }
+        }
+
+        /* Pass call on */
+<span class="nc" id="L247">        super.adjustForCredit(pHelper);</span>
+<span class="nc" id="L248">    }</span>
+
+    /**
+     * Is the transaction a badDebt?
+     *
+     * @param pHelper the transaction helper
+     * @return true/false
+     */
+    boolean isBadDebt(final MoneyWiseAnalysisTransactionHelper pHelper) {
+<span class="nc bnc" id="L257" title="All 2 branches missed.">        return pHelper.isCategoryClass(MoneyWiseTransCategoryClass.BADDEBTCAPITAL)</span>
+<span class="nc bnc" id="L258" title="All 2 branches missed.">                || pHelper.isCategoryClass(MoneyWiseTransCategoryClass.BADDEBTINTEREST);</span>
+    }
+
+    /**
+     * Obtain the badDebt attribute.
+     *
+     * @param pHelper the transaction helper
+     * @return the attribute
+     */
+    MoneyWiseAnalysisAccountAttr badDebtAttr(final MoneyWiseAnalysisTransactionHelper pHelper) {
+<span class="nc bnc" id="L268" title="All 2 branches missed.">        return pHelper.isCategoryClass(MoneyWiseTransCategoryClass.BADDEBTCAPITAL)</span>
+<span class="nc" id="L269">                ? MoneyWiseAnalysisAccountAttr.BADDEBTCAPITAL</span>
+<span class="nc" id="L270">                : MoneyWiseAnalysisAccountAttr.BADDEBTINTEREST;</span>
+    }
+
+    /**
+     * Peer2PeerValues class.
+     */
+    public static final class MoneyWiseAnalysisPeer2PeerValues
+            extends MoneyWiseAnalysisAccountValues {
+        /**
+         * Constructor.
+         *
+         * @param pCurrency the account currency
+         */
+        private MoneyWiseAnalysisPeer2PeerValues(final Currency pCurrency) {
+            /* Initialise class */
+<span class="nc" id="L285">            super(pCurrency);</span>
+
+            /* Initialise BadDebt to zero */
+<span class="nc" id="L288">            setValue(MoneyWiseAnalysisAccountAttr.BADDEBTCAPITAL, new OceanusMoney(pCurrency));</span>
+<span class="nc" id="L289">            setValue(MoneyWiseAnalysisAccountAttr.BADDEBTINTEREST, new OceanusMoney(pCurrency));</span>
+<span class="nc" id="L290">        }</span>
+
+        /**
+         * Constructor.
+         *
+         * @param pCurrency          the account currency
+         * @param pReportingCurrency the reporting currency
+         */
+        private MoneyWiseAnalysisPeer2PeerValues(final Currency pCurrency,
+                                                 final Currency pReportingCurrency) {
+            /* Initialise class */
+<span class="nc" id="L301">            super(pCurrency, pReportingCurrency);</span>
+
+            /* Initialise BadDebt to zero */
+<span class="nc" id="L304">            setValue(MoneyWiseAnalysisAccountAttr.BADDEBTCAPITAL, new OceanusMoney(pCurrency));</span>
+<span class="nc" id="L305">            setValue(MoneyWiseAnalysisAccountAttr.BADDEBTINTEREST, new OceanusMoney(pCurrency));</span>
+<span class="nc" id="L306">        }</span>
+
+        /**
+         * Constructor.
+         *
+         * @param pSource       the source map.
+         * @param pCountersOnly only copy counters
+         */
+        private MoneyWiseAnalysisPeer2PeerValues(final MoneyWiseAnalysisPeer2PeerValues pSource,
+                                                 final boolean pCountersOnly) {
+            /* Initialise class */
+<span class="nc" id="L317">            super(pSource, pCountersOnly);</span>
+<span class="nc" id="L318">        }</span>
+
+        @Override
+        protected MoneyWiseAnalysisPeer2PeerValues getCounterSnapShot() {
+<span class="nc" id="L322">            return new MoneyWiseAnalysisPeer2PeerValues(this, true);</span>
+        }
+
+        @Override
+        protected MoneyWiseAnalysisPeer2PeerValues getFullSnapShot() {
+<span class="nc" id="L327">            return new MoneyWiseAnalysisPeer2PeerValues(this, false);</span>
+        }
+    }
+
+    /**
+     * DepositBucket list class.
+     */
+    public static final class MoneyWiseAnalysisDepositBucketList
+            extends MoneyWiseAnalysisAccountBucketList&lt;MoneyWiseAnalysisDepositBucket, MoneyWiseDeposit&gt; {
+        /**
+         * Local Report fields.
+         */
+<span class="fc" id="L339">        private static final MetisFieldSet&lt;MoneyWiseAnalysisDepositBucketList&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseAnalysisDepositBucketList.class);</span>
+
+        /**
+         * Construct a top-level List.
+         *
+         * @param pAnalysis the analysis
+         */
+        MoneyWiseAnalysisDepositBucketList(final MoneyWiseAnalysis pAnalysis) {
+            /* Initialise class */
+<span class="fc" id="L348">            super(pAnalysis);</span>
+<span class="fc" id="L349">        }</span>
+
+        /**
+         * Construct a view List.
+         *
+         * @param pAnalysis the analysis
+         * @param pBase     the base list
+         */
+        MoneyWiseAnalysisDepositBucketList(final MoneyWiseAnalysis pAnalysis,
+                                           final MoneyWiseAnalysisDepositBucketList pBase) {
+            /* Initialise class */
+<span class="nc" id="L360">            this(pAnalysis);</span>
+
+            /* Construct list from base */
+<span class="nc" id="L363">            constructFromBase(pBase);</span>
+<span class="nc" id="L364">        }</span>
+
+        /**
+         * Construct a dated List.
+         *
+         * @param pAnalysis the analysis
+         * @param pBase     the base list
+         * @param pDate     the Date
+         */
+        MoneyWiseAnalysisDepositBucketList(final MoneyWiseAnalysis pAnalysis,
+                                           final MoneyWiseAnalysisDepositBucketList pBase,
+                                           final OceanusDate pDate) {
+            /* Initialise class */
+<span class="nc" id="L377">            this(pAnalysis);</span>
+
+            /* Construct list from base */
+<span class="nc" id="L380">            constructFromBase(pBase, pDate);</span>
+<span class="nc" id="L381">        }</span>
+
+        /**
+         * Construct a ranged List.
+         *
+         * @param pAnalysis the analysis
+         * @param pBase     the base list
+         * @param pRange    the Date Range
+         */
+        MoneyWiseAnalysisDepositBucketList(final MoneyWiseAnalysis pAnalysis,
+                                           final MoneyWiseAnalysisDepositBucketList pBase,
+                                           final OceanusDateRange pRange) {
+            /* Initialise class */
+<span class="nc" id="L394">            this(pAnalysis);</span>
+
+            /* Construct list from base */
+<span class="nc" id="L397">            constructFromBase(pBase, pRange);</span>
+<span class="nc" id="L398">        }</span>
+
+        @Override
+        public MetisFieldSet&lt;MoneyWiseAnalysisDepositBucketList&gt; getDataFieldSet() {
+<span class="nc" id="L402">            return FIELD_DEFS;</span>
+        }
+
+        /**
+         * Obtain the matching DepositBucket.
+         *
+         * @param pDeposit the deposit
+         * @return the matching bucket
+         */
+        public MoneyWiseAnalysisDepositBucket getMatchingDeposit(final MoneyWiseDeposit pDeposit) {
+            /* Return the matching deposit if it exists else an orphan bucket */
+<span class="nc" id="L413">            final MoneyWiseAnalysisDepositBucket myDeposit = findItemById(pDeposit.getIndexedId());</span>
+<span class="nc bnc" id="L414" title="All 2 branches missed.">            return myDeposit != null</span>
+<span class="nc" id="L415">                    ? myDeposit</span>
+<span class="nc" id="L416">                    : new MoneyWiseAnalysisDepositBucket(getAnalysis(), pDeposit);</span>
+        }
+
+        /**
+         * Obtain the default Deposit.
+         *
+         * @return the bucket
+         */
+        public MoneyWiseAnalysisDepositBucket getDefaultDeposit() {
+            /* Return the first deposit in the list if it exists */
+<span class="nc bnc" id="L426" title="All 2 branches missed.">            return isEmpty()</span>
+<span class="nc" id="L427">                    ? null</span>
+<span class="nc" id="L428">                    : getUnderlyingList().get(0);</span>
+        }
+
+        /**
+         * Obtain the default Deposit for the category.
+         *
+         * @param pCategory the category
+         * @return the bucket
+         */
+        public MoneyWiseAnalysisDepositBucket getDefaultDeposit(final MoneyWiseDepositCategory pCategory) {
+            /* If there is a category */
+<span class="nc bnc" id="L439" title="All 2 branches missed.">            if (pCategory != null) {</span>
+                /* Loop through the available account values */
+<span class="nc" id="L441">                final Iterator&lt;MoneyWiseAnalysisDepositBucket&gt; myIterator = iterator();</span>
+<span class="nc bnc" id="L442" title="All 2 branches missed.">                while (myIterator.hasNext()) {</span>
+<span class="nc" id="L443">                    final MoneyWiseAnalysisDepositBucket myBucket = myIterator.next();</span>
+
+                    /* Return if correct category */
+<span class="nc bnc" id="L446" title="All 2 branches missed.">                    if (MetisDataDifference.isEqual(pCategory, myBucket.getCategory())) {</span>
+<span class="nc" id="L447">                        return myBucket;</span>
+                    }
+<span class="nc" id="L449">                }</span>
+            }
+
+            /* No default deposit */
+<span class="nc" id="L453">            return null;</span>
+        }
+
+        /**
+         * Obtain an orphan DepositBucket for a given deposit account.
+         *
+         * @param pDeposit the deposit account
+         * @return the bucket
+         */
+        public MoneyWiseAnalysisDepositBucket getOrphanBucket(final MoneyWiseDeposit pDeposit) {
+            /* Allocate an orphan bucket */
+<span class="nc" id="L464">            return newBucket(pDeposit);</span>
+        }
+
+        @Override
+        protected MoneyWiseAnalysisDepositBucket newBucket(final MoneyWiseDeposit pDeposit) {
+<span class="nc" id="L469">            return new MoneyWiseAnalysisDepositBucket(getAnalysis(), pDeposit);</span>
+        }
+
+        @Override
+        protected MoneyWiseAnalysisDepositBucket newBucket(final MoneyWiseAnalysisDepositBucket pBase) {
+<span class="nc" id="L474">            return new MoneyWiseAnalysisDepositBucket(getAnalysis(), pBase);</span>
+        }
+
+        @Override
+        protected MoneyWiseAnalysisDepositBucket newBucket(final MoneyWiseAnalysisDepositBucket pBase,
+                                                           final OceanusDate pDate) {
+<span class="nc" id="L480">            return new MoneyWiseAnalysisDepositBucket(getAnalysis(), pBase, pDate);</span>
+        }
+
+        @Override
+        protected MoneyWiseAnalysisDepositBucket newBucket(final MoneyWiseAnalysisDepositBucket pBase,
+                                                           final OceanusDateRange pRange) {
+<span class="nc" id="L486">            return new MoneyWiseAnalysisDepositBucket(getAnalysis(), pBase, pRange);</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

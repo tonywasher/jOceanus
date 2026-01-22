@@ -1,0 +1,418 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ThemisDSMModule.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Themis Core Project Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.themis.lethe.dsm</a> &gt; <span class="el_source">ThemisDSMModule.java</span></div><h1>ThemisDSMModule.java</h1><pre class="source lang-java linenums">/*
+ * Themis: Java Project Framework
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.themis.lethe.dsm;
+
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.themis.exc.ThemisIOException;
+import io.github.tonywasher.joceanus.themis.lethe.analysis.ThemisAnalysisMaven;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Objects;
+
+/**
+ * DSM Module.
+ */
+public class ThemisDSMModule {
+    /**
+     * The java directory.
+     */
+    private static final String DIR_JAVA = &quot;src/main/java&quot;;
+
+    /**
+     * The location of the module.
+     */
+    private final File theLocation;
+
+    /**
+     * The name of the module.
+     */
+    private final String theModule;
+
+    /**
+     * The list of subModules.
+     */
+    private final List&lt;ThemisDSMModule&gt; theSubModules;
+
+    /**
+     * The list of packages.
+     */
+    private final List&lt;ThemisDSMPackage&gt; thePackages;
+
+    /**
+     * The error.
+     */
+    private OceanusException theError;
+
+    /**
+     * Constructor.
+     *
+     * @param pLocation the location of the project
+     */
+<span class="nc" id="L72">    ThemisDSMModule(final File pLocation) {</span>
+<span class="nc" id="L73">        theLocation = pLocation;</span>
+<span class="nc" id="L74">        theModule = theLocation.getName();</span>
+<span class="nc" id="L75">        theSubModules = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L76">        thePackages = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L77">    }</span>
+
+    /**
+     * Return the location of the module.
+     *
+     * @return the location
+     */
+    File getLocation() {
+<span class="nc" id="L85">        return theLocation;</span>
+    }
+
+    /**
+     * Return the module name.
+     *
+     * @return the name
+     */
+    String getModuleName() {
+<span class="nc" id="L94">        return theModule;</span>
+    }
+
+    /**
+     * Add a package to the list.
+     *
+     * @param pPackage the package
+     */
+    void registerPackage(final ThemisDSMPackage pPackage) {
+<span class="nc bnc" id="L103" title="All 2 branches missed.">        if (thePackages.contains(pPackage)) {</span>
+<span class="nc" id="L104">            throw new IllegalArgumentException(&quot;Already included&quot;);</span>
+        }
+
+        /* Add the package */
+<span class="nc" id="L108">        thePackages.add(pPackage);</span>
+<span class="nc" id="L109">    }</span>
+
+    /**
+     * Obtain an iterator of the imports.
+     *
+     * @return the iterator
+     */
+    Iterator&lt;ThemisDSMModule&gt; moduleIterator() {
+<span class="nc" id="L117">        return theSubModules.iterator();</span>
+    }
+
+    /**
+     * Does the module have subModules?
+     *
+     * @return true/false
+     */
+    boolean hasSubModules() {
+<span class="nc bnc" id="L126" title="All 2 branches missed.">        return !theSubModules.isEmpty();</span>
+    }
+
+    /**
+     * Does the module have packages?
+     *
+     * @return true/false
+     */
+    boolean hasPackages() {
+<span class="nc bnc" id="L135" title="All 2 branches missed.">        return !thePackages.isEmpty();</span>
+    }
+
+    /**
+     * Obtain the count of packages.
+     *
+     * @return the count
+     */
+    int getPackageCount() {
+<span class="nc" id="L144">        return thePackages.size();</span>
+    }
+
+    /**
+     * Obtain the error.
+     *
+     * @return error
+     */
+    public OceanusException getError() {
+<span class="nc" id="L153">        return theError;</span>
+    }
+
+    /**
+     * Obtain an iterator of the imports.
+     *
+     * @return the iterator
+     */
+    Iterator&lt;ThemisDSMPackage&gt; packageIterator() {
+<span class="nc" id="L162">        return thePackages.iterator();</span>
+    }
+
+    /**
+     * Obtain an iterator of the imports.
+     *
+     * @return the iterator
+     */
+    public ThemisDSMPackage getDefaultPackage() {
+<span class="nc" id="L171">        final List&lt;ThemisDSMPackage&gt; myList = listPackages();</span>
+<span class="nc bnc" id="L172" title="All 2 branches missed.">        return myList.isEmpty() ? null : myList.get(0);</span>
+    }
+
+    /**
+     * Obtain an indexed package.
+     *
+     * @param pIndex the index of the package
+     * @return the package
+     */
+    public ThemisDSMPackage getIndexedPackage(final int pIndex) {
+<span class="nc" id="L182">        final List&lt;ThemisDSMPackage&gt; myList = listPackages();</span>
+<span class="nc bnc" id="L183" title="All 4 branches missed.">        return myList.size() &lt;= pIndex || pIndex &lt; 0 ? null : myList.get(pIndex);</span>
+    }
+
+    /**
+     * Obtain a list of all modules and submodules that contain packages.
+     *
+     * @return the list
+     */
+    List&lt;ThemisDSMModule&gt; listModules() {
+        /* Create result list and loop through the modules */
+<span class="nc" id="L193">        final List&lt;ThemisDSMModule&gt; myList = new ArrayList&lt;&gt;();</span>
+<span class="nc bnc" id="L194" title="All 2 branches missed.">        for (ThemisDSMModule myModule : theSubModules) {</span>
+            /* Only add the module if it has packages */
+<span class="nc bnc" id="L196" title="All 2 branches missed.">            if (myModule.hasPackages()) {</span>
+<span class="nc" id="L197">                myList.add(myModule);</span>
+            }
+
+            /* Add any subModules */
+<span class="nc" id="L201">            myList.addAll(myModule.listModules());</span>
+<span class="nc" id="L202">        }</span>
+
+        /* Return the list */
+<span class="nc" id="L205">        return myList;</span>
+    }
+
+    @Override
+    public boolean equals(final Object pThat) {
+        /* Handle the trivial cases */
+<span class="nc bnc" id="L211" title="All 2 branches missed.">        if (this == pThat) {</span>
+<span class="nc" id="L212">            return true;</span>
+        }
+<span class="nc bnc" id="L214" title="All 2 branches missed.">        if (pThat == null) {</span>
+<span class="nc" id="L215">            return false;</span>
+        }
+
+        /* Make sure that the object is a module */
+<span class="nc bnc" id="L219" title="All 2 branches missed.">        if (pThat.getClass() != this.getClass()) {</span>
+<span class="nc" id="L220">            return false;</span>
+        }
+
+        /* Access the target Class */
+<span class="nc" id="L224">        final ThemisDSMModule myThat = (ThemisDSMModule) pThat;</span>
+
+        /* Check name */
+<span class="nc" id="L227">        return theModule.equals(myThat.getModuleName());</span>
+    }
+
+    @Override
+    public int hashCode() {
+<span class="nc" id="L232">        return theModule.hashCode();</span>
+    }
+
+    /**
+     * process modules and packages.
+     */
+    void processModulesAndPackages() {
+        /* Process the project */
+<span class="nc" id="L240">        parseProjectFile(new File(theLocation, ThemisAnalysisMaven.POM));</span>
+
+        /* Look for the source directory */
+<span class="nc" id="L243">        final File mySrc = new File(theLocation, DIR_JAVA);</span>
+<span class="nc bnc" id="L244" title="All 2 branches missed.">        if (mySrc.isDirectory()) {</span>
+            /* Process any packages */
+<span class="nc" id="L246">            processPackages(mySrc);</span>
+        }
+
+        /* Process the classes */
+<span class="nc" id="L250">        processClasses();</span>
+
+        /* Process the dependencies */
+<span class="nc" id="L253">        processDependencies();</span>
+<span class="nc" id="L254">    }</span>
+
+    /**
+     * process packages.
+     *
+     * @param pPath the location of the package
+     */
+    void processPackages(final File pPath) {
+        /* Loop through the entries in the directory */
+<span class="nc bnc" id="L263" title="All 2 branches missed.">        for (File myFile : Objects.requireNonNull(pPath.listFiles())) {</span>
+            /* Ignore files */
+<span class="nc bnc" id="L265" title="All 2 branches missed.">            if (!myFile.isDirectory()) {</span>
+<span class="nc" id="L266">                continue;</span>
+            }
+
+            /* Process the package */
+<span class="nc" id="L270">            final ThemisDSMPackage myPackage = new ThemisDSMPackage(this, myFile);</span>
+<span class="nc" id="L271">            myPackage.processPackages();</span>
+        }
+<span class="nc" id="L273">    }</span>
+
+    /**
+     * process classes.
+     */
+    private void processClasses() {
+        /* Loop through the packages */
+<span class="nc bnc" id="L280" title="All 2 branches missed.">        for (ThemisDSMPackage myPackage : thePackages) {</span>
+            /* Process the classes */
+<span class="nc" id="L282">            myPackage.processClasses();</span>
+<span class="nc" id="L283">        }</span>
+<span class="nc" id="L284">    }</span>
+
+    /**
+     * process dependencies.
+     */
+    private void processDependencies() {
+        /* Loop through the packages */
+<span class="nc bnc" id="L291" title="All 2 branches missed.">        for (ThemisDSMPackage myPackage : thePackages) {</span>
+            /* Process the classes */
+<span class="nc" id="L293">            myPackage.processDependencies();</span>
+<span class="nc" id="L294">        }</span>
+
+        /* Sort the packages */
+<span class="nc" id="L297">        thePackages.sort(ThemisDSMPackage::compareTo);</span>
+<span class="nc" id="L298">    }</span>
+
+    /**
+     * Find a class reference.
+     *
+     * @param pReference the class name
+     * @return the found class or null
+     */
+    ThemisDSMClass findClass(final String pReference) {
+        /* Loop through the packages */
+<span class="nc bnc" id="L308" title="All 2 branches missed.">        for (ThemisDSMPackage myPackage : thePackages) {</span>
+            /* Ignore if the package is not a possibility */
+<span class="nc" id="L310">            final String myPrefix = myPackage.getPackageName() + ThemisDSMPackage.SEP_PACKAGE;</span>
+<span class="nc bnc" id="L311" title="All 2 branches missed.">            if (!pReference.startsWith(myPrefix)) {</span>
+<span class="nc" id="L312">                continue;</span>
+            }
+
+            /* Loop through the classes */
+<span class="nc" id="L316">            final ThemisDSMClass myClass = myPackage.findClass(pReference);</span>
+<span class="nc bnc" id="L317" title="All 2 branches missed.">            if (myClass != null) {</span>
+<span class="nc" id="L318">                return myClass;</span>
+            }
+<span class="nc" id="L320">        }</span>
+
+        /* No match */
+<span class="nc" id="L323">        return null;</span>
+    }
+
+    /**
+     * Does this module contain circular package references?
+     *
+     * @return true/false
+     */
+    public boolean isCircular() {
+        /* Loop through the dependencies */
+<span class="nc bnc" id="L333" title="All 2 branches missed.">        for (ThemisDSMPackage myPackage : thePackages) {</span>
+<span class="nc bnc" id="L334" title="All 2 branches missed.">            if (myPackage.isCircular()) {</span>
+<span class="nc" id="L335">                return true;</span>
+            }
+<span class="nc" id="L337">        }</span>
+<span class="nc" id="L338">        return false;</span>
+    }
+
+    /**
+     * Obtain a list of all packages that have dependencies.
+     *
+     * @return the list
+     */
+    public List&lt;ThemisDSMPackage&gt; listPackages() {
+        /* Create result list and loop through the modules */
+<span class="nc" id="L348">        final List&lt;ThemisDSMPackage&gt; myList = new ArrayList&lt;&gt;();</span>
+<span class="nc bnc" id="L349" title="All 2 branches missed.">        for (ThemisDSMPackage myPackage : thePackages) {</span>
+<span class="nc" id="L350">            myList.add(myPackage);</span>
+<span class="nc" id="L351">        }</span>
+
+        /* Return the list */
+<span class="nc" id="L354">        return myList;</span>
+    }
+
+    /**
+     * Compare this package to another module for sort order.
+     *
+     * @param pThat the other module to compare to
+     * @return true/false
+     */
+    public int compareTo(final ThemisDSMModule pThat) {
+        /* Handle circular status */
+<span class="nc bnc" id="L365" title="All 2 branches missed.">        if (isCircular() != pThat.isCircular()) {</span>
+<span class="nc bnc" id="L366" title="All 2 branches missed.">            return isCircular() ? -1 : 1;</span>
+        }
+
+        /* If all else fails rely on alphabetical */
+<span class="nc" id="L370">        return theModule.compareTo(pThat.getModuleName());</span>
+    }
+
+    @Override
+    public String toString() {
+<span class="nc" id="L375">        return getModuleName();</span>
+    }
+
+    /**
+     * Parse the maven project file.
+     *
+     * @param pPom the project file
+     */
+    private void parseProjectFile(final File pPom) {
+        /* If the pom file does not exist, just return */
+<span class="nc bnc" id="L385" title="All 2 branches missed.">        if (!pPom.exists()) {</span>
+<span class="nc" id="L386">            return;</span>
+        }
+
+        /* Protect against exceptions */
+<span class="nc" id="L390">        try (InputStream myInStream = new FileInputStream(pPom)) {</span>
+            /* Parse the Project definition file */
+<span class="nc" id="L392">            final ThemisAnalysisMaven myPom = new ThemisAnalysisMaven(myInStream);</span>
+
+            /* Loop through the modules */
+<span class="nc bnc" id="L395" title="All 2 branches missed.">            for (final String myModuleName : myPom.getModules()) {</span>
+<span class="nc" id="L396">                final File myModuleDir = new File(pPom.getParentFile(), myModuleName);</span>
+
+<span class="nc" id="L398">                final ThemisDSMModule myModule = new ThemisDSMModule(myModuleDir);</span>
+<span class="nc" id="L399">                myModule.processModulesAndPackages();</span>
+<span class="nc bnc" id="L400" title="All 2 branches missed.">                if (myModule.getPackageCount() &gt; 1</span>
+<span class="nc bnc" id="L401" title="All 2 branches missed.">                        || myModule.hasSubModules()) {</span>
+<span class="nc" id="L402">                    theSubModules.add(myModule);</span>
+                }
+<span class="nc" id="L404">            }</span>
+
+            /* Sort the modules */
+<span class="nc" id="L407">            theSubModules.sort(Comparator.comparing(ThemisDSMModule::getModuleName));</span>
+
+            /* Catch exceptions */
+<span class="nc" id="L410">        } catch (IOException</span>
+                 | OceanusException e) {
+            /* Save Exception */
+<span class="nc" id="L413">            theSubModules.clear();</span>
+<span class="nc" id="L414">            theError = new ThemisIOException(&quot;Failed to parse Project file&quot;, e);</span>
+<span class="nc" id="L415">        }</span>
+<span class="nc" id="L416">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

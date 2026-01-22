@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianSP800HMacDRBG.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.impl.core.random</a> &gt; <span class="el_source">GordianSP800HMacDRBG.java</span></div><h1>GordianSP800HMacDRBG.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.gordianknot.impl.core.random;
+
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMac;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianByteArrayInteger;
+import org.bouncycastle.crypto.prng.EntropySource;
+import org.bouncycastle.util.Arrays;
+
+/**
+ * Implementation of HMacSP800DRBG based on the BouncyCastle Code.
+ * &lt;p&gt;
+ * This implementation is modified so that it accepts any GordianMac.
+ */
+public final class GordianSP800HMacDRBG
+        implements GordianDRBGenerator {
+    /**
+     * The Update Id.
+     */
+<span class="fc" id="L35">    private static final byte[] UPDATE_ID = {0};</span>
+
+    /**
+     * The ReSeed Id.
+     */
+<span class="fc" id="L40">    private static final byte[] SEED_ID = {1};</span>
+
+    /**
+     * The HMac.
+     */
+    private final GordianMac theHMac;
+
+    /**
+     * The Entropy Source.
+     */
+    private final EntropySource theEntropy;
+
+    /**
+     * The ReSeed Counter.
+     */
+    private final GordianByteArrayInteger theReseedCounter;
+
+    /**
+     * The Key.
+     */
+    private final byte[] theKey;
+
+    /**
+     * The Hash.
+     */
+    private final byte[] theHash;
+
+    /**
+     * Construct a SP800-90A Hash DRBG.
+     *
+     * @param pHMac          Hash MAC to base the DRBG on.
+     * @param pEntropy       source of entropy to use for seeding/reSeeding.
+     * @param pSecurityBytes personalisation string to distinguish this DRBG (may be null).
+     * @param pInitVector    nonce to further distinguish this DRBG (may be null).
+     */
+    public GordianSP800HMacDRBG(final GordianMac pHMac,
+                                final EntropySource pEntropy,
+                                final byte[] pSecurityBytes,
+<span class="fc" id="L78">                                final byte[] pInitVector) {</span>
+        /* Store hMac and entropy source */
+<span class="fc" id="L80">        theHMac = pHMac;</span>
+<span class="fc" id="L81">        theEntropy = pEntropy;</span>
+
+        /* Create Seed Material */
+<span class="fc" id="L84">        final byte[] myEntropy = theEntropy.getEntropy();</span>
+<span class="fc" id="L85">        final byte[] mySeed = Arrays.concatenate(myEntropy, pInitVector, pSecurityBytes);</span>
+
+        /* Initialise buffers */
+<span class="fc" id="L88">        final int myLen = theHMac.getMacSize();</span>
+<span class="fc" id="L89">        theKey = new byte[myLen];</span>
+<span class="fc" id="L90">        theHash = new byte[myLen];</span>
+<span class="fc" id="L91">        Arrays.fill(theHash, (byte) 1);</span>
+
+        /* Update the state */
+<span class="fc" id="L94">        updateState(mySeed);</span>
+
+        /* Initialise reSeed counter */
+<span class="fc" id="L97">        theReseedCounter = new GordianByteArrayInteger(Long.BYTES);</span>
+<span class="fc" id="L98">        theReseedCounter.iterate();</span>
+<span class="fc" id="L99">    }</span>
+
+    /**
+     * Update the state (HMAC_DRBG_Update).
+     *
+     * @param pSeed the extra seed material
+     */
+    private void updateState(final byte[] pSeed) {
+        try {
+<span class="fc" id="L108">            updateState(pSeed, UPDATE_ID);</span>
+<span class="fc bfc" id="L109" title="All 2 branches covered.">            if (pSeed != null) {</span>
+<span class="fc" id="L110">                updateState(pSeed, SEED_ID);</span>
+            }
+<span class="nc" id="L112">        } catch (GordianException e) {</span>
+<span class="nc" id="L113">            throw new IllegalStateException(e);</span>
+<span class="fc" id="L114">        }</span>
+<span class="fc" id="L115">    }</span>
+
+    /**
+     * Update the state.
+     *
+     * @param pSeed  optional seed material
+     * @param pCycle the cycle id
+     * @throws GordianException on error
+     */
+    private void updateState(final byte[] pSeed,
+                             final byte[] pCycle) throws GordianException {
+
+        /* Initialise the hMac */
+<span class="fc" id="L128">        theHMac.initKeyBytes(theKey);</span>
+
+        /* Update with hash and cycle id */
+<span class="fc" id="L131">        theHMac.update(theHash);</span>
+<span class="fc" id="L132">        theHMac.update(pCycle);</span>
+
+        /* Add any seed material */
+<span class="fc bfc" id="L135" title="All 2 branches covered.">        if (pSeed != null) {</span>
+<span class="fc" id="L136">            theHMac.update(pSeed);</span>
+        }
+
+        /* Generate new key */
+<span class="fc" id="L140">        theHMac.finish(theKey, 0);</span>
+
+        /* Calculate new hash */
+<span class="fc" id="L143">        theHMac.initKeyBytes(theKey);</span>
+<span class="fc" id="L144">        theHMac.update(theHash);</span>
+<span class="fc" id="L145">        theHMac.finish(theHash, 0);</span>
+<span class="fc" id="L146">    }</span>
+
+    @Override
+    public void reseed(final byte[] pXtraBytes) {
+        /* Create seed material */
+<span class="fc" id="L151">        final byte[] myEntropy = theEntropy.getEntropy();</span>
+<span class="fc" id="L152">        final byte[] mySeed = Arrays.concatenate(myEntropy, pXtraBytes);</span>
+
+        /* Update the state */
+<span class="fc" id="L155">        updateState(mySeed);</span>
+
+        /* re-initialise reSeed counter */
+<span class="fc" id="L158">        theReseedCounter.reset();</span>
+<span class="fc" id="L159">        theReseedCounter.iterate();</span>
+<span class="fc" id="L160">    }</span>
+
+    @Override
+    public int generate(final byte[] pOutput,
+                        final byte[] pXtraBytes,
+                        final boolean isPredictionResistant) {
+        /* Check valid # of bits */
+<span class="fc" id="L167">        final int myLen = pOutput.length;</span>
+<span class="fc" id="L168">        final int myNumBits = myLen &lt;&lt; GordianCoreRandomFactory.BIT_SHIFT;</span>
+<span class="pc bpc" id="L169" title="1 of 2 branches missed.">        if (myNumBits &gt; GordianCoreRandomFactory.MAX_BITS_REQUEST) {</span>
+<span class="nc" id="L170">            throw new IllegalArgumentException(&quot;Number of bits per request limited to &quot;</span>
+                    + GordianCoreRandomFactory.MAX_BITS_REQUEST);
+        }
+
+        /* Check for reSeed required */
+<span class="pc bpc" id="L175" title="1 of 2 branches missed.">        if (theReseedCounter.compareLimit(GordianCoreRandomFactory.RESEED_MAX)) {</span>
+<span class="nc" id="L176">            return -1;</span>
+        }
+
+        /* Access XtraBytes */
+<span class="fc" id="L180">        byte[] myXtraBytes = pXtraBytes;</span>
+
+        /* If we are prediction resistant */
+<span class="fc bfc" id="L183" title="All 2 branches covered.">        if (isPredictionResistant) {</span>
+            /* ReSeed and discard xtraBytes */
+<span class="fc" id="L185">            reseed(myXtraBytes);</span>
+<span class="fc" id="L186">            myXtraBytes = null;</span>
+
+            /* else if we have extra bytes */
+<span class="fc bfc" id="L189" title="All 2 branches covered.">        } else if (myXtraBytes != null) {</span>
+            /* Update the state */
+<span class="fc" id="L191">            updateState(myXtraBytes);</span>
+        }
+
+        /* Allocate output buffer */
+<span class="fc" id="L195">        final byte[] myResult = new byte[myLen];</span>
+
+        /* Protect against exceptions */
+        try {
+            /* Initialise the hMac */
+<span class="fc" id="L200">            theHMac.initKeyBytes(theKey);</span>
+<span class="fc" id="L201">            final int mySize = theHMac.getMacSize();</span>
+
+            /* while we need to generate more bytes */
+<span class="fc" id="L204">            int myBuilt = 0;</span>
+<span class="fc bfc" id="L205" title="All 2 branches covered.">            while (myBuilt &lt; myLen) {</span>
+                /* Update the mac */
+<span class="fc" id="L207">                theHMac.update(theHash);</span>
+<span class="fc" id="L208">                theHMac.finish(theHash, 0);</span>
+
+                /* Determine how many bytes of this hash should be used */
+<span class="fc" id="L211">                int myNeeded = myLen</span>
+                        - myBuilt;
+<span class="fc bfc" id="L213" title="All 2 branches covered.">                if (myNeeded &gt; mySize) {</span>
+<span class="fc" id="L214">                    myNeeded = mySize;</span>
+                }
+
+                /* Copy bytes across */
+<span class="fc" id="L218">                System.arraycopy(theHash, 0, myResult, myBuilt, myNeeded);</span>
+<span class="fc" id="L219">                myBuilt += myNeeded;</span>
+<span class="fc" id="L220">            }</span>
+<span class="nc" id="L221">        } catch (GordianException e) {</span>
+<span class="nc" id="L222">            throw new IllegalStateException(e);</span>
+<span class="fc" id="L223">        }</span>
+
+        /* Update the state */
+<span class="fc" id="L226">        updateState(myXtraBytes);</span>
+
+        /* Iterate the reSeed counter */
+<span class="fc" id="L229">        theReseedCounter.iterate();</span>
+
+        /* Return the bytes */
+<span class="fc" id="L232">        System.arraycopy(myResult, 0, pOutput, 0, pOutput.length);</span>
+
+        /* Return the number of bits generated */
+<span class="fc" id="L235">        return myNumBits;</span>
+    }
+
+    @Override
+    public int getBlockSize() {
+<span class="fc" id="L240">        return theHMac.getMacSize();</span>
+    }
+
+    @Override
+    public String getAlgorithm() {
+<span class="nc" id="L245">        return GordianCoreRandomFactory.SP800_PREFIX + theHMac.getMacSpec().toString();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

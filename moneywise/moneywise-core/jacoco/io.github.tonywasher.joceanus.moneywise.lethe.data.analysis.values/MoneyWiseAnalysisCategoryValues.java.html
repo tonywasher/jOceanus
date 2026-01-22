@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseAnalysisCategoryValues.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.values</a> &gt; <span class="el_source">MoneyWiseAnalysisCategoryValues.java</span></div><h1>MoneyWiseAnalysisCategoryValues.java</h1><pre class="source lang-java linenums">/*
+ * MoneyWise: Finance Application
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.values;
+
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.base.MoneyWiseAnalysisValues;
+
+import java.util.Currency;
+
+/**
+ * CategoryValues class.
+ */
+public final class MoneyWiseAnalysisCategoryValues
+        extends MoneyWiseAnalysisValues&lt;MoneyWiseAnalysisCategoryValues, MoneyWiseAnalysisTransAttr&gt; {
+    /**
+     * Constructor.
+     *
+     * @param pCurrency the reporting currency
+     */
+    public MoneyWiseAnalysisCategoryValues(final Currency pCurrency) {
+        /* Initialise class */
+<span class="fc" id="L36">        super(MoneyWiseAnalysisTransAttr.class);</span>
+
+        /* Create all possible values */
+<span class="fc" id="L39">        super.setValue(MoneyWiseAnalysisTransAttr.INCOME, new OceanusMoney(pCurrency));</span>
+<span class="fc" id="L40">        super.setValue(MoneyWiseAnalysisTransAttr.EXPENSE, new OceanusMoney(pCurrency));</span>
+<span class="fc" id="L41">    }</span>
+
+    /**
+     * Constructor.
+     *
+     * @param pSource       the source map.
+     * @param pCountersOnly only copy counters
+     */
+    public MoneyWiseAnalysisCategoryValues(final MoneyWiseAnalysisCategoryValues pSource,
+                                           final boolean pCountersOnly) {
+        /* Initialise class */
+<span class="fc" id="L52">        super(pSource, pCountersOnly);</span>
+<span class="fc" id="L53">    }</span>
+
+    @Override
+    protected MoneyWiseAnalysisCategoryValues getCounterSnapShot() {
+<span class="nc" id="L57">        return new MoneyWiseAnalysisCategoryValues(this, true);</span>
+    }
+
+    @Override
+    protected MoneyWiseAnalysisCategoryValues getFullSnapShot() {
+<span class="fc" id="L62">        return new MoneyWiseAnalysisCategoryValues(this, false);</span>
+    }
+
+    @Override
+    public void adjustToBaseValues(final MoneyWiseAnalysisCategoryValues pBase) {
+        /* Adjust income/expense values */
+<span class="nc" id="L68">        adjustMoneyToBase(pBase, MoneyWiseAnalysisTransAttr.INCOME);</span>
+<span class="nc" id="L69">        adjustMoneyToBase(pBase, MoneyWiseAnalysisTransAttr.EXPENSE);</span>
+<span class="nc" id="L70">        calculateDelta();</span>
+<span class="nc" id="L71">    }</span>
+
+    /**
+     * Calculate delta.
+     */
+    public void calculateDelta() {
+        /* Obtain a copy of the value */
+<span class="fc" id="L78">        OceanusMoney myDelta = getMoneyValue(MoneyWiseAnalysisTransAttr.INCOME);</span>
+<span class="fc" id="L79">        myDelta = new OceanusMoney(myDelta);</span>
+
+        /* Subtract the expense value */
+<span class="fc" id="L82">        final OceanusMoney myExpense = getMoneyValue(MoneyWiseAnalysisTransAttr.EXPENSE);</span>
+<span class="fc" id="L83">        myDelta.subtractAmount(myExpense);</span>
+
+        /* Set the delta */
+<span class="fc" id="L86">        super.setValue(MoneyWiseAnalysisTransAttr.PROFIT, myDelta);</span>
+<span class="fc" id="L87">    }</span>
+
+    @Override
+    public void resetBaseValues() {
+        /* Create a zero value in the correct currency */
+<span class="nc" id="L92">        OceanusMoney myValue = getMoneyValue(MoneyWiseAnalysisTransAttr.INCOME);</span>
+<span class="nc" id="L93">        myValue = new OceanusMoney(myValue);</span>
+<span class="nc" id="L94">        myValue.setZero();</span>
+
+        /* Reset Income and expense values */
+<span class="nc" id="L97">        super.setValue(MoneyWiseAnalysisTransAttr.INCOME, myValue);</span>
+<span class="nc" id="L98">        super.setValue(MoneyWiseAnalysisTransAttr.EXPENSE, new OceanusMoney(myValue));</span>
+<span class="nc" id="L99">        super.setValue(MoneyWiseAnalysisTransAttr.PROFIT, new OceanusMoney(myValue));</span>
+<span class="nc" id="L100">    }</span>
+
+    /**
+     * Are the values?
+     *
+     * @return true/false
+     */
+    public boolean isActive() {
+<span class="nc" id="L108">        final OceanusMoney myIncome = getMoneyValue(MoneyWiseAnalysisTransAttr.INCOME);</span>
+<span class="nc" id="L109">        final OceanusMoney myExpense = getMoneyValue(MoneyWiseAnalysisTransAttr.EXPENSE);</span>
+<span class="nc bnc" id="L110" title="All 4 branches missed.">        return myIncome.isNonZero() || myExpense.isNonZero();</span>
+    }
+}
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

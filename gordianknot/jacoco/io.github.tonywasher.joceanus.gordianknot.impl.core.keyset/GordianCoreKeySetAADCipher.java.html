@@ -1,0 +1,448 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianCoreKeySetAADCipher.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.impl.core.keyset</a> &gt; <span class="el_source">GordianCoreKeySetAADCipher.java</span></div><h1>GordianCoreKeySetAADCipher.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.gordianknot.impl.core.keyset;
+
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymKeyType;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigest;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestFactory;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKey;
+import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySetAADCipher;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMac;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacFactory;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacParameters;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianLogicException;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.keyset.GordianKeySetRecipe.GordianKeySetParameters;
+import org.bouncycastle.util.Arrays;
+import org.bouncycastle.util.Pack;
+
+import java.io.ByteArrayOutputStream;
+
+/**
+ * Core keySetAADCipher.
+ */
+public class GordianCoreKeySetAADCipher
+        extends GordianCoreKeySetCipher
+        implements GordianKeySetAADCipher {
+    /**
+     * The MacSize.
+     */
+    static final int MACSIZE = 16;
+
+    /**
+     * The Zero padding.
+     */
+<span class="fc" id="L54">    private static final byte[] PADDING = new byte[MACSIZE - 1];</span>
+
+    /**
+     * The Mac.
+     */
+    private final GordianMac theMac;
+
+    /**
+     * The AEAD Data.
+     */
+    private final ByteArrayOutputStream theAEAD;
+
+    /**
+     * The Initial AEAD Data.
+     */
+    private byte[] initialAEAD;
+
+    /**
+     * Have we completed AEAD?
+     */
+    private boolean aeadComplete;
+
+    /**
+     * The aeadLength.
+     */
+    private long aeadLength;
+
+    /**
+     * The dataLength.
+     */
+    private long dataLength;
+
+    /**
+     * The encryptedLength.
+     */
+    private long encryptedLength;
+
+    /**
+     * The Digest.
+     */
+    private GordianDigest theDigest;
+
+    /**
+     * The SymKeyType.
+     */
+    private GordianSymKeyType theSymKeyType;
+
+    /**
+     * The cachedBytes.
+     */
+    private final byte[] cachedBytes;
+
+    /**
+     * number of bytes in the cache.
+     */
+    private int cacheBytes;
+
+    /**
+     * Constructor.
+     *
+     * @param pKeySet the keySet.
+     * @throws GordianException on error
+     */
+    public GordianCoreKeySetAADCipher(final GordianBaseKeySet pKeySet) throws GordianException {
+        /* Initialise underlying class */
+<span class="fc" id="L119">        super(pKeySet, true);</span>
+
+        /* Create mac and buffers */
+<span class="fc" id="L122">        final GordianMacFactory myMacFactory = pKeySet.getFactory().getMacFactory();</span>
+<span class="fc" id="L123">        theMac = myMacFactory.createMac(GordianMacSpecBuilder.poly1305Mac());</span>
+<span class="fc" id="L124">        theAEAD = new ByteArrayOutputStream();</span>
+<span class="fc" id="L125">        cachedBytes = new byte[MACSIZE];</span>
+<span class="fc" id="L126">    }</span>
+
+    @Override
+    public void initForEncrypt(final byte[] pAAD) throws GordianException {
+<span class="fc" id="L130">        initialAEAD = Arrays.clone(pAAD);</span>
+<span class="fc" id="L131">        super.initForEncrypt();</span>
+<span class="fc" id="L132">    }</span>
+
+    @Override
+    public void initForDecrypt(final byte[] pAAD) throws GordianException {
+<span class="fc" id="L136">        initialAEAD = Arrays.clone(pAAD);</span>
+<span class="fc" id="L137">        super.initForDecrypt();</span>
+<span class="fc" id="L138">    }</span>
+
+    @Override
+    public void initForEncrypt() throws GordianException {
+<span class="nc" id="L142">        initForEncrypt(null);</span>
+<span class="nc" id="L143">    }</span>
+
+    @Override
+    public void initForDecrypt() throws GordianException {
+<span class="nc" id="L147">        initForDecrypt(null);</span>
+<span class="nc" id="L148">    }</span>
+
+    @Override
+    protected void reset() throws GordianException {
+        /* Process underlying reset */
+<span class="fc" id="L153">        super.reset();</span>
+
+        /* reset the AAD */
+<span class="fc" id="L156">        theAEAD.reset();</span>
+<span class="fc" id="L157">        aeadComplete = false;</span>
+<span class="fc" id="L158">        cacheBytes = 0;</span>
+
+        /* initialise with any initialAEAD */
+<span class="fc bfc" id="L161" title="All 2 branches covered.">        if (initialAEAD != null) {</span>
+<span class="fc" id="L162">            theAEAD.write(initialAEAD, 0, initialAEAD.length);</span>
+        }
+<span class="fc" id="L164">    }</span>
+
+    @Override
+    public void updateAAD(final byte[] pAAD,
+                          final int pOffset,
+                          final int pLength) throws GordianException {
+        /* Check AAD is allowed */
+<span class="nc" id="L171">        checkAEADStatus();</span>
+
+        /* Store the bytes */
+<span class="nc" id="L174">        theAEAD.write(pAAD, pOffset, pLength);</span>
+<span class="nc" id="L175">    }</span>
+
+    /**
+     * check AEAD status.
+     *
+     * @throws GordianException on error
+     */
+    private void checkAEADStatus() throws GordianException {
+        /* Check we are initialised */
+<span class="nc bnc" id="L184" title="All 2 branches missed.">        if (!isInitialised()) {</span>
+<span class="nc" id="L185">            throw new GordianLogicException(&quot;Cipher is not initialised&quot;);</span>
+        }
+
+        /* Check AAD is allowed */
+<span class="nc bnc" id="L189" title="All 2 branches missed.">        if (aeadComplete) {</span>
+<span class="nc" id="L190">            throw new GordianLogicException(&quot;AEAD data cannot be processed after ordinary data&quot;);</span>
+        }
+<span class="nc" id="L192">    }</span>
+
+    @Override
+    protected void checkStatus() throws GordianException {
+        /* Check underlying status */
+<span class="fc" id="L197">        super.checkStatus();</span>
+
+        /* aead is now complete */
+<span class="fc" id="L200">        aeadComplete = true;</span>
+<span class="fc" id="L201">    }</span>
+
+    @Override
+    protected void initCiphers(final GordianKeySetParameters pParams) throws GordianException {
+        /* Pass call on */
+<span class="fc" id="L206">        super.initCiphers(pParams);</span>
+
+        /* Create the digest */
+<span class="fc" id="L209">        final GordianDigestFactory myDigests = getFactory().getDigestFactory();</span>
+<span class="fc" id="L210">        final GordianDigestSpec myDigestSpec = new GordianDigestSpec(pParams.getDigestType(), GordianLength.LEN_512);</span>
+<span class="fc" id="L211">        theDigest = myDigests.createDigest(myDigestSpec);</span>
+
+        /* initialise the Mac */
+<span class="fc" id="L214">        final GordianKey&lt;GordianMacSpec&gt; myKey = getMultiCipher().derivePoly1305Key(pParams);</span>
+<span class="fc" id="L215">        theMac.init(GordianMacParameters.key(myKey));</span>
+
+        /* Stash the symKeyType */
+<span class="fc" id="L218">        theSymKeyType = pParams.getPoly1305SymKeyType();</span>
+
+        /* Update the Mac with the AEAD data */
+<span class="fc" id="L221">        final byte[] myAEAD = theAEAD.toByteArray();</span>
+<span class="fc" id="L222">        theMac.update(myAEAD);</span>
+<span class="fc" id="L223">        aeadLength = myAEAD.length;</span>
+<span class="fc" id="L224">        completeAEADMac();</span>
+<span class="fc" id="L225">        dataLength = 0;</span>
+<span class="fc" id="L226">        encryptedLength = 0;</span>
+<span class="fc" id="L227">    }</span>
+
+    @Override
+    public int getOutputLength(final int pLength) {
+        /* Handle encrypting calculation */
+<span class="fc bfc" id="L232" title="All 2 branches covered.">        if (isEncrypting()) {</span>
+<span class="fc" id="L233">            return super.getOutputLength(pLength) + MACSIZE;</span>
+        }
+
+        /* Allow for cacheSpace */
+<span class="fc" id="L237">        final int cacheSpace = MACSIZE - cacheBytes;</span>
+<span class="fc" id="L238">        final int len = super.getOutputLength(pLength);</span>
+<span class="fc bfc" id="L239" title="All 2 branches covered.">        return len &lt; cacheSpace</span>
+<span class="fc" id="L240">                ? 0</span>
+<span class="fc" id="L241">                : len - cacheSpace;</span>
+    }
+
+    @Override
+    protected int updateEncryption(final byte[] pBytes,
+                                   final int pOffset,
+                                   final int pLength,
+                                   final byte[] pOutput,
+                                   final int pOutOffset) throws GordianException {
+        /* Process the bytes */
+<span class="fc" id="L251">        final int myLen = super.updateEncryption(pBytes, pOffset, pLength, pOutput, pOutOffset);</span>
+
+        /* Process data into mac and  digest */
+<span class="fc" id="L254">        theMac.update(pOutput, pOutOffset, myLen);</span>
+<span class="fc" id="L255">        encryptedLength += myLen;</span>
+<span class="fc" id="L256">        theDigest.update(pBytes, pOffset, pLength);</span>
+<span class="fc" id="L257">        dataLength += pLength;</span>
+
+        /* Return the number of bytes processed */
+<span class="fc" id="L260">        return myLen;</span>
+    }
+
+    @Override
+    protected int updateDecryption(final byte[] pBytes,
+                                   final int pOffset,
+                                   final int pLength,
+                                   final byte[] pOutput,
+                                   final int pOutOffset) throws GordianException {
+        /* Count how much we have processed */
+<span class="fc" id="L270">        int processed = 0;</span>
+
+        /* Calculate the number of bytes to process from the cache */
+<span class="fc" id="L273">        final int numInputBytes = pLength - MACSIZE;</span>
+<span class="fc" id="L274">        int numCacheBytes = Math.max(cacheBytes + numInputBytes, 0);</span>
+<span class="fc" id="L275">        numCacheBytes = Math.min(cacheBytes, numCacheBytes);</span>
+
+        /* If we should process bytes from the cache */
+<span class="pc bpc" id="L278" title="1 of 2 branches missed.">        if (numCacheBytes &gt; 0) {</span>
+            /* Process the cached bytes */
+<span class="nc" id="L280">            processed = super.updateDecryption(cachedBytes, 0, numCacheBytes, pOutput, pOutOffset);</span>
+
+            /* Process data into mac and  digest */
+<span class="nc" id="L283">            theMac.update(cachedBytes, 0, numCacheBytes);</span>
+<span class="nc" id="L284">            encryptedLength += numCacheBytes;</span>
+<span class="nc" id="L285">            theDigest.update(pOutput, pOutOffset, processed);</span>
+<span class="nc" id="L286">            dataLength += processed;</span>
+
+            /* Move any remaining cached bytes down in the buffer */
+<span class="nc" id="L289">            cacheBytes -= numCacheBytes;</span>
+<span class="nc bnc" id="L290" title="All 2 branches missed.">            if (cacheBytes &gt; 0) {</span>
+<span class="nc" id="L291">                System.arraycopy(cachedBytes, numCacheBytes, cachedBytes, 0, cacheBytes);</span>
+            }
+        }
+
+        /* Process any excess bytes from the input buffer */
+<span class="fc bfc" id="L296" title="All 2 branches covered.">        if (numInputBytes &gt; 0) {</span>
+            /* Process the input */
+<span class="fc" id="L298">            final int numProcessed = super.updateDecryption(pBytes, pOffset, numInputBytes, pOutput, pOutOffset + processed);</span>
+
+            /* Process data into mac and  digest */
+<span class="fc" id="L301">            theMac.update(pBytes, pOffset, numInputBytes);</span>
+<span class="fc" id="L302">            encryptedLength += numInputBytes;</span>
+<span class="fc" id="L303">            theDigest.update(pOutput, pOutOffset + processed, numProcessed);</span>
+<span class="fc" id="L304">            dataLength += numProcessed;</span>
+<span class="fc" id="L305">            processed += numProcessed;</span>
+        }
+
+        /* Store the remaining input into the cache */
+<span class="fc" id="L309">        final int numToCache = Math.min(pLength, MACSIZE);</span>
+<span class="fc" id="L310">        System.arraycopy(pBytes, pOffset + pLength - numToCache, cachedBytes, cacheBytes, numToCache);</span>
+<span class="fc" id="L311">        cacheBytes += numToCache;</span>
+
+        /* Return the number of bytes processed */
+<span class="fc" id="L314">        return processed;</span>
+    }
+
+    @Override
+    public int doFinish(final byte[] pOutput,
+                        final int pOutOffset) throws GordianException {
+        /* Finish the cipher */
+<span class="fc" id="L321">        int myLen = finishCipher(pOutput, pOutOffset);</span>
+
+        /* Update mac if we have output data on encryption */
+<span class="fc bfc" id="L324" title="All 2 branches covered.">        if (myLen &gt; 0) {</span>
+            /* Update Mac/digest as appropriate */
+<span class="fc bfc" id="L326" title="All 2 branches covered.">            if (isEncrypting()) {</span>
+                /* Update the mac */
+<span class="fc" id="L328">                theMac.update(pOutput, pOutOffset, myLen);</span>
+<span class="fc" id="L329">                encryptedLength += myLen;</span>
+            } else {
+                /* Update the digest */
+<span class="fc" id="L332">                theDigest.update(pOutput, pOutOffset, myLen);</span>
+<span class="fc" id="L333">                dataLength += myLen;</span>
+            }
+        }
+
+        /* finish the mac */
+<span class="fc bfc" id="L338" title="All 2 branches covered.">        myLen += isEncrypting()</span>
+<span class="fc" id="L339">                ? finishEncryptionMac(pOutput, pOutOffset + myLen)</span>
+<span class="fc" id="L340">                : finishDecryptionMac();</span>
+
+        /* Reset the cipher */
+<span class="fc" id="L343">        reset();</span>
+
+        /* return the number of bytes processed */
+<span class="fc" id="L346">        return myLen;</span>
+    }
+
+    /**
+     * finish the encryption Mac.
+     *
+     * @param pOutput    the output buffer
+     * @param pOutOffset the offset from which to start writing output
+     * @return the length of data written out
+     * @throws GordianException on error
+     */
+    private int finishEncryptionMac(final byte[] pOutput,
+                                    final int pOutOffset) throws GordianException {
+        /* Complete the dataMac */
+<span class="fc" id="L360">        completeDataMac();</span>
+
+        /* Calculate the Mac */
+<span class="fc" id="L363">        final byte[] myMac = new byte[MACSIZE];</span>
+<span class="fc" id="L364">        theMac.finish(myMac, 0);</span>
+
+        /* Encrypt the Mac */
+<span class="fc" id="L367">        final byte[] myResult = getMultiCipher().encryptMac(theSymKeyType, myMac);</span>
+
+        /* return the encrypted mac in the output buffer */
+<span class="fc" id="L370">        System.arraycopy(myResult, 0, pOutput, pOutOffset, MACSIZE);</span>
+<span class="fc" id="L371">        return MACSIZE;</span>
+    }
+
+    /**
+     * finish the decryption Mac.
+     *
+     * @return the length of data written out
+     * @throws GordianException on mac misMatch
+     */
+    private int finishDecryptionMac() throws GordianException {
+        /* If we do not have sufficient data */
+<span class="pc bpc" id="L382" title="1 of 2 branches missed.">        if (cacheBytes &lt; MACSIZE) {</span>
+<span class="nc" id="L383">            throw new GordianDataException(&quot;data too short&quot;);</span>
+        }
+
+        /* Complete the dataMac */
+<span class="fc" id="L387">        completeDataMac();</span>
+
+        /* Calculate the Mac */
+<span class="fc" id="L390">        final byte[] myMac = new byte[MACSIZE];</span>
+<span class="fc" id="L391">        theMac.finish(myMac, 0);</span>
+
+        /* Encrypt the Mac */
+<span class="fc" id="L394">        final byte[] myResult = getMultiCipher().encryptMac(theSymKeyType, myMac);</span>
+
+        /* Check that the encrypted Mac is identical to that contained in the cache */
+<span class="pc bpc" id="L397" title="1 of 2 branches missed.">        if (!Arrays.constantTimeAreEqual(myResult, cachedBytes)) {</span>
+<span class="nc" id="L398">            throw new GordianDataException(&quot;mac check failed&quot;);</span>
+        }
+
+        /* No bytes returned */
+<span class="fc" id="L402">        return 0;</span>
+    }
+
+    /**
+     * Complete AEAD Mac input.
+     */
+    private void completeAEADMac() {
+        /* Pad to boundary */
+<span class="fc" id="L410">        padToBoundary(aeadLength);</span>
+
+        /* Set flag */
+<span class="fc" id="L413">        aeadComplete = true;</span>
+<span class="fc" id="L414">    }</span>
+
+    /**
+     * Complete Mac data input.
+     */
+    private void completeDataMac() {
+        /* Pad to boundary */
+<span class="fc" id="L421">        padToBoundary(encryptedLength);</span>
+
+        /* Write the lengths */
+<span class="fc" id="L424">        final byte[] len = new byte[Long.BYTES &lt;&lt; 1];</span>
+<span class="fc" id="L425">        Pack.longToLittleEndian(aeadLength, len, 0);</span>
+<span class="fc" id="L426">        Pack.longToLittleEndian(dataLength, len, Long.BYTES);</span>
+<span class="fc" id="L427">        theMac.update(len, 0, len.length);</span>
+
+        /* Calculate the digest and update the mac */
+<span class="fc" id="L430">        final byte[] myDigest = theDigest.finish();</span>
+<span class="fc" id="L431">        theMac.update(myDigest);</span>
+<span class="fc" id="L432">    }</span>
+
+    /**
+     * Pad to boundary.
+     *
+     * @param pDataLen the length of the data to pad
+     */
+    private void padToBoundary(final long pDataLen) {
+        /* Pad to boundary */
+<span class="fc" id="L441">        final int xtra = (int) pDataLen &amp; (MACSIZE - 1);</span>
+<span class="fc bfc" id="L442" title="All 2 branches covered.">        if (xtra != 0) {</span>
+<span class="fc" id="L443">            final int numPadding = MACSIZE - xtra;</span>
+<span class="fc" id="L444">            theMac.update(PADDING, 0, numPadding);</span>
+        }
+<span class="fc" id="L446">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

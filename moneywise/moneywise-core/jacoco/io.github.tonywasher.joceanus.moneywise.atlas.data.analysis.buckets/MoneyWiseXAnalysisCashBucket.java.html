@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseXAnalysisCashBucket.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets</a> &gt; <span class="el_source">MoneyWiseXAnalysisCashBucket.java</span></div><h1>MoneyWiseXAnalysisCashBucket.java</h1><pre class="source lang-java linenums">/*
+ * MoneyWise: Finance Application
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets;
+
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
+import io.github.tonywasher.joceanus.metis.data.MetisDataDifference;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseCash;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseCashCategory;
+
+import java.util.Iterator;
+
+/**
+ * The Cash Bucket class.
+ */
+public final class MoneyWiseXAnalysisCashBucket
+        extends MoneyWiseXAnalysisAccountBucket&lt;MoneyWiseCash&gt; {
+    /**
+     * Local Report fields.
+     */
+<span class="fc" id="L37">    private static final MetisFieldSet&lt;MoneyWiseXAnalysisCashBucket&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseXAnalysisCashBucket.class);</span>
+
+    /*
+     * Declare Fields.
+     */
+    static {
+<span class="fc" id="L43">        FIELD_DEFS.declareLocalField(MoneyWiseBasicDataType.CASHCATEGORY, MoneyWiseXAnalysisCashBucket::getCategory);</span>
+<span class="fc" id="L44">    }</span>
+
+    /**
+     * The cash category.
+     */
+    private final MoneyWiseCashCategory theCategory;
+
+    /**
+     * Constructor.
+     *
+     * @param pAnalysis the analysis
+     * @param pCash     the cash account
+     */
+    private MoneyWiseXAnalysisCashBucket(final MoneyWiseXAnalysis pAnalysis,
+                                         final MoneyWiseCash pCash) {
+        /* Call super-constructor */
+<span class="fc" id="L60">        super(pAnalysis, pCash);</span>
+
+        /* Obtain category */
+<span class="fc" id="L63">        theCategory = pCash.getCategory();</span>
+<span class="fc" id="L64">    }</span>
+
+    /**
+     * Constructor.
+     *
+     * @param pAnalysis the analysis
+     * @param pBase     the underlying bucket
+     */
+    private MoneyWiseXAnalysisCashBucket(final MoneyWiseXAnalysis pAnalysis,
+                                         final MoneyWiseXAnalysisCashBucket pBase) {
+        /* Call super-constructor */
+<span class="nc" id="L75">        super(pAnalysis, pBase);</span>
+
+        /* Copy details from base */
+<span class="nc" id="L78">        theCategory = pBase.getCategory();</span>
+<span class="nc" id="L79">    }</span>
+
+    /**
+     * Constructor.
+     *
+     * @param pAnalysis the analysis
+     * @param pBase     the underlying bucket
+     * @param pDate     the date for the bucket
+     */
+    private MoneyWiseXAnalysisCashBucket(final MoneyWiseXAnalysis pAnalysis,
+                                         final MoneyWiseXAnalysisCashBucket pBase,
+                                         final OceanusDate pDate) {
+        /* Call super-constructor */
+<span class="nc" id="L92">        super(pAnalysis, pBase, pDate);</span>
+
+        /* Copy details from base */
+<span class="nc" id="L95">        theCategory = pBase.getCategory();</span>
+<span class="nc" id="L96">    }</span>
+
+    /**
+     * Constructor.
+     *
+     * @param pAnalysis the analysis
+     * @param pBase     the underlying bucket
+     * @param pRange    the range for the bucket
+     */
+    private MoneyWiseXAnalysisCashBucket(final MoneyWiseXAnalysis pAnalysis,
+                                         final MoneyWiseXAnalysisCashBucket pBase,
+                                         final OceanusDateRange pRange) {
+        /* Call super-constructor */
+<span class="nc" id="L109">        super(pAnalysis, pBase, pRange);</span>
+
+        /* Copy details from base */
+<span class="nc" id="L112">        theCategory = pBase.getCategory();</span>
+<span class="nc" id="L113">    }</span>
+
+    @Override
+    public MetisFieldSet&lt;MoneyWiseXAnalysisCashBucket&gt; getDataFieldSet() {
+<span class="nc" id="L117">        return FIELD_DEFS;</span>
+    }
+
+    /**
+     * Obtain the cash category.
+     *
+     * @return the cash category
+     */
+    public MoneyWiseCashCategory getCategory() {
+<span class="fc" id="L126">        return theCategory;</span>
+    }
+
+    @Override
+    public Long getBucketId() {
+<span class="fc" id="L131">        return getAccount().getExternalId();</span>
+    }
+
+    /**
+     * CashBucket list class.
+     */
+    public static final class MoneyWiseXAnalysisCashBucketList
+            extends MoneyWiseXAnalysisAccountBucketList&lt;MoneyWiseXAnalysisCashBucket, MoneyWiseCash&gt; {
+        /**
+         * Local Report fields.
+         */
+<span class="fc" id="L142">        private static final MetisFieldSet&lt;MoneyWiseXAnalysisCashBucketList&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseXAnalysisCashBucketList.class);</span>
+
+        /**
+         * Construct a top-level List.
+         *
+         * @param pAnalysis the analysis
+         */
+        MoneyWiseXAnalysisCashBucketList(final MoneyWiseXAnalysis pAnalysis) {
+            /* Initialise class */
+<span class="fc" id="L151">            super(pAnalysis);</span>
+<span class="fc" id="L152">        }</span>
+
+        /**
+         * Construct a dated List.
+         *
+         * @param pAnalysis the analysis
+         * @param pBase     the base list
+         * @param pDate     the Date
+         */
+        MoneyWiseXAnalysisCashBucketList(final MoneyWiseXAnalysis pAnalysis,
+                                         final MoneyWiseXAnalysisCashBucketList pBase,
+                                         final OceanusDate pDate) {
+            /* Initialise class */
+<span class="nc" id="L165">            this(pAnalysis);</span>
+
+            /* Construct list from base */
+<span class="nc" id="L168">            constructFromBase(pBase, pDate);</span>
+<span class="nc" id="L169">        }</span>
+
+        /**
+         * Construct a ranged List.
+         *
+         * @param pAnalysis the analysis
+         * @param pBase     the base list
+         * @param pRange    the Date Range
+         */
+        MoneyWiseXAnalysisCashBucketList(final MoneyWiseXAnalysis pAnalysis,
+                                         final MoneyWiseXAnalysisCashBucketList pBase,
+                                         final OceanusDateRange pRange) {
+            /* Initialise class */
+<span class="nc" id="L182">            this(pAnalysis);</span>
+
+            /* Construct list from base */
+<span class="nc" id="L185">            constructFromBase(pBase, pRange);</span>
+<span class="nc" id="L186">        }</span>
+
+        @Override
+        public MetisFieldSet&lt;MoneyWiseXAnalysisCashBucketList&gt; getDataFieldSet() {
+<span class="nc" id="L190">            return FIELD_DEFS;</span>
+        }
+
+        /**
+         * Obtain the matching CashBucket.
+         *
+         * @param pCash the cash
+         * @return the matching bucket
+         */
+        public MoneyWiseXAnalysisCashBucket getMatchingCash(final MoneyWiseCash pCash) {
+            /* Return the matching cash if it exists else an orphan bucket */
+<span class="nc" id="L201">            final MoneyWiseXAnalysisCashBucket myCash = findItemById(pCash.getIndexedId());</span>
+<span class="nc bnc" id="L202" title="All 2 branches missed.">            return myCash != null</span>
+<span class="nc" id="L203">                    ? myCash</span>
+<span class="nc" id="L204">                    : new MoneyWiseXAnalysisCashBucket(getAnalysis(), pCash);</span>
+        }
+
+        /**
+         * Obtain the default Cash.
+         *
+         * @return the bucket
+         */
+        public MoneyWiseXAnalysisCashBucket getDefaultCash() {
+            /* Return the first cash in the list if it exists */
+<span class="nc bnc" id="L214" title="All 2 branches missed.">            return isEmpty()</span>
+<span class="nc" id="L215">                    ? null</span>
+<span class="nc" id="L216">                    : getUnderlyingList().get(0);</span>
+        }
+
+        /**
+         * Obtain the default Cash for the category.
+         *
+         * @param pCategory the category
+         * @return the bucket
+         */
+        public MoneyWiseXAnalysisCashBucket getDefaultCash(final MoneyWiseCashCategory pCategory) {
+            /* If there is a category */
+<span class="nc bnc" id="L227" title="All 2 branches missed.">            if (pCategory != null) {</span>
+                /* Loop through the available account values */
+<span class="nc" id="L229">                final Iterator&lt;MoneyWiseXAnalysisCashBucket&gt; myIterator = iterator();</span>
+<span class="nc bnc" id="L230" title="All 2 branches missed.">                while (myIterator.hasNext()) {</span>
+<span class="nc" id="L231">                    final MoneyWiseXAnalysisCashBucket myBucket = myIterator.next();</span>
+
+                    /* Return if correct category */
+<span class="nc bnc" id="L234" title="All 2 branches missed.">                    if (MetisDataDifference.isEqual(pCategory, myBucket.getCategory())) {</span>
+<span class="nc" id="L235">                        return myBucket;</span>
+                    }
+<span class="nc" id="L237">                }</span>
+            }
+
+            /* No default cash */
+<span class="nc" id="L241">            return null;</span>
+        }
+
+        @Override
+        protected MoneyWiseXAnalysisCashBucket newBucket(final MoneyWiseCash pCash) {
+<span class="fc" id="L246">            return new MoneyWiseXAnalysisCashBucket(getAnalysis(), pCash);</span>
+        }
+
+        @Override
+        protected MoneyWiseXAnalysisCashBucket newBucket(final MoneyWiseXAnalysisCashBucket pBase) {
+<span class="nc" id="L251">            return new MoneyWiseXAnalysisCashBucket(getAnalysis(), pBase);</span>
+        }
+
+        @Override
+        protected MoneyWiseXAnalysisCashBucket newBucket(final MoneyWiseXAnalysisCashBucket pBase,
+                                                         final OceanusDate pDate) {
+<span class="nc" id="L257">            return new MoneyWiseXAnalysisCashBucket(getAnalysis(), pBase, pDate);</span>
+        }
+
+        @Override
+        protected MoneyWiseXAnalysisCashBucket newBucket(final MoneyWiseXAnalysisCashBucket pBase,
+                                                         final OceanusDateRange pRange) {
+<span class="nc" id="L263">            return new MoneyWiseXAnalysisCashBucket(getAnalysis(), pBase, pRange);</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

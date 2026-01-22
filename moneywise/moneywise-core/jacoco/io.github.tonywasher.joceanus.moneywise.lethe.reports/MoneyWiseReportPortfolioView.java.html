@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseReportPortfolioView.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.moneywise.lethe.reports</a> &gt; <span class="el_source">MoneyWiseReportPortfolioView.java</span></div><h1>MoneyWiseReportPortfolioView.java</h1><pre class="source lang-java linenums">/*
+ * MoneyWise: Finance Application
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.moneywise.lethe.reports;
+
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
+import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogManager;
+import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogger;
+import io.github.tonywasher.joceanus.metis.report.MetisReportBase;
+import io.github.tonywasher.joceanus.metis.report.MetisReportHTMLBuilder;
+import io.github.tonywasher.joceanus.metis.report.MetisReportHTMLBuilder.MetisHTMLTable;
+import io.github.tonywasher.joceanus.metis.report.MetisReportManager;
+import io.github.tonywasher.joceanus.metis.report.MetisReportReferenceManager.DelayedTable;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysis;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisPortfolioBucket;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisPortfolioBucket.MoneyWiseAnalysisPortfolioBucketList;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisSecurityBucket;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisSecurityBucket.MoneyWiseAnalysisSecurityBucketList;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisSecurityAttr;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisSecurityValues;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisValuesResource;
+import io.github.tonywasher.joceanus.moneywise.lethe.views.MoneyWiseAnalysisFilter;
+import io.github.tonywasher.joceanus.moneywise.lethe.views.MoneyWiseAnalysisFilter.MoneyWiseAnalysisSecurityFilter;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
+import java.util.Iterator;
+
+/**
+ * Portfolio (Market) report builder.
+ */
+public class MoneyWiseReportPortfolioView
+        extends MetisReportBase&lt;MoneyWiseAnalysis, MoneyWiseAnalysisFilter&lt;?, ?&gt;&gt; {
+    /**
+     * Logger.
+     */
+<span class="nc" id="L52">    private static final OceanusLogger LOGGER = OceanusLogManager.getLogger(MoneyWiseReportPortfolioView.class);</span>
+
+    /**
+     * The Title text.
+     */
+<span class="nc" id="L57">    private static final String TEXT_TITLE = MoneyWiseReportResource.PORTFOLIO_TITLE.getValue();</span>
+
+    /**
+     * The Cost text.
+     */
+<span class="nc" id="L62">    private static final String TEXT_COST = MoneyWiseAnalysisValuesResource.SECURITYATTR_RESIDUALCOST.getValue();</span>
+
+    /**
+     * The Adjustment text.
+     */
+<span class="nc" id="L67">    private static final String TEXT_ADJUST = MoneyWiseAnalysisValuesResource.SECURITYATTR_GROWTHADJUST.getValue();</span>
+
+    /**
+     * The Value text.
+     */
+<span class="nc" id="L72">    private static final String TEXT_VALUE = MoneyWiseAnalysisValuesResource.ACCOUNTATTR_VALUATION.getValue();</span>
+
+    /**
+     * The Gains text.
+     */
+<span class="nc" id="L77">    private static final String TEXT_GAINS = MoneyWiseAnalysisValuesResource.SECURITYATTR_REALISEDGAINS.getValue();</span>
+
+    /**
+     * The Dividend text.
+     */
+<span class="nc" id="L82">    private static final String TEXT_DIVIDEND = MoneyWiseAnalysisValuesResource.SECURITYATTR_DIVIDEND.getValue();</span>
+
+    /**
+     * HTML builder.
+     */
+    private final MetisReportHTMLBuilder theBuilder;
+
+    /**
+     * The Formatter.
+     */
+    private final OceanusDataFormatter theFormatter;
+
+    /**
+     * Constructor.
+     *
+     * @param pManager the Report Manager
+     */
+<span class="nc" id="L99">    protected MoneyWiseReportPortfolioView(final MetisReportManager&lt;MoneyWiseAnalysisFilter&lt;?, ?&gt;&gt; pManager) {</span>
+        /* Access underlying utilities */
+<span class="nc" id="L101">        theBuilder = pManager.getBuilder();</span>
+<span class="nc" id="L102">        theFormatter = theBuilder.getDataFormatter();</span>
+<span class="nc" id="L103">    }</span>
+
+    @Override
+    public Document createReport(final MoneyWiseAnalysis pAnalysis) {
+        /* Access the bucket lists */
+<span class="nc" id="L108">        final MoneyWiseAnalysisPortfolioBucketList myPortfolios = pAnalysis.getPortfolios();</span>
+
+        /* Access the totals */
+<span class="nc" id="L111">        final MoneyWiseAnalysisPortfolioBucket myTotals = myPortfolios.getTotals();</span>
+<span class="nc" id="L112">        final OceanusDate myDate = pAnalysis.getDateRange().getEnd();</span>
+
+        /* Start the report */
+<span class="nc" id="L115">        final Element myBody = theBuilder.startReport();</span>
+<span class="nc" id="L116">        theBuilder.makeTitle(myBody, TEXT_TITLE, theFormatter.formatObject(myDate));</span>
+
+        /* Initialise the table */
+<span class="nc" id="L119">        final MetisHTMLTable myTable = theBuilder.startTable(myBody);</span>
+<span class="nc" id="L120">        theBuilder.startHdrRow(myTable);</span>
+<span class="nc" id="L121">        theBuilder.makeTitleCell(myTable);</span>
+<span class="nc" id="L122">        theBuilder.makeTitleCell(myTable, TEXT_VALUE);</span>
+<span class="nc" id="L123">        theBuilder.makeTitleCell(myTable, TEXT_COST);</span>
+<span class="nc" id="L124">        theBuilder.makeTitleCell(myTable, TEXT_GAINS);</span>
+<span class="nc" id="L125">        theBuilder.makeTitleCell(myTable, TEXT_DIVIDEND);</span>
+<span class="nc" id="L126">        theBuilder.makeTitleCell(myTable, TEXT_ADJUST);</span>
+<span class="nc" id="L127">        theBuilder.makeTitleCell(myTable, MoneyWiseReportBuilder.TEXT_PROFIT);</span>
+
+        /* Loop through the Portfolio Buckets */
+<span class="nc" id="L130">        final Iterator&lt;MoneyWiseAnalysisPortfolioBucket&gt; myIterator = myPortfolios.iterator();</span>
+<span class="nc bnc" id="L131" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L132">            final MoneyWiseAnalysisPortfolioBucket myBucket = myIterator.next();</span>
+
+            /* Access bucket name */
+<span class="nc" id="L135">            final String myName = myBucket.getName();</span>
+
+            /* Access values */
+<span class="nc" id="L138">            final MoneyWiseAnalysisSecurityValues myValues = myBucket.getValues();</span>
+
+            /* Format the Asset */
+<span class="nc" id="L141">            theBuilder.startRow(myTable);</span>
+<span class="nc" id="L142">            theBuilder.makeDelayLinkCell(myTable, myName);</span>
+
+            /* Handle values bucket value */
+<span class="nc" id="L145">            theBuilder.makeValueCell(myTable, myBucket.getNonCashValue(false));</span>
+<span class="nc" id="L146">            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.RESIDUALCOST));</span>
+<span class="nc" id="L147">            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.REALISEDGAINS));</span>
+<span class="nc" id="L148">            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.DIVIDEND));</span>
+<span class="nc" id="L149">            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.GROWTHADJUST));</span>
+<span class="nc" id="L150">            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.PROFIT));</span>
+<span class="nc" id="L151">            checkPortfolioProfit(myBucket);</span>
+
+            /* Note the delayed subTable */
+<span class="nc" id="L154">            setDelayedTable(myName, myTable, myBucket);</span>
+<span class="nc" id="L155">        }</span>
+
+        /* Access values */
+<span class="nc" id="L158">        final MoneyWiseAnalysisSecurityValues myValues = myTotals.getValues();</span>
+
+        /* Create the total row */
+<span class="nc" id="L161">        theBuilder.startTotalRow(myTable);</span>
+<span class="nc" id="L162">        theBuilder.makeTitleCell(myTable, MoneyWiseReportBuilder.TEXT_TOTAL);</span>
+<span class="nc" id="L163">        theBuilder.makeTotalCell(myTable, myTotals.getNonCashValue(false));</span>
+<span class="nc" id="L164">        theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.RESIDUALCOST));</span>
+<span class="nc" id="L165">        theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.REALISEDGAINS));</span>
+<span class="nc" id="L166">        theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.DIVIDEND));</span>
+<span class="nc" id="L167">        theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.GROWTHADJUST));</span>
+<span class="nc" id="L168">        theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.PROFIT));</span>
+<span class="nc" id="L169">        checkPortfolioProfit(myTotals);</span>
+
+        /* Return the document */
+<span class="nc" id="L172">        return theBuilder.getDocument();</span>
+    }
+
+    @Override
+    public MetisHTMLTable createDelayedTable(final DelayedTable pTable) {
+        /* Access the source */
+<span class="nc" id="L178">        final Object mySource = pTable.getSource();</span>
+<span class="nc bnc" id="L179" title="All 2 branches missed.">        if (mySource instanceof MoneyWiseAnalysisPortfolioBucket mySourceBucket) {</span>
+<span class="nc" id="L180">            return createDelayedPortfolio(pTable.getParent(), mySourceBucket);</span>
+        }
+
+        /* Return the null table */
+<span class="nc" id="L184">        return null;</span>
+    }
+
+    /**
+     * Create a delayed portfolio table.
+     *
+     * @param pParent the parent table
+     * @param pSource the source bucket
+     * @return the new document fragment
+     */
+    private MetisHTMLTable createDelayedPortfolio(final MetisHTMLTable pParent,
+                                                  final MoneyWiseAnalysisPortfolioBucket pSource) {
+        /* Access the securities and portfolio */
+<span class="nc" id="L197">        final MoneyWiseAnalysisSecurityBucketList mySecurities = pSource.getSecurities();</span>
+
+        /* Create a new table */
+<span class="nc" id="L200">        final MetisHTMLTable myTable = theBuilder.createEmbeddedTable(pParent);</span>
+
+        /* Loop through the Security Buckets */
+<span class="nc" id="L203">        final Iterator&lt;MoneyWiseAnalysisSecurityBucket&gt; myIterator = mySecurities.iterator();</span>
+<span class="nc bnc" id="L204" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L205">            final MoneyWiseAnalysisSecurityBucket myBucket = myIterator.next();</span>
+
+            /* Access bucket name */
+<span class="nc" id="L208">            final String myName = myBucket.getSecurityName();</span>
+<span class="nc" id="L209">            String myFullName = myBucket.getDecoratedName();</span>
+<span class="nc" id="L210">            myFullName = myFullName.replace(':', '-');</span>
+
+            /* Access values */
+<span class="nc" id="L213">            final MoneyWiseAnalysisSecurityValues myValues = myBucket.getValues();</span>
+
+            /* Create the detail row */
+<span class="nc" id="L216">            theBuilder.startRow(myTable);</span>
+<span class="nc" id="L217">            theBuilder.makeFilterLinkCell(myTable, myFullName, myName);</span>
+<span class="nc" id="L218">            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.VALUATION));</span>
+<span class="nc" id="L219">            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.RESIDUALCOST));</span>
+<span class="nc" id="L220">            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.REALISEDGAINS));</span>
+<span class="nc" id="L221">            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.DIVIDEND));</span>
+<span class="nc" id="L222">            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.GROWTHADJUST));</span>
+<span class="nc" id="L223">            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.PROFIT));</span>
+<span class="nc" id="L224">            checkSecurityProfit(myBucket);</span>
+
+            /* Record the filter */
+<span class="nc" id="L227">            setFilterForId(myFullName, myBucket);</span>
+<span class="nc" id="L228">        }</span>
+
+        /* Return the table */
+<span class="nc" id="L231">        return myTable;</span>
+    }
+
+    /**
+     * Check portfolio profit calculation.
+     *
+     * @param pBucket the portfolio bucket
+     */
+    private static void checkPortfolioProfit(final MoneyWiseAnalysisPortfolioBucket pBucket) {
+<span class="nc" id="L240">        final MoneyWiseAnalysisSecurityValues myValues = pBucket.getValues();</span>
+<span class="nc" id="L241">        final OceanusMoney myCalcProfit = pBucket.getNonCashValue(false);</span>
+<span class="nc" id="L242">        myCalcProfit.subtractAmount(myValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.RESIDUALCOST));</span>
+<span class="nc" id="L243">        myCalcProfit.addAmount(myValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.REALISEDGAINS));</span>
+<span class="nc" id="L244">        myCalcProfit.addAmount(myValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.DIVIDEND));</span>
+<span class="nc" id="L245">        myCalcProfit.addAmount(myValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.GROWTHADJUST));</span>
+<span class="nc" id="L246">        final OceanusMoney myProfit = myValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.PROFIT);</span>
+<span class="nc bnc" id="L247" title="All 2 branches missed.">        if (!myProfit.equals(myCalcProfit)) {</span>
+<span class="nc" id="L248">            LOGGER.error(&quot;Incorrect profit calculation for portfolio &lt;%s&gt;&quot;, pBucket.getName());</span>
+        }
+<span class="nc" id="L250">    }</span>
+
+    /**
+     * Check security portfolio profit calculation.
+     *
+     * @param pBucket the security bucket
+     */
+    private static void checkSecurityProfit(final MoneyWiseAnalysisSecurityBucket pBucket) {
+<span class="nc" id="L258">        final MoneyWiseAnalysisSecurityValues myValues = pBucket.getValues();</span>
+<span class="nc" id="L259">        final OceanusMoney myCalcProfit = new OceanusMoney(myValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.VALUATION));</span>
+<span class="nc" id="L260">        myCalcProfit.subtractAmount(myValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.RESIDUALCOST));</span>
+<span class="nc" id="L261">        myCalcProfit.addAmount(myValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.REALISEDGAINS));</span>
+<span class="nc" id="L262">        myCalcProfit.addAmount(myValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.DIVIDEND));</span>
+<span class="nc" id="L263">        myCalcProfit.addAmount(myValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.GROWTHADJUST));</span>
+<span class="nc" id="L264">        final OceanusMoney myProfit = myValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.PROFIT);</span>
+<span class="nc bnc" id="L265" title="All 2 branches missed.">        if (!myProfit.equals(myCalcProfit)) {</span>
+<span class="nc" id="L266">            LOGGER.error(&quot;Incorrect profit calculation for security &lt;%s&gt;&quot;, pBucket.getDecoratedName());</span>
+        }
+<span class="nc" id="L268">    }</span>
+
+    @Override
+    public MoneyWiseAnalysisSecurityFilter processFilter(final Object pSource) {
+        /* If this is a SecurityBucket */
+<span class="nc bnc" id="L273" title="All 2 branches missed.">        if (pSource instanceof MoneyWiseAnalysisSecurityBucket mySource) {</span>
+            /* Create the new filter */
+<span class="nc" id="L275">            return new MoneyWiseAnalysisSecurityFilter(mySource);</span>
+        }
+<span class="nc" id="L277">        return null;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

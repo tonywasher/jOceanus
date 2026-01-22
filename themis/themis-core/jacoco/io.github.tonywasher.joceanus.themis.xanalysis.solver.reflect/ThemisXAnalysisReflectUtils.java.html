@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ThemisXAnalysisReflectUtils.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Themis Core Project Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.themis.xanalysis.solver.reflect</a> &gt; <span class="el_source">ThemisXAnalysisReflectUtils.java</span></div><h1>ThemisXAnalysisReflectUtils.java</h1><pre class="source lang-java linenums">/*
+ * Themis: Java Project Framework
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.themis.xanalysis.solver.reflect;
+
+import com.github.javaparser.ast.Modifier;
+import com.github.javaparser.ast.NodeList;
+import com.github.javaparser.ast.body.Parameter;
+import com.github.javaparser.ast.expr.SimpleName;
+import com.github.javaparser.ast.type.ClassOrInterfaceType;
+import com.github.javaparser.ast.type.ReferenceType;
+import com.github.javaparser.ast.type.Type;
+import com.github.javaparser.ast.type.TypeParameter;
+import io.github.tonywasher.joceanus.themis.xanalysis.solver.reflect.ThemisXAnalysisReflectBaseUtils.ThemisXAnalysisReflectParameter;
+
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Executable;
+import java.lang.reflect.Method;
+
+/**
+ * Solver utilities.
+ */
+public final class ThemisXAnalysisReflectUtils {
+    /**
+     * Private constructor.
+     */
+    private ThemisXAnalysisReflectUtils() {
+    }
+
+    /**
+     * Build modifiers.
+     *
+     * @param pClass the class
+     * @return the modifier list
+     */
+    static NodeList&lt;Modifier&gt; buildModifiers(final Class&lt;?&gt; pClass) {
+<span class="nc" id="L50">        final NodeList&lt;Modifier&gt; myModifiers = buildModifiers(pClass.getModifiers());</span>
+<span class="nc bnc" id="L51" title="All 2 branches missed.">        if (pClass.isSealed()) {</span>
+<span class="nc" id="L52">            myModifiers.add(Modifier.sealedModifier());</span>
+        }
+<span class="nc" id="L54">        return myModifiers;</span>
+    }
+
+    /**
+     * Build modifiers.
+     *
+     * @param pConstructor the constructor
+     * @return the modifier list
+     */
+    static NodeList&lt;Modifier&gt; buildModifiers(final Constructor&lt;?&gt; pConstructor) {
+<span class="nc" id="L64">        return buildModifiers(pConstructor.getModifiers());</span>
+    }
+
+    /**
+     * Build modifiers.
+     *
+     * @param pMethod the method
+     * @return the modifier list
+     */
+    static NodeList&lt;Modifier&gt; buildModifiers(final Method pMethod) {
+<span class="nc" id="L74">        return buildModifiers(pMethod.getModifiers());</span>
+    }
+
+    /**
+     * Build modifiers.
+     *
+     * @param pFlags the flags
+     * @return the modifier list
+     */
+    private static NodeList&lt;Modifier&gt; buildModifiers(final int pFlags) {
+<span class="nc" id="L84">        final NodeList&lt;Modifier&gt; myModifiers = new NodeList&lt;&gt;();</span>
+<span class="nc bnc" id="L85" title="All 2 branches missed.">        if (ThemisXAnalysisReflectBaseUtils.isPublic(pFlags)) {</span>
+<span class="nc" id="L86">            myModifiers.add(Modifier.publicModifier());</span>
+        }
+<span class="nc bnc" id="L88" title="All 2 branches missed.">        if (ThemisXAnalysisReflectBaseUtils.isProtected(pFlags)) {</span>
+<span class="nc" id="L89">            myModifiers.add(Modifier.protectedModifier());</span>
+        }
+<span class="nc bnc" id="L91" title="All 2 branches missed.">        if (ThemisXAnalysisReflectBaseUtils.isPrivate(pFlags)) {</span>
+<span class="nc" id="L92">            myModifiers.add(Modifier.privateModifier());</span>
+        }
+<span class="nc bnc" id="L94" title="All 2 branches missed.">        if (ThemisXAnalysisReflectBaseUtils.isStatic(pFlags)) {</span>
+<span class="nc" id="L95">            myModifiers.add(Modifier.staticModifier());</span>
+        }
+<span class="nc bnc" id="L97" title="All 2 branches missed.">        if (ThemisXAnalysisReflectBaseUtils.isFinal(pFlags)) {</span>
+<span class="nc" id="L98">            myModifiers.add(Modifier.finalModifier());</span>
+        }
+<span class="nc bnc" id="L100" title="All 2 branches missed.">        if (ThemisXAnalysisReflectBaseUtils.isSynchronized(pFlags)) {</span>
+<span class="nc" id="L101">            myModifiers.add(Modifier.synchronizedModifier());</span>
+        }
+<span class="nc bnc" id="L103" title="All 2 branches missed.">        if (ThemisXAnalysisReflectBaseUtils.isVolatile(pFlags)) {</span>
+<span class="nc" id="L104">            myModifiers.add(Modifier.volatileModifier());</span>
+        }
+<span class="nc bnc" id="L106" title="All 2 branches missed.">        if (ThemisXAnalysisReflectBaseUtils.isTransient(pFlags)) {</span>
+<span class="nc" id="L107">            myModifiers.add(Modifier.transientModifier());</span>
+        }
+<span class="nc bnc" id="L109" title="All 2 branches missed.">        if (ThemisXAnalysisReflectBaseUtils.isNative(pFlags)) {</span>
+<span class="nc" id="L110">            myModifiers.add(Modifier.nativeModifier());</span>
+        }
+<span class="nc bnc" id="L112" title="All 2 branches missed.">        if (ThemisXAnalysisReflectBaseUtils.isAbstract(pFlags)) {</span>
+<span class="nc" id="L113">            myModifiers.add(Modifier.abstractModifier());</span>
+        }
+<span class="nc" id="L115">        return myModifiers;</span>
+    }
+
+    /**
+     * Build the extended list.
+     *
+     * @param pClass the class
+     * @return the extended list
+     */
+    static NodeList&lt;ClassOrInterfaceType&gt; buildExtended(final Class&lt;?&gt; pClass) {
+<span class="nc" id="L125">        final Class&lt;?&gt; mySuperClass = pClass.getSuperclass();</span>
+<span class="nc" id="L126">        final NodeList&lt;ClassOrInterfaceType&gt; myExtends = new NodeList&lt;&gt;();</span>
+<span class="nc bnc" id="L127" title="All 2 branches missed.">        if (mySuperClass != null) {</span>
+<span class="nc" id="L128">            final ClassOrInterfaceType myType = buildClassOrInterface(mySuperClass);</span>
+<span class="nc" id="L129">            myExtends.add(myType);</span>
+        }
+<span class="nc" id="L131">        return myExtends;</span>
+    }
+
+    /**
+     * Build the implemented list.
+     *
+     * @param pClass the class
+     * @return the implemented list
+     */
+    static NodeList&lt;ClassOrInterfaceType&gt; buildImplements(final Class&lt;?&gt; pClass) {
+<span class="nc" id="L141">        final NodeList&lt;ClassOrInterfaceType&gt; myImplements = new NodeList&lt;&gt;();</span>
+<span class="nc bnc" id="L142" title="All 2 branches missed.">        for (Class&lt;?&gt; myClass : pClass.getInterfaces()) {</span>
+<span class="nc" id="L143">            final ClassOrInterfaceType myType = buildClassOrInterface(myClass);</span>
+<span class="nc" id="L144">            myImplements.add(myType);</span>
+        }
+<span class="nc" id="L146">        return myImplements;</span>
+    }
+
+    /**
+     * Build the thrown list.
+     *
+     * @param pConstructor the constructor
+     * @return the thrown list
+     */
+    static NodeList&lt;ReferenceType&gt; buildThrown(final Constructor&lt;?&gt; pConstructor) {
+<span class="nc" id="L156">        final NodeList&lt;ReferenceType&gt; myImplements = new NodeList&lt;&gt;();</span>
+<span class="nc bnc" id="L157" title="All 2 branches missed.">        for (Class&lt;?&gt; myClass : pConstructor.getExceptionTypes()) {</span>
+<span class="nc" id="L158">            final ClassOrInterfaceType myType = buildClassOrInterface(myClass);</span>
+<span class="nc" id="L159">            myImplements.add(myType);</span>
+        }
+<span class="nc" id="L161">        return myImplements;</span>
+    }
+
+    /**
+     * Build the thrown list.
+     *
+     * @param pMethod the method
+     * @return the thrown list
+     */
+    static NodeList&lt;ReferenceType&gt; buildThrown(final Method pMethod) {
+<span class="nc" id="L171">        final NodeList&lt;ReferenceType&gt; myImplements = new NodeList&lt;&gt;();</span>
+<span class="nc bnc" id="L172" title="All 2 branches missed.">        for (Class&lt;?&gt; myClass : pMethod.getExceptionTypes()) {</span>
+<span class="nc" id="L173">            final ClassOrInterfaceType myType = buildClassOrInterface(myClass);</span>
+<span class="nc" id="L174">            myImplements.add(myType);</span>
+        }
+<span class="nc" id="L176">        return myImplements;</span>
+    }
+
+    /**
+     * Build the parameters.
+     *
+     * @param pExecutable the executable
+     * @return the parameter list
+     */
+    static NodeList&lt;Parameter&gt; buildParameters(final Executable pExecutable) {
+<span class="nc" id="L186">        final NodeList&lt;Parameter&gt; myParameters = new NodeList&lt;&gt;();</span>
+<span class="nc bnc" id="L187" title="All 2 branches missed.">        for (ThemisXAnalysisReflectParameter myParam : ThemisXAnalysisReflectBaseUtils.getParameters(pExecutable.getParameters())) {</span>
+<span class="nc" id="L188">            final Parameter myParm = new Parameter();</span>
+<span class="nc" id="L189">            myParm.setName(new SimpleName(myParam.getName()));</span>
+<span class="nc" id="L190">            myParm.setModifiers(buildModifiers(myParam.getModifiers()));</span>
+<span class="nc" id="L191">            myParm.setType(buildClassOrInterface(myParam.getType()));</span>
+<span class="nc" id="L192">            myParm.setVarArgs(myParam.isVarArgs());</span>
+<span class="nc" id="L193">            myParameters.add(myParm);</span>
+<span class="nc" id="L194">        }</span>
+<span class="nc" id="L195">        return myParameters;</span>
+    }
+
+    /**
+     * Build the classOrInterface reference.
+     *
+     * @param pClass the class
+     * @return the reference
+     */
+    static ClassOrInterfaceType buildClassOrInterface(final Class&lt;?&gt; pClass) {
+<span class="nc" id="L205">        final ClassOrInterfaceType myType = ThemisXAnalysisReflectBaseUtils.createTypeForName(pClass.getCanonicalName());</span>
+<span class="nc" id="L206">        final NodeList&lt;TypeParameter&gt; myParams = ThemisXAnalysisReflectBaseUtils.buildTypeParams(pClass.getTypeParameters());</span>
+<span class="nc" id="L207">        myType.setTypeArguments(typeList(myParams));</span>
+<span class="nc" id="L208">        return myType;</span>
+    }
+
+    /**
+     * Map typeParameter list to type list.
+     *
+     * @param pSource the source list
+     * @return the type list
+     */
+    private static NodeList&lt;Type&gt; typeList(final NodeList&lt;TypeParameter&gt; pSource) {
+<span class="nc" id="L218">        final NodeList&lt;Type&gt; myTypes = new NodeList&lt;&gt;();</span>
+<span class="nc" id="L219">        myTypes.addAll(pSource);</span>
+<span class="nc" id="L220">        return myTypes;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

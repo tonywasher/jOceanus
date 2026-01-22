@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseUKSavingsAllowance.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.moneywise.tax.uk</a> &gt; <span class="el_source">MoneyWiseUKSavingsAllowance.java</span></div><h1>MoneyWiseUKSavingsAllowance.java</h1><pre class="source lang-java linenums">/*
+ * MoneyWise: Finance Application
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.moneywise.tax.uk;
+
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
+import io.github.tonywasher.joceanus.moneywise.tax.MoneyWiseMarginalReduction;
+import io.github.tonywasher.joceanus.moneywise.tax.MoneyWiseTaxBandSet.MoneyWiseTaxBand;
+import io.github.tonywasher.joceanus.moneywise.tax.MoneyWiseTaxResource;
+
+import java.util.Iterator;
+
+/**
+ * Savings UK Tax Allowance.
+ */
+public class MoneyWiseUKSavingsAllowance
+        extends MoneyWiseUKBasicAllowance {
+    /**
+     * Local Report fields.
+     */
+<span class="fc" id="L36">    private static final MetisFieldSet&lt;MoneyWiseUKSavingsAllowance&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseUKSavingsAllowance.class);</span>
+
+    /*
+     * Declare Fields.
+     */
+    static {
+<span class="fc" id="L42">        FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.ALLOWANCE_SAVINGS, MoneyWiseUKSavingsAllowance::getSavingsAllowance);</span>
+<span class="fc" id="L43">        FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.ALLOWANCE_DIVIDEND, MoneyWiseUKSavingsAllowance::getDividendAllowance);</span>
+<span class="fc" id="L44">        FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.LIMIT_ADDALLOWANCE, MoneyWiseUKSavingsAllowance::getAdditionalAllowanceLimit);</span>
+<span class="fc" id="L45">    }</span>
+
+    /**
+     * SavingsAllowance.
+     */
+    private final OceanusMoney theSavingsAllowance;
+
+    /**
+     * DividendAllowance.
+     */
+    private final OceanusMoney theDividendAllowance;
+
+    /**
+     * AdditionalAllowanceLimit.
+     */
+    private final OceanusMoney theAddAllowLimit;
+
+    /**
+     * Constructor.
+     *
+     * @param pAllowance         the allowance
+     * @param pRentalAllowance   the rental allowance
+     * @param pCapitalAllowance  the capital allowance
+     * @param pSavingsAllowance  the savings allowance
+     * @param pDividendAllowance the dividend allowance
+     * @param pAddAllowLimit     the additional allowance limit
+     */
+    protected MoneyWiseUKSavingsAllowance(final OceanusMoney pAllowance,
+                                          final OceanusMoney pRentalAllowance,
+                                          final OceanusMoney pCapitalAllowance,
+                                          final OceanusMoney pSavingsAllowance,
+                                          final OceanusMoney pDividendAllowance,
+                                          final OceanusMoney pAddAllowLimit) {
+<span class="fc" id="L78">        super(pAllowance, pRentalAllowance, pCapitalAllowance, MoneyWiseMarginalReduction.ONEINTWO);</span>
+<span class="fc" id="L79">        theSavingsAllowance = pSavingsAllowance;</span>
+<span class="fc" id="L80">        theDividendAllowance = pDividendAllowance;</span>
+<span class="fc" id="L81">        theAddAllowLimit = pAddAllowLimit;</span>
+<span class="fc" id="L82">    }</span>
+
+    /**
+     * Obtain the savings allowance.
+     *
+     * @return the Allowance
+     */
+    protected OceanusMoney getSavingsAllowance() {
+<span class="nc" id="L90">        return theSavingsAllowance;</span>
+    }
+
+    /**
+     * Obtain the dividend allowance.
+     *
+     * @return the Allowance
+     */
+    protected OceanusMoney getDividendAllowance() {
+<span class="nc" id="L99">        return theDividendAllowance;</span>
+    }
+
+    /**
+     * Obtain the additional Allowance limit.
+     *
+     * @return the Limit
+     */
+    protected OceanusMoney getAdditionalAllowanceLimit() {
+<span class="nc" id="L108">        return theAddAllowLimit;</span>
+    }
+
+    @Override
+    protected OceanusMoney calculateBasicAllowance(final MoneyWiseUKTaxConfig pConfig) {
+        /* Determine Basic allowance */
+<span class="nc" id="L114">        OceanusMoney myAllowance = getAllowance();</span>
+
+        /* If we have additional tax possible and we are above the allowance limit */
+<span class="nc" id="L117">        final OceanusMoney myGross = pConfig.getGrossTaxable();</span>
+<span class="nc bnc" id="L118" title="All 2 branches missed.">        if (myGross.compareTo(theAddAllowLimit) &gt; 0) {</span>
+            /* Calculate and apply the reduction */
+<span class="nc" id="L120">            final OceanusMoney myReduction = getMarginalReduction().calculateReduction(myGross, theAddAllowLimit);</span>
+<span class="nc" id="L121">            myAllowance = new OceanusMoney(myAllowance);</span>
+<span class="nc" id="L122">            myAllowance.subtractAmount(myReduction);</span>
+
+            /* If we have reduced below zero */
+<span class="nc bnc" id="L125" title="All 2 branches missed.">            if (!myAllowance.isPositive()) {</span>
+                /* Set the allowance to zero */
+<span class="nc" id="L127">                myAllowance.setZero();</span>
+            }
+        }
+
+        /* Return the allowance */
+<span class="nc" id="L132">        return myAllowance;</span>
+    }
+
+    @Override
+    protected OceanusMoney calculateSavingsAllowance(final MoneyWiseUKTaxConfig pConfig) {
+        /* Obtain the gross taxable and allowance */
+<span class="nc" id="L138">        final OceanusMoney myGross = pConfig.getGrossTaxable();</span>
+<span class="nc" id="L139">        final OceanusMoney myBoundary = new OceanusMoney(pConfig.getAllowance());</span>
+
+        /* Obtain the tax bands */
+<span class="nc" id="L142">        final MoneyWiseUKTaxBands myBands = pConfig.getTaxYear().getTaxBands();</span>
+<span class="nc" id="L143">        final Iterator&lt;MoneyWiseTaxBand&gt; myIterator = myBands.getStandardSet().iterator();</span>
+
+        /* If we have a basic band */
+<span class="nc bnc" id="L146" title="All 2 branches missed.">        if (myIterator.hasNext()) {</span>
+            /* If we are only a basic taxPayer return the full allowance */
+<span class="nc" id="L148">            myBoundary.addAmount(myIterator.next().getAmount());</span>
+<span class="nc bnc" id="L149" title="All 2 branches missed.">            if (myBoundary.compareTo(myGross) &gt;= 0) {</span>
+<span class="nc" id="L150">                return theSavingsAllowance;</span>
+            }
+        }
+
+        /* If we have a high band */
+<span class="nc" id="L155">        final OceanusMoney myAllowance = new OceanusMoney(theSavingsAllowance);</span>
+<span class="nc bnc" id="L156" title="All 2 branches missed.">        if (myIterator.hasNext()) {</span>
+            /* If we are only a high taxPayer return the half allowance */
+<span class="nc" id="L158">            myBoundary.addAmount(myIterator.next().getAmount());</span>
+<span class="nc bnc" id="L159" title="All 2 branches missed.">            if (myBoundary.compareTo(myGross) &gt;= 0) {</span>
+<span class="nc" id="L160">                myAllowance.divide(2);</span>
+<span class="nc" id="L161">                return myAllowance;</span>
+            }
+        }
+
+        /* No Allowance */
+<span class="nc" id="L166">        myAllowance.setZero();</span>
+<span class="nc" id="L167">        return theSavingsAllowance;</span>
+    }
+
+    @Override
+    protected OceanusMoney calculateDividendAllowance() {
+<span class="nc" id="L172">        return theDividendAllowance;</span>
+    }
+
+    @Override
+    public MetisFieldSet&lt;MoneyWiseUKSavingsAllowance&gt; getDataFieldSet() {
+<span class="nc" id="L177">        return FIELD_DEFS;</span>
+    }
+
+    @Override
+    public String formatObject(final OceanusDataFormatter pFormatter) {
+<span class="nc" id="L182">        return FIELD_DEFS.getName();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

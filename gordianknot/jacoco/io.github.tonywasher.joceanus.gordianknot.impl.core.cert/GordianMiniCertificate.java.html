@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianMiniCertificate.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.impl.core.cert</a> &gt; <span class="el_source">GordianMiniCertificate.java</span></div><h1>GordianMiniCertificate.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.gordianknot.impl.core.cert;
+
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianCertificate;
+import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianCertificateId;
+import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairUsage;
+import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactory;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairFactory;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairGenerator;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
+import org.bouncycastle.asn1.x500.X500Name;
+
+import java.security.spec.X509EncodedKeySpec;
+import java.util.Date;
+
+/**
+ * Mini Certificate implementation.
+ */
+public class GordianMiniCertificate
+        implements GordianCertificate {
+    /**
+     * Subject of certificate.
+     */
+    private final GordianCertificateId theSubject;
+
+    /**
+     * keyPair of certificate.
+     */
+    private final GordianKeyPair theKeyPair;
+
+    /**
+     * Subject of certificate.
+     */
+    private final GordianKeyPairUsage theUsage;
+
+    /**
+     * The encoded representation.
+     */
+    private final byte[] theEncoded;
+
+    /**
+     * The ASN1 representation.
+     */
+    private final GordianMiniCertificateASN1 theASN1;
+
+    /**
+     * Constructor.
+     *
+     * @param pFactory the factory
+     * @param pSubject the subject of the certificate
+     * @param pKeyPair the keyPair.
+     * @param pUsage   the usage
+     * @throws GordianException on error
+     */
+    public GordianMiniCertificate(final GordianFactory pFactory,
+                                  final X500Name pSubject,
+                                  final GordianKeyPair pKeyPair,
+<span class="fc" id="L75">                                  final GordianKeyPairUsage pUsage) throws GordianException {</span>
+        /* Store parameters */
+<span class="fc" id="L77">        theKeyPair = pKeyPair;</span>
+<span class="fc" id="L78">        theUsage = pUsage;</span>
+
+        /* Access the keyPairFactory */
+<span class="fc" id="L81">        final GordianKeyPairFactory myFactory = pFactory.getAsyncFactory().getKeyPairFactory();</span>
+<span class="fc" id="L82">        final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(pKeyPair.getKeyPairSpec());</span>
+<span class="fc" id="L83">        final X509EncodedKeySpec myX509Spec = myGenerator.getX509Encoding(pKeyPair);</span>
+<span class="fc" id="L84">        theSubject = new GordianCoreCertificateId(pSubject, null);</span>
+
+        /* Create the encoded */
+<span class="fc" id="L87">        theASN1 = new GordianMiniCertificateASN1(pSubject, myX509Spec, pUsage);</span>
+<span class="fc" id="L88">        theEncoded = theASN1.getEncodedBytes();</span>
+<span class="fc" id="L89">    }</span>
+
+    /**
+     * Constructor.
+     *
+     * @param pFactory the factory
+     * @param pEncoded the encoded bytes
+     * @throws GordianException on error
+     */
+    public GordianMiniCertificate(final GordianFactory pFactory,
+                                  final byte[] pEncoded) throws GordianException {
+        /* Parse the bytes */
+<span class="nc" id="L101">        this(pFactory, GordianMiniCertificateASN1.getInstance(pEncoded));</span>
+<span class="nc" id="L102">    }</span>
+
+    /**
+     * Constructor.
+     *
+     * @param pFactory the factory.
+     * @param pASN1    the ASN1
+     * @throws GordianException on error
+     */
+    public GordianMiniCertificate(final GordianFactory pFactory,
+<span class="fc" id="L112">                                  final GordianMiniCertificateASN1 pASN1) throws GordianException {</span>
+        /* Parse the bytes */
+<span class="fc" id="L114">        theASN1 = pASN1;</span>
+<span class="fc" id="L115">        theEncoded = theASN1.getEncodedBytes();</span>
+
+        /* Derive the keyPair */
+<span class="fc" id="L118">        final GordianKeyPairFactory myFactory = pFactory.getAsyncFactory().getKeyPairFactory();</span>
+<span class="fc" id="L119">        final X509EncodedKeySpec myX509Spec = theASN1.getPublicKey();</span>
+<span class="fc" id="L120">        final GordianKeyPairSpec myKeySpec = myFactory.determineKeyPairSpec(myX509Spec);</span>
+<span class="fc" id="L121">        final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(myKeySpec);</span>
+<span class="fc" id="L122">        theKeyPair = myGenerator.derivePublicOnlyKeyPair(myX509Spec);</span>
+
+        /* Store subject and usage */
+<span class="fc" id="L125">        theSubject = new GordianCoreCertificateId(theASN1.getSubject(), null);</span>
+<span class="fc" id="L126">        theUsage = theASN1.getUsage();</span>
+<span class="fc" id="L127">    }</span>
+
+    @Override
+    public GordianCertificateId getSubject() {
+<span class="nc" id="L131">        return theSubject;</span>
+    }
+
+    @Override
+    public GordianCertificateId getIssuer() {
+<span class="nc" id="L136">        return null;</span>
+    }
+
+    @Override
+    public GordianKeyPair getKeyPair() {
+<span class="fc" id="L141">        return theKeyPair;</span>
+    }
+
+    @Override
+    public byte[] getEncoded() {
+<span class="fc" id="L146">        return theEncoded.clone();</span>
+    }
+
+    @Override
+    public boolean isValidOnDate(final Date pDate) {
+<span class="nc" id="L151">        return true;</span>
+    }
+
+    @Override
+    public boolean isSelfSigned() {
+<span class="nc" id="L156">        return false;</span>
+    }
+
+    @Override
+    public GordianKeyPairUsage getUsage() {
+<span class="fc" id="L161">        return theUsage;</span>
+    }
+
+    @Override
+    public boolean validateCertificate(final GordianCertificate pSigner) throws GordianException {
+<span class="nc" id="L166">        return true;</span>
+    }
+
+    /**
+     * Obtain the ASN1.
+     *
+     * @return the ASN1
+     */
+    public GordianMiniCertificateASN1 getASN1() {
+<span class="fc" id="L175">        return theASN1;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

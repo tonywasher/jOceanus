@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianCoreEncryptor.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.impl.core.encrypt</a> &gt; <span class="el_source">GordianCoreEncryptor.java</span></div><h1>GordianCoreEncryptor.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.gordianknot.impl.core.encrypt;
+
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianEncryptor;
+import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianEncryptorFactory;
+import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianEncryptorSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianAsyncFactory;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianCoreKeyPair;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianPrivateKey;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianPublicKey;
+
+import java.security.SecureRandom;
+
+/**
+ * Asymmetric Encryptor.
+ */
+public abstract class GordianCoreEncryptor
+        implements GordianEncryptor {
+    /**
+     * The Factory.
+     */
+    private final GordianBaseFactory theFactory;
+
+    /**
+     * The encryptorSpec.
+     */
+    private final GordianEncryptorSpec theSpec;
+
+    /**
+     * The KeyPair.
+     */
+    private GordianCoreKeyPair theKeyPair;
+
+    /**
+     * Encrypt Mode.
+     */
+    private GordianEncryptMode theMode;
+
+    /**
+     * Constructor.
+     *
+     * @param pFactory the factory
+     * @param pSpec    the encryptorSpec
+     */
+    protected GordianCoreEncryptor(final GordianBaseFactory pFactory,
+<span class="fc" id="L65">                                   final GordianEncryptorSpec pSpec) {</span>
+<span class="fc" id="L66">        theFactory = pFactory;</span>
+<span class="fc" id="L67">        theSpec = pSpec;</span>
+<span class="fc" id="L68">    }</span>
+
+    /**
+     * Obtain the factory.
+     *
+     * @return the factory
+     */
+    public GordianBaseFactory getFactory() {
+<span class="nc" id="L76">        return theFactory;</span>
+    }
+
+    /**
+     * Obtain the randomGenerator.
+     *
+     * @return the random
+     */
+    public SecureRandom getRandom() {
+<span class="fc" id="L85">        return theFactory.getRandomSource().getRandom();</span>
+    }
+
+    @Override
+    public GordianEncryptorSpec getEncryptorSpec() {
+<span class="nc" id="L90">        return theSpec;</span>
+    }
+
+    /**
+     * CheckKeyPair.
+     *
+     * @param pKeyPair the keyPair
+     * @throws GordianException on error
+     */
+    protected void checkKeyPair(final GordianKeyPair pKeyPair) throws GordianException {
+<span class="fc" id="L100">        final GordianAsyncFactory myFactory = theFactory.getAsyncFactory();</span>
+<span class="fc" id="L101">        final GordianEncryptorFactory myEncrypts = myFactory.getEncryptorFactory();</span>
+<span class="pc bpc" id="L102" title="1 of 2 branches missed.">        if (!myEncrypts.validEncryptorSpecForKeyPair(pKeyPair, theSpec)) {</span>
+<span class="nc" id="L103">            throw new GordianDataException(&quot;Incorrect KeyPair type&quot;);</span>
+        }
+<span class="fc" id="L105">    }</span>
+
+    /**
+     * Obtain public key from pair.
+     *
+     * @return the public key
+     */
+    protected GordianPublicKey getPublicKey() {
+<span class="fc" id="L113">        return theKeyPair.getPublicKey();</span>
+    }
+
+    /**
+     * Obtain private key from pair.
+     *
+     * @return the private key
+     */
+    protected GordianPrivateKey getPrivateKey() {
+<span class="fc" id="L122">        return theKeyPair.getPrivateKey();</span>
+    }
+
+    @Override
+    public void initForEncrypt(final GordianKeyPair pKeyPair) throws GordianException {
+        /* Check that the keyPair matches */
+<span class="fc" id="L128">        checkKeyPair(pKeyPair);</span>
+
+        /* Store details */
+<span class="fc" id="L131">        theMode = GordianEncryptMode.ENCRYPT;</span>
+<span class="fc" id="L132">        theKeyPair = (GordianCoreKeyPair) pKeyPair;</span>
+<span class="fc" id="L133">    }</span>
+
+    @Override
+    public void initForDecrypt(final GordianKeyPair pKeyPair) throws GordianException {
+        /* Check that the keyPair matches */
+<span class="fc" id="L138">        checkKeyPair(pKeyPair);</span>
+
+        /* Check that we have the private key */
+<span class="pc bpc" id="L141" title="1 of 2 branches missed.">        if (pKeyPair.isPublicOnly()) {</span>
+<span class="nc" id="L142">            throw new GordianDataException(&quot;Missing privateKey&quot;);</span>
+        }
+
+        /* Store details */
+<span class="fc" id="L146">        theMode = GordianEncryptMode.DECRYPT;</span>
+<span class="fc" id="L147">        theKeyPair = (GordianCoreKeyPair) pKeyPair;</span>
+<span class="fc" id="L148">    }</span>
+
+    /**
+     * Check that we are in the correct mode.
+     *
+     * @param pMode the required mode
+     * @throws GordianException on error
+     */
+    protected void checkMode(final GordianEncryptMode pMode) throws GordianException {
+<span class="pc bpc" id="L157" title="1 of 2 branches missed.">        if (!pMode.equals(theMode)) {</span>
+<span class="nc" id="L158">            throw new GordianDataException(&quot;Incorrect encryption Mode&quot;);</span>
+        }
+<span class="fc" id="L160">    }</span>
+
+    /**
+     * Are we encrypting?
+     *
+     * @return true/false
+     */
+    protected boolean isEncrypting() {
+<span class="nc" id="L168">        return GordianEncryptMode.ENCRYPT.equals(theMode);</span>
+    }
+
+    /**
+     * EncryptionMode.
+     */
+<span class="fc" id="L174">    public enum GordianEncryptMode {</span>
+        /**
+         * Encrypt.
+         */
+<span class="fc" id="L178">        ENCRYPT,</span>
+
+        /**
+         * Decrypt.
+         */
+<span class="fc" id="L183">        DECRYPT;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

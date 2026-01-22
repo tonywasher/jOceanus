@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseUKChargeableGainsScheme.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.moneywise.tax.uk</a> &gt; <span class="el_source">MoneyWiseUKChargeableGainsScheme.java</span></div><h1>MoneyWiseUKChargeableGainsScheme.java</h1><pre class="source lang-java linenums">/*
+ * MoneyWise: Finance Application
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.moneywise.tax.uk;
+
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
+import io.github.tonywasher.joceanus.moneywise.tax.MoneyWiseChargeableGainSlice;
+import io.github.tonywasher.joceanus.moneywise.tax.MoneyWiseTaxBandSet;
+import io.github.tonywasher.joceanus.moneywise.tax.MoneyWiseTaxBandSet.MoneyWiseTaxBand;
+import io.github.tonywasher.joceanus.moneywise.tax.MoneyWiseTaxDueBucket;
+import io.github.tonywasher.joceanus.moneywise.tax.MoneyWiseTaxResource;
+import io.github.tonywasher.joceanus.moneywise.tax.MoneyWiseTaxSource;
+
+import java.util.Iterator;
+
+/**
+ * Taxable Gains Scheme.
+ */
+public class MoneyWiseUKChargeableGainsScheme
+        extends MoneyWiseUKIncomeScheme {
+    /**
+     * Constructor.
+     */
+    protected MoneyWiseUKChargeableGainsScheme() {
+<span class="fc" id="L41">        super(Boolean.FALSE);</span>
+<span class="fc" id="L42">    }</span>
+
+    /**
+     * Chargeable Gains Sliced Tax Due.
+     */
+    public static class MoneyWiseUKSlicedTaxDueBucket
+            extends MoneyWiseTaxDueBucket {
+        /**
+         * Local Report fields.
+         */
+<span class="nc" id="L52">        private static final MetisFieldSet&lt;MoneyWiseUKSlicedTaxDueBucket&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseUKSlicedTaxDueBucket.class);</span>
+
+        /*
+         * Declare Fields.
+         */
+        static {
+<span class="nc" id="L58">            FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.CHARGEABLEGAIN_TOTALGAINS, MoneyWiseUKSlicedTaxDueBucket::getTotalGains);</span>
+<span class="nc" id="L59">            FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.CHARGEABLEGAIN_TOTALSLICES, MoneyWiseUKSlicedTaxDueBucket::getTotalSlices);</span>
+<span class="nc" id="L60">            FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.CHARGEABLEGAIN_RATIO, MoneyWiseUKSlicedTaxDueBucket::getRatio);</span>
+<span class="nc" id="L61">            FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.CHARGEABLEGAIN_TAXEDSLICES, MoneyWiseUKSlicedTaxDueBucket::getTaxedSlices);</span>
+<span class="nc" id="L62">            FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.CHARGEABLEGAIN_NETTTAXDUE, MoneyWiseUKSlicedTaxDueBucket::getNettTaxDue);</span>
+<span class="nc" id="L63">            FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.CHARGEABLEGAIN_TAXRELIEF, MoneyWiseUKSlicedTaxDueBucket::getTaxRelief);</span>
+<span class="nc" id="L64">        }</span>
+
+        /**
+         * The total gains.
+         */
+        private final OceanusMoney theTotalGains;
+
+        /**
+         * The total slices.
+         */
+        private final OceanusMoney theTotalSlices;
+
+        /**
+         * The ratio.
+         */
+        private final OceanusRatio theRatio;
+
+        /**
+         * The slices taxDueBucket.
+         */
+        private final MoneyWiseTaxDueBucket theSliceBucket;
+
+        /**
+         * The taxRelief.
+         */
+        private final OceanusMoney theTaxRelief;
+
+        /**
+         * The nett taxDue.
+         */
+        private final OceanusMoney theNettTaxDue;
+
+        /**
+         * Constructor.
+         *
+         * @param pBase   the underlying bucket
+         * @param pSource the tax source
+         */
+        protected MoneyWiseUKSlicedTaxDueBucket(final MoneyWiseTaxDueBucket pBase,
+                                                final MoneyWiseTaxSource pSource) {
+            /* Initialise underlying bucket */
+<span class="nc" id="L105">            super(pBase);</span>
+
+            /* Create the totals */
+<span class="nc" id="L108">            final OceanusMoney myZero = new OceanusMoney(pBase.getTaxDue());</span>
+<span class="nc" id="L109">            theTotalGains = new OceanusMoney(myZero);</span>
+<span class="nc" id="L110">            theTotalSlices = new OceanusMoney(myZero);</span>
+<span class="nc" id="L111">            theTaxRelief = new OceanusMoney(myZero);</span>
+<span class="nc" id="L112">            theNettTaxDue = new OceanusMoney(myZero);</span>
+
+            /* Process the slices */
+<span class="nc bnc" id="L115" title="All 2 branches missed.">            for (MoneyWiseChargeableGainSlice mySlice : pSource.getGainSlices().getUnderlyingList()) {</span>
+<span class="nc" id="L116">                processSlice(mySlice);</span>
+<span class="nc" id="L117">            }</span>
+
+            /* Calculate the ratio */
+<span class="nc" id="L120">            theRatio = new OceanusRatio(theTotalGains, theTotalSlices);</span>
+
+            /* Determine tax due on slices */
+<span class="nc" id="L123">            theSliceBucket = buildSliceBucket();</span>
+<span class="nc" id="L124">            calculateTax();</span>
+<span class="nc" id="L125">        }</span>
+
+        /**
+         * Obtain the total gains.
+         *
+         * @return the gains
+         */
+        public OceanusMoney getTotalGains() {
+<span class="nc" id="L133">            return theTotalGains;</span>
+        }
+
+        /**
+         * Obtain the total slices.
+         *
+         * @return the slices
+         */
+        public OceanusMoney getTotalSlices() {
+<span class="nc" id="L142">            return theTotalSlices;</span>
+        }
+
+        /**
+         * Obtain the ratio.
+         *
+         * @return the ratio
+         */
+        public OceanusRatio getRatio() {
+<span class="nc" id="L151">            return theRatio;</span>
+        }
+
+        /**
+         * Obtain the taxed slices.
+         *
+         * @return the taxed slices
+         */
+        public MoneyWiseTaxDueBucket getTaxedSlices() {
+<span class="nc" id="L160">            return theSliceBucket;</span>
+        }
+
+        /**
+         * Obtain the tax due.
+         *
+         * @return the tax due
+         */
+        public OceanusMoney getNettTaxDue() {
+<span class="nc" id="L169">            return theNettTaxDue;</span>
+        }
+
+        /**
+         * Obtain the tax relief.
+         *
+         * @return the tax relief
+         */
+        public OceanusMoney getTaxRelief() {
+<span class="nc" id="L178">            return theTaxRelief;</span>
+        }
+
+        /**
+         * Process slice.
+         *
+         * @param pSlice the slice
+         */
+        private void processSlice(final MoneyWiseChargeableGainSlice pSlice) {
+            /* Adjust totals */
+<span class="nc" id="L188">            theTotalGains.addAmount(pSlice.getGain());</span>
+<span class="nc" id="L189">            theTotalSlices.addAmount(pSlice.getSlice());</span>
+<span class="nc" id="L190">        }</span>
+
+        /**
+         * build slice bucket.
+         *
+         * @return the slice bucket
+         */
+        private MoneyWiseTaxDueBucket buildSliceBucket() {
+            /* Create a new taxBand set */
+<span class="nc" id="L199">            final MoneyWiseTaxBandSet myTaxBands = new MoneyWiseTaxBandSet();</span>
+<span class="nc" id="L200">            final OceanusMoney myRemaining = new OceanusMoney(theTotalSlices);</span>
+
+            /* Calculate new tax allocation */
+<span class="nc" id="L203">            final Iterator&lt;MoneyWiseTaxBandBucket&gt; myIterator = taxBandIterator();</span>
+<span class="nc bnc" id="L204" title="All 2 branches missed.">            while (myRemaining.isNonZero()</span>
+<span class="nc bnc" id="L205" title="All 2 branches missed.">                    &amp;&amp; myIterator.hasNext()) {</span>
+<span class="nc" id="L206">                final MoneyWiseTaxBandBucket myBucket = myIterator.next();</span>
+
+                /* Determine amount in band */
+<span class="nc" id="L209">                OceanusMoney myAmount = getAmountInBand(myBucket.getAmount(), myRemaining);</span>
+<span class="nc" id="L210">                myAmount = new OceanusMoney(myAmount);</span>
+
+                /* allocate band and adjust */
+<span class="nc" id="L213">                myTaxBands.addTaxBand(new MoneyWiseTaxBand(myAmount, myBucket.getRate()));</span>
+<span class="nc" id="L214">                myRemaining.subtractAmount(myAmount);</span>
+<span class="nc" id="L215">            }</span>
+
+            /* Create the new tax bucket */
+<span class="nc" id="L218">            return new MoneyWiseTaxDueBucket(getTaxBasis(), myTaxBands, getTaxConfig());</span>
+        }
+
+        /**
+         * calculate the tax.
+         */
+        private void calculateTax() {
+            /* Calculate tax due */
+<span class="nc" id="L226">            theNettTaxDue.add(theSliceBucket.getTaxDue().valueAtRatio(theRatio));</span>
+
+            /* Calculate tax relief */
+<span class="nc" id="L229">            theTaxRelief.addAmount(getTaxDue());</span>
+<span class="nc" id="L230">            theTaxRelief.subtractAmount(theNettTaxDue);</span>
+<span class="nc" id="L231">        }</span>
+
+        @Override
+        public String formatObject(final OceanusDataFormatter pFormatter) {
+<span class="nc" id="L235">            return FIELD_DEFS.getName();</span>
+        }
+
+        @Override
+        public MetisFieldSet&lt;MoneyWiseUKSlicedTaxDueBucket&gt; getDataFieldSet() {
+<span class="nc" id="L240">            return FIELD_DEFS;</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

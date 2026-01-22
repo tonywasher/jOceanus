@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ThemisStatsProject.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Themis Core Project Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.themis.lethe.statistics</a> &gt; <span class="el_source">ThemisStatsProject.java</span></div><h1>ThemisStatsProject.java</h1><pre class="source lang-java linenums">/*
+ * Themis: Java Project Framework
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.themis.lethe.statistics;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+import io.github.tonywasher.joceanus.themis.lethe.analysis.ThemisAnalysisProject;
+
+/**
+ * Project statistics.
+ */
+public class ThemisStatsProject
+        extends ThemisStatsBase {
+    /**
+     * The project.
+     */
+    private final ThemisAnalysisProject theProject;
+
+    /**
+     * The module list.
+     */
+    private final List&lt;ThemisStatsBase&gt; theChildren;
+
+    /**
+     * Constructor.
+     *
+     * @param pProject the project
+     */
+<span class="nc" id="L45">    ThemisStatsProject(final ThemisAnalysisProject pProject) {</span>
+        /* Store parameters */
+<span class="nc" id="L47">        theProject = pProject;</span>
+
+        /* Create lists */
+<span class="nc" id="L50">        theChildren = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L51">    }</span>
+
+    /**
+     * Obtain the project.
+     *
+     * @return the project
+     */
+    public ThemisAnalysisProject getProject() {
+<span class="nc" id="L59">        return theProject;</span>
+    }
+
+    @Override
+    public Iterator&lt;ThemisStatsBase&gt; childIterator() {
+<span class="nc" id="L64">        return theChildren.iterator();</span>
+    }
+
+    @Override
+    public String toString() {
+<span class="nc" id="L69">        return theProject.getName();</span>
+    }
+
+    /**
+     * Add module to list.
+     *
+     * @param pModule the module
+     */
+    void addModule(final ThemisStatsModule pModule) {
+        /* Add module to list */
+<span class="nc" id="L79">        theChildren.add(pModule);</span>
+<span class="nc" id="L80">        pModule.setParent(this);</span>
+
+        /* Adjust count of files and packages */
+<span class="nc" id="L83">        adjustChildStat(pModule, ThemisStat.TNPKG);</span>
+<span class="nc" id="L84">        adjustChildStat(pModule, ThemisStat.TNFI);</span>
+
+        /* Adjust counts */
+<span class="nc" id="L87">        addChildTotals(pModule);</span>
+<span class="nc" id="L88">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

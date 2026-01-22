@@ -1,0 +1,581 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianCoreCipherFactory.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.impl.core.cipher</a> &gt; <span class="el_source">GordianCoreCipherFactory.java</span></div><h1>GordianCoreCipherFactory.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.gordianknot.impl.core.cipher;
+
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherMode;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianPBESpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianPBESpec.GordianPBEDigestAndCountSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianPadding;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamCipherSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamKeySpec.GordianBlakeXofKey;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamKeySpec.GordianChaCha20Key;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamKeySpec.GordianElephantKey;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamKeySpec.GordianISAPKey;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamKeySpec.GordianRomulusKey;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamKeySpec.GordianSalsa20Key;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamKeySpec.GordianSkeinXofKey;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamKeySpec.GordianSparkleKey;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamKeySpec.GordianStreamSubKeyType;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamKeySpec.GordianVMPCKey;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamKeyType;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymKeyType;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianWrapper;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKey;
+import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKeyLengths;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseData;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
+import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+
+/**
+ * Core Cipher factory.
+ */
+public abstract class GordianCoreCipherFactory
+        implements GordianBaseCipherFactory {
+    /**
+     * The factory.
+     */
+    private final GordianBaseFactory theFactory;
+
+    /**
+     * The Cipher AlgIds.
+     */
+    private GordianCipherAlgId theCipherAlgIds;
+
+    /**
+     * Constructor.
+     *
+     * @param pFactory the factory.
+     */
+<span class="fc" id="L81">    protected GordianCoreCipherFactory(final GordianBaseFactory pFactory) {</span>
+<span class="fc" id="L82">        theFactory = pFactory;</span>
+<span class="fc" id="L83">    }</span>
+
+    /**
+     * Obtain the factory.
+     *
+     * @return the factory
+     */
+    protected GordianBaseFactory getFactory() {
+<span class="fc" id="L91">        return theFactory;</span>
+    }
+
+    @Override
+    public Predicate&lt;GordianSymKeySpec&gt; supportedSymKeySpecs() {
+<span class="fc" id="L96">        return this::validSymKeySpec;</span>
+    }
+
+    @Override
+    public Predicate&lt;GordianSymCipherSpec&gt; supportedSymCipherSpecs() {
+<span class="fc" id="L101">        return this::validSymCipherSpec;</span>
+    }
+
+    @Override
+    public Predicate&lt;GordianSymKeyType&gt; supportedSymKeyTypes() {
+<span class="fc" id="L106">        return t -&gt; theFactory.getValidator().validSymKeyType(t);</span>
+    }
+
+    @Override
+    public Predicate&lt;GordianStreamKeySpec&gt; supportedStreamKeySpecs() {
+<span class="fc" id="L111">        return this::validStreamKeySpec;</span>
+    }
+
+    @Override
+    public Predicate&lt;GordianStreamCipherSpec&gt; supportedStreamCipherSpecs() {
+<span class="fc" id="L116">        return this::validStreamCipherSpec;</span>
+    }
+
+    @Override
+    public Predicate&lt;GordianStreamKeyType&gt; supportedStreamKeyTypes() {
+<span class="fc" id="L121">        return t -&gt; theFactory.getValidator().validStreamKeyType(t);</span>
+    }
+
+    @Override
+    public Predicate&lt;GordianPBECipherSpec&lt;? extends GordianKeySpec&gt;&gt; supportedPBECipherSpecs() {
+<span class="fc" id="L126">        return this::validPBECipherSpec;</span>
+    }
+
+    /**
+     * Create a wrapCipher.
+     *
+     * @param pKey         the key
+     * @param pBlockCipher the underlying block cipher
+     * @return the wrapCipher
+     */
+    protected GordianWrapper createKeyWrapper(final GordianKey&lt;GordianSymKeySpec&gt; pKey,
+                                              final GordianCoreCipher&lt;GordianSymKeySpec&gt; pBlockCipher) {
+<span class="fc" id="L138">        return new GordianCoreWrapper(theFactory, pKey, pBlockCipher);</span>
+    }
+
+    /**
+     * Check SymKeySpec.
+     *
+     * @param pSymKeySpec the symKeySpec
+     * @return true/false
+     */
+    public boolean validSymKeySpec(final GordianSymKeySpec pSymKeySpec) {
+        /* Reject invalid keySpec */
+<span class="pc bpc" id="L149" title="1 of 2 branches missed.">        if (pSymKeySpec == null</span>
+<span class="pc bpc" id="L150" title="1 of 2 branches missed.">                || !pSymKeySpec.isValid()) {</span>
+<span class="nc" id="L151">            return false;</span>
+        }
+<span class="fc" id="L153">        return supportedSymKeyTypes().test(pSymKeySpec.getSymKeyType());</span>
+    }
+
+    /**
+     * validate the symCipherSpec.
+     *
+     * @param pCipherSpec the cipherSpec.
+     * @return true/false
+     */
+    protected boolean validSymCipherSpec(final GordianSymCipherSpec pCipherSpec) {
+        /* Reject invalid cipherSpec */
+<span class="pc bpc" id="L164" title="2 of 4 branches missed.">        if (pCipherSpec == null || !pCipherSpec.isValid()) {</span>
+<span class="nc" id="L165">            return false;</span>
+        }
+
+        /* Reject unsupported keySpecs */
+<span class="pc bpc" id="L169" title="1 of 2 branches missed.">        if (!supportedSymKeySpecs().test(pCipherSpec.getKeyType())) {</span>
+<span class="nc" id="L170">            return false;</span>
+        }
+
+        /* Reject null modes */
+<span class="fc" id="L174">        final GordianCipherMode myMode = pCipherSpec.getCipherMode();</span>
+<span class="pc bpc" id="L175" title="1 of 2 branches missed.">        if (myMode == null) {</span>
+<span class="nc" id="L176">            return false;</span>
+        }
+
+        /* Check that the mode is valid for the keyType */
+<span class="fc" id="L180">        final GordianSymKeySpec myKeySpec = pCipherSpec.getKeyType();</span>
+<span class="fc" id="L181">        final GordianSymKeyType myKeyType = myKeySpec.getSymKeyType();</span>
+<span class="fc bfc" id="L182" title="All 2 branches covered.">        if (!myMode.validForSymKey(myKeySpec)) {</span>
+<span class="fc" id="L183">            return false;</span>
+        }
+
+        /* Disallow AAD for RC5-64 */
+<span class="fc bfc" id="L187" title="All 2 branches covered.">        if (GordianSymKeyType.RC5.equals(myKeyType)</span>
+<span class="fc bfc" id="L188" title="All 2 branches covered.">                &amp;&amp; GordianLength.LEN_128.equals(myKeySpec.getBlockLength())</span>
+<span class="fc bfc" id="L189" title="All 2 branches covered.">                &amp;&amp; myMode.isAAD()) {</span>
+<span class="fc" id="L190">            return false;</span>
+        }
+
+        /* Determine whether we have a short block length */
+<span class="fc" id="L194">        final int myLen = myKeySpec.getBlockLength().getLength();</span>
+<span class="fc bfc" id="L195" title="All 2 branches covered.">        final boolean shortBlock = myLen &lt; GordianLength.LEN_128.getLength();</span>
+
+        /* Reject modes which do not allow short blocks */
+<span class="fc bfc" id="L198" title="All 4 branches covered.">        if (shortBlock &amp;&amp; !myMode.allowShortBlock()) {</span>
+<span class="fc" id="L199">            return false;</span>
+        }
+
+        /* Reject modes which do not allow non-standard blocks */
+<span class="fc bfc" id="L203" title="All 2 branches covered.">        final boolean stdBlock = myLen == GordianLength.LEN_128.getLength();</span>
+<span class="fc bfc" id="L204" title="All 4 branches covered.">        if (!stdBlock &amp;&amp; myMode.needsStdBlock()) {</span>
+<span class="fc" id="L205">            return false;</span>
+        }
+
+        /* Reject bad padding */
+<span class="fc" id="L209">        final GordianPadding myPadding = pCipherSpec.getPadding();</span>
+<span class="fc bfc" id="L210" title="All 2 branches covered.">        return myMode.hasPadding()</span>
+<span class="pc bpc" id="L211" title="1 of 2 branches missed.">                ? myPadding != null</span>
+<span class="fc" id="L212">                : GordianPadding.NONE.equals(myPadding);</span>
+    }
+
+    /**
+     * Check the keySpec.
+     *
+     * @param pKeySpec the keySpec
+     * @throws GordianException on error
+     */
+    protected void checkKeySpec(final GordianKeySpec pKeySpec) throws GordianException {
+        /* Assume failure */
+<span class="fc" id="L223">        boolean bValid = false;</span>
+
+        /* If this is a streamKeySpec */
+<span class="fc bfc" id="L226" title="All 2 branches covered.">        if (pKeySpec instanceof GordianStreamKeySpec mySpec) {</span>
+            /* Check validity of StreamKey */
+<span class="fc" id="L228">            bValid = supportedStreamKeySpecs().test(mySpec);</span>
+
+            /* If this is a symKeySpec */
+<span class="pc bpc" id="L231" title="1 of 2 branches missed.">        } else if (pKeySpec instanceof GordianSymKeySpec mySpec) {</span>
+            /* Check validity of SymKey */
+<span class="fc" id="L233">            bValid = supportedSymKeySpecs().test(mySpec);</span>
+        }
+
+        /* Report error */
+<span class="pc bpc" id="L237" title="1 of 2 branches missed.">        if (!bValid) {</span>
+<span class="nc" id="L238">            throw new GordianDataException(GordianBaseData.getInvalidText(pKeySpec));</span>
+        }
+<span class="fc" id="L240">    }</span>
+
+    /**
+     * Check the symKeySpec.
+     *
+     * @param pKeySpec the symKeySpec
+     * @throws GordianException on error
+     */
+    public void checkSymKeySpec(final GordianSymKeySpec pKeySpec) throws GordianException {
+        /* Check validity of SymKey */
+<span class="nc bnc" id="L250" title="All 2 branches missed.">        if (!supportedSymKeySpecs().test(pKeySpec)) {</span>
+<span class="nc" id="L251">            throw new GordianDataException(GordianBaseData.getInvalidText(pKeySpec));</span>
+        }
+<span class="nc" id="L253">    }</span>
+
+    /**
+     * Check the symCipherSpec.
+     *
+     * @param pCipherSpec the cipherSpec
+     * @throws GordianException on error
+     */
+    public void checkSymCipherSpec(final GordianSymCipherSpec pCipherSpec) throws GordianException {
+        /* Reject invalid cipherSpec */
+<span class="pc bpc" id="L263" title="2 of 4 branches missed.">        if (pCipherSpec == null || !pCipherSpec.isValid()) {</span>
+<span class="nc" id="L264">            throw new GordianDataException(GordianBaseData.getInvalidText(pCipherSpec));</span>
+        }
+
+        /* Check validity of SymKey */
+<span class="fc" id="L268">        final GordianSymKeySpec myKeySpec = pCipherSpec.getKeyType();</span>
+<span class="pc bpc" id="L269" title="1 of 2 branches missed.">        if (!supportedSymKeySpecs().test(myKeySpec)) {</span>
+<span class="nc" id="L270">            throw new GordianDataException(GordianBaseData.getInvalidText(pCipherSpec));</span>
+        }
+
+        /* Check validity of Mode */
+<span class="pc bpc" id="L274" title="1 of 2 branches missed.">        if (!validSymCipherSpec(pCipherSpec)) {</span>
+<span class="nc" id="L275">            throw new GordianDataException(GordianBaseData.getInvalidText(pCipherSpec));</span>
+        }
+<span class="fc" id="L277">    }</span>
+
+    /**
+     * Check the streamCipherSpec.
+     *
+     * @param pCipherSpec the cipherSpec
+     * @throws GordianException on error
+     */
+    public void checkStreamCipherSpec(final GordianStreamCipherSpec pCipherSpec) throws GordianException {
+        /* Reject invalid cipherSpec */
+<span class="pc bpc" id="L287" title="2 of 4 branches missed.">        if (pCipherSpec == null || !pCipherSpec.isValid()) {</span>
+<span class="nc" id="L288">            throw new GordianDataException(GordianBaseData.getInvalidText(pCipherSpec));</span>
+        }
+
+        /* Check validity of StreamKey */
+<span class="fc" id="L292">        final GordianStreamKeySpec myKeySpec = pCipherSpec.getKeyType();</span>
+<span class="pc bpc" id="L293" title="1 of 2 branches missed.">        if (!supportedStreamKeySpecs().test(myKeySpec)) {</span>
+<span class="nc" id="L294">            throw new GordianDataException(GordianBaseData.getInvalidText(myKeySpec));</span>
+        }
+
+        /* Check validity of Mode */
+<span class="pc bpc" id="L298" title="1 of 2 branches missed.">        if (!validStreamCipherSpec(pCipherSpec)) {</span>
+<span class="nc" id="L299">            throw new GordianDataException(GordianBaseData.getInvalidText(pCipherSpec));</span>
+        }
+<span class="fc" id="L301">    }</span>
+
+    /**
+     * Check StreamCipherSpec.
+     *
+     * @param pCipherSpec the streamCipherSpec
+     * @return true/false
+     */
+    protected boolean validStreamCipherSpec(final GordianStreamCipherSpec pCipherSpec) {
+<span class="fc" id="L310">        return true;</span>
+    }
+
+    /**
+     * Check StreamKeySpec.
+     *
+     * @param pKeySpec the streamKeySpec
+     * @return true/false
+     */
+    protected boolean validStreamKeySpec(final GordianStreamKeySpec pKeySpec) {
+        /* Reject invalid keySpec */
+<span class="pc bpc" id="L321" title="1 of 2 branches missed.">        if (pKeySpec == null</span>
+<span class="pc bpc" id="L322" title="1 of 2 branches missed.">                || !pKeySpec.isValid()) {</span>
+<span class="nc" id="L323">            return false;</span>
+        }
+<span class="fc" id="L325">        return supportedStreamKeyTypes().test(pKeySpec.getStreamKeyType());</span>
+    }
+
+    /**
+     * Obtain Identifier for cipherSpec.
+     *
+     * @param pSpec the cipherSpec.
+     * @return the Identifier
+     */
+    public AlgorithmIdentifier getIdentifierForSpec(final GordianCipherSpec&lt;?&gt; pSpec) {
+<span class="fc" id="L335">        return getCipherAlgIds().getIdentifierForSpec(pSpec);</span>
+    }
+
+    /**
+     * Obtain cipherSpec for Identifier.
+     *
+     * @param pIdentifier the identifier.
+     * @return the cipherSpec (or null if not found)
+     */
+    public GordianCipherSpec&lt;?&gt; getCipherSpecForIdentifier(final AlgorithmIdentifier pIdentifier) {
+<span class="fc" id="L345">        return getCipherAlgIds().getCipherSpecForIdentifier(pIdentifier);</span>
+    }
+
+    /**
+     * Obtain the cipher algorithm Ids.
+     *
+     * @return the cipher Algorithm Ids
+     */
+    private GordianCipherAlgId getCipherAlgIds() {
+<span class="fc bfc" id="L354" title="All 2 branches covered.">        if (theCipherAlgIds == null) {</span>
+<span class="fc" id="L355">            theCipherAlgIds = new GordianCipherAlgId(theFactory);</span>
+        }
+<span class="fc" id="L357">        return theCipherAlgIds;</span>
+    }
+
+    /**
+     * Check SymCipherSpec and PBESpec combination.
+     *
+     * @param pPBECipherSpec the PBESpec
+     * @return true/false
+     */
+    public boolean validPBECipherSpec(final GordianPBECipherSpec&lt;? extends GordianKeySpec&gt; pPBECipherSpec) {
+        /* Check basic validity */
+<span class="pc bpc" id="L368" title="2 of 4 branches missed.">        if (pPBECipherSpec == null || !pPBECipherSpec.isValid()) {</span>
+<span class="nc" id="L369">            return false;</span>
+        }
+
+        /* Digest if specified must be SHA512 currently */
+<span class="fc" id="L373">        final GordianPBESpec myPBESpec = pPBECipherSpec.getPBESpec();</span>
+<span class="fc bfc" id="L374" title="All 2 branches covered.">        if (myPBESpec instanceof GordianPBEDigestAndCountSpec myCountSpec) {</span>
+<span class="fc" id="L375">            final GordianDigestSpec mySpec = myCountSpec.getDigestSpec();</span>
+<span class="fc" id="L376">            return GordianDigestSpecBuilder.sha2(GordianLength.LEN_512).equals(mySpec);</span>
+        }
+
+        /* OK */
+<span class="fc" id="L380">        return true;</span>
+    }
+
+    @Override
+    public List&lt;GordianSymCipherSpec&gt; listAllSupportedSymCipherSpecs(final GordianSymKeySpec pSpec) {
+<span class="fc" id="L385">        return listAllSymCipherSpecs(pSpec)</span>
+<span class="fc" id="L386">                .stream()</span>
+<span class="fc" id="L387">                .filter(s -&gt; supportedSymCipherSpecs().test(s))</span>
+<span class="fc" id="L388">                .collect(Collectors.toCollection(ArrayList::new));</span>
+    }
+
+    @Override
+    public List&lt;GordianSymKeySpec&gt; listAllSupportedSymKeySpecs(final GordianLength pKeyLen) {
+<span class="fc" id="L393">        return listAllSymKeySpecs(pKeyLen)</span>
+<span class="fc" id="L394">                .stream()</span>
+<span class="fc" id="L395">                .filter(supportedSymKeySpecs())</span>
+<span class="fc" id="L396">                .collect(Collectors.toCollection(ArrayList::new));</span>
+    }
+
+    @Override
+    public List&lt;GordianSymKeyType&gt; listAllSupportedSymKeyTypes() {
+<span class="fc" id="L401">        return Arrays.stream(GordianSymKeyType.values())</span>
+<span class="fc" id="L402">                .filter(supportedSymKeyTypes())</span>
+<span class="fc" id="L403">                .collect(Collectors.toCollection(ArrayList::new));</span>
+    }
+
+    @Override
+    public List&lt;GordianStreamCipherSpec&gt; listAllSupportedStreamCipherSpecs(final GordianLength pKeyLen) {
+<span class="fc" id="L408">        final List&lt;GordianStreamCipherSpec&gt; myResult = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L409" title="All 2 branches covered.">        for (GordianStreamKeySpec mySpec : listAllSupportedStreamKeySpecs(pKeyLen)) {</span>
+            /* Add the standard cipher */
+<span class="fc" id="L411">            final GordianStreamCipherSpec myCipherSpec = GordianStreamCipherSpecBuilder.stream(mySpec);</span>
+<span class="fc" id="L412">            myResult.add(myCipherSpec);</span>
+
+            /* Add the AAD Cipher if supported */
+<span class="fc bfc" id="L415" title="All 2 branches covered.">            if (mySpec.supportsAEAD()) {</span>
+<span class="fc" id="L416">                final GordianStreamCipherSpec myAADSpec = GordianStreamCipherSpecBuilder.stream(mySpec, true);</span>
+<span class="pc bpc" id="L417" title="1 of 2 branches missed.">                if (supportedStreamCipherSpecs().test(myAADSpec)) {</span>
+<span class="fc" id="L418">                    myResult.add(myAADSpec);</span>
+                }
+            }
+<span class="fc" id="L421">        }</span>
+<span class="fc" id="L422">        return myResult;</span>
+    }
+
+    @Override
+    public List&lt;GordianStreamKeySpec&gt; listAllSupportedStreamKeySpecs(final GordianLength pKeyLen) {
+<span class="fc" id="L427">        return listAllStreamKeySpecs(pKeyLen)</span>
+<span class="fc" id="L428">                .stream()</span>
+<span class="fc" id="L429">                .filter(supportedStreamKeySpecs())</span>
+<span class="fc" id="L430">                .collect(Collectors.toCollection(ArrayList::new));</span>
+    }
+
+    @Override
+    public List&lt;GordianStreamKeyType&gt; listAllSupportedStreamKeyTypes() {
+<span class="nc" id="L435">        return Arrays.stream(GordianStreamKeyType.values())</span>
+<span class="nc" id="L436">                .filter(supportedStreamKeyTypes())</span>
+<span class="nc" id="L437">                .collect(Collectors.toCollection(ArrayList::new));</span>
+    }
+
+    @Override
+    public List&lt;GordianSymKeySpec&gt; listAllSymKeySpecs(final GordianLength pKeyLen) {
+        /* Create the array list */
+<span class="fc" id="L443">        final List&lt;GordianSymKeySpec&gt; myList = new ArrayList&lt;&gt;();</span>
+
+        /* Check that the keyLength is supported */
+<span class="pc bpc" id="L446" title="1 of 2 branches missed.">        if (!GordianKeyLengths.isSupportedLength(pKeyLen)) {</span>
+<span class="nc" id="L447">            return myList;</span>
+        }
+
+        /* For each symKey type */
+<span class="fc bfc" id="L451" title="All 2 branches covered.">        for (final GordianSymKeyType myType : GordianSymKeyType.values()) {</span>
+            /* For each supported block length */
+<span class="fc bfc" id="L453" title="All 2 branches covered.">            for (final GordianLength myBlkLen : myType.getSupportedBlockLengths()) {</span>
+                /* Add spec if valid for blkLen and keyLen */
+<span class="fc bfc" id="L455" title="All 2 branches covered.">                if (myType.validBlockAndKeyLengths(myBlkLen, pKeyLen)) {</span>
+<span class="fc" id="L456">                    myList.add(new GordianSymKeySpec(myType, myBlkLen, pKeyLen));</span>
+                }
+            }
+        }
+
+        /* Return the list */
+<span class="fc" id="L462">        return myList;</span>
+    }
+
+    @Override
+    public List&lt;GordianSymCipherSpec&gt; listAllSymCipherSpecs(final GordianSymKeySpec pSpec) {
+        /* Create the array list */
+<span class="fc" id="L468">        final List&lt;GordianSymCipherSpec&gt; myList = new ArrayList&lt;&gt;();</span>
+
+        /* Loop through the modes */
+<span class="fc bfc" id="L471" title="All 2 branches covered.">        for (GordianCipherMode myMode : GordianCipherMode.values()) {</span>
+            /* If the mode has padding */
+<span class="fc bfc" id="L473" title="All 2 branches covered.">            if (myMode.hasPadding()) {</span>
+                /* Loop through the paddings */
+<span class="fc bfc" id="L475" title="All 2 branches covered.">                for (GordianPadding myPadding : GordianPadding.values()) {</span>
+<span class="fc" id="L476">                    myList.add(new GordianSymCipherSpec(pSpec, myMode, myPadding));</span>
+                }
+
+                /* else no padding */
+            } else {
+<span class="fc" id="L481">                myList.add(new GordianSymCipherSpec(pSpec, myMode, GordianPadding.NONE));</span>
+            }
+        }
+
+        /* Return the list */
+<span class="fc" id="L486">        return myList;</span>
+    }
+
+    /**
+     * List all possible streamKeySpecs for the keyLength.
+     *
+     * @param pKeyLen the keyLength
+     * @return the list
+     */
+    private static List&lt;GordianStreamKeySpec&gt; listAllStreamKeySpecs(final GordianLength pKeyLen) {
+        /* Create the array list */
+<span class="fc" id="L497">        final List&lt;GordianStreamKeySpec&gt; myList = new ArrayList&lt;&gt;();</span>
+
+        /* Check that the keyLength is supported */
+<span class="pc bpc" id="L500" title="1 of 2 branches missed.">        if (!GordianKeyLengths.isSupportedLength(pKeyLen)) {</span>
+<span class="nc" id="L501">            return myList;</span>
+        }
+
+        /* For each streamKey type */
+<span class="fc bfc" id="L505" title="All 2 branches covered.">        for (final GordianStreamKeyType myType : GordianStreamKeyType.values()) {</span>
+            /* if valid for keyLength */
+<span class="fc bfc" id="L507" title="All 2 branches covered.">            if (myType.validForKeyLength(pKeyLen)) {</span>
+                /* If we need a subType */
+<span class="fc bfc" id="L509" title="All 2 branches covered.">                if (myType.needsSubKeyType()) {</span>
+                    /* Add all valid subKeyTypes */
+<span class="fc" id="L511">                    myList.addAll(listStreamSubKeys(myType, pKeyLen));</span>
+
+                    /* Else just add the spec */
+                } else {
+<span class="fc" id="L515">                    myList.add(new GordianStreamKeySpec(myType, pKeyLen));</span>
+                }
+            }
+        }
+
+        /* Return the list */
+<span class="fc" id="L521">        return myList;</span>
+    }
+
+    /**
+     * List all possible subKeyTypes Specs.
+     *
+     * @param pKeyType the keyType
+     * @param pKeyLen  the keyLength
+     * @return the list
+     */
+    private static List&lt;GordianStreamKeySpec&gt; listStreamSubKeys(final GordianStreamKeyType pKeyType,
+                                                                final GordianLength pKeyLen) {
+        /* Create the array list */
+<span class="fc" id="L534">        final List&lt;GordianStreamKeySpec&gt; myList = new ArrayList&lt;&gt;();</span>
+
+        /* Loop through the subKeyTypes */
+<span class="fc bfc" id="L537" title="All 2 branches covered.">        for (GordianStreamSubKeyType mySubKeyType : listStreamSubKeys(pKeyType)) {</span>
+            /* Add valid subKeySpec */
+<span class="fc" id="L539">            final GordianStreamKeySpec mySpec = new GordianStreamKeySpec(pKeyType, pKeyLen, mySubKeyType);</span>
+<span class="fc bfc" id="L540" title="All 2 branches covered.">            if (mySpec.isValid()) {</span>
+<span class="fc" id="L541">                myList.add(mySpec);</span>
+            }
+<span class="fc" id="L543">        }</span>
+
+        /* Return the list */
+<span class="fc" id="L546">        return myList;</span>
+    }
+
+    /**
+     * List all possible subKeyTypes.
+     *
+     * @param pKeyType the keyType
+     * @return the list
+     */
+    private static List&lt;GordianStreamSubKeyType&gt; listStreamSubKeys(final GordianStreamKeyType pKeyType) {
+        /* Switch on keyType */
+<span class="pc bpc" id="L557" title="1 of 10 branches missed.">        switch (pKeyType) {</span>
+            case SALSA20:
+<span class="fc" id="L559">                return Arrays.asList(GordianSalsa20Key.values());</span>
+            case CHACHA20:
+<span class="fc" id="L561">                return Arrays.asList(GordianChaCha20Key.values());</span>
+            case VMPC:
+<span class="fc" id="L563">                return Arrays.asList(GordianVMPCKey.values());</span>
+            case SKEINXOF:
+<span class="fc" id="L565">                return Arrays.asList(GordianSkeinXofKey.values());</span>
+            case BLAKE2XOF:
+<span class="fc" id="L567">                return Arrays.asList(GordianBlakeXofKey.values());</span>
+            case ELEPHANT:
+<span class="fc" id="L569">                return Arrays.asList(GordianElephantKey.values());</span>
+            case ISAP:
+<span class="fc" id="L571">                return Arrays.asList(GordianISAPKey.values());</span>
+            case ROMULUS:
+<span class="fc" id="L573">                return Arrays.asList(GordianRomulusKey.values());</span>
+            case SPARKLE:
+<span class="fc" id="L575">                return Arrays.asList(GordianSparkleKey.values());</span>
+            default:
+<span class="nc" id="L577">                return Collections.emptyList();</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

@@ -1,0 +1,306 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianPipedStream.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.impl.core.stream</a> &gt; <span class="el_source">GordianPipedStream.java</span></div><h1>GordianPipedStream.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.gordianknot.impl.core.stream;
+
+import org.bouncycastle.util.Arrays;
+
+import java.io.BufferedOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.concurrent.ArrayBlockingQueue;
+
+/**
+ * Class to provide a pipe enabling data to be passed between threads via writing to an output
+ * stream and reading from an input stream.
+ */
+class GordianPipedStream {
+    /**
+     * The Queue Capacity.
+     */
+    private static final int QUEUE_LEN = 4096;
+
+    /**
+     * The output buffer size.
+     */
+    private static final int BUFFER_LEN = 16384;
+
+    /**
+     * The Array Blocking queue that implements the pipe.
+     */
+    private final ArrayBlockingQueue&lt;byte[]&gt; theQueue;
+
+    /**
+     * The Input Stream.
+     */
+    private final GordianPipedInputStream theSource;
+
+    /**
+     * The Output Stream.
+     */
+    private final BufferedOutputStream theSink;
+
+    /**
+     * Constructor.
+     */
+<span class="fc" id="L60">    GordianPipedStream() {</span>
+        /* Create the queue */
+<span class="fc" id="L62">        theQueue = new ArrayBlockingQueue&lt;&gt;(QUEUE_LEN);</span>
+
+        /* Create the source stream */
+<span class="fc" id="L65">        theSource = new GordianPipedInputStream();</span>
+
+        /* Create the sink stream */
+<span class="fc" id="L68">        theSink = new BufferedOutputStream(new GordianPipedOutputStream(), BUFFER_LEN);</span>
+<span class="fc" id="L69">    }</span>
+
+    /**
+     * Obtain the source stream.
+     *
+     * @return the source stream
+     */
+    public InputStream getSource() {
+<span class="fc" id="L77">        return theSource;</span>
+    }
+
+    /**
+     * Obtain the sink stream.
+     *
+     * @return the sink stream
+     */
+    OutputStream getSink() {
+<span class="fc" id="L86">        return theSink;</span>
+    }
+
+    /**
+     * The inputStream class.
+     */
+<span class="fc" id="L92">    private final class GordianPipedInputStream</span>
+            extends InputStream {
+        /**
+         * The currently active element.
+         */
+        private byte[] theElement;
+
+        /**
+         * The length of the current element.
+         */
+<span class="fc" id="L102">        private int theDataLen = -1;</span>
+
+        /**
+         * The offset within the element.
+         */
+<span class="fc" id="L107">        private int theReadOffset = -1;</span>
+
+        /**
+         * has this stream been closed.
+         */
+        private boolean isClosed;
+
+        /**
+         * have we seen EOF.
+         */
+        private boolean hasEOFbeenSeen;
+
+        /**
+         * A buffer for single byte reads.
+         */
+<span class="fc" id="L122">        private final byte[] theByte = new byte[1];</span>
+
+        @Override
+        public int read(final byte[] pBytes) throws IOException {
+            /* Read the bytes from the stream */
+<span class="nc" id="L127">            return read(pBytes, 0, pBytes.length);</span>
+        }
+
+        @Override
+        public int read() throws IOException {
+            int iNumRead;
+
+            /* Loop until we get a byte or EOF */
+            do {
+<span class="nc" id="L136">                iNumRead = read(theByte, 0, 1);</span>
+<span class="nc bnc" id="L137" title="All 2 branches missed.">            } while (iNumRead == 0);</span>
+
+            /* Convert the byte read into an integer */
+<span class="nc bnc" id="L140" title="All 2 branches missed.">            if (iNumRead &gt; 0) {</span>
+<span class="nc" id="L141">                iNumRead = theByte[0] &amp; GordianInputStream.BYTE_MASK;</span>
+            }
+
+            /* Return to the caller */
+<span class="nc" id="L145">            return iNumRead;</span>
+        }
+
+        @Override
+        public int read(final byte[] pBuffer,
+                        final int pOffset,
+                        final int pLength) throws IOException {
+            /* If we are already closed throw IO Exception */
+<span class="pc bpc" id="L153" title="1 of 2 branches missed.">            if (isClosed) {</span>
+<span class="nc" id="L154">                throw new IOException(GordianInputStream.ERROR_CLOSED);</span>
+            }
+
+            /* If we have already seen EOF return now */
+<span class="pc bpc" id="L158" title="1 of 2 branches missed.">            if (hasEOFbeenSeen) {</span>
+<span class="nc" id="L159">                return -1;</span>
+            }
+
+            /* If we have no current element */
+<span class="fc bfc" id="L163" title="All 2 branches covered.">            if (theElement == null) {</span>
+                /* Obtain the next element from the queue */
+                try {
+<span class="fc" id="L166">                    theElement = theQueue.take();</span>
+<span class="nc" id="L167">                } catch (InterruptedException e) {</span>
+<span class="nc" id="L168">                    Thread.currentThread().interrupt();</span>
+<span class="nc" id="L169">                    throw new IOException(e.getMessage(), e);</span>
+<span class="fc" id="L170">                }</span>
+
+                /* Set variables */
+<span class="fc" id="L173">                theDataLen = theElement.length;</span>
+<span class="fc" id="L174">                theReadOffset = 0;</span>
+
+                /* If the dataLen is zero, it is EOF */
+<span class="fc bfc" id="L177" title="All 2 branches covered.">                if (theDataLen == 0) {</span>
+<span class="fc" id="L178">                    hasEOFbeenSeen = true;</span>
+<span class="fc" id="L179">                    return -1;</span>
+                }
+            }
+
+            /* Determine how much data we have available */
+<span class="fc" id="L184">            int iNumRead = theDataLen</span>
+                    - theReadOffset;
+
+            /* Determine how much data we can transfer */
+<span class="fc" id="L188">            iNumRead = Math.min(iNumRead, pLength);</span>
+
+            /* If we have data to copy */
+<span class="pc bpc" id="L191" title="1 of 2 branches missed.">            if (iNumRead &gt; 0) {</span>
+                /* Transfer the bytes */
+<span class="fc" id="L193">                System.arraycopy(theElement, theReadOffset, pBuffer, pOffset, iNumRead);</span>
+
+                /* Adjust ReadOffset */
+<span class="fc" id="L196">                theReadOffset += iNumRead;</span>
+
+                /* If we have finished with the data in the element */
+<span class="fc bfc" id="L199" title="All 2 branches covered.">                if (theReadOffset &gt;= theDataLen) {</span>
+                    /* Reset the values */
+<span class="fc" id="L201">                    Arrays.fill(theElement, (byte) 0);</span>
+<span class="fc" id="L202">                    theElement = null;</span>
+<span class="fc" id="L203">                    theDataLen = 0;</span>
+<span class="fc" id="L204">                    theReadOffset = 0;</span>
+                }
+            }
+
+            /* Return the number of bytes read */
+<span class="fc" id="L209">            return iNumRead;</span>
+        }
+
+        @Override
+        public void close() throws IOException {
+            /* Note that we have closed the stream */
+<span class="fc" id="L215">            isClosed = true;</span>
+
+            /* Clear any data buffer */
+<span class="pc bpc" id="L218" title="1 of 2 branches missed.">            if (theElement != null) {</span>
+<span class="fc" id="L219">                Arrays.fill(theElement, (byte) 0);</span>
+<span class="fc" id="L220">                theElement = null;</span>
+            }
+<span class="fc" id="L222">        }</span>
+    }
+
+    /**
+     * The outputStream class.
+     */
+<span class="fc" id="L228">    private final class GordianPipedOutputStream</span>
+            extends OutputStream {
+        /**
+         * has this stream been closed.
+         */
+        private boolean isClosed;
+
+        /**
+         * A buffer for single byte writes.
+         */
+<span class="fc" id="L238">        private final byte[] theByte = new byte[1];</span>
+
+        @Override
+        public void write(final byte[] pBytes,
+                          final int pOffset,
+                          final int pLength) throws IOException {
+            /* If we are already closed throw IO Exception */
+<span class="pc bpc" id="L245" title="1 of 2 branches missed.">            if (isClosed) {</span>
+<span class="nc" id="L246">                throw new IOException(GordianInputStream.ERROR_CLOSED);</span>
+            }
+
+            /* no data is to be written, just ignore */
+<span class="pc bpc" id="L250" title="1 of 2 branches missed.">            if (pLength == 0) {</span>
+<span class="nc" id="L251">                return;</span>
+            }
+
+            /* Create a copy of the data */
+<span class="fc" id="L255">            final byte[] myBuffer = new byte[pLength];</span>
+<span class="fc" id="L256">            System.arraycopy(pBytes, pOffset, myBuffer, 0, pLength);</span>
+
+            /* Write the element to the queue */
+            try {
+<span class="fc" id="L260">                theQueue.put(myBuffer);</span>
+<span class="nc" id="L261">            } catch (InterruptedException e) {</span>
+<span class="nc" id="L262">                Thread.currentThread().interrupt();</span>
+<span class="nc" id="L263">                throw new IOException(e.getMessage(), e);</span>
+<span class="fc" id="L264">            }</span>
+<span class="fc" id="L265">        }</span>
+
+        @Override
+        public void write(final byte[] pBytes) throws IOException {
+            /* Write the bytes to the stream */
+<span class="nc" id="L270">            write(pBytes, 0, pBytes.length);</span>
+<span class="nc" id="L271">        }</span>
+
+        @Override
+        public void write(final int pByte) throws IOException {
+            /* Store the byte */
+<span class="nc" id="L276">            theByte[0] = (byte) pByte;</span>
+
+            /* Write the byte to the stream */
+<span class="nc" id="L279">            write(theByte, 0, 1);</span>
+<span class="nc" id="L280">        }</span>
+
+        @Override
+        public void flush() throws IOException {
+            /* No need to flush */
+<span class="fc" id="L285">        }</span>
+
+        @Override
+        public void close() {
+            /* Ignore if already closed */
+<span class="pc bpc" id="L290" title="1 of 2 branches missed.">            if (isClosed) {</span>
+<span class="nc" id="L291">                return;</span>
+            }
+
+            /* Write a zero length element */
+            try {
+<span class="fc" id="L296">                theQueue.put(new byte[0]);</span>
+<span class="nc" id="L297">            } catch (InterruptedException e) {</span>
+<span class="nc" id="L298">                Thread.currentThread().interrupt();</span>
+<span class="fc" id="L299">            }</span>
+
+            /* Note that we have closed */
+<span class="fc" id="L302">            isClosed = true;</span>
+<span class="fc" id="L303">        }</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

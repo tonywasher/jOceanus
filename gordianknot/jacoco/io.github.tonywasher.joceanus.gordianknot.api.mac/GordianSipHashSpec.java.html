@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianSipHashSpec.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.api.mac</a> &gt; <span class="el_source">GordianSipHashSpec.java</span></div><h1>GordianSipHashSpec.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.gordianknot.api.mac;
+
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
+
+/**
+ * SipHashSpec.
+ */
+<span class="fc" id="L24">public enum GordianSipHashSpec {</span>
+    /**
+     * SipHash-2-4.
+     */
+<span class="fc" id="L28">    SIPHASH_2_4(GordianLength.LEN_64, 2),</span>
+
+    /**
+     * SipHash128-2-4.
+     */
+<span class="fc" id="L33">    SIPHASH128_2_4(GordianLength.LEN_64, 4),</span>
+
+    /**
+     * SipHash-4-8.
+     */
+<span class="fc" id="L38">    SIPHASH_4_8(GordianLength.LEN_128, 2),</span>
+
+    /**
+     * SipHash128-4-8.
+     */
+<span class="fc" id="L43">    SIPHASH128_4_8(GordianLength.LEN_128, 4);</span>
+
+    /**
+     * The output length.
+     */
+    private final GordianLength theOutLen;
+
+    /**
+     * The number of compression rounds.
+     */
+    private final int theCompression;
+
+    /**
+     * The name of the hash.
+     */
+    private String theName;
+
+    /**
+     * Constructor.
+     *
+     * @param pOutLen      the output length
+     * @param pCompression the number of compression rounds
+     */
+    GordianSipHashSpec(final GordianLength pOutLen,
+<span class="fc" id="L67">                       final int pCompression) {</span>
+<span class="fc" id="L68">        theOutLen = pOutLen;</span>
+<span class="fc" id="L69">        theCompression = pCompression;</span>
+<span class="fc" id="L70">    }</span>
+
+    /**
+     * Obtain the output length.
+     *
+     * @return the length
+     */
+    public GordianLength getOutLength() {
+<span class="fc" id="L78">        return theOutLen;</span>
+    }
+
+    /**
+     * Is this a long output?
+     *
+     * @return true/false
+     */
+    public boolean isLong() {
+<span class="fc bfc" id="L87" title="All 2 branches covered.">        return theOutLen == GordianLength.LEN_128;</span>
+    }
+
+    /**
+     * Obtain the number of compression rounds.
+     *
+     * @return the number of rounds
+     */
+    public int getCompression() {
+<span class="fc" id="L96">        return theCompression;</span>
+    }
+
+    /**
+     * Obtain the number of finalization rounds.
+     *
+     * @return the number of rounds
+     */
+    public int getFinalisation() {
+<span class="fc" id="L105">        return theCompression &lt;&lt; 1;</span>
+    }
+
+    @Override
+    public String toString() {
+        /* If we have not yet loaded the name */
+<span class="fc bfc" id="L111" title="All 2 branches covered.">        if (theName == null) {</span>
+            /* Build the name */
+<span class="fc" id="L113">            theName = &quot;SipHash&quot;;</span>
+<span class="fc bfc" id="L114" title="All 2 branches covered.">            if (GordianLength.LEN_128 == theOutLen) {</span>
+<span class="fc" id="L115">                theName += theOutLen;</span>
+            }
+<span class="fc" id="L117">            theName += GordianMacSpec.SEP + getCompression()</span>
+<span class="fc" id="L118">                    + GordianMacSpec.SEP + getFinalisation();</span>
+        }
+
+        /* return the name */
+<span class="fc" id="L122">        return theName;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

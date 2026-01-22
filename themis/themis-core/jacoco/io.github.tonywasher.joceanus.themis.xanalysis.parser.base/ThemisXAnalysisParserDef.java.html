@@ -1,0 +1,313 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ThemisXAnalysisParserDef.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Themis Core Project Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.themis.xanalysis.parser.base</a> &gt; <span class="el_source">ThemisXAnalysisParserDef.java</span></div><h1>ThemisXAnalysisParserDef.java</h1><pre class="source lang-java linenums">/*
+ * Themis: Java Project Framework
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.themis.xanalysis.parser.base;
+
+import com.github.javaparser.ast.Node;
+import com.github.javaparser.ast.NodeList;
+import com.github.javaparser.ast.PackageDeclaration;
+import com.github.javaparser.ast.body.BodyDeclaration;
+import com.github.javaparser.ast.expr.Expression;
+import com.github.javaparser.ast.modules.ModuleDirective;
+import com.github.javaparser.ast.stmt.Statement;
+import com.github.javaparser.ast.type.Type;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance.ThemisXAnalysisClassInstance;
+import io.github.tonywasher.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance.ThemisXAnalysisDeclarationInstance;
+import io.github.tonywasher.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance.ThemisXAnalysisExpressionInstance;
+import io.github.tonywasher.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance.ThemisXAnalysisModuleInstance;
+import io.github.tonywasher.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance.ThemisXAnalysisNodeInstance;
+import io.github.tonywasher.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance.ThemisXAnalysisStatementInstance;
+import io.github.tonywasher.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance.ThemisXAnalysisTypeInstance;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+/**
+ * Parser interface.
+ */
+public interface ThemisXAnalysisParserDef {
+    /**
+     * Process the file as javaCode.
+     *
+     * @return the parsed compilation unit
+     * @throws OceanusException on error
+     */
+    ThemisXAnalysisNodeInstance parseJavaFile() throws OceanusException;
+
+    /**
+     * Process the file as a module-info instance.
+     *
+     * @param pInfoFile the module-info file
+     * @return the parsed moduleInfo
+     * @throws OceanusException on error
+     */
+    ThemisXAnalysisModuleInstance parseModuleInfo(File pInfoFile) throws OceanusException;
+
+    /**
+     * Set the current package.
+     *
+     * @param pPackage the package
+     */
+    void setCurrentPackage(String pPackage);
+
+    /**
+     * Set the current file.
+     *
+     * @param pFile the file
+     */
+    void setCurrentFile(File pFile);
+
+    /**
+     * Obtain the classList.
+     *
+     * @return the classList
+     */
+    List&lt;ThemisXAnalysisClassInstance&gt; getClasses();
+
+    /**
+     * Build exception.
+     *
+     * @param pMessage the message
+     * @param pNode    the failing node
+     * @return the built exception
+     */
+    OceanusException buildException(String pMessage,
+                                    Node pNode);
+
+    /**
+     * Check the package name.
+     *
+     * @param pPackage the package name
+     * @throws OceanusException on error
+     */
+    void checkPackage(PackageDeclaration pPackage) throws OceanusException;
+
+    /**
+     * Register Instance.
+     *
+     * @param pInstance the instance
+     * @return the parent node
+     * @throws OceanusException on error
+     */
+    ThemisXAnalysisInstance registerInstance(ThemisXAnalysisInstance pInstance) throws OceanusException;
+
+    /**
+     * Register Class.
+     *
+     * @param pClass the class
+     * @return the class name
+     */
+    String registerClass(ThemisXAnalysisClassInstance pClass) throws OceanusException;
+
+    /**
+     * Parse a declaration.
+     *
+     * @param pDecl the declaration
+     * @return the parsed declaration
+     * @throws OceanusException on error
+     */
+    ThemisXAnalysisDeclarationInstance parseDeclaration(BodyDeclaration&lt;?&gt; pDecl) throws OceanusException;
+
+    /**
+     * parse a list of declarations.
+     *
+     * @param pDeclList the list of Declarations
+     * @return the list of parsed declarations
+     * @throws OceanusException on error
+     */
+    default List&lt;ThemisXAnalysisDeclarationInstance&gt; parseDeclarationList(final NodeList&lt;? extends BodyDeclaration&lt;?&gt;&gt; pDeclList) throws OceanusException {
+        /* Handle null list */
+<span class="pc bpc" id="L136" title="1 of 2 branches missed.">        if (pDeclList == null) {</span>
+<span class="nc" id="L137">            return Collections.emptyList();</span>
+        }
+
+        /* Create list of declarations */
+<span class="fc" id="L141">        final List&lt;ThemisXAnalysisDeclarationInstance&gt; myList = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L142" title="All 2 branches covered.">        for (BodyDeclaration&lt;?&gt; myDecl : pDeclList) {</span>
+<span class="fc" id="L143">            final ThemisXAnalysisDeclarationInstance myParsed = parseDeclaration(myDecl);</span>
+<span class="fc" id="L144">            myList.add(myParsed);</span>
+<span class="fc" id="L145">        }</span>
+<span class="fc" id="L146">        return myList;</span>
+    }
+
+    /**
+     * Parse a node.
+     *
+     * @param pNode the node
+     * @return the parsed node
+     * @throws OceanusException on error
+     */
+    ThemisXAnalysisNodeInstance parseNode(Node pNode) throws OceanusException;
+
+    /**
+     * parse a list of nodes.
+     *
+     * @param pNodeList the list of Nodes
+     * @return the list of parsed nodes
+     * @throws OceanusException on error
+     */
+    default List&lt;ThemisXAnalysisNodeInstance&gt; parseNodeList(final NodeList&lt;? extends Node&gt; pNodeList) throws OceanusException {
+        /* Handle null list */
+<span class="pc bpc" id="L167" title="1 of 2 branches missed.">        if (pNodeList == null) {</span>
+<span class="nc" id="L168">            return Collections.emptyList();</span>
+        }
+
+        /* Create list of nodes */
+<span class="fc" id="L172">        final List&lt;ThemisXAnalysisNodeInstance&gt; myList = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L173" title="All 2 branches covered.">        for (Node myNode : pNodeList) {</span>
+<span class="fc" id="L174">            final ThemisXAnalysisNodeInstance myParsed = parseNode(myNode);</span>
+<span class="fc" id="L175">            myList.add(myParsed);</span>
+<span class="fc" id="L176">        }</span>
+<span class="fc" id="L177">        return myList;</span>
+    }
+
+    /**
+     * parse a list of modifiers.
+     *
+     * @param pNodeList the list of Modifiers
+     * @return the list of parsed modifiers
+     * @throws OceanusException on error
+     */
+    ThemisXAnalysisModifierList parseModifierList(NodeList&lt;? extends Node&gt; pNodeList) throws OceanusException;
+
+    /**
+     * Parse a type.
+     *
+     * @param pType the type
+     * @return the parsed type
+     * @throws OceanusException on error
+     */
+    ThemisXAnalysisTypeInstance parseType(Type pType) throws OceanusException;
+
+    /**
+     * parse a list of types.
+     *
+     * @param pTypeList the list of Types
+     * @return the list of parsed types
+     * @throws OceanusException on error
+     */
+    default List&lt;ThemisXAnalysisTypeInstance&gt; parseTypeList(final NodeList&lt;? extends Type&gt; pTypeList) throws OceanusException {
+        /* Handle null list */
+<span class="fc bfc" id="L207" title="All 2 branches covered.">        if (pTypeList == null) {</span>
+<span class="fc" id="L208">            return Collections.emptyList();</span>
+        }
+
+        /* Create list of nodes */
+<span class="fc" id="L212">        final List&lt;ThemisXAnalysisTypeInstance&gt; myList = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L213" title="All 2 branches covered.">        for (Type myType : pTypeList) {</span>
+<span class="fc" id="L214">            final ThemisXAnalysisTypeInstance myParsed = parseType(myType);</span>
+<span class="fc" id="L215">            myList.add(myParsed);</span>
+<span class="fc" id="L216">        }</span>
+<span class="fc" id="L217">        return myList;</span>
+    }
+
+    /**
+     * Parse a statement.
+     *
+     * @param pStatement the statement
+     * @return the parsed statement
+     * @throws OceanusException on error
+     */
+    ThemisXAnalysisStatementInstance parseStatement(Statement pStatement) throws OceanusException;
+
+    /**
+     * parse a list of statements.
+     *
+     * @param pStatementList the list of Statements
+     * @return the list of parsed statements
+     * @throws OceanusException on error
+     */
+    default List&lt;ThemisXAnalysisStatementInstance&gt; parseStatementList(final NodeList&lt;? extends Statement&gt; pStatementList) throws OceanusException {
+        /* Handle null list */
+<span class="pc bpc" id="L238" title="1 of 2 branches missed.">        if (pStatementList == null) {</span>
+<span class="nc" id="L239">            return Collections.emptyList();</span>
+        }
+
+        /* Create list of statements */
+<span class="fc" id="L243">        final List&lt;ThemisXAnalysisStatementInstance&gt; myList = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L244" title="All 2 branches covered.">        for (Statement myStatement : pStatementList) {</span>
+<span class="fc" id="L245">            final ThemisXAnalysisStatementInstance myParsed = parseStatement(myStatement);</span>
+<span class="fc" id="L246">            myList.add(myParsed);</span>
+<span class="fc" id="L247">        }</span>
+<span class="fc" id="L248">        return myList;</span>
+    }
+
+    /**
+     * Parse an expression.
+     *
+     * @param pExpression the expression
+     * @return the parsed expression
+     * @throws OceanusException on error
+     */
+    ThemisXAnalysisExpressionInstance parseExpression(Expression pExpression) throws OceanusException;
+
+    /**
+     * parse a list of expressions.
+     *
+     * @param pExprList the list of Expressions
+     * @return the list of parsed expressions
+     * @throws OceanusException on error
+     */
+    default List&lt;ThemisXAnalysisExpressionInstance&gt; parseExprList(final NodeList&lt;? extends Expression&gt; pExprList) throws OceanusException {
+        /* Handle null list */
+<span class="pc bpc" id="L269" title="1 of 2 branches missed.">        if (pExprList == null) {</span>
+<span class="nc" id="L270">            return Collections.emptyList();</span>
+        }
+
+        /* Create list of expressions */
+<span class="fc" id="L274">        final List&lt;ThemisXAnalysisExpressionInstance&gt; myList = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L275" title="All 2 branches covered.">        for (Expression myExpr : pExprList) {</span>
+<span class="fc" id="L276">            final ThemisXAnalysisExpressionInstance myParsed = parseExpression(myExpr);</span>
+<span class="fc" id="L277">            myList.add(myParsed);</span>
+<span class="fc" id="L278">        }</span>
+<span class="fc" id="L279">        return myList;</span>
+    }
+
+    /**
+     * Parse a module.
+     *
+     * @param pDeclaration the module declaration/directive
+     * @return the parsed declaration/directive
+     * @throws OceanusException on error
+     */
+    ThemisXAnalysisModuleInstance parseModule(Node pDeclaration) throws OceanusException;
+
+    /**
+     * parse a list of module directives.
+     *
+     * @param pDirList the list of Directives
+     * @return the list of parsed directives
+     * @throws OceanusException on error
+     */
+    default List&lt;ThemisXAnalysisModuleInstance&gt; parseModuleList(final NodeList&lt;? extends ModuleDirective&gt; pDirList) throws OceanusException {
+        /* Handle null list */
+<span class="pc bpc" id="L300" title="1 of 2 branches missed.">        if (pDirList == null) {</span>
+<span class="nc" id="L301">            return Collections.emptyList();</span>
+        }
+
+        /* Create list of directives */
+<span class="fc" id="L305">        final List&lt;ThemisXAnalysisModuleInstance&gt; myList = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L306" title="All 2 branches covered.">        for (ModuleDirective myDir : pDirList) {</span>
+<span class="fc" id="L307">            final ThemisXAnalysisModuleInstance myParsed = parseModule(myDir);</span>
+<span class="fc" id="L308">            myList.add(myParsed);</span>
+<span class="fc" id="L309">        }</span>
+<span class="fc" id="L310">        return myList;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

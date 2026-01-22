@@ -1,0 +1,908 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseAnalysisFilter.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.moneywise.lethe.views</a> &gt; <span class="el_source">MoneyWiseAnalysisFilter.java</span></div><h1>MoneyWiseAnalysisFilter.java</h1><pre class="source lang-java linenums">/*
+ * MoneyWise: Finance Application
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.moneywise.lethe.views;
+
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimal;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
+import io.github.tonywasher.joceanus.metis.data.MetisDataDifference;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldItem;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseAssetBase;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseCash;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDeposit;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseLoan;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransaction;
+import io.github.tonywasher.joceanus.moneywise.data.validate.MoneyWiseValidateTransaction;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.base.MoneyWiseAnalysisAttribute;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.base.MoneyWiseAnalysisValues;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisAccountBucket;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisCashBucket;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisDepositBucket;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisLoanBucket;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisPayeeBucket;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisPortfolioBucket;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisPortfolioCashBucket;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisSecurityBucket;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisTaxBasisBucket;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisTransCategoryBucket;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisTransTagBucket;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisType;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisAccountAttr;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisAccountValues;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisCategoryValues;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisPayeeAttr;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisPayeeValues;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisSecurityAttr;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisSecurityValues;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisTaxBasisAttr;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisTaxBasisValues;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisTransAttr;
+import io.github.tonywasher.joceanus.moneywise.views.MoneyWiseViewResource;
+
+/**
+ * Analysis Filter Classes.
+ *
+ * @param &lt;B&gt; the underlying bucket type
+ * @param &lt;T&gt; the attribute for the filter
+ */
+public abstract class MoneyWiseAnalysisFilter&lt;B, T extends Enum&lt;T&gt; &amp; MoneyWiseAnalysisAttribute&gt;
+        implements MetisFieldItem {
+    /**
+     * Report fields.
+     */
+    @SuppressWarnings(&quot;rawtypes&quot;)
+<span class="nc" id="L70">    private static final MetisFieldSet&lt;MoneyWiseAnalysisFilter&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseAnalysisFilter.class);</span>
+
+    /*
+     * Declare Fields.
+     */
+    static {
+<span class="nc" id="L76">        FIELD_DEFS.declareLocalField(MoneyWiseBasicResource.MONEYWISEDATA_RANGE, MoneyWiseAnalysisFilter::getDateRange);</span>
+<span class="nc" id="L77">        FIELD_DEFS.declareLocalField(MoneyWiseViewResource.FILTER_BUCKET, MoneyWiseAnalysisFilter::getBucket);</span>
+<span class="nc" id="L78">        FIELD_DEFS.declareLocalField(MoneyWiseViewResource.FILTER_ATTR, MoneyWiseAnalysisFilter::getCurrentAttribute);</span>
+<span class="nc" id="L79">    }</span>
+
+    /**
+     * The Underlying bucket.
+     */
+    private final B theBucket;
+
+    /**
+     * The Attribute class.
+     */
+    private final Class&lt;T&gt; theClass;
+
+    /**
+     * The Date Range.
+     */
+    private OceanusDateRange theDateRange;
+
+    /**
+     * The Current Attribute.
+     */
+    private T theAttr;
+
+    /**
+     * Constructor.
+     *
+     * @param pBucket the underlying bucket
+     * @param pClass  the attribute class
+     */
+    protected MoneyWiseAnalysisFilter(final B pBucket,
+<span class="nc" id="L108">                                      final Class&lt;T&gt; pClass) {</span>
+<span class="nc" id="L109">        theBucket = pBucket;</span>
+<span class="nc" id="L110">        theClass = pClass;</span>
+<span class="nc" id="L111">        theDateRange = new OceanusDateRange();</span>
+<span class="nc" id="L112">    }</span>
+
+    @SuppressWarnings(&quot;rawtypes&quot;)
+    @Override
+    public MetisFieldSet&lt;MoneyWiseAnalysisFilter&gt; getDataFieldSet() {
+<span class="nc" id="L117">        return FIELD_DEFS;</span>
+    }
+
+    @Override
+    public String formatObject(final OceanusDataFormatter pFormatter) {
+<span class="nc" id="L122">        return getName();</span>
+    }
+
+    /**
+     * Set attribute.
+     *
+     * @param pAttr the attribute
+     */
+    public void setCurrentAttribute(final MoneyWiseAnalysisAttribute pAttr) {
+<span class="nc" id="L131">        theAttr = theClass.cast(pAttr);</span>
+<span class="nc" id="L132">    }</span>
+
+    /**
+     * Obtain current attribute.
+     *
+     * @return the current attribute
+     */
+    public T getCurrentAttribute() {
+<span class="nc" id="L140">        return theAttr;</span>
+    }
+
+    /**
+     * Get Analysis Type.
+     *
+     * @return the Analysis Type
+     */
+    public abstract MoneyWiseAnalysisType getAnalysisType();
+
+    /**
+     * Obtain underlying bucket.
+     *
+     * @return theBucket
+     */
+    public B getBucket() {
+<span class="nc" id="L156">        return theBucket;</span>
+    }
+
+    /**
+     * Obtain the dateRange.
+     *
+     * @return the dateRange
+     */
+    public OceanusDateRange getDateRange() {
+<span class="nc" id="L165">        return theDateRange;</span>
+    }
+
+    /**
+     * Obtain the dateRange.
+     *
+     * @param pRange the dateRange
+     */
+    public void setDateRange(final OceanusDateRange pRange) {
+<span class="nc" id="L174">        theDateRange = pRange;</span>
+<span class="nc" id="L175">    }</span>
+
+    /**
+     * Should we filter this transaction out?
+     *
+     * @param pTrans the transaction to check
+     * @return true/false
+     */
+    public boolean filterTransaction(final MoneyWiseTransaction pTrans) {
+        /* Check whether this transaction is registered */
+<span class="nc bnc" id="L185" title="All 2 branches missed.">        return !pTrans.isHeader()</span>
+<span class="nc bnc" id="L186" title="All 2 branches missed.">                &amp;&amp; (theDateRange.compareToDate(pTrans.getDate()) != 0</span>
+<span class="nc bnc" id="L187" title="All 2 branches missed.">                || getValuesForTransaction(pTrans) == null);</span>
+    }
+
+    /**
+     * Obtain base bucket values.
+     *
+     * @return the value
+     */
+    protected abstract MoneyWiseAnalysisValues&lt;?, T&gt; getBaseValues();
+
+    /**
+     * Obtain values for transaction.
+     *
+     * @param pTrans the transaction
+     * @return the values
+     */
+    public abstract MoneyWiseAnalysisValues&lt;?, T&gt; getValuesForTransaction(MoneyWiseTransaction pTrans);
+
+    /**
+     * Obtain delta value for transaction.
+     *
+     * @param pTrans the transaction
+     * @return the delta value
+     */
+    public abstract OceanusDecimal getDeltaForTransaction(MoneyWiseTransaction pTrans);
+
+    /**
+     * Populate new transaction.
+     *
+     * @param pBuilder the transaction builder
+     * @return the new transaction (or null)
+     */
+    public abstract MoneyWiseTransaction buildNewTransaction(MoneyWiseValidateTransaction pBuilder);
+
+    /**
+     * is the counter relevant?
+     *
+     * @param pCounter the counter
+     * @return true/false
+     */
+    public boolean isRelevantCounter(final MoneyWiseAnalysisAttribute pCounter) {
+<span class="nc" id="L228">        return true;</span>
+    }
+
+    /**
+     * Obtain starting value for attribute.
+     *
+     * @return the value
+     */
+    public OceanusDecimal getStartingBalance() {
+<span class="nc" id="L237">        final MoneyWiseAnalysisValues&lt;?, T&gt; myValues = getBaseValues();</span>
+<span class="nc" id="L238">        return myValues.getDecimalValue(getCurrentAttribute());</span>
+    }
+
+    /**
+     * Obtain total money value for attribute.
+     *
+     * @param pTrans the transaction to check
+     * @return the value
+     */
+    public OceanusDecimal getBalanceForTransaction(final MoneyWiseTransaction pTrans) {
+<span class="nc" id="L248">        final MoneyWiseAnalysisValues&lt;?, T&gt; myValues = getValuesForTransaction(pTrans);</span>
+<span class="nc bnc" id="L249" title="All 2 branches missed.">        return myValues == null</span>
+<span class="nc" id="L250">                ? null</span>
+<span class="nc" id="L251">                : myValues.getDecimalValue(getCurrentAttribute());</span>
+    }
+
+    /**
+     * Obtain delta debit value for attribute.
+     *
+     * @param pTrans the transaction to check
+     * @return the value
+     */
+    public OceanusDecimal getDebitForTransaction(final MoneyWiseTransaction pTrans) {
+<span class="nc" id="L261">        OceanusDecimal myValue = getDeltaValueForTransaction(pTrans);</span>
+<span class="nc bnc" id="L262" title="All 2 branches missed.">        if (myValue != null) {</span>
+<span class="nc bnc" id="L263" title="All 2 branches missed.">            if (myValue.isPositive()</span>
+<span class="nc bnc" id="L264" title="All 2 branches missed.">                    || myValue.isZero()) {</span>
+<span class="nc" id="L265">                myValue = null;</span>
+            } else {
+<span class="nc" id="L267">                myValue.negate();</span>
+            }
+        }
+<span class="nc" id="L270">        return myValue;</span>
+    }
+
+    /**
+     * Obtain delta credit value for attribute.
+     *
+     * @param pTrans the transaction to check
+     * @return the value
+     */
+    public OceanusDecimal getCreditForTransaction(final MoneyWiseTransaction pTrans) {
+<span class="nc" id="L280">        final OceanusDecimal myValue = getDeltaValueForTransaction(pTrans);</span>
+<span class="nc bnc" id="L281" title="All 2 branches missed.">        return (myValue != null</span>
+<span class="nc bnc" id="L282" title="All 4 branches missed.">                &amp;&amp; myValue.isPositive() &amp;&amp; myValue.isNonZero())</span>
+<span class="nc" id="L283">                ? myValue</span>
+<span class="nc" id="L284">                : null;</span>
+    }
+
+    /**
+     * Obtain delta value for attribute.
+     *
+     * @param pTrans the transaction to check
+     * @return the value
+     */
+    private OceanusDecimal getDeltaValueForTransaction(final MoneyWiseTransaction pTrans) {
+<span class="nc" id="L294">        return getDeltaForTransaction(pTrans);</span>
+    }
+
+    /**
+     * Obtain analysis name.
+     *
+     * @return the name
+     */
+    public abstract String getName();
+
+    @Override
+    public boolean equals(final Object pThat) {
+        /* Handle the trivial cases */
+<span class="nc bnc" id="L307" title="All 2 branches missed.">        if (this == pThat) {</span>
+<span class="nc" id="L308">            return true;</span>
+        }
+<span class="nc bnc" id="L310" title="All 2 branches missed.">        if (pThat == null) {</span>
+<span class="nc" id="L311">            return false;</span>
+        }
+
+        /* Check class */
+<span class="nc bnc" id="L315" title="All 2 branches missed.">        if (getClass() != pThat.getClass()) {</span>
+<span class="nc" id="L316">            return false;</span>
+        }
+
+        /* Access as AccountFilter */
+<span class="nc" id="L320">        final MoneyWiseAnalysisFilter&lt;?, ?&gt; myThat = (MoneyWiseAnalysisFilter&lt;?, ?&gt;) pThat;</span>
+
+        /* Check equality */
+<span class="nc" id="L323">        return MetisDataDifference.isEqual(getBucket(), myThat.getBucket());</span>
+    }
+
+    @Override
+    public int hashCode() {
+<span class="nc" id="L328">        return getBucket().hashCode();</span>
+    }
+
+    /**
+     * Account filter class.
+     *
+     * @param &lt;B&gt; the underlying bucket type
+     * @param &lt;T&gt; the account data type
+     */
+    public abstract static class MoneyWiseAnalysisAccountFilter&lt;B extends MoneyWiseAnalysisAccountBucket&lt;T&gt;, T extends MoneyWiseAssetBase&gt;
+            extends MoneyWiseAnalysisFilter&lt;B, MoneyWiseAnalysisAccountAttr&gt; {
+        /**
+         * Constructor.
+         *
+         * @param pAccount the account bucket
+         */
+        protected MoneyWiseAnalysisAccountFilter(final B pAccount) {
+            /* Store parameter */
+<span class="nc" id="L346">            super(pAccount, MoneyWiseAnalysisAccountAttr.class);</span>
+<span class="nc" id="L347">            setCurrentAttribute(getAnalysisType().getDefaultValue());</span>
+<span class="nc" id="L348">        }</span>
+
+        @Override
+        public String getName() {
+<span class="nc" id="L352">            return getBucket().getName();</span>
+        }
+
+        @Override
+        protected MoneyWiseAnalysisAccountValues getBaseValues() {
+<span class="nc" id="L357">            return getBucket().getBaseValues();</span>
+        }
+
+        @Override
+        public MoneyWiseAnalysisAccountValues getValuesForTransaction(final MoneyWiseTransaction pTrans) {
+<span class="nc" id="L362">            return getBucket().getValuesForTransaction(pTrans);</span>
+        }
+
+        @Override
+        public OceanusDecimal getDeltaForTransaction(final MoneyWiseTransaction pTrans) {
+<span class="nc" id="L367">            return getBucket().getDeltaForTransaction(pTrans, getCurrentAttribute());</span>
+        }
+
+        @Override
+        public MoneyWiseTransaction buildNewTransaction(final MoneyWiseValidateTransaction pBuilder) {
+<span class="nc" id="L372">            return pBuilder.buildTransaction(getBucket().getAccount());</span>
+        }
+    }
+
+    /**
+     * Deposit Bucket filter class.
+     */
+    public static class MoneyWiseAnalysisDepositFilter
+            extends MoneyWiseAnalysisAccountFilter&lt;MoneyWiseAnalysisDepositBucket, MoneyWiseDeposit&gt; {
+        /**
+         * Constructor.
+         *
+         * @param pDeposit the deposit bucket
+         */
+        public MoneyWiseAnalysisDepositFilter(final MoneyWiseAnalysisDepositBucket pDeposit) {
+            /* Call super-constructor */
+<span class="nc" id="L388">            super(pDeposit);</span>
+<span class="nc" id="L389">        }</span>
+
+        @Override
+        public MoneyWiseAnalysisType getAnalysisType() {
+<span class="nc" id="L393">            return MoneyWiseAnalysisType.DEPOSIT;</span>
+        }
+
+        @Override
+        public boolean isRelevantCounter(final MoneyWiseAnalysisAttribute pCounter) {
+<span class="nc bnc" id="L398" title="All 2 branches missed.">            if (!(pCounter instanceof MoneyWiseAnalysisAccountAttr)) {</span>
+<span class="nc" id="L399">                return false;</span>
+            }
+
+<span class="nc bnc" id="L402" title="All 4 branches missed.">            switch ((MoneyWiseAnalysisAccountAttr) pCounter) {</span>
+                case BADDEBTCAPITAL:
+                case BADDEBTINTEREST:
+<span class="nc" id="L405">                    return getBucket().isPeer2Peer();</span>
+                case FOREIGNVALUE:
+<span class="nc" id="L407">                    return getBucket().isForeignCurrency();</span>
+                case SPEND:
+<span class="nc" id="L409">                    return false;</span>
+                default:
+<span class="nc" id="L411">                    return true;</span>
+            }
+        }
+    }
+
+    /**
+     * Cash Bucket filter class.
+     */
+    public static class MoneyWiseAnalysisCashFilter
+            extends MoneyWiseAnalysisAccountFilter&lt;MoneyWiseAnalysisCashBucket, MoneyWiseCash&gt; {
+        /**
+         * Constructor.
+         *
+         * @param pCash the cash bucket
+         */
+        public MoneyWiseAnalysisCashFilter(final MoneyWiseAnalysisCashBucket pCash) {
+            /* Call super-constructor */
+<span class="nc" id="L428">            super(pCash);</span>
+<span class="nc" id="L429">        }</span>
+
+        @Override
+        public MoneyWiseAnalysisType getAnalysisType() {
+<span class="nc" id="L433">            return MoneyWiseAnalysisType.CASH;</span>
+        }
+
+        @Override
+        public boolean isRelevantCounter(final MoneyWiseAnalysisAttribute pCounter) {
+<span class="nc bnc" id="L438" title="All 2 branches missed.">            if (!(pCounter instanceof MoneyWiseAnalysisAccountAttr)) {</span>
+<span class="nc" id="L439">                return false;</span>
+            }
+
+<span class="nc bnc" id="L442" title="All 3 branches missed.">            switch ((MoneyWiseAnalysisAccountAttr) pCounter) {</span>
+                case BADDEBTCAPITAL:
+                case BADDEBTINTEREST:
+                case SPEND:
+<span class="nc" id="L446">                    return false;</span>
+                case FOREIGNVALUE:
+<span class="nc" id="L448">                    return getBucket().isForeignCurrency();</span>
+                default:
+<span class="nc" id="L450">                    return true;</span>
+            }
+        }
+    }
+
+    /**
+     * Loan Bucket filter class.
+     */
+    public static class MoneyWiseAnalysisLoanFilter
+            extends MoneyWiseAnalysisAccountFilter&lt;MoneyWiseAnalysisLoanBucket, MoneyWiseLoan&gt; {
+        /**
+         * Constructor.
+         *
+         * @param pLoan the loan bucket
+         */
+        public MoneyWiseAnalysisLoanFilter(final MoneyWiseAnalysisLoanBucket pLoan) {
+            /* Call super-constructor */
+<span class="nc" id="L467">            super(pLoan);</span>
+<span class="nc" id="L468">        }</span>
+
+        @Override
+        public MoneyWiseAnalysisType getAnalysisType() {
+<span class="nc" id="L472">            return MoneyWiseAnalysisType.LOAN;</span>
+        }
+
+        @Override
+        public boolean isRelevantCounter(final MoneyWiseAnalysisAttribute pCounter) {
+<span class="nc bnc" id="L477" title="All 2 branches missed.">            if (!(pCounter instanceof MoneyWiseAnalysisAccountAttr)) {</span>
+<span class="nc" id="L478">                return false;</span>
+            }
+
+<span class="nc bnc" id="L481" title="All 4 branches missed.">            switch ((MoneyWiseAnalysisAccountAttr) pCounter) {</span>
+                case SPEND:
+<span class="nc" id="L483">                    return getBucket().isCreditCard();</span>
+                case BADDEBTCAPITAL:
+                case BADDEBTINTEREST:
+<span class="nc" id="L486">                    return false;</span>
+                case FOREIGNVALUE:
+<span class="nc" id="L488">                    return getBucket().isForeignCurrency();</span>
+                default:
+<span class="nc" id="L490">                    return true;</span>
+            }
+        }
+    }
+
+    /**
+     * Security Bucket filter class.
+     */
+    public static class MoneyWiseAnalysisSecurityFilter
+            extends MoneyWiseAnalysisFilter&lt;MoneyWiseAnalysisSecurityBucket, MoneyWiseAnalysisSecurityAttr&gt; {
+        /**
+         * Constructor.
+         *
+         * @param pSecurity the security bucket
+         */
+        public MoneyWiseAnalysisSecurityFilter(final MoneyWiseAnalysisSecurityBucket pSecurity) {
+            /* Store parameter */
+<span class="nc" id="L507">            super(pSecurity, MoneyWiseAnalysisSecurityAttr.class);</span>
+<span class="nc" id="L508">            setCurrentAttribute(getAnalysisType().getDefaultValue());</span>
+<span class="nc" id="L509">        }</span>
+
+        @Override
+        public String getName() {
+<span class="nc" id="L513">            return getBucket().getDecoratedName();</span>
+        }
+
+        @Override
+        public MoneyWiseAnalysisType getAnalysisType() {
+<span class="nc" id="L518">            return MoneyWiseAnalysisType.SECURITY;</span>
+        }
+
+        @Override
+        protected MoneyWiseAnalysisSecurityValues getBaseValues() {
+<span class="nc" id="L523">            return getBucket().getBaseValues();</span>
+        }
+
+        @Override
+        public MoneyWiseAnalysisSecurityValues getValuesForTransaction(final MoneyWiseTransaction pTrans) {
+<span class="nc" id="L528">            return getBucket().getValuesForTransaction(pTrans);</span>
+        }
+
+        @Override
+        public OceanusDecimal getDeltaForTransaction(final MoneyWiseTransaction pTrans) {
+<span class="nc" id="L533">            return getBucket().getDeltaForTransaction(pTrans, getCurrentAttribute());</span>
+        }
+
+        @Override
+        public MoneyWiseTransaction buildNewTransaction(final MoneyWiseValidateTransaction pBuilder) {
+<span class="nc" id="L538">            return pBuilder.buildTransaction(getBucket().getSecurityHolding());</span>
+        }
+
+        @Override
+        public boolean isRelevantCounter(final MoneyWiseAnalysisAttribute pCounter) {
+<span class="nc bnc" id="L543" title="All 2 branches missed.">            if (!(pCounter instanceof MoneyWiseAnalysisSecurityAttr)) {</span>
+<span class="nc" id="L544">                return false;</span>
+            }
+
+<span class="nc bnc" id="L547" title="All 3 branches missed.">            switch ((MoneyWiseAnalysisSecurityAttr) pCounter) {</span>
+                case FOREIGNINVESTED:
+<span class="nc" id="L549">                    return getBucket().isForeignCurrency();</span>
+                case INVESTED:
+                case DIVIDEND:
+                case RESIDUALCOST:
+                case REALISEDGAINS:
+                case UNITS:
+                case GROWTHADJUST:
+<span class="nc" id="L556">                    return true;</span>
+                default:
+<span class="nc" id="L558">                    return false;</span>
+            }
+        }
+    }
+
+    /**
+     * Portfolio Bucket filter class.
+     */
+    public static class MoneyWiseAnalysisPortfolioCashFilter
+            extends MoneyWiseAnalysisFilter&lt;MoneyWiseAnalysisPortfolioCashBucket, MoneyWiseAnalysisAccountAttr&gt; {
+        /**
+         * The portfolio bucket.
+         */
+        private final MoneyWiseAnalysisPortfolioBucket thePortfolio;
+
+        /**
+         * Constructor.
+         *
+         * @param pPortfolio the portfolio bucket
+         */
+        public MoneyWiseAnalysisPortfolioCashFilter(final MoneyWiseAnalysisPortfolioBucket pPortfolio) {
+            /* Store parameter */
+<span class="nc" id="L580">            super(pPortfolio.getPortfolioCash(), MoneyWiseAnalysisAccountAttr.class);</span>
+<span class="nc" id="L581">            thePortfolio = pPortfolio;</span>
+<span class="nc" id="L582">            setCurrentAttribute(getAnalysisType().getDefaultValue());</span>
+<span class="nc" id="L583">        }</span>
+
+        /**
+         * Obtain portfolio bucket.
+         *
+         * @return the portfolio bucket
+         */
+        public MoneyWiseAnalysisPortfolioBucket getPortfolioBucket() {
+<span class="nc" id="L591">            return thePortfolio;</span>
+        }
+
+        @Override
+        public String getName() {
+<span class="nc" id="L596">            return thePortfolio.getName();</span>
+        }
+
+        @Override
+        public MoneyWiseAnalysisType getAnalysisType() {
+<span class="nc" id="L601">            return MoneyWiseAnalysisType.PORTFOLIO;</span>
+        }
+
+        @Override
+        protected MoneyWiseAnalysisAccountValues getBaseValues() {
+<span class="nc" id="L606">            return getBucket().getBaseValues();</span>
+        }
+
+        @Override
+        public MoneyWiseAnalysisAccountValues getValuesForTransaction(final MoneyWiseTransaction pTrans) {
+<span class="nc" id="L611">            return getBucket().getValuesForTransaction(pTrans);</span>
+        }
+
+        @Override
+        public OceanusDecimal getDeltaForTransaction(final MoneyWiseTransaction pTrans) {
+<span class="nc" id="L616">            return getBucket().getDeltaForTransaction(pTrans, getCurrentAttribute());</span>
+        }
+
+        @Override
+        public MoneyWiseTransaction buildNewTransaction(final MoneyWiseValidateTransaction pBuilder) {
+<span class="nc" id="L621">            return pBuilder.buildTransaction(getBucket().getAccount());</span>
+        }
+
+        @Override
+        public boolean isRelevantCounter(final MoneyWiseAnalysisAttribute pCounter) {
+<span class="nc bnc" id="L626" title="All 2 branches missed.">            if (!(pCounter instanceof MoneyWiseAnalysisAccountAttr)) {</span>
+<span class="nc" id="L627">                return false;</span>
+            }
+
+<span class="nc bnc" id="L630" title="All 4 branches missed.">            switch ((MoneyWiseAnalysisAccountAttr) pCounter) {</span>
+                case FOREIGNVALUE:
+<span class="nc" id="L632">                    return getBucket().isForeignCurrency();</span>
+                case VALUATION:
+<span class="nc" id="L634">                    return true;</span>
+                case BADDEBTCAPITAL:
+                case BADDEBTINTEREST:
+                case SPEND:
+<span class="nc" id="L638">                    return false;</span>
+                default:
+<span class="nc" id="L640">                    return true;</span>
+            }
+        }
+    }
+
+    /**
+     * Payee Bucket filter class.
+     */
+    public static class MoneyWiseAnalysisPayeeFilter
+            extends MoneyWiseAnalysisFilter&lt;MoneyWiseAnalysisPayeeBucket, MoneyWiseAnalysisPayeeAttr&gt; {
+        /**
+         * Constructor.
+         *
+         * @param pPayee the payee bucket
+         */
+        public MoneyWiseAnalysisPayeeFilter(final MoneyWiseAnalysisPayeeBucket pPayee) {
+            /* Store parameter */
+<span class="nc" id="L657">            super(pPayee, MoneyWiseAnalysisPayeeAttr.class);</span>
+<span class="nc" id="L658">            setCurrentAttribute(getAnalysisType().getDefaultValue());</span>
+<span class="nc" id="L659">        }</span>
+
+        @Override
+        public String getName() {
+<span class="nc" id="L663">            return getBucket().getName();</span>
+        }
+
+        @Override
+        public MoneyWiseAnalysisType getAnalysisType() {
+<span class="nc" id="L668">            return MoneyWiseAnalysisType.PAYEE;</span>
+        }
+
+        @Override
+        protected MoneyWiseAnalysisPayeeValues getBaseValues() {
+<span class="nc" id="L673">            return getBucket().getBaseValues();</span>
+        }
+
+        @Override
+        public MoneyWiseAnalysisPayeeValues getValuesForTransaction(final MoneyWiseTransaction pTrans) {
+<span class="nc" id="L678">            return getBucket().getValuesForTransaction(pTrans);</span>
+        }
+
+        @Override
+        public OceanusDecimal getDeltaForTransaction(final MoneyWiseTransaction pTrans) {
+<span class="nc" id="L683">            return getBucket().getDeltaForTransaction(pTrans, getCurrentAttribute());</span>
+        }
+
+        @Override
+        public MoneyWiseTransaction buildNewTransaction(final MoneyWiseValidateTransaction pBuilder) {
+<span class="nc" id="L688">            return pBuilder.buildTransaction(getBucket().getPayee());</span>
+        }
+    }
+
+    /**
+     * TransactionCategory Bucket filter class.
+     */
+    public static class MoneyWiseAnalysisTransCategoryFilter
+            extends MoneyWiseAnalysisFilter&lt;MoneyWiseAnalysisTransCategoryBucket, MoneyWiseAnalysisTransAttr&gt; {
+        /**
+         * Constructor.
+         *
+         * @param pCategory the category bucket
+         */
+        public MoneyWiseAnalysisTransCategoryFilter(final MoneyWiseAnalysisTransCategoryBucket pCategory) {
+            /* Store parameter */
+<span class="nc" id="L704">            super(pCategory, MoneyWiseAnalysisTransAttr.class);</span>
+<span class="nc" id="L705">            final boolean isExpense = pCategory.getTransactionCategory().getCategoryTypeClass().isExpense();</span>
+<span class="nc bnc" id="L706" title="All 2 branches missed.">            setCurrentAttribute(isExpense</span>
+<span class="nc" id="L707">                    ? MoneyWiseAnalysisTransAttr.EXPENSE</span>
+<span class="nc" id="L708">                    : MoneyWiseAnalysisTransAttr.INCOME);</span>
+<span class="nc" id="L709">        }</span>
+
+        @Override
+        public String getName() {
+<span class="nc" id="L713">            return getBucket().getName();</span>
+        }
+
+        @Override
+        public MoneyWiseAnalysisType getAnalysisType() {
+<span class="nc" id="L718">            return MoneyWiseAnalysisType.CATEGORY;</span>
+        }
+
+        @Override
+        protected MoneyWiseAnalysisCategoryValues getBaseValues() {
+<span class="nc" id="L723">            return getBucket().getBaseValues();</span>
+        }
+
+        @Override
+        public MoneyWiseAnalysisCategoryValues getValuesForTransaction(final MoneyWiseTransaction pTrans) {
+<span class="nc" id="L728">            return getBucket().getValuesForTransaction(pTrans);</span>
+        }
+
+        @Override
+        public OceanusDecimal getDeltaForTransaction(final MoneyWiseTransaction pTrans) {
+<span class="nc" id="L733">            return getBucket().getDeltaForTransaction(pTrans, getCurrentAttribute());</span>
+        }
+
+        @Override
+        public MoneyWiseTransaction buildNewTransaction(final MoneyWiseValidateTransaction pBuilder) {
+<span class="nc" id="L738">            return pBuilder.buildTransaction(getBucket().getTransactionCategory());</span>
+        }
+    }
+
+    /**
+     * TaxBasis Bucket filter class.
+     */
+    public static class MoneyWiseAnalysisTaxBasisFilter
+            extends MoneyWiseAnalysisFilter&lt;MoneyWiseAnalysisTaxBasisBucket, MoneyWiseAnalysisTaxBasisAttr&gt; {
+        /**
+         * Constructor.
+         *
+         * @param pTaxBasis the taxBasis bucket
+         */
+        public MoneyWiseAnalysisTaxBasisFilter(final MoneyWiseAnalysisTaxBasisBucket pTaxBasis) {
+            /* Store parameter */
+<span class="nc" id="L754">            super(pTaxBasis, MoneyWiseAnalysisTaxBasisAttr.class);</span>
+<span class="nc" id="L755">            setCurrentAttribute(getAnalysisType().getDefaultValue());</span>
+<span class="nc" id="L756">        }</span>
+
+        @Override
+        public String getName() {
+<span class="nc" id="L760">            return getBucket().getName();</span>
+        }
+
+        @Override
+        public MoneyWiseAnalysisType getAnalysisType() {
+<span class="nc" id="L765">            return MoneyWiseAnalysisType.TAXBASIS;</span>
+        }
+
+        @Override
+        protected MoneyWiseAnalysisTaxBasisValues getBaseValues() {
+<span class="nc" id="L770">            return getBucket().getBaseValues();</span>
+        }
+
+        @Override
+        public MoneyWiseAnalysisTaxBasisValues getValuesForTransaction(final MoneyWiseTransaction pTrans) {
+<span class="nc" id="L775">            return getBucket().getValuesForTransaction(pTrans);</span>
+        }
+
+        @Override
+        public OceanusDecimal getDeltaForTransaction(final MoneyWiseTransaction pTrans) {
+<span class="nc" id="L780">            return getBucket().getDeltaForTransaction(pTrans, getCurrentAttribute());</span>
+        }
+
+        @Override
+        public MoneyWiseTransaction buildNewTransaction(final MoneyWiseValidateTransaction pBuilder) {
+<span class="nc" id="L785">            return null;</span>
+        }
+    }
+
+    /**
+     * TransactionTag filter class.
+     */
+    public static class MoneyWiseAnalysisTagFilter
+            extends MoneyWiseAnalysisFilter&lt;MoneyWiseAnalysisTransTagBucket, MoneyWiseAnalysisAccountAttr&gt; {
+        /**
+         * Constructor.
+         *
+         * @param pTag the transactionTag
+         */
+        public MoneyWiseAnalysisTagFilter(final MoneyWiseAnalysisTransTagBucket pTag) {
+            /* Store parameter */
+<span class="nc" id="L801">            super(pTag, MoneyWiseAnalysisAccountAttr.class);</span>
+<span class="nc" id="L802">            setCurrentAttribute(null);</span>
+<span class="nc" id="L803">        }</span>
+
+        @Override
+        public String getName() {
+<span class="nc" id="L807">            return getBucket().getName();</span>
+        }
+
+        @Override
+        public MoneyWiseAnalysisType getAnalysisType() {
+<span class="nc" id="L812">            return MoneyWiseAnalysisType.TRANSTAG;</span>
+        }
+
+        @Override
+        public boolean filterTransaction(final MoneyWiseTransaction pTrans) {
+<span class="nc bnc" id="L817" title="All 2 branches missed.">            return pTrans.isHeader()</span>
+<span class="nc bnc" id="L818" title="All 2 branches missed.">                    || !getBucket().hasTransaction(pTrans);</span>
+        }
+
+        @Override
+        protected MoneyWiseAnalysisAccountValues getBaseValues() {
+<span class="nc" id="L823">            return null;</span>
+        }
+
+        @Override
+        public MoneyWiseAnalysisAccountValues getValuesForTransaction(final MoneyWiseTransaction pTrans) {
+<span class="nc" id="L828">            return null;</span>
+        }
+
+        @Override
+        public OceanusDecimal getDeltaForTransaction(final MoneyWiseTransaction pTrans) {
+<span class="nc" id="L833">            return null;</span>
+        }
+
+        @Override
+        public MoneyWiseTransaction buildNewTransaction(final MoneyWiseValidateTransaction pBuilder) {
+<span class="nc" id="L838">            return null;</span>
+        }
+    }
+
+    /**
+     * All filter class.
+     */
+    public static final class MoneyWiseAnalysisAllFilter
+            extends MoneyWiseAnalysisFilter&lt;Void, MoneyWiseAnalysisAccountAttr&gt; {
+        /**
+         * Constructor.
+         */
+        public MoneyWiseAnalysisAllFilter() {
+            /* Store parameter */
+<span class="nc" id="L852">            super(null, MoneyWiseAnalysisAccountAttr.class);</span>
+<span class="nc" id="L853">            setCurrentAttribute(null);</span>
+<span class="nc" id="L854">        }</span>
+
+        @Override
+        public String getName() {
+<span class="nc" id="L858">            return MoneyWiseAnalysisType.ALL.toString();</span>
+        }
+
+        @Override
+        public MoneyWiseAnalysisType getAnalysisType() {
+<span class="nc" id="L863">            return MoneyWiseAnalysisType.ALL;</span>
+        }
+
+        @Override
+        public Void getBucket() {
+<span class="nc" id="L868">            return null;</span>
+        }
+
+        @Override
+        public boolean filterTransaction(final MoneyWiseTransaction pTrans) {
+<span class="nc" id="L873">            return pTrans.isHeader();</span>
+        }
+
+        @Override
+        protected MoneyWiseAnalysisAccountValues getBaseValues() {
+<span class="nc" id="L878">            return null;</span>
+        }
+
+        @Override
+        public MoneyWiseAnalysisAccountValues getValuesForTransaction(final MoneyWiseTransaction pTrans) {
+<span class="nc" id="L883">            return null;</span>
+        }
+
+        @Override
+        public OceanusDecimal getDeltaForTransaction(final MoneyWiseTransaction pTrans) {
+<span class="nc" id="L888">            return null;</span>
+        }
+
+        @Override
+        public boolean equals(final Object pThat) {
+            /* Only ever one instance */
+<span class="nc bnc" id="L894" title="All 2 branches missed.">            return this == pThat;</span>
+        }
+
+        @Override
+        public int hashCode() {
+<span class="nc" id="L899">            return MetisFieldSet.HASH_PRIME;</span>
+        }
+
+        @Override
+        public MoneyWiseTransaction buildNewTransaction(final MoneyWiseValidateTransaction pBuilder) {
+<span class="nc" id="L904">            return pBuilder.buildTransaction(null);</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

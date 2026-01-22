@@ -1,0 +1,305 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianCoreZipReadFile.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.impl.core.zip</a> &gt; <span class="el_source">GordianCoreZipReadFile.java</span></div><h1>GordianCoreZipReadFile.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.gordianknot.impl.core.zip;
+
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactory;
+import io.github.tonywasher.joceanus.gordianknot.api.zip.GordianZipFileContents;
+import io.github.tonywasher.joceanus.gordianknot.api.zip.GordianZipFileEntry;
+import io.github.tonywasher.joceanus.gordianknot.api.zip.GordianZipLock;
+import io.github.tonywasher.joceanus.gordianknot.api.zip.GordianZipReadFile;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianDataConverter;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianIOException;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.keyset.GordianCoreKeySet;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.stream.GordianStreamManager;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.zip.GordianCoreZipLock.GordianUnlockNotify;
+import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
+
+import javax.xml.XMLConstants;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Arrays;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
+
+/**
+ * Class used to extract from a ZipFile.
+ */
+public class GordianCoreZipReadFile
+        implements GordianZipReadFile, GordianUnlockNotify {
+    /**
+     * The extension size for the buffer.
+     */
+    private static final int BUFFERSIZE = 1024;
+
+    /**
+     * Lock for this zip file.
+     */
+    private final GordianCoreZipLock theLock;
+
+    /**
+     * The contents of this zip file.
+     */
+    private GordianCoreZipFileContents theContents;
+
+    /**
+     * The zip file contents.
+     */
+    private final byte[] theZipFile;
+
+    /**
+     * KeySet for this zip file.
+     */
+    private GordianCoreKeySet theKeySet;
+
+    /**
+     * The header bytes.
+     */
+    private final byte[] theHeader;
+
+    /**
+     * Constructor.
+     *
+     * @param pFactory     the factory
+     * @param pInputStream the input stream to read
+     * @throws GordianException on error
+     */
+    GordianCoreZipReadFile(final GordianFactory pFactory,
+<span class="fc" id="L90">                           final InputStream pInputStream) throws GordianException {</span>
+        /* Protect against exceptions */
+<span class="fc" id="L92">        try (BufferedInputStream myInBuffer = new BufferedInputStream(pInputStream);</span>
+<span class="fc" id="L93">             ByteArrayOutputStream myOutBuffer = new ByteArrayOutputStream()) {</span>
+            /* Read the Zip file into memory */
+<span class="fc" id="L95">            myInBuffer.transferTo(myOutBuffer);</span>
+<span class="fc" id="L96">            theZipFile = myOutBuffer.toByteArray();</span>
+
+            /* Handle exceptions */
+<span class="nc" id="L99">        } catch (IOException e) {</span>
+<span class="nc" id="L100">            throw new GordianIOException(&quot;Exception accessing Zip file&quot;, e);</span>
+<span class="fc" id="L101">        }</span>
+
+        /* Protect against exceptions */
+<span class="fc" id="L104">        try (ByteArrayInputStream myInBuffer = new ByteArrayInputStream(theZipFile);</span>
+<span class="fc" id="L105">             ZipInputStream myHdrStream = new ZipInputStream(myInBuffer)) {</span>
+            /* Create the file contents */
+<span class="fc" id="L107">            theContents = new GordianCoreZipFileContents();</span>
+
+            /* Loop through the Zip file entries */
+            ZipEntry myEntry;
+            while (true) {
+                /* Read next entry */
+<span class="fc" id="L113">                myEntry = myHdrStream.getNextEntry();</span>
+
+                /* If this is EOF or a header record break the loop */
+<span class="fc bfc" id="L116" title="All 2 branches covered.">                if (myEntry == null</span>
+<span class="fc bfc" id="L117" title="All 2 branches covered.">                        || myEntry.getExtra() != null) {</span>
+<span class="fc" id="L118">                    break;</span>
+                }
+
+                /* Add to list of contents */
+<span class="fc" id="L122">                theContents.addZipFileEntry(myEntry);</span>
+            }
+
+            /* If we have a header */
+<span class="fc bfc" id="L126" title="All 2 branches covered.">            if (myEntry != null) {</span>
+                /* Pick up security lock */
+<span class="fc" id="L128">                theLock = new GordianCoreZipLock(pFactory, this, myEntry.getExtra());</span>
+<span class="fc" id="L129">                theHeader = readHeader(myHdrStream);</span>
+            } else {
+                /* Record no security */
+<span class="fc" id="L132">                theLock = null;</span>
+<span class="fc" id="L133">                theHeader = null;</span>
+            }
+
+            /* Catch exceptions */
+<span class="nc" id="L137">        } catch (IOException e) {</span>
+<span class="nc" id="L138">            throw new GordianIOException(&quot;Exception accessing Zip file&quot;, e);</span>
+<span class="fc" id="L139">        }</span>
+<span class="fc" id="L140">    }</span>
+
+    @Override
+    public boolean isEncrypted() {
+<span class="fc bfc" id="L144" title="All 2 branches covered.">        return theLock != null;</span>
+    }
+
+    @Override
+    public GordianZipFileContents getContents() {
+<span class="fc" id="L149">        return theContents;</span>
+    }
+
+    @Override
+    public GordianZipLock getLock() {
+<span class="fc" id="L154">        return theLock;</span>
+    }
+
+    @Override
+    public void notifyUnlock() throws GordianException {
+        /* Access the keySet */
+<span class="fc" id="L160">        final GordianCoreKeySet myKeySet = (GordianCoreKeySet) theLock.getKeySet();</span>
+
+        /* Parse the decrypted header */
+<span class="fc" id="L163">        final byte[] myBytes = myKeySet.decryptBytes(theHeader);</span>
+<span class="fc" id="L164">        theContents = new GordianCoreZipFileContents(GordianDataConverter.byteArrayToString(myBytes));</span>
+
+        /* Access the security details */
+<span class="fc" id="L167">        final GordianCoreZipFileEntry myHeader = theContents.getHeader();</span>
+
+        /* Reject if the entry is not found */
+<span class="pc bpc" id="L170" title="1 of 2 branches missed.">        if (myHeader == null) {</span>
+<span class="nc" id="L171">            throw new GordianDataException(&quot;Header record not found.&quot;);</span>
+        }
+
+        /* Obtain encoded keySet */
+<span class="fc" id="L175">        final byte[] mySecuredKeySet = myHeader.getHash();</span>
+<span class="fc" id="L176">        theKeySet = myKeySet.deriveKeySet(mySecuredKeySet);</span>
+<span class="fc" id="L177">    }</span>
+
+    /**
+     * Read the header.
+     *
+     * @param pHdrStream the header stream
+     * @return the header
+     * @throws IOException on error
+     */
+    private static byte[] readHeader(final InputStream pHdrStream) throws IOException {
+        /* Initialise variables */
+<span class="fc" id="L188">        int myLen = 0;</span>
+<span class="fc" id="L189">        int mySpace = BUFFERSIZE;</span>
+<span class="fc" id="L190">        byte[] myBuffer = new byte[BUFFERSIZE];</span>
+
+        /* Loop */
+        while (true) {
+            /* Read the header entry */
+<span class="fc" id="L195">            final int myRead = pHdrStream.read(myBuffer, myLen, mySpace);</span>
+<span class="fc bfc" id="L196" title="All 2 branches covered.">            if (myRead == -1) {</span>
+<span class="fc" id="L197">                break;</span>
+            }
+
+            /* Adjust buffer */
+<span class="fc" id="L201">            myLen += myRead;</span>
+<span class="fc" id="L202">            mySpace -= myRead;</span>
+
+            /* If we have finished up the buffer */
+<span class="fc bfc" id="L205" title="All 2 branches covered.">            if (mySpace == 0) {</span>
+                /* Increase the buffer */
+<span class="fc" id="L207">                myBuffer = Arrays.copyOf(myBuffer, myLen</span>
+                        + BUFFERSIZE);
+<span class="fc" id="L209">                mySpace += BUFFERSIZE;</span>
+            }
+<span class="fc" id="L211">        }</span>
+
+        /* Cut down the buffer to size */
+<span class="fc" id="L214">        return Arrays.copyOf(myBuffer, myLen);</span>
+    }
+
+    @Override
+    public Document readXMLDocument(final GordianZipFileEntry pFile) throws GordianException {
+        /* Access the entry as an input stream */
+<span class="fc" id="L220">        try (InputStream myInputStream = createInputStream(pFile)) {</span>
+            /* Create a Document builder */
+<span class="fc" id="L222">            final DocumentBuilderFactory myFactory = DocumentBuilderFactory.newInstance();</span>
+<span class="fc" id="L223">            myFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);</span>
+<span class="fc" id="L224">            myFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, &quot;&quot;);</span>
+<span class="fc" id="L225">            myFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, &quot;&quot;);</span>
+<span class="fc" id="L226">            final DocumentBuilder myBuilder = myFactory.newDocumentBuilder();</span>
+
+            /* Build the document from the input stream */
+<span class="fc" id="L229">            return myBuilder.parse(myInputStream);</span>
+
+            /* Catch exceptions */
+<span class="nc" id="L232">        } catch (IOException</span>
+                 | ParserConfigurationException
+                 | SAXException e) {
+<span class="nc" id="L235">            throw new GordianIOException(&quot;Failed to parse Document&quot;, e);</span>
+        }
+    }
+
+    @Override
+    public InputStream createInputStream(final GordianZipFileEntry pFile) throws GordianException {
+        /* Check that entry belongs to this zip file */
+<span class="pc bpc" id="L242" title="1 of 2 branches missed.">        if (!((GordianCoreZipFileEntry) pFile).getParent().equals(theContents)) {</span>
+<span class="nc" id="L243">            throw new GordianDataException(&quot;File does not belong to Zip file&quot;);</span>
+        }
+
+        /* Declare control variables */
+<span class="fc" id="L247">        ZipInputStream myZipFile = null;</span>
+<span class="fc" id="L248">        InputStream myResult = null;</span>
+
+        /* Protect against exceptions */
+<span class="fc" id="L251">        final GordianCoreZipFileEntry myFile = (GordianCoreZipFileEntry) pFile;</span>
+        try {
+            /* Open the zip file for reading */
+<span class="fc" id="L254">            final ByteArrayInputStream myInBuffer = new ByteArrayInputStream(theZipFile);</span>
+<span class="fc" id="L255">            myZipFile = new ZipInputStream(myInBuffer);</span>
+
+            /* Access the name of the file entry */
+<span class="fc" id="L258">            final String myName = myFile.getZipName();</span>
+            ZipEntry myEntry;
+
+            /* Loop through the Zip file entries */
+            do {
+                /* Read the entry */
+<span class="fc" id="L264">                myEntry = myZipFile.getNextEntry();</span>
+
+                /* Break if we reached EOF or found the correct entry */
+<span class="pc bpc" id="L267" title="1 of 2 branches missed.">            } while (myEntry != null</span>
+<span class="pc bpc" id="L268" title="1 of 2 branches missed.">                    &amp;&amp; myEntry.getName().compareTo(myName) != 0);</span>
+
+            /* Handle entry not found */
+<span class="pc bpc" id="L271" title="1 of 2 branches missed.">            if (myEntry == null) {</span>
+<span class="nc" id="L272">                myZipFile.close();</span>
+<span class="nc" id="L273">                throw new GordianDataException(&quot;File not found - &quot;</span>
+<span class="nc" id="L274">                        + pFile.getFileName());</span>
+            }
+
+            /* If the file is encrypted */
+<span class="fc bfc" id="L278" title="All 2 branches covered.">            if (isEncrypted()) {</span>
+                /* Create a StreamManager */
+<span class="fc" id="L280">                final GordianStreamManager myManager = new GordianStreamManager(theKeySet);</span>
+
+                /* Build input stream */
+<span class="fc" id="L283">                myResult = myManager.buildInputStream(myFile.buildInputList(), myZipFile);</span>
+
+                /* Else we are already OK */
+<span class="fc" id="L286">            } else {</span>
+<span class="fc" id="L287">                myResult = myZipFile;</span>
+            }
+
+            /* return the new stream */
+<span class="fc" id="L291">            return myResult;</span>
+
+            /* Catch exceptions */
+<span class="nc" id="L294">        } catch (IOException e) {</span>
+<span class="nc" id="L295">            throw new GordianIOException(&quot;Exception creating new Input stream&quot;, e);</span>
+
+        } finally {
+            /* Close the ZipFile on error */
+<span class="pc bpc" id="L299" title="2 of 4 branches missed.">            if (myZipFile != null &amp;&amp; myResult == null) {</span>
+<span class="nc" id="L300">                GordianStreamManager.cleanUpInputStream(myZipFile);</span>
+            }
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

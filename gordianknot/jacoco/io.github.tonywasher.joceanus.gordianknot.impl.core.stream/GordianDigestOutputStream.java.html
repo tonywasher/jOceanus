@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianDigestOutputStream.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.impl.core.stream</a> &gt; <span class="el_source">GordianDigestOutputStream.java</span></div><h1>GordianDigestOutputStream.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.gordianknot.impl.core.stream;
+
+import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigest;
+
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.Arrays;
+
+/**
+ * Output stream digest implementation.
+ */
+public class GordianDigestOutputStream
+        extends GordianOutputStream {
+    /**
+     * The digest.
+     */
+    private final GordianDigest theDigest;
+
+    /**
+     * The result.
+     */
+    private byte[] theResult;
+
+    /**
+     * The data length.
+     */
+    private long theDataLen;
+
+    /**
+     * The MacStream.
+     */
+    private final GordianMacOutputStream theMacStream;
+
+    /**
+     * Constructor.
+     *
+     * @param pDigest    the digest
+     * @param pOutput    the underlying output stream
+     * @param pMacStream the MacStream
+     */
+    GordianDigestOutputStream(final GordianDigest pDigest,
+                              final OutputStream pOutput,
+                              final GordianMacOutputStream pMacStream) {
+<span class="fc" id="L60">        super(pOutput);</span>
+<span class="fc" id="L61">        theDigest = pDigest;</span>
+<span class="fc" id="L62">        theMacStream = pMacStream;</span>
+<span class="fc" id="L63">    }</span>
+
+    /**
+     * Obtain the Digest.
+     *
+     * @return the digest
+     */
+    public GordianDigest getDigest() {
+<span class="fc" id="L71">        return theDigest;</span>
+    }
+
+    /**
+     * Obtain the Result.
+     *
+     * @return the result
+     */
+    public byte[] getResult() {
+<span class="pc bpc" id="L80" title="1 of 2 branches missed.">        return theResult == null</span>
+<span class="nc" id="L81">                ? null</span>
+<span class="fc" id="L82">                : Arrays.copyOf(theResult, theResult.length);</span>
+    }
+
+    /**
+     * Obtain the dataLength.
+     *
+     * @return the length
+     */
+    long getDataLen() {
+<span class="fc" id="L91">        return theDataLen;</span>
+    }
+
+    @Override
+    protected void processData(final byte[] pBytes,
+                               final int pOffset,
+                               final int pLength) throws IOException {
+        /* Update the digest and write bytes to underlying stream */
+<span class="fc" id="L99">        theDigest.update(pBytes, pOffset, pLength);</span>
+<span class="fc" id="L100">        theDataLen += pLength;</span>
+<span class="fc" id="L101">        writeToStream(pBytes, pOffset, pLength);</span>
+<span class="fc" id="L102">    }</span>
+
+    @Override
+    protected void finishData() {
+        /* Calculate the digest */
+<span class="fc" id="L107">        theResult = theDigest.finish();</span>
+
+        /* Report the expected Digest to the MacStream */
+<span class="fc" id="L110">        theMacStream.setDigest(theResult);</span>
+<span class="fc" id="L111">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

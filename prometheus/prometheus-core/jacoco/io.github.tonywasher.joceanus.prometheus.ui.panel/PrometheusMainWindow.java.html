@@ -1,0 +1,591 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PrometheusMainWindow.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Prometheus Core Application Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.prometheus.ui.panel</a> &gt; <span class="el_source">PrometheusMainWindow.java</span></div><h1>PrometheusMainWindow.java</h1><pre class="source lang-java linenums">/*
+ * Prometheus: Application Framework
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.prometheus.ui.panel;
+
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogManager;
+import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogger;
+import io.github.tonywasher.joceanus.oceanus.profile.OceanusProfile;
+import io.github.tonywasher.joceanus.metis.help.MetisHelpModule;
+import io.github.tonywasher.joceanus.metis.help.MetisHelpWindow;
+import io.github.tonywasher.joceanus.metis.toolkit.MetisToolkit;
+import io.github.tonywasher.joceanus.metis.viewer.MetisViewerWindow;
+import io.github.tonywasher.joceanus.prometheus.threads.PrometheusThreadCreateBackup;
+import io.github.tonywasher.joceanus.prometheus.threads.PrometheusThreadCreateDatabase;
+import io.github.tonywasher.joceanus.prometheus.threads.PrometheusThreadCreateTables;
+import io.github.tonywasher.joceanus.prometheus.threads.PrometheusThreadCreateXMLFile;
+import io.github.tonywasher.joceanus.prometheus.threads.PrometheusThreadId;
+import io.github.tonywasher.joceanus.prometheus.threads.PrometheusThreadLoadBackup;
+import io.github.tonywasher.joceanus.prometheus.threads.PrometheusThreadLoadDatabase;
+import io.github.tonywasher.joceanus.prometheus.threads.PrometheusThreadLoadXMLFile;
+import io.github.tonywasher.joceanus.prometheus.threads.PrometheusThreadPurgeDatabase;
+import io.github.tonywasher.joceanus.prometheus.threads.PrometheusThreadRenewSecurity;
+import io.github.tonywasher.joceanus.prometheus.threads.PrometheusThreadStoreDatabase;
+import io.github.tonywasher.joceanus.prometheus.threads.PrometheusThreadUpdatePassword;
+import io.github.tonywasher.joceanus.prometheus.toolkit.PrometheusToolkit;
+import io.github.tonywasher.joceanus.prometheus.ui.PrometheusMenuId;
+import io.github.tonywasher.joceanus.prometheus.ui.PrometheusUIResource;
+import io.github.tonywasher.joceanus.prometheus.views.PrometheusDataControl;
+import io.github.tonywasher.joceanus.tethys.api.base.TethysUIComponent;
+import io.github.tonywasher.joceanus.tethys.api.base.TethysUIEvent;
+import io.github.tonywasher.joceanus.tethys.api.dialog.TethysUIAlert;
+import io.github.tonywasher.joceanus.tethys.api.factory.TethysUIFactory;
+import io.github.tonywasher.joceanus.tethys.api.factory.TethysUIMainPanel;
+import io.github.tonywasher.joceanus.tethys.api.menu.TethysUIMenuBarManager;
+import io.github.tonywasher.joceanus.tethys.api.menu.TethysUIMenuBarManager.TethysUIMenuSubMenu;
+import io.github.tonywasher.joceanus.tethys.api.pane.TethysUIBorderPaneManager;
+import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThread;
+import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadEvent;
+import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadManager;
+import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadStatusManager;
+
+/**
+ * Main window for application.
+ */
+public abstract class PrometheusMainWindow
+        implements TethysUIMainPanel {
+    /**
+     * Logger.
+     */
+<span class="nc" id="L64">    private static final OceanusLogger LOGGER = OceanusLogManager.getLogger(PrometheusMainWindow.class);</span>
+
+    /**
+     * Discard prompt.
+     */
+<span class="nc" id="L69">    private static final String PROMPT_DISCARD = PrometheusUIResource.PROMPT_DISCARD.getValue();</span>
+
+    /**
+     * Close Dialog title.
+     */
+<span class="nc" id="L74">    private static final String TITLE_CLOSE = PrometheusUIResource.TITLE_CLOSE.getValue();</span>
+
+    /**
+     * The Toolkit.
+     */
+    private MetisToolkit theToolkit;
+
+    /**
+     * The GUI Factory.
+     */
+    private TethysUIFactory&lt;?&gt; theGuiFactory;
+
+    /**
+     * The data view.
+     */
+    private PrometheusDataControl theView;
+
+    /**
+     * The panel.
+     */
+    private TethysUIBorderPaneManager thePanel;
+
+    /**
+     * The data menu.
+     */
+    private TethysUIMenuBarManager theMenuBar;
+
+    /**
+     * The Thread Manager.
+     */
+    private TethysUIThreadManager theThreadMgr;
+
+    /**
+     * The Started data window.
+     */
+    private MetisViewerWindow theDataWdw;
+
+    /**
+     * The Status window.
+     */
+    private TethysUIThreadStatusManager theStatusBar;
+
+    /**
+     * Constructor.
+     */
+<span class="nc" id="L119">    protected PrometheusMainWindow() {</span>
+<span class="nc" id="L120">    }</span>
+
+    /**
+     * Get the data view.
+     *
+     * @return the data view
+     */
+    public PrometheusDataControl getView() {
+<span class="nc" id="L128">        return theView;</span>
+    }
+
+    @Override
+    public TethysUIComponent getComponent() {
+<span class="nc" id="L133">        return thePanel;</span>
+    }
+
+    @Override
+    public TethysUIMenuBarManager getMenuBar() {
+<span class="nc" id="L138">        return theMenuBar;</span>
+    }
+
+    /**
+     * Build the main panel.
+     *
+     * @return the main panel
+     * @throws OceanusException on error
+     */
+    protected abstract TethysUIComponent buildMainPanel() throws OceanusException;
+
+    /**
+     * Obtain the Help Module.
+     *
+     * @return the help module
+     * @throws OceanusException on error
+     */
+    protected abstract MetisHelpModule getHelpModule() throws OceanusException;
+
+    /**
+     * Build the main window.
+     *
+     * @param pView    the Data view
+     * @param pToolkit the toolkit
+     * @throws OceanusException on error
+     */
+    public void buildMainWindow(final PrometheusDataControl pView,
+                                final PrometheusToolkit pToolkit) throws OceanusException {
+        /* Store the view */
+<span class="nc" id="L167">        theView = pView;</span>
+<span class="nc" id="L168">        theToolkit = pToolkit.getToolkit();</span>
+<span class="nc" id="L169">        theGuiFactory = theToolkit.getGuiFactory();</span>
+<span class="nc" id="L170">        theThreadMgr = theToolkit.getThreadManager();</span>
+
+        /* Obtain the active profile */
+<span class="nc" id="L173">        final OceanusProfile myTask = theView.getActiveTask();</span>
+<span class="nc" id="L174">        myTask.startTask(&quot;buildGUI&quot;);</span>
+
+        /* Create the panel */
+<span class="nc" id="L177">        thePanel = theGuiFactory.paneFactory().newBorderPane();</span>
+
+        /* Build the Main Panel */
+<span class="nc" id="L180">        final TethysUIComponent myMainPanel = buildMainPanel();</span>
+
+        /* Access the status bar and set to invisible */
+<span class="nc" id="L183">        theStatusBar = theThreadMgr.getStatusManager();</span>
+<span class="nc" id="L184">        theStatusBar.setVisible(false);</span>
+<span class="nc" id="L185">        theThreadMgr.getEventRegistrar().addEventListener(TethysUIThreadEvent.THREADEND, e -&gt; {</span>
+<span class="nc" id="L186">            setVisibility();</span>
+<span class="nc" id="L187">            theStatusBar.setVisible(false);</span>
+<span class="nc" id="L188">        });</span>
+
+        /* Create the panel */
+<span class="nc" id="L191">        thePanel.setNorth(theStatusBar);</span>
+<span class="nc" id="L192">        thePanel.setCentre(myMainPanel);</span>
+
+        /* Build the Main Menu */
+<span class="nc" id="L195">        buildMainMenu();</span>
+
+        /* Create the data window */
+<span class="nc" id="L198">        theDataWdw = theToolkit.newViewerWindow();</span>
+<span class="nc" id="L199">        theDataWdw.getEventRegistrar().addEventListener(TethysUIEvent.WINDOWCLOSED, e -&gt; theMenuBar.setEnabled(PrometheusMenuId.DATAVIEWER, true));</span>
+
+        /* Complete task */
+<span class="nc" id="L202">        myTask.end();</span>
+<span class="nc" id="L203">    }</span>
+
+    /**
+     * Build Main Menu.
+     */
+    protected void buildMainMenu() {
+        /* Create the menu bar */
+<span class="nc" id="L210">        theMenuBar = theGuiFactory.menuFactory().newMenuBar();</span>
+
+        /* Add Data Menu Items */
+<span class="nc" id="L213">        TethysUIMenuSubMenu myMenu = theMenuBar.newSubMenu(PrometheusMenuId.DATA);</span>
+<span class="nc" id="L214">        addDataMenuItems(myMenu);</span>
+
+        /* Add Edit Menu Items */
+<span class="nc" id="L217">        myMenu = theMenuBar.newSubMenu(PrometheusMenuId.EDIT);</span>
+<span class="nc" id="L218">        addEditMenuItems(myMenu);</span>
+
+        /* Add Backup Menu Items */
+<span class="nc" id="L221">        myMenu = theMenuBar.newSubMenu(PrometheusMenuId.BACKUP);</span>
+<span class="nc" id="L222">        addBackupMenuItems(myMenu);</span>
+
+        /* Add Security Menu Items */
+<span class="nc" id="L225">        myMenu = theMenuBar.newSubMenu(PrometheusMenuId.SECURITY);</span>
+<span class="nc" id="L226">        addSecurityMenuItems(myMenu);</span>
+
+        /* Add Help Menu items */
+<span class="nc" id="L229">        myMenu = theMenuBar.newSubMenu(PrometheusMenuId.HELP);</span>
+<span class="nc" id="L230">        addHelpMenuItems(myMenu);</span>
+<span class="nc" id="L231">    }</span>
+
+    /**
+     * Add Data Menu items.
+     *
+     * @param pMenu the menu
+     */
+    protected void addDataMenuItems(final TethysUIMenuSubMenu pMenu) {
+        /* Add Standard Data Menu items */
+<span class="nc" id="L240">        pMenu.newMenuItem(PrometheusThreadId.LOADDB, e -&gt; loadDatabase());</span>
+<span class="nc" id="L241">        pMenu.newMenuItem(PrometheusThreadId.STOREDB, e -&gt; storeDatabase());</span>
+<span class="nc" id="L242">        pMenu.newMenuItem(PrometheusThreadId.CREATEDB, e -&gt; createDatabase());</span>
+<span class="nc" id="L243">        pMenu.newMenuItem(PrometheusThreadId.CREATEDBTABLES, e -&gt; createDatabaseTables());</span>
+<span class="nc" id="L244">        pMenu.newMenuItem(PrometheusThreadId.PURGEDB, e -&gt; purgeDatabase());</span>
+<span class="nc" id="L245">    }</span>
+
+    /**
+     * Add EditMenu items.
+     *
+     * @param pMenu the menu
+     */
+    protected void addEditMenuItems(final TethysUIMenuSubMenu pMenu) {
+        /* Add Standard Edit Menu items */
+<span class="nc" id="L254">        pMenu.newMenuItem(PrometheusMenuId.UNDO, e -&gt; undoLastEdit());</span>
+<span class="nc" id="L255">        pMenu.newMenuItem(PrometheusMenuId.RESET, e -&gt; resetEdit());</span>
+<span class="nc" id="L256">    }</span>
+
+    /**
+     * Add Backup Menu items.
+     *
+     * @param pMenu the menu
+     */
+    protected void addBackupMenuItems(final TethysUIMenuSubMenu pMenu) {
+        /* Add Standard Backup menu items */
+<span class="nc" id="L265">        pMenu.newMenuItem(PrometheusThreadId.CREATEBACKUP, e -&gt; writeBackup());</span>
+<span class="nc" id="L266">        pMenu.newMenuItem(PrometheusThreadId.RESTOREBACKUP, e -&gt; restoreBackup());</span>
+<span class="nc" id="L267">        pMenu.newMenuItem(PrometheusThreadId.CREATEXML, e -&gt; createXmlBackup());</span>
+<span class="nc" id="L268">        pMenu.newMenuItem(PrometheusThreadId.CREATEXTRACT, e -&gt; createXmlXtract());</span>
+<span class="nc" id="L269">        pMenu.newMenuItem(PrometheusThreadId.RESTOREXML, e -&gt; loadXmlFile());</span>
+<span class="nc" id="L270">    }</span>
+
+    /**
+     * Add Security Menu items.
+     *
+     * @param pMenu the menu
+     */
+    protected void addSecurityMenuItems(final TethysUIMenuSubMenu pMenu) {
+        /* Add Standard Security menu items */
+<span class="nc" id="L279">        pMenu.newMenuItem(PrometheusThreadId.CHANGEPASS, e -&gt; updatePassword());</span>
+<span class="nc" id="L280">        pMenu.newMenuItem(PrometheusThreadId.RENEWSECURITY, e -&gt; reNewSecurity());</span>
+<span class="nc" id="L281">    }</span>
+
+    /**
+     * Add Help Menu items.
+     *
+     * @param pMenu the menu
+     */
+    protected void addHelpMenuItems(final TethysUIMenuSubMenu pMenu) {
+        /* Create the menu items */
+<span class="nc" id="L290">        pMenu.newMenuItem(PrometheusMenuId.SHOWHELP, e -&gt; displayHelp());</span>
+<span class="nc" id="L291">        pMenu.newMenuItem(PrometheusMenuId.DATAVIEWER, e -&gt; displayViewerMgr());</span>
+<span class="nc" id="L292">        pMenu.newMenuItem(PrometheusMenuId.ABOUT, e -&gt; displayAbout());</span>
+<span class="nc" id="L293">    }</span>
+
+    /**
+     * Make the frame.
+     */
+    public void makeFrame() {
+        /* Set visibility */
+<span class="nc" id="L300">        setVisibility();</span>
+<span class="nc" id="L301">    }</span>
+
+    /**
+     * Set visibility.
+     */
+    public void setVisibility() {
+        /* Determine whether we have any updates */
+<span class="nc" id="L308">        final boolean hasUpdates = hasUpdates();</span>
+<span class="nc" id="L309">        final boolean hasChanges = hasChanges();</span>
+<span class="nc bnc" id="L310" title="All 2 branches missed.">        final boolean hasControl = getView().getData().getControl() != null;</span>
+
+        /* Note whether we have a worker thread */
+<span class="nc" id="L313">        final boolean hasWorker = hasWorker();</span>
+
+        /* Disable menus if we have a worker thread */
+<span class="nc bnc" id="L316" title="All 2 branches missed.">        theMenuBar.setEnabled(PrometheusMenuId.DATA, !hasWorker);</span>
+<span class="nc bnc" id="L317" title="All 2 branches missed.">        theMenuBar.setEnabled(PrometheusMenuId.BACKUP, !hasWorker);</span>
+<span class="nc bnc" id="L318" title="All 4 branches missed.">        theMenuBar.setEnabled(PrometheusMenuId.SECURITY, !hasWorker &amp;&amp; hasControl);</span>
+
+        /* If we have changes but no updates enable the undo/reset options */
+<span class="nc bnc" id="L321" title="All 4 branches missed.">        if (hasWorker || !hasControl) {</span>
+<span class="nc" id="L322">            theMenuBar.setEnabled(PrometheusMenuId.EDIT, false);</span>
+        } else {
+<span class="nc bnc" id="L324" title="All 4 branches missed.">            theMenuBar.setEnabled(PrometheusMenuId.EDIT, !hasUpdates &amp;&amp; hasChanges);</span>
+        }
+
+        /* If we have changes disable the create backup options */
+<span class="nc bnc" id="L328" title="All 6 branches missed.">        final boolean allowBackups = !hasChanges &amp;&amp; !hasUpdates &amp;&amp; hasControl;</span>
+<span class="nc" id="L329">        theMenuBar.setEnabled(PrometheusThreadId.CREATEBACKUP, allowBackups);</span>
+<span class="nc" id="L330">        theMenuBar.setEnabled(PrometheusThreadId.CREATEXML, allowBackups);</span>
+<span class="nc" id="L331">        theMenuBar.setEnabled(PrometheusThreadId.CREATEXTRACT, allowBackups);</span>
+
+        /* If we have changes disable the security options */
+<span class="nc bnc" id="L334" title="All 4 branches missed.">        final boolean allowSecurity = !hasChanges &amp;&amp; !hasUpdates;</span>
+<span class="nc" id="L335">        theMenuBar.setEnabled(PrometheusThreadId.CHANGEPASS, allowSecurity);</span>
+<span class="nc" id="L336">        theMenuBar.setEnabled(PrometheusThreadId.RENEWSECURITY, allowSecurity);</span>
+
+        /* If we have updates disable the load backup/database option */
+<span class="nc bnc" id="L339" title="All 2 branches missed.">        theMenuBar.setEnabled(PrometheusThreadId.RESTOREBACKUP, !hasUpdates);</span>
+<span class="nc bnc" id="L340" title="All 2 branches missed.">        theMenuBar.setEnabled(PrometheusThreadId.RESTOREXML, !hasUpdates);</span>
+<span class="nc bnc" id="L341" title="All 2 branches missed.">        theMenuBar.setEnabled(PrometheusThreadId.LOADDB, !hasUpdates);</span>
+
+        /* If we have updates or no changes disable the save database */
+<span class="nc bnc" id="L344" title="All 4 branches missed.">        theMenuBar.setEnabled(PrometheusThreadId.STOREDB, !hasUpdates &amp;&amp; hasChanges);</span>
+<span class="nc" id="L345">    }</span>
+
+    /**
+     * Has the underlying data got changes.
+     *
+     * @return true/false
+     */
+    protected final boolean hasChanges() {
+<span class="nc" id="L353">        return theView.getData().hasUpdates();</span>
+    }
+
+    /**
+     * Has the window got updates.
+     *
+     * @return true/false
+     */
+    protected abstract boolean hasUpdates();
+
+    /**
+     * Is a worker active.
+     *
+     * @return true/false
+     */
+    protected final boolean hasWorker() {
+<span class="nc" id="L369">        return theThreadMgr.hasWorker();</span>
+    }
+
+    /**
+     * Start a thread.
+     *
+     * @param pThread the thread to start
+     */
+    protected void startThread(final TethysUIThread&lt;?&gt; pThread) {
+        /* Execute the thread and record it */
+<span class="nc" id="L379">        theThreadMgr.startThread(pThread);</span>
+
+        /* Adjust visible threads */
+<span class="nc" id="L382">        theStatusBar.setVisible(true);</span>
+<span class="nc" id="L383">        setVisibility();</span>
+<span class="nc" id="L384">    }</span>
+
+    /**
+     * Load Database.
+     */
+    private void loadDatabase() {
+        /* Create the worker thread */
+<span class="nc" id="L391">        final PrometheusThreadLoadDatabase myThread = new PrometheusThreadLoadDatabase(theView);</span>
+<span class="nc" id="L392">        startThread(myThread);</span>
+<span class="nc" id="L393">    }</span>
+
+    /**
+     * Store Database.
+     */
+    private void storeDatabase() {
+        /* Create the worker thread */
+<span class="nc" id="L400">        final PrometheusThreadStoreDatabase myThread = new PrometheusThreadStoreDatabase(theView);</span>
+<span class="nc" id="L401">        startThread(myThread);</span>
+<span class="nc" id="L402">    }</span>
+
+    /**
+     * Create Database.
+     */
+    private void createDatabase() {
+        /* Create the worker thread */
+<span class="nc" id="L409">        final PrometheusThreadCreateDatabase myThread = new PrometheusThreadCreateDatabase(theView);</span>
+<span class="nc" id="L410">        startThread(myThread);</span>
+<span class="nc" id="L411">    }</span>
+
+    /**
+     * Create Database Tables.
+     */
+    private void createDatabaseTables() {
+        /* Create the worker thread */
+<span class="nc" id="L418">        final PrometheusThreadCreateTables myThread = new PrometheusThreadCreateTables(theView);</span>
+<span class="nc" id="L419">        startThread(myThread);</span>
+<span class="nc" id="L420">    }</span>
+
+    /**
+     * Purge Database.
+     */
+    private void purgeDatabase() {
+        /* Create the worker thread */
+<span class="nc" id="L427">        final PrometheusThreadPurgeDatabase myThread = new PrometheusThreadPurgeDatabase(theView);</span>
+<span class="nc" id="L428">        startThread(myThread);</span>
+<span class="nc" id="L429">    }</span>
+
+    /**
+     * UnDo last edit.
+     */
+    private void undoLastEdit() {
+        /* Create a new profile */
+<span class="nc" id="L436">        final OceanusProfile myTask = theView.getNewProfile(&quot;unDoLastEdit&quot;);</span>
+
+        /* Undo the last edit */
+<span class="nc" id="L439">        theView.undoLastChange();</span>
+
+        /* Adjust visibility */
+<span class="nc" id="L442">        setVisibility();</span>
+
+        /* Complete the task */
+<span class="nc" id="L445">        myTask.end();</span>
+<span class="nc" id="L446">    }</span>
+
+    /**
+     * reset Edit changes.
+     */
+    private void resetEdit() {
+        /* Create a new profile */
+<span class="nc" id="L453">        final OceanusProfile myTask = theView.getNewProfile(&quot;resetEdit&quot;);</span>
+
+        /* Reset the edit View */
+<span class="nc" id="L456">        theView.resetChanges();</span>
+
+        /* Adjust visibility */
+<span class="nc" id="L459">        setVisibility();</span>
+
+        /* Complete the task */
+<span class="nc" id="L462">        myTask.end();</span>
+<span class="nc" id="L463">    }</span>
+
+    /**
+     * Write Backup.
+     */
+    private void writeBackup() {
+        /* Create the worker thread */
+<span class="nc" id="L470">        final PrometheusThreadCreateBackup myThread = new PrometheusThreadCreateBackup(theView);</span>
+<span class="nc" id="L471">        startThread(myThread);</span>
+<span class="nc" id="L472">    }</span>
+
+    /**
+     * Restore Backup.
+     */
+    private void restoreBackup() {
+        /* Create the worker thread */
+<span class="nc" id="L479">        final PrometheusThreadLoadBackup myThread = new PrometheusThreadLoadBackup(theView);</span>
+<span class="nc" id="L480">        startThread(myThread);</span>
+<span class="nc" id="L481">    }</span>
+
+    /**
+     * Create XML Backup file.
+     */
+    private void createXmlBackup() {
+        /* Create the worker thread */
+<span class="nc" id="L488">        final PrometheusThreadCreateXMLFile myThread = new PrometheusThreadCreateXMLFile(theView, true);</span>
+<span class="nc" id="L489">        startThread(myThread);</span>
+<span class="nc" id="L490">    }</span>
+
+    /**
+     * Create XML Extract file.
+     */
+    private void createXmlXtract() {
+        /* Create the worker thread */
+<span class="nc" id="L497">        final PrometheusThreadCreateXMLFile myThread = new PrometheusThreadCreateXMLFile(theView, false);</span>
+<span class="nc" id="L498">        startThread(myThread);</span>
+<span class="nc" id="L499">    }</span>
+
+    /**
+     * Load XML Backup file.
+     */
+    private void loadXmlFile() {
+        /* Create the worker thread */
+<span class="nc" id="L506">        final PrometheusThreadLoadXMLFile myThread = new PrometheusThreadLoadXMLFile(theView);</span>
+<span class="nc" id="L507">        startThread(myThread);</span>
+<span class="nc" id="L508">    }</span>
+
+    /**
+     * Update password.
+     */
+    private void updatePassword() {
+        /* Create the worker thread */
+<span class="nc" id="L515">        final PrometheusThreadUpdatePassword myThread = new PrometheusThreadUpdatePassword(theView);</span>
+<span class="nc" id="L516">        startThread(myThread);</span>
+<span class="nc" id="L517">    }</span>
+
+    /**
+     * ReNew Security.
+     */
+    private void reNewSecurity() {
+        /* Create the worker thread */
+<span class="nc" id="L524">        final PrometheusThreadRenewSecurity myThread = new PrometheusThreadRenewSecurity(theView);</span>
+<span class="nc" id="L525">        startThread(myThread);</span>
+<span class="nc" id="L526">    }</span>
+
+    /**
+     * Display ViewerMgr.
+     */
+    private void displayViewerMgr() {
+        /* Disable the menu item */
+<span class="nc" id="L533">        theMenuBar.setEnabled(PrometheusMenuId.DATAVIEWER, false);</span>
+
+        /* Display it */
+<span class="nc" id="L536">        theDataWdw.showDialog();</span>
+<span class="nc" id="L537">    }</span>
+
+    /**
+     * Display Help.
+     */
+    private void displayHelp() {
+        try {
+            /* Create the help window */
+<span class="nc" id="L545">            final MetisHelpWindow myHelpWdw = theToolkit.newHelpWindow();</span>
+<span class="nc" id="L546">            myHelpWdw.setModule(getHelpModule());</span>
+
+            /* Listen for its closure */
+<span class="nc" id="L549">            myHelpWdw.getEventRegistrar().addEventListener(e -&gt; {</span>
+<span class="nc" id="L550">                theMenuBar.setEnabled(PrometheusMenuId.SHOWHELP, true);</span>
+<span class="nc" id="L551">                myHelpWdw.hideDialog();</span>
+<span class="nc" id="L552">            });</span>
+
+            /* Disable the menu item */
+<span class="nc" id="L555">            theMenuBar.setEnabled(PrometheusMenuId.SHOWHELP, false);</span>
+
+            /* Display it */
+<span class="nc" id="L558">            myHelpWdw.showDialog();</span>
+
+<span class="nc" id="L560">        } catch (OceanusException e) {</span>
+<span class="nc" id="L561">            LOGGER.error(&quot;Failed to start Help Window&quot;, e);</span>
+<span class="nc" id="L562">        }</span>
+<span class="nc" id="L563">    }</span>
+
+    /**
+     * Display About Box.
+     */
+    protected abstract void displayAbout();
+
+    @Override
+    public boolean handleAppClose() {
+        /* If we have updates or changes */
+<span class="nc bnc" id="L573" title="All 4 branches missed.">        if (hasUpdates() || hasChanges()) {</span>
+            /* Ask whether to continue */
+<span class="nc" id="L575">            final TethysUIAlert myAlert = theGuiFactory.dialogFactory().newAlert();</span>
+<span class="nc" id="L576">            myAlert.setMessage(PROMPT_DISCARD);</span>
+<span class="nc" id="L577">            myAlert.setTitle(TITLE_CLOSE);</span>
+<span class="nc" id="L578">            final boolean myResult = myAlert.confirmYesNo();</span>
+
+            /* Ignore if not confirmed */
+<span class="nc bnc" id="L581" title="All 2 branches missed.">            if (!myResult) {</span>
+<span class="nc" id="L582">                return false;</span>
+            }
+        }
+
+        /* terminate the executor */
+<span class="nc" id="L587">        theThreadMgr.shutdown();</span>
+<span class="nc" id="L588">        return true;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

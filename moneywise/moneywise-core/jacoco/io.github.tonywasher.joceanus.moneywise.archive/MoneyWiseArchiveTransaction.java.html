@@ -1,0 +1,397 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseArchiveTransaction.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.moneywise.archive</a> &gt; <span class="el_source">MoneyWiseArchiveTransaction.java</span></div><h1>MoneyWiseArchiveTransaction.java</h1><pre class="source lang-java linenums">/*
+ * MoneyWise: Finance Application
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.moneywise.archive;
+
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.profile.OceanusProfile;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDataSet;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransInfo.MoneyWiseTransInfoList;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransaction;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransaction.MoneyWiseTransactionList;
+import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTransInfoClass;
+import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseIOException;
+import io.github.tonywasher.joceanus.prometheus.service.sheet.PrometheusSheetCell;
+import io.github.tonywasher.joceanus.prometheus.service.sheet.PrometheusSheetRow;
+import io.github.tonywasher.joceanus.prometheus.service.sheet.PrometheusSheetView;
+import io.github.tonywasher.joceanus.prometheus.service.sheet.PrometheusSheetWorkBook;
+import io.github.tonywasher.joceanus.tethys.api.base.TethysUIConstant;
+import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadCancelException;
+import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadStatusReport;
+
+import java.util.ListIterator;
+
+/**
+ * ArchiveLoader for Transaction.
+ *
+ * @author Tony Washer
+ */
+public final class MoneyWiseArchiveTransaction {
+    /**
+     * NamedArea for Transactions.
+     */
+<span class="nc" id="L47">    private static final String AREA_TRANS = MoneyWiseTransaction.LIST_NAME;</span>
+
+    /**
+     * Report processor.
+     */
+    private final TethysUIThreadStatusReport theReport;
+
+    /**
+     * Workbook.
+     */
+    private final PrometheusSheetWorkBook theWorkBook;
+
+    /**
+     * DataSet.
+     */
+    private final MoneyWiseDataSet theData;
+
+    /**
+     * Cache.
+     */
+    private final MoneyWiseArchiveCache theCache;
+
+    /**
+     * Constructor.
+     *
+     * @param pReport   the report
+     * @param pWorkBook the workbook
+     * @param pData     the data set to load into
+     * @param pCache    the cache
+     */
+    MoneyWiseArchiveTransaction(final TethysUIThreadStatusReport pReport,
+                                final PrometheusSheetWorkBook pWorkBook,
+                                final MoneyWiseDataSet pData,
+<span class="nc" id="L80">                                final MoneyWiseArchiveCache pCache) {</span>
+<span class="nc" id="L81">        theReport = pReport;</span>
+<span class="nc" id="L82">        theWorkBook = pWorkBook;</span>
+<span class="nc" id="L83">        theData = pData;</span>
+<span class="nc" id="L84">        theCache = pCache;</span>
+<span class="nc" id="L85">    }</span>
+
+    /**
+     * Load the ExchangeRates from an archive.
+     *
+     * @param pStage the stage
+     * @throws OceanusException on error
+     */
+    void loadArchive(final OceanusProfile pStage) throws OceanusException {
+        /* Access the list of transactions */
+<span class="nc" id="L95">        pStage.startTask(AREA_TRANS);</span>
+<span class="nc" id="L96">        final MoneyWiseTransactionList myList = theData.getTransactions();</span>
+<span class="nc" id="L97">        final MoneyWiseTransInfoList myInfoList = theData.getTransactionInfo();</span>
+
+        /* Protect against exceptions */
+        try {
+            /* Obtain the range iterator */
+<span class="nc" id="L102">            final ListIterator&lt;MoneyWiseArchiveYear&gt; myIterator = theCache.reverseIterator();</span>
+
+            /* Loop through the individual year ranges */
+<span class="nc bnc" id="L105" title="All 2 branches missed.">            while (myIterator.hasPrevious()) {</span>
+                /* Access year */
+<span class="nc" id="L107">                final MoneyWiseArchiveYear myYear = myIterator.previous();</span>
+
+                /* Find the range of cells */
+<span class="nc" id="L110">                final PrometheusSheetView myView = theWorkBook.getRangeView(myYear.getRangeName());</span>
+
+                /* Declare the new stage */
+<span class="nc" id="L113">                theReport.setNewStage(&quot;Events from &quot; + myYear.getDate().getYear());</span>
+
+                /* Count the number of Transactions */
+<span class="nc" id="L116">                final int myTotal = myView.getRowCount();</span>
+
+                /* Declare the number of steps */
+<span class="nc" id="L119">                theReport.setNumSteps(myTotal);</span>
+
+                /* Loop through the rows of the table */
+<span class="nc bnc" id="L122" title="All 2 branches missed.">                for (int i = 0; i &lt; myTotal; i++) {</span>
+                    /* Access the row */
+<span class="nc" id="L124">                    final PrometheusSheetRow myRow = myView.getRowByIndex(i);</span>
+
+                    /* Process transaction and break loop if requested */
+<span class="nc bnc" id="L127" title="All 2 branches missed.">                    if (!processTransaction(myView, myRow)) {</span>
+<span class="nc" id="L128">                        break;</span>
+                    }
+
+                    /* Report the progress */
+<span class="nc" id="L132">                    theReport.setNextStep();</span>
+                }
+
+                /* If we have finished */
+<span class="nc bnc" id="L136" title="All 2 branches missed.">                if (!theCache.checkDate(myYear.getDate())) {</span>
+                    /* Break the loop */
+<span class="nc" id="L138">                    break;</span>
+                }
+<span class="nc" id="L140">            }</span>
+
+            /* Resolve ValueLinks */
+<span class="nc" id="L143">            myInfoList.resolveValueLinks();</span>
+
+            /* Sort the list */
+<span class="nc" id="L146">            myList.resolveDataSetLinks();</span>
+<span class="nc" id="L147">            myList.reSort();</span>
+
+            /* Validate the list */
+<span class="nc" id="L150">            myList.validateOnLoad();</span>
+
+            /* Handle Exceptions */
+<span class="nc" id="L153">        } catch (TethysUIThreadCancelException e) {</span>
+<span class="nc" id="L154">            throw e;</span>
+<span class="nc" id="L155">        } catch (OceanusException e) {</span>
+<span class="nc" id="L156">            throw new MoneyWiseIOException(&quot;Failed to load &quot; + myList.getItemType().getListName(), e);</span>
+<span class="nc" id="L157">        }</span>
+<span class="nc" id="L158">    }</span>
+
+    /**
+     * Process transaction row from archive.
+     *
+     * @param pView the spreadsheet view
+     * @param pRow  the spreadsheet row
+     * @return continue true/false
+     * @throws OceanusException on error
+     */
+    private boolean processTransaction(final PrometheusSheetView pView,
+                                       final PrometheusSheetRow pRow) throws OceanusException {
+        /* Access cache */
+<span class="nc" id="L171">        int iAdjust = -1;</span>
+
+        /* Access date */
+<span class="nc" id="L174">        PrometheusSheetCell myCell = pView.getRowCellByIndex(pRow, ++iAdjust);</span>
+<span class="nc bnc" id="L175" title="All 2 branches missed.">        final OceanusDate myDate = (myCell != null)</span>
+<span class="nc" id="L176">                ? myCell.getDate()</span>
+<span class="nc" id="L177">                : null;</span>
+
+        /* Access the values */
+<span class="nc" id="L180">        myCell = pView.getRowCellByIndex(pRow, ++iAdjust);</span>
+<span class="nc bnc" id="L181" title="All 2 branches missed.">        final String myDebit = (myCell != null)</span>
+<span class="nc" id="L182">                ? myCell.getString()</span>
+<span class="nc" id="L183">                : null;</span>
+<span class="nc" id="L184">        myCell = pView.getRowCellByIndex(pRow, ++iAdjust);</span>
+<span class="nc bnc" id="L185" title="All 2 branches missed.">        final String myCredit = (myCell != null)</span>
+<span class="nc" id="L186">                ? myCell.getString()</span>
+<span class="nc" id="L187">                : null;</span>
+<span class="nc" id="L188">        myCell = pView.getRowCellByIndex(pRow, ++iAdjust);</span>
+<span class="nc bnc" id="L189" title="All 2 branches missed.">        final String myAmount = (myCell != null)</span>
+<span class="nc" id="L190">                ? myCell.getString()</span>
+<span class="nc" id="L191">                : null;</span>
+<span class="nc" id="L192">        final String myCategory = pView.getRowCellByIndex(pRow, ++iAdjust).getString();</span>
+
+        /* Handle Reconciled which may be missing */
+<span class="nc" id="L195">        myCell = pView.getRowCellByIndex(pRow, ++iAdjust);</span>
+<span class="nc" id="L196">        Boolean myReconciled = Boolean.FALSE;</span>
+<span class="nc bnc" id="L197" title="All 2 branches missed.">        if (myCell != null) {</span>
+<span class="nc" id="L198">            myReconciled = Boolean.TRUE;</span>
+        }
+
+        /* Set defaults */
+<span class="nc bnc" id="L202" title="All 2 branches missed.">        if (!theCache.resolveValues(myDate, myDebit, myCredit, myCategory)) {</span>
+<span class="nc" id="L203">            return false;</span>
+        }
+
+        /* Build transaction */
+<span class="nc" id="L207">        final MoneyWiseTransaction myTrans = theCache.buildTransaction(myAmount, myReconciled);</span>
+<span class="nc bnc" id="L208" title="All 2 branches missed.">        if (myTrans == null) {</span>
+<span class="nc" id="L209">            return true;</span>
+        }
+
+        /* Process TransactionInfo */
+<span class="nc" id="L213">        final int myLast = pRow.getMaxValuedCellIndex();</span>
+<span class="nc bnc" id="L214" title="All 2 branches missed.">        if (iAdjust &lt; myLast) {</span>
+<span class="nc" id="L215">            processTransInfo(pView, pRow, myTrans, iAdjust);</span>
+        }
+
+        /* Continue */
+<span class="nc" id="L219">        return true;</span>
+    }
+
+    /**
+     * Process transaction row from archive.
+     *
+     * @param pView   the spreadsheet view
+     * @param pRow    the spreadsheet row
+     * @param pTrans  the transaction
+     * @param pAdjust the cell#
+     * @throws OceanusException on error
+     */
+    private void processTransInfo(final PrometheusSheetView pView,
+                                  final PrometheusSheetRow pRow,
+                                  final MoneyWiseTransaction pTrans,
+                                  final int pAdjust) throws OceanusException {
+        /* Handle Description which may be missing */
+<span class="nc" id="L236">        int iAdjust = pAdjust;</span>
+<span class="nc" id="L237">        PrometheusSheetCell myCell = pView.getRowCellByIndex(pRow, ++iAdjust);</span>
+<span class="nc" id="L238">        String myDesc = null;</span>
+<span class="nc bnc" id="L239" title="All 2 branches missed.">        if (myCell != null) {</span>
+<span class="nc" id="L240">            myDesc = myCell.getString();</span>
+        }
+
+        /* Handle Tax Credit which may be missing */
+<span class="nc" id="L244">        myCell = pView.getRowCellByIndex(pRow, ++iAdjust);</span>
+<span class="nc" id="L245">        String myTaxCredit = null;</span>
+<span class="nc bnc" id="L246" title="All 2 branches missed.">        if (myCell != null) {</span>
+<span class="nc" id="L247">            myTaxCredit = myCell.getString();</span>
+        }
+
+        /* Handle EmployeeNatIns which may be missing */
+<span class="nc" id="L251">        myCell = pView.getRowCellByIndex(pRow, ++iAdjust);</span>
+<span class="nc" id="L252">        String myEmployeeNatIns = null;</span>
+<span class="nc bnc" id="L253" title="All 2 branches missed.">        if (myCell != null) {</span>
+<span class="nc" id="L254">            myEmployeeNatIns = myCell.getString();</span>
+        }
+
+        /* Handle EmployerNatIns which may be missing */
+<span class="nc" id="L258">        myCell = pView.getRowCellByIndex(pRow, ++iAdjust);</span>
+<span class="nc" id="L259">        String myEmployerNatIns = null;</span>
+<span class="nc bnc" id="L260" title="All 2 branches missed.">        if (myCell != null) {</span>
+<span class="nc" id="L261">            myEmployerNatIns = myCell.getString();</span>
+        }
+
+        /* Handle Benefit which may be missing */
+<span class="nc" id="L265">        myCell = pView.getRowCellByIndex(pRow, ++iAdjust);</span>
+<span class="nc" id="L266">        String myBenefit = null;</span>
+<span class="nc bnc" id="L267" title="All 2 branches missed.">        if (myCell != null) {</span>
+<span class="nc" id="L268">            myBenefit = myCell.getString();</span>
+        }
+
+        /* Handle DebitUnits which may be missing */
+<span class="nc" id="L272">        myCell = pView.getRowCellByIndex(pRow, ++iAdjust);</span>
+<span class="nc" id="L273">        String myDebitUnits = null;</span>
+<span class="nc bnc" id="L274" title="All 2 branches missed.">        if (myCell != null) {</span>
+<span class="nc" id="L275">            myDebitUnits = myCell.getString();</span>
+        }
+
+        /* Handle CreditUnits which may be missing */
+<span class="nc" id="L279">        myCell = pView.getRowCellByIndex(pRow, ++iAdjust);</span>
+<span class="nc" id="L280">        String myCreditUnits = null;</span>
+<span class="nc bnc" id="L281" title="All 2 branches missed.">        if (myCell != null) {</span>
+<span class="nc" id="L282">            myCreditUnits = myCell.getString();</span>
+        }
+
+        /* Handle Dilution which may be missing */
+<span class="nc" id="L286">        myCell = pView.getRowCellByIndex(pRow, ++iAdjust);</span>
+<span class="nc" id="L287">        String myDilution = null;</span>
+<span class="nc bnc" id="L288" title="All 2 branches missed.">        if (myCell != null) {</span>
+<span class="nc" id="L289">            myDilution = myCell.getString();</span>
+        }
+
+        /* Handle Reference which may be missing */
+<span class="nc" id="L293">        myCell = pView.getRowCellByIndex(pRow, ++iAdjust);</span>
+<span class="nc" id="L294">        String myReference = null;</span>
+<span class="nc bnc" id="L295" title="All 2 branches missed.">        if (myCell != null) {</span>
+<span class="nc" id="L296">            myReference = myCell.getString();</span>
+        }
+
+        /* Handle Years which may be missing */
+<span class="nc" id="L300">        myCell = pView.getRowCellByIndex(pRow, ++iAdjust);</span>
+<span class="nc" id="L301">        Integer myYears = null;</span>
+<span class="nc bnc" id="L302" title="All 2 branches missed.">        if (myCell != null) {</span>
+<span class="nc" id="L303">            myYears = myCell.getInteger();</span>
+        }
+
+        /* Handle Withheld which may be missing */
+<span class="nc" id="L307">        myCell = pView.getRowCellByIndex(pRow, ++iAdjust);</span>
+<span class="nc" id="L308">        String myWithheld = null;</span>
+<span class="nc bnc" id="L309" title="All 2 branches missed.">        if (myCell != null) {</span>
+<span class="nc" id="L310">            myWithheld = myCell.getString();</span>
+        }
+
+        /* Handle ReturnedCashAccount which may be missing */
+<span class="nc" id="L314">        myCell = pView.getRowCellByIndex(pRow, ++iAdjust);</span>
+<span class="nc" id="L315">        String myReturnedCashAccount = null;</span>
+<span class="nc bnc" id="L316" title="All 2 branches missed.">        if (myCell != null) {</span>
+<span class="nc" id="L317">            myReturnedCashAccount = myCell.getString();</span>
+        }
+
+        /* Handle ReturnedCash which may be missing */
+<span class="nc" id="L321">        myCell = pView.getRowCellByIndex(pRow, ++iAdjust);</span>
+<span class="nc" id="L322">        String myReturnedCash = null;</span>
+<span class="nc bnc" id="L323" title="All 2 branches missed.">        if (myCell != null) {</span>
+<span class="nc" id="L324">            myReturnedCash = myCell.getString();</span>
+        }
+
+        /* Handle PartnerAmount which may be missing */
+<span class="nc" id="L328">        myCell = pView.getRowCellByIndex(pRow, ++iAdjust);</span>
+<span class="nc" id="L329">        String myPartnerAmount = null;</span>
+<span class="nc bnc" id="L330" title="All 2 branches missed.">        if (myCell != null) {</span>
+<span class="nc" id="L331">            myPartnerAmount = myCell.getString();</span>
+        }
+
+        /* Handle XchangeRate which may be missing */
+<span class="nc" id="L335">        myCell = pView.getRowCellByIndex(pRow, ++iAdjust);</span>
+<span class="nc" id="L336">        String myXchangeRate = null;</span>
+<span class="nc bnc" id="L337" title="All 2 branches missed.">        if (myCell != null) {</span>
+<span class="nc" id="L338">            myXchangeRate = myCell.getString();</span>
+        }
+
+        /* Handle TagList which may be missing */
+<span class="nc" id="L342">        myCell = pView.getRowCellByIndex(pRow, ++iAdjust);</span>
+<span class="nc" id="L343">        String myTagList = null;</span>
+<span class="nc bnc" id="L344" title="All 2 branches missed.">        if (myCell != null) {</span>
+<span class="nc" id="L345">            myTagList = myCell.getString();</span>
+        }
+
+        /* If the debit was reversed */
+<span class="nc bnc" id="L349" title="All 2 branches missed.">        if (theCache.isDebitReversed()) {</span>
+            /* Flip the Debit and credit values */
+<span class="nc" id="L351">            final String myTemp = myDebitUnits;</span>
+<span class="nc" id="L352">            myDebitUnits = myCreditUnits;</span>
+<span class="nc" id="L353">            myCreditUnits = myTemp;</span>
+<span class="nc bnc" id="L354" title="All 2 branches missed.">            if (myCreditUnits != null) {</span>
+<span class="nc" id="L355">                myCreditUnits = &quot;-&quot; + myCreditUnits;</span>
+            }
+<span class="nc bnc" id="L357" title="All 2 branches missed.">        } else if (myDebitUnits != null) {</span>
+<span class="nc" id="L358">            myDebitUnits = &quot;-&quot; + myDebitUnits;</span>
+<span class="nc bnc" id="L359" title="All 2 branches missed.">        } else if (theCache.isRecursive()) {</span>
+<span class="nc" id="L360">            myDebitUnits = myCreditUnits;</span>
+<span class="nc" id="L361">            myCreditUnits = null;</span>
+        }
+
+        /* Add information relating to the account */
+<span class="nc" id="L365">        final MoneyWiseTransInfoList myInfoList = theData.getTransactionInfo();</span>
+<span class="nc" id="L366">        myInfoList.addInfoItem(null, pTrans, MoneyWiseTransInfoClass.COMMENTS, myDesc);</span>
+<span class="nc" id="L367">        myInfoList.addInfoItem(null, pTrans, MoneyWiseTransInfoClass.TAXCREDIT, myTaxCredit);</span>
+<span class="nc" id="L368">        myInfoList.addInfoItem(null, pTrans, MoneyWiseTransInfoClass.EMPLOYEENATINS, myEmployeeNatIns);</span>
+<span class="nc" id="L369">        myInfoList.addInfoItem(null, pTrans, MoneyWiseTransInfoClass.EMPLOYERNATINS, myEmployerNatIns);</span>
+<span class="nc" id="L370">        myInfoList.addInfoItem(null, pTrans, MoneyWiseTransInfoClass.DEEMEDBENEFIT, myBenefit);</span>
+<span class="nc" id="L371">        myInfoList.addInfoItem(null, pTrans, MoneyWiseTransInfoClass.ACCOUNTDELTAUNITS, myDebitUnits);</span>
+<span class="nc" id="L372">        myInfoList.addInfoItem(null, pTrans, MoneyWiseTransInfoClass.PARTNERDELTAUNITS, myCreditUnits);</span>
+<span class="nc" id="L373">        myInfoList.addInfoItem(null, pTrans, MoneyWiseTransInfoClass.DILUTION, myDilution);</span>
+<span class="nc" id="L374">        myInfoList.addInfoItem(null, pTrans, MoneyWiseTransInfoClass.REFERENCE, myReference);</span>
+<span class="nc" id="L375">        myInfoList.addInfoItem(null, pTrans, MoneyWiseTransInfoClass.QUALIFYYEARS, myYears);</span>
+<span class="nc" id="L376">        myInfoList.addInfoItem(null, pTrans, MoneyWiseTransInfoClass.WITHHELD, myWithheld);</span>
+<span class="nc" id="L377">        myInfoList.addInfoItem(null, pTrans, MoneyWiseTransInfoClass.RETURNEDCASHACCOUNT, myReturnedCashAccount);</span>
+<span class="nc" id="L378">        myInfoList.addInfoItem(null, pTrans, MoneyWiseTransInfoClass.RETURNEDCASH, myReturnedCash);</span>
+<span class="nc" id="L379">        myInfoList.addInfoItem(null, pTrans, MoneyWiseTransInfoClass.PARTNERAMOUNT, myPartnerAmount);</span>
+<span class="nc" id="L380">        myInfoList.addInfoItem(null, pTrans, MoneyWiseTransInfoClass.XCHANGERATE, myXchangeRate);</span>
+
+        /* If we have a TagList */
+<span class="nc bnc" id="L383" title="All 2 branches missed.">        if (myTagList != null) {</span>
+            /* Process any separated items */
+<span class="nc" id="L385">            int iIndex = myTagList.indexOf(TethysUIConstant.LIST_SEP);</span>
+<span class="nc bnc" id="L386" title="All 2 branches missed.">            while (iIndex != -1) {</span>
+<span class="nc" id="L387">                myInfoList.addInfoItem(null, pTrans, MoneyWiseTransInfoClass.TRANSTAG, myTagList.substring(0, iIndex));</span>
+<span class="nc" id="L388">                myTagList = myTagList.substring(iIndex + 1);</span>
+<span class="nc" id="L389">                iIndex = myTagList.indexOf(TethysUIConstant.LIST_SEP);</span>
+            }
+
+            /* Process the single remaining item */
+<span class="nc" id="L393">            myInfoList.addInfoItem(null, pTrans, MoneyWiseTransInfoClass.TRANSTAG, myTagList);</span>
+        }
+<span class="nc" id="L395">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

@@ -1,0 +1,633 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PrometheusDataInfoLinkSet.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Prometheus Core Application Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.prometheus.data</a> &gt; <span class="el_source">PrometheusDataInfoLinkSet.java</span></div><h1>PrometheusDataInfoLinkSet.java</h1><pre class="source lang-java linenums">/*
+ * Prometheus: Application Framework
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.prometheus.data;
+
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
+import io.github.tonywasher.joceanus.metis.data.MetisDataDifference;
+import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataList;
+import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataObjectFormat;
+import io.github.tonywasher.joceanus.metis.data.MetisDataState;
+import io.github.tonywasher.joceanus.tethys.api.base.TethysUIConstant;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+/**
+ * Representation of a set of DataInfo links for a DataItem.
+ *
+ * @param &lt;T&gt; the data type
+ * @author Tony Washer
+ */
+public class PrometheusDataInfoLinkSet&lt;T extends PrometheusDataInfoItem&gt;
+        extends PrometheusDataInfoItem {
+    /**
+     * Item separator.
+     */
+    public static final String ITEM_SEP = TethysUIConstant.LIST_SEP;
+
+    /**
+     * Report fields.
+     */
+    @SuppressWarnings(&quot;rawtypes&quot;)
+<span class="nc" id="L48">    private static final PrometheusEncryptedFieldSet&lt;PrometheusDataInfoLinkSet&gt; FIELD_DEFS = PrometheusEncryptedFieldSet.newEncryptedFieldSet(PrometheusDataInfoLinkSet.class);</span>
+
+    /*
+     * FieldIds.
+     */
+    static {
+<span class="nc" id="L54">        FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAINFO_ACTIVE, PrometheusDataInfoLinkSet::getActive);</span>
+<span class="nc" id="L55">        FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAINFO_LINKSET, PrometheusDataInfoLinkSet::getLinkSet);</span>
+<span class="nc" id="L56">    }</span>
+
+    /**
+     * List of active items.
+     */
+    private final PrometheusInfoSetValueList theActive;
+
+    /**
+     * List of underlying items.
+     */
+    private final PrometheusDataList&lt;T&gt; theLinkSet;
+
+    /**
+     * The owner.
+     */
+    private final PrometheusDataItem theOwner;
+
+    /**
+     * The infoType.
+     */
+    private final PrometheusStaticDataItem theInfoType;
+
+    /**
+     * The infoType.
+     */
+    private final PrometheusDataInfoList&lt;T&gt; theInfoList;
+
+    /**
+     * Constructor.
+     *
+     * @param pList     the infoList
+     * @param pOwner    the set owner
+     * @param pInfoType the info type
+     */
+    protected PrometheusDataInfoLinkSet(final PrometheusDataInfoList&lt;T&gt; pList,
+                                        final PrometheusDataItem pOwner,
+                                        final PrometheusStaticDataItem pInfoType) {
+        /* Call super-constructor */
+<span class="nc" id="L94">        super(pList);</span>
+
+        /* Save parameters */
+<span class="nc" id="L97">        theOwner = pOwner;</span>
+<span class="nc" id="L98">        theInfoType = pInfoType;</span>
+<span class="nc" id="L99">        theInfoList = pList;</span>
+
+        /* Allocate the lists */
+<span class="nc" id="L102">        theActive = new PrometheusInfoSetValueList();</span>
+<span class="nc" id="L103">        theLinkSet = pList.getEmptyList(pList.getStyle());</span>
+<span class="nc" id="L104">    }</span>
+
+    /**
+     * Constructor.
+     *
+     * @param pList the infoList
+     * @param pSet  the infoLinkSet to clone
+     */
+    protected PrometheusDataInfoLinkSet(final PrometheusDataInfoList&lt;T&gt; pList,
+                                        final PrometheusDataInfoLinkSet&lt;T&gt; pSet) {
+        /* Call standard constructor */
+<span class="nc" id="L115">        this(pList, pSet.getOwner(), pSet.getInfoType());</span>
+
+        /* Iterator through the links */
+<span class="nc" id="L118">        final Iterator&lt;T&gt; myIterator = pSet.iterator();</span>
+<span class="nc bnc" id="L119" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L120">            final T myLink = myIterator.next();</span>
+
+            /* Add a copy item */
+<span class="nc" id="L123">            final T myNew = pList.addCopyItem(myLink);</span>
+<span class="nc" id="L124">            theLinkSet.add(myNew);</span>
+<span class="nc" id="L125">        }</span>
+
+        /* build active links */
+<span class="nc" id="L128">        buildActiveLinks();</span>
+<span class="nc" id="L129">    }</span>
+
+    @Override
+    public MetisFieldSetDef getDataFieldSet() {
+<span class="nc" id="L133">        return FIELD_DEFS;</span>
+    }
+
+    @Override
+    public String formatObject(final OceanusDataFormatter pFormatter) {
+<span class="nc" id="L138">        return theActive.toString();</span>
+    }
+
+    @Override
+    public PrometheusDataItem getOwner() {
+<span class="nc" id="L143">        return theOwner;</span>
+    }
+
+    @Override
+    public PrometheusStaticDataItem getInfoType() {
+<span class="nc" id="L148">        return theInfoType;</span>
+    }
+
+    @Override
+    public PrometheusDataInfoClass getInfoClass() {
+<span class="nc" id="L153">        return (PrometheusDataInfoClass) theInfoType.getStaticClass();</span>
+    }
+
+    /**
+     * Obtain Active Links.
+     *
+     * @return the Owner
+     */
+    public List&lt;Object&gt; getActive() {
+<span class="nc bnc" id="L162" title="All 2 branches missed.">        return theActive.isEmpty()</span>
+<span class="nc" id="L163">                ? null</span>
+<span class="nc" id="L164">                : theActive.getUnderlyingList();</span>
+    }
+
+    /**
+     * Obtain Active Links.
+     *
+     * @return the Owner
+     */
+    private PrometheusDataList&lt;T&gt; getLinkSet() {
+<span class="nc" id="L173">        return theLinkSet;</span>
+    }
+
+    /**
+     * Is the link list empty?
+     *
+     * @return true/false
+     */
+    public boolean isEmpty() {
+<span class="nc" id="L182">        return theLinkSet.isEmpty();</span>
+    }
+
+    /**
+     * Add link to Item.
+     *
+     * @param pItem the item to link to
+     */
+    public void linkItem(final T pItem) {
+        /* If the item is not already linked */
+<span class="nc bnc" id="L192" title="All 2 branches missed.">        if (!isItemLinked(pItem)) {</span>
+            /* Add the item to the list */
+<span class="nc" id="L194">            theLinkSet.add(pItem);</span>
+<span class="nc" id="L195">            sortLinks();</span>
+        }
+<span class="nc" id="L197">    }</span>
+
+    /**
+     * Remove link to Item.
+     *
+     * @param pItem the item to unlink
+     */
+    public void unlinkItem(final T pItem) {
+        /* If the item is already linked */
+<span class="nc bnc" id="L206" title="All 2 branches missed.">        if (isItemLinked(pItem)) {</span>
+            /* Remove the item from the list */
+<span class="nc" id="L208">            theLinkSet.remove(pItem);</span>
+<span class="nc" id="L209">            sortLinks();</span>
+        }
+<span class="nc" id="L211">    }</span>
+
+    /**
+     * Check whether an item is linked.
+     *
+     * @param pItem the item to check
+     * @return true/false
+     */
+    public boolean isItemLinked(final T pItem) {
+<span class="nc bnc" id="L220" title="All 2 branches missed.">        return theLinkSet.indexOf(pItem) != -1;</span>
+    }
+
+    /**
+     * Obtain item linked to value.
+     *
+     * @param pValue the value to check
+     * @return true/false
+     */
+    public T getItemForValue(final PrometheusDataItem pValue) {
+        /* Loop through the list */
+<span class="nc" id="L231">        T myItem = null;</span>
+<span class="nc" id="L232">        final Iterator&lt;T&gt; myIterator = theLinkSet.iterator();</span>
+<span class="nc bnc" id="L233" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L234">            final T myLink = myIterator.next();</span>
+
+            /* If this item is the correct link */
+<span class="nc bnc" id="L237" title="All 2 branches missed.">            if (pValue.equals(myLink.getLink())) {</span>
+<span class="nc" id="L238">                myItem = myLink;</span>
+<span class="nc" id="L239">                break;</span>
+            }
+<span class="nc" id="L241">        }</span>
+
+        /* Return the item */
+<span class="nc" id="L244">        return myItem;</span>
+    }
+
+    /**
+     * Clear all the links.
+     */
+    public void clearAllLinks() {
+        /* For each existing value */
+<span class="nc" id="L252">        final Iterator&lt;T&gt; myIterator = theLinkSet.iterator();</span>
+<span class="nc bnc" id="L253" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L254">            final T myLink = myIterator.next();</span>
+
+            /* If the value is active */
+<span class="nc bnc" id="L257" title="All 2 branches missed.">            if (!myLink.isDeleted()) {</span>
+                /* Set the value as deleted */
+<span class="nc" id="L259">                myLink.setDeleted(true);</span>
+            }
+<span class="nc" id="L261">        }</span>
+
+        /* Clear the active links */
+<span class="nc" id="L264">        theActive.clear();</span>
+<span class="nc" id="L265">    }</span>
+
+    /**
+     * Add/restore all required links.
+     *
+     * @param pActive the active items
+     * @throws OceanusException on error
+     */
+    public void addNewLinks(final List&lt;? extends PrometheusDataItem&gt; pActive) throws OceanusException {
+        /* For each existing value */
+<span class="nc" id="L275">        final Iterator&lt;? extends PrometheusDataItem&gt; myIterator = pActive.iterator();</span>
+<span class="nc bnc" id="L276" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L277">            final PrometheusDataItem myItem = myIterator.next();</span>
+
+            /* Link the item if it is not currently selected */
+<span class="nc bnc" id="L280" title="All 2 branches missed.">            if (!theActive.getUnderlyingList().contains(myItem)) {</span>
+                /* If we have never had such a link */
+<span class="nc" id="L282">                T myLink = getItemForValue(myItem);</span>
+<span class="nc bnc" id="L283" title="All 2 branches missed.">                if (myLink == null) {</span>
+                    /* Create the new item */
+<span class="nc" id="L285">                    myLink = theInfoList.addNewItem(theOwner, theInfoType);</span>
+<span class="nc" id="L286">                    myLink.setValue(myItem);</span>
+<span class="nc" id="L287">                    myLink.setValueLink(myItem);</span>
+<span class="nc" id="L288">                    myLink.setNewVersion();</span>
+<span class="nc" id="L289">                    theLinkSet.add(myLink);</span>
+
+                    /* else restore the value */
+                } else {
+<span class="nc" id="L293">                    myLink.setDeleted(false);</span>
+                }
+            }
+<span class="nc" id="L296">        }</span>
+<span class="nc" id="L297">    }</span>
+
+    /**
+     * Clear all unnecessary links.
+     *
+     * @param pActive the active items
+     */
+    public void clearUnnecessaryLinks(final List&lt;? extends PrometheusDataItem&gt; pActive) {
+        /* For each existing link */
+<span class="nc" id="L306">        final Iterator&lt;T&gt; myIterator = theLinkSet.iterator();</span>
+<span class="nc bnc" id="L307" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L308">            final T myLink = myIterator.next();</span>
+<span class="nc" id="L309">            final PrometheusDataItem myItem = myLink.getLink();</span>
+
+            /* Link the item if it is not currently selected */
+<span class="nc bnc" id="L312" title="All 2 branches missed.">            if (!myLink.isDeleted()</span>
+<span class="nc bnc" id="L313" title="All 2 branches missed.">                    &amp;&amp; !pActive.contains(myItem)) {</span>
+<span class="nc" id="L314">                myLink.setDeleted(true);</span>
+            }
+<span class="nc" id="L316">        }</span>
+<span class="nc" id="L317">    }</span>
+
+    /**
+     * Sort the list.
+     */
+    protected void sortLinks() {
+        /* Sort using natural comparison */
+<span class="nc" id="L324">        theLinkSet.reSort();</span>
+<span class="nc" id="L325">        buildActiveLinks();</span>
+<span class="nc" id="L326">    }</span>
+
+    /**
+     * Build the active links.
+     */
+    private void buildActiveLinks() {
+        /* Clear the list */
+<span class="nc" id="L333">        theActive.clear();</span>
+
+        /* Loop through the list */
+<span class="nc" id="L336">        final Iterator&lt;T&gt; myIterator = theLinkSet.iterator();</span>
+<span class="nc bnc" id="L337" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L338">            final T myLink = myIterator.next();</span>
+
+            /* Ignore deleted elements */
+<span class="nc bnc" id="L341" title="All 2 branches missed.">            if (myLink.isDeleted()) {</span>
+<span class="nc" id="L342">                continue;</span>
+            }
+
+            /* Add to the list */
+<span class="nc" id="L346">            theActive.add(myLink.getLink());</span>
+<span class="nc" id="L347">        }</span>
+<span class="nc" id="L348">    }</span>
+
+    /**
+     * Determine whether any item has changed in this edit view.
+     *
+     * @return &lt;code&gt;true/false&lt;/code&gt;
+     */
+    public MetisDataDifference fieldChanged() {
+        /* Loop through the list */
+<span class="nc" id="L357">        final Iterator&lt;T&gt; myIterator = theLinkSet.iterator();</span>
+<span class="nc bnc" id="L358" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L359">            final T myLink = myIterator.next();</span>
+
+            /* Notify if the item has changed */
+<span class="nc bnc" id="L362" title="All 2 branches missed.">            if (myLink.hasHistory()</span>
+<span class="nc bnc" id="L363" title="All 2 branches missed.">                    || myLink.getOriginalValues().getVersion() &gt; 0) {</span>
+<span class="nc" id="L364">                return MetisDataDifference.DIFFERENT;</span>
+            }
+<span class="nc" id="L366">        }</span>
+
+        /* No change has occurred */
+<span class="nc" id="L369">        return MetisDataDifference.IDENTICAL;</span>
+    }
+
+    @Override
+    public boolean hasHistory() {
+        /* Loop through the list */
+<span class="nc" id="L375">        final Iterator&lt;T&gt; myIterator = theLinkSet.iterator();</span>
+<span class="nc bnc" id="L376" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L377">            final T myLink = myIterator.next();</span>
+
+            /* Notify if the item has changed */
+<span class="nc bnc" id="L380" title="All 2 branches missed.">            if (myLink.hasHistory()) {</span>
+<span class="nc" id="L381">                return true;</span>
+            }
+<span class="nc" id="L383">        }</span>
+
+        /* No change has occurred */
+<span class="nc" id="L386">        return false;</span>
+    }
+
+    @Override
+    public void pushHistory() {
+        /* Loop through the list */
+<span class="nc" id="L392">        final Iterator&lt;T&gt; myIterator = theLinkSet.iterator();</span>
+<span class="nc bnc" id="L393" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L394">            final T myLink = myIterator.next();</span>
+
+            /* Notify if the item has changed */
+<span class="nc" id="L397">            myLink.pushHistory();</span>
+<span class="nc" id="L398">        }</span>
+<span class="nc" id="L399">    }</span>
+
+    @Override
+    public void popHistory() {
+        /* Iterate through table values */
+<span class="nc" id="L404">        final Iterator&lt;T&gt; myIterator = iterator();</span>
+<span class="nc bnc" id="L405" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L406">            final T myValue = myIterator.next();</span>
+
+            /* If the entry should be removed */
+<span class="nc bnc" id="L409" title="All 2 branches missed.">            if (myValue.getOriginalValues().getVersion() &gt; theInfoList.getVersion()) {</span>
+                /* Remove the value */
+<span class="nc" id="L411">                myIterator.remove();</span>
+<span class="nc" id="L412">                myValue.unLink();</span>
+<span class="nc" id="L413">                continue;</span>
+            }
+
+            /* Pop the value */
+<span class="nc" id="L417">            myValue.popHistory();</span>
+<span class="nc" id="L418">        }</span>
+<span class="nc" id="L419">    }</span>
+
+    @Override
+    public boolean checkForHistory() {
+        /* Iterate through table values */
+<span class="nc" id="L424">        boolean bChanges = false;</span>
+<span class="nc" id="L425">        final Iterator&lt;T&gt; myIterator = iterator();</span>
+<span class="nc bnc" id="L426" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L427">            final T myValue = myIterator.next();</span>
+
+            /* If this is a newly created item */
+<span class="nc bnc" id="L430" title="All 2 branches missed.">            if (!myValue.hasHistory()) {</span>
+<span class="nc" id="L431">                bChanges = true;</span>
+
+                /* else existing entry */
+            } else {
+                /* Check for history */
+<span class="nc" id="L436">                bChanges |= myValue.checkForHistory();</span>
+            }
+<span class="nc" id="L438">        }</span>
+
+        /* return result */
+<span class="nc" id="L441">        return bChanges;</span>
+    }
+
+    /**
+     * Get the State for this infoSet.
+     *
+     * @return the State
+     */
+    @Override
+    public MetisDataState getState() {
+        /* Default to clean */
+<span class="nc" id="L452">        final MetisDataState myState = MetisDataState.CLEAN;</span>
+
+        /* Loop through each existing value */
+<span class="nc" id="L455">        final Iterator&lt;T&gt; myIterator = iterator();</span>
+<span class="nc bnc" id="L456" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L457">            final T myValue = myIterator.next();</span>
+
+            /* If we have changes */
+<span class="nc bnc" id="L460" title="All 2 branches missed.">            if (myValue.getState() != MetisDataState.CLEAN) {</span>
+                /* Note that new state is changed */
+<span class="nc" id="L462">                return MetisDataState.CHANGED;</span>
+            }
+<span class="nc" id="L464">        }</span>
+
+        /* return result */
+<span class="nc" id="L467">        return myState;</span>
+    }
+
+    /**
+     * Is there active values for the infoClass?
+     *
+     * @return true/false
+     */
+    public boolean isExisting() {
+        /* Loop through each existing value */
+<span class="nc" id="L477">        final Iterator&lt;T&gt; myIterator = iterator();</span>
+<span class="nc bnc" id="L478" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L479">            final T myValue = myIterator.next();</span>
+
+            /* If we have changes */
+<span class="nc bnc" id="L482" title="All 2 branches missed.">            if (!myValue.isDeleted()) {</span>
+                /* Note that new state is changed */
+<span class="nc" id="L484">                return true;</span>
+            }
+<span class="nc" id="L486">        }</span>
+
+        /* No active entry found */
+<span class="nc" id="L489">        return false;</span>
+    }
+
+    @Override
+    public void setDeleted(final boolean bDeleted) {
+        /* If we are restoring */
+<span class="nc bnc" id="L495" title="All 2 branches missed.">        if (!bDeleted) {</span>
+            /* Handle separately */
+<span class="nc" id="L497">            setRestored();</span>
+<span class="nc" id="L498">            return;</span>
+        }
+
+        /* Clear all the links */
+<span class="nc" id="L502">        clearAllLinks();</span>
+<span class="nc" id="L503">    }</span>
+
+    /**
+     * Restore values that we deleted at the same time as the owner.
+     */
+    private void setRestored() {
+        /* Access the version of the owner */
+<span class="nc" id="L510">        int myVersion = theOwner.getValueSetVersion();</span>
+
+        /* We are restoring an edit version if delete was in this session */
+<span class="nc bnc" id="L513" title="All 2 branches missed.">        final boolean bEditRestore = myVersion &gt; 0;</span>
+<span class="nc bnc" id="L514" title="All 2 branches missed.">        if (!bEditRestore) {</span>
+            /* Access underlying version if not editRestore */
+<span class="nc" id="L516">            myVersion = theOwner.getBase().getValueSetVersion();</span>
+        }
+
+        /* For each existing value */
+<span class="nc" id="L520">        final Iterator&lt;T&gt; myIterator = theLinkSet.iterator();</span>
+<span class="nc bnc" id="L521" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L522">            final T myLink = myIterator.next();</span>
+
+            /* Access version of value */
+<span class="nc bnc" id="L525" title="All 2 branches missed.">            final int myValueVersion = bEditRestore</span>
+<span class="nc" id="L526">                    ? myLink.getValueSetVersion()</span>
+<span class="nc" id="L527">                    : myLink.getBase().getValueSetVersion();</span>
+
+            /* If the value was deleted at same time as owner */
+<span class="nc bnc" id="L530" title="All 2 branches missed.">            if (myValueVersion == myVersion) {</span>
+                /* Set the value as restored */
+<span class="nc" id="L532">                myLink.setDeleted(false);</span>
+            }
+<span class="nc" id="L534">        }</span>
+
+        /* build the active links */
+<span class="nc" id="L537">        buildActiveLinks();</span>
+<span class="nc" id="L538">    }</span>
+
+    @Override
+    public void touchUnderlyingItems() {
+        /* Loop through the list */
+<span class="nc" id="L543">        final Iterator&lt;T&gt; myIterator = theLinkSet.iterator();</span>
+<span class="nc bnc" id="L544" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L545">            final T myLink = myIterator.next();</span>
+
+            /* If the link is not deleted */
+<span class="nc bnc" id="L548" title="All 2 branches missed.">            if (!myLink.isDeleted()) {</span>
+                /* Touch the underlying items */
+<span class="nc" id="L550">                myLink.touchUnderlyingItems();</span>
+            }
+<span class="nc" id="L552">        }</span>
+<span class="nc" id="L553">    }</span>
+
+    @Override
+    public void touchOnUpdate() {
+        /* Loop through the list */
+<span class="nc" id="L558">        final Iterator&lt;T&gt; myIterator = theLinkSet.iterator();</span>
+<span class="nc bnc" id="L559" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L560">            final T myLink = myIterator.next();</span>
+
+            /* If the link is not deleted */
+<span class="nc bnc" id="L563" title="All 2 branches missed.">            if (!myLink.isDeleted()) {</span>
+                /* Touch the underlying items */
+<span class="nc" id="L565">                myLink.touchOnUpdate();</span>
+            }
+<span class="nc" id="L567">        }</span>
+<span class="nc" id="L568">    }</span>
+
+    /**
+     * Obtain an iterator through the list.
+     *
+     * @return the iterator
+     */
+    public Iterator&lt;T&gt; iterator() {
+<span class="nc" id="L576">        return theLinkSet.iterator();</span>
+    }
+
+    /**
+     * Value List.
+     */
+    public static final class PrometheusInfoSetValueList
+            implements MetisDataObjectFormat, MetisDataList&lt;Object&gt; {
+        /**
+         * The list.
+         */
+        private final List&lt;Object&gt; theList;
+
+        /**
+         * Constructor.
+         */
+<span class="nc" id="L592">        PrometheusInfoSetValueList() {</span>
+<span class="nc" id="L593">            theList = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L594">        }</span>
+
+        @Override
+        public String toString() {
+            /* Create the string builder */
+<span class="nc" id="L599">            final StringBuilder myBuilder = new StringBuilder();</span>
+<span class="nc" id="L600">            boolean isFirst = true;</span>
+
+            /* Loop through the list */
+<span class="nc" id="L603">            final Iterator&lt;?&gt; myIterator = iterator();</span>
+<span class="nc bnc" id="L604" title="All 2 branches missed.">            while (myIterator.hasNext()) {</span>
+<span class="nc" id="L605">                final Object myLink = myIterator.next();</span>
+
+                /* If this is not the first item */
+<span class="nc bnc" id="L608" title="All 2 branches missed.">                if (!isFirst) {</span>
+                    /* add separator */
+<span class="nc" id="L610">                    myBuilder.append(ITEM_SEP);</span>
+                }
+
+                /* Append the name */
+<span class="nc" id="L614">                myBuilder.append(myLink.toString());</span>
+<span class="nc" id="L615">                isFirst = false;</span>
+<span class="nc" id="L616">            }</span>
+
+            /* Return the list */
+<span class="nc" id="L619">            return myBuilder.toString();</span>
+        }
+
+        @Override
+        public String formatObject(final OceanusDataFormatter pFormatter) {
+<span class="nc" id="L624">            return toString();</span>
+        }
+
+        @Override
+        public List&lt;Object&gt; getUnderlyingList() {
+<span class="nc" id="L629">            return theList;</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

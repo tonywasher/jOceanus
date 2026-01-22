@@ -1,0 +1,385 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianSP800CTRDRBG.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.impl.core.random</a> &gt; <span class="el_source">GordianSP800CTRDRBG.java</span></div><h1>GordianSP800CTRDRBG.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.gordianknot.impl.core.random;
+
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianByteArrayInteger;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianDataConverter;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.cipher.GordianCoreCipher;
+import org.bouncycastle.crypto.prng.EntropySource;
+import org.bouncycastle.util.Arrays;
+
+/**
+ * Implementation of CTRSP800DRBG based on the BouncyCastle Code.
+ * &lt;p&gt;
+ * This implementation is modified so that it accepts any GordianCipher.
+ */
+public class GordianSP800CTRDRBG
+        implements GordianDRBGenerator {
+    /**
+     * The endData flag.
+     */
+    private static final byte ENDDATA = (byte) 0x80;
+
+    /**
+     * The Cipher.
+     */
+    private final GordianCoreCipher&lt;GordianSymKeySpec&gt; theCipher;
+
+    /**
+     * The Entropy Source.
+     */
+    private final EntropySource theEntropy;
+
+    /**
+     * The ReSeed Counter.
+     */
+    private final GordianByteArrayInteger theReseedCounter;
+
+    /**
+     * The Seed Length.
+     */
+    private final int theSeedLen;
+
+    /**
+     * The Key.
+     */
+    private final byte[] theKey;
+
+    /**
+     * The Variable Source.
+     */
+    private final GordianByteArrayInteger theV;
+
+    /**
+     * The cipher blockSize (bytes).
+     */
+    private final int theBlockLen;
+
+    /**
+     * Construct a SP800-90A Hash DRBG.
+     *
+     * @param pCipher        SIC Cipher to base the DRBG on.
+     * @param pEntropy       source of entropy to use for seeding/reSeeding.
+     * @param pSecurityBytes personalisation string to distinguish this DRBG (may be null).
+     * @param pInitVector    nonce to further distinguish this DRBG (may be null).
+     * @throws GordianException on error
+     */
+    public GordianSP800CTRDRBG(final GordianCoreCipher&lt;GordianSymKeySpec&gt; pCipher,
+                               final EntropySource pEntropy,
+                               final byte[] pSecurityBytes,
+<span class="fc" id="L86">                               final byte[] pInitVector) throws GordianException {</span>
+        /* Store cipher and entropy source */
+<span class="fc" id="L88">        theCipher = pCipher;</span>
+<span class="fc" id="L89">        theEntropy = pEntropy;</span>
+
+        /* Initialise buffers */
+<span class="fc" id="L92">        final int myKeyLen = pCipher.getKeyType().getKeyLength().getByteLength();</span>
+<span class="fc" id="L93">        theBlockLen = theCipher.getKeyType().getBlockLength().getByteLength();</span>
+<span class="fc" id="L94">        theKey = new byte[myKeyLen];</span>
+<span class="fc" id="L95">        theV = new GordianByteArrayInteger(theBlockLen);</span>
+<span class="fc" id="L96">        theSeedLen = (myKeyLen + theBlockLen) * Byte.SIZE;</span>
+
+        /* Create Seed Material */
+<span class="fc" id="L99">        final byte[] myEntropy = theEntropy.getEntropy();</span>
+<span class="fc" id="L100">        final byte[] mySeedInput = Arrays.concatenate(myEntropy, pInitVector, pSecurityBytes);</span>
+<span class="fc" id="L101">        final byte[] mySeed = blockCipherDF(mySeedInput, theSeedLen);</span>
+
+        /* Update the state */
+<span class="fc" id="L104">        ctrDRBGUpdate(mySeed);</span>
+
+        /* Initialise reSeed counter */
+<span class="fc" id="L107">        theReseedCounter = new GordianByteArrayInteger(Long.BYTES);</span>
+<span class="fc" id="L108">        theReseedCounter.iterate();</span>
+<span class="fc" id="L109">    }</span>
+
+    /**
+     * Block Cipher derivation function.
+     *
+     * @param pInput   the seed material
+     * @param pNumBits the number of bits to return
+     * @return the derived seed
+     * @throws GordianException on error
+     */
+    private byte[] blockCipherDF(final byte[] pInput,
+                                 final int pNumBits) throws GordianException {
+        /* Check valid # of bits */
+<span class="pc bpc" id="L122" title="1 of 2 branches missed.">        if (pNumBits &gt; GordianCoreRandomFactory.MAX_BITS_REQUEST) {</span>
+<span class="nc" id="L123">            throw new IllegalArgumentException(&quot;Number of bits per request limited to &quot;</span>
+                    + GordianCoreRandomFactory.MAX_BITS_REQUEST);
+        }
+
+        /* Allocate the lengths */
+<span class="fc" id="L128">        final byte[] myL = GordianDataConverter.integerToByteArray(pInput.length);</span>
+<span class="fc" id="L129">        final byte[] myN = GordianDataConverter.integerToByteArray(pNumBits / Byte.SIZE);</span>
+
+        /* Create the input buffer */
+<span class="fc" id="L132">        final int myKeyLen = theKey.length;</span>
+<span class="fc" id="L133">        final int myBaseLen = (2 * Integer.BYTES) + pInput.length + 1;</span>
+<span class="fc" id="L134">        final int myDataLen = theBlockLen * ((myBaseLen + theBlockLen - 1) / theBlockLen);</span>
+<span class="fc" id="L135">        final byte[] myBlock = new byte[myDataLen];</span>
+<span class="fc" id="L136">        System.arraycopy(myL, 0, myBlock, 0, Integer.BYTES);</span>
+<span class="fc" id="L137">        System.arraycopy(myN, 0, myBlock, Integer.BYTES, Integer.BYTES);</span>
+<span class="fc" id="L138">        System.arraycopy(pInput, 0, myBlock, 2 * Integer.BYTES, pInput.length);</span>
+<span class="fc" id="L139">        myBlock[2 * Integer.BYTES + pInput.length] = ENDDATA;</span>
+
+        /* Create the key buffer and initialise it */
+<span class="fc" id="L142">        final byte[] myKey = new byte[myKeyLen];</span>
+<span class="fc bfc" id="L143" title="All 2 branches covered.">        for (int i = 0; i &lt; myKeyLen; i++) {</span>
+<span class="fc" id="L144">            myKey[i] = (byte) i;</span>
+        }
+
+        /* Create the temporary buffers */
+<span class="fc" id="L148">        final byte[] myTemp = new byte[myKeyLen + theBlockLen];</span>
+<span class="fc" id="L149">        final byte[] myOut = new byte[theBlockLen];</span>
+<span class="fc" id="L150">        final byte[] myIV = new byte[theBlockLen];</span>
+
+        /* while we need to generate more bytes */
+<span class="fc" id="L153">        int myBuilt = 0;</span>
+<span class="fc" id="L154">        final GordianByteArrayInteger myI = new GordianByteArrayInteger();</span>
+<span class="fc bfc" id="L155" title="All 2 branches covered.">        while (myBuilt &lt; myTemp.length) {</span>
+            /* Update the buffer */
+<span class="fc" id="L157">            System.arraycopy(myI.getBuffer(), 0, myIV, 0, Integer.BYTES);</span>
+<span class="fc" id="L158">            blockCC(myOut, myKey, myIV, myBlock);</span>
+
+            /* Determine how many bytes of this hash should be used */
+<span class="fc" id="L161">            int myNeeded = myTemp.length</span>
+                    - myBuilt;
+<span class="fc bfc" id="L163" title="All 2 branches covered.">            if (myNeeded &gt; theBlockLen) {</span>
+<span class="fc" id="L164">                myNeeded = theBlockLen;</span>
+            }
+
+            /* Copy bytes across */
+<span class="fc" id="L168">            System.arraycopy(myOut, 0, myTemp, myBuilt, myNeeded);</span>
+<span class="fc" id="L169">            myBuilt += myNeeded;</span>
+<span class="fc" id="L170">            myI.iterate();</span>
+<span class="fc" id="L171">        }</span>
+
+        /* Access key and IV from temp */
+<span class="fc" id="L174">        System.arraycopy(myTemp, 0, myKey, 0, myKeyLen);</span>
+<span class="fc" id="L175">        System.arraycopy(myTemp, myKeyLen, myOut, 0, theBlockLen);</span>
+
+        /* while we need to generate more bytes */
+<span class="fc" id="L178">        myBuilt = 0;</span>
+<span class="fc bfc" id="L179" title="All 2 branches covered.">        while (myBuilt &lt; myTemp.length) {</span>
+            /* Encrypt the bytes */
+<span class="fc" id="L181">            theCipher.initKeyBytes(myKey);</span>
+<span class="fc" id="L182">            theCipher.finish(myOut, 0, myOut.length, myOut, 0);</span>
+
+            /* Determine how many bytes of this hash should be used */
+<span class="fc" id="L185">            int myNeeded = myTemp.length</span>
+                    - myBuilt;
+<span class="fc bfc" id="L187" title="All 2 branches covered.">            if (myNeeded &gt; theBlockLen) {</span>
+<span class="fc" id="L188">                myNeeded = theBlockLen;</span>
+            }
+
+            /* Copy bytes across */
+<span class="fc" id="L192">            System.arraycopy(myOut, 0, myTemp, myBuilt, myNeeded);</span>
+<span class="fc" id="L193">            myBuilt += myNeeded;</span>
+<span class="fc" id="L194">            myI.iterate();</span>
+<span class="fc" id="L195">        }</span>
+
+        /* Return the derived bytes */
+<span class="fc" id="L198">        return myTemp;</span>
+    }
+
+    /**
+     * BCC Cipher Chaining.
+     *
+     * @param pOutput the output buffer
+     * @param pKey    the key
+     * @param pIV     the initVector
+     * @param pData   the data
+     * @throws GordianException on error
+     */
+    private void blockCC(final byte[] pOutput,
+                         final byte[] pKey,
+                         final byte[] pIV,
+                         final byte[] pData) throws GordianException {
+        /* Build the buffers */
+<span class="fc" id="L215">        final byte[] myChain = new byte[theBlockLen];</span>
+<span class="fc" id="L216">        final byte[] myIn = new byte[theBlockLen];</span>
+
+        /* Encrypt the IV */
+<span class="fc" id="L219">        theCipher.initKeyBytes(pKey);</span>
+<span class="fc" id="L220">        theCipher.finish(pIV, 0, theBlockLen, myChain, 0);</span>
+
+        /* Loop through the data */
+<span class="fc" id="L223">        final int myNumBlocks = pData.length / theBlockLen;</span>
+<span class="fc bfc" id="L224" title="All 2 branches covered.">        for (int i = 0; i &lt; myNumBlocks; i++) {</span>
+            /* Xor in the value */
+<span class="fc" id="L226">            final int offset = i * theBlockLen;</span>
+<span class="fc bfc" id="L227" title="All 2 branches covered.">            for (int j = 0; j &lt; theBlockLen; j++) {</span>
+<span class="fc" id="L228">                myIn[j] = (byte) (myChain[j] ^ pData[offset + j]);</span>
+            }
+
+            /* Encrypt it */
+<span class="fc" id="L232">            theCipher.finish(myIn, 0, theBlockLen, myChain, 0);</span>
+        }
+
+        /* Copy the output */
+<span class="fc" id="L236">        System.arraycopy(myChain, 0, pOutput, 0, theBlockLen);</span>
+<span class="fc" id="L237">    }</span>
+
+    /**
+     * Update state.
+     *
+     * @param pSeed the seed material
+     * @throws GordianException on error
+     */
+    private void ctrDRBGUpdate(final byte[] pSeed) throws GordianException {
+        /* Create the buffers */
+<span class="fc" id="L247">        final byte[] myOut = new byte[theBlockLen];</span>
+<span class="fc" id="L248">        final byte[] myResult = new byte[theSeedLen / Byte.SIZE];</span>
+
+        /* while we need to generate more bytes */
+<span class="fc" id="L251">        int myBuilt = 0;</span>
+<span class="fc bfc" id="L252" title="All 2 branches covered.">        while (myBuilt &lt; myResult.length) {</span>
+            /* Encrypt the bytes */
+<span class="fc" id="L254">            theCipher.initKeyBytes(theKey);</span>
+<span class="fc" id="L255">            theV.iterate();</span>
+<span class="fc" id="L256">            theCipher.finish(theV.getBuffer(), 0, theBlockLen, myOut, 0);</span>
+
+            /* Determine how many bytes of this hash should be used */
+<span class="fc" id="L259">            int myNeeded = myResult.length</span>
+                    - myBuilt;
+<span class="fc bfc" id="L261" title="All 2 branches covered.">            if (myNeeded &gt; theBlockLen) {</span>
+<span class="fc" id="L262">                myNeeded = theBlockLen;</span>
+            }
+
+            /* Copy bytes across */
+<span class="fc" id="L266">            System.arraycopy(myOut, 0, myResult, myBuilt, myNeeded);</span>
+<span class="fc" id="L267">            myBuilt += myNeeded;</span>
+<span class="fc" id="L268">        }</span>
+
+        /* Xor in the Seed */
+<span class="fc bfc" id="L271" title="All 2 branches covered.">        for (int i = 0; i &lt; myResult.length; i++) {</span>
+<span class="fc" id="L272">            myResult[i] ^= pSeed[i];</span>
+        }
+
+        /* Update key and IV from result*/
+<span class="fc" id="L276">        System.arraycopy(myResult, 0, theKey, 0, theKey.length);</span>
+<span class="fc" id="L277">        System.arraycopy(myResult, theKey.length, theV.getBuffer(), 0, theBlockLen);</span>
+<span class="fc" id="L278">    }</span>
+
+    @Override
+    public void reseed(final byte[] pXtraBytes) {
+        try {
+            /* Hash the new input and add to variable hash */
+<span class="fc" id="L284">            final byte[] myEntropy = theEntropy.getEntropy();</span>
+<span class="fc" id="L285">            final byte[] mySeedInput = Arrays.concatenate(myEntropy, pXtraBytes);</span>
+<span class="fc" id="L286">            final byte[] mySeed = blockCipherDF(mySeedInput, theSeedLen);</span>
+
+            /* Update the state */
+<span class="fc" id="L289">            ctrDRBGUpdate(mySeed);</span>
+
+            /* re-initialise reSeed counter */
+<span class="fc" id="L292">            theReseedCounter.reset();</span>
+<span class="fc" id="L293">            theReseedCounter.iterate();</span>
+<span class="nc" id="L294">        } catch (GordianException e) {</span>
+<span class="nc" id="L295">            throw new IllegalStateException(e);</span>
+<span class="fc" id="L296">        }</span>
+<span class="fc" id="L297">    }</span>
+
+    @Override
+    public int generate(final byte[] pOutput,
+                        final byte[] pXtraBytes,
+                        final boolean isPredictionResistant) {
+        /* Check valid # of bits */
+<span class="fc" id="L304">        final int myNumBits = pOutput.length &lt;&lt; GordianCoreRandomFactory.BIT_SHIFT;</span>
+<span class="pc bpc" id="L305" title="1 of 2 branches missed.">        if (myNumBits &gt; GordianCoreRandomFactory.MAX_BITS_REQUEST) {</span>
+<span class="nc" id="L306">            throw new IllegalArgumentException(&quot;Number of bits per request limited to &quot;</span>
+                    + GordianCoreRandomFactory.MAX_BITS_REQUEST);
+        }
+
+        /* Check for reSeed required */
+<span class="pc bpc" id="L311" title="1 of 2 branches missed.">        if (theReseedCounter.compareLimit(GordianCoreRandomFactory.RESEED_MAX)) {</span>
+<span class="nc" id="L312">            return -1;</span>
+        }
+
+        /* If we are prediction resistant */
+<span class="fc" id="L316">        byte[] mySeed = pXtraBytes;</span>
+<span class="fc bfc" id="L317" title="All 2 branches covered.">        if (isPredictionResistant) {</span>
+            /* reSeed */
+<span class="fc" id="L319">            reseed(pXtraBytes);</span>
+<span class="fc" id="L320">            mySeed = null;</span>
+        }
+
+        try {
+            /* if we have extra bytes */
+<span class="fc bfc" id="L325" title="All 2 branches covered.">            if (mySeed != null) {</span>
+                /* Derive the new input and process */
+<span class="fc" id="L327">                mySeed = blockCipherDF(pXtraBytes, theSeedLen);</span>
+<span class="fc" id="L328">                ctrDRBGUpdate(mySeed);</span>
+
+                /* else allocate a buffer of zeroes */
+            } else {
+<span class="fc" id="L332">                mySeed = new byte[theBlockLen + theKey.length];</span>
+            }
+
+            /* Create the buffers */
+<span class="fc" id="L336">            final byte[] myOut = new byte[theBlockLen];</span>
+<span class="fc" id="L337">            final byte[] myResult = new byte[pOutput.length];</span>
+
+            /* while we need to generate more bytes */
+<span class="fc" id="L340">            int myBuilt = 0;</span>
+<span class="fc bfc" id="L341" title="All 2 branches covered.">            while (myBuilt &lt; myResult.length) {</span>
+                /* Encrypt the bytes */
+<span class="fc" id="L343">                theCipher.initKeyBytes(theKey);</span>
+<span class="fc" id="L344">                theV.iterate();</span>
+<span class="fc" id="L345">                theCipher.finish(theV.getBuffer(), 0, theBlockLen, myOut, 0);</span>
+
+                /* Determine how many bytes of this hash should be used */
+<span class="fc" id="L348">                int myNeeded = myResult.length</span>
+                        - myBuilt;
+<span class="fc bfc" id="L350" title="All 2 branches covered.">                if (myNeeded &gt; theBlockLen) {</span>
+<span class="fc" id="L351">                    myNeeded = theBlockLen;</span>
+                }
+
+                /* Copy bytes across */
+<span class="fc" id="L355">                System.arraycopy(myOut, 0, myResult, myBuilt, myNeeded);</span>
+<span class="fc" id="L356">                myBuilt += myNeeded;</span>
+<span class="fc" id="L357">            }</span>
+
+            /* Update the state */
+<span class="fc" id="L360">            ctrDRBGUpdate(mySeed);</span>
+
+            /* Iterate the reSeed counter */
+<span class="fc" id="L363">            theReseedCounter.iterate();</span>
+
+            /* Return the bytes */
+<span class="fc" id="L366">            System.arraycopy(myResult, 0, pOutput, 0, pOutput.length);</span>
+<span class="nc" id="L367">        } catch (GordianException e) {</span>
+<span class="nc" id="L368">            throw new IllegalStateException(e);</span>
+<span class="fc" id="L369">        }</span>
+
+        /* Return the number of bits generated */
+<span class="fc" id="L372">        return myNumBits;</span>
+    }
+
+    @Override
+    public int getBlockSize() {
+<span class="fc" id="L377">        return theBlockLen * Byte.SIZE;</span>
+    }
+
+    @Override
+    public String getAlgorithm() {
+<span class="nc" id="L382">        return GordianCoreRandomFactory.SP800_PREFIX + theCipher.getCipherSpec().toString();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

@@ -1,0 +1,766 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PrometheusTableDataItem.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Prometheus Core Application Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.prometheus.database</a> &gt; <span class="el_source">PrometheusTableDataItem.java</span></div><h1>PrometheusTableDataItem.java</h1><pre class="source lang-java linenums">/*
+ * Prometheus: Application Framework
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.prometheus.database;
+
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
+import io.github.tonywasher.joceanus.metis.data.MetisDataResource;
+import io.github.tonywasher.joceanus.metis.data.MetisDataState;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldVersionValues;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataList;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataSet;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValues;
+import io.github.tonywasher.joceanus.prometheus.exc.PrometheusDataException;
+import io.github.tonywasher.joceanus.prometheus.exc.PrometheusIOException;
+import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadStatusReport;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Iterator;
+import java.util.ListIterator;
+
+/**
+ * Database Table class. This controls should be extended for each DataType/Table.
+ *
+ * @param &lt;T&gt; the DataType
+ */
+public abstract class PrometheusTableDataItem&lt;T extends PrometheusDataItem&gt; {
+    /**
+     * The Database control.
+     */
+    private final PrometheusDataStore theDatabase;
+
+    /**
+     * The Database connection.
+     */
+    private final Connection theConn;
+
+    /**
+     * The list of items for this table.
+     */
+    private PrometheusDataList&lt;T&gt; theList;
+
+    /**
+     * The prepared statement.
+     */
+    private PreparedStatement theStmt;
+
+    /**
+     * Do we have batched updated in the prepared statement?
+     */
+    private boolean hasBatchedUpdates;
+
+    /**
+     * The result set.
+     */
+    private ResultSet theResults;
+
+    /**
+     * The table definition.
+     */
+    private final PrometheusTableDefinition theTable;
+
+    /**
+     * Constructor.
+     *
+     * @param pDatabase the database control
+     * @param pTable    the table name
+     */
+    protected PrometheusTableDataItem(final PrometheusDataStore pDatabase,
+<span class="nc" id="L87">                                      final String pTable) {</span>
+        /* Set the table */
+<span class="nc" id="L89">        theDatabase = pDatabase;</span>
+<span class="nc" id="L90">        theConn = theDatabase.getConn();</span>
+<span class="nc" id="L91">        theTable = new PrometheusTableDefinition(theDatabase.getDriver(), pTable);</span>
+<span class="nc" id="L92">    }</span>
+
+    /**
+     * Obtain database.
+     *
+     * @return the database
+     */
+    protected PrometheusDataStore getDatabase() {
+<span class="nc" id="L100">        return theDatabase;</span>
+    }
+
+    /**
+     * Obtain table definition.
+     *
+     * @return the table definition
+     */
+    protected PrometheusTableDefinition getTableDef() {
+<span class="nc" id="L109">        return theTable;</span>
+    }
+
+    /**
+     * Access the table name.
+     *
+     * @return the table name
+     */
+    protected String getTableName() {
+<span class="nc" id="L118">        return theTable.getTableName();</span>
+    }
+
+    /**
+     * Access the table definition.
+     *
+     * @return the table definition
+     */
+    protected PrometheusTableDefinition getDefinition() {
+<span class="nc" id="L127">        return theTable;</span>
+    }
+
+    /**
+     * Close the result set and statement.
+     *
+     * @throws SQLException on error
+     */
+    protected void closeStmt() throws SQLException {
+<span class="nc" id="L136">        executeBatch();</span>
+<span class="nc" id="L137">        theTable.clearValues();</span>
+<span class="nc bnc" id="L138" title="All 2 branches missed.">        if (theResults != null) {</span>
+<span class="nc" id="L139">            theResults.close();</span>
+        }
+<span class="nc bnc" id="L141" title="All 2 branches missed.">        if (theStmt != null) {</span>
+<span class="nc" id="L142">            theStmt.close();</span>
+        }
+<span class="nc" id="L144">    }</span>
+
+    /**
+     * Shift to next line in result set.
+     *
+     * @return is there a next line
+     * @throws SQLException on error
+     */
+    private boolean nextLine() throws SQLException {
+<span class="nc" id="L153">        return theResults.next();</span>
+    }
+
+    /**
+     * Prepare the statement.
+     *
+     * @param pStatement the statement to prepare
+     * @throws SQLException on error
+     */
+    private void prepareStatement(final String pStatement) throws SQLException {
+<span class="nc" id="L163">        theStmt = theConn.prepareStatement(pStatement);</span>
+<span class="nc" id="L164">    }</span>
+
+    /**
+     * Execute the prepared statement.
+     *
+     * @throws SQLException on error
+     */
+    private void execute() throws SQLException {
+<span class="nc" id="L172">        theStmt.executeUpdate();</span>
+<span class="nc" id="L173">        theTable.clearValues();</span>
+<span class="nc" id="L174">    }</span>
+
+    /**
+     * Add to the batched statement.
+     *
+     * @throws SQLException on error
+     */
+    private void addToBatch() throws SQLException {
+<span class="nc" id="L182">        theStmt.addBatch();</span>
+<span class="nc" id="L183">        theTable.clearValues();</span>
+<span class="nc" id="L184">        hasBatchedUpdates = true;</span>
+<span class="nc" id="L185">    }</span>
+
+    /**
+     * Execute the batched statement.
+     *
+     * @throws SQLException on error
+     */
+    private void executeBatch() throws SQLException {
+<span class="nc bnc" id="L193" title="All 2 branches missed.">        if (hasBatchedUpdates) {</span>
+<span class="nc" id="L194">            theStmt.executeBatch();</span>
+<span class="nc" id="L195">            hasBatchedUpdates = false;</span>
+        }
+<span class="nc" id="L197">    }</span>
+
+    /**
+     * Query the prepared statement.
+     *
+     * @throws SQLException on error
+     */
+    private void executeQuery() throws SQLException {
+<span class="nc" id="L205">        theTable.clearValues();</span>
+<span class="nc" id="L206">        theResults = theStmt.executeQuery();</span>
+<span class="nc" id="L207">    }</span>
+
+    /**
+     * Commit the update.
+     *
+     * @throws SQLException on error
+     */
+    private void commit() throws SQLException {
+<span class="nc" id="L215">        theConn.commit();</span>
+<span class="nc" id="L216">    }</span>
+
+    /**
+     * Execute a statement.
+     *
+     * @param pStatement the statement
+     * @throws SQLException on error
+     */
+    private void executeStatement(final String pStatement) throws SQLException {
+        /* Prepare the statement */
+<span class="nc" id="L226">        prepareStatement(pStatement);</span>
+
+        /* Execute the delete */
+<span class="nc" id="L229">        execute();</span>
+<span class="nc" id="L230">        commit();</span>
+
+        /* Close the Statement */
+<span class="nc" id="L233">        closeStmt();</span>
+<span class="nc" id="L234">    }</span>
+
+    /**
+     * Count the number of items to be loaded.
+     *
+     * @return the count of items
+     * @throws SQLException on error
+     */
+    protected int countLoadItems() throws SQLException {
+<span class="nc" id="L243">        int myCount = 0;</span>
+<span class="nc" id="L244">        final String myString = theTable.getCountString();</span>
+<span class="nc" id="L245">        prepareStatement(myString);</span>
+<span class="nc" id="L246">        executeQuery();</span>
+
+        /* Loop through the results */
+<span class="nc bnc" id="L249" title="All 2 branches missed.">        while (theResults.next()) {</span>
+            /* Get the count */
+<span class="nc" id="L251">            myCount = theResults.getInt(1);</span>
+        }
+
+        /* Close the Statement */
+<span class="nc" id="L255">        closeStmt();</span>
+
+        /* Return the count */
+<span class="nc" id="L258">        return myCount;</span>
+    }
+
+    /**
+     * Declare DataSet.
+     *
+     * @param pData the Data set
+     */
+    protected abstract void declareData(PrometheusDataSet pData);
+
+    /**
+     * Set the list of items.
+     *
+     * @param pList the list of items
+     */
+    protected void setList(final PrometheusDataList&lt;T&gt; pList) {
+<span class="nc" id="L274">        theList = pList;</span>
+<span class="nc" id="L275">    }</span>
+
+    /**
+     * Obtain the list of items.
+     *
+     * @return the list of items
+     */
+    protected PrometheusDataList&lt;T&gt; getList() {
+<span class="nc" id="L283">        return theList;</span>
+    }
+
+    /**
+     * Load an individual item from the result set.
+     *
+     * @return the values for the row
+     * @throws OceanusException on error
+     */
+    protected abstract PrometheusDataValues loadValues() throws OceanusException;
+
+    /**
+     * Set a field value for an item.
+     *
+     * @param pItem  the item to insert
+     * @param pField the field id
+     * @throws OceanusException on error
+     */
+    protected void setFieldValue(final T pItem,
+                                 final MetisDataFieldId pField) throws OceanusException {
+        /* Switch on field id */
+<span class="nc bnc" id="L304" title="All 2 branches missed.">        if (pField.equals(MetisDataResource.DATA_ID)) {</span>
+<span class="nc" id="L305">            theTable.setIntegerValue(MetisDataResource.DATA_ID, pItem.getIndexedId());</span>
+        }
+<span class="nc" id="L307">    }</span>
+
+    /**
+     * Post-Process on a load operation.
+     *
+     * @throws OceanusException on error
+     */
+    protected void postProcessOnLoad() throws OceanusException {
+        /* PostProcess the list */
+<span class="nc" id="L316">        theList.postProcessOnLoad();</span>
+<span class="nc" id="L317">    }</span>
+
+    /**
+     * Load items from the list into the table.
+     *
+     * @param pReport the report
+     * @param pData   the data
+     * @throws OceanusException on error
+     */
+    protected void loadItems(final TethysUIThreadStatusReport pReport,
+                             final PrometheusDataSet pData) throws OceanusException {
+        /* Declare the new stage */
+<span class="nc" id="L329">        pReport.setNewStage(getTableName());</span>
+
+        /* Declare the Data */
+<span class="nc" id="L332">        declareData(pData);</span>
+
+        /* Protect the load */
+        try {
+            /* Count the Items to be loaded */
+<span class="nc" id="L337">            pReport.setNumSteps(countLoadItems());</span>
+
+            /* Load the items from the table */
+<span class="nc" id="L340">            final String myQuery = theTable.getLoadString();</span>
+<span class="nc" id="L341">            prepareStatement(myQuery);</span>
+<span class="nc" id="L342">            executeQuery();</span>
+
+            /* Loop through the results */
+<span class="nc bnc" id="L345" title="All 2 branches missed.">            while (nextLine()) {</span>
+                /* Read in the results */
+<span class="nc" id="L347">                theTable.loadResults(theResults);</span>
+
+                /* Load the next item */
+<span class="nc" id="L350">                theList.addValuesItem(loadValues());</span>
+
+                /* Report the progress */
+<span class="nc" id="L353">                pReport.setNextStep();</span>
+            }
+
+            /* Close the Statement */
+<span class="nc" id="L357">            closeStmt();</span>
+
+            /* Perform post process */
+<span class="nc" id="L360">            postProcessOnLoad();</span>
+
+<span class="nc" id="L362">        } catch (SQLException e) {</span>
+<span class="nc" id="L363">            throw new PrometheusIOException(&quot;Failed to load &quot; + getTableName(), e);</span>
+<span class="nc" id="L364">        }</span>
+<span class="nc" id="L365">    }</span>
+
+    /**
+     * Determine the count of items that are in a particular state.
+     *
+     * @param pState the particular state
+     * @return the count of items
+     */
+    private int countStateItems(final MetisDataState pState) {
+        /* Initialise the count */
+<span class="nc" id="L375">        int iCount = 0;</span>
+
+        /* Loop through the list */
+<span class="nc" id="L378">        final Iterator&lt;T&gt; myIterator = theList.iterator();</span>
+<span class="nc bnc" id="L379" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L380">            final T myCurr = myIterator.next();</span>
+
+            /* Ignore items that are not this type */
+<span class="nc bnc" id="L383" title="All 2 branches missed.">            if (myCurr.getState() != pState) {</span>
+<span class="nc" id="L384">                continue;</span>
+            }
+
+            /* Increment count */
+<span class="nc" id="L388">            ++iCount;</span>
+<span class="nc" id="L389">        }</span>
+
+        /* Return count */
+<span class="nc" id="L392">        return iCount;</span>
+    }
+
+    /**
+     * Insert new items from the list.
+     *
+     * @param pReport the report
+     * @param pData   the data
+     * @param pBatch  the batch control
+     * @throws OceanusException on error
+     */
+    protected void insertItems(final TethysUIThreadStatusReport pReport,
+                               final PrometheusDataSet pData,
+                               final PrometheusBatchControl pBatch) throws OceanusException {
+        /* Declare the new stage */
+<span class="nc" id="L407">        pReport.setNewStage(&quot;Inserting &quot; + getTableName());</span>
+
+        /* Declare the Data */
+<span class="nc" id="L410">        declareData(pData);</span>
+
+        /* Protect the insert */
+<span class="nc" id="L413">        T myCurr = null;</span>
+        try {
+            /* Declare the number of steps */
+<span class="nc" id="L416">            final int mySteps = countStateItems(MetisDataState.NEW);</span>
+<span class="nc" id="L417">            pReport.setNumSteps(mySteps);</span>
+<span class="nc bnc" id="L418" title="All 2 branches missed.">            if (mySteps == 0) {</span>
+<span class="nc" id="L419">                return;</span>
+            }
+
+            /* Declare the table and mode */
+<span class="nc" id="L423">            pBatch.setCurrentTable(this, MetisDataState.NEW);</span>
+
+            /* Prepare the insert statement */
+<span class="nc" id="L426">            final String myInsert = theTable.getInsertString();</span>
+<span class="nc" id="L427">            prepareStatement(myInsert);</span>
+
+            /* Loop through the list */
+<span class="nc" id="L430">            final Iterator&lt;T&gt; myIterator = theList.iterator();</span>
+<span class="nc bnc" id="L431" title="All 2 branches missed.">            while (myIterator.hasNext()) {</span>
+                /* Ignore non-new items */
+<span class="nc" id="L433">                myCurr = myIterator.next();</span>
+<span class="nc bnc" id="L434" title="All 2 branches missed.">                if (myCurr.getState() != MetisDataState.NEW) {</span>
+<span class="nc" id="L435">                    continue;</span>
+                }
+
+                /* Loop through the columns */
+<span class="nc bnc" id="L439" title="All 2 branches missed.">                for (PrometheusColumnDefinition myCol : theTable.getColumns()) {</span>
+                    /* Access the column id */
+<span class="nc" id="L441">                    final MetisDataFieldId iField = myCol.getColumnId();</span>
+
+                    /* Set the field value */
+<span class="nc" id="L444">                    setFieldValue(myCurr, iField);</span>
+<span class="nc" id="L445">                }</span>
+
+                /* Apply the values */
+<span class="nc" id="L448">                theTable.insertValues(theStmt);</span>
+<span class="nc" id="L449">                pBatch.addBatchItem();</span>
+
+                /* Add to the statement batch */
+<span class="nc" id="L452">                addToBatch();</span>
+<span class="nc" id="L453">                myCurr = null;</span>
+
+                /* If we have no further space in the batch */
+<span class="nc bnc" id="L456" title="All 2 branches missed.">                if (pBatch.isFull()) {</span>
+                    /* ExecuteBatch and commit the database */
+<span class="nc" id="L458">                    executeBatch();</span>
+<span class="nc" id="L459">                    commit();</span>
+
+                    /* Commit the batch */
+<span class="nc" id="L462">                    pBatch.commitItems();</span>
+                }
+
+                /* Report the progress */
+<span class="nc" id="L466">                pReport.setNextStep();</span>
+            }
+
+            /* Close the Statement */
+<span class="nc" id="L470">            closeStmt();</span>
+
+<span class="nc" id="L472">        } catch (SQLException e) {</span>
+<span class="nc" id="L473">            throw new PrometheusDataException(myCurr, &quot;Failed to insert &quot; + getTableName(), e);</span>
+<span class="nc" id="L474">        }</span>
+<span class="nc" id="L475">    }</span>
+
+    /**
+     * Update items from the list.
+     *
+     * @param pReport the report
+     * @param pBatch  the batch control
+     * @throws OceanusException on error
+     */
+    protected void updateItems(final TethysUIThreadStatusReport pReport,
+                               final PrometheusBatchControl pBatch) throws OceanusException {
+        /* Declare the new stage */
+<span class="nc" id="L487">        pReport.setNewStage(&quot;Updating &quot; + getTableName());</span>
+
+        /* Protect the update */
+<span class="nc" id="L490">        T myCurr = null;</span>
+        try {
+            /* Declare the number of steps */
+<span class="nc" id="L493">            final int mySteps = countStateItems(MetisDataState.CHANGED);</span>
+<span class="nc" id="L494">            pReport.setNumSteps(mySteps);</span>
+<span class="nc bnc" id="L495" title="All 2 branches missed.">            if (mySteps == 0) {</span>
+<span class="nc" id="L496">                return;</span>
+            }
+
+            /* Declare the table and mode */
+<span class="nc" id="L500">            pBatch.setCurrentTable(this, MetisDataState.CHANGED);</span>
+
+            /* Loop through the list */
+<span class="nc" id="L503">            final Iterator&lt;T&gt; myIterator = theList.iterator();</span>
+<span class="nc bnc" id="L504" title="All 2 branches missed.">            while (myIterator.hasNext()) {</span>
+                /* Ignore non-changed items */
+<span class="nc" id="L506">                myCurr = myIterator.next();</span>
+<span class="nc bnc" id="L507" title="All 2 branches missed.">                if ((myCurr.getState() != MetisDataState.CHANGED)</span>
+<span class="nc bnc" id="L508" title="All 2 branches missed.">                        || !updateItem(myCurr)) {</span>
+<span class="nc" id="L509">                    continue;</span>
+                }
+
+                /* Record the id and access the update string */
+<span class="nc" id="L513">                theTable.setIntegerValue(MetisDataResource.DATA_ID, myCurr.getIndexedId());</span>
+<span class="nc" id="L514">                final String myUpdate = theTable.getUpdateString();</span>
+
+                /* Prepare the statement and declare values */
+<span class="nc" id="L517">                prepareStatement(myUpdate);</span>
+<span class="nc" id="L518">                theTable.updateValues(theStmt);</span>
+<span class="nc" id="L519">                pBatch.addBatchItem();</span>
+
+                /* Execute the update */
+<span class="nc" id="L522">                execute();</span>
+<span class="nc" id="L523">                myCurr = null;</span>
+
+                /* Close the Statement */
+<span class="nc" id="L526">                closeStmt();</span>
+
+                /* If we have no further space in the batch */
+<span class="nc bnc" id="L529" title="All 2 branches missed.">                if (pBatch.isFull()) {</span>
+                    /* Commit the database */
+<span class="nc" id="L531">                    commit();</span>
+
+                    /* Commit the batch */
+<span class="nc" id="L534">                    pBatch.commitItems();</span>
+                }
+
+                /* Report the progress */
+<span class="nc" id="L538">                pReport.setNextStep();</span>
+<span class="nc" id="L539">            }</span>
+<span class="nc" id="L540">        } catch (SQLException e) {</span>
+<span class="nc" id="L541">            throw new PrometheusDataException(myCurr, &quot;Failed to update &quot; + getTableName(), e);</span>
+<span class="nc" id="L542">        }</span>
+<span class="nc" id="L543">    }</span>
+
+    /**
+     * Update the item.
+     *
+     * @param pItem the item
+     * @return Continue &lt;code&gt;true/false&lt;/code&gt;
+     * @throws OceanusException on error
+     */
+    private boolean updateItem(final T pItem) throws OceanusException {
+        /* Access the object and base */
+<span class="nc" id="L554">        final MetisFieldVersionValues myCurr = pItem.getValues();</span>
+<span class="nc" id="L555">        final MetisFieldVersionValues myBase = pItem.getOriginalValues();</span>
+<span class="nc" id="L556">        boolean isUpdated = false;</span>
+
+        /* Loop through the fields */
+<span class="nc bnc" id="L559" title="All 2 branches missed.">        for (PrometheusColumnDefinition myCol : theTable.getColumns()) {</span>
+            /* Skip null and Id columns */
+<span class="nc bnc" id="L561" title="All 2 branches missed.">            if (myCol == null) {</span>
+<span class="nc" id="L562">                continue;</span>
+            }
+
+            /* Access the column id */
+<span class="nc" id="L566">            final MetisDataFieldId iField = myCol.getColumnId();</span>
+
+            /* If the non-Id field has changed */
+<span class="nc bnc" id="L569" title="All 2 branches missed.">            if (!MetisDataResource.DATA_ID.equals(myCol.getColumnId())</span>
+<span class="nc bnc" id="L570" title="All 2 branches missed.">                    &amp;&amp; myCurr.fieldChanged(iField, myBase).isDifferent()) {</span>
+                /* Record the change */
+<span class="nc" id="L572">                isUpdated = true;</span>
+<span class="nc" id="L573">                setFieldValue(pItem, iField);</span>
+            }
+<span class="nc" id="L575">        }</span>
+
+        /* Return to caller */
+<span class="nc" id="L578">        return isUpdated;</span>
+    }
+
+    /**
+     * Delete items from the list.
+     *
+     * @param pReport the report
+     * @param pBatch  the batch control
+     * @throws OceanusException on error
+     */
+    protected void deleteItems(final TethysUIThreadStatusReport pReport,
+                               final PrometheusBatchControl pBatch) throws OceanusException {
+        /* Declare the new stage */
+<span class="nc" id="L591">        pReport.setNewStage(&quot;Deleting &quot; + getTableName());</span>
+
+        /* Protect the delete */
+<span class="nc" id="L594">        T myCurr = null;</span>
+        try {
+            /* Declare the number of steps */
+<span class="nc" id="L597">            int mySteps = countStateItems(MetisDataState.DELETED);</span>
+<span class="nc" id="L598">            mySteps += countStateItems(MetisDataState.DELNEW);</span>
+<span class="nc" id="L599">            pReport.setNumSteps(mySteps);</span>
+<span class="nc bnc" id="L600" title="All 2 branches missed.">            if (mySteps == 0) {</span>
+<span class="nc" id="L601">                return;</span>
+            }
+
+            /* Declare the table and mode */
+<span class="nc" id="L605">            pBatch.setCurrentTable(this, MetisDataState.DELETED);</span>
+
+            /* Prepare the delete statement */
+<span class="nc" id="L608">            final String myDelete = theTable.getDeleteString();</span>
+<span class="nc" id="L609">            prepareStatement(myDelete);</span>
+
+            /* Access the iterator */
+<span class="nc" id="L612">            final ListIterator&lt;T&gt; myIterator = theList.listIterator(theList.size());</span>
+
+            /* Loop through the list in reverse order */
+<span class="nc bnc" id="L615" title="All 2 branches missed.">            while (myIterator.hasPrevious()) {</span>
+                /* Ignore non-deleted items */
+<span class="nc" id="L617">                myCurr = myIterator.previous();</span>
+<span class="nc" id="L618">                final MetisDataState myState = myCurr.getState();</span>
+<span class="nc bnc" id="L619" title="All 4 branches missed.">                if ((myState != MetisDataState.DELETED)</span>
+                        &amp;&amp; (myState != MetisDataState.DELNEW)) {
+<span class="nc" id="L621">                    continue;</span>
+                }
+
+                /* Declare the item in the batch */
+<span class="nc" id="L625">                pBatch.addBatchItem();</span>
+
+                /* Ignore DelNew items as far as the database is concerned */
+<span class="nc bnc" id="L628" title="All 2 branches missed.">                if (myState != MetisDataState.DELNEW) {</span>
+                    /* Apply the id */
+<span class="nc" id="L630">                    theTable.setIntegerValue(MetisDataResource.DATA_ID, myCurr.getIndexedId());</span>
+<span class="nc" id="L631">                    theTable.updateValues(theStmt);</span>
+
+                    /* Add to the statement batch */
+<span class="nc" id="L634">                    addToBatch();</span>
+                }
+
+                /* If we have no further space in the batch */
+<span class="nc bnc" id="L638" title="All 2 branches missed.">                if (pBatch.isFull()) {</span>
+                    /* ExecuteBatch and commit the database */
+<span class="nc" id="L640">                    executeBatch();</span>
+<span class="nc" id="L641">                    commit();</span>
+
+                    /* Commit the batch */
+<span class="nc" id="L644">                    pBatch.commitItems();</span>
+                }
+
+                /* Report the progress */
+<span class="nc" id="L648">                pReport.setNextStep();</span>
+<span class="nc" id="L649">            }</span>
+
+            /* Close the Statement */
+<span class="nc" id="L652">            closeStmt();</span>
+
+<span class="nc" id="L654">        } catch (SQLException e) {</span>
+<span class="nc" id="L655">            throw new PrometheusDataException(myCurr, &quot;Failed to delete &quot; + getTableName(), e);</span>
+<span class="nc" id="L656">        }</span>
+<span class="nc" id="L657">    }</span>
+
+    /**
+     * Create the table.
+     *
+     * @throws OceanusException on error
+     */
+    protected void createTable() throws OceanusException {
+        /* Protect the create */
+        try {
+            /* Execute the create index statement */
+<span class="nc" id="L668">            String myCreate = theTable.getCreateTableString();</span>
+<span class="nc" id="L669">            executeStatement(myCreate);</span>
+
+            /* If the table has an index */
+<span class="nc bnc" id="L672" title="All 2 branches missed.">            if (theTable.isIndexed()) {</span>
+                /* Prepare the create index statement */
+<span class="nc" id="L674">                myCreate = theTable.getCreateIndexString();</span>
+<span class="nc" id="L675">                executeStatement(myCreate);</span>
+            }
+
+<span class="nc" id="L678">        } catch (SQLException e) {</span>
+<span class="nc" id="L679">            throw new PrometheusIOException(&quot;Failed to create &quot; + getTableName(), e);</span>
+<span class="nc" id="L680">        }</span>
+<span class="nc" id="L681">    }</span>
+
+    /**
+     * Create the database.
+     *
+     * @param pDatabase the database name
+     * @throws OceanusException on error
+     */
+    void createDatabase(final String pDatabase) throws OceanusException {
+        /* Protect the statements */
+        try {
+            /* Execute the drop and create database statements */
+<span class="nc" id="L693">            theConn.setAutoCommit(true);</span>
+<span class="nc" id="L694">            final String myDrop = &quot;DROP DATABASE IF EXISTS &quot; + pDatabase;</span>
+<span class="nc" id="L695">            prepareStatement(myDrop);</span>
+<span class="nc" id="L696">            theStmt.execute();</span>
+<span class="nc" id="L697">            theStmt.close();</span>
+<span class="nc" id="L698">            final String myCreate = &quot;CREATE DATABASE &quot; + pDatabase;</span>
+<span class="nc" id="L699">            prepareStatement(myCreate);</span>
+<span class="nc" id="L700">            theStmt.execute();</span>
+<span class="nc" id="L701">            theStmt.close();</span>
+<span class="nc" id="L702">            theConn.setAutoCommit(false);</span>
+
+<span class="nc" id="L704">        } catch (SQLException e) {</span>
+<span class="nc" id="L705">            throw new PrometheusIOException(&quot;Failed to create database&quot;, e);</span>
+<span class="nc" id="L706">        }</span>
+<span class="nc" id="L707">    }</span>
+
+    /**
+     * Drop the table.
+     *
+     * @throws OceanusException on error
+     */
+    protected void dropTable() throws OceanusException {
+        /* Protect the drop */
+        try {
+            /* If we should drop the index */
+<span class="nc" id="L718">            String myDrop = theTable.getDropIndexString();</span>
+<span class="nc bnc" id="L719" title="All 2 branches missed.">            if (myDrop != null) {</span>
+                /* Execute the drop index statement */
+<span class="nc" id="L721">                executeStatement(myDrop);</span>
+            }
+
+            /* Execute the drop table statement */
+<span class="nc" id="L725">            myDrop = theTable.getDropTableString();</span>
+<span class="nc" id="L726">            executeStatement(myDrop);</span>
+
+<span class="nc" id="L728">        } catch (SQLException e) {</span>
+<span class="nc" id="L729">            throw new PrometheusIOException(&quot;Failed to drop &quot; + getTableName(), e);</span>
+<span class="nc" id="L730">        }</span>
+<span class="nc" id="L731">    }</span>
+
+    /**
+     * Truncate the table.
+     *
+     * @throws OceanusException on error
+     */
+    protected void purgeTable() throws OceanusException {
+        /* Protect the truncate */
+        try {
+            /* Execute the purge statement */
+<span class="nc" id="L742">            final String myTrunc = theTable.getPurgeString();</span>
+<span class="nc" id="L743">            executeStatement(myTrunc);</span>
+
+<span class="nc" id="L745">        } catch (SQLException e) {</span>
+<span class="nc" id="L746">            throw new PrometheusIOException(&quot;Failed to purge &quot; + getTableName(), e);</span>
+<span class="nc" id="L747">        }</span>
+<span class="nc" id="L748">    }</span>
+
+    /**
+     * Obtain row values.
+     *
+     * @param pName the name of the item
+     * @return the row values.
+     * @throws OceanusException on error
+     */
+    protected PrometheusDataValues getRowValues(final String pName) throws OceanusException {
+        /* Allocate the values */
+<span class="nc" id="L759">        final PrometheusDataValues myValues = new PrometheusDataValues(pName);</span>
+
+        /* Add the id and return the new values */
+<span class="nc" id="L762">        myValues.addValue(MetisDataResource.DATA_ID, theTable.getIntegerValue(MetisDataResource.DATA_ID));</span>
+<span class="nc" id="L763">        return myValues;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

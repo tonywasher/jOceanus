@@ -1,0 +1,312 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseTransactionFilters.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.moneywise.lethe.views</a> &gt; <span class="el_source">MoneyWiseTransactionFilters.java</span></div><h1>MoneyWiseTransactionFilters.java</h1><pre class="source lang-java linenums">/*
+ * MoneyWise: Finance Application
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.moneywise.lethe.views;
+
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
+import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataList;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransaction;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysis;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisCashBucket;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisCashBucket.MoneyWiseAnalysisCashBucketList;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisDepositBucket;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisDepositBucket.MoneyWiseAnalysisDepositBucketList;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisLoanBucket;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisLoanBucket.MoneyWiseAnalysisLoanBucketList;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisPayeeBucket;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisPayeeBucket.MoneyWiseAnalysisPayeeBucketList;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisPortfolioBucket;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisPortfolioBucket.MoneyWiseAnalysisPortfolioBucketList;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisPortfolioCashBucket;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisSecurityBucket;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisSecurityBucket.MoneyWiseAnalysisSecurityBucketList;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisTaxBasisBucket;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisTaxBasisBucket.MoneyWiseAnalysisTaxBasisBucketList;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisTransCategoryBucket;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisTransCategoryBucket.MoneyWiseAnalysisTransCategoryBucketList;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisTransTagBucket;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisTransTagBucket.MoneyWiseAnalysisTransTagBucketList;
+import io.github.tonywasher.joceanus.moneywise.lethe.views.MoneyWiseAnalysisFilter.MoneyWiseAnalysisCashFilter;
+import io.github.tonywasher.joceanus.moneywise.lethe.views.MoneyWiseAnalysisFilter.MoneyWiseAnalysisDepositFilter;
+import io.github.tonywasher.joceanus.moneywise.lethe.views.MoneyWiseAnalysisFilter.MoneyWiseAnalysisLoanFilter;
+import io.github.tonywasher.joceanus.moneywise.lethe.views.MoneyWiseAnalysisFilter.MoneyWiseAnalysisPayeeFilter;
+import io.github.tonywasher.joceanus.moneywise.lethe.views.MoneyWiseAnalysisFilter.MoneyWiseAnalysisPortfolioCashFilter;
+import io.github.tonywasher.joceanus.moneywise.lethe.views.MoneyWiseAnalysisFilter.MoneyWiseAnalysisSecurityFilter;
+import io.github.tonywasher.joceanus.moneywise.lethe.views.MoneyWiseAnalysisFilter.MoneyWiseAnalysisTagFilter;
+import io.github.tonywasher.joceanus.moneywise.lethe.views.MoneyWiseAnalysisFilter.MoneyWiseAnalysisTaxBasisFilter;
+import io.github.tonywasher.joceanus.moneywise.lethe.views.MoneyWiseAnalysisFilter.MoneyWiseAnalysisTransCategoryFilter;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+/**
+ * List of filters for a transaction within an analysis.
+ */
+public class MoneyWiseTransactionFilters
+        implements MetisDataList&lt;MoneyWiseAnalysisFilter&lt;?, ?&gt;&gt; {
+    /**
+     * The list.
+     */
+    private final List&lt;MoneyWiseAnalysisFilter&lt;?, ?&gt;&gt; theList;
+
+    /**
+     * The transaction.
+     */
+    private final MoneyWiseTransaction theTrans;
+
+    /**
+     * The dateRange.
+     */
+    private final OceanusDateRange theDateRange;
+
+    /**
+     * Constructor.
+     *
+     * @param pAnalysis  the analysis
+     * @param pDateRange the dateRange
+     * @param pTrans     the transaction
+     */
+    public MoneyWiseTransactionFilters(final MoneyWiseAnalysis pAnalysis,
+                                       final OceanusDateRange pDateRange,
+<span class="nc" id="L85">                                       final MoneyWiseTransaction pTrans) {</span>
+        /* Store dateRange and transaction */
+<span class="nc" id="L87">        theDateRange = pDateRange;</span>
+<span class="nc" id="L88">        theTrans = pTrans;</span>
+
+        /* Create the list */
+<span class="nc" id="L91">        theList = new ArrayList&lt;&gt;();</span>
+
+        /* Analyse accounts */
+<span class="nc" id="L94">        analyseDeposits(pAnalysis.getDeposits());</span>
+<span class="nc" id="L95">        analyseCash(pAnalysis.getCash());</span>
+<span class="nc" id="L96">        analyseLoans(pAnalysis.getLoans());</span>
+
+        /* Analyse Portfolios */
+<span class="nc" id="L99">        analysePortfolios(pAnalysis.getPortfolios());</span>
+
+        /* Analyse Payees */
+<span class="nc" id="L102">        analysePayees(pAnalysis.getPayees());</span>
+
+        /* Analyse Categories */
+<span class="nc" id="L105">        analyseCategories(pAnalysis.getTransCategories());</span>
+
+        /* Analyse TaxBases */
+<span class="nc" id="L108">        analyseTaxBasis(pAnalysis.getTaxBasis());</span>
+
+        /* Analyse Tags */
+<span class="nc" id="L111">        analyseTags(pAnalysis.getTransactionTags());</span>
+<span class="nc" id="L112">    }</span>
+
+    @Override
+    public List&lt;MoneyWiseAnalysisFilter&lt;?, ?&gt;&gt; getUnderlyingList() {
+<span class="nc" id="L116">        return theList;</span>
+    }
+
+    /**
+     * Add relevant deposit filters.
+     *
+     * @param pDeposits the deposit buckets
+     */
+    private void analyseDeposits(final MoneyWiseAnalysisDepositBucketList pDeposits) {
+        /* Loop through the deposit buckets */
+<span class="nc" id="L126">        final Iterator&lt;MoneyWiseAnalysisDepositBucket&gt; myIterator = pDeposits.iterator();</span>
+<span class="nc bnc" id="L127" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L128">            final MoneyWiseAnalysisDepositBucket myBucket = myIterator.next();</span>
+
+            /* If this bucket is relevant for the transaction */
+<span class="nc bnc" id="L131" title="All 2 branches missed.">            if (myBucket.getValuesForTransaction(theTrans) != null) {</span>
+                /* Add filter */
+<span class="nc" id="L133">                final MoneyWiseAnalysisDepositFilter myFilter = new MoneyWiseAnalysisDepositFilter(myBucket);</span>
+<span class="nc" id="L134">                myFilter.setDateRange(theDateRange);</span>
+<span class="nc" id="L135">                add(myFilter);</span>
+            }
+<span class="nc" id="L137">        }</span>
+<span class="nc" id="L138">    }</span>
+
+    /**
+     * Add relevant cash filters.
+     *
+     * @param pCash the cash buckets
+     */
+    private void analyseCash(final MoneyWiseAnalysisCashBucketList pCash) {
+        /* Loop through the cash buckets */
+<span class="nc" id="L147">        final Iterator&lt;MoneyWiseAnalysisCashBucket&gt; myIterator = pCash.iterator();</span>
+<span class="nc bnc" id="L148" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L149">            final MoneyWiseAnalysisCashBucket myBucket = myIterator.next();</span>
+
+            /* If this bucket is relevant for the transaction */
+<span class="nc bnc" id="L152" title="All 2 branches missed.">            if (myBucket.getValuesForTransaction(theTrans) != null) {</span>
+                /* Add filter */
+<span class="nc" id="L154">                final MoneyWiseAnalysisCashFilter myFilter = new MoneyWiseAnalysisCashFilter(myBucket);</span>
+<span class="nc" id="L155">                myFilter.setDateRange(theDateRange);</span>
+<span class="nc" id="L156">                add(myFilter);</span>
+            }
+<span class="nc" id="L158">        }</span>
+<span class="nc" id="L159">    }</span>
+
+    /**
+     * Add relevant loan filters.
+     *
+     * @param pLoans the loan buckets
+     */
+    private void analyseLoans(final MoneyWiseAnalysisLoanBucketList pLoans) {
+        /* Loop through the loan buckets */
+<span class="nc" id="L168">        final Iterator&lt;MoneyWiseAnalysisLoanBucket&gt; myIterator = pLoans.iterator();</span>
+<span class="nc bnc" id="L169" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L170">            final MoneyWiseAnalysisLoanBucket myBucket = myIterator.next();</span>
+
+            /* If this bucket is relevant for the transaction */
+<span class="nc bnc" id="L173" title="All 2 branches missed.">            if (myBucket.getValuesForTransaction(theTrans) != null) {</span>
+                /* Add filter */
+<span class="nc" id="L175">                final MoneyWiseAnalysisLoanFilter myFilter = new MoneyWiseAnalysisLoanFilter(myBucket);</span>
+<span class="nc" id="L176">                myFilter.setDateRange(theDateRange);</span>
+<span class="nc" id="L177">                add(myFilter);</span>
+            }
+<span class="nc" id="L179">        }</span>
+<span class="nc" id="L180">    }</span>
+
+    /**
+     * Add relevant portfolio filters.
+     *
+     * @param pPortfolios the portfolio buckets
+     */
+    private void analysePortfolios(final MoneyWiseAnalysisPortfolioBucketList pPortfolios) {
+        /* Loop through the portfolio buckets */
+<span class="nc" id="L189">        final Iterator&lt;MoneyWiseAnalysisPortfolioBucket&gt; myIterator = pPortfolios.iterator();</span>
+<span class="nc bnc" id="L190" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L191">            final MoneyWiseAnalysisPortfolioBucket myBucket = myIterator.next();</span>
+
+            /* Analyse Securities */
+<span class="nc" id="L194">            analyseSecurities(myBucket.getSecurities());</span>
+
+            /* Check for Cash bucket is relevant for the transaction */
+<span class="nc" id="L197">            final MoneyWiseAnalysisPortfolioCashBucket myCash = myBucket.getPortfolioCash();</span>
+<span class="nc bnc" id="L198" title="All 2 branches missed.">            if (myCash.getValuesForTransaction(theTrans) != null) {</span>
+                /* Add filter */
+<span class="nc" id="L200">                final MoneyWiseAnalysisPortfolioCashFilter myFilter = new MoneyWiseAnalysisPortfolioCashFilter(myBucket);</span>
+<span class="nc" id="L201">                myFilter.setDateRange(theDateRange);</span>
+<span class="nc" id="L202">                add(myFilter);</span>
+            }
+<span class="nc" id="L204">        }</span>
+<span class="nc" id="L205">    }</span>
+
+    /**
+     * Add relevant security filters.
+     *
+     * @param pSecurities the security buckets
+     */
+    private void analyseSecurities(final MoneyWiseAnalysisSecurityBucketList pSecurities) {
+        /* Loop through the security buckets */
+<span class="nc" id="L214">        final Iterator&lt;MoneyWiseAnalysisSecurityBucket&gt; myIterator = pSecurities.iterator();</span>
+<span class="nc bnc" id="L215" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L216">            final MoneyWiseAnalysisSecurityBucket myBucket = myIterator.next();</span>
+
+            /* If this bucket is relevant for the transaction */
+<span class="nc bnc" id="L219" title="All 2 branches missed.">            if (myBucket.getValuesForTransaction(theTrans) != null) {</span>
+                /* Add filter */
+<span class="nc" id="L221">                final MoneyWiseAnalysisSecurityFilter myFilter = new MoneyWiseAnalysisSecurityFilter(myBucket);</span>
+<span class="nc" id="L222">                myFilter.setDateRange(theDateRange);</span>
+<span class="nc" id="L223">                add(myFilter);</span>
+            }
+<span class="nc" id="L225">        }</span>
+<span class="nc" id="L226">    }</span>
+
+    /**
+     * Add relevant payee filters.
+     *
+     * @param pPayees the payee buckets
+     */
+    private void analysePayees(final MoneyWiseAnalysisPayeeBucketList pPayees) {
+        /* Loop through the payee buckets */
+<span class="nc" id="L235">        final Iterator&lt;MoneyWiseAnalysisPayeeBucket&gt; myIterator = pPayees.iterator();</span>
+<span class="nc bnc" id="L236" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L237">            final MoneyWiseAnalysisPayeeBucket myBucket = myIterator.next();</span>
+
+            /* If this bucket is relevant for the transaction */
+<span class="nc bnc" id="L240" title="All 2 branches missed.">            if (myBucket.getValuesForTransaction(theTrans) != null) {</span>
+                /* Add filter */
+<span class="nc" id="L242">                final MoneyWiseAnalysisPayeeFilter myFilter = new MoneyWiseAnalysisPayeeFilter(myBucket);</span>
+<span class="nc" id="L243">                myFilter.setDateRange(theDateRange);</span>
+<span class="nc" id="L244">                add(myFilter);</span>
+            }
+<span class="nc" id="L246">        }</span>
+<span class="nc" id="L247">    }</span>
+
+    /**
+     * Add relevant category filters.
+     *
+     * @param pCategories the category buckets
+     */
+    private void analyseCategories(final MoneyWiseAnalysisTransCategoryBucketList pCategories) {
+        /* Loop through the category buckets */
+<span class="nc" id="L256">        final Iterator&lt;MoneyWiseAnalysisTransCategoryBucket&gt; myIterator = pCategories.iterator();</span>
+<span class="nc bnc" id="L257" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L258">            final MoneyWiseAnalysisTransCategoryBucket myBucket = myIterator.next();</span>
+
+            /* If this bucket is relevant for the transaction */
+<span class="nc bnc" id="L261" title="All 2 branches missed.">            if (myBucket.getValuesForTransaction(theTrans) != null) {</span>
+                /* Add filter */
+<span class="nc" id="L263">                final MoneyWiseAnalysisTransCategoryFilter myFilter = new MoneyWiseAnalysisTransCategoryFilter(myBucket);</span>
+<span class="nc" id="L264">                myFilter.setDateRange(theDateRange);</span>
+<span class="nc" id="L265">                add(myFilter);</span>
+            }
+<span class="nc" id="L267">        }</span>
+<span class="nc" id="L268">    }</span>
+
+    /**
+     * Add relevant taxBasis filters.
+     *
+     * @param pBases the taxBasis buckets
+     */
+    private void analyseTaxBasis(final MoneyWiseAnalysisTaxBasisBucketList pBases) {
+        /* Loop through the taxBasis buckets */
+<span class="nc" id="L277">        final Iterator&lt;MoneyWiseAnalysisTaxBasisBucket&gt; myIterator = pBases.iterator();</span>
+<span class="nc bnc" id="L278" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L279">            final MoneyWiseAnalysisTaxBasisBucket myBucket = myIterator.next();</span>
+
+            /* If this bucket is relevant for the transaction */
+<span class="nc bnc" id="L282" title="All 2 branches missed.">            if (myBucket.getValuesForTransaction(theTrans) != null) {</span>
+                /* Add filter */
+<span class="nc" id="L284">                final MoneyWiseAnalysisTaxBasisFilter myFilter = new MoneyWiseAnalysisTaxBasisFilter(myBucket);</span>
+<span class="nc" id="L285">                myFilter.setDateRange(theDateRange);</span>
+<span class="nc" id="L286">                add(myFilter);</span>
+            }
+<span class="nc" id="L288">        }</span>
+<span class="nc" id="L289">    }</span>
+
+    /**
+     * Add relevant transaction tag filters.
+     *
+     * @param pTags the trqansactionTag buckets
+     */
+    private void analyseTags(final MoneyWiseAnalysisTransTagBucketList pTags) {
+        /* Loop through the tag buckets */
+<span class="nc" id="L298">        final Iterator&lt;MoneyWiseAnalysisTransTagBucket&gt; myIterator = pTags.iterator();</span>
+<span class="nc bnc" id="L299" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L300">            final MoneyWiseAnalysisTransTagBucket myBucket = myIterator.next();</span>
+
+            /* If this bucket is relevant for the transaction */
+<span class="nc bnc" id="L303" title="All 2 branches missed.">            if (myBucket.hasTransaction(theTrans)) {</span>
+                /* Add filter */
+<span class="nc" id="L305">                final MoneyWiseAnalysisTagFilter myFilter = new MoneyWiseAnalysisTagFilter(myBucket);</span>
+<span class="nc" id="L306">                myFilter.setDateRange(theDateRange);</span>
+<span class="nc" id="L307">                add(myFilter);</span>
+            }
+<span class="nc" id="L309">        }</span>
+<span class="nc" id="L310">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

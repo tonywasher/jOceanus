@@ -1,0 +1,288 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>OceanusDecimalLocale.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Oceanus Java Core Utilities</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.oceanus.decimal</a> &gt; <span class="el_source">OceanusDecimalLocale.java</span></div><h1>OceanusDecimalLocale.java</h1><pre class="source lang-java linenums">/*
+ * Oceanus: Java Utilities
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.oceanus.decimal;
+
+import io.github.tonywasher.joceanus.oceanus.base.OceanusLocale;
+
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.text.NumberFormat;
+import java.util.Currency;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+
+/**
+ * Locale constants.
+ */
+public class OceanusDecimalLocale {
+    /**
+     * The dollar.
+     */
+    private static final String DOLLAR = &quot;$&quot;;
+
+    /**
+     * The pound.
+     */
+    private static final String POUND = &quot;£&quot;;
+
+    /**
+     * The locale.
+     */
+    private final Locale theLocale;
+
+    /**
+     * The currencies map.
+     */
+    private final Map&lt;String, Currency&gt; theCurrencyMap;
+
+    /**
+     * The currency symbols map.
+     */
+    private final Map&lt;String, String&gt; theSymbolMap;
+
+    /**
+     * The grouping size.
+     */
+    private final int theGroupingSize;
+
+    /**
+     * The grouping separator.
+     */
+    private final String theGrouping;
+
+    /**
+     * The minus sign.
+     */
+    private final char theMinusSign;
+
+    /**
+     * The perCent symbol.
+     */
+    private final char thePerCent;
+
+    /**
+     * The perMille symbol.
+     */
+    private final char thePerMille;
+
+    /**
+     * The decimal separator.
+     */
+    private final String theDecimal;
+
+    /**
+     * The money decimal separator.
+     */
+    private final String theMoneyDecimal;
+
+    /**
+     * The default currency.
+     */
+    private final Currency theCurrency;
+
+    /**
+     * Constructor.
+     */
+    protected OceanusDecimalLocale() {
+        /* Use default locale */
+<span class="fc" id="L103">        this(OceanusLocale.getDefaultLocale());</span>
+<span class="fc" id="L104">    }</span>
+
+    /**
+     * Constructor.
+     *
+     * @param pLocale the locale
+     */
+<span class="fc" id="L111">    protected OceanusDecimalLocale(final Locale pLocale) {</span>
+        /* Default to UK locale if the locale only has a pseudo-currency */
+<span class="fc" id="L113">        DecimalFormatSymbols mySymbols = DecimalFormatSymbols.getInstance(pLocale);</span>
+<span class="fc" id="L114">        final Currency myCurrency = mySymbols.getCurrency();</span>
+<span class="pc bpc" id="L115" title="1 of 2 branches missed.">        theLocale = myCurrency.getDefaultFractionDigits() == -1</span>
+<span class="nc" id="L116">                ? Locale.UK</span>
+<span class="fc" id="L117">                : pLocale;</span>
+
+        /* Create currency maps */
+<span class="fc" id="L120">        theCurrencyMap = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L121">        theSymbolMap = new HashMap&lt;&gt;();</span>
+
+        /* Access decimal formats */
+<span class="fc" id="L124">        mySymbols = DecimalFormatSymbols.getInstance(theLocale);</span>
+<span class="fc" id="L125">        final DecimalFormat myFormat = (DecimalFormat) NumberFormat.getInstance(theLocale);</span>
+<span class="fc" id="L126">        theGroupingSize = myFormat.getGroupingSize();</span>
+
+        /* Access various interesting formats */
+<span class="fc" id="L129">        theMinusSign = mySymbols.getMinusSign();</span>
+<span class="fc" id="L130">        thePerCent = mySymbols.getPercent();</span>
+<span class="fc" id="L131">        thePerMille = mySymbols.getPerMill();</span>
+<span class="fc" id="L132">        theGrouping = Character.toString(mySymbols.getGroupingSeparator());</span>
+<span class="fc" id="L133">        theDecimal = Character.toString(mySymbols.getDecimalSeparator());</span>
+<span class="fc" id="L134">        theMoneyDecimal = Character.toString(mySymbols.getMonetaryDecimalSeparator());</span>
+
+        /* Access the default currency */
+<span class="fc" id="L137">        theCurrency = mySymbols.getCurrency();</span>
+<span class="fc" id="L138">        final String myCurrSymbol = theCurrency.getSymbol(theLocale);</span>
+<span class="fc" id="L139">        declareSymbol(myCurrSymbol, theCurrency);</span>
+
+        /* Declare simplified USD/GBP if possible */
+<span class="pc bpc" id="L142" title="1 of 2 branches missed.">        if (!DOLLAR.equals(myCurrSymbol)) {</span>
+<span class="fc" id="L143">            declareSymbol(DOLLAR, Currency.getInstance(Locale.US));</span>
+        }
+<span class="pc bpc" id="L145" title="1 of 2 branches missed.">        if (!POUND.equals(myCurrSymbol)) {</span>
+<span class="nc" id="L146">            declareSymbol(POUND, Currency.getInstance(Locale.UK));</span>
+        }
+<span class="fc" id="L148">    }</span>
+
+    /**
+     * Obtain the grouping size.
+     *
+     * @return the size
+     */
+    protected int getGroupingSize() {
+<span class="nc" id="L156">        return theGroupingSize;</span>
+    }
+
+    /**
+     * Obtain the grouping string.
+     *
+     * @return the string
+     */
+    protected String getGrouping() {
+<span class="fc" id="L165">        return theGrouping;</span>
+    }
+
+    /**
+     * Obtain the minus sign.
+     *
+     * @return the sign
+     */
+    protected char getMinusSign() {
+<span class="fc" id="L174">        return theMinusSign;</span>
+    }
+
+    /**
+     * Obtain the perCent sign.
+     *
+     * @return the sign
+     */
+    protected char getPerCent() {
+<span class="nc" id="L183">        return thePerCent;</span>
+    }
+
+    /**
+     * Obtain the perMille sign.
+     *
+     * @return the sign
+     */
+    protected char getPerMille() {
+<span class="nc" id="L192">        return thePerMille;</span>
+    }
+
+    /**
+     * Obtain the decimal string.
+     *
+     * @return the string
+     */
+    protected String getDecimal() {
+<span class="fc" id="L201">        return theDecimal;</span>
+    }
+
+    /**
+     * Obtain the grouping string.
+     *
+     * @return the string
+     */
+    protected String getMoneyDecimal() {
+<span class="nc" id="L210">        return theMoneyDecimal;</span>
+    }
+
+    /**
+     * Obtain the default currency.
+     *
+     * @return the currency
+     */
+    protected Currency getDefaultCurrency() {
+<span class="nc" id="L219">        return theCurrency;</span>
+    }
+
+    /**
+     * Parse currency symbol.
+     *
+     * @param pSymbol the symbol
+     * @return the currency
+     * @throws IllegalArgumentException on invalid currency
+     */
+    protected Currency parseCurrencySymbol(final String pSymbol) {
+        /* Look for the currency in the map */
+<span class="nc" id="L231">        Currency myCurrency = theCurrencyMap.get(pSymbol);</span>
+
+        /* If this is a new currency */
+<span class="nc bnc" id="L234" title="All 2 branches missed.">        if (myCurrency == null) {</span>
+            /* Loop through all the currencies */
+<span class="nc bnc" id="L236" title="All 2 branches missed.">            for (Currency myCurr : Currency.getAvailableCurrencies()) {</span>
+                /* If the symbol matches */
+<span class="nc bnc" id="L238" title="All 2 branches missed.">                if (pSymbol.equals(myCurr.getSymbol(theLocale))) {</span>
+                    /* Record currency and break the loop */
+<span class="nc" id="L240">                    myCurrency = myCurr;</span>
+<span class="nc" id="L241">                    declareSymbol(pSymbol, myCurrency);</span>
+<span class="nc" id="L242">                    break;</span>
+                }
+<span class="nc" id="L244">            }</span>
+
+            /* If we did not find a currency */
+<span class="nc bnc" id="L247" title="All 2 branches missed.">            if (myCurrency == null) {</span>
+                /* Reject the currency */
+<span class="nc" id="L249">                throw new IllegalArgumentException(&quot;Invalid currency: &quot;</span>
+                        + pSymbol);
+            }
+        }
+
+        /* Return the currency */
+<span class="nc" id="L255">        return myCurrency;</span>
+    }
+
+    /**
+     * Declare symbol.
+     *
+     * @param pSymbol   the symbol
+     * @param pCurrency the currency
+     */
+    private void declareSymbol(final String pSymbol,
+                               final Currency pCurrency) {
+        /* Store in currency map */
+<span class="fc" id="L267">        theCurrencyMap.put(pSymbol, pCurrency);</span>
+
+        /* Store symbol if not already declared */
+<span class="fc" id="L270">        final String myCode = pCurrency.getCurrencyCode();</span>
+<span class="fc" id="L271">        theSymbolMap.computeIfAbsent(myCode, c -&gt; pSymbol);</span>
+<span class="fc" id="L272">    }</span>
+
+    /**
+     * Get currency symbol.
+     *
+     * @param pCurrency the currency
+     * @return the symbol
+     */
+    protected String getSymbol(final Currency pCurrency) {
+        /* Look for the currency in the map */
+<span class="nc" id="L282">        final String mySymbol = theSymbolMap.get(pCurrency.getCurrencyCode());</span>
+<span class="nc bnc" id="L283" title="All 2 branches missed.">        return mySymbol == null</span>
+<span class="nc" id="L284">                ? pCurrency.getSymbol(theLocale)</span>
+<span class="nc" id="L285">                : mySymbol;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

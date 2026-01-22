@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseArchiveDepositCategoryType.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.moneywise.archive</a> &gt; <span class="el_source">MoneyWiseArchiveDepositCategoryType.java</span></div><h1>MoneyWiseArchiveDepositCategoryType.java</h1><pre class="source lang-java linenums">/*
+ * MoneyWise: Finance Application
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.moneywise.archive;
+
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.profile.OceanusProfile;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDataSet;
+import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseDepositCategoryType;
+import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseDepositCategoryType.MoneyWiseDepositCategoryTypeList;
+import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseIOException;
+import io.github.tonywasher.joceanus.prometheus.service.sheet.PrometheusSheetCell;
+import io.github.tonywasher.joceanus.prometheus.service.sheet.PrometheusSheetRow;
+import io.github.tonywasher.joceanus.prometheus.service.sheet.PrometheusSheetView;
+import io.github.tonywasher.joceanus.prometheus.service.sheet.PrometheusSheetWorkBook;
+import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadCancelException;
+import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadStatusReport;
+
+/**
+ * Archive Loader for DepositCategoryType.
+ *
+ * @author Tony Washer
+ */
+public final class MoneyWiseArchiveDepositCategoryType {
+    /**
+     * NamedArea for DepositCategoryTypes.
+     */
+<span class="nc" id="L41">    private static final String AREA_DEPOSITCATTYPES = MoneyWiseDepositCategoryType.LIST_NAME;</span>
+
+    /**
+     * Report processor.
+     */
+    private final TethysUIThreadStatusReport theReport;
+
+    /**
+     * Workbook.
+     */
+    private final PrometheusSheetWorkBook theWorkBook;
+
+    /**
+     * DataSet.
+     */
+    private final MoneyWiseDataSet theData;
+
+    /**
+     * Constructor.
+     *
+     * @param pReport   the report
+     * @param pWorkBook the workbook
+     * @param pData     the data set to load into
+     */
+    MoneyWiseArchiveDepositCategoryType(final TethysUIThreadStatusReport pReport,
+                                        final PrometheusSheetWorkBook pWorkBook,
+<span class="nc" id="L67">                                        final MoneyWiseDataSet pData) {</span>
+<span class="nc" id="L68">        theReport = pReport;</span>
+<span class="nc" id="L69">        theWorkBook = pWorkBook;</span>
+<span class="nc" id="L70">        theData = pData;</span>
+<span class="nc" id="L71">    }</span>
+
+    /**
+     * Load the Deposit Types from an archive.
+     *
+     * @param pStage the stage
+     * @throws OceanusException on error
+     */
+    void loadArchive(final OceanusProfile pStage) throws OceanusException {
+        /* Access the list of deposit types */
+<span class="nc" id="L81">        pStage.startTask(AREA_DEPOSITCATTYPES);</span>
+<span class="nc" id="L82">        final MoneyWiseDepositCategoryTypeList myList = theData.getDepositCategoryTypes();</span>
+
+        /* Protect against exceptions */
+        try {
+            /* Find the range of cells */
+<span class="nc" id="L87">            final PrometheusSheetView myView = theWorkBook.getRangeView(AREA_DEPOSITCATTYPES);</span>
+
+            /* Declare the new stage */
+<span class="nc" id="L90">            theReport.setNewStage(AREA_DEPOSITCATTYPES);</span>
+
+            /* Count the number of AccountCategoryTypes */
+<span class="nc" id="L93">            final int myTotal = myView.getRowCount();</span>
+
+            /* Declare the number of steps */
+<span class="nc" id="L96">            theReport.setNumSteps(myTotal);</span>
+
+            /* Loop through the rows of the single column range */
+<span class="nc bnc" id="L99" title="All 2 branches missed.">            for (int i = 0; i &lt; myTotal; i++) {</span>
+                /* Access the cell by reference */
+<span class="nc" id="L101">                final PrometheusSheetRow myRow = myView.getRowByIndex(i);</span>
+<span class="nc" id="L102">                final PrometheusSheetCell myCell = myView.getRowCellByIndex(myRow, 0);</span>
+
+                /* Add the value into the tables */
+<span class="nc" id="L105">                myList.addBasicItem(myCell.getString());</span>
+
+                /* Report the progress */
+<span class="nc" id="L108">                theReport.setNextStep();</span>
+            }
+
+            /* PostProcess the list */
+<span class="nc" id="L112">            myList.postProcessOnLoad();</span>
+
+            /* Handle exceptions */
+<span class="nc" id="L115">        } catch (TethysUIThreadCancelException e) {</span>
+<span class="nc" id="L116">            throw e;</span>
+<span class="nc" id="L117">        } catch (OceanusException e) {</span>
+<span class="nc" id="L118">            throw new MoneyWiseIOException(&quot;Failed to Load &quot; + myList.getItemType().getListName(), e);</span>
+<span class="nc" id="L119">        }</span>
+<span class="nc" id="L120">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

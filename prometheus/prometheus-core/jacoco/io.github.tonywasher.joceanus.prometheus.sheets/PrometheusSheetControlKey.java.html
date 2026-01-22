@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PrometheusSheetControlKey.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Prometheus Core Application Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.prometheus.sheets</a> &gt; <span class="el_source">PrometheusSheetControlKey.java</span></div><h1>PrometheusSheetControlKey.java</h1><pre class="source lang-java linenums">/*
+ * Prometheus: Application Framework
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.prometheus.sheets;
+
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusControlKey;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataResource;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataSet;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValues;
+
+/**
+ * SheetDataItem extension for ControlKey.
+ *
+ * @author Tony Washer
+ */
+public class PrometheusSheetControlKey
+        extends PrometheusSheetDataItem&lt;PrometheusControlKey&gt; {
+    /**
+     * SheetName for Keys.
+     */
+<span class="nc" id="L35">    private static final String SHEET_NAME = PrometheusControlKey.class.getSimpleName();</span>
+
+    /**
+     * KeyData column.
+     */
+    private static final int COL_CREATION = COL_ID + 1;
+
+    /**
+     * KeyData column.
+     */
+    private static final int COL_KEYDATA = COL_CREATION + 1;
+
+    /**
+     * Constructor for loading a spreadsheet.
+     *
+     * @param pReader the spreadsheet reader
+     */
+    protected PrometheusSheetControlKey(final PrometheusSheetReader pReader) {
+        /* Call super constructor */
+<span class="nc" id="L54">        super(pReader, SHEET_NAME);</span>
+
+        /* Access the Lists */
+<span class="nc" id="L57">        final PrometheusDataSet myData = pReader.getData();</span>
+<span class="nc" id="L58">        setDataList(myData.getControlKeys());</span>
+<span class="nc" id="L59">    }</span>
+
+    /**
+     * Constructor for creating a spreadsheet.
+     *
+     * @param pWriter the Spreadsheet writer
+     */
+    protected PrometheusSheetControlKey(final PrometheusSheetWriter pWriter) {
+        /* Call super constructor */
+<span class="nc" id="L68">        super(pWriter, SHEET_NAME);</span>
+
+        /* Access the Control list */
+<span class="nc" id="L71">        final PrometheusDataSet myData = pWriter.getData();</span>
+<span class="nc" id="L72">        setDataList(myData.getControlKeys());</span>
+<span class="nc" id="L73">    }</span>
+
+    @Override
+    protected PrometheusDataValues loadSecureValues() throws OceanusException {
+        /* Build data values */
+<span class="nc" id="L78">        final PrometheusDataValues myValues = getRowValues(PrometheusControlKey.OBJECT_NAME);</span>
+<span class="nc" id="L79">        myValues.addValue(PrometheusDataResource.CONTROLKEY_CREATION, loadDate(COL_CREATION));</span>
+<span class="nc" id="L80">        myValues.addValue(PrometheusDataResource.CONTROLKEY_LOCKBYTES, loadBytes(COL_KEYDATA));</span>
+
+        /* Return the values */
+<span class="nc" id="L83">        return myValues;</span>
+    }
+
+    @Override
+    protected void insertSecureItem(final PrometheusControlKey pItem) throws OceanusException {
+        /* Set the fields */
+<span class="nc" id="L89">        super.insertSecureItem(pItem);</span>
+<span class="nc" id="L90">        writeDate(COL_CREATION, pItem.getCreationDate());</span>
+<span class="nc" id="L91">        writeBytes(COL_KEYDATA, pItem.getLockBytes());</span>
+<span class="nc" id="L92">    }</span>
+
+    @Override
+    protected int getLastColumn() {
+        /* Return the last column */
+<span class="nc" id="L97">        return COL_KEYDATA;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

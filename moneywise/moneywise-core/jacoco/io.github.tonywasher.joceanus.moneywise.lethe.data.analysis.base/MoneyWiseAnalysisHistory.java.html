@@ -1,0 +1,358 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseAnalysisHistory.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.base</a> &gt; <span class="el_source">MoneyWiseAnalysisHistory.java</span></div><h1>MoneyWiseAnalysisHistory.java</h1><pre class="source lang-java linenums">/*
+ * MoneyWise: Finance Application
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.base;
+
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimal;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
+import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataMap;
+import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataObjectFormat;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransaction;
+
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+
+/**
+ * History for a bucket.
+ *
+ * @param &lt;T&gt; the values
+ * @param &lt;E&gt; the enum class
+ */
+public class MoneyWiseAnalysisHistory&lt;T extends MoneyWiseAnalysisValues&lt;T, E&gt;, E extends Enum&lt;E&gt; &amp; MoneyWiseAnalysisAttribute&gt;
+        implements MetisDataObjectFormat, MetisDataMap&lt;Integer, MoneyWiseAnalysisSnapShot&lt;T, E&gt;&gt; {
+    /**
+     * The history map.
+     */
+    private final Map&lt;Integer, MoneyWiseAnalysisSnapShot&lt;T, E&gt;&gt; theHistoryMap;
+
+    /**
+     * values.
+     */
+    private final T theValues;
+
+    /**
+     * Base values.
+     */
+    private final T theBaseValues;
+
+    /**
+     * Last values.
+     */
+    private T theLastValues;
+
+    /**
+     * Constructor.
+     *
+     * @param pValues the initial values
+     */
+<span class="fc" id="L67">    public MoneyWiseAnalysisHistory(final T pValues) {</span>
+        /* Store the values */
+<span class="fc" id="L69">        theValues = pValues;</span>
+
+        /* Create the history map */
+<span class="fc" id="L72">        theHistoryMap = new LinkedHashMap&lt;&gt;();</span>
+
+        /* Create base as a snapshot */
+<span class="fc" id="L75">        theBaseValues = theValues.getFullSnapShot();</span>
+<span class="fc" id="L76">    }</span>
+
+    /**
+     * Constructor.
+     *
+     * @param pHistory the base history
+     */
+<span class="nc" id="L83">    public MoneyWiseAnalysisHistory(final MoneyWiseAnalysisHistory&lt;T, E&gt; pHistory) {</span>
+        /* Copy the base values */
+<span class="nc" id="L85">        theBaseValues = pHistory.getBaseValues().getFullSnapShot();</span>
+<span class="nc" id="L86">        theValues = theBaseValues.getCounterSnapShot();</span>
+<span class="nc" id="L87">        theLastValues = theBaseValues;</span>
+
+        /* Create the history map */
+<span class="nc" id="L90">        theHistoryMap = new LinkedHashMap&lt;&gt;();</span>
+<span class="nc" id="L91">    }</span>
+
+    /**
+     * Constructor.
+     *
+     * @param pHistory the base history
+     * @param pDate    the date for history cut-off
+     */
+    public MoneyWiseAnalysisHistory(final MoneyWiseAnalysisHistory&lt;T, E&gt; pHistory,
+<span class="nc" id="L100">                                    final OceanusDate pDate) {</span>
+        /* Copy the base values */
+<span class="nc" id="L102">        theBaseValues = pHistory.getBaseValues().getFullSnapShot();</span>
+<span class="nc" id="L103">        theLastValues = theBaseValues;</span>
+
+        /* Create the history map */
+<span class="nc" id="L106">        theHistoryMap = new LinkedHashMap&lt;&gt;();</span>
+
+        /* Record latest transaction */
+<span class="nc" id="L109">        MoneyWiseAnalysisSnapShot&lt;T, E&gt; myLatest = null;</span>
+
+        /* Loop through the map */
+<span class="nc" id="L112">        final Iterator&lt;Entry&lt;Integer, MoneyWiseAnalysisSnapShot&lt;T, E&gt;&gt;&gt; myIterator = pHistory.entryIterator();</span>
+<span class="nc bnc" id="L113" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L114">            final Entry&lt;Integer, MoneyWiseAnalysisSnapShot&lt;T, E&gt;&gt; myEntry = myIterator.next();</span>
+<span class="nc" id="L115">            final MoneyWiseAnalysisSnapShot&lt;T, E&gt; myTrans = myEntry.getValue();</span>
+
+            /* If we have passed the Date, break the loop */
+<span class="nc bnc" id="L118" title="All 2 branches missed.">            if (pDate.compareTo(myTrans.getDate()) &lt; 0) {</span>
+<span class="nc" id="L119">                break;</span>
+            }
+
+            /* Add to the map */
+<span class="nc" id="L123">            final MoneyWiseAnalysisSnapShot&lt;T, E&gt; myNewTrans = new MoneyWiseAnalysisSnapShot&lt;&gt;(myTrans, theBaseValues, theLastValues);</span>
+<span class="nc" id="L124">            theLastValues = myNewTrans.getSnapShot();</span>
+<span class="nc" id="L125">            theHistoryMap.put(myEntry.getKey(), myNewTrans);</span>
+
+            /* Store latest value */
+<span class="nc" id="L128">            myLatest = myTrans;</span>
+<span class="nc" id="L129">        }</span>
+
+        /* If we have no entries */
+<span class="nc bnc" id="L132" title="All 2 branches missed.">        if (myLatest == null) {</span>
+            /* Values are identical to base values */
+<span class="nc" id="L134">            theValues = theBaseValues.getCounterSnapShot();</span>
+        } else {
+            /* Take a snapShot of the latest values */
+<span class="nc" id="L137">            theValues = myLatest.getCounterSnapShot();</span>
+        }
+<span class="nc" id="L139">    }</span>
+
+    /**
+     * Constructor.
+     *
+     * @param pHistory the base history
+     * @param pRange   the date range for history cut-off
+     */
+    public MoneyWiseAnalysisHistory(final MoneyWiseAnalysisHistory&lt;T, E&gt; pHistory,
+<span class="nc" id="L148">                                    final OceanusDateRange pRange) {</span>
+        /* Create the history map */
+<span class="nc" id="L150">        theHistoryMap = new LinkedHashMap&lt;&gt;();</span>
+
+        /* Record first and last events */
+<span class="nc" id="L153">        MoneyWiseAnalysisSnapShot&lt;T, E&gt; myFirst = null;</span>
+<span class="nc" id="L154">        MoneyWiseAnalysisSnapShot&lt;T, E&gt; myLatest = null;</span>
+
+        /* Loop through the map */
+<span class="nc" id="L157">        final Iterator&lt;Entry&lt;Integer, MoneyWiseAnalysisSnapShot&lt;T, E&gt;&gt;&gt; myIterator = pHistory.entryIterator();</span>
+<span class="nc bnc" id="L158" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L159">            final Entry&lt;Integer, MoneyWiseAnalysisSnapShot&lt;T, E&gt;&gt; myEntry = myIterator.next();</span>
+<span class="nc" id="L160">            final MoneyWiseAnalysisSnapShot&lt;T, E&gt; myTrans = myEntry.getValue();</span>
+
+            /* If we are past the initial Date */
+<span class="nc" id="L163">            final int iRange = pRange.compareToDate(myTrans.getDate());</span>
+<span class="nc bnc" id="L164" title="All 2 branches missed.">            if (iRange &lt;= 0) {</span>
+                /* If we are within the range */
+<span class="nc bnc" id="L166" title="All 2 branches missed.">                if (iRange == 0) {</span>
+                    /* Note that this counts as latest */
+<span class="nc" id="L168">                    myLatest = myTrans;</span>
+                }
+
+                /* Break the loop */
+                break;
+            }
+
+            /* Store first value */
+<span class="nc" id="L176">            myFirst = myTrans;</span>
+<span class="nc" id="L177">        }</span>
+
+        /* Determine the base values */
+<span class="nc bnc" id="L180" title="All 2 branches missed.">        theBaseValues = (myFirst == null)</span>
+<span class="nc" id="L181">                ? pHistory.getBaseValues().getFullSnapShot()</span>
+<span class="nc" id="L182">                : myFirst.getFullSnapShot();</span>
+<span class="nc" id="L183">        theLastValues = theBaseValues;</span>
+
+        /* If we broke the loop because we found an event */
+<span class="nc bnc" id="L186" title="All 2 branches missed.">        if (myLatest != null) {</span>
+            /* Add to the map */
+<span class="nc" id="L188">            final MoneyWiseAnalysisSnapShot&lt;T, E&gt; myNewTrans = new MoneyWiseAnalysisSnapShot&lt;&gt;(myLatest, theBaseValues, theLastValues);</span>
+<span class="nc" id="L189">            theHistoryMap.put(myLatest.getId(), myNewTrans);</span>
+<span class="nc" id="L190">            theLastValues = myNewTrans.getSnapShot();</span>
+        }
+
+        /* Continue the loop */
+<span class="nc bnc" id="L194" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L195">            final Entry&lt;Integer, MoneyWiseAnalysisSnapShot&lt;T, E&gt;&gt; myEntry = myIterator.next();</span>
+<span class="nc" id="L196">            final MoneyWiseAnalysisSnapShot&lt;T, E&gt; myTrans = myEntry.getValue();</span>
+
+            /* If we are past the range, break the loop */
+<span class="nc bnc" id="L199" title="All 2 branches missed.">            if (pRange.compareToDate(myTrans.getDate()) &lt; 0) {</span>
+<span class="nc" id="L200">                break;</span>
+            }
+
+            /* Add to the map */
+<span class="nc" id="L204">            final MoneyWiseAnalysisSnapShot&lt;T, E&gt; myNewTrans = new MoneyWiseAnalysisSnapShot&lt;&gt;(myTrans, theBaseValues, theLastValues);</span>
+<span class="nc" id="L205">            theHistoryMap.put(myEntry.getKey(), myNewTrans);</span>
+<span class="nc" id="L206">            theLastValues = myNewTrans.getSnapShot();</span>
+
+            /* Store latest value */
+<span class="nc" id="L209">            myLatest = myTrans;</span>
+<span class="nc" id="L210">        }</span>
+
+        /* Store the values */
+<span class="nc bnc" id="L213" title="All 2 branches missed.">        theValues = (myLatest != null)</span>
+<span class="nc" id="L214">                ? myLatest.getCounterSnapShot()</span>
+<span class="nc" id="L215">                : theBaseValues.getCounterSnapShot();</span>
+<span class="nc" id="L216">    }</span>
+
+    @Override
+    public Map&lt;Integer, MoneyWiseAnalysisSnapShot&lt;T, E&gt;&gt; getUnderlyingMap() {
+<span class="nc" id="L220">        return theHistoryMap;</span>
+    }
+
+    @Override
+    public String formatObject(final OceanusDataFormatter pFormatter) {
+<span class="nc" id="L225">        return getClass().getSimpleName();</span>
+    }
+
+    /**
+     * Obtain the entry set iterator.
+     *
+     * @return the iterator
+     */
+    private Iterator&lt;Entry&lt;Integer, MoneyWiseAnalysisSnapShot&lt;T, E&gt;&gt;&gt; entryIterator() {
+<span class="nc" id="L234">        return theHistoryMap.entrySet().iterator();</span>
+    }
+
+    /**
+     * Are there any entries in the map?
+     *
+     * @return true/false
+     */
+    public boolean isIdle() {
+<span class="nc" id="L243">        return theHistoryMap.isEmpty();</span>
+    }
+
+    /**
+     * Obtain the values.
+     *
+     * @return the values
+     */
+    public T getValues() {
+<span class="fc" id="L252">        return theValues;</span>
+    }
+
+    /**
+     * Obtain the base values.
+     *
+     * @return the base values
+     */
+    public T getBaseValues() {
+<span class="fc" id="L261">        return theBaseValues;</span>
+    }
+
+    /**
+     * Register the transaction.
+     *
+     * @param pTrans  the transaction to register.
+     * @param pValues the values
+     * @return the snapShot values
+     */
+    public T registerTransaction(final MoneyWiseTransaction pTrans,
+                                 final T pValues) {
+        /* Allocate the transaction and add to map */
+<span class="nc" id="L274">        final MoneyWiseAnalysisSnapShot&lt;T, E&gt; myTrans = new MoneyWiseAnalysisSnapShot&lt;&gt;(pTrans, pValues, theLastValues);</span>
+<span class="nc" id="L275">        theHistoryMap.put(pTrans.getIndexedId(), myTrans);</span>
+<span class="nc" id="L276">        theLastValues = myTrans.getSnapShot();</span>
+
+        /* Return the values */
+<span class="nc" id="L279">        return theLastValues;</span>
+    }
+
+    /**
+     * Obtain values for transaction.
+     *
+     * @param pTrans the transaction
+     * @return the values (or null)
+     */
+    public T getValuesForTransaction(final MoneyWiseTransaction pTrans) {
+        /* Locate the transaction in the map */
+<span class="nc" id="L290">        final MoneyWiseAnalysisSnapShot&lt;T, E&gt; myTrans = theHistoryMap.get(pTrans.getIndexedId());</span>
+<span class="nc bnc" id="L291" title="All 2 branches missed.">        return myTrans == null</span>
+<span class="nc" id="L292">                ? null</span>
+<span class="nc" id="L293">                : myTrans.getSnapShot();</span>
+    }
+
+    /**
+     * Obtain previous values for transaction.
+     *
+     * @param pTrans the transaction
+     * @return the values (or null)
+     */
+    public T getPreviousValuesForTransaction(final MoneyWiseTransaction pTrans) {
+        /* Locate the transaction in the map */
+<span class="nc" id="L304">        final MoneyWiseAnalysisSnapShot&lt;T, E&gt; myTrans = theHistoryMap.get(pTrans.getIndexedId());</span>
+<span class="nc bnc" id="L305" title="All 2 branches missed.">        return myTrans == null</span>
+<span class="nc" id="L306">                ? null</span>
+<span class="nc" id="L307">                : myTrans.getPrevious();</span>
+    }
+
+    /**
+     * Obtain delta for transaction.
+     *
+     * @param pTrans the transaction
+     * @param pAttr  the attribute
+     * @return the delta (or null)
+     */
+    public OceanusDecimal getDeltaValue(final MoneyWiseTransaction pTrans,
+                                        final E pAttr) {
+        /* Locate the transaction in the map */
+<span class="nc" id="L320">        final MoneyWiseAnalysisSnapShot&lt;T, E&gt; myTrans = theHistoryMap.get(pTrans.getIndexedId());</span>
+<span class="nc bnc" id="L321" title="All 2 branches missed.">        return myTrans == null</span>
+<span class="nc" id="L322">                ? null</span>
+<span class="nc" id="L323">                : myTrans.getDeltaValue(pAttr);</span>
+    }
+
+    /**
+     * Obtain money delta for transaction.
+     *
+     * @param pTrans the transaction
+     * @param pAttr  the attribute
+     * @return the delta (or null)
+     */
+    public OceanusMoney getDeltaMoneyValue(final MoneyWiseTransaction pTrans,
+                                           final E pAttr) {
+        /* Locate the transaction in the map */
+<span class="nc" id="L336">        final MoneyWiseAnalysisSnapShot&lt;T, E&gt; myTrans = theHistoryMap.get(pTrans.getIndexedId());</span>
+<span class="nc bnc" id="L337" title="All 2 branches missed.">        return myTrans == null</span>
+<span class="nc" id="L338">                ? null</span>
+<span class="nc" id="L339">                : myTrans.getDeltaMoneyValue(pAttr);</span>
+    }
+
+    /**
+     * Obtain units delta for transaction.
+     *
+     * @param pTrans the transaction
+     * @param pAttr  the attribute
+     * @return the delta (or null)
+     */
+    public OceanusUnits getDeltaUnitsValue(final MoneyWiseTransaction pTrans,
+                                           final E pAttr) {
+        /* Locate the transaction in the map */
+<span class="nc" id="L352">        final MoneyWiseAnalysisSnapShot&lt;T, E&gt; myTrans = theHistoryMap.get(pTrans.getIndexedId());</span>
+<span class="nc bnc" id="L353" title="All 2 branches missed.">        return myTrans == null</span>
+<span class="nc" id="L354">                ? null</span>
+<span class="nc" id="L355">                : myTrans.getDeltaUnitsValue(pAttr);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

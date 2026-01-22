@@ -1,0 +1,811 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianKangarooDigest.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.impl.ext.digests</a> &gt; <span class="el_source">GordianKangarooDigest.java</span></div><h1>GordianKangarooDigest.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.gordianknot.impl.ext.digests;
+
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
+import io.github.tonywasher.joceanus.gordianknot.impl.ext.params.GordianKeccakParameters;
+import org.bouncycastle.crypto.Digest;
+import org.bouncycastle.crypto.Xof;
+import org.bouncycastle.util.Arrays;
+import org.bouncycastle.util.Pack;
+
+/**
+ * Kangaroo. Donated to BouncyCastle.
+ */
+public abstract class GordianKangarooDigest
+        implements Digest {
+    /**
+     * Default digest length.
+     */
+    private static final int DIGESTLEN = 32;
+
+    /**
+     * Private constructor.
+     */
+    private GordianKangarooDigest() {
+    }
+
+    /**
+     * KangarooTwelve.
+     */
+    public static class GordianKangarooTwelve
+            extends GordianKangarooBase {
+        /**
+         * # of rounds.
+         */
+        private static final int ROUNDS = 12;
+
+        /**
+         * Constructor.
+         */
+        public GordianKangarooTwelve() {
+<span class="fc" id="L56">            this(DIGESTLEN);</span>
+<span class="fc" id="L57">        }</span>
+
+        /**
+         * Constructor.
+         *
+         * @param pLength the digest length
+         */
+        public GordianKangarooTwelve(final int pLength) {
+<span class="fc" id="L65">            super(GordianLength.LEN_128.getLength(), ROUNDS, pLength);</span>
+<span class="fc" id="L66">        }</span>
+
+        @Override
+        public String getAlgorithmName() {
+<span class="fc" id="L70">            return getClass().getSimpleName();</span>
+        }
+    }
+
+    /**
+     * MarsupilamiFourteen.
+     */
+    public static class GordianMarsupilamiFourteen
+            extends GordianKangarooBase {
+        /**
+         * # of rounds.
+         */
+        private static final int ROUNDS = 14;
+
+        /**
+         * Constructor.
+         */
+        public GordianMarsupilamiFourteen() {
+<span class="nc" id="L88">            this(DIGESTLEN);</span>
+<span class="nc" id="L89">        }</span>
+
+        /**
+         * Constructor.
+         *
+         * @param pLength the digest length
+         */
+        public GordianMarsupilamiFourteen(final int pLength) {
+<span class="fc" id="L97">            super(GordianLength.LEN_256.getLength(), ROUNDS, pLength);</span>
+<span class="fc" id="L98">        }</span>
+
+        @Override
+        public String getAlgorithmName() {
+<span class="fc" id="L102">            return getClass().getSimpleName();</span>
+        }
+    }
+
+    /**
+     * The Kangaroo Base.
+     */
+    public abstract static class GordianKangarooBase
+            implements Digest, Xof {
+        /**
+         * Block Size.
+         */
+        private static final int BLKSIZE = 8192;
+
+        /**
+         * Single marker.
+         */
+<span class="fc" id="L119">        private static final byte[] SINGLE = new byte[]{7};</span>
+
+        /**
+         * Intermediate marker.
+         */
+<span class="fc" id="L124">        private static final byte[] INTERMEDIATE = new byte[]{0xb};</span>
+
+        /**
+         * Final marker.
+         */
+<span class="fc" id="L129">        private static final byte[] FINAL = new byte[]{-1, -1, 6};</span>
+
+        /**
+         * First marker.
+         */
+<span class="fc" id="L134">        private static final byte[] FIRST = new byte[]{3, 0, 0, 0, 0, 0, 0, 0};</span>
+
+        /**
+         * The single byte buffer.
+         */
+<span class="fc" id="L139">        private final byte[] singleByte = new byte[1];</span>
+
+        /**
+         * The Tree Sponge.
+         */
+        private final GordianKangarooSponge theTree;
+
+        /**
+         * The Leaf Sponge.
+         */
+        private final GordianKangarooSponge theLeaf;
+
+        /**
+         * The chain length.
+         */
+        private final int theChainLen;
+
+        /**
+         * The personalisation.
+         */
+        private byte[] thePersonal;
+
+        /**
+         * Are we squeezing?.
+         */
+        private boolean squeezing;
+
+        /**
+         * The current node.
+         */
+        private int theCurrNode;
+
+        /**
+         * The data processed in the current node.
+         */
+        private int theProcessed;
+
+        /**
+         * Constructor.
+         *
+         * @param pStrength the strength
+         * @param pRounds   the rounds.
+         * @param pLength   the digest length
+         */
+        GordianKangarooBase(final int pStrength,
+                            final int pRounds,
+<span class="fc" id="L185">                            final int pLength) {</span>
+            /* Create underlying digests */
+<span class="fc" id="L187">            theTree = new GordianKangarooSponge(pStrength, pRounds);</span>
+<span class="fc" id="L188">            theLeaf = new GordianKangarooSponge(pStrength, pRounds);</span>
+<span class="fc" id="L189">            theChainLen = pStrength &gt;&gt; 2;</span>
+
+            /* Build personalisation */
+<span class="fc" id="L192">            buildPersonal(null);</span>
+<span class="fc" id="L193">        }</span>
+
+        /**
+         * Constructor.
+         *
+         * @param pPersonal the personalisation
+         */
+        private void buildPersonal(final byte[] pPersonal) {
+            /* Build personalisation */
+<span class="fc bfc" id="L202" title="All 2 branches covered.">            final int myLen = pPersonal == null ? 0 : pPersonal.length;</span>
+<span class="fc" id="L203">            final byte[] myEnc = lengthEncode(myLen);</span>
+<span class="fc bfc" id="L204" title="All 2 branches covered.">            thePersonal = pPersonal == null</span>
+<span class="fc" id="L205">                    ? new byte[myLen + myEnc.length]</span>
+<span class="fc" id="L206">                    : Arrays.copyOf(pPersonal, myLen + myEnc.length);</span>
+<span class="fc" id="L207">            System.arraycopy(myEnc, 0, thePersonal, myLen, myEnc.length);</span>
+<span class="fc" id="L208">        }</span>
+
+        @Override
+        public int getByteLength() {
+<span class="fc" id="L212">            return theTree.theRateBytes;</span>
+        }
+
+        @Override
+        public int getDigestSize() {
+            //return theXofLen == 0 ? theChainLen &gt;&gt; 1 : (int) theXofLen;
+<span class="fc" id="L218">            return theChainLen &gt;&gt; 1;</span>
+        }
+
+        /**
+         * Initialise the digest.
+         *
+         * @param pParams the parameters
+         */
+        public void init(final GordianKeccakParameters pParams) {
+            /* Build the new personalisation */
+<span class="fc" id="L228">            buildPersonal(pParams.getPersonalisation());</span>
+
+            /* Reset everything */
+<span class="fc" id="L231">            reset();</span>
+<span class="fc" id="L232">        }</span>
+
+        @Override
+        public void update(final byte pIn) {
+<span class="fc" id="L236">            singleByte[0] = pIn;</span>
+<span class="fc" id="L237">            update(singleByte, 0, 1);</span>
+<span class="fc" id="L238">        }</span>
+
+        @Override
+        public void update(final byte[] pIn,
+                           final int pInOff,
+                           final int pLen) {
+<span class="fc" id="L244">            processData(pIn, pInOff, pLen);</span>
+<span class="fc" id="L245">        }</span>
+
+        @Override
+        public int doFinal(final byte[] pOut,
+                           final int pOutOffset) {
+            /* finalise the digest */
+<span class="fc" id="L251">            return doFinal(pOut, pOutOffset, getDigestSize());</span>
+        }
+
+        @Override
+        public int doFinal(final byte[] pOut,
+                           final int pOutOffset,
+                           final int pOutLen) {
+            /* Build the required output */
+<span class="fc" id="L259">            final int length = doOutput(pOut, pOutOffset, pOutLen);</span>
+
+            /* reset the underlying digest and return the length */
+<span class="fc" id="L262">            reset();</span>
+<span class="fc" id="L263">            return length;</span>
+        }
+
+        @Override
+        public int doOutput(final byte[] pOut,
+                            final int pOutOffset,
+                            final int pOutLen) {
+            /* If we are not currently squeezing, switch to squeezing */
+<span class="fc bfc" id="L271" title="All 2 branches covered.">            if (!squeezing) {</span>
+<span class="fc" id="L272">                switchToSqueezing();</span>
+            }
+
+            /* Reject if there is insufficient Xof remaining */
+<span class="pc bpc" id="L276" title="1 of 2 branches missed.">            if (pOutLen &lt; 0) {</span>
+<span class="nc" id="L277">                throw new IllegalArgumentException(&quot;Invalid output length&quot;);</span>
+            }
+
+            /* Squeeze out the data and return the length */
+<span class="fc" id="L281">            theTree.squeeze(pOut, pOutOffset, pOutLen);</span>
+<span class="fc" id="L282">            return pOutLen;</span>
+        }
+
+        /**
+         * Process data.
+         *
+         * @param pIn       the input buffer
+         * @param pInOffSet the starting offset in the input buffer
+         * @param pLen      the length of data to process
+         */
+        private void processData(final byte[] pIn,
+                                 final int pInOffSet,
+                                 final int pLen) {
+            /* Check validity */
+<span class="pc bpc" id="L296" title="1 of 2 branches missed.">            if (squeezing) {</span>
+<span class="nc" id="L297">                throw new IllegalStateException(&quot;attempt to absorb while squeezing&quot;);</span>
+            }
+
+            /* Determine current sponge */
+<span class="fc bfc" id="L301" title="All 2 branches covered.">            final GordianKangarooSponge mySponge = theCurrNode == 0 ? theTree : theLeaf;</span>
+
+            /* Determine space in current block */
+<span class="fc" id="L304">            final int mySpace = BLKSIZE - theProcessed;</span>
+
+            /* If all data can be processed by the current sponge*/
+<span class="fc bfc" id="L307" title="All 2 branches covered.">            if (mySpace &gt;= pLen) {</span>
+                /* Absorb and return */
+<span class="fc" id="L309">                mySponge.absorb(pIn, pInOffSet, pLen);</span>
+<span class="fc" id="L310">                theProcessed += pLen;</span>
+<span class="fc" id="L311">                return;</span>
+            }
+
+            /* Absorb as much as possible into current sponge */
+<span class="fc bfc" id="L315" title="All 2 branches covered.">            if (mySpace &gt; 0) {</span>
+<span class="fc" id="L316">                mySponge.absorb(pIn, pInOffSet, mySpace);</span>
+<span class="fc" id="L317">                theProcessed += mySpace;</span>
+            }
+
+            /* Loop while we have data remaining */
+<span class="fc" id="L321">            int myProcessed = mySpace;</span>
+<span class="fc bfc" id="L322" title="All 2 branches covered.">            while (myProcessed &lt; pLen) {</span>
+                /* Switch Leaf if the current sponge is full */
+<span class="pc bpc" id="L324" title="1 of 2 branches missed.">                if (theProcessed == BLKSIZE) {</span>
+<span class="fc" id="L325">                    switchLeaf(true);</span>
+                }
+
+                /* Process next block */
+<span class="fc" id="L329">                final int myDataLen = Math.min(pLen - myProcessed, BLKSIZE);</span>
+<span class="fc" id="L330">                theLeaf.absorb(pIn, pInOffSet + myProcessed, myDataLen);</span>
+<span class="fc" id="L331">                theProcessed += myDataLen;</span>
+<span class="fc" id="L332">                myProcessed += myDataLen;</span>
+<span class="fc" id="L333">            }</span>
+<span class="fc" id="L334">        }</span>
+
+        @Override
+        public void reset() {
+<span class="fc" id="L338">            theTree.initSponge();</span>
+<span class="fc" id="L339">            theLeaf.initSponge();</span>
+<span class="fc" id="L340">            theCurrNode = 0;</span>
+<span class="fc" id="L341">            theProcessed = 0;</span>
+<span class="fc" id="L342">            squeezing = false;</span>
+<span class="fc" id="L343">        }</span>
+
+        /**
+         * Complete Leaf.
+         *
+         * @param pMoreToCome is there more data to come? true/false
+         */
+        private void switchLeaf(final boolean pMoreToCome) {
+            /* If we are the first node */
+<span class="fc bfc" id="L352" title="All 2 branches covered.">            if (theCurrNode == 0) {</span>
+                /* Absorb the padding */
+<span class="fc" id="L354">                theTree.absorb(FIRST, 0, FIRST.length);</span>
+
+                /* else intermediate node */
+            } else {
+                /* Absorb intermediate node marker */
+<span class="fc" id="L359">                theLeaf.absorb(INTERMEDIATE, 0, INTERMEDIATE.length);</span>
+
+                /* Complete the node */
+<span class="fc" id="L362">                final byte[] myHash = new byte[theChainLen];</span>
+<span class="fc" id="L363">                theLeaf.squeeze(myHash, 0, theChainLen);</span>
+<span class="fc" id="L364">                theTree.absorb(myHash, 0, theChainLen);</span>
+
+                /* Re-init the leaf */
+<span class="fc" id="L367">                theLeaf.initSponge();</span>
+            }
+
+            /* Switch to next node */
+<span class="fc bfc" id="L371" title="All 2 branches covered.">            if (pMoreToCome) {</span>
+<span class="fc" id="L372">                theCurrNode++;</span>
+            }
+<span class="fc" id="L374">            theProcessed = 0;</span>
+<span class="fc" id="L375">        }</span>
+
+        /**
+         * Switch to squeezing.
+         */
+        private void switchToSqueezing() {
+            /* Absorb the personalisation */
+<span class="fc" id="L382">            processData(thePersonal, 0, thePersonal.length);</span>
+
+            /* Complete the absorption */
+<span class="fc bfc" id="L385" title="All 2 branches covered.">            if (theCurrNode == 0) {</span>
+<span class="fc" id="L386">                switchSingle();</span>
+            } else {
+<span class="fc" id="L388">                switchFinal();</span>
+            }
+
+            /* Set flag */
+<span class="fc" id="L392">            squeezing = true;</span>
+<span class="fc" id="L393">        }</span>
+
+        /**
+         * Switch single node to squeezing.
+         */
+        private void switchSingle() {
+            /* Absorb single node marker */
+<span class="fc" id="L400">            theTree.absorb(SINGLE, 0, 1);</span>
+
+            /* Switch to squeezing */
+<span class="fc" id="L403">            theTree.padAndSwitchToSqueezingPhase();</span>
+<span class="fc" id="L404">        }</span>
+
+        /**
+         * Switch multiple node to squeezing.
+         */
+        private void switchFinal() {
+            /* Complete the current leaf */
+<span class="fc" id="L411">            switchLeaf(false);</span>
+
+            /* Absorb length */
+<span class="fc" id="L414">            final byte[] myLength = lengthEncode(theCurrNode);</span>
+<span class="fc" id="L415">            theTree.absorb(myLength, 0, myLength.length);</span>
+
+            /* Absorb final node marker */
+<span class="fc" id="L418">            theTree.absorb(FINAL, 0, FINAL.length);</span>
+
+            /* Switch to squeezing */
+<span class="fc" id="L421">            theTree.padAndSwitchToSqueezingPhase();</span>
+<span class="fc" id="L422">        }</span>
+
+        /**
+         * right Encode a length.
+         *
+         * @param strLen the length to encode
+         * @return the encoded length
+         */
+        private static byte[] lengthEncode(final long strLen) {
+            /* Calculate # of bytes required to hold length */
+<span class="fc" id="L432">            byte n = 0;</span>
+<span class="fc" id="L433">            long v = strLen;</span>
+<span class="fc bfc" id="L434" title="All 2 branches covered.">            if (v != 0) {</span>
+<span class="fc" id="L435">                n = 1;</span>
+<span class="fc bfc" id="L436" title="All 2 branches covered.">                while ((v &gt;&gt;= Byte.SIZE) != 0) {</span>
+<span class="fc" id="L437">                    n++;</span>
+                }
+            }
+
+            /* Allocate byte array and store length */
+<span class="fc" id="L442">            final byte[] b = new byte[n + 1];</span>
+<span class="fc" id="L443">            b[n] = n;</span>
+
+            /* Encode the length */
+<span class="fc bfc" id="L446" title="All 2 branches covered.">            for (int i = 0; i &lt; n; i++) {</span>
+<span class="fc" id="L447">                b[i] = (byte) (strLen &gt;&gt; (Byte.SIZE * (n - i - 1)));</span>
+            }
+
+            /* Return the encoded length */
+<span class="fc" id="L451">            return b;</span>
+        }
+    }
+
+    /**
+     * The Kangaroo Sponge.
+     */
+    @SuppressWarnings(&quot;checkstyle:MagicNumber&quot;)
+    private static class GordianKangarooSponge {
+        /**
+         * The round constants.
+         */
+<span class="fc" id="L463">        private static long[] keccakRoundConstants = {</span>
+                0x0000000000000001L, 0x0000000000008082L,
+                0x800000000000808aL, 0x8000000080008000L, 0x000000000000808bL, 0x0000000080000001L, 0x8000000080008081L,
+                0x8000000000008009L, 0x000000000000008aL, 0x0000000000000088L, 0x0000000080008009L, 0x000000008000000aL,
+                0x000000008000808bL, 0x800000000000008bL, 0x8000000000008089L, 0x8000000000008003L, 0x8000000000008002L,
+                0x8000000000000080L, 0x000000000000800aL, 0x800000008000000aL, 0x8000000080008081L, 0x8000000000008080L,
+                0x0000000080000001L, 0x8000000080008008L
+        };
+
+        /**
+         * The number of rounds.
+         */
+        private final int theRounds;
+
+        /**
+         * The rateBytes.
+         */
+        private final int theRateBytes;
+
+        /**
+         * The state.
+         */
+<span class="fc" id="L485">        private final long[] theState = new long[25];</span>
+
+        /**
+         * The queue.
+         */
+        private final byte[] theQueue;
+
+        /**
+         * The numnber of bytes in the queue.
+         */
+        private int bytesInQueue;
+
+        /**
+         * Are we squeezing?
+         */
+        private boolean squeezing;
+
+        /**
+         * Constructor.
+         *
+         * @param pStrength the strength
+         * @param pRounds   the rounds.
+         */
+        GordianKangarooSponge(final int pStrength,
+<span class="fc" id="L509">                              final int pRounds) {</span>
+<span class="fc" id="L510">            theRateBytes = (1600 - (pStrength &lt;&lt; 1)) &gt;&gt; 3;</span>
+<span class="fc" id="L511">            theRounds = pRounds;</span>
+<span class="fc" id="L512">            theQueue = new byte[theRateBytes];</span>
+<span class="fc" id="L513">            initSponge();</span>
+<span class="fc" id="L514">        }</span>
+
+        /**
+         * Initialise the sponge.
+         */
+        private void initSponge() {
+<span class="fc" id="L520">            Arrays.fill(theState, 0L);</span>
+<span class="fc" id="L521">            Arrays.fill(theQueue, (byte) 0);</span>
+<span class="fc" id="L522">            bytesInQueue = 0;</span>
+<span class="fc" id="L523">            squeezing = false;</span>
+<span class="fc" id="L524">        }</span>
+
+        /**
+         * Absorb data into sponge.
+         *
+         * @param data the data buffer
+         * @param off  the starting offset in the buffer.
+         * @param len  the length of data to absorb
+         */
+        private void absorb(final byte[] data,
+                            final int off,
+                            final int len) {
+            /* Sanity checks */
+<span class="pc bpc" id="L537" title="1 of 2 branches missed.">            if (squeezing) {</span>
+<span class="nc" id="L538">                throw new IllegalStateException(&quot;attempt to absorb while squeezing&quot;);</span>
+            }
+
+            /* Loop through bytes */
+<span class="fc" id="L542">            int count = 0;</span>
+<span class="fc bfc" id="L543" title="All 2 branches covered.">            while (count &lt; len) {</span>
+                /* Handle full buffer */
+<span class="fc bfc" id="L545" title="All 2 branches covered.">                if (bytesInQueue == theRateBytes) {</span>
+<span class="fc" id="L546">                    kangarooAbsorb(theQueue, 0);</span>
+<span class="fc" id="L547">                    bytesInQueue = 0;</span>
+                }
+
+                /* If we have full blocks */
+<span class="fc bfc" id="L551" title="All 4 branches covered.">                if (bytesInQueue == 0 &amp;&amp; count &lt;= (len - theRateBytes)) {</span>
+                    /* Process full blocks */
+                    do {
+<span class="fc" id="L554">                        kangarooAbsorb(data, off + count);</span>
+<span class="fc" id="L555">                        count += theRateBytes;</span>
+<span class="fc bfc" id="L556" title="All 2 branches covered.">                    } while (count &lt;= (len - theRateBytes));</span>
+
+                    /* else process partial blocks */
+                } else {
+<span class="fc" id="L560">                    final int partialBlock = Math.min(theRateBytes - bytesInQueue, len - count);</span>
+<span class="fc" id="L561">                    System.arraycopy(data, off + count, theQueue, bytesInQueue, partialBlock);</span>
+
+<span class="fc" id="L563">                    bytesInQueue += partialBlock;</span>
+<span class="fc" id="L564">                    count += partialBlock;</span>
+<span class="fc" id="L565">                }</span>
+            }
+<span class="fc" id="L567">        }</span>
+
+        /**
+         * Handle padding.
+         */
+        private void padAndSwitchToSqueezingPhase() {
+            /* Fill any remaining space in queue with zeroes */
+<span class="fc bfc" id="L574" title="All 2 branches covered.">            for (int i = bytesInQueue; i &lt; theRateBytes; i++) {</span>
+<span class="fc" id="L575">                theQueue[i] = 0;</span>
+            }
+<span class="fc" id="L577">            theQueue[theRateBytes - 1] ^= 0x80;</span>
+<span class="fc" id="L578">            kangarooAbsorb(theQueue, 0);</span>
+
+<span class="fc" id="L580">            kangarooExtract();</span>
+<span class="fc" id="L581">            bytesInQueue = theRateBytes;</span>
+<span class="fc" id="L582">            squeezing = true;</span>
+<span class="fc" id="L583">        }</span>
+
+        /**
+         * Squeeze data out.
+         *
+         * @param output       the output buffer
+         * @param offset       the offset in the output buffer
+         * @param outputLength the output length
+         */
+        private void squeeze(final byte[] output,
+                             final int offset,
+                             final int outputLength) {
+<span class="fc bfc" id="L595" title="All 2 branches covered.">            if (!squeezing) {</span>
+<span class="fc" id="L596">                padAndSwitchToSqueezingPhase();</span>
+            }
+
+<span class="fc" id="L599">            int i = 0;</span>
+<span class="fc bfc" id="L600" title="All 2 branches covered.">            while (i &lt; outputLength) {</span>
+<span class="fc bfc" id="L601" title="All 2 branches covered.">                if (bytesInQueue == 0) {</span>
+<span class="fc" id="L602">                    kangarooPermutation();</span>
+<span class="fc" id="L603">                    kangarooExtract();</span>
+<span class="fc" id="L604">                    bytesInQueue = theRateBytes;</span>
+                }
+<span class="fc" id="L606">                final int partialBlock = Math.min(bytesInQueue, outputLength - i);</span>
+<span class="fc" id="L607">                System.arraycopy(theQueue, theRateBytes - bytesInQueue, output, offset + i, partialBlock);</span>
+<span class="fc" id="L608">                bytesInQueue -= partialBlock;</span>
+<span class="fc" id="L609">                i += partialBlock;</span>
+<span class="fc" id="L610">            }</span>
+<span class="fc" id="L611">        }</span>
+
+        /**
+         * Absorb a block of data.
+         *
+         * @param data the data to absorb
+         * @param off  the starting offset in the data
+         */
+        private void kangarooAbsorb(final byte[] data,
+                                    final int off) {
+<span class="fc" id="L621">            final int count = theRateBytes &gt;&gt; 3;</span>
+<span class="fc" id="L622">            int offSet = off;</span>
+<span class="fc bfc" id="L623" title="All 2 branches covered.">            for (int i = 0; i &lt; count; ++i) {</span>
+<span class="fc" id="L624">                theState[i] ^= Pack.littleEndianToLong(data, offSet);</span>
+<span class="fc" id="L625">                offSet += 8;</span>
+            }
+
+<span class="fc" id="L628">            kangarooPermutation();</span>
+<span class="fc" id="L629">        }</span>
+
+        /**
+         * Extract a block of data to the queue.
+         */
+        private void kangarooExtract() {
+<span class="fc" id="L635">            Pack.longToLittleEndian(theState, 0, theRateBytes &gt;&gt; 3, theQueue, 0);</span>
+<span class="fc" id="L636">        }</span>
+
+        /**
+         * Permutation (KP).
+         */
+        private void kangarooPermutation() {
+<span class="fc" id="L642">            final long[] a = theState;</span>
+
+<span class="fc" id="L644">            long a00 = a[0];</span>
+<span class="fc" id="L645">            long a01 = a[1];</span>
+<span class="fc" id="L646">            long a02 = a[2];</span>
+<span class="fc" id="L647">            long a03 = a[3];</span>
+<span class="fc" id="L648">            long a04 = a[4];</span>
+<span class="fc" id="L649">            long a05 = a[5];</span>
+<span class="fc" id="L650">            long a06 = a[6];</span>
+<span class="fc" id="L651">            long a07 = a[7];</span>
+<span class="fc" id="L652">            long a08 = a[8];</span>
+<span class="fc" id="L653">            long a09 = a[9];</span>
+<span class="fc" id="L654">            long a10 = a[10];</span>
+<span class="fc" id="L655">            long a11 = a[11];</span>
+<span class="fc" id="L656">            long a12 = a[12];</span>
+<span class="fc" id="L657">            long a13 = a[13];</span>
+<span class="fc" id="L658">            long a14 = a[14];</span>
+<span class="fc" id="L659">            long a15 = a[15];</span>
+<span class="fc" id="L660">            long a16 = a[16];</span>
+<span class="fc" id="L661">            long a17 = a[17];</span>
+<span class="fc" id="L662">            long a18 = a[18];</span>
+<span class="fc" id="L663">            long a19 = a[19];</span>
+<span class="fc" id="L664">            long a20 = a[20];</span>
+<span class="fc" id="L665">            long a21 = a[21];</span>
+<span class="fc" id="L666">            long a22 = a[22];</span>
+<span class="fc" id="L667">            long a23 = a[23];</span>
+<span class="fc" id="L668">            long a24 = a[24];</span>
+
+<span class="fc" id="L670">            final int myBase = keccakRoundConstants.length - theRounds;</span>
+<span class="fc bfc" id="L671" title="All 2 branches covered.">            for (int i = 0; i &lt; theRounds; i++) {</span>
+                // theta
+<span class="fc" id="L673">                long c0 = a00 ^ a05 ^ a10 ^ a15 ^ a20;</span>
+<span class="fc" id="L674">                long c1 = a01 ^ a06 ^ a11 ^ a16 ^ a21;</span>
+<span class="fc" id="L675">                final long c2 = a02 ^ a07 ^ a12 ^ a17 ^ a22;</span>
+<span class="fc" id="L676">                final long c3 = a03 ^ a08 ^ a13 ^ a18 ^ a23;</span>
+<span class="fc" id="L677">                final long c4 = a04 ^ a09 ^ a14 ^ a19 ^ a24;</span>
+
+<span class="fc" id="L679">                final long d1 = (c1 &lt;&lt; 1 | c1 &gt;&gt;&gt; -1) ^ c4;</span>
+<span class="fc" id="L680">                final long d2 = (c2 &lt;&lt; 1 | c2 &gt;&gt;&gt; -1) ^ c0;</span>
+<span class="fc" id="L681">                final long d3 = (c3 &lt;&lt; 1 | c3 &gt;&gt;&gt; -1) ^ c1;</span>
+<span class="fc" id="L682">                final long d4 = (c4 &lt;&lt; 1 | c4 &gt;&gt;&gt; -1) ^ c2;</span>
+<span class="fc" id="L683">                final long d0 = (c0 &lt;&lt; 1 | c0 &gt;&gt;&gt; -1) ^ c3;</span>
+
+<span class="fc" id="L685">                a00 ^= d1;</span>
+<span class="fc" id="L686">                a05 ^= d1;</span>
+<span class="fc" id="L687">                a10 ^= d1;</span>
+<span class="fc" id="L688">                a15 ^= d1;</span>
+<span class="fc" id="L689">                a20 ^= d1;</span>
+<span class="fc" id="L690">                a01 ^= d2;</span>
+<span class="fc" id="L691">                a06 ^= d2;</span>
+<span class="fc" id="L692">                a11 ^= d2;</span>
+<span class="fc" id="L693">                a16 ^= d2;</span>
+<span class="fc" id="L694">                a21 ^= d2;</span>
+<span class="fc" id="L695">                a02 ^= d3;</span>
+<span class="fc" id="L696">                a07 ^= d3;</span>
+<span class="fc" id="L697">                a12 ^= d3;</span>
+<span class="fc" id="L698">                a17 ^= d3;</span>
+<span class="fc" id="L699">                a22 ^= d3;</span>
+<span class="fc" id="L700">                a03 ^= d4;</span>
+<span class="fc" id="L701">                a08 ^= d4;</span>
+<span class="fc" id="L702">                a13 ^= d4;</span>
+<span class="fc" id="L703">                a18 ^= d4;</span>
+<span class="fc" id="L704">                a23 ^= d4;</span>
+<span class="fc" id="L705">                a04 ^= d0;</span>
+<span class="fc" id="L706">                a09 ^= d0;</span>
+<span class="fc" id="L707">                a14 ^= d0;</span>
+<span class="fc" id="L708">                a19 ^= d0;</span>
+<span class="fc" id="L709">                a24 ^= d0;</span>
+
+                // rho/pi
+<span class="fc" id="L712">                c1 = a01 &lt;&lt; 1 | a01 &gt;&gt;&gt; 63;</span>
+<span class="fc" id="L713">                a01 = a06 &lt;&lt; 44 | a06 &gt;&gt;&gt; 20;</span>
+<span class="fc" id="L714">                a06 = a09 &lt;&lt; 20 | a09 &gt;&gt;&gt; 44;</span>
+<span class="fc" id="L715">                a09 = a22 &lt;&lt; 61 | a22 &gt;&gt;&gt; 3;</span>
+<span class="fc" id="L716">                a22 = a14 &lt;&lt; 39 | a14 &gt;&gt;&gt; 25;</span>
+<span class="fc" id="L717">                a14 = a20 &lt;&lt; 18 | a20 &gt;&gt;&gt; 46;</span>
+<span class="fc" id="L718">                a20 = a02 &lt;&lt; 62 | a02 &gt;&gt;&gt; 2;</span>
+<span class="fc" id="L719">                a02 = a12 &lt;&lt; 43 | a12 &gt;&gt;&gt; 21;</span>
+<span class="fc" id="L720">                a12 = a13 &lt;&lt; 25 | a13 &gt;&gt;&gt; 39;</span>
+<span class="fc" id="L721">                a13 = a19 &lt;&lt; 8 | a19 &gt;&gt;&gt; 56;</span>
+<span class="fc" id="L722">                a19 = a23 &lt;&lt; 56 | a23 &gt;&gt;&gt; 8;</span>
+<span class="fc" id="L723">                a23 = a15 &lt;&lt; 41 | a15 &gt;&gt;&gt; 23;</span>
+<span class="fc" id="L724">                a15 = a04 &lt;&lt; 27 | a04 &gt;&gt;&gt; 37;</span>
+<span class="fc" id="L725">                a04 = a24 &lt;&lt; 14 | a24 &gt;&gt;&gt; 50;</span>
+<span class="fc" id="L726">                a24 = a21 &lt;&lt; 2 | a21 &gt;&gt;&gt; 62;</span>
+<span class="fc" id="L727">                a21 = a08 &lt;&lt; 55 | a08 &gt;&gt;&gt; 9;</span>
+<span class="fc" id="L728">                a08 = a16 &lt;&lt; 45 | a16 &gt;&gt;&gt; 19;</span>
+<span class="fc" id="L729">                a16 = a05 &lt;&lt; 36 | a05 &gt;&gt;&gt; 28;</span>
+<span class="fc" id="L730">                a05 = a03 &lt;&lt; 28 | a03 &gt;&gt;&gt; 36;</span>
+<span class="fc" id="L731">                a03 = a18 &lt;&lt; 21 | a18 &gt;&gt;&gt; 43;</span>
+<span class="fc" id="L732">                a18 = a17 &lt;&lt; 15 | a17 &gt;&gt;&gt; 49;</span>
+<span class="fc" id="L733">                a17 = a11 &lt;&lt; 10 | a11 &gt;&gt;&gt; 54;</span>
+<span class="fc" id="L734">                a11 = a07 &lt;&lt; 6 | a07 &gt;&gt;&gt; 58;</span>
+<span class="fc" id="L735">                a07 = a10 &lt;&lt; 3 | a10 &gt;&gt;&gt; 61;</span>
+<span class="fc" id="L736">                a10 = c1;</span>
+
+                // chi
+<span class="fc" id="L739">                c0 = a00 ^ (~a01 &amp; a02);</span>
+<span class="fc" id="L740">                c1 = a01 ^ (~a02 &amp; a03);</span>
+<span class="fc" id="L741">                a02 ^= ~a03 &amp; a04;</span>
+<span class="fc" id="L742">                a03 ^= ~a04 &amp; a00;</span>
+<span class="fc" id="L743">                a04 ^= ~a00 &amp; a01;</span>
+<span class="fc" id="L744">                a00 = c0;</span>
+<span class="fc" id="L745">                a01 = c1;</span>
+
+<span class="fc" id="L747">                c0 = a05 ^ (~a06 &amp; a07);</span>
+<span class="fc" id="L748">                c1 = a06 ^ (~a07 &amp; a08);</span>
+<span class="fc" id="L749">                a07 ^= ~a08 &amp; a09;</span>
+<span class="fc" id="L750">                a08 ^= ~a09 &amp; a05;</span>
+<span class="fc" id="L751">                a09 ^= ~a05 &amp; a06;</span>
+<span class="fc" id="L752">                a05 = c0;</span>
+<span class="fc" id="L753">                a06 = c1;</span>
+
+<span class="fc" id="L755">                c0 = a10 ^ (~a11 &amp; a12);</span>
+<span class="fc" id="L756">                c1 = a11 ^ (~a12 &amp; a13);</span>
+<span class="fc" id="L757">                a12 ^= ~a13 &amp; a14;</span>
+<span class="fc" id="L758">                a13 ^= ~a14 &amp; a10;</span>
+<span class="fc" id="L759">                a14 ^= ~a10 &amp; a11;</span>
+<span class="fc" id="L760">                a10 = c0;</span>
+<span class="fc" id="L761">                a11 = c1;</span>
+
+<span class="fc" id="L763">                c0 = a15 ^ (~a16 &amp; a17);</span>
+<span class="fc" id="L764">                c1 = a16 ^ (~a17 &amp; a18);</span>
+<span class="fc" id="L765">                a17 ^= ~a18 &amp; a19;</span>
+<span class="fc" id="L766">                a18 ^= ~a19 &amp; a15;</span>
+<span class="fc" id="L767">                a19 ^= ~a15 &amp; a16;</span>
+<span class="fc" id="L768">                a15 = c0;</span>
+<span class="fc" id="L769">                a16 = c1;</span>
+
+<span class="fc" id="L771">                c0 = a20 ^ (~a21 &amp; a22);</span>
+<span class="fc" id="L772">                c1 = a21 ^ (~a22 &amp; a23);</span>
+<span class="fc" id="L773">                a22 ^= ~a23 &amp; a24;</span>
+<span class="fc" id="L774">                a23 ^= ~a24 &amp; a20;</span>
+<span class="fc" id="L775">                a24 ^= ~a20 &amp; a21;</span>
+<span class="fc" id="L776">                a20 = c0;</span>
+<span class="fc" id="L777">                a21 = c1;</span>
+
+                // iota
+<span class="fc" id="L780">                a00 ^= keccakRoundConstants[myBase + i];</span>
+            }
+
+<span class="fc" id="L783">            a[0] = a00;</span>
+<span class="fc" id="L784">            a[1] = a01;</span>
+<span class="fc" id="L785">            a[2] = a02;</span>
+<span class="fc" id="L786">            a[3] = a03;</span>
+<span class="fc" id="L787">            a[4] = a04;</span>
+<span class="fc" id="L788">            a[5] = a05;</span>
+<span class="fc" id="L789">            a[6] = a06;</span>
+<span class="fc" id="L790">            a[7] = a07;</span>
+<span class="fc" id="L791">            a[8] = a08;</span>
+<span class="fc" id="L792">            a[9] = a09;</span>
+<span class="fc" id="L793">            a[10] = a10;</span>
+<span class="fc" id="L794">            a[11] = a11;</span>
+<span class="fc" id="L795">            a[12] = a12;</span>
+<span class="fc" id="L796">            a[13] = a13;</span>
+<span class="fc" id="L797">            a[14] = a14;</span>
+<span class="fc" id="L798">            a[15] = a15;</span>
+<span class="fc" id="L799">            a[16] = a16;</span>
+<span class="fc" id="L800">            a[17] = a17;</span>
+<span class="fc" id="L801">            a[18] = a18;</span>
+<span class="fc" id="L802">            a[19] = a19;</span>
+<span class="fc" id="L803">            a[20] = a20;</span>
+<span class="fc" id="L804">            a[21] = a21;</span>
+<span class="fc" id="L805">            a[22] = a22;</span>
+<span class="fc" id="L806">            a[23] = a23;</span>
+<span class="fc" id="L807">            a[24] = a24;</span>
+<span class="fc" id="L808">        }</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

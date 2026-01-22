@@ -1,0 +1,288 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseTaxBasis.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.moneywise.data.statics</a> &gt; <span class="el_source">MoneyWiseTaxBasis.java</span></div><h1>MoneyWiseTaxBasis.java</h1><pre class="source lang-java linenums">/*
+ * MoneyWise: Finance Application
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.moneywise.data.statics;
+
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.metis.data.MetisDataResource;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
+import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataSet;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValues;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusStaticDataClass;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusStaticDataItem;
+
+/**
+ * TaxBasis data type.
+ *
+ * @author Tony Washer
+ */
+public class MoneyWiseTaxBasis
+        extends PrometheusStaticDataItem {
+    /**
+     * Object name.
+     */
+<span class="fc" id="L39">    public static final String OBJECT_NAME = MoneyWiseStaticDataType.TAXBASIS.getItemName();</span>
+
+    /**
+     * List name.
+     */
+<span class="fc" id="L44">    public static final String LIST_NAME = MoneyWiseStaticDataType.TAXBASIS.getListName();</span>
+
+    /**
+     * Report fields.
+     */
+<span class="fc" id="L49">    private static final MetisFieldSet&lt;MoneyWiseTaxBasis&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseTaxBasis.class);</span>
+
+    /**
+     * Copy Constructor.
+     *
+     * @param pList     The list to associate the Tax Basis with
+     * @param pTaxBasis The Tax Basis to copy
+     */
+    protected MoneyWiseTaxBasis(final MoneyWiseTaxBasisList pList,
+                                final MoneyWiseTaxBasis pTaxBasis) {
+<span class="fc" id="L59">        super(pList, pTaxBasis);</span>
+<span class="fc" id="L60">    }</span>
+
+    /**
+     * Basic Constructor.
+     *
+     * @param pList The list to associate the Tax Basis with
+     * @param pName Name of Tax Basis
+     * @throws OceanusException on error
+     */
+    private MoneyWiseTaxBasis(final MoneyWiseTaxBasisList pList,
+                              final String pName) throws OceanusException {
+<span class="fc" id="L71">        super(pList, pName);</span>
+<span class="fc" id="L72">    }</span>
+
+    /**
+     * Basic constructor.
+     *
+     * @param pList  The list to associate the Tax Basis with
+     * @param pClass Class of Tax Basis
+     * @throws OceanusException on error
+     */
+    private MoneyWiseTaxBasis(final MoneyWiseTaxBasisList pList,
+                              final MoneyWiseTaxClass pClass) throws OceanusException {
+<span class="nc" id="L83">        super(pList, pClass);</span>
+<span class="nc" id="L84">    }</span>
+
+    /**
+     * Values constructor.
+     *
+     * @param pList   The list to associate the item with
+     * @param pValues the values
+     * @throws OceanusException on error
+     */
+    private MoneyWiseTaxBasis(final MoneyWiseTaxBasisList pList,
+                              final PrometheusDataValues pValues) throws OceanusException {
+<span class="fc" id="L95">        super(pList, pValues);</span>
+<span class="fc" id="L96">    }</span>
+
+    @Override
+    public MetisFieldSetDef getDataFieldSet() {
+<span class="fc" id="L100">        return FIELD_DEFS;</span>
+    }
+
+    /**
+     * Return the Tax class of the Tax Basis.
+     *
+     * @return the class
+     */
+    public MoneyWiseTaxClass getTaxClass() {
+<span class="fc" id="L109">        return (MoneyWiseTaxClass) super.getStaticClass();</span>
+    }
+
+    @Override
+    public MoneyWiseTaxBasis getBase() {
+<span class="fc" id="L114">        return (MoneyWiseTaxBasis) super.getBase();</span>
+    }
+
+    @Override
+    public MoneyWiseTaxBasisList getList() {
+<span class="fc" id="L119">        return (MoneyWiseTaxBasisList) super.getList();</span>
+    }
+
+    @Override
+    public boolean isActive() {
+<span class="nc" id="L124">        return true;</span>
+    }
+
+    /**
+     * Determine whether we this is the tax paid category.
+     *
+     * @return &lt;code&gt;true&lt;/code&gt; if we should add tax credits to the total, &lt;code&gt;false&lt;/code&gt;
+     * otherwise.
+     */
+    public boolean isTaxPaid() {
+<span class="nc" id="L134">        return MoneyWiseTaxClass.TAXPAID.equals(getTaxClass());</span>
+    }
+
+    /**
+     * Represents a list of {@link MoneyWiseTaxBasis} objects.
+     */
+    public static class MoneyWiseTaxBasisList
+            extends PrometheusStaticList&lt;MoneyWiseTaxBasis&gt; {
+        /**
+         * Report fields.
+         */
+<span class="fc" id="L145">        private static final MetisFieldSet&lt;MoneyWiseTaxBasisList&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseTaxBasisList.class);</span>
+
+        /**
+         * Construct an empty CORE tax bucket list.
+         *
+         * @param pData the DataSet for the list
+         */
+        public MoneyWiseTaxBasisList(final PrometheusDataSet pData) {
+<span class="fc" id="L153">            super(MoneyWiseTaxBasis.class, pData, MoneyWiseStaticDataType.TAXBASIS, PrometheusListStyle.CORE);</span>
+<span class="fc" id="L154">        }</span>
+
+        /**
+         * Constructor for a cloned List.
+         *
+         * @param pSource the source List
+         */
+        private MoneyWiseTaxBasisList(final MoneyWiseTaxBasisList pSource) {
+<span class="fc" id="L162">            super(pSource);</span>
+<span class="fc" id="L163">        }</span>
+
+        @Override
+        public MetisFieldSet&lt;MoneyWiseTaxBasisList&gt; getDataFieldSet() {
+<span class="nc" id="L167">            return FIELD_DEFS;</span>
+        }
+
+        @Override
+        public String listName() {
+<span class="fc" id="L172">            return LIST_NAME;</span>
+        }
+
+        @Override
+        public MetisFieldSetDef getItemFields() {
+<span class="fc" id="L177">            return MoneyWiseTaxBasis.FIELD_DEFS;</span>
+        }
+
+        @Override
+        protected Class&lt;MoneyWiseTaxClass&gt; getEnumClass() {
+<span class="fc" id="L182">            return MoneyWiseTaxClass.class;</span>
+        }
+
+        @Override
+        protected MoneyWiseTaxBasisList getEmptyList(final PrometheusListStyle pStyle) {
+<span class="fc" id="L187">            final MoneyWiseTaxBasisList myList = new MoneyWiseTaxBasisList(this);</span>
+<span class="fc" id="L188">            myList.setStyle(pStyle);</span>
+<span class="fc" id="L189">            return myList;</span>
+        }
+
+        /**
+         * Add a new item to the list.
+         *
+         * @param pItem item to be added
+         * @return the newly added item
+         */
+        @Override
+        public MoneyWiseTaxBasis addCopyItem(final PrometheusDataItem pItem) {
+            /* Can only clone a TaxBasis */
+<span class="pc bpc" id="L201" title="1 of 2 branches missed.">            if (!(pItem instanceof MoneyWiseTaxBasis)) {</span>
+<span class="nc" id="L202">                throw new UnsupportedOperationException();</span>
+            }
+
+<span class="fc" id="L205">            final MoneyWiseTaxBasis myBasis = new MoneyWiseTaxBasis(this, (MoneyWiseTaxBasis) pItem);</span>
+<span class="fc" id="L206">            add(myBasis);</span>
+<span class="fc" id="L207">            return myBasis;</span>
+        }
+
+        /**
+         * Create a new empty element in the edit list (null-operation).
+         *
+         * @return the newly added item
+         */
+        @Override
+        public MoneyWiseTaxBasis addNewItem() {
+<span class="nc" id="L217">            throw new UnsupportedOperationException();</span>
+        }
+
+        /**
+         * Obtain the type of the item.
+         *
+         * @return the type of the item
+         */
+        public String itemType() {
+<span class="nc" id="L226">            return LIST_NAME;</span>
+        }
+
+        /**
+         * Add a TaxBasis.
+         *
+         * @param pTaxBasis the Name of the tax basis
+         * @return the new basis
+         * @throws OceanusException on error
+         */
+        public MoneyWiseTaxBasis addBasicItem(final String pTaxBasis) throws OceanusException {
+            /* Create a new Tax Basis */
+<span class="fc" id="L238">            final MoneyWiseTaxBasis myBasis = new MoneyWiseTaxBasis(this, pTaxBasis);</span>
+
+            /* Check that this TaxBasisId has not been previously added */
+<span class="pc bpc" id="L241" title="1 of 2 branches missed.">            if (!isIdUnique(myBasis.getIndexedId())) {</span>
+<span class="nc" id="L242">                myBasis.addError(ERROR_DUPLICATE, MetisDataResource.DATA_ID);</span>
+<span class="nc" id="L243">                throw new MoneyWiseDataException(myBasis, ERROR_VALIDATION);</span>
+            }
+
+            /* Add the Tax Basis to the list */
+<span class="fc" id="L247">            add(myBasis);</span>
+<span class="fc" id="L248">            return myBasis;</span>
+        }
+
+        @Override
+        public MoneyWiseTaxBasis addValuesItem(final PrometheusDataValues pValues) throws OceanusException {
+            /* Create the basis */
+<span class="fc" id="L254">            final MoneyWiseTaxBasis myBasis = new MoneyWiseTaxBasis(this, pValues);</span>
+
+            /* Check that this BasisId has not been previously added */
+<span class="pc bpc" id="L257" title="1 of 2 branches missed.">            if (!isIdUnique(myBasis.getIndexedId())) {</span>
+<span class="nc" id="L258">                myBasis.addError(ERROR_DUPLICATE, MetisDataResource.DATA_ID);</span>
+<span class="nc" id="L259">                throw new MoneyWiseDataException(myBasis, ERROR_VALIDATION);</span>
+            }
+
+            /* Add to the list */
+<span class="fc" id="L263">            add(myBasis);</span>
+
+            /* Return it */
+<span class="fc" id="L266">            return myBasis;</span>
+        }
+
+        @Override
+        protected MoneyWiseTaxBasis newItem(final PrometheusStaticDataClass pClass) throws OceanusException {
+            /* Create the basis */
+<span class="nc" id="L272">            final MoneyWiseTaxBasis myBasis = new MoneyWiseTaxBasis(this, (MoneyWiseTaxClass) pClass);</span>
+
+            /* Check that this BasisId has not been previously added */
+<span class="nc bnc" id="L275" title="All 2 branches missed.">            if (!isIdUnique(myBasis.getIndexedId())) {</span>
+<span class="nc" id="L276">                myBasis.addError(ERROR_DUPLICATE, MetisDataResource.DATA_ID);</span>
+<span class="nc" id="L277">                throw new MoneyWiseDataException(myBasis, ERROR_VALIDATION);</span>
+            }
+
+            /* Add to the list */
+<span class="nc" id="L281">            add(myBasis);</span>
+
+            /* Return it */
+<span class="nc" id="L284">            return myBasis;</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

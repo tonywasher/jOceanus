@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseArchiveAccountCategory.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.moneywise.archive</a> &gt; <span class="el_source">MoneyWiseArchiveAccountCategory.java</span></div><h1>MoneyWiseArchiveAccountCategory.java</h1><pre class="source lang-java linenums">/*
+ * MoneyWise: Finance Application
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.moneywise.archive;
+
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.profile.OceanusProfile;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseCashCategory;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseCashCategory.MoneyWiseCashCategoryList;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDataSet;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDepositCategory;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDepositCategory.MoneyWiseDepositCategoryList;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseLoanCategory;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseLoanCategory.MoneyWiseLoanCategoryList;
+import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
+import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseIOException;
+import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseLogicException;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataResource;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValues;
+import io.github.tonywasher.joceanus.prometheus.service.sheet.PrometheusSheetCell;
+import io.github.tonywasher.joceanus.prometheus.service.sheet.PrometheusSheetRow;
+import io.github.tonywasher.joceanus.prometheus.service.sheet.PrometheusSheetView;
+import io.github.tonywasher.joceanus.prometheus.service.sheet.PrometheusSheetWorkBook;
+import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadCancelException;
+import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadStatusReport;
+
+/**
+ * Archive Loader for AccountCategory.
+ *
+ * @author Tony Washer
+ */
+public final class MoneyWiseArchiveAccountCategory {
+    /**
+     * NamedArea for Categories.
+     */
+    static final String AREA_ACTCATEGORIES = &quot;AccountCategoryInfo&quot;;
+
+    /**
+     * Report processor.
+     */
+    private final TethysUIThreadStatusReport theReport;
+
+    /**
+     * Workbook.
+     */
+    private final PrometheusSheetWorkBook theWorkBook;
+
+    /**
+     * DataSet.
+     */
+    private final MoneyWiseDataSet theData;
+
+    /**
+     * Constructor.
+     *
+     * @param pReport   the report
+     * @param pWorkBook the workbook
+     * @param pData     the data set to load into
+     */
+    MoneyWiseArchiveAccountCategory(final TethysUIThreadStatusReport pReport,
+                                    final PrometheusSheetWorkBook pWorkBook,
+<span class="nc" id="L76">                                    final MoneyWiseDataSet pData) {</span>
+<span class="nc" id="L77">        theReport = pReport;</span>
+<span class="nc" id="L78">        theWorkBook = pWorkBook;</span>
+<span class="nc" id="L79">        theData = pData;</span>
+<span class="nc" id="L80">    }</span>
+
+    /**
+     * Load the AccountCategories from an archive.
+     *
+     * @param pStage the stage
+     * @throws OceanusException on error
+     */
+    void loadArchive(final OceanusProfile pStage) throws OceanusException {
+        /* Protect against exceptions */
+        try {
+            /* Find the range of cells */
+<span class="nc" id="L92">            pStage.startTask(&quot;AccountCategories&quot;);</span>
+<span class="nc" id="L93">            final PrometheusSheetView myView = theWorkBook.getRangeView(AREA_ACTCATEGORIES);</span>
+
+            /* Declare the new stage */
+<span class="nc" id="L96">            theReport.setNewStage(AREA_ACTCATEGORIES);</span>
+
+            /* Count the number of Categories */
+<span class="nc" id="L99">            final int myTotal = myView.getRowCount();</span>
+
+            /* Declare the number of steps */
+<span class="nc" id="L102">            theReport.setNumSteps(myTotal);</span>
+
+            /* Loop through the rows of the table */
+<span class="nc bnc" id="L105" title="All 2 branches missed.">            for (int i = 0; i &lt; myTotal; i++) {</span>
+                /* Access the cell by reference */
+<span class="nc" id="L107">                final PrometheusSheetRow myRow = myView.getRowByIndex(i);</span>
+
+                /* Process category */
+<span class="nc" id="L110">                processCategory(myView, myRow);</span>
+
+                /* Report the progress */
+<span class="nc" id="L113">                theReport.setNextStep();</span>
+            }
+
+            /* Resolve Category lists */
+<span class="nc" id="L117">            resolveCategoryLists();</span>
+
+            /* Handle exceptions */
+<span class="nc" id="L120">        } catch (TethysUIThreadCancelException e) {</span>
+<span class="nc" id="L121">            throw e;</span>
+<span class="nc" id="L122">        } catch (OceanusException e) {</span>
+<span class="nc" id="L123">            throw new MoneyWiseIOException(&quot;Failed to Load &quot; + AREA_ACTCATEGORIES, e);</span>
+<span class="nc" id="L124">        }</span>
+<span class="nc" id="L125">    }</span>
+
+    /**
+     * Process row into alternate form.
+     *
+     * @param pView the spreadsheet view
+     * @param pRow  the spreadsheet row
+     * @throws OceanusException on error
+     */
+    private void processCategory(final PrometheusSheetView pView,
+                                 final PrometheusSheetRow pRow) throws OceanusException {
+        /* Access name */
+<span class="nc" id="L137">        int iAdjust = -1;</span>
+<span class="nc" id="L138">        final String myName = pView.getRowCellByIndex(pRow, ++iAdjust).getString();</span>
+<span class="nc" id="L139">        ++iAdjust;</span>
+
+        /* Access parent */
+<span class="nc" id="L142">        PrometheusSheetCell myCell = pView.getRowCellByIndex(pRow, ++iAdjust);</span>
+<span class="nc bnc" id="L143" title="All 2 branches missed.">        String myParent = myCell == null</span>
+<span class="nc" id="L144">                ? null</span>
+<span class="nc" id="L145">                : myCell.getString();</span>
+
+        /* Access category class and ignore if doesn't exist */
+<span class="nc" id="L148">        myCell = pView.getRowCellByIndex(pRow, ++iAdjust);</span>
+<span class="nc bnc" id="L149" title="All 2 branches missed.">        if (myCell == null) {</span>
+<span class="nc" id="L150">            return;</span>
+        }
+
+        /* Access class and category */
+<span class="nc" id="L154">        final String myClass = myCell.getString();</span>
+<span class="nc" id="L155">        final String myCat = pView.getRowCellByIndex(pRow, ++iAdjust).getString();</span>
+
+        /* If the category is parent then null the parent reference */
+<span class="nc bnc" id="L158" title="All 2 branches missed.">        if (myName.indexOf(':') == -1) {</span>
+<span class="nc" id="L159">            myParent = null;</span>
+        }
+
+        /* If this is a Deposit Category */
+<span class="nc bnc" id="L163" title="All 2 branches missed.">        if (myClass.equals(MoneyWiseBasicDataType.DEPOSIT.toString())) {</span>
+            /* Build data values */
+<span class="nc" id="L165">            final PrometheusDataValues myValues = new PrometheusDataValues(MoneyWiseDepositCategory.OBJECT_NAME);</span>
+<span class="nc" id="L166">            myValues.addValue(MoneyWiseStaticDataType.DEPOSITTYPE, myCat);</span>
+<span class="nc" id="L167">            myValues.addValue(PrometheusDataResource.DATAGROUP_PARENT, myParent);</span>
+<span class="nc" id="L168">            myValues.addValue(PrometheusDataResource.DATAITEM_FIELD_NAME, myName);</span>
+
+            /* Add the value into the list */
+<span class="nc" id="L171">            final MoneyWiseDepositCategoryList myList = theData.getDepositCategories();</span>
+<span class="nc" id="L172">            myList.addValuesItem(myValues);</span>
+
+            /* If this is a cash category */
+<span class="nc bnc" id="L175" title="All 2 branches missed.">        } else if (myClass.equals(MoneyWiseBasicDataType.CASH.toString())) {</span>
+            /* Build data values */
+<span class="nc" id="L177">            final PrometheusDataValues myValues = new PrometheusDataValues(MoneyWiseCashCategory.OBJECT_NAME);</span>
+<span class="nc" id="L178">            myValues.addValue(MoneyWiseStaticDataType.CASHTYPE, myCat);</span>
+<span class="nc" id="L179">            myValues.addValue(PrometheusDataResource.DATAGROUP_PARENT, myParent);</span>
+<span class="nc" id="L180">            myValues.addValue(PrometheusDataResource.DATAITEM_FIELD_NAME, myName);</span>
+
+            /* Add the value into the list */
+<span class="nc" id="L183">            final MoneyWiseCashCategoryList myList = theData.getCashCategories();</span>
+<span class="nc" id="L184">            myList.addValuesItem(myValues);</span>
+
+            /* If this is a loan category */
+<span class="nc bnc" id="L187" title="All 2 branches missed.">        } else if (myClass.equals(MoneyWiseBasicDataType.LOAN.toString())) {</span>
+            /* Build data values */
+<span class="nc" id="L189">            final PrometheusDataValues myValues = new PrometheusDataValues(MoneyWiseLoanCategory.OBJECT_NAME);</span>
+<span class="nc" id="L190">            myValues.addValue(MoneyWiseStaticDataType.LOANTYPE, myCat);</span>
+<span class="nc" id="L191">            myValues.addValue(PrometheusDataResource.DATAGROUP_PARENT, myParent);</span>
+<span class="nc" id="L192">            myValues.addValue(PrometheusDataResource.DATAITEM_FIELD_NAME, myName);</span>
+
+            /* Add the value into the list */
+<span class="nc" id="L195">            final MoneyWiseLoanCategoryList myList = theData.getLoanCategories();</span>
+<span class="nc" id="L196">            myList.addValuesItem(myValues);</span>
+
+<span class="nc" id="L198">        } else {</span>
+<span class="nc" id="L199">            throw new MoneyWiseLogicException(&quot;Unexpected Account Class&quot; + myClass);</span>
+        }
+<span class="nc" id="L201">    }</span>
+
+    /**
+     * Resolve category lists.
+     *
+     * @throws OceanusException on error
+     */
+    private void resolveCategoryLists() throws OceanusException {
+        /* Post process the deposit category list */
+<span class="nc" id="L210">        final MoneyWiseDepositCategoryList myDepositList = theData.getDepositCategories();</span>
+<span class="nc" id="L211">        myDepositList.postProcessOnLoad();</span>
+
+        /* Post process the cash category list */
+<span class="nc" id="L214">        final MoneyWiseCashCategoryList myCashList = theData.getCashCategories();</span>
+<span class="nc" id="L215">        myCashList.postProcessOnLoad();</span>
+
+        /* Post process the loan category list */
+<span class="nc" id="L218">        final MoneyWiseLoanCategoryList myLoanList = theData.getLoanCategories();</span>
+<span class="nc" id="L219">        myLoanList.postProcessOnLoad();</span>
+<span class="nc" id="L220">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

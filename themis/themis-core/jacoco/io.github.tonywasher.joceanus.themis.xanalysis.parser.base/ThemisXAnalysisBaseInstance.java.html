@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ThemisXAnalysisBaseInstance.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Themis Core Project Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.themis.xanalysis.parser.base</a> &gt; <span class="el_source">ThemisXAnalysisBaseInstance.java</span></div><h1>ThemisXAnalysisBaseInstance.java</h1><pre class="source lang-java linenums">/*
+ * Themis: Java Project Framework
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.themis.xanalysis.parser.base;
+
+import com.github.javaparser.ast.Node;
+import com.github.javaparser.ast.comments.Comment;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Predicate;
+
+/**
+ * Instance Base Class.
+ *
+ * @param &lt;T&gt; the Node
+ */
+public abstract class ThemisXAnalysisBaseInstance&lt;T extends Node&gt;
+        implements ThemisXAnalysisInstance {
+    /**
+     * The node.
+     */
+    private final T theNode;
+
+    /**
+     * The parent.
+     */
+    private final ThemisXAnalysisInstance theParent;
+
+    /**
+     * The list of children.
+     */
+    private final List&lt;ThemisXAnalysisInstance&gt; theChildren;
+
+    /**
+     * The list of comments.
+     */
+    private final List&lt;ThemisXAnalysisInstance&gt; theComments;
+
+    /**
+     * Constructor.
+     *
+     * @param pParser the parser
+     * @param pNode   the node
+     * @throws OceanusException on error
+     */
+    protected ThemisXAnalysisBaseInstance(final ThemisXAnalysisParserDef pParser,
+<span class="fc" id="L62">                                          final T pNode) throws OceanusException {</span>
+        /* Record the node and lists */
+<span class="fc" id="L64">        theNode = pNode;</span>
+<span class="fc" id="L65">        theChildren = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L66">        theComments = new ArrayList&lt;&gt;();</span>
+
+        /* Register the node */
+<span class="fc" id="L69">        theParent = pParser.registerInstance(this);</span>
+
+        /* Parse comments */
+<span class="fc" id="L72">        final Comment myComment = pNode.getComment().orElse(null);</span>
+<span class="fc bfc" id="L73" title="All 2 branches covered.">        if (myComment != null) {</span>
+<span class="fc" id="L74">            theComments.add(pParser.parseNode(myComment));</span>
+        }
+<span class="fc bfc" id="L76" title="All 2 branches covered.">        for (Comment myOrphan : pNode.getOrphanComments()) {</span>
+<span class="fc" id="L77">            theComments.add(pParser.parseNode(myOrphan));</span>
+<span class="fc" id="L78">        }</span>
+<span class="fc" id="L79">    }</span>
+
+    @Override
+    public void registerChild(final ThemisXAnalysisInstance pChild) {
+<span class="fc" id="L83">        theChildren.add(pChild);</span>
+<span class="fc" id="L84">    }</span>
+
+    @Override
+    public T getNode() {
+<span class="fc" id="L88">        return theNode;</span>
+    }
+
+    @Override
+    public ThemisXAnalysisInstance getParent() {
+<span class="nc" id="L93">        return theParent;</span>
+    }
+
+    @Override
+    public List&lt;ThemisXAnalysisInstance&gt; getChildren() {
+<span class="nc" id="L98">        return theChildren;</span>
+    }
+
+    /**
+     * Obtain the list of comments.
+     *
+     * @return the list of comments
+     */
+    public List&lt;ThemisXAnalysisInstance&gt; getComments() {
+<span class="nc" id="L107">        return theComments;</span>
+    }
+
+    @Override
+    public List&lt;ThemisXAnalysisInstance&gt; discoverChildren(final Predicate&lt;ThemisXAnalysisInstance&gt; pTest) {
+        /* Loop adding children to list */
+<span class="fc" id="L113">        final List&lt;ThemisXAnalysisInstance&gt; myList = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L114" title="All 2 branches covered.">        for (ThemisXAnalysisInstance myChild : theChildren) {</span>
+<span class="fc bfc" id="L115" title="All 2 branches covered.">            if (pTest.test(myChild)) {</span>
+<span class="fc" id="L116">                myList.add(myChild);</span>
+            }
+<span class="fc" id="L118">        }</span>
+<span class="fc" id="L119">        return myList;</span>
+    }
+
+    @Override
+    public void discoverNodes(final List&lt;ThemisXAnalysisInstance&gt; pList,
+                              final Predicate&lt;ThemisXAnalysisInstance&gt; pTest) {
+        /* Add self to list if required */
+<span class="nc bnc" id="L126" title="All 2 branches missed.">        if (pTest.test(this)) {</span>
+<span class="nc" id="L127">            pList.add(this);</span>
+        }
+
+        /* Loop adding children to list */
+<span class="nc bnc" id="L131" title="All 2 branches missed.">        for (ThemisXAnalysisInstance myChild : theChildren) {</span>
+<span class="nc" id="L132">            myChild.discoverNodes(pList, pTest);</span>
+<span class="nc" id="L133">        }</span>
+<span class="nc" id="L134">    }</span>
+
+    @Override
+    public String toString() {
+<span class="nc" id="L138">        return theNode.toString();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

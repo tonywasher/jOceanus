@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianCoreZipFactory.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.impl.core.zip</a> &gt; <span class="el_source">GordianCoreZipFactory.java</span></div><h1>GordianCoreZipFactory.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.gordianknot.impl.core.zip;
+
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactory;
+import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactory.GordianFactoryLock;
+import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactoryType;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
+import io.github.tonywasher.joceanus.gordianknot.api.lock.GordianKeyPairLock;
+import io.github.tonywasher.joceanus.gordianknot.api.lock.GordianKeySetLock;
+import io.github.tonywasher.joceanus.gordianknot.api.lock.GordianLock;
+import io.github.tonywasher.joceanus.gordianknot.api.lock.GordianLockFactory;
+import io.github.tonywasher.joceanus.gordianknot.api.lock.GordianPasswordLockSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.zip.GordianZipFactory;
+import io.github.tonywasher.joceanus.gordianknot.api.zip.GordianZipLock;
+import io.github.tonywasher.joceanus.gordianknot.api.zip.GordianZipReadFile;
+import io.github.tonywasher.joceanus.gordianknot.api.zip.GordianZipWriteFile;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianIOException;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianLogicException;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+
+/**
+ * Zip Factory.
+ */
+public class GordianCoreZipFactory
+        implements GordianZipFactory {
+    /**
+     * The factory.
+     */
+    private final GordianFactory theFactory;
+
+    /**
+     * Constructor.
+     *
+     * @param pFactory the factory
+     */
+<span class="fc" id="L58">    public GordianCoreZipFactory(final GordianFactory pFactory) {</span>
+<span class="fc" id="L59">        theFactory = pFactory;</span>
+<span class="fc" id="L60">    }</span>
+
+    /**
+     * The Create ZipFile Error text.
+     */
+    private static final String ERROR_CREATE = &quot;Failed to create ZipFile&quot;;
+
+    @Override
+    public GordianZipLock keySetZipLock(final GordianPasswordLockSpec pLockSpec,
+                                        final char[] pPassword) throws GordianException {
+<span class="fc" id="L70">        final GordianLockFactory myLockFactory = theFactory.getLockFactory();</span>
+<span class="fc" id="L71">        final GordianKeySetLock myLock = myLockFactory.newKeySetLock(pLockSpec, pPassword);</span>
+<span class="fc" id="L72">        return zipLock(myLock);</span>
+    }
+
+    @Override
+    public GordianZipLock factoryZipLock(final GordianPasswordLockSpec pLockSpec,
+                                         final char[] pPassword) throws GordianException {
+<span class="fc" id="L78">        final GordianFactoryLock myLock = theFactory.newFactoryLock(pLockSpec, GordianFactoryType.BC, pPassword);</span>
+<span class="fc" id="L79">        return zipLock(myLock);</span>
+    }
+
+    @Override
+    public GordianZipLock keyPairZipLock(final GordianPasswordLockSpec pLockSpec,
+                                         final GordianKeyPair pKeyPair,
+                                         final char[] pPassword) throws GordianException {
+<span class="fc" id="L86">        final GordianLockFactory myLockFactory = theFactory.getLockFactory();</span>
+<span class="fc" id="L87">        final GordianKeyPairLock myLock = myLockFactory.newKeyPairLock(pLockSpec, pKeyPair, pPassword);</span>
+<span class="fc" id="L88">        return zipLock(myLock);</span>
+    }
+
+    @Override
+    public GordianZipLock zipLock(final GordianLock&lt;?&gt; pLock) throws GordianException {
+<span class="fc bfc" id="L93" title="All 2 branches covered.">        if (pLock instanceof GordianKeySetLock myLock) {</span>
+<span class="fc" id="L94">            return new GordianCoreZipLock(theFactory, myLock);</span>
+        }
+<span class="fc bfc" id="L96" title="All 2 branches covered.">        if (pLock instanceof GordianFactoryLock myLock) {</span>
+<span class="fc" id="L97">            return new GordianCoreZipLock(theFactory, myLock);</span>
+        }
+<span class="pc bpc" id="L99" title="1 of 2 branches missed.">        if (pLock instanceof GordianKeyPairLock myLock) {</span>
+<span class="fc" id="L100">            return new GordianCoreZipLock(theFactory, myLock);</span>
+        }
+<span class="nc" id="L102">        throw new GordianLogicException(&quot;Invalid Lock type&quot;);</span>
+    }
+
+    @Override
+    public GordianZipWriteFile createZipFile(final GordianZipLock pLock,
+                                             final File pFile) throws GordianException {
+        try {
+<span class="nc" id="L109">            return createZipFile(pLock, new FileOutputStream(pFile));</span>
+<span class="nc" id="L110">        } catch (IOException e) {</span>
+<span class="nc" id="L111">            throw new GordianIOException(ERROR_CREATE, e);</span>
+        }
+    }
+
+    @Override
+    public GordianZipWriteFile createZipFile(final GordianZipLock pLock,
+                                             final OutputStream pOutputStream) throws GordianException {
+<span class="fc" id="L118">        return new GordianCoreZipWriteFile((GordianCoreZipLock) pLock, pOutputStream);</span>
+    }
+
+    @Override
+    public GordianZipWriteFile createZipFile(final File pFile) throws GordianException {
+        try {
+<span class="nc" id="L124">            return createZipFile(new FileOutputStream(pFile));</span>
+<span class="nc" id="L125">        } catch (IOException e) {</span>
+<span class="nc" id="L126">            throw new GordianIOException(ERROR_CREATE, e);</span>
+        }
+    }
+
+    @Override
+    public GordianZipWriteFile createZipFile(final OutputStream pOutputStream) {
+<span class="fc" id="L132">        return new GordianCoreZipWriteFile(pOutputStream);</span>
+    }
+
+    @Override
+    public GordianZipReadFile openZipFile(final File pFile) throws GordianException {
+        try {
+<span class="nc" id="L138">            return openZipFile(new FileInputStream(pFile));</span>
+<span class="nc" id="L139">        } catch (IOException e) {</span>
+<span class="nc" id="L140">            throw new GordianIOException(&quot;Failed to access ZipFile&quot;, e);</span>
+        }
+    }
+
+    @Override
+    public GordianZipReadFile openZipFile(final InputStream pInputStream) throws GordianException {
+<span class="fc" id="L146">        return new GordianCoreZipReadFile(theFactory, pInputStream);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

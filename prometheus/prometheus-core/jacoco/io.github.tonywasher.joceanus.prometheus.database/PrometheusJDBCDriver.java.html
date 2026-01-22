@@ -1,0 +1,334 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PrometheusJDBCDriver.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Prometheus Core Application Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.prometheus.database</a> &gt; <span class="el_source">PrometheusJDBCDriver.java</span></div><h1>PrometheusJDBCDriver.java</h1><pre class="source lang-java linenums">/*
+ * Prometheus: Application Framework
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.prometheus.database;
+
+import io.github.tonywasher.joceanus.prometheus.preference.PrometheusColumnType;
+
+/**
+ * Database Drivers. Also code that encapsulates differences between databases.
+ */
+<span class="nc" id="L24">public enum PrometheusJDBCDriver {</span>
+    /**
+     * SQLServer.
+     */
+<span class="nc" id="L28">    SQLSERVER,</span>
+
+    /**
+     * PostgreSQL.
+     */
+<span class="nc" id="L33">    POSTGRESQL,</span>
+
+    /**
+     * MySQL.
+     */
+<span class="nc" id="L38">    MYSQL,</span>
+
+    /**
+     * MariaDB.
+     */
+<span class="nc" id="L43">    MARIADB,</span>
+
+    /**
+     * H2.
+     */
+<span class="nc" id="L48">    H2;</span>
+
+    /**
+     * Buffer length.
+     */
+    private static final int BUFFER_LEN = 100;
+
+    /**
+     * DefaultPort for MariaDB/MySQL.
+     */
+    static final int PORT_MARIADB = 3306;
+
+    /**
+     * DefaultPort for PostgreSQL.
+     */
+    static final int PORT_POSTGRESQL = 5432;
+
+    /**
+     * DefaultPort for SQLExpress.
+     */
+    static final int PORT_SQLEXPRESS = 50843;
+
+    /**
+     * DefaultInstance for SQLExpress.
+     */
+    static final String INSTANCE_SQLEXPRESS = &quot;SQLEXPRESS&quot;;
+
+    /**
+     * The String name.
+     */
+    private String theName;
+
+    @Override
+    public String toString() {
+        /* If we have not yet loaded the name */
+<span class="nc bnc" id="L83" title="All 2 branches missed.">        if (theName == null) {</span>
+            /* Load the name */
+<span class="nc" id="L85">            theName = PrometheusDBResource.getKeyForDriver(this).getValue();</span>
+        }
+
+        /* return the name */
+<span class="nc" id="L89">        return theName;</span>
+    }
+
+    /**
+     * Determine whether we use instance.
+     *
+     * @return true/false
+     */
+    public boolean useInstance() {
+<span class="nc bnc" id="L98" title="All 2 branches missed.">        switch (this) {</span>
+            case SQLSERVER:
+<span class="nc" id="L100">                return true;</span>
+            case MYSQL:
+            case MARIADB:
+            case H2:
+            case POSTGRESQL:
+            default:
+<span class="nc" id="L106">                return false;</span>
+        }
+    }
+
+    /**
+     * Determine whether we use quotes.
+     *
+     * @return true/false
+     */
+    public boolean useQuotes() {
+<span class="nc bnc" id="L116" title="All 2 branches missed.">        switch (this) {</span>
+            case MYSQL:
+            case MARIADB:
+<span class="nc" id="L119">                return false;</span>
+            case SQLSERVER:
+            case H2:
+            case POSTGRESQL:
+            default:
+<span class="nc" id="L124">                return true;</span>
+        }
+    }
+
+    /**
+     * Determine whether we use port.
+     *
+     * @return true/false
+     */
+    public boolean usePort() {
+<span class="nc bnc" id="L134" title="All 2 branches missed.">        switch (this) {</span>
+            case MYSQL:
+            case MARIADB:
+            case POSTGRESQL:
+            case SQLSERVER:
+<span class="nc" id="L139">                return true;</span>
+            case H2:
+            default:
+<span class="nc" id="L142">                return false;</span>
+        }
+    }
+
+    /**
+     * Obtain default port.
+     *
+     * @return the default port
+     */
+    public Integer getDefaultPort() {
+<span class="nc bnc" id="L152" title="All 4 branches missed.">        switch (this) {</span>
+            case MYSQL:
+            case MARIADB:
+<span class="nc" id="L155">                return PORT_MARIADB;</span>
+            case POSTGRESQL:
+<span class="nc" id="L157">                return PORT_POSTGRESQL;</span>
+            case SQLSERVER:
+<span class="nc" id="L159">                return PORT_SQLEXPRESS;</span>
+            case H2:
+            default:
+<span class="nc" id="L162">                return null;</span>
+        }
+    }
+
+    /**
+     * Obtain connection prefix.
+     *
+     * @return the connection prefix
+     */
+    public String getPrefix() {
+<span class="nc bnc" id="L172" title="All 5 branches missed.">        switch (this) {</span>
+            case SQLSERVER:
+<span class="nc" id="L174">                return &quot;jdbc:sqlserver://&quot;;</span>
+            case MYSQL:
+<span class="nc" id="L176">                return &quot;jdbc:mysql://&quot;;</span>
+            case MARIADB:
+<span class="nc" id="L178">                return &quot;jdbc:mariadb://&quot;;</span>
+            case H2:
+<span class="nc" id="L180">                return &quot;jdbc:h2:mem:&quot;;</span>
+            case POSTGRESQL:
+            default:
+<span class="nc" id="L183">                return &quot;jdbc:postgresql://&quot;;</span>
+        }
+    }
+
+    /**
+     * Get connection string.
+     *
+     * @param pDatabase the database
+     * @param pServer   the server
+     * @param pPort     the port
+     * @return the connection string
+     */
+    public String getConnectionString(final String pDatabase,
+                                      final String pServer,
+                                      final Integer pPort) {
+        /* Create the buffer */
+<span class="nc" id="L199">        final StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);</span>
+<span class="nc" id="L200">        myBuilder.append(getPrefix());</span>
+<span class="nc bnc" id="L201" title="All 2 branches missed.">        if (this != H2) {</span>
+<span class="nc" id="L202">            myBuilder.append(pServer);</span>
+<span class="nc bnc" id="L203" title="All 2 branches missed.">            if (pPort != null) {</span>
+<span class="nc" id="L204">                myBuilder.append(&quot;:&quot;);</span>
+<span class="nc" id="L205">                myBuilder.append(pPort);</span>
+            }
+<span class="nc bnc" id="L207" title="All 2 branches missed.">            if (this != SQLSERVER) {</span>
+<span class="nc" id="L208">                myBuilder.append(&quot;/&quot;);</span>
+            }
+        }
+<span class="nc bnc" id="L211" title="All 2 branches missed.">        if (this != SQLSERVER) {</span>
+<span class="nc" id="L212">            myBuilder.append(pDatabase);</span>
+        }
+<span class="nc bnc" id="L214" title="All 2 branches missed.">        if (this == H2) {</span>
+<span class="nc" id="L215">            myBuilder.append(&quot;;DB_CLOSE_DELAY=-1&quot;);</span>
+        }
+
+        /* Return the string */
+<span class="nc" id="L219">        return myBuilder.toString();</span>
+    }
+
+    /**
+     * Get connection string for database create.
+     *
+     * @param pServer the server
+     * @param pPort   the port
+     * @return the connection string
+     */
+    public String getConnectionString(final String pServer,
+                                      final Integer pPort) {
+        /* Create the buffer */
+<span class="nc" id="L232">        final StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);</span>
+<span class="nc" id="L233">        myBuilder.append(getPrefix());</span>
+<span class="nc" id="L234">        myBuilder.append(pServer);</span>
+<span class="nc bnc" id="L235" title="All 2 branches missed.">        if (pPort != null) {</span>
+<span class="nc" id="L236">            myBuilder.append(&quot;:&quot;);</span>
+<span class="nc" id="L237">            myBuilder.append(pPort);</span>
+        }
+<span class="nc bnc" id="L239" title="All 2 branches missed.">        if (this != SQLSERVER) {</span>
+<span class="nc" id="L240">            myBuilder.append(&quot;/&quot;);</span>
+        }
+<span class="nc bnc" id="L242" title="All 2 branches missed.">        if (this == POSTGRESQL) {</span>
+<span class="nc" id="L243">            myBuilder.append(&quot;postgres&quot;);</span>
+        }
+
+        /* Return the string */
+<span class="nc" id="L247">        return myBuilder.toString();</span>
+    }
+
+    /**
+     * Obtain the database type for the field.
+     *
+     * @param pType the data type
+     * @return the database column type
+     */
+    public String getDatabaseType(final PrometheusColumnType pType) {
+<span class="nc" id="L257">        final boolean isSQLServer = this.equals(SQLSERVER);</span>
+<span class="nc" id="L258">        final boolean isPostgreSQL = this.equals(POSTGRESQL);</span>
+<span class="nc bnc" id="L259" title="All 11 branches missed.">        switch (pType) {</span>
+            case BOOLEAN:
+<span class="nc bnc" id="L261" title="All 2 branches missed.">                return isPostgreSQL</span>
+<span class="nc" id="L262">                        ? &quot;boolean&quot;</span>
+<span class="nc" id="L263">                        : &quot;bit&quot;;</span>
+            case SHORT:
+<span class="nc" id="L265">                return &quot;smallint&quot;;</span>
+            case INTEGER:
+<span class="nc" id="L267">                return &quot;int&quot;;</span>
+            case LONG:
+<span class="nc" id="L269">                return &quot;bigint&quot;;</span>
+            case FLOAT:
+<span class="nc" id="L271">                return &quot;real&quot;;</span>
+            case DOUBLE:
+<span class="nc bnc" id="L273" title="All 2 branches missed.">                return isSQLServer</span>
+<span class="nc" id="L274">                        ? &quot;float&quot;</span>
+<span class="nc bnc" id="L275" title="All 2 branches missed.">                        : isPostgreSQL</span>
+<span class="nc" id="L276">                        ? &quot;double precision&quot;</span>
+<span class="nc" id="L277">                        : &quot;double&quot;;</span>
+            case DATE:
+<span class="nc" id="L279">                return &quot;date&quot;;</span>
+            case MONEY:
+<span class="nc bnc" id="L281" title="All 2 branches missed.">                return isSQLServer</span>
+<span class="nc" id="L282">                        ? &quot;money&quot;</span>
+<span class="nc" id="L283">                        : &quot;numeric(18,2)&quot;;</span>
+            case DECIMAL:
+<span class="nc bnc" id="L285" title="All 2 branches missed.">                return isSQLServer</span>
+<span class="nc" id="L286">                        ? &quot;decimal&quot;</span>
+<span class="nc" id="L287">                        : &quot;numeric&quot;;</span>
+            case BINARY:
+<span class="nc bnc" id="L289" title="All 2 branches missed.">                return isPostgreSQL</span>
+<span class="nc" id="L290">                        ? &quot;bytea&quot;</span>
+<span class="nc" id="L291">                        : &quot;varbinary&quot;;</span>
+            case STRING:
+            default:
+<span class="nc" id="L294">                return &quot;varchar&quot;;</span>
+        }
+    }
+
+    /**
+     * Should we define binary length?
+     *
+     * @return true/false
+     */
+    public boolean defineBinaryLength() {
+<span class="nc bnc" id="L304" title="All 2 branches missed.">        switch (this) {</span>
+            case MYSQL:
+            case MARIADB:
+            case SQLSERVER:
+            case H2:
+<span class="nc" id="L309">                return true;</span>
+            case POSTGRESQL:
+            default:
+<span class="nc" id="L312">                return false;</span>
+        }
+    }
+
+    /**
+     * Should we explicitly drop indexes?
+     *
+     * @return true/false
+     */
+    public boolean explicitDropIndex() {
+<span class="nc bnc" id="L322" title="All 2 branches missed.">        switch (this) {</span>
+            case POSTGRESQL:
+            case SQLSERVER:
+            case H2:
+<span class="nc" id="L326">                return true;</span>
+            case MYSQL:
+            case MARIADB:
+            default:
+<span class="nc" id="L330">                return false;</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

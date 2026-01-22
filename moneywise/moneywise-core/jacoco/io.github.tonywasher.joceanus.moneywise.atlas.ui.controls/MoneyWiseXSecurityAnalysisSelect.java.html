@@ -1,0 +1,510 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseXSecurityAnalysisSelect.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.moneywise.atlas.ui.controls</a> &gt; <span class="el_source">MoneyWiseXSecurityAnalysisSelect.java</span></div><h1>MoneyWiseXSecurityAnalysisSelect.java</h1><pre class="source lang-java linenums">/*
+ * MoneyWise: Finance Application
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.moneywise.atlas.ui.controls;
+
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventManager;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
+import io.github.tonywasher.joceanus.metis.data.MetisDataDifference;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysis;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisPortfolioBucket;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisPortfolioBucket.MoneyWiseXAnalysisPortfolioBucketList;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisSecurityBucket;
+import io.github.tonywasher.joceanus.moneywise.atlas.views.MoneyWiseXAnalysisFilter;
+import io.github.tonywasher.joceanus.moneywise.atlas.views.MoneyWiseXAnalysisFilter.MoneyWiseXAnalysisSecurityFilter;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
+import io.github.tonywasher.joceanus.prometheus.views.PrometheusDataEvent;
+import io.github.tonywasher.joceanus.tethys.api.base.TethysUIComponent;
+import io.github.tonywasher.joceanus.tethys.api.base.TethysUIConstant;
+import io.github.tonywasher.joceanus.tethys.api.base.TethysUIEvent;
+import io.github.tonywasher.joceanus.tethys.api.button.TethysUIButtonFactory;
+import io.github.tonywasher.joceanus.tethys.api.button.TethysUIScrollButtonManager;
+import io.github.tonywasher.joceanus.tethys.api.control.TethysUIControlFactory;
+import io.github.tonywasher.joceanus.tethys.api.control.TethysUILabel;
+import io.github.tonywasher.joceanus.tethys.api.factory.TethysUIFactory;
+import io.github.tonywasher.joceanus.tethys.api.menu.TethysUIScrollItem;
+import io.github.tonywasher.joceanus.tethys.api.menu.TethysUIScrollMenu;
+import io.github.tonywasher.joceanus.tethys.api.pane.TethysUIBoxPaneManager;
+
+import java.util.Iterator;
+
+/**
+ * Security Analysis Selection.
+ */
+public class MoneyWiseXSecurityAnalysisSelect
+        implements MoneyWiseXAnalysisFilterSelection, OceanusEventProvider&lt;PrometheusDataEvent&gt; {
+    /**
+     * Text for Portfolio Label.
+     */
+<span class="nc" id="L54">    private static final String NLS_PORTFOLIO = MoneyWiseBasicDataType.PORTFOLIO.getItemName();</span>
+
+    /**
+     * Text for Security Label.
+     */
+<span class="nc" id="L59">    private static final String NLS_SECURITY = MoneyWiseBasicDataType.SECURITY.getItemName();</span>
+
+    /**
+     * The Event Manager.
+     */
+    private final OceanusEventManager&lt;PrometheusDataEvent&gt; theEventManager;
+
+    /**
+     * The panel.
+     */
+    private final TethysUIBoxPaneManager thePanel;
+
+    /**
+     * The security button.
+     */
+    private final TethysUIScrollButtonManager&lt;MoneyWiseXAnalysisSecurityBucket&gt; theSecButton;
+
+    /**
+     * The portfolio button.
+     */
+    private final TethysUIScrollButtonManager&lt;MoneyWiseXAnalysisPortfolioBucket&gt; thePortButton;
+
+    /**
+     * Portfolio menu.
+     */
+    private final TethysUIScrollMenu&lt;MoneyWiseXAnalysisPortfolioBucket&gt; thePortfolioMenu;
+
+    /**
+     * Security menu.
+     */
+    private final TethysUIScrollMenu&lt;MoneyWiseXAnalysisSecurityBucket&gt; theSecurityMenu;
+
+    /**
+     * The active portfolio bucket list.
+     */
+    private MoneyWiseXAnalysisPortfolioBucketList thePortfolios;
+
+    /**
+     * The state.
+     */
+    private MoneyWiseSecurityState theState;
+
+    /**
+     * The savePoint.
+     */
+    private MoneyWiseSecurityState theSavePoint;
+
+    /**
+     * Constructor.
+     *
+     * @param pFactory the GUI factory
+     */
+<span class="nc" id="L111">    protected MoneyWiseXSecurityAnalysisSelect(final TethysUIFactory&lt;?&gt; pFactory) {</span>
+        /* Create the security button */
+<span class="nc" id="L113">        final TethysUIButtonFactory&lt;?&gt; myButtons = pFactory.buttonFactory();</span>
+<span class="nc" id="L114">        theSecButton = myButtons.newScrollButton(MoneyWiseXAnalysisSecurityBucket.class);</span>
+
+        /* Create the portfolio button */
+<span class="nc" id="L117">        thePortButton = myButtons.newScrollButton(MoneyWiseXAnalysisPortfolioBucket.class);</span>
+
+        /* Create Event Manager */
+<span class="nc" id="L120">        theEventManager = new OceanusEventManager&lt;&gt;();</span>
+
+        /* Create the labels */
+<span class="nc" id="L123">        final TethysUIControlFactory myControls = pFactory.controlFactory();</span>
+<span class="nc" id="L124">        final TethysUILabel myPortLabel = myControls.newLabel(NLS_PORTFOLIO + TethysUIConstant.STR_COLON);</span>
+<span class="nc" id="L125">        final TethysUILabel mySecLabel = myControls.newLabel(NLS_SECURITY + TethysUIConstant.STR_COLON);</span>
+
+        /* Define the layout */
+<span class="nc" id="L128">        thePanel = pFactory.paneFactory().newHBoxPane();</span>
+<span class="nc" id="L129">        thePanel.addSpacer();</span>
+<span class="nc" id="L130">        thePanel.addNode(myPortLabel);</span>
+<span class="nc" id="L131">        thePanel.addNode(thePortButton);</span>
+<span class="nc" id="L132">        thePanel.addStrut();</span>
+<span class="nc" id="L133">        thePanel.addNode(mySecLabel);</span>
+<span class="nc" id="L134">        thePanel.addNode(theSecButton);</span>
+
+        /* Create initial state */
+<span class="nc" id="L137">        theState = new MoneyWiseSecurityState();</span>
+<span class="nc" id="L138">        theState.applyState();</span>
+
+        /* Access the menus */
+<span class="nc" id="L141">        thePortfolioMenu = thePortButton.getMenu();</span>
+<span class="nc" id="L142">        theSecurityMenu = theSecButton.getMenu();</span>
+
+        /* Create the listener */
+<span class="nc" id="L145">        OceanusEventRegistrar&lt;TethysUIEvent&gt; myRegistrar = thePortButton.getEventRegistrar();</span>
+<span class="nc" id="L146">        myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -&gt; handleNewPortfolio());</span>
+<span class="nc" id="L147">        thePortButton.setMenuConfigurator(e -&gt; buildPortfolioMenu());</span>
+<span class="nc" id="L148">        myRegistrar = theSecButton.getEventRegistrar();</span>
+<span class="nc" id="L149">        myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -&gt; handleNewSecurity());</span>
+<span class="nc" id="L150">        theSecButton.setMenuConfigurator(e -&gt; buildSecurityMenu());</span>
+<span class="nc" id="L151">    }</span>
+
+    @Override
+    public TethysUIComponent getUnderlying() {
+<span class="nc" id="L155">        return thePanel;</span>
+    }
+
+    @Override
+    public OceanusEventRegistrar&lt;PrometheusDataEvent&gt; getEventRegistrar() {
+<span class="nc" id="L160">        return theEventManager.getEventRegistrar();</span>
+    }
+
+    @Override
+    public MoneyWiseXAnalysisSecurityFilter getFilter() {
+<span class="nc" id="L165">        return theState.getFilter();</span>
+    }
+
+    @Override
+    public boolean isAvailable() {
+<span class="nc bnc" id="L170" title="All 2 branches missed.">        return thePortfolios != null</span>
+<span class="nc bnc" id="L171" title="All 2 branches missed.">                &amp;&amp; !thePortfolios.isEmpty();</span>
+    }
+
+    /**
+     * Create SavePoint.
+     */
+    public void createSavePoint() {
+        /* Create the savePoint */
+<span class="nc" id="L179">        theSavePoint = new MoneyWiseSecurityState(theState);</span>
+<span class="nc" id="L180">    }</span>
+
+    /**
+     * Restore SavePoint.
+     */
+    public void restoreSavePoint() {
+        /* Restore the savePoint */
+<span class="nc" id="L187">        theState = new MoneyWiseSecurityState(theSavePoint);</span>
+
+        /* Apply the state */
+<span class="nc" id="L190">        theState.applyState();</span>
+<span class="nc" id="L191">    }</span>
+
+    @Override
+    public void setEnabled(final boolean bEnabled) {
+        /* Determine whether there are any Securities to select */
+<span class="nc bnc" id="L196" title="All 4 branches missed.">        final boolean secAvailable = bEnabled &amp;&amp; isAvailable();</span>
+
+        /* Pass call on to buttons */
+<span class="nc" id="L199">        theSecButton.setEnabled(secAvailable);</span>
+<span class="nc" id="L200">        thePortButton.setEnabled(secAvailable);</span>
+<span class="nc" id="L201">    }</span>
+
+    @Override
+    public void setVisible(final boolean pVisible) {
+<span class="nc" id="L205">        thePanel.setVisible(pVisible);</span>
+<span class="nc" id="L206">    }</span>
+
+    /**
+     * Set analysis.
+     *
+     * @param pAnalysis the analysis.
+     */
+    public void setAnalysis(final MoneyWiseXAnalysis pAnalysis) {
+        /* Access buckets */
+<span class="nc" id="L215">        thePortfolios = pAnalysis.getPortfolios();</span>
+
+        /* Obtain the current security */
+<span class="nc" id="L218">        MoneyWiseXAnalysisSecurityBucket mySecurity = theState.getSecurity();</span>
+
+        /* Switch to versions from the analysis */
+<span class="nc bnc" id="L221" title="All 2 branches missed.">        mySecurity = mySecurity != null</span>
+<span class="nc" id="L222">                ? thePortfolios.getMatchingSecurityHolding(mySecurity.getSecurityHolding())</span>
+<span class="nc" id="L223">                : thePortfolios.getDefaultSecurityHolding();</span>
+<span class="nc bnc" id="L224" title="All 2 branches missed.">        final MoneyWiseXAnalysisPortfolioBucket myPortfolio = mySecurity != null</span>
+<span class="nc" id="L225">                ? thePortfolios.getMatchingPortfolio(mySecurity.getPortfolio())</span>
+<span class="nc" id="L226">                : thePortfolios.getDefaultPortfolio();</span>
+
+        /* Set the security */
+<span class="nc" id="L229">        theState.setTheSecurity(myPortfolio, mySecurity);</span>
+<span class="nc" id="L230">        theState.setDateRange(pAnalysis.getDateRange());</span>
+<span class="nc" id="L231">        theState.applyState();</span>
+<span class="nc" id="L232">    }</span>
+
+    @Override
+    public void setFilter(final MoneyWiseXAnalysisFilter&lt;?, ?&gt; pFilter) {
+        /* If this is the correct filter type */
+<span class="nc bnc" id="L237" title="All 2 branches missed.">        if (pFilter instanceof MoneyWiseXAnalysisSecurityFilter myFilter) {</span>
+            /* Obtain the filter buckets */
+<span class="nc" id="L239">            MoneyWiseXAnalysisSecurityBucket mySecurity = myFilter.getBucket();</span>
+
+            /* Look for the equivalent buckets */
+<span class="nc" id="L242">            mySecurity = thePortfolios.getMatchingSecurityHolding(mySecurity.getSecurityHolding());</span>
+
+            /* Determine the matching portfolio bucket */
+<span class="nc" id="L245">            final MoneyWiseXAnalysisPortfolioBucket myPortfolio = thePortfolios.getMatchingPortfolio(mySecurity.getPortfolio());</span>
+
+            /* Set the security */
+<span class="nc" id="L248">            theState.setTheSecurity(myPortfolio, mySecurity);</span>
+<span class="nc" id="L249">            theState.setDateRange(myFilter.getDateRange());</span>
+<span class="nc" id="L250">            theState.applyState();</span>
+        }
+<span class="nc" id="L252">    }</span>
+
+    /**
+     * Handle new Portfolio.
+     */
+    private void handleNewPortfolio() {
+        /* Select the new portfolio */
+<span class="nc bnc" id="L259" title="All 2 branches missed.">        if (theState.setPortfolio(thePortButton.getValue())) {</span>
+<span class="nc" id="L260">            theState.applyState();</span>
+<span class="nc" id="L261">            theEventManager.fireEvent(PrometheusDataEvent.SELECTIONCHANGED);</span>
+        }
+<span class="nc" id="L263">    }</span>
+
+    /**
+     * Handle new Security.
+     */
+    private void handleNewSecurity() {
+        /* Select the new security */
+<span class="nc bnc" id="L270" title="All 2 branches missed.">        if (theState.setSecurity(theSecButton.getValue())) {</span>
+<span class="nc" id="L271">            theState.applyState();</span>
+<span class="nc" id="L272">            theEventManager.fireEvent(PrometheusDataEvent.SELECTIONCHANGED);</span>
+        }
+<span class="nc" id="L274">    }</span>
+
+    /**
+     * Build Portfolio menu.
+     */
+    private void buildPortfolioMenu() {
+        /* Reset the popUp menu */
+<span class="nc" id="L281">        thePortfolioMenu.removeAllItems();</span>
+
+        /* Record active item */
+<span class="nc" id="L284">        TethysUIScrollItem&lt;MoneyWiseXAnalysisPortfolioBucket&gt; myActive = null;</span>
+<span class="nc" id="L285">        final MoneyWiseXAnalysisPortfolioBucket myCurr = theState.getPortfolio();</span>
+
+        /* Loop through the available portfolio values */
+<span class="nc" id="L288">        final Iterator&lt;MoneyWiseXAnalysisPortfolioBucket&gt; myIterator = thePortfolios.iterator();</span>
+<span class="nc bnc" id="L289" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L290">            final MoneyWiseXAnalysisPortfolioBucket myBucket = myIterator.next();</span>
+
+            /* Create a new MenuItem and add it to the popUp */
+<span class="nc" id="L293">            final TethysUIScrollItem&lt;MoneyWiseXAnalysisPortfolioBucket&gt; myItem = thePortfolioMenu.addItem(myBucket);</span>
+
+            /* If this is the active bucket */
+<span class="nc bnc" id="L296" title="All 2 branches missed.">            if (myBucket.equals(myCurr)) {</span>
+                /* Record it */
+<span class="nc" id="L298">                myActive = myItem;</span>
+            }
+<span class="nc" id="L300">        }</span>
+
+        /* Ensure active item is visible */
+<span class="nc bnc" id="L303" title="All 2 branches missed.">        if (myActive != null) {</span>
+<span class="nc" id="L304">            myActive.scrollToItem();</span>
+        }
+<span class="nc" id="L306">    }</span>
+
+    /**
+     * Build Security menu.
+     */
+    private void buildSecurityMenu() {
+        /* Reset the popUp menu */
+<span class="nc" id="L313">        theSecurityMenu.removeAllItems();</span>
+
+        /* Access current portfolio */
+<span class="nc" id="L316">        final MoneyWiseXAnalysisPortfolioBucket myPortfolio = theState.getPortfolio();</span>
+<span class="nc" id="L317">        final MoneyWiseXAnalysisSecurityBucket myCurr = theState.getSecurity();</span>
+<span class="nc" id="L318">        TethysUIScrollItem&lt;MoneyWiseXAnalysisSecurityBucket&gt; myActive = null;</span>
+
+        /* Loop through the available security values */
+<span class="nc" id="L321">        final Iterator&lt;MoneyWiseXAnalysisSecurityBucket&gt; myIterator = myPortfolio.securityIterator();</span>
+<span class="nc bnc" id="L322" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L323">            final MoneyWiseXAnalysisSecurityBucket myBucket = myIterator.next();</span>
+
+            /* Create a new MenuItem and add it to the popUp */
+<span class="nc" id="L326">            final TethysUIScrollItem&lt;MoneyWiseXAnalysisSecurityBucket&gt; myItem = theSecurityMenu.addItem(myBucket, myBucket.getSecurityName());</span>
+
+            /* If this is the active bucket */
+<span class="nc bnc" id="L329" title="All 2 branches missed.">            if (myBucket.equals(myCurr)) {</span>
+                /* Record it */
+<span class="nc" id="L331">                myActive = myItem;</span>
+            }
+<span class="nc" id="L333">        }</span>
+
+        /* Ensure active item is visible */
+<span class="nc bnc" id="L336" title="All 2 branches missed.">        if (myActive != null) {</span>
+<span class="nc" id="L337">            myActive.scrollToItem();</span>
+        }
+<span class="nc" id="L339">    }</span>
+
+    /**
+     * SavePoint values.
+     */
+    private final class MoneyWiseSecurityState {
+        /**
+         * The active Portfolio.
+         */
+        private MoneyWiseXAnalysisPortfolioBucket thePortfolio;
+
+        /**
+         * The active SecurityBucket.
+         */
+        private MoneyWiseXAnalysisSecurityBucket theSecurity;
+
+        /**
+         * The dateRange.
+         */
+        private OceanusDateRange theDateRange;
+
+        /**
+         * The filter.
+         */
+        private MoneyWiseXAnalysisSecurityFilter theFilter;
+
+        /**
+         * Constructor.
+         */
+<span class="nc" id="L368">        private MoneyWiseSecurityState() {</span>
+<span class="nc" id="L369">        }</span>
+
+        /**
+         * Constructor.
+         *
+         * @param pState state to copy from
+         */
+<span class="nc" id="L376">        private MoneyWiseSecurityState(final MoneyWiseSecurityState pState) {</span>
+            /* Initialise state */
+<span class="nc" id="L378">            theSecurity = pState.getSecurity();</span>
+<span class="nc" id="L379">            thePortfolio = pState.getPortfolio();</span>
+<span class="nc" id="L380">            theDateRange = pState.getDateRange();</span>
+<span class="nc" id="L381">            theFilter = pState.getFilter();</span>
+<span class="nc" id="L382">        }</span>
+
+        /**
+         * Obtain the Security Bucket.
+         *
+         * @return the Security
+         */
+        private MoneyWiseXAnalysisSecurityBucket getSecurity() {
+<span class="nc" id="L390">            return theSecurity;</span>
+        }
+
+        /**
+         * Obtain the Portfolio.
+         *
+         * @return the portfolio
+         */
+        private MoneyWiseXAnalysisPortfolioBucket getPortfolio() {
+<span class="nc" id="L399">            return thePortfolio;</span>
+        }
+
+        /**
+         * Obtain the dateRange.
+         *
+         * @return the dateRange
+         */
+        private OceanusDateRange getDateRange() {
+<span class="nc" id="L408">            return theDateRange;</span>
+        }
+
+        /**
+         * Obtain the Filter.
+         *
+         * @return the filter
+         */
+        private MoneyWiseXAnalysisSecurityFilter getFilter() {
+<span class="nc" id="L417">            return theFilter;</span>
+        }
+
+        /**
+         * Set new Security.
+         *
+         * @param pSecurity the Security
+         * @return true/false did a change occur
+         */
+        private boolean setSecurity(final MoneyWiseXAnalysisSecurityBucket pSecurity) {
+            /* Adjust the selected security */
+<span class="nc bnc" id="L428" title="All 2 branches missed.">            if (!MetisDataDifference.isEqual(pSecurity, theSecurity)) {</span>
+                /* Store the security */
+<span class="nc" id="L430">                setTheSecurity(thePortfolio, pSecurity);</span>
+<span class="nc" id="L431">                return true;</span>
+            }
+<span class="nc" id="L433">            return false;</span>
+        }
+
+        /**
+         * Set new Security.
+         *
+         * @param pPortfolio the Portfolio
+         * @param pSecurity  the Security
+         */
+        private void setTheSecurity(final MoneyWiseXAnalysisPortfolioBucket pPortfolio,
+                                    final MoneyWiseXAnalysisSecurityBucket pSecurity) {
+            /* Store the portfolio and security */
+<span class="nc" id="L445">            thePortfolio = pPortfolio;</span>
+<span class="nc" id="L446">            theSecurity = pSecurity;</span>
+<span class="nc bnc" id="L447" title="All 2 branches missed.">            if (theSecurity != null) {</span>
+<span class="nc" id="L448">                theFilter = new MoneyWiseXAnalysisSecurityFilter(theSecurity);</span>
+<span class="nc" id="L449">                theFilter.setDateRange(theDateRange);</span>
+            } else {
+<span class="nc" id="L451">                theFilter = null;</span>
+            }
+<span class="nc" id="L453">        }</span>
+
+        /**
+         * Set new Portfolio.
+         *
+         * @param pPortfolio the Portfolio
+         * @return true/false did a change occur
+         */
+        private boolean setPortfolio(final MoneyWiseXAnalysisPortfolioBucket pPortfolio) {
+            /* Adjust the selected portfolio */
+<span class="nc bnc" id="L463" title="All 2 branches missed.">            if (!MetisDataDifference.isEqual(pPortfolio, thePortfolio)) {</span>
+<span class="nc" id="L464">                setTheSecurity(pPortfolio, getFirstSecurity(pPortfolio));</span>
+<span class="nc" id="L465">                return true;</span>
+            }
+<span class="nc" id="L467">            return false;</span>
+        }
+
+        /**
+         * Obtain first security for portfolio.
+         *
+         * @param pPortfolio the portfolio
+         * @return the first security
+         */
+        private MoneyWiseXAnalysisSecurityBucket getFirstSecurity(final MoneyWiseXAnalysisPortfolioBucket pPortfolio) {
+            /* Loop through the available security values */
+<span class="nc" id="L478">            final Iterator&lt;MoneyWiseXAnalysisSecurityBucket&gt; myIterator = pPortfolio.securityIterator();</span>
+<span class="nc bnc" id="L479" title="All 2 branches missed.">            return myIterator.hasNext()</span>
+<span class="nc" id="L480">                    ? myIterator.next()</span>
+<span class="nc" id="L481">                    : null;</span>
+        }
+
+        /**
+         * Set the dateRange.
+         *
+         * @param pRange the dateRange
+         */
+        private void setDateRange(final OceanusDateRange pRange) {
+            /* Store the dateRange */
+<span class="nc" id="L491">            theDateRange = pRange;</span>
+<span class="nc bnc" id="L492" title="All 2 branches missed.">            if (theFilter != null) {</span>
+<span class="nc" id="L493">                theFilter.setDateRange(theDateRange);</span>
+            }
+<span class="nc" id="L495">        }</span>
+
+        /**
+         * Apply the State.
+         */
+        private void applyState() {
+            /* Adjust the lock-down */
+<span class="nc" id="L502">            setEnabled(true);</span>
+<span class="nc bnc" id="L503" title="All 2 branches missed.">            theSecButton.setValue(theSecurity, theSecurity == null</span>
+<span class="nc" id="L504">                    ? null</span>
+<span class="nc" id="L505">                    : theSecurity.getSecurityName());</span>
+<span class="nc" id="L506">            thePortButton.setValue(thePortfolio);</span>
+<span class="nc" id="L507">        }</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianRandomSpec.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.api.random</a> &gt; <span class="el_source">GordianRandomSpec.java</span></div><h1>GordianRandomSpec.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.gordianknot.api.random;
+
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestSpec;
+
+import java.util.Objects;
+
+/**
+ * SecureRandom Specification.
+ */
+public class GordianRandomSpec {
+    /**
+     * The Separator.
+     */
+    private static final String SEP = &quot;-&quot;;
+
+    /**
+     * The RandomType.
+     */
+    private final GordianRandomType theRandomType;
+
+    /**
+     * The SubSpec.
+     */
+    private final Object theSubSpec;
+
+    /**
+     * Is the secureRandom predicationResistant?
+     */
+    private final boolean isPredictionResistant;
+
+    /**
+     * The Validity.
+     */
+    private final boolean isValid;
+
+    /**
+     * The String name.
+     */
+    private String theName;
+
+    /**
+     * Constructor.
+     *
+     * @param pRandomType the randomType
+     * @param pSubSpec    the subSpec
+     * @param pResistant  is the secureRandom predicationResistant?
+     */
+    public GordianRandomSpec(final GordianRandomType pRandomType,
+                             final Object pSubSpec,
+<span class="fc" id="L67">                             final boolean pResistant) {</span>
+<span class="fc" id="L68">        theRandomType = pRandomType;</span>
+<span class="fc" id="L69">        theSubSpec = pSubSpec;</span>
+<span class="fc" id="L70">        isPredictionResistant = pResistant;</span>
+<span class="fc" id="L71">        isValid = checkValidity();</span>
+<span class="fc" id="L72">    }</span>
+
+    /**
+     * Obtain the randomType.
+     *
+     * @return the randomType.
+     */
+    public GordianRandomType getRandomType() {
+<span class="fc" id="L80">        return theRandomType;</span>
+    }
+
+    /**
+     * Obtain the subSpec.
+     *
+     * @return the subSpec.
+     */
+    private Object getSubSpec() {
+<span class="nc" id="L89">        return theSubSpec;</span>
+    }
+
+    /**
+     * Is the macSpec valid?
+     *
+     * @return true/false.
+     */
+    public boolean isValid() {
+<span class="fc" id="L98">        return isValid;</span>
+    }
+
+    /**
+     * Obtain the digestSpec.
+     *
+     * @return the digestSpec.
+     */
+    public GordianDigestSpec getDigestSpec() {
+<span class="fc bfc" id="L107" title="All 2 branches covered.">        return theSubSpec instanceof GordianDigestSpec mySpec</span>
+<span class="fc" id="L108">                ? mySpec</span>
+<span class="fc" id="L109">                : null;</span>
+    }
+
+    /**
+     * Obtain the symKeySpec.
+     *
+     * @return the symKeySpec.
+     */
+    public GordianSymKeySpec getSymKeySpec() {
+<span class="fc bfc" id="L118" title="All 2 branches covered.">        return theSubSpec instanceof GordianSymKeySpec mySpec</span>
+<span class="fc" id="L119">                ? mySpec</span>
+<span class="fc" id="L120">                : null;</span>
+    }
+
+    /**
+     * Obtain the predication resistance.
+     *
+     * @return the resistance.
+     */
+    public boolean isPredictionResistant() {
+<span class="fc" id="L129">        return isPredictionResistant;</span>
+    }
+
+    /**
+     * Check spec validity.
+     *
+     * @return valid true/false
+     */
+    private boolean checkValidity() {
+<span class="pc bpc" id="L138" title="1 of 2 branches missed.">        if (theRandomType == null) {</span>
+<span class="nc" id="L139">            return false;</span>
+        }
+<span class="pc bpc" id="L141" title="1 of 3 branches missed.">        switch (theRandomType) {</span>
+            case HMAC:
+            case HASH:
+<span class="pc bpc" id="L144" title="1 of 2 branches missed.">                return theSubSpec instanceof GordianDigestSpec mySpec</span>
+<span class="pc bpc" id="L145" title="1 of 2 branches missed.">                        &amp;&amp; mySpec.isValid()</span>
+<span class="fc bfc" id="L146" title="All 2 branches covered.">                        &amp;&amp; mySpec.getDigestType().supportsLargeData();</span>
+            case CTR:
+            case X931:
+<span class="pc bpc" id="L149" title="1 of 2 branches missed.">                return theSubSpec instanceof GordianSymKeySpec mySpec</span>
+<span class="pc bpc" id="L150" title="1 of 2 branches missed.">                        &amp;&amp; mySpec.isValid();</span>
+            default:
+<span class="nc" id="L152">                return false;</span>
+        }
+    }
+
+    @Override
+    public String toString() {
+        /* If we have not yet loaded the name */
+<span class="pc bpc" id="L159" title="1 of 2 branches missed.">        if (theName == null) {</span>
+            /* If the randomSpec is valid */
+<span class="pc bpc" id="L161" title="1 of 2 branches missed.">            if (isValid) {</span>
+                /* Load the name */
+<span class="fc" id="L163">                theName = theRandomType.toString();</span>
+<span class="fc" id="L164">                theName += SEP + theSubSpec;</span>
+<span class="fc bfc" id="L165" title="All 2 branches covered.">                if (isPredictionResistant) {</span>
+<span class="fc" id="L166">                    theName += SEP + &quot;resistant&quot;;</span>
+                }
+            } else {
+                /* Report invalid spec */
+<span class="nc" id="L170">                theName = &quot;InvalidRandomSpec: &quot; + theRandomType + &quot;:&quot; + theSubSpec + &quot;:&quot; + isPredictionResistant;</span>
+            }
+        }
+
+        /* return the name */
+<span class="fc" id="L175">        return theName;</span>
+    }
+
+    @Override
+    public boolean equals(final Object pThat) {
+        /* Handle the trivial cases */
+<span class="nc bnc" id="L181" title="All 2 branches missed.">        if (this == pThat) {</span>
+<span class="nc" id="L182">            return true;</span>
+        }
+<span class="nc bnc" id="L184" title="All 2 branches missed.">        if (pThat == null) {</span>
+<span class="nc" id="L185">            return false;</span>
+        }
+
+        /* Check KeyType, prediction and subSpec */
+<span class="nc" id="L189">        return pThat instanceof GordianRandomSpec myThat</span>
+<span class="nc bnc" id="L190" title="All 2 branches missed.">                &amp;&amp; theRandomType == myThat.getRandomType()</span>
+<span class="nc bnc" id="L191" title="All 2 branches missed.">                &amp;&amp; isPredictionResistant == myThat.isPredictionResistant()</span>
+<span class="nc bnc" id="L192" title="All 4 branches missed.">                &amp;&amp; Objects.equals(theSubSpec, myThat.getSubSpec());</span>
+    }
+
+    @Override
+    public int hashCode() {
+<span class="nc" id="L197">        return Objects.hash(theRandomType, theSubSpec, isPredictionResistant);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

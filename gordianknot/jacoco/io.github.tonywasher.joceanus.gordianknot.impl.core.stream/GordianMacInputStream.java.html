@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianMacInputStream.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.impl.core.stream</a> &gt; <span class="el_source">GordianMacInputStream.java</span></div><h1>GordianMacInputStream.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.gordianknot.impl.core.stream;
+
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMac;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
+import org.bouncycastle.util.Arrays;
+
+import java.io.InputStream;
+
+/**
+ * Input stream MAC implementation.
+ */
+class GordianMacInputStream
+        extends GordianInputStream {
+    /**
+     * The MAC.
+     */
+    private final GordianMac theMac;
+
+    /**
+     * The expected result.
+     */
+    private final byte[] theExpected;
+
+    /**
+     * The expected digest.
+     */
+    private byte[] theDigest;
+
+    /**
+     * Have we closed the stream?.
+     */
+    private boolean haveClosed;
+
+    /**
+     * Constructor.
+     *
+     * @param pMac      the MAC
+     * @param pExpected the expected result
+     * @param pInput    the underlying input stream
+     */
+    GordianMacInputStream(final GordianMac pMac,
+                          final byte[] pExpected,
+                          final InputStream pInput) {
+        /* Initialise underlying class */
+<span class="fc" id="L62">        super(pInput);</span>
+
+        /* Store parameters */
+<span class="fc" id="L65">        theMac = pMac;</span>
+<span class="fc" id="L66">        theExpected = Arrays.copyOf(pExpected, pExpected.length);</span>
+
+        /* Create processed buffer */
+<span class="fc" id="L69">        setProcessedBuffer(new GordianMacBuffer(this));</span>
+<span class="fc" id="L70">    }</span>
+
+    /**
+     * Obtain the Mac.
+     *
+     * @return the Mac
+     */
+    public GordianMac getMac() {
+<span class="fc" id="L78">        return theMac;</span>
+    }
+
+    /**
+     * Set the expected digest.
+     *
+     * @param pExpected the expected digest
+     * @throws GordianException on error
+     */
+    void setExpectedDigest(final byte[] pExpected) throws GordianException {
+        /* Set the expected client */
+<span class="fc" id="L89">        theDigest = pExpected;</span>
+
+        /* If we are late reporting the digest, then check result now */
+<span class="pc bpc" id="L92" title="1 of 2 branches missed.">        if (haveClosed) {</span>
+<span class="nc" id="L93">            checkResult();</span>
+        }
+<span class="fc" id="L95">    }</span>
+
+    /**
+     * Check result.
+     *
+     * @throws GordianException on error
+     */
+    void checkResult() throws GordianException {
+        /*
+         * If we are reading a small file, we may end up closing the input file before the digest stream is created, and
+         *  therefore the digest has not yet been reported. If this is the case, defer processing until the digest is reported
+         */
+<span class="pc bpc" id="L107" title="1 of 2 branches missed.">        if (theDigest == null) {</span>
+            /* Just note that we have closed and return */
+<span class="nc" id="L109">            haveClosed = true;</span>
+<span class="nc" id="L110">            return;</span>
+        }
+
+        /* Record the digest */
+<span class="fc" id="L114">        theMac.update(theDigest);</span>
+
+        /* Calculate MAC */
+<span class="fc" id="L117">        final byte[] myResult = theMac.finish();</span>
+
+        /* Check valid MAC */
+<span class="pc bpc" id="L120" title="1 of 2 branches missed.">        if (!Arrays.areEqual(myResult, theExpected)) {</span>
+<span class="nc" id="L121">            throw new GordianDataException(&quot;Invalid MAC&quot;);</span>
+        }
+<span class="fc" id="L123">    }</span>
+
+    /**
+     * Buffer to hold the processed data prior to returning it to the caller.
+     */
+    private static final class GordianMacBuffer
+            extends GordianProcessedBuffer {
+        /**
+         * The InputStream.
+         */
+        private final GordianMacInputStream theStream;
+
+        /**
+         * The MAC.
+         */
+        private final GordianMac theMac;
+
+        /**
+         * Constructor.
+         *
+         * @param pStream the input stream
+         */
+<span class="fc" id="L145">        GordianMacBuffer(final GordianMacInputStream pStream) {</span>
+<span class="fc" id="L146">            theStream = pStream;</span>
+<span class="fc" id="L147">            theMac = theStream.getMac();</span>
+<span class="fc" id="L148">        }</span>
+
+        @Override
+        public int processBytes(final byte[] pBuffer,
+                                final int pLength) throws GordianException {
+            /* If we have EOF from the input stream */
+<span class="fc bfc" id="L154" title="All 2 branches covered.">            if (pLength == -1) {</span>
+                /* Record the fact and reset the read length to zero */
+<span class="fc" id="L156">                setEOFSeen();</span>
+<span class="fc" id="L157">                theStream.checkResult();</span>
+<span class="fc" id="L158">                return -1;</span>
+            }
+
+            /* Update the MAC */
+<span class="fc" id="L162">            theMac.update(pBuffer, 0, pLength);</span>
+
+            /* Set up buffer variables */
+<span class="fc" id="L165">            setBuffer(pBuffer, pLength);</span>
+<span class="fc" id="L166">            return pLength;</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

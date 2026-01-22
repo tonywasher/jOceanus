@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseUKRoomRentalScheme.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.moneywise.tax.uk</a> &gt; <span class="el_source">MoneyWiseUKRoomRentalScheme.java</span></div><h1>MoneyWiseUKRoomRentalScheme.java</h1><pre class="source lang-java linenums">/*
+ * MoneyWise: Finance Application
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.moneywise.tax.uk;
+
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
+
+/**
+ * Rental Tax Scheme.
+ */
+public class MoneyWiseUKRoomRentalScheme
+        extends MoneyWiseUKIncomeScheme {
+    /**
+     * Local Report fields.
+     */
+<span class="fc" id="L30">    private static final MetisFieldSet&lt;MoneyWiseUKRoomRentalScheme&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseUKRoomRentalScheme.class);</span>
+
+    /**
+     * Constructor.
+     */
+<span class="fc" id="L35">    public MoneyWiseUKRoomRentalScheme() {</span>
+<span class="fc" id="L36">    }</span>
+
+    @Override
+    protected OceanusMoney adjustAllowances(final MoneyWiseUKTaxConfig pConfig,
+                                            final OceanusMoney pAmount) {
+        /* Adjust against the rental allowance for room rental */
+<span class="nc" id="L42">        OceanusMoney myRemaining = adjustForAllowance(pConfig.getRentalAllowance(), pAmount);</span>
+
+        /* If we have any income left */
+<span class="nc bnc" id="L45" title="All 2 branches missed.">        if (myRemaining.isNonZero()) {</span>
+            /* Adjust the basic allowance */
+<span class="nc" id="L47">            myRemaining = super.adjustAllowances(pConfig, myRemaining);</span>
+        }
+
+        /* Return unallocated income */
+<span class="nc" id="L51">        return myRemaining;</span>
+    }
+
+    @Override
+    protected OceanusMoney getAmountInAllowance(final MoneyWiseUKTaxConfig pConfig,
+                                                final OceanusMoney pAmount) {
+        /* Obtain the amount covered by the room rental allowance */
+<span class="nc" id="L58">        OceanusMoney myAmount = getAmountInBand(pConfig.getCapitalAllowance(), pAmount);</span>
+
+        /* If we have income left over */
+<span class="nc bnc" id="L61" title="All 2 branches missed.">        if (myAmount.compareTo(pAmount) &lt; 0) {</span>
+            /* Calculate remaining amount */
+<span class="nc" id="L63">            final OceanusMoney myRemaining = new OceanusMoney(pAmount);</span>
+<span class="nc" id="L64">            myRemaining.subtractAmount(myAmount);</span>
+
+            /* Calculate the amount covered by basic allowance */
+<span class="nc" id="L67">            final OceanusMoney myXtra = super.getAmountInAllowance(pConfig, myRemaining);</span>
+
+            /* Determine the total amount covered by the allowance */
+<span class="nc" id="L70">            myAmount = new OceanusMoney(myAmount);</span>
+<span class="nc" id="L71">            myAmount.addAmount(myXtra);</span>
+        }
+
+        /* return the amount */
+<span class="nc" id="L75">        return myAmount;</span>
+    }
+
+    @Override
+    public MetisFieldSet&lt;MoneyWiseUKRoomRentalScheme&gt; getDataFieldSet() {
+<span class="nc" id="L80">        return FIELD_DEFS;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

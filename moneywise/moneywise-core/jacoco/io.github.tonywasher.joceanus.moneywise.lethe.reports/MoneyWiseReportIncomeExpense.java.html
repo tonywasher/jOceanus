@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseReportIncomeExpense.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.moneywise.lethe.reports</a> &gt; <span class="el_source">MoneyWiseReportIncomeExpense.java</span></div><h1>MoneyWiseReportIncomeExpense.java</h1><pre class="source lang-java linenums">/*
+ * MoneyWise: Finance Application
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.moneywise.lethe.reports;
+
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
+import io.github.tonywasher.joceanus.metis.data.MetisDataDifference;
+import io.github.tonywasher.joceanus.metis.report.MetisReportBase;
+import io.github.tonywasher.joceanus.metis.report.MetisReportHTMLBuilder;
+import io.github.tonywasher.joceanus.metis.report.MetisReportHTMLBuilder.MetisHTMLTable;
+import io.github.tonywasher.joceanus.metis.report.MetisReportManager;
+import io.github.tonywasher.joceanus.metis.report.MetisReportReferenceManager.DelayedTable;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransCategory;
+import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTransCategoryClass;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysis;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisTransCategoryBucket;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisTransCategoryBucket.MoneyWiseAnalysisTransCategoryBucketList;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisCategoryValues;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisTransAttr;
+import io.github.tonywasher.joceanus.moneywise.lethe.views.MoneyWiseAnalysisFilter;
+import io.github.tonywasher.joceanus.moneywise.lethe.views.MoneyWiseAnalysisFilter.MoneyWiseAnalysisTransCategoryFilter;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
+import java.util.Iterator;
+
+/**
+ * Income/Expense report builder.
+ */
+public class MoneyWiseReportIncomeExpense
+        extends MetisReportBase&lt;MoneyWiseAnalysis, MoneyWiseAnalysisFilter&lt;?, ?&gt;&gt; {
+    /**
+     * The Title text.
+     */
+<span class="nc" id="L49">    private static final String TEXT_TITLE = MoneyWiseReportResource.INCEXP_TITLE.getValue();</span>
+
+    /**
+     * HTML builder.
+     */
+    private final MetisReportHTMLBuilder theBuilder;
+
+    /**
+     * The Formatter.
+     */
+    private final OceanusDataFormatter theFormatter;
+
+    /**
+     * Data Analysis.
+     */
+    private MoneyWiseAnalysis theAnalysis;
+
+    /**
+     * Constructor.
+     *
+     * @param pManager the Report Manager
+     */
+<span class="nc" id="L71">    protected MoneyWiseReportIncomeExpense(final MetisReportManager&lt;MoneyWiseAnalysisFilter&lt;?, ?&gt;&gt; pManager) {</span>
+        /* Access underlying utilities */
+<span class="nc" id="L73">        theBuilder = pManager.getBuilder();</span>
+<span class="nc" id="L74">        theFormatter = theBuilder.getDataFormatter();</span>
+<span class="nc" id="L75">    }</span>
+
+    @Override
+    public Document createReport(final MoneyWiseAnalysis pAnalysis) {
+        /* Access the bucket list */
+<span class="nc" id="L80">        theAnalysis = pAnalysis;</span>
+<span class="nc" id="L81">        final MoneyWiseAnalysisTransCategoryBucketList myCategories = theAnalysis.getTransCategories();</span>
+<span class="nc" id="L82">        final OceanusDateRange myRange = theAnalysis.getDateRange();</span>
+
+        /* Obtain the totals bucket */
+<span class="nc" id="L85">        final MoneyWiseAnalysisTransCategoryBucket myTotals = myCategories.getTotals();</span>
+
+        /* Start the report */
+<span class="nc" id="L88">        final Element myBody = theBuilder.startReport();</span>
+<span class="nc" id="L89">        theBuilder.makeTitle(myBody, TEXT_TITLE, theFormatter.formatObject(myRange));</span>
+
+        /* Initialise the table */
+<span class="nc" id="L92">        final MetisHTMLTable myTable = theBuilder.startTable(myBody);</span>
+<span class="nc" id="L93">        theBuilder.startHdrRow(myTable);</span>
+<span class="nc" id="L94">        theBuilder.makeTitleCell(myTable);</span>
+<span class="nc" id="L95">        theBuilder.makeTitleCell(myTable, MoneyWiseReportBuilder.TEXT_INCOME);</span>
+<span class="nc" id="L96">        theBuilder.makeTitleCell(myTable, MoneyWiseReportBuilder.TEXT_EXPENSE);</span>
+<span class="nc" id="L97">        theBuilder.makeTitleCell(myTable, MoneyWiseReportBuilder.TEXT_PROFIT);</span>
+
+        /* Loop through the SubTotal Buckets */
+<span class="nc" id="L100">        final Iterator&lt;MoneyWiseAnalysisTransCategoryBucket&gt; myIterator = myCategories.iterator();</span>
+<span class="nc bnc" id="L101" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L102">            final MoneyWiseAnalysisTransCategoryBucket myBucket = myIterator.next();</span>
+
+            /* Only process subTotal items */
+<span class="nc" id="L105">            final MoneyWiseTransCategoryClass myClass = myBucket.getTransactionCategoryType().getCategoryClass();</span>
+<span class="nc bnc" id="L106" title="All 2 branches missed.">            if (!myClass.isSubTotal()) {</span>
+<span class="nc" id="L107">                continue;</span>
+            }
+
+            /* Access bucket name */
+<span class="nc" id="L111">            final String myName = myBucket.getName();</span>
+
+            /* Access values */
+<span class="nc" id="L114">            final MoneyWiseAnalysisCategoryValues myValues = myBucket.getValues();</span>
+
+            /* Format the Category Total */
+<span class="nc" id="L117">            theBuilder.startRow(myTable);</span>
+<span class="nc" id="L118">            theBuilder.makeDelayLinkCell(myTable, myName);</span>
+<span class="nc" id="L119">            theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(MoneyWiseAnalysisTransAttr.INCOME));</span>
+<span class="nc" id="L120">            theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(MoneyWiseAnalysisTransAttr.EXPENSE));</span>
+<span class="nc" id="L121">            theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(MoneyWiseAnalysisTransAttr.PROFIT));</span>
+
+            /* Note the delayed subTable */
+<span class="nc" id="L124">            setDelayedTable(myName, myTable, myBucket);</span>
+<span class="nc" id="L125">        }</span>
+
+        /* Access values */
+<span class="nc" id="L128">        final MoneyWiseAnalysisCategoryValues myValues = myTotals.getValues();</span>
+
+        /* Format the total */
+<span class="nc" id="L131">        theBuilder.startTotalRow(myTable);</span>
+<span class="nc" id="L132">        theBuilder.makeTitleCell(myTable, MoneyWiseReportBuilder.TEXT_TOTAL);</span>
+<span class="nc" id="L133">        theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(MoneyWiseAnalysisTransAttr.INCOME));</span>
+<span class="nc" id="L134">        theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(MoneyWiseAnalysisTransAttr.EXPENSE));</span>
+<span class="nc" id="L135">        theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(MoneyWiseAnalysisTransAttr.PROFIT));</span>
+
+        /* Return the document */
+<span class="nc" id="L138">        return theBuilder.getDocument();</span>
+    }
+
+    @Override
+    public MetisHTMLTable createDelayedTable(final DelayedTable pTable) {
+        /* Access the source */
+<span class="nc" id="L144">        final Object mySource = pTable.getSource();</span>
+<span class="nc bnc" id="L145" title="All 2 branches missed.">        if (mySource instanceof MoneyWiseAnalysisTransCategoryBucket mySourceBucket) {</span>
+<span class="nc" id="L146">            return createDelayedCategory(pTable.getParent(), mySourceBucket);</span>
+        }
+
+        /* Return the null table */
+<span class="nc" id="L150">        return null;</span>
+    }
+
+    /**
+     * Create a delayed category table.
+     *
+     * @param pParent the parent table
+     * @param pSource the source bucket
+     * @return the new document fragment
+     */
+    protected MetisHTMLTable createDelayedCategory(final MetisHTMLTable pParent,
+                                                   final MoneyWiseAnalysisTransCategoryBucket pSource) {
+        /* Access the category */
+<span class="nc" id="L163">        final MoneyWiseAnalysisTransCategoryBucketList myCategories = theAnalysis.getTransCategories();</span>
+<span class="nc" id="L164">        final MoneyWiseTransCategory myCategory = pSource.getTransactionCategory();</span>
+
+        /* Create an embedded table */
+<span class="nc" id="L167">        final MetisHTMLTable myTable = theBuilder.createEmbeddedTable(pParent);</span>
+
+        /* Loop through the Category Buckets */
+<span class="nc" id="L170">        final Iterator&lt;MoneyWiseAnalysisTransCategoryBucket&gt; myIterator = myCategories.iterator();</span>
+<span class="nc bnc" id="L171" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L172">            final MoneyWiseAnalysisTransCategoryBucket myBucket = myIterator.next();</span>
+
+            /* Skip record if incorrect category */
+<span class="nc" id="L175">            final MoneyWiseTransCategory myCurr = myBucket.getTransactionCategory();</span>
+<span class="nc bnc" id="L176" title="All 2 branches missed.">            if (!MetisDataDifference.isEqual(myCurr.getParentCategory(), myCategory)) {</span>
+<span class="nc" id="L177">                continue;</span>
+            }
+
+            /* Access bucket name */
+<span class="nc" id="L181">            final String myName = myBucket.getName();</span>
+
+            /* Access values */
+<span class="nc" id="L184">            final MoneyWiseAnalysisCategoryValues myValues = myBucket.getValues();</span>
+
+            /* Create the SubCategory row */
+<span class="nc" id="L187">            theBuilder.startRow(myTable);</span>
+<span class="nc" id="L188">            theBuilder.makeFilterLinkCell(myTable, myName, myCurr.getSubCategory());</span>
+<span class="nc" id="L189">            theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(MoneyWiseAnalysisTransAttr.INCOME));</span>
+<span class="nc" id="L190">            theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(MoneyWiseAnalysisTransAttr.EXPENSE));</span>
+<span class="nc" id="L191">            theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(MoneyWiseAnalysisTransAttr.PROFIT));</span>
+
+            /* Record the selection */
+<span class="nc" id="L194">            setFilterForId(myName, myBucket);</span>
+<span class="nc" id="L195">        }</span>
+
+        /* Return the table */
+<span class="nc" id="L198">        return myTable;</span>
+    }
+
+    @Override
+    public MoneyWiseAnalysisTransCategoryFilter processFilter(final Object pSource) {
+        /* If this is an EventCategoryBucket */
+<span class="nc bnc" id="L204" title="All 2 branches missed.">        if (pSource instanceof MoneyWiseAnalysisTransCategoryBucket mySource) {</span>
+            /* Create the new filter */
+<span class="nc" id="L206">            return new MoneyWiseAnalysisTransCategoryFilter(mySource);</span>
+        }
+<span class="nc" id="L208">        return null;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

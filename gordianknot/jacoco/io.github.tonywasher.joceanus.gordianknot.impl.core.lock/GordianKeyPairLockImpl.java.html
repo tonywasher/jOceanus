@@ -1,0 +1,290 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianKeyPairLockImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.impl.core.lock</a> &gt; <span class="el_source">GordianKeyPairLockImpl.java</span></div><h1>GordianKeyPairLockImpl.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.gordianknot.impl.core.lock;
+
+import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreement;
+import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementFactory;
+import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementKDF;
+import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementParams;
+import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementType;
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianCertificate;
+import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairUsage;
+import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairUse;
+import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianAsyncFactory;
+import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactoryType;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianEdwardsElliptic;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySet;
+import io.github.tonywasher.joceanus.gordianknot.api.lock.GordianKeyPairLock;
+import io.github.tonywasher.joceanus.gordianknot.api.lock.GordianPasswordLockSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.agree.GordianCoreAgreementMessageASN1;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianDataConverter;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianParameters;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianLogicException;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.keyset.GordianCoreKeySet;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.keyset.GordianKeySetData;
+import org.bouncycastle.asn1.x500.X500Name;
+import org.bouncycastle.asn1.x500.X500NameBuilder;
+import org.bouncycastle.asn1.x500.style.BCStyle;
+
+import java.util.Arrays;
+import java.util.Objects;
+
+/**
+ * KeyPair Lock implementation.
+ */
+public class GordianKeyPairLockImpl
+        implements GordianKeyPairLock {
+    /**
+     * Server X500Name.
+     */
+<span class="fc" id="L59">    static final X500Name SERVER = new X500NameBuilder(BCStyle.INSTANCE).addRDN(BCStyle.CN, &quot;Server&quot;).build();</span>
+
+    /**
+     * The keySet.
+     */
+    private final GordianCoreKeySet theKeySet;
+
+    /**
+     * The lockASN1.
+     */
+    private final GordianKeyPairLockASN1 theLockASN1;
+
+    /**
+     * The lockBytes.
+     */
+    private final byte[] theLockBytes;
+
+    /**
+     * The keyPair.
+     */
+    private final GordianKeyPair theKeyPair;
+
+    /**
+     * Locking constructor.
+     *
+     * @param pLockingFactory the locking factory
+     * @param pLockSpec       the passwordLockSpec
+     * @param pKeyPair        the locking keyPair
+     * @param pPassword       the password
+     * @throws GordianException on error
+     */
+    public GordianKeyPairLockImpl(final GordianBaseFactory pLockingFactory,
+                                  final GordianPasswordLockSpec pLockSpec,
+                                  final GordianKeyPair pKeyPair,
+<span class="fc" id="L93">                                  final char[] pPassword) throws GordianException {</span>
+        /* Protect from exceptions */
+<span class="fc" id="L95">        byte[] myPassword = null;</span>
+        try {
+            /* Create the agreement and derive the factory */
+<span class="fc" id="L98">            final GordianAsyncFactory myAsyncFactory = pLockingFactory.getAsyncFactory();</span>
+<span class="fc" id="L99">            final GordianAgreementFactory myAgreeFactory = myAsyncFactory.getAgreementFactory();</span>
+<span class="fc" id="L100">            final GordianCertificate myCert = myAgreeFactory.newMiniCertificate(SERVER, pKeyPair,</span>
+                    new GordianKeyPairUsage(GordianKeyPairUse.AGREEMENT));
+<span class="fc" id="L102">            final GordianAgreementSpec mySpec = getAgreementSpec(pKeyPair.getKeyPairSpec());</span>
+<span class="fc" id="L103">            final GordianAgreementParams myParams = myAgreeFactory.newAgreementParams(mySpec, GordianFactoryType.BC)</span>
+<span class="fc" id="L104">                    .setServerCertificate(myCert);</span>
+<span class="fc" id="L105">            final GordianAgreement myAgreement = myAgreeFactory.createAgreement(myParams);</span>
+<span class="fc" id="L106">            final byte[] myClientHello = myAgreement.nextMessage();</span>
+<span class="fc" id="L107">            final GordianBaseFactory myFactory = (GordianBaseFactory) myAgreement.getFactoryResult();</span>
+
+            /* Create a recipe */
+<span class="fc" id="L110">            final GordianPasswordLockRecipe myRecipe = new GordianPasswordLockRecipe(pLockingFactory, pLockSpec);</span>
+
+            /* Generate the keySet */
+<span class="fc" id="L113">            myPassword = GordianDataConverter.charsToByteArray(pPassword);</span>
+<span class="fc" id="L114">            theKeySet = myRecipe.processPassword(myFactory, myPassword);</span>
+
+            /* Create lockBytes */
+<span class="fc" id="L117">            final GordianPasswordLockASN1 myLock = myRecipe.buildLockASN1(myPassword.length, null);</span>
+<span class="fc" id="L118">            theLockASN1 = new GordianKeyPairLockASN1(GordianCoreAgreementMessageASN1.getInstance(myClientHello), myLock);</span>
+<span class="fc" id="L119">            theLockBytes = theLockASN1.getEncodedBytes();</span>
+<span class="fc" id="L120">            theKeyPair = pKeyPair;</span>
+
+        } finally {
+<span class="pc bpc" id="L123" title="1 of 2 branches missed.">            if (myPassword != null) {</span>
+<span class="fc" id="L124">                Arrays.fill(myPassword, (byte) 0);</span>
+            }
+        }
+<span class="fc" id="L127">    }</span>
+
+    /**
+     * UnLocking constructor.
+     *
+     * @param pLockingFactory the locking factory
+     * @param pLockBytes      the lockBytes
+     * @param pKeyPair        the keyPair
+     * @param pPassword       the password
+     * @throws GordianException on error
+     */
+    public GordianKeyPairLockImpl(final GordianBaseFactory pLockingFactory,
+                                  final byte[] pLockBytes,
+                                  final GordianKeyPair pKeyPair,
+                                  final char[] pPassword) throws GordianException {
+<span class="nc" id="L142">        this(pLockingFactory, GordianKeyPairLockASN1.getInstance(pLockBytes), pLockBytes, pKeyPair, pPassword);</span>
+<span class="nc" id="L143">    }</span>
+
+    /**
+     * UnLocking constructor.
+     *
+     * @param pLockingFactory the locking factory
+     * @param pLockASN1       the lockASN1
+     * @param pKeyPair        the keyPair
+     * @param pPassword       the password
+     * @throws GordianException on error
+     */
+    public GordianKeyPairLockImpl(final GordianBaseFactory pLockingFactory,
+                                  final GordianKeyPairLockASN1 pLockASN1,
+                                  final GordianKeyPair pKeyPair,
+                                  final char[] pPassword) throws GordianException {
+<span class="fc" id="L158">        this(pLockingFactory, pLockASN1, pLockASN1.getEncodedBytes(), pKeyPair, pPassword);</span>
+<span class="fc" id="L159">    }</span>
+
+    /**
+     * UnLocking constructor.
+     *
+     * @param pLockingFactory the locking factory
+     * @param pLockASN1       the lockASN1
+     * @param pLockBytes      the lockBytes
+     * @param pKeyPair        the keyPair
+     * @param pPassword       the password
+     * @throws GordianException on error
+     */
+    public GordianKeyPairLockImpl(final GordianBaseFactory pLockingFactory,
+                                  final GordianKeyPairLockASN1 pLockASN1,
+                                  final byte[] pLockBytes,
+                                  final GordianKeyPair pKeyPair,
+<span class="fc" id="L175">                                  final char[] pPassword) throws GordianException {</span>
+        /* Protect from exceptions */
+<span class="fc" id="L177">        byte[] myPassword = null;</span>
+        try {
+            /* Store the Lock */
+<span class="fc" id="L180">            theLockBytes = pLockBytes;</span>
+<span class="fc" id="L181">            theLockASN1 = pLockASN1;</span>
+<span class="fc" id="L182">            theKeyPair = pKeyPair;</span>
+
+            /* Resolve the agreement */
+<span class="fc" id="L185">            final GordianAsyncFactory myAsyncFactory = pLockingFactory.getAsyncFactory();</span>
+<span class="fc" id="L186">            final GordianAgreementFactory myAgreeFactory = myAsyncFactory.getAgreementFactory();</span>
+<span class="fc" id="L187">            final byte[] myClientHello = theLockASN1.getAgreement().getEncodedBytes();</span>
+<span class="fc" id="L188">            final GordianAgreement myAgreement = myAgreeFactory.parseAgreementMessage(myClientHello);</span>
+<span class="fc" id="L189">            final GordianCertificate myCert = myAgreeFactory.newMiniCertificate(SERVER, pKeyPair,</span>
+                    new GordianKeyPairUsage(GordianKeyPairUse.AGREEMENT));
+<span class="fc" id="L191">            final GordianAgreementParams myParams = myAgreement.getAgreementParams().setServerCertificate(myCert);</span>
+<span class="fc" id="L192">            myAgreement.updateParams(myParams);</span>
+<span class="fc" id="L193">            final GordianBaseFactory myFactory = (GordianBaseFactory) myAgreement.getFactoryResult();</span>
+
+            /* Resolve the recipe */
+<span class="fc" id="L196">            myPassword = GordianDataConverter.charsToByteArray(pPassword);</span>
+<span class="fc" id="L197">            final GordianPasswordLockRecipe myRecipe = new GordianPasswordLockRecipe(pLockingFactory, myPassword.length, theLockASN1.getPasswordLock());</span>
+
+            /* Process the password, creating keySet */
+<span class="fc" id="L200">            theKeySet = myRecipe.processPassword(myFactory, myPassword);</span>
+
+        } finally {
+<span class="pc bpc" id="L203" title="1 of 2 branches missed.">            if (myPassword != null) {</span>
+<span class="fc" id="L204">                Arrays.fill(myPassword, (byte) 0);</span>
+            }
+        }
+<span class="fc" id="L207">    }</span>
+
+    @Override
+    public GordianKeySet getLockedObject() {
+<span class="fc" id="L211">        return theKeySet;</span>
+    }
+
+    @Override
+    public GordianKeyPairLockASN1 getLockASN1() {
+<span class="fc" id="L216">        return theLockASN1;</span>
+    }
+
+    @Override
+    public byte[] getLockBytes() {
+<span class="nc" id="L221">        return theLockBytes;</span>
+    }
+
+    @Override
+    public GordianKeyPair getKeyPair() {
+<span class="nc" id="L226">        return theKeyPair;</span>
+    }
+
+    /**
+     * Obtain AgreementSpec for asymKeySpec.
+     *
+     * @param pKeySpec the keySpec
+     * @return the agreementSpec
+     * @throws GordianException on error
+     */
+    private static GordianAgreementSpec getAgreementSpec(final GordianKeyPairSpec pKeySpec) throws GordianException {
+        /* Determine KDF type */
+<span class="pc bpc" id="L238" title="1 of 2 branches missed.">        final GordianAgreementKDF myKDFType = GordianEdwardsElliptic.CURVE25519.equals(pKeySpec.getSubKeyType())</span>
+<span class="nc" id="L239">                ? GordianAgreementKDF.SHA256KDF</span>
+<span class="fc" id="L240">                : GordianAgreementKDF.SHA512KDF;</span>
+
+        /* Determine AgreementType - either ANON or KEM */
+<span class="fc bfc" id="L243" title="All 2 branches covered.">        if (GordianAgreementType.ANON.isSupported(pKeySpec.getKeyPairType())) {</span>
+<span class="fc" id="L244">            return new GordianAgreementSpec(pKeySpec, GordianAgreementType.ANON, myKDFType);</span>
+        }
+<span class="pc bpc" id="L246" title="1 of 2 branches missed.">        if (GordianAgreementType.KEM.isSupported(pKeySpec.getKeyPairType())) {</span>
+<span class="fc" id="L247">            return new GordianAgreementSpec(pKeySpec, GordianAgreementType.KEM, GordianAgreementKDF.NONE);</span>
+        }
+<span class="nc" id="L249">        throw new GordianLogicException(&quot;Invalid KeyPair type&quot;);</span>
+    }
+
+    /**
+     * Obtain the byte length of the encoded sequence.
+     *
+     * @return the byte length
+     */
+    public static int getEncodedLength() {
+<span class="nc" id="L258">        return GordianPasswordLockASN1.getEncodedLength(GordianKeySetData.getEncryptionLength(GordianParameters.SEED_LEN.getByteLength()));</span>
+    }
+
+    @Override
+    public boolean equals(final Object pThat) {
+        /* Handle the trivial cases */
+<span class="nc bnc" id="L264" title="All 2 branches missed.">        if (pThat == this) {</span>
+<span class="nc" id="L265">            return true;</span>
+        }
+<span class="nc bnc" id="L267" title="All 2 branches missed.">        if (pThat == null) {</span>
+<span class="nc" id="L268">            return false;</span>
+        }
+
+        /* Make sure that the object is the same class */
+<span class="nc bnc" id="L272" title="All 2 branches missed.">        if (!(pThat instanceof GordianKeyPairLockImpl)) {</span>
+<span class="nc" id="L273">            return false;</span>
+        }
+
+        /* Access the target field */
+<span class="nc" id="L277">        final GordianKeyPairLockImpl myThat = (GordianKeyPairLockImpl) pThat;</span>
+
+        /* Check differences */
+<span class="nc bnc" id="L280" title="All 2 branches missed.">        return theKeySet.equals(myThat.getLockedObject())</span>
+<span class="nc bnc" id="L281" title="All 2 branches missed.">                &amp;&amp; Arrays.equals(theLockBytes, myThat.getLockBytes());</span>
+    }
+
+    @Override
+    public int hashCode() {
+<span class="nc" id="L286">        return Objects.hashCode(theKeySet)</span>
+<span class="nc" id="L287">                + Arrays.hashCode(theLockBytes);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

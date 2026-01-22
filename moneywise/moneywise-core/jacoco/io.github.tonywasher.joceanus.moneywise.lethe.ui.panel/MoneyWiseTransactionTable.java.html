@@ -1,0 +1,1274 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseTransactionTable.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.moneywise.lethe.ui.panel</a> &gt; <span class="el_source">MoneyWiseTransactionTable.java</span></div><h1>MoneyWiseTransactionTable.java</h1><pre class="source lang-java linenums">/*
+ * MoneyWise: Finance Application
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.moneywise.lethe.ui.panel;
+
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateConfig;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimal;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEvent;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventManager;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
+import io.github.tonywasher.joceanus.oceanus.profile.OceanusProfile;
+import io.github.tonywasher.joceanus.metis.data.MetisDataDifference;
+import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
+import io.github.tonywasher.joceanus.metis.ui.MetisAction;
+import io.github.tonywasher.joceanus.metis.ui.MetisErrorPanel;
+import io.github.tonywasher.joceanus.metis.ui.MetisIcon;
+import io.github.tonywasher.joceanus.metis.viewer.MetisViewerEntry;
+import io.github.tonywasher.joceanus.metis.viewer.MetisViewerManager;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseAssetDirection;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransAsset;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransCategory;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransTag;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransaction;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransaction.MoneyWiseTransactionList;
+import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTransInfoClass;
+import io.github.tonywasher.joceanus.moneywise.data.validate.MoneyWiseValidateTransaction;
+import io.github.tonywasher.joceanus.moneywise.lethe.ui.controls.MoneyWiseAnalysisSelect;
+import io.github.tonywasher.joceanus.moneywise.lethe.ui.controls.MoneyWiseAnalysisSelect.MoneyWiseStatementSelect;
+import io.github.tonywasher.joceanus.moneywise.lethe.ui.dialog.MoneyWiseTransactionDialog;
+import io.github.tonywasher.joceanus.moneywise.lethe.views.MoneyWiseAnalysisFilter;
+import io.github.tonywasher.joceanus.moneywise.lethe.views.MoneyWiseAnalysisView;
+import io.github.tonywasher.joceanus.moneywise.ui.MoneyWiseAnalysisColumnSet;
+import io.github.tonywasher.joceanus.moneywise.ui.MoneyWiseIcon;
+import io.github.tonywasher.joceanus.moneywise.ui.MoneyWiseUIResource;
+import io.github.tonywasher.joceanus.moneywise.ui.base.MoneyWiseBaseTable;
+import io.github.tonywasher.joceanus.moneywise.views.MoneyWiseView;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataResource;
+import io.github.tonywasher.joceanus.prometheus.ui.PrometheusActionButtons;
+import io.github.tonywasher.joceanus.prometheus.views.PrometheusDataEvent;
+import io.github.tonywasher.joceanus.prometheus.views.PrometheusEditSet;
+import io.github.tonywasher.joceanus.prometheus.views.PrometheusUIEvent;
+import io.github.tonywasher.joceanus.prometheus.views.PrometheusViewerEntryId;
+import io.github.tonywasher.joceanus.tethys.api.base.TethysUIComponent;
+import io.github.tonywasher.joceanus.tethys.api.button.TethysUIButton;
+import io.github.tonywasher.joceanus.tethys.api.control.TethysUIControl.TethysUIIconMapSet;
+import io.github.tonywasher.joceanus.tethys.api.factory.TethysUIFactory;
+import io.github.tonywasher.joceanus.tethys.api.menu.TethysUIScrollMenu;
+import io.github.tonywasher.joceanus.tethys.api.pane.TethysUIBorderPaneManager;
+import io.github.tonywasher.joceanus.tethys.api.pane.TethysUIPaneFactory;
+import io.github.tonywasher.joceanus.tethys.api.table.TethysUITableManager;
+
+import java.util.Map;
+
+/**
+ * MoneyWise Transaction Table.
+ */
+public class MoneyWiseTransactionTable
+        extends MoneyWiseBaseTable&lt;MoneyWiseTransaction&gt; {
+    /**
+     * The analysis data entry.
+     */
+    private final MetisViewerEntry theViewerAnalysis;
+
+    /**
+     * The filter data entry.
+     */
+    private final MetisViewerEntry theViewerFilter;
+
+    /**
+     * The transaction dialog.
+     */
+    private final MoneyWiseTransactionDialog theActiveTran;
+
+    /**
+     * The new button.
+     */
+    private final TethysUIButton theNewButton;
+
+    /**
+     * Analysis View.
+     */
+    private final MoneyWiseAnalysisView theAnalysisView;
+
+    /**
+     * Analysis Selection panel.
+     */
+    private final MoneyWiseAnalysisSelect theSelect;
+
+    /**
+     * The action buttons.
+     */
+    private final PrometheusActionButtons theActionButtons;
+
+    /**
+     * The UpdateSet.
+     */
+    private final PrometheusEditSet theEditSet;
+
+    /**
+     * The error panel.
+     */
+    private final MetisErrorPanel theError;
+
+    /**
+     * The date range.
+     */
+    private OceanusDateRange theRange;
+
+    /**
+     * The analysis filter.
+     */
+    private MoneyWiseAnalysisFilter&lt;?, ?&gt; theFilter;
+
+    /**
+     * The edit list.
+     */
+    private MoneyWiseTransactionList theTransactions;
+
+    /**
+     * ColumnSet.
+     */
+    private MoneyWiseAnalysisColumnSet theColumnSet;
+
+    /**
+     * Constructor.
+     *
+     * @param pView     the view
+     * @param pEditSet  the editSet
+     * @param pError    the error panel
+     * @param pFilter   the filter viewer entry
+     * @param pAnalysis the analysis viewer entry
+     */
+    MoneyWiseTransactionTable(final MoneyWiseView pView,
+                              final PrometheusEditSet pEditSet,
+                              final MetisErrorPanel pError,
+                              final MetisViewerEntry pFilter,
+                              final MetisViewerEntry pAnalysis) {
+        /* Store parameters */
+<span class="nc" id="L158">        super(pView, pEditSet, pError, MoneyWiseBasicDataType.TRANSACTION);</span>
+
+        /* store parameters */
+<span class="nc" id="L161">        theEditSet = pEditSet;</span>
+<span class="nc" id="L162">        theError = pError;</span>
+
+        /* Store viewer entries */
+<span class="nc" id="L165">        theViewerAnalysis = pAnalysis;</span>
+<span class="nc" id="L166">        theViewerFilter = pFilter;</span>
+
+        /* Access gui factory */
+<span class="nc" id="L169">        final TethysUIFactory&lt;?&gt; myGuiFactory = pView.getGuiFactory();</span>
+<span class="nc" id="L170">        final TethysUITableManager&lt;MetisDataFieldId, MoneyWiseTransaction&gt; myTable = getTable();</span>
+
+        /* Create new button */
+<span class="nc" id="L173">        theNewButton = myGuiFactory.buttonFactory().newButton();</span>
+<span class="nc" id="L174">        MetisIcon.configureNewIconButton(theNewButton);</span>
+
+        /* Create the Analysis View */
+<span class="nc" id="L177">        theAnalysisView = new MoneyWiseAnalysisView(pView, getEditSet());</span>
+
+        /* Create the Analysis Selection */
+<span class="nc" id="L180">        theSelect = new MoneyWiseAnalysisSelect(myGuiFactory, pView, theAnalysisView, theNewButton);</span>
+
+        /* Create the action buttons */
+<span class="nc" id="L183">        theActionButtons = new PrometheusActionButtons(myGuiFactory, getEditSet());</span>
+
+        /* Create a transaction panel */
+<span class="nc" id="L186">        theActiveTran = new MoneyWiseTransactionDialog(myGuiFactory, pEditSet, theSelect, this);</span>
+<span class="nc" id="L187">        declareItemPanel(theActiveTran);</span>
+
+        /* Set table configuration */
+<span class="nc" id="L190">        myTable.setDisabled(MoneyWiseTransaction::isDisabled)</span>
+<span class="nc" id="L191">                .setComparator(MoneyWiseTransaction::compareTo);</span>
+
+        /* Create the date column */
+<span class="nc" id="L194">        myTable.declareDateColumn(MoneyWiseBasicResource.MONEYWISEDATA_FIELD_DATE)</span>
+<span class="nc" id="L195">                .setDateConfigurator((r, c) -&gt; handleDateEvent(c))</span>
+<span class="nc" id="L196">                .setCellValueFactory(this::getFilteredDate)</span>
+<span class="nc" id="L197">                .setEditable(true)</span>
+<span class="nc bnc" id="L198" title="All 4 branches missed.">                .setCellEditable(r -&gt; !r.isHeader() &amp;&amp; !r.isReconciled())</span>
+<span class="nc" id="L199">                .setColumnWidth(WIDTH_DATE)</span>
+<span class="nc" id="L200">                .setOnCommit((r, v) -&gt; updateField(MoneyWiseTransaction::setDate, r, v));</span>
+
+        /* Create the account column */
+<span class="nc" id="L203">        myTable.declareScrollColumn(MoneyWiseBasicResource.TRANSACTION_ACCOUNT, MoneyWiseTransAsset.class)</span>
+<span class="nc" id="L204">                .setMenuConfigurator(this::buildAccountMenu)</span>
+<span class="nc" id="L205">                .setCellValueFactory(MoneyWiseTransaction::getAccount)</span>
+<span class="nc" id="L206">                .setEditable(true)</span>
+<span class="nc bnc" id="L207" title="All 4 branches missed.">                .setCellEditable(r -&gt; !r.isHeader() &amp;&amp; !r.isReconciled())</span>
+<span class="nc" id="L208">                .setColumnWidth(WIDTH_NAME)</span>
+<span class="nc" id="L209">                .setOnCommit((r, v) -&gt; updateField(MoneyWiseTransaction::setAccount, r, v));</span>
+
+        /* Create the category column */
+<span class="nc" id="L212">        myTable.declareScrollColumn(MoneyWiseBasicDataType.TRANSCATEGORY, MoneyWiseTransCategory.class)</span>
+<span class="nc" id="L213">                .setMenuConfigurator(this::buildCategoryMenu)</span>
+<span class="nc" id="L214">                .setCellValueFactory(MoneyWiseTransaction::getCategory)</span>
+<span class="nc" id="L215">                .setEditable(true)</span>
+<span class="nc bnc" id="L216" title="All 4 branches missed.">                .setCellEditable(r -&gt; !r.isHeader() &amp;&amp; !r.isReconciled())</span>
+<span class="nc" id="L217">                .setColumnWidth(WIDTH_NAME)</span>
+<span class="nc" id="L218">                .setOnCommit((r, v) -&gt; updateField(MoneyWiseTransaction::setCategory, r, v));</span>
+
+        /* Create the direction column */
+<span class="nc" id="L221">        final Map&lt;Boolean, TethysUIIconMapSet&lt;MoneyWiseAssetDirection&gt;&gt; myDirMapSets = MoneyWiseIcon.configureDirectionIconButton(myGuiFactory);</span>
+<span class="nc" id="L222">        myTable.declareIconColumn(MoneyWiseBasicResource.TRANSACTION_DIRECTION, MoneyWiseAssetDirection.class)</span>
+<span class="nc" id="L223">                .setIconMapSet(r -&gt; myDirMapSets.get(determineDirectionState(r)))</span>
+<span class="nc" id="L224">                .setCellValueFactory(MoneyWiseTransactionTable::getFilteredDirection)</span>
+<span class="nc" id="L225">                .setEditable(true)</span>
+<span class="nc bnc" id="L226" title="All 6 branches missed.">                .setCellEditable(r -&gt; !r.isHeader() &amp;&amp; !r.isReconciled() &amp;&amp; r.canSwitchDirection())</span>
+<span class="nc" id="L227">                .setColumnWidth(WIDTH_ICON)</span>
+<span class="nc" id="L228">                .setOnCommit((r, v) -&gt; updateField(this::setDirection, r, v));</span>
+
+        /* Create the partner column */
+<span class="nc" id="L231">        myTable.declareScrollColumn(MoneyWiseBasicResource.TRANSACTION_PARTNER, MoneyWiseTransAsset.class)</span>
+<span class="nc" id="L232">                .setMenuConfigurator(this::buildPartnerMenu)</span>
+<span class="nc" id="L233">                .setCellValueFactory(MoneyWiseTransaction::getPartner)</span>
+<span class="nc" id="L234">                .setEditable(true)</span>
+<span class="nc bnc" id="L235" title="All 4 branches missed.">                .setCellEditable(r -&gt; !r.isHeader() &amp;&amp; !r.isReconciled())</span>
+<span class="nc" id="L236">                .setColumnWidth(WIDTH_NAME)</span>
+<span class="nc" id="L237">                .setOnCommit((r, v) -&gt; updateField(MoneyWiseTransaction::setPartner, r, v));</span>
+
+        /* Create the reconciled column */
+<span class="nc" id="L240">        final Map&lt;Boolean, TethysUIIconMapSet&lt;Boolean&gt;&gt; myRecMapSets = MoneyWiseIcon.configureReconciledIconButton(myGuiFactory);</span>
+<span class="nc" id="L241">        myTable.declareIconColumn(MoneyWiseBasicResource.TRANSACTION_RECONCILED, Boolean.class)</span>
+<span class="nc" id="L242">                .setIconMapSet(r -&gt; myRecMapSets.get(determineReconciledState(r)))</span>
+<span class="nc" id="L243">                .setCellValueFactory(MoneyWiseTransaction::isReconciled)</span>
+<span class="nc" id="L244">                .setEditable(true)</span>
+<span class="nc bnc" id="L245" title="All 4 branches missed.">                .setCellEditable(r -&gt; !r.isHeader() &amp;&amp; !r.isLocked())</span>
+<span class="nc" id="L246">                .setColumnWidth(WIDTH_ICON)</span>
+<span class="nc" id="L247">                .setOnCommit((r, v) -&gt; updateField(MoneyWiseTransaction::setReconciled, r, v));</span>
+
+        /* Create the comments column */
+<span class="nc" id="L250">        myTable.declareStringColumn(MoneyWiseTransInfoClass.COMMENTS)</span>
+<span class="nc" id="L251">                .setCellValueFactory(MoneyWiseTransactionTable::getFilteredComments)</span>
+<span class="nc" id="L252">                .setEditable(true)</span>
+<span class="nc bnc" id="L253" title="All 2 branches missed.">                .setCellEditable(r -&gt; !r.isHeader())</span>
+<span class="nc" id="L254">                .setColumnWidth(WIDTH_DESC)</span>
+<span class="nc" id="L255">                .setOnCommit((r, v) -&gt; updateField(MoneyWiseTransaction::setComments, r, v));</span>
+
+        /* Create the amount column */
+<span class="nc" id="L258">        myTable.declareMoneyColumn(MoneyWiseBasicResource.TRANSACTION_AMOUNT)</span>
+<span class="nc" id="L259">                .setCellValueFactory(MoneyWiseTransaction::getAmount)</span>
+<span class="nc" id="L260">                .setEditable(true)</span>
+<span class="nc" id="L261">                .setColumnWidth(WIDTH_MONEY)</span>
+<span class="nc" id="L262">                .setOnCommit((r, v) -&gt; updateField(MoneyWiseTransaction::setAmount, r, v));</span>
+
+        /* Create the tag column */
+<span class="nc" id="L265">        myTable.declareListColumn(MoneyWiseTransInfoClass.TRANSTAG, MoneyWiseTransTag.class)</span>
+<span class="nc" id="L266">                .setSelectables(c -&gt; theActiveTran.buildTransactionTags())</span>
+<span class="nc" id="L267">                .setCellValueFactory(MoneyWiseTransaction::getTransactionTags)</span>
+<span class="nc" id="L268">                .setEditable(true)</span>
+<span class="nc" id="L269">                .setColumnWidth(WIDTH_NAME)</span>
+<span class="nc" id="L270">                .setOnCommit((r, v) -&gt; updateField(MoneyWiseTransaction::setTransactionTags, r, v));</span>
+
+        /* Create the reference column */
+<span class="nc" id="L273">        myTable.declareStringColumn(MoneyWiseTransInfoClass.REFERENCE)</span>
+<span class="nc" id="L274">                .setCellValueFactory(MoneyWiseTransaction::getReference)</span>
+<span class="nc" id="L275">                .setEditable(true)</span>
+<span class="nc" id="L276">                .setColumnWidth(WIDTH_DESC)</span>
+<span class="nc" id="L277">                .setOnCommit((r, v) -&gt; updateField(MoneyWiseTransaction::setReference, r, v));</span>
+
+        /* Create the taxCredit column */
+<span class="nc" id="L280">        myTable.declareMoneyColumn(MoneyWiseTransInfoClass.TAXCREDIT)</span>
+<span class="nc" id="L281">                .setCellValueFactory(MoneyWiseTransaction::getTaxCredit)</span>
+<span class="nc" id="L282">                .setEditable(true)</span>
+<span class="nc" id="L283">                .setColumnWidth(WIDTH_MONEY)</span>
+<span class="nc" id="L284">                .setOnCommit((r, v) -&gt; updateField(MoneyWiseTransaction::setTaxCredit, r, v));</span>
+
+        /* Create the EeNatIns column */
+<span class="nc" id="L287">        myTable.declareMoneyColumn(MoneyWiseTransInfoClass.EMPLOYEENATINS)</span>
+<span class="nc" id="L288">                .setCellValueFactory(MoneyWiseTransaction::getEmployeeNatIns)</span>
+<span class="nc" id="L289">                .setEditable(true)</span>
+<span class="nc" id="L290">                .setColumnWidth(WIDTH_MONEY)</span>
+<span class="nc" id="L291">                .setOnCommit((r, v) -&gt; updateField(MoneyWiseTransaction::setEmployeeNatIns, r, v));</span>
+
+        /* Create the ErNatIns column */
+<span class="nc" id="L294">        myTable.declareMoneyColumn(MoneyWiseTransInfoClass.EMPLOYERNATINS)</span>
+<span class="nc" id="L295">                .setCellValueFactory(MoneyWiseTransaction::getEmployerNatIns)</span>
+<span class="nc" id="L296">                .setEditable(true)</span>
+<span class="nc" id="L297">                .setColumnWidth(WIDTH_MONEY)</span>
+<span class="nc" id="L298">                .setOnCommit((r, v) -&gt; updateField(MoneyWiseTransaction::setEmployerNatIns, r, v));</span>
+
+        /* Create the Benefit column */
+<span class="nc" id="L301">        myTable.declareMoneyColumn(MoneyWiseTransInfoClass.DEEMEDBENEFIT)</span>
+<span class="nc" id="L302">                .setCellValueFactory(MoneyWiseTransaction::getDeemedBenefit)</span>
+<span class="nc" id="L303">                .setEditable(true)</span>
+<span class="nc" id="L304">                .setColumnWidth(WIDTH_MONEY)</span>
+<span class="nc" id="L305">                .setOnCommit((r, v) -&gt; updateField(MoneyWiseTransaction::setDeemedBenefit, r, v));</span>
+
+        /* Create the Withheld column */
+<span class="nc" id="L308">        myTable.declareMoneyColumn(MoneyWiseTransInfoClass.WITHHELD)</span>
+<span class="nc" id="L309">                .setCellValueFactory(MoneyWiseTransaction::getWithheld)</span>
+<span class="nc" id="L310">                .setEditable(true)</span>
+<span class="nc" id="L311">                .setColumnWidth(WIDTH_MONEY)</span>
+<span class="nc" id="L312">                .setOnCommit((r, v) -&gt; updateField(MoneyWiseTransaction::setWithheld, r, v));</span>
+
+        /* Create the AccountUnits column */
+<span class="nc" id="L315">        myTable.declareUnitsColumn(MoneyWiseTransInfoClass.ACCOUNTDELTAUNITS)</span>
+<span class="nc" id="L316">                .setCellValueFactory(MoneyWiseTransaction::getAccountDeltaUnits)</span>
+<span class="nc" id="L317">                .setEditable(true)</span>
+<span class="nc" id="L318">                .setColumnWidth(WIDTH_UNITS)</span>
+<span class="nc" id="L319">                .setOnCommit((r, v) -&gt; updateField(MoneyWiseTransaction::setAccountDeltaUnits, r, v));</span>
+
+        /* Create the PartnerUnits column */
+<span class="nc" id="L322">        myTable.declareUnitsColumn(MoneyWiseTransInfoClass.PARTNERDELTAUNITS)</span>
+<span class="nc" id="L323">                .setCellValueFactory(MoneyWiseTransaction::getPartnerDeltaUnits)</span>
+<span class="nc" id="L324">                .setEditable(true)</span>
+<span class="nc" id="L325">                .setColumnWidth(WIDTH_UNITS)</span>
+<span class="nc" id="L326">                .setOnCommit((r, v) -&gt; updateField(MoneyWiseTransaction::setPartnerDeltaUnits, r, v));</span>
+
+        /* Create the Dilution column */
+<span class="nc" id="L329">        myTable.declareRatioColumn(MoneyWiseTransInfoClass.DILUTION)</span>
+<span class="nc" id="L330">                .setCellValueFactory(MoneyWiseTransaction::getDilution)</span>
+<span class="nc" id="L331">                .setEditable(true)</span>
+<span class="nc" id="L332">                .setColumnWidth(WIDTH_UNITS)</span>
+<span class="nc" id="L333">                .setOnCommit((r, v) -&gt; updateField(MoneyWiseTransaction::setDilution, r, v));</span>
+
+        /* Create the QualifyYears column */
+<span class="nc" id="L336">        myTable.declareIntegerColumn(MoneyWiseTransInfoClass.QUALIFYYEARS)</span>
+<span class="nc" id="L337">                .setCellValueFactory(MoneyWiseTransaction::getYears)</span>
+<span class="nc" id="L338">                .setEditable(true)</span>
+<span class="nc" id="L339">                .setColumnWidth(WIDTH_UNITS)</span>
+<span class="nc" id="L340">                .setOnCommit((r, v) -&gt; updateField(MoneyWiseTransaction::setYears, r, v));</span>
+
+        /* Create the returned cash account column */
+<span class="nc" id="L343">        myTable.declareScrollColumn(MoneyWiseTransInfoClass.RETURNEDCASHACCOUNT, MoneyWiseTransAsset.class)</span>
+<span class="nc" id="L344">                .setMenuConfigurator(this::buildReturnedMenu)</span>
+<span class="nc" id="L345">                .setCellValueFactory(MoneyWiseTransaction::getReturnedCashAccount)</span>
+<span class="nc" id="L346">                .setEditable(true)</span>
+<span class="nc bnc" id="L347" title="All 2 branches missed.">                .setCellEditable(r -&gt; !r.isReconciled())</span>
+<span class="nc" id="L348">                .setColumnWidth(WIDTH_NAME)</span>
+<span class="nc" id="L349">                .setOnCommit((r, v) -&gt; updateField(MoneyWiseTransaction::setReturnedCashAccount, r, v));</span>
+
+        /* Create the returned cash column */
+<span class="nc" id="L352">        myTable.declareMoneyColumn(MoneyWiseTransInfoClass.RETURNEDCASH)</span>
+<span class="nc" id="L353">                .setCellValueFactory(MoneyWiseTransaction::getReturnedCash)</span>
+<span class="nc" id="L354">                .setEditable(true)</span>
+<span class="nc" id="L355">                .setColumnWidth(WIDTH_MONEY)</span>
+<span class="nc" id="L356">                .setOnCommit((r, v) -&gt; updateField(MoneyWiseTransaction::setReturnedCash, r, v));</span>
+
+        /* Create the partner amount column */
+<span class="nc" id="L359">        myTable.declareMoneyColumn(MoneyWiseTransInfoClass.PARTNERAMOUNT)</span>
+<span class="nc" id="L360">                .setCellValueFactory(MoneyWiseTransaction::getPartnerAmount)</span>
+<span class="nc" id="L361">                .setEditable(true)</span>
+<span class="nc" id="L362">                .setColumnWidth(WIDTH_MONEY)</span>
+<span class="nc" id="L363">                .setOnCommit((r, v) -&gt; updateField(MoneyWiseTransaction::setPartnerAmount, r, v));</span>
+
+        /* Create the debit column */
+<span class="nc" id="L366">        myTable.declareRawDecimalColumn(MoneyWiseTransDataId.DEBIT)</span>
+<span class="nc" id="L367">                .setCellValueFactory(this::getFilteredDebit)</span>
+<span class="nc" id="L368">                .setEditable(false)</span>
+<span class="nc" id="L369">                .setColumnWidth(WIDTH_MONEY);</span>
+
+        /* Create the credit column */
+<span class="nc" id="L372">        myTable.declareRawDecimalColumn(MoneyWiseTransDataId.CREDIT)</span>
+<span class="nc" id="L373">                .setCellValueFactory(this::getFilteredCredit)</span>
+<span class="nc" id="L374">                .setEditable(false)</span>
+<span class="nc" id="L375">                .setColumnWidth(WIDTH_MONEY);</span>
+
+        /* Create the balance column */
+<span class="nc" id="L378">        myTable.declareRawDecimalColumn(MoneyWiseTransDataId.BALANCE)</span>
+<span class="nc" id="L379">                .setCellValueFactory(this::getFilteredBalance)</span>
+<span class="nc" id="L380">                .setEditable(false)</span>
+<span class="nc" id="L381">                .setColumnWidth(WIDTH_MONEY);</span>
+
+        /* Create the Active column */
+<span class="nc" id="L384">        final TethysUIIconMapSet&lt;MetisAction&gt; myActionMapSet = MetisIcon.configureStatusIconButton(myGuiFactory);</span>
+<span class="nc" id="L385">        myTable.declareIconColumn(PrometheusDataResource.DATAITEM_TOUCH, MetisAction.class)</span>
+<span class="nc" id="L386">                .setIconMapSet(r -&gt; myActionMapSet)</span>
+<span class="nc" id="L387">                .setCellValueFactory(MoneyWiseTransactionTable::getFilteredAction)</span>
+<span class="nc" id="L388">                .setName(MoneyWiseUIResource.STATICDATA_ACTIVE.getValue())</span>
+<span class="nc" id="L389">                .setEditable(true)</span>
+<span class="nc bnc" id="L390" title="All 4 branches missed.">                .setCellEditable(r -&gt; !r.isHeader() &amp;&amp; !r.isReconciled())</span>
+<span class="nc" id="L391">                .setColumnWidth(WIDTH_ICON)</span>
+<span class="nc" id="L392">                .setOnCommit((r, v) -&gt; updateField(this::deleteRow, r, v));</span>
+
+        /* Add listeners */
+<span class="nc" id="L395">        pView.getEventRegistrar().addEventListener(e -&gt; refreshData());</span>
+<span class="nc" id="L396">        theActionButtons.getEventRegistrar().addEventListener(this::handleActionButtons);</span>
+<span class="nc" id="L397">        theNewButton.getEventRegistrar().addEventListener(e -&gt; addNewItem());</span>
+<span class="nc" id="L398">        theError.getEventRegistrar().addEventListener(e -&gt; handleErrorPane());</span>
+<span class="nc" id="L399">        theSelect.getEventRegistrar().addEventListener(PrometheusDataEvent.SELECTIONCHANGED, e -&gt; handleFilterSelection());</span>
+<span class="nc" id="L400">        theSelect.getEventRegistrar().addEventListener(PrometheusDataEvent.SAVETOFILE, e -&gt; writeCSVToFile(pView.getGuiFactory()));</span>
+<span class="nc" id="L401">        theActiveTran.getEventRegistrar().addEventListener(PrometheusDataEvent.ADJUSTVISIBILITY, e -&gt; handlePanelState());</span>
+
+        /* Hide the action buttons initially */
+<span class="nc" id="L404">        theActionButtons.setVisible(false);</span>
+<span class="nc" id="L405">        theFilter = theSelect.getFilter();</span>
+
+        /* Initialise the columns */
+<span class="nc bnc" id="L408" title="All 2 branches missed.">        adjustColumns(theSelect.showColumns()</span>
+<span class="nc" id="L409">                ? theSelect.getColumns()</span>
+<span class="nc" id="L410">                : MoneyWiseAnalysisColumnSet.BALANCE);</span>
+<span class="nc" id="L411">    }</span>
+
+    /**
+     * Obtain the selection panel.
+     *
+     * @return the select panel
+     */
+    MoneyWiseAnalysisSelect getSelect() {
+<span class="nc" id="L419">        return theSelect;</span>
+    }
+
+    /**
+     * Obtain the action buttons.
+     *
+     * @return the action buttons
+     */
+    PrometheusActionButtons getActionButtons() {
+<span class="nc" id="L428">        return theActionButtons;</span>
+    }
+
+    /**
+     * Delete row.
+     *
+     * @param pRow   the row
+     * @param pValue the value (ignored)
+     * @throws OceanusException on error
+     */
+    protected void setDirection(final MoneyWiseTransaction pRow,
+                                final Object pValue) throws OceanusException {
+<span class="nc" id="L440">        pRow.switchDirection();</span>
+<span class="nc" id="L441">    }</span>
+
+    @Override
+    protected boolean isItemEditing() {
+<span class="nc" id="L445">        return theActiveTran.isEditing();</span>
+    }
+
+    /**
+     * handle Date event.
+     *
+     * @param pConfig the dateConfig
+     */
+    private void handleDateEvent(final OceanusDateConfig pConfig) {
+<span class="nc bnc" id="L454" title="All 2 branches missed.">        pConfig.setEarliestDate(theRange == null</span>
+<span class="nc" id="L455">                ? null</span>
+<span class="nc" id="L456">                : theRange.getStart());</span>
+<span class="nc bnc" id="L457" title="All 2 branches missed.">        pConfig.setLatestDate(theRange == null</span>
+<span class="nc" id="L458">                ? null</span>
+<span class="nc" id="L459">                : theRange.getEnd());</span>
+<span class="nc" id="L460">    }</span>
+
+    @Override
+    public boolean isFieldChanged(final MetisDataFieldId pField,
+                                  final MoneyWiseTransaction pItem) {
+<span class="nc bnc" id="L465" title="All 2 branches missed.">        if (pField.equals(MoneyWiseTransDataId.DEBIT)</span>
+<span class="nc bnc" id="L466" title="All 2 branches missed.">                || pField.equals(MoneyWiseTransDataId.CREDIT)</span>
+<span class="nc bnc" id="L467" title="All 2 branches missed.">                || pField.equals(MoneyWiseTransDataId.BALANCE)) {</span>
+<span class="nc" id="L468">            return false;</span>
+        }
+<span class="nc" id="L470">        return super.isFieldChanged(pField, pItem);</span>
+    }
+
+    /**
+     * Determine reconciled state.
+     *
+     * @param pTrans the transaction
+     * @return the state
+     */
+    private static boolean determineReconciledState(final MoneyWiseTransaction pTrans) {
+<span class="nc" id="L480">        return pTrans.isLocked();</span>
+    }
+
+    /**
+     * Determine direction state.
+     *
+     * @param pTrans the transaction
+     * @return the state
+     */
+    private static boolean determineDirectionState(final MoneyWiseTransaction pTrans) {
+<span class="nc" id="L490">        return pTrans.isReconciled();</span>
+    }
+
+    /**
+     * Determine Focus.
+     */
+    protected void determineFocus() {
+        /* Request the focus */
+<span class="nc" id="L498">        getTable().requestFocus();</span>
+<span class="nc" id="L499">    }</span>
+
+    /**
+     * Obtain filtered debit for transaction.
+     *
+     * @param pTrans the transaction
+     * @return the debit
+     */
+    private OceanusDecimal getFilteredDebit(final MoneyWiseTransaction pTrans) {
+<span class="nc" id="L508">        return theFilter.getDebitForTransaction(pTrans);</span>
+    }
+
+    /**
+     * Obtain filtered debit for transaction.
+     *
+     * @param pTrans the transaction
+     * @return the debit
+     */
+    private OceanusDecimal getFilteredCredit(final MoneyWiseTransaction pTrans) {
+<span class="nc" id="L518">        return theFilter.getCreditForTransaction(pTrans);</span>
+    }
+
+    /**
+     * Obtain filtered debit for transaction.
+     *
+     * @param pTrans the transaction
+     * @return the debit
+     */
+    private OceanusDecimal getFilteredBalance(final MoneyWiseTransaction pTrans) {
+<span class="nc bnc" id="L528" title="All 2 branches missed.">        return pTrans.isHeader() ? theFilter.getStartingBalance() : theFilter.getBalanceForTransaction(pTrans);</span>
+    }
+
+    /**
+     * Obtain date value.
+     *
+     * @param pTrans the transaction
+     * @return the date value
+     */
+    private OceanusDate getFilteredDate(final MoneyWiseTransaction pTrans) {
+<span class="nc bnc" id="L538" title="All 2 branches missed.">        return pTrans.isHeader() ? theRange.getStart() : pTrans.getDate();</span>
+    }
+
+    /**
+     * Obtain date value.
+     *
+     * @param pTrans the transaction
+     * @return the date value
+     */
+    private static String getFilteredComments(final MoneyWiseTransaction pTrans) {
+<span class="nc bnc" id="L548" title="All 2 branches missed.">        return pTrans.isHeader() ? MoneyWiseUIResource.STATEMENT_OPENINGBALANCE.getValue() : pTrans.getComments();</span>
+    }
+
+    /**
+     * Obtain direction value.
+     *
+     * @param pTrans the transaction
+     * @return the direction value
+     */
+    private static MoneyWiseAssetDirection getFilteredDirection(final MoneyWiseTransaction pTrans) {
+<span class="nc bnc" id="L558" title="All 2 branches missed.">        return pTrans.isHeader() ? null : pTrans.getDirection();</span>
+    }
+
+    /**
+     * Obtain date value.
+     *
+     * @param pTrans the transaction
+     * @return the date value
+     */
+    private static MetisAction getFilteredAction(final MoneyWiseTransaction pTrans) {
+<span class="nc bnc" id="L568" title="All 4 branches missed.">        return (pTrans.isHeader() || pTrans.isReconciled()) ? MetisAction.DO : MetisAction.DELETE;</span>
+    }
+
+    @Override
+    protected void selectItem(final MoneyWiseTransaction pTrans) {
+<span class="nc bnc" id="L573" title="All 4 branches missed.">        final MoneyWiseTransaction myTrans = pTrans != null &amp;&amp; !pTrans.isHeader() ? pTrans : null;</span>
+<span class="nc" id="L574">        theActiveTran.setItem(myTrans);</span>
+<span class="nc" id="L575">    }</span>
+
+    /**
+     * Select Statement.
+     *
+     * @param pSelect the selection
+     */
+    void selectStatement(final MoneyWiseStatementSelect pSelect) {
+        /* Update selection */
+<span class="nc" id="L584">        theSelect.selectStatement(pSelect);</span>
+
+        /* Set the filter */
+<span class="nc" id="L587">        theFilter = theSelect.getFilter();</span>
+
+        /* Ensure that columns are correct */
+<span class="nc bnc" id="L590" title="All 2 branches missed.">        adjustColumns(theSelect.showColumns()</span>
+<span class="nc" id="L591">                ? theSelect.getColumns()</span>
+<span class="nc" id="L592">                : MoneyWiseAnalysisColumnSet.BALANCE);</span>
+
+        /* Update the lists */
+<span class="nc" id="L595">        updateList();</span>
+<span class="nc" id="L596">    }</span>
+
+    /**
+     * handleErrorPane.
+     */
+    private void handleErrorPane() {
+        /* Determine whether we have an error */
+<span class="nc" id="L603">        final boolean isError = theError.hasError();</span>
+
+        /* Hide selection panel on error */
+<span class="nc bnc" id="L606" title="All 2 branches missed.">        theSelect.setVisible(!isError);</span>
+
+        /* Lock scroll area */
+<span class="nc bnc" id="L609" title="All 2 branches missed.">        getTable().setEnabled(!isError);</span>
+
+        /* Lock Action Buttons */
+<span class="nc bnc" id="L612" title="All 2 branches missed.">        theActionButtons.setEnabled(!isError);</span>
+<span class="nc" id="L613">    }</span>
+
+    @Override
+    protected void refreshData() {
+        /* Obtain the active profile */
+<span class="nc" id="L618">        OceanusProfile myTask = getView().getActiveTask();</span>
+<span class="nc" id="L619">        myTask = myTask.startTask(&quot;refreshData&quot;);</span>
+
+        /* Update the selection */
+<span class="nc" id="L622">        theSelect.refreshData();</span>
+
+        /* Set the filter */
+<span class="nc" id="L625">        theFilter = theSelect.getFilter();</span>
+
+        /* Update the list */
+<span class="nc" id="L628">        updateList();</span>
+
+        /* Complete the task */
+<span class="nc" id="L631">        myTask.end();</span>
+<span class="nc" id="L632">    }</span>
+
+    /**
+     * Handle filter selection.
+     */
+    private void handleFilterSelection() {
+        /* Set the filter */
+<span class="nc" id="L639">        theFilter = theSelect.getFilter();</span>
+
+        /* Ensure that columns are correct */
+<span class="nc bnc" id="L642" title="All 2 branches missed.">        adjustColumns(theSelect.showColumns()</span>
+<span class="nc" id="L643">                ? theSelect.getColumns()</span>
+<span class="nc" id="L644">                : MoneyWiseAnalysisColumnSet.BALANCE);</span>
+
+        /* Set the selection */
+<span class="nc" id="L647">        final OceanusDateRange myRange = theSelect.getRange();</span>
+<span class="nc bnc" id="L648" title="All 2 branches missed.">        if (MetisDataDifference.isEqual(myRange, theRange)) {</span>
+            /* Handle a simple filter change */
+<span class="nc" id="L650">            theViewerFilter.setObject(theFilter);</span>
+<span class="nc" id="L651">            updateTableData();</span>
+        } else {
+            /* Update new lists */
+<span class="nc" id="L654">            updateList();</span>
+        }
+<span class="nc" id="L656">    }</span>
+
+
+    @Override
+    protected boolean isFiltered(final MoneyWiseTransaction pRow) {
+        /* Handle no filter */
+<span class="nc bnc" id="L662" title="All 2 branches missed.">        if (theFilter == null) {</span>
+<span class="nc" id="L663">            return false;</span>
+        }
+
+        /* Handle header visibility */
+<span class="nc bnc" id="L667" title="All 2 branches missed.">        if (pRow.isHeader()) {</span>
+<span class="nc" id="L668">            return MoneyWiseAnalysisColumnSet.BALANCE.equals(theColumnSet);</span>
+        }
+
+        /* Return visibility of row */
+<span class="nc bnc" id="L672" title="All 4 branches missed.">        return super.isFiltered(pRow) &amp;&amp; !theFilter.filterTransaction(pRow);</span>
+    }
+
+    @Override
+    public void notifyChanges() {
+        /* Determine whether we have updates */
+<span class="nc" id="L678">        final boolean hasUpdates = hasUpdates();</span>
+<span class="nc" id="L679">        final boolean isItemEditing = theActiveTran.isEditing();</span>
+
+        /* Update the table buttons */
+<span class="nc" id="L682">        theActionButtons.setEnabled(true);</span>
+<span class="nc bnc" id="L683" title="All 4 branches missed.">        theActionButtons.setVisible(hasUpdates &amp;&amp; !isItemEditing);</span>
+<span class="nc bnc" id="L684" title="All 2 branches missed.">        theSelect.setEnabled(!isItemEditing);</span>
+<span class="nc bnc" id="L685" title="All 2 branches missed.">        theNewButton.setEnabled(!isItemEditing);</span>
+
+        /* Adjust enable of the table */
+<span class="nc bnc" id="L688" title="All 2 branches missed.">        if (!isItemEditing) {</span>
+<span class="nc" id="L689">            setEnabled(true);</span>
+        } else {
+<span class="nc" id="L691">            setTableEnabled(false);</span>
+        }
+
+        /* Pass call on */
+<span class="nc" id="L695">        super.notifyChanges();</span>
+<span class="nc" id="L696">    }</span>
+
+    /**
+     * Update lists.
+     */
+    private void updateList() {
+        /* Access the transactions */
+<span class="nc" id="L703">        theTransactions = theAnalysisView.getTransactions();</span>
+<span class="nc" id="L704">        theRange = theAnalysisView.getRange();</span>
+
+        /* If we have data */
+<span class="nc bnc" id="L707" title="All 2 branches missed.">        if (theTransactions != null) {</span>
+<span class="nc" id="L708">            MoneyWiseTransaction myHeader = theTransactions.findItemById(AnalysisHeader.ID_VALUE);</span>
+<span class="nc bnc" id="L709" title="All 2 branches missed.">            if (myHeader == null) {</span>
+                /* Create the header */
+<span class="nc" id="L711">                myHeader = new AnalysisHeader(theTransactions);</span>
+<span class="nc" id="L712">                theTransactions.add(myHeader);</span>
+            }
+
+            /* Notify panel of refresh */
+<span class="nc" id="L716">            theActiveTran.refreshData();</span>
+<span class="nc" id="L717">            theActiveTran.updateEditors(theRange);</span>
+
+            /* Notify the builder */
+<span class="nc" id="L720">            theTransactions.getValidator().setRange(theRange);</span>
+<span class="nc" id="L721">            theTransactions.getValidator().setEditSet(theEditSet);</span>
+        }
+
+        /* Update lists */
+<span class="nc bnc" id="L725" title="All 2 branches missed.">        getTable().setItems(theTransactions == null ? null : theTransactions.getUnderlyingList());</span>
+<span class="nc" id="L726">        theActionButtons.setEnabled(true);</span>
+<span class="nc bnc" id="L727" title="All 2 branches missed.">        theSelect.setEnabled(!hasUpdates());</span>
+
+        /* Touch the filter and updateSet */
+<span class="nc" id="L730">        theViewerFilter.setObject(theFilter);</span>
+<span class="nc" id="L731">        theViewerAnalysis.setTreeObject(getEditSet());</span>
+<span class="nc" id="L732">        restoreSelected();</span>
+<span class="nc" id="L733">    }</span>
+
+    @Override
+    public void cancelEditing() {
+<span class="nc" id="L737">        super.cancelEditing();</span>
+<span class="nc" id="L738">        theActiveTran.setEditable(false);</span>
+<span class="nc" id="L739">    }</span>
+
+    /**
+     * Select transaction.
+     *
+     * @param pTran the transaction to select
+     */
+    void selectTran(final MoneyWiseTransaction pTran) {
+        /* Select the row */
+<span class="nc" id="L748">        getTable().selectRow(pTran);</span>
+<span class="nc" id="L749">    }</span>
+
+    @Override
+    protected void handleRewind() {
+        /* Only action if we are not editing */
+<span class="nc bnc" id="L754" title="All 2 branches missed.">        if (!theActiveTran.isEditing()) {</span>
+            /* Handle the reWind */
+<span class="nc" id="L756">            setEnabled(true);</span>
+<span class="nc" id="L757">            super.handleRewind();</span>
+        }
+
+        /* Adjust for changes */
+<span class="nc" id="L761">        notifyChanges();</span>
+<span class="nc" id="L762">    }</span>
+
+    /**
+     * handle Action Buttons.
+     *
+     * @param pEvent the event
+     */
+    private void handleActionButtons(final OceanusEvent&lt;PrometheusUIEvent&gt; pEvent) {
+        /* Cancel editing */
+<span class="nc" id="L771">        cancelEditing();</span>
+
+        /* Perform the command */
+<span class="nc" id="L774">        theEditSet.processCommand(pEvent.getEventId(), theError);</span>
+
+        /* Adjust for changes */
+<span class="nc" id="L777">        notifyChanges();</span>
+<span class="nc" id="L778">    }</span>
+
+    /**
+     * Handle panel state.
+     */
+    private void handlePanelState() {
+        /* Only action if we are not editing */
+<span class="nc bnc" id="L785" title="All 2 branches missed.">        if (!theActiveTran.isEditing()) {</span>
+            /* handle the edit transition */
+<span class="nc" id="L787">            setEnabled(true);</span>
+<span class="nc" id="L788">            final MoneyWiseTransaction myTrans = theActiveTran.getSelectedItem();</span>
+<span class="nc" id="L789">            updateTableData();</span>
+<span class="nc bnc" id="L790" title="All 2 branches missed.">            if (myTrans != null) {</span>
+<span class="nc" id="L791">                getTable().selectRow(myTrans);</span>
+            } else {
+<span class="nc" id="L793">                restoreSelected();</span>
+            }
+<span class="nc" id="L795">        } else {</span>
+<span class="nc" id="L796">            getTable().cancelEditing();</span>
+        }
+
+        /* Note changes */
+<span class="nc" id="L800">        notifyChanges();</span>
+<span class="nc" id="L801">    }</span>
+
+    /**
+     * Obtain the popUpMenu for Accounts.
+     *
+     * @param pTrans the transaction
+     * @param pMenu  the menu to build
+     */
+    private void buildAccountMenu(final MoneyWiseTransaction pTrans,
+                                  final TethysUIScrollMenu&lt;MoneyWiseTransAsset&gt; pMenu) {
+        /* Build the menu */
+<span class="nc" id="L812">        theActiveTran.buildAccountMenu(pMenu, pTrans);</span>
+<span class="nc" id="L813">    }</span>
+
+    /**
+     * Obtain the popUpMenu for Partner Accounts.
+     *
+     * @param pTrans the transaction
+     * @param pMenu  the menu to build
+     */
+    private void buildPartnerMenu(final MoneyWiseTransaction pTrans,
+                                  final TethysUIScrollMenu&lt;MoneyWiseTransAsset&gt; pMenu) {
+        /* Build the menu */
+<span class="nc" id="L824">        theActiveTran.buildPartnerMenu(pMenu, pTrans);</span>
+<span class="nc" id="L825">    }</span>
+
+    /**
+     * Build the popUpMenu for categories.
+     *
+     * @param pTrans the transaction
+     * @param pMenu  the menu to build
+     */
+    private void buildCategoryMenu(final MoneyWiseTransaction pTrans,
+                                   final TethysUIScrollMenu&lt;MoneyWiseTransCategory&gt; pMenu) {
+        /* Build the menu */
+<span class="nc" id="L836">        theActiveTran.buildCategoryMenu(pMenu, pTrans);</span>
+<span class="nc" id="L837">    }</span>
+
+    /**
+     * Build the popUpMenu for categories.
+     *
+     * @param pTrans the transaction
+     * @param pMenu  the menu to build
+     */
+    private void buildReturnedMenu(final MoneyWiseTransaction pTrans,
+                                   final TethysUIScrollMenu&lt;MoneyWiseTransAsset&gt; pMenu) {
+        /* Build the menu */
+<span class="nc" id="L848">        theActiveTran.buildReturnedAccountMenu(pMenu, pTrans);</span>
+<span class="nc" id="L849">    }</span>
+
+    /**
+     * New item.
+     */
+    private void addNewItem() {
+        /* Make sure that we have finished editing */
+<span class="nc" id="L856">        cancelEditing();</span>
+
+        /* Create a new profile */
+<span class="nc" id="L859">        final OceanusProfile myTask = getView().getNewProfile(&quot;addNewItem&quot;);</span>
+
+        /* Create the new transaction */
+<span class="nc" id="L862">        myTask.startTask(&quot;buildItem&quot;);</span>
+<span class="nc" id="L863">        final MoneyWiseValidateTransaction myBuilder = (MoneyWiseValidateTransaction) theTransactions.getValidator();</span>
+<span class="nc" id="L864">        final MoneyWiseTransaction myTrans = theFilter.buildNewTransaction(myBuilder);</span>
+
+        /* If we have one available */
+<span class="nc bnc" id="L867" title="All 2 branches missed.">        if (myTrans != null) {</span>
+            /* Add the new item */
+<span class="nc" id="L869">            myTask.startTask(&quot;addToList&quot;);</span>
+<span class="nc" id="L870">            theTransactions.add(myTrans);</span>
+<span class="nc" id="L871">            myTrans.setNewVersion();</span>
+
+            /* Validate the new item and notify of the changes */
+<span class="nc" id="L874">            myTask.startTask(&quot;incrementVersion&quot;);</span>
+<span class="nc" id="L875">            getEditSet().incrementVersion();</span>
+
+            /* validate the item */
+<span class="nc" id="L878">            myTask.startTask(&quot;validate&quot;);</span>
+<span class="nc" id="L879">            myTrans.validate();</span>
+
+            /* Lock the table */
+<span class="nc" id="L882">            myTask.startTask(&quot;setItem&quot;);</span>
+<span class="nc" id="L883">            theActiveTran.setNewItem(myTrans);</span>
+<span class="nc" id="L884">            setTableEnabled(false);</span>
+        }
+
+        /* End the task */
+<span class="nc" id="L888">        myTask.end();</span>
+<span class="nc" id="L889">    }</span>
+
+    /**
+     * Adjust columns.
+     *
+     * @param pSet the set to display.
+     */
+    private void adjustColumns(final MoneyWiseAnalysisColumnSet pSet) {
+        /* Ignore if we are already the right set */
+<span class="nc bnc" id="L898" title="All 2 branches missed.">        if (pSet.equals(theColumnSet)) {</span>
+<span class="nc" id="L899">            return;</span>
+        }
+
+        /* Hide all columns */
+<span class="nc" id="L903">        final TethysUITableManager&lt;MetisDataFieldId, MoneyWiseTransaction&gt; myTable = getTable();</span>
+<span class="nc" id="L904">        hideAllColumns();</span>
+
+        /* Switch on column set */
+<span class="nc bnc" id="L907" title="All 7 branches missed.">        switch (pSet) {</span>
+            case BALANCE:
+<span class="nc" id="L909">                myTable.getColumn(MoneyWiseTransInfoClass.COMMENTS).setVisible(true);</span>
+<span class="nc" id="L910">                myTable.getColumn(MoneyWiseTransDataId.DEBIT).setVisible(true);</span>
+<span class="nc" id="L911">                myTable.getColumn(MoneyWiseTransDataId.CREDIT).setVisible(true);</span>
+<span class="nc" id="L912">                myTable.getColumn(MoneyWiseTransDataId.BALANCE).setVisible(true);</span>
+<span class="nc" id="L913">                break;</span>
+            case STANDARD:
+<span class="nc" id="L915">                myTable.getColumn(MoneyWiseTransInfoClass.COMMENTS).setVisible(true);</span>
+<span class="nc" id="L916">                myTable.getColumn(MoneyWiseBasicResource.TRANSACTION_AMOUNT).setVisible(true);</span>
+<span class="nc" id="L917">                myTable.getColumn(MoneyWiseTransInfoClass.TRANSTAG).setVisible(true);</span>
+<span class="nc" id="L918">                myTable.getColumn(MoneyWiseTransInfoClass.REFERENCE).setVisible(true);</span>
+<span class="nc" id="L919">                myTable.getColumn(MoneyWiseTransInfoClass.PARTNERAMOUNT).setVisible(true);</span>
+<span class="nc" id="L920">                break;</span>
+            case SALARY:
+<span class="nc" id="L922">                myTable.getColumn(MoneyWiseBasicResource.TRANSACTION_AMOUNT).setVisible(true);</span>
+<span class="nc" id="L923">                myTable.getColumn(MoneyWiseTransInfoClass.TAXCREDIT).setVisible(true);</span>
+<span class="nc" id="L924">                myTable.getColumn(MoneyWiseTransInfoClass.EMPLOYEENATINS).setVisible(true);</span>
+<span class="nc" id="L925">                myTable.getColumn(MoneyWiseTransInfoClass.EMPLOYERNATINS).setVisible(true);</span>
+<span class="nc" id="L926">                myTable.getColumn(MoneyWiseTransInfoClass.DEEMEDBENEFIT).setVisible(true);</span>
+<span class="nc" id="L927">                myTable.getColumn(MoneyWiseTransInfoClass.WITHHELD).setVisible(true);</span>
+<span class="nc" id="L928">                break;</span>
+            case INTEREST:
+<span class="nc" id="L930">                myTable.getColumn(MoneyWiseBasicResource.TRANSACTION_AMOUNT).setVisible(true);</span>
+<span class="nc" id="L931">                myTable.getColumn(MoneyWiseTransInfoClass.TAXCREDIT).setVisible(true);</span>
+<span class="nc" id="L932">                myTable.getColumn(MoneyWiseTransInfoClass.WITHHELD).setVisible(true);</span>
+<span class="nc" id="L933">                break;</span>
+            case DIVIDEND:
+<span class="nc" id="L935">                myTable.getColumn(MoneyWiseBasicResource.TRANSACTION_AMOUNT).setVisible(true);</span>
+<span class="nc" id="L936">                myTable.getColumn(MoneyWiseTransInfoClass.TAXCREDIT).setVisible(true);</span>
+<span class="nc" id="L937">                myTable.getColumn(MoneyWiseTransInfoClass.ACCOUNTDELTAUNITS).setVisible(true);</span>
+<span class="nc" id="L938">                break;</span>
+            case SECURITY:
+<span class="nc" id="L940">                myTable.getColumn(MoneyWiseBasicResource.TRANSACTION_AMOUNT).setVisible(true);</span>
+<span class="nc" id="L941">                myTable.getColumn(MoneyWiseTransInfoClass.ACCOUNTDELTAUNITS).setVisible(true);</span>
+<span class="nc" id="L942">                myTable.getColumn(MoneyWiseTransInfoClass.PARTNERDELTAUNITS).setVisible(true);</span>
+<span class="nc" id="L943">                myTable.getColumn(MoneyWiseTransInfoClass.DILUTION).setVisible(true);</span>
+<span class="nc" id="L944">                myTable.getColumn(MoneyWiseTransInfoClass.RETURNEDCASHACCOUNT).setVisible(true);</span>
+<span class="nc" id="L945">                myTable.getColumn(MoneyWiseTransInfoClass.RETURNEDCASH).setVisible(true);</span>
+<span class="nc" id="L946">                myTable.getColumn(MoneyWiseTransInfoClass.QUALIFYYEARS).setVisible(true);</span>
+<span class="nc" id="L947">                break;</span>
+            case ALL:
+            default:
+<span class="nc" id="L950">                myTable.getColumn(MoneyWiseTransInfoClass.COMMENTS).setVisible(true);</span>
+<span class="nc" id="L951">                myTable.getColumn(MoneyWiseBasicResource.TRANSACTION_AMOUNT).setVisible(true);</span>
+<span class="nc" id="L952">                myTable.getColumn(MoneyWiseTransInfoClass.TRANSTAG).setVisible(true);</span>
+<span class="nc" id="L953">                myTable.getColumn(MoneyWiseTransInfoClass.REFERENCE).setVisible(true);</span>
+<span class="nc" id="L954">                myTable.getColumn(MoneyWiseTransInfoClass.TAXCREDIT).setVisible(true);</span>
+<span class="nc" id="L955">                myTable.getColumn(MoneyWiseTransInfoClass.EMPLOYERNATINS).setVisible(true);</span>
+<span class="nc" id="L956">                myTable.getColumn(MoneyWiseTransInfoClass.EMPLOYEENATINS).setVisible(true);</span>
+<span class="nc" id="L957">                myTable.getColumn(MoneyWiseTransInfoClass.DEEMEDBENEFIT).setVisible(true);</span>
+<span class="nc" id="L958">                myTable.getColumn(MoneyWiseTransInfoClass.WITHHELD).setVisible(true);</span>
+<span class="nc" id="L959">                myTable.getColumn(MoneyWiseTransInfoClass.ACCOUNTDELTAUNITS).setVisible(true);</span>
+<span class="nc" id="L960">                myTable.getColumn(MoneyWiseTransInfoClass.PARTNERDELTAUNITS).setVisible(true);</span>
+<span class="nc" id="L961">                myTable.getColumn(MoneyWiseTransInfoClass.PARTNERAMOUNT).setVisible(true);</span>
+<span class="nc" id="L962">                myTable.getColumn(MoneyWiseTransInfoClass.DILUTION).setVisible(true);</span>
+<span class="nc" id="L963">                myTable.getColumn(MoneyWiseTransInfoClass.RETURNEDCASHACCOUNT).setVisible(true);</span>
+<span class="nc" id="L964">                myTable.getColumn(MoneyWiseTransInfoClass.RETURNEDCASH).setVisible(true);</span>
+<span class="nc" id="L965">                myTable.getColumn(MoneyWiseTransInfoClass.QUALIFYYEARS).setVisible(true);</span>
+                break;
+        }
+
+        /* Store the column set */
+<span class="nc" id="L970">        theColumnSet = pSet;</span>
+<span class="nc" id="L971">    }</span>
+
+    /**
+     * Hide all columns.
+     */
+    private void hideAllColumns() {
+<span class="nc" id="L977">        final TethysUITableManager&lt;MetisDataFieldId, MoneyWiseTransaction&gt; myTable = getTable();</span>
+<span class="nc" id="L978">        myTable.getColumn(MoneyWiseTransDataId.DEBIT).setVisible(false);</span>
+<span class="nc" id="L979">        myTable.getColumn(MoneyWiseTransDataId.CREDIT).setVisible(false);</span>
+<span class="nc" id="L980">        myTable.getColumn(MoneyWiseTransDataId.BALANCE).setVisible(false);</span>
+<span class="nc" id="L981">        myTable.getColumn(MoneyWiseTransInfoClass.COMMENTS).setVisible(false);</span>
+<span class="nc" id="L982">        myTable.getColumn(MoneyWiseBasicResource.TRANSACTION_AMOUNT).setVisible(false);</span>
+<span class="nc" id="L983">        myTable.getColumn(MoneyWiseTransInfoClass.TRANSTAG).setVisible(false);</span>
+<span class="nc" id="L984">        myTable.getColumn(MoneyWiseTransInfoClass.REFERENCE).setVisible(false);</span>
+<span class="nc" id="L985">        myTable.getColumn(MoneyWiseTransInfoClass.TAXCREDIT).setVisible(false);</span>
+<span class="nc" id="L986">        myTable.getColumn(MoneyWiseTransInfoClass.EMPLOYERNATINS).setVisible(false);</span>
+<span class="nc" id="L987">        myTable.getColumn(MoneyWiseTransInfoClass.EMPLOYEENATINS).setVisible(false);</span>
+<span class="nc" id="L988">        myTable.getColumn(MoneyWiseTransInfoClass.DEEMEDBENEFIT).setVisible(false);</span>
+<span class="nc" id="L989">        myTable.getColumn(MoneyWiseTransInfoClass.WITHHELD).setVisible(false);</span>
+<span class="nc" id="L990">        myTable.getColumn(MoneyWiseTransInfoClass.ACCOUNTDELTAUNITS).setVisible(false);</span>
+<span class="nc" id="L991">        myTable.getColumn(MoneyWiseTransInfoClass.PARTNERDELTAUNITS).setVisible(false);</span>
+<span class="nc" id="L992">        myTable.getColumn(MoneyWiseTransInfoClass.PARTNERAMOUNT).setVisible(false);</span>
+<span class="nc" id="L993">        myTable.getColumn(MoneyWiseTransInfoClass.DILUTION).setVisible(false);</span>
+<span class="nc" id="L994">        myTable.getColumn(MoneyWiseTransInfoClass.RETURNEDCASHACCOUNT).setVisible(false);</span>
+<span class="nc" id="L995">        myTable.getColumn(MoneyWiseTransInfoClass.RETURNEDCASH).setVisible(false);</span>
+<span class="nc" id="L996">        myTable.getColumn(MoneyWiseTransInfoClass.QUALIFYYEARS).setVisible(false);</span>
+<span class="nc" id="L997">    }</span>
+
+
+    /**
+     * Analysis Header class.
+     */
+    private static class AnalysisHeader
+            extends MoneyWiseTransaction {
+        /**
+         * Analysis Header Id.
+         */
+        static final int ID_VALUE = 1;
+
+        /**
+         * Constructor.
+         *
+         * @param pList the Transaction list
+         */
+        protected AnalysisHeader(final MoneyWiseTransactionList pList) {
+<span class="nc" id="L1016">            super(pList);</span>
+<span class="nc" id="L1017">            setHeader(true);</span>
+<span class="nc" id="L1018">            setIndexedId(ID_VALUE);</span>
+<span class="nc" id="L1019">        }</span>
+    }
+
+    /**
+     * Transaction DataIds.
+     */
+<span class="nc" id="L1025">    private enum MoneyWiseTransDataId</span>
+            implements MetisDataFieldId {
+        /**
+         * Debit.
+         */
+<span class="nc" id="L1030">        DEBIT(MoneyWiseUIResource.STATEMENT_COLUMN_DEBIT),</span>
+
+        /**
+         * Credit.
+         */
+<span class="nc" id="L1035">        CREDIT(MoneyWiseUIResource.STATEMENT_COLUMN_CREDIT),</span>
+
+        /**
+         * Balance.
+         */
+<span class="nc" id="L1040">        BALANCE(MoneyWiseUIResource.STATEMENT_COLUMN_BALANCE);</span>
+
+        /**
+         * The Value.
+         */
+        private final String theValue;
+
+        /**
+         * Constructor.
+         *
+         * @param pKeyName the key name
+         */
+<span class="nc" id="L1052">        MoneyWiseTransDataId(final MetisDataFieldId pKeyName) {</span>
+<span class="nc" id="L1053">            theValue = pKeyName.getId();</span>
+<span class="nc" id="L1054">        }</span>
+
+        @Override
+        public String getId() {
+<span class="nc" id="L1058">            return theValue;</span>
+        }
+
+        @Override
+        public String toString() {
+<span class="nc" id="L1063">            return getId();</span>
+        }
+    }
+
+    /**
+     * Transaction Panel.
+     */
+    public static class MoneyWiseStatementPanel
+            implements TethysUIComponent, OceanusEventProvider&lt;PrometheusDataEvent&gt; {
+        /**
+         * Text for DataEntry Title.
+         */
+<span class="nc" id="L1075">        private static final String NLS_DATAENTRY = MoneyWiseUIResource.REGISTER_DATAENTRY.getValue();</span>
+
+        /**
+         * Text for Filter DataEntry Title.
+         */
+<span class="nc" id="L1080">        private static final String NLS_FILTERDATAENTRY = MoneyWiseUIResource.FILTER_DATAENTRY.getValue();</span>
+
+        /**
+         * Text for Transactions DataEntry Title.
+         */
+<span class="nc" id="L1085">        private static final String NLS_TRANSDATAENTRY = MoneyWiseUIResource.TRANSACTION_DATAENTRY.getValue();</span>
+
+        /**
+         * The Event Manager.
+         */
+        private final OceanusEventManager&lt;PrometheusDataEvent&gt; theEventManager;
+
+        /**
+         * The updateSet.
+         */
+        private final PrometheusEditSet theEditSet;
+
+        /**
+         * The analysis data entry.
+         */
+        private final MetisViewerEntry theViewerAnalysis;
+
+        /**
+         * The error panel.
+         */
+        private final MetisErrorPanel theError;
+
+        /**
+         * The table.
+         */
+        private final MoneyWiseTransactionTable theTable;
+
+        /**
+         * The panel.
+         */
+        private final TethysUIBorderPaneManager thePanel;
+
+        /**
+         * Constructor.
+         *
+         * @param pView the data view
+         */
+<span class="nc" id="L1122">        public MoneyWiseStatementPanel(final MoneyWiseView pView) {</span>
+            /* Build the Update set and entry */
+<span class="nc" id="L1124">            theEditSet = new PrometheusEditSet(pView);</span>
+
+            /* Create the event manager */
+<span class="nc" id="L1127">            theEventManager = new OceanusEventManager&lt;&gt;();</span>
+
+            /* Create the top level viewer entry for this view */
+<span class="nc" id="L1130">            final MetisViewerManager myViewer = pView.getViewerManager();</span>
+<span class="nc" id="L1131">            final MetisViewerEntry mySection = pView.getViewerEntry(PrometheusViewerEntryId.VIEW);</span>
+<span class="nc" id="L1132">            final MetisViewerEntry myRegister = myViewer.newEntry(mySection, NLS_DATAENTRY);</span>
+<span class="nc" id="L1133">            final MetisViewerEntry myViewerFilter = myViewer.newEntry(myRegister, NLS_FILTERDATAENTRY);</span>
+<span class="nc" id="L1134">            theViewerAnalysis = myViewer.newEntry(myRegister, NLS_TRANSDATAENTRY);</span>
+<span class="nc" id="L1135">            theViewerAnalysis.setTreeObject(theEditSet);</span>
+
+            /* Create the error panel for this view */
+<span class="nc" id="L1138">            theError = pView.getToolkit().getToolkit().newErrorPanel(theViewerAnalysis);</span>
+
+            /* Create the table */
+<span class="nc" id="L1141">            theTable = new MoneyWiseTransactionTable(pView, theEditSet, theError, myViewerFilter, theViewerAnalysis);</span>
+
+            /* Create the action buttons */
+<span class="nc" id="L1144">            final TethysUIFactory&lt;?&gt; myGuiFactory = pView.getGuiFactory();</span>
+
+            /* Create the header panel */
+<span class="nc" id="L1147">            final TethysUIPaneFactory myPanes = myGuiFactory.paneFactory();</span>
+<span class="nc" id="L1148">            final TethysUIBorderPaneManager myHeader = myPanes.newBorderPane();</span>
+<span class="nc" id="L1149">            myHeader.setCentre(theTable.getSelect());</span>
+<span class="nc" id="L1150">            myHeader.setNorth(theError);</span>
+<span class="nc" id="L1151">            myHeader.setEast(theTable.getActionButtons());</span>
+
+            /* Create the panel */
+<span class="nc" id="L1154">            thePanel = myPanes.newBorderPane();</span>
+<span class="nc" id="L1155">            thePanel.setNorth(myHeader);</span>
+<span class="nc" id="L1156">            thePanel.setCentre(theTable);</span>
+
+            /* Add listeners */
+<span class="nc" id="L1159">            theError.getEventRegistrar().addEventListener(e -&gt; handleErrorPane());</span>
+<span class="nc" id="L1160">            theTable.getActionButtons().getEventRegistrar().addEventListener(this::handleActionButtons);</span>
+<span class="nc" id="L1161">            theTable.getEventRegistrar().addEventListener(PrometheusDataEvent.ADJUSTVISIBILITY, e -&gt; notifyChanges());</span>
+<span class="nc" id="L1162">            theTable.getEventRegistrar().addEventListener(PrometheusDataEvent.GOTOWINDOW, theEventManager::cascadeEvent);</span>
+<span class="nc" id="L1163">        }</span>
+
+        @Override
+        public TethysUIComponent getUnderlying() {
+<span class="nc" id="L1167">            return thePanel;</span>
+        }
+
+        @Override
+        public void setEnabled(final boolean pEnabled) {
+<span class="nc" id="L1172">            thePanel.setEnabled(pEnabled);</span>
+<span class="nc" id="L1173">        }</span>
+
+        @Override
+        public void setVisible(final boolean pVisible) {
+<span class="nc" id="L1177">            thePanel.setVisible(pVisible);</span>
+<span class="nc" id="L1178">        }</span>
+
+        @Override
+        public OceanusEventRegistrar&lt;PrometheusDataEvent&gt; getEventRegistrar() {
+<span class="nc" id="L1182">            return theEventManager.getEventRegistrar();</span>
+        }
+
+        /**
+         * Select Statement.
+         *
+         * @param pSelect the selection
+         */
+        public void selectStatement(final MoneyWiseStatementSelect pSelect) {
+<span class="nc" id="L1191">            theTable.selectStatement(pSelect);</span>
+<span class="nc" id="L1192">        }</span>
+
+        /**
+         * handleErrorPane.
+         */
+        private void handleErrorPane() {
+            /* Determine whether we have an error */
+<span class="nc" id="L1199">            final boolean isError = theError.hasError();</span>
+
+            /* Hide selection panel on error */
+<span class="nc bnc" id="L1202" title="All 2 branches missed.">            theTable.getSelect().setVisible(!isError);</span>
+
+            /* Lock scroll area */
+<span class="nc bnc" id="L1205" title="All 2 branches missed.">            theTable.setEnabled(!isError);</span>
+
+            /* Lock Action Buttons */
+<span class="nc bnc" id="L1208" title="All 2 branches missed.">            theTable.getActionButtons().setEnabled(!isError);</span>
+<span class="nc" id="L1209">        }</span>
+
+        /**
+         * handle Action Buttons.
+         *
+         * @param pEvent the event
+         */
+        private void handleActionButtons(final OceanusEvent&lt;PrometheusUIEvent&gt; pEvent) {
+            /* Cancel editing */
+<span class="nc" id="L1218">            theTable.cancelEditing();</span>
+
+            /* Perform the command */
+<span class="nc" id="L1221">            theEditSet.processCommand(pEvent.getEventId(), theError);</span>
+
+            /* Adjust for changes */
+<span class="nc" id="L1224">            theTable.notifyChanges();</span>
+<span class="nc" id="L1225">        }</span>
+
+        /**
+         * Determine Focus.
+         */
+        public void determineFocus() {
+            /* Request the focus */
+<span class="nc" id="L1232">            theTable.determineFocus();</span>
+
+            /* Focus on the Data entry */
+<span class="nc" id="L1235">            theViewerAnalysis.setFocus();</span>
+<span class="nc" id="L1236">        }</span>
+
+        /**
+         * Call underlying controls to take notice of changes in view/selection.
+         */
+        private void notifyChanges() {
+            /* Notify listeners */
+<span class="nc" id="L1243">            theEventManager.fireEvent(PrometheusDataEvent.ADJUSTVISIBILITY);</span>
+<span class="nc" id="L1244">        }</span>
+
+        /**
+         * Does the panel have updates?
+         *
+         * @return true/false
+         */
+        public boolean hasUpdates() {
+<span class="nc" id="L1252">            return theTable.hasUpdates();</span>
+        }
+
+        /**
+         * Does the panel have a session?
+         *
+         * @return true/false
+         */
+        public boolean hasSession() {
+<span class="nc" id="L1261">            return theTable.hasUpdates();</span>
+        }
+
+        /**
+         * Does the panel have errors?
+         *
+         * @return true/false
+         */
+        public boolean hasErrors() {
+<span class="nc" id="L1270">            return theTable.hasErrors();</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

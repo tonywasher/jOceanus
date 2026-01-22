@@ -1,0 +1,812 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseQIFFile.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.moneywise.quicken.file</a> &gt; <span class="el_source">MoneyWiseQIFFile.java</span></div><h1>MoneyWiseQIFFile.java</h1><pre class="source lang-java linenums">/*
+ * MoneyWise: Finance Application
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.moneywise.quicken.file;
+
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseCategoryBase;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDataSet;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDeposit;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDeposit.MoneyWiseDepositList;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePayee;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePortfolio;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurity;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurityPrice;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurityPrice.MoneyWiseSecurityPriceList;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransAsset;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransCategory;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransTag;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransaction;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransaction.MoneyWiseTransactionList;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysis;
+import io.github.tonywasher.joceanus.moneywise.quicken.definitions.MoneyWiseQIFPreference.MoneyWiseQIFPreferenceKey;
+import io.github.tonywasher.joceanus.moneywise.quicken.definitions.MoneyWiseQIFPreference.MoneyWiseQIFPreferences;
+import io.github.tonywasher.joceanus.moneywise.quicken.definitions.MoneyWiseQIFType;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * QIF File representation.
+ */
+public class MoneyWiseQIFFile {
+    /**
+     * Hash multiplier.
+     */
+    protected static final int HASH_BASE = 37;
+
+    /**
+     * Holding suffix.
+     */
+    protected static final String HOLDING_SUFFIX = &quot;Holding&quot;;
+
+    /**
+     * Type of file.
+     */
+    private final MoneyWiseQIFType theFileType;
+
+    /**
+     * Start event Date.
+     */
+    private OceanusDate theStartDate;
+
+    /**
+     * Last event Date.
+     */
+    private OceanusDate theLastDate;
+
+    /**
+     * Map of Accounts with Events.
+     */
+    private final Map&lt;String, MoneyWiseQIFAccountEvents&gt; theAccountMap;
+
+    /**
+     * Sorted List of Accounts with Events.
+     */
+    private final List&lt;MoneyWiseQIFAccountEvents&gt; theAccounts;
+
+    /**
+     * Map of Payees.
+     */
+    private final Map&lt;String, MoneyWiseQIFPayee&gt; thePayeeMap;
+
+    /**
+     * Sorted List of Payees.
+     */
+    private final List&lt;MoneyWiseQIFPayee&gt; thePayees;
+
+    /**
+     * Map of Securities with Prices.
+     */
+    private final Map&lt;String, MoneyWiseQIFSecurityPrices&gt; theSecurityMap;
+
+    /**
+     * Sorted List of Securities with Prices.
+     */
+    private final List&lt;MoneyWiseQIFSecurityPrices&gt; theSecurities;
+
+    /**
+     * Map of Symbols to Securities.
+     */
+    private final Map&lt;String, MoneyWiseQIFSecurity&gt; theSymbolMap;
+
+    /**
+     * Map of Parent Categories.
+     */
+    private final Map&lt;String, MoneyWiseQIFParentCategory&gt; theParentMap;
+
+    /**
+     * Sorted List of Parent Categories.
+     */
+    private final List&lt;MoneyWiseQIFParentCategory&gt; theParentCategories;
+
+    /**
+     * Map of Categories.
+     */
+    private final Map&lt;String, MoneyWiseQIFEventCategory&gt; theCategories;
+
+    /**
+     * Map of Classes.
+     */
+    private final Map&lt;String, MoneyWiseQIFClass&gt; theClassMap;
+
+    /**
+     * Sorted List of Classes.
+     */
+    private final List&lt;MoneyWiseQIFClass&gt; theClasses;
+
+    /**
+     * Constructor.
+     *
+     * @param pType the file type
+     */
+<span class="nc" id="L140">    public MoneyWiseQIFFile(final MoneyWiseQIFType pType) {</span>
+        /* Store file type */
+<span class="nc" id="L142">        theFileType = pType;</span>
+
+        /* Allocate maps */
+<span class="nc" id="L145">        theAccountMap = new HashMap&lt;&gt;();</span>
+<span class="nc" id="L146">        thePayeeMap = new HashMap&lt;&gt;();</span>
+<span class="nc" id="L147">        theSecurityMap = new HashMap&lt;&gt;();</span>
+<span class="nc" id="L148">        theSymbolMap = new HashMap&lt;&gt;();</span>
+<span class="nc" id="L149">        theParentMap = new HashMap&lt;&gt;();</span>
+<span class="nc" id="L150">        theCategories = new HashMap&lt;&gt;();</span>
+<span class="nc" id="L151">        theClassMap = new HashMap&lt;&gt;();</span>
+
+        /* Allocate maps */
+<span class="nc" id="L154">        theAccounts = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L155">        thePayees = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L156">        theSecurities = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L157">        theParentCategories = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L158">        theClasses = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L159">    }</span>
+
+    /**
+     * Obtain the file type.
+     *
+     * @return the file type
+     */
+    public MoneyWiseQIFType getFileType() {
+<span class="nc" id="L167">        return theFileType;</span>
+    }
+
+    /**
+     * Does the file have classes?
+     *
+     * @return true/false
+     */
+    protected boolean hasClasses() {
+<span class="nc bnc" id="L176" title="All 2 branches missed.">        return !theClasses.isEmpty();</span>
+    }
+
+    /**
+     * Obtain the number of class.
+     *
+     * @return the number
+     */
+    protected int numClasses() {
+<span class="nc" id="L185">        return theClasses.size();</span>
+    }
+
+    /**
+     * Obtain the classes iterator.
+     *
+     * @return the iterator
+     */
+    protected Iterator&lt;MoneyWiseQIFClass&gt; classIterator() {
+<span class="nc" id="L194">        return theClasses.iterator();</span>
+    }
+
+    /**
+     * Obtain the number of categories.
+     *
+     * @return the number
+     */
+    protected int numCategories() {
+<span class="nc" id="L203">        return theCategories.size();</span>
+    }
+
+    /**
+     * Obtain the category iterator.
+     *
+     * @return the iterator
+     */
+    protected Iterator&lt;MoneyWiseQIFParentCategory&gt; categoryIterator() {
+<span class="nc" id="L212">        return theParentCategories.iterator();</span>
+    }
+
+    /**
+     * Obtain the number of accounts.
+     *
+     * @return the number
+     */
+    protected int numAccounts() {
+<span class="nc" id="L221">        return theAccounts.size();</span>
+    }
+
+    /**
+     * Obtain the account iterator.
+     *
+     * @return the iterator
+     */
+    protected Iterator&lt;MoneyWiseQIFAccountEvents&gt; accountIterator() {
+<span class="nc" id="L230">        return theAccounts.iterator();</span>
+    }
+
+    /**
+     * Does the file have securities?
+     *
+     * @return true/false
+     */
+    protected boolean hasSecurities() {
+<span class="nc bnc" id="L239" title="All 2 branches missed.">        return !theSecurities.isEmpty();</span>
+    }
+
+    /**
+     * Obtain the number of securities.
+     *
+     * @return the number
+     */
+    protected int numSecurities() {
+<span class="nc" id="L248">        return theSecurities.size();</span>
+    }
+
+    /**
+     * Obtain the account iterator.
+     *
+     * @return the iterator
+     */
+    protected Iterator&lt;MoneyWiseQIFSecurityPrices&gt; securityIterator() {
+<span class="nc" id="L257">        return theSecurities.iterator();</span>
+    }
+
+    /**
+     * Sort the lists.
+     */
+    protected void sortLists() {
+        /* Sort the classes */
+<span class="nc" id="L265">        theClasses.sort(null);</span>
+
+        /* Sort the payees */
+<span class="nc" id="L268">        thePayees.sort(null);</span>
+
+        /* Sort the categories */
+<span class="nc" id="L271">        theParentCategories.sort(null);</span>
+<span class="nc" id="L272">        final Iterator&lt;MoneyWiseQIFParentCategory&gt; myCatIterator = categoryIterator();</span>
+<span class="nc bnc" id="L273" title="All 2 branches missed.">        while (myCatIterator.hasNext()) {</span>
+<span class="nc" id="L274">            final MoneyWiseQIFParentCategory myParent = myCatIterator.next();</span>
+
+            /* Sort the children */
+<span class="nc" id="L277">            myParent.sortChildren();</span>
+<span class="nc" id="L278">        }</span>
+
+        /* Sort the securities */
+<span class="nc" id="L281">        theSecurities.sort(null);</span>
+<span class="nc" id="L282">        final Iterator&lt;MoneyWiseQIFSecurityPrices&gt; mySecIterator = securityIterator();</span>
+<span class="nc bnc" id="L283" title="All 2 branches missed.">        while (mySecIterator.hasNext()) {</span>
+<span class="nc" id="L284">            final MoneyWiseQIFSecurityPrices mySecurity = mySecIterator.next();</span>
+
+            /* Sort the prices */
+<span class="nc" id="L287">            mySecurity.sortPrices();</span>
+<span class="nc" id="L288">        }</span>
+
+        /* Sort the accounts */
+<span class="nc" id="L291">        theAccounts.sort(null);</span>
+<span class="nc" id="L292">        final Iterator&lt;MoneyWiseQIFAccountEvents&gt; myAccIterator = accountIterator();</span>
+<span class="nc bnc" id="L293" title="All 2 branches missed.">        while (myAccIterator.hasNext()) {</span>
+<span class="nc" id="L294">            final MoneyWiseQIFAccountEvents myAccount = myAccIterator.next();</span>
+
+            /* Sort the events */
+<span class="nc" id="L297">            myAccount.sortEvents();</span>
+<span class="nc" id="L298">        }</span>
+<span class="nc" id="L299">    }</span>
+
+    /**
+     * Build QIF File from data.
+     *
+     * @param pData        the data
+     * @param pAnalysis    the analysis
+     * @param pPreferences the preferences
+     * @return the QIF File
+     */
+    public static MoneyWiseQIFFile buildQIFFile(final MoneyWiseDataSet pData,
+                                                final MoneyWiseAnalysis pAnalysis,
+                                                final MoneyWiseQIFPreferences pPreferences) {
+        /* Access preference details */
+<span class="nc" id="L313">        final MoneyWiseQIFType myType = pPreferences.getEnumValue(MoneyWiseQIFPreferenceKey.QIFTYPE, MoneyWiseQIFType.class);</span>
+<span class="nc" id="L314">        final OceanusDate myLastDate = pPreferences.getDateValue(MoneyWiseQIFPreferenceKey.LASTEVENT);</span>
+
+        /* Create new QIF File */
+<span class="nc" id="L317">        final MoneyWiseQIFFile myFile = new MoneyWiseQIFFile(myType);</span>
+
+        /* Build the data for the accounts */
+<span class="nc" id="L320">        myFile.buildData(pData, pAnalysis, myLastDate);</span>
+<span class="nc" id="L321">        myFile.sortLists();</span>
+
+        /* Return the QIF File */
+<span class="nc" id="L324">        return myFile;</span>
+    }
+
+    /**
+     * Register class.
+     *
+     * @param pClass the class
+     * @return the QIFClass representation
+     */
+    public MoneyWiseQIFClass registerClass(final MoneyWiseTransTag pClass) {
+        /* Locate an existing class */
+<span class="nc" id="L335">        final String myName = pClass.getName();</span>
+<span class="nc" id="L336">        return theClassMap.computeIfAbsent(myName, n -&gt; {</span>
+<span class="nc" id="L337">            final MoneyWiseQIFClass myClass = new MoneyWiseQIFClass(this, pClass);</span>
+<span class="nc" id="L338">            theClasses.add(myClass);</span>
+<span class="nc" id="L339">            return myClass;</span>
+        });
+    }
+
+    /**
+     * Register class.
+     *
+     * @param pClass the class
+     */
+    public void registerClass(final MoneyWiseQIFClass pClass) {
+        /* Locate an existing class */
+<span class="nc" id="L350">        final String myName = pClass.getName();</span>
+<span class="nc" id="L351">        theClassMap.computeIfAbsent(myName, n -&gt; {</span>
+<span class="nc" id="L352">            theClasses.add(pClass);</span>
+<span class="nc" id="L353">            return pClass;</span>
+        });
+<span class="nc" id="L355">    }</span>
+
+    /**
+     * Register category.
+     *
+     * @param pCategory the category
+     * @return the QIFEventCategory representation
+     */
+    public MoneyWiseQIFEventCategory registerCategory(final MoneyWiseTransCategory pCategory) {
+        /* Locate an existing category */
+<span class="nc" id="L365">        final String myName = pCategory.getName();</span>
+<span class="nc" id="L366">        return theCategories.computeIfAbsent(myName, n -&gt; {</span>
+<span class="nc" id="L367">            final MoneyWiseQIFEventCategory myCat = new MoneyWiseQIFEventCategory(this, pCategory);</span>
+<span class="nc" id="L368">            registerCategoryToParent(pCategory.getParentCategory(), myCat);</span>
+<span class="nc" id="L369">            return myCat;</span>
+        });
+    }
+
+    /**
+     * Register parent category.
+     *
+     * @param pParent   the parent category
+     * @param pCategory the QIFEventCategory to register
+     */
+    private void registerCategoryToParent(final MoneyWiseTransCategory pParent,
+                                          final MoneyWiseQIFEventCategory pCategory) {
+        /* Locate an existing parent category */
+<span class="nc" id="L382">        final String myName = pParent.getName();</span>
+<span class="nc" id="L383">        final MoneyWiseQIFParentCategory myParent = theParentMap.computeIfAbsent(myName, n -&gt; {</span>
+<span class="nc" id="L384">            final MoneyWiseQIFParentCategory myParCat = new MoneyWiseQIFParentCategory(this, pParent);</span>
+<span class="nc" id="L385">            theParentCategories.add(myParCat);</span>
+<span class="nc" id="L386">            return myParCat;</span>
+        });
+
+        /* Register the category */
+<span class="nc" id="L390">        myParent.registerChild(pCategory);</span>
+<span class="nc" id="L391">    }</span>
+
+    /**
+     * Register category.
+     *
+     * @param pCategory the category
+     */
+    public void registerCategory(final MoneyWiseQIFEventCategory pCategory) {
+        /* Locate an existing category */
+<span class="nc" id="L400">        final String myName = pCategory.getName();</span>
+<span class="nc" id="L401">        final MoneyWiseQIFEventCategory myCat = theCategories.get(myName);</span>
+<span class="nc bnc" id="L402" title="All 2 branches missed.">        if (myCat == null) {</span>
+            /* Locate parent separator */
+<span class="nc" id="L404">            final int myPos = myName.indexOf(MoneyWiseCategoryBase.STR_SEP);</span>
+
+            /* If this is a parent category */
+<span class="nc bnc" id="L407" title="All 2 branches missed.">            if (myPos &lt; 0) {</span>
+                /* Create the new Parent Category */
+<span class="nc" id="L409">                final MoneyWiseQIFParentCategory myParent = new MoneyWiseQIFParentCategory(pCategory);</span>
+<span class="nc" id="L410">                theParentMap.put(myName, myParent);</span>
+<span class="nc" id="L411">                theParentCategories.add(myParent);</span>
+
+                /* else this is a standard category */
+<span class="nc" id="L414">            } else {</span>
+                /* Register the new category */
+<span class="nc" id="L416">                theCategories.put(myName, pCategory);</span>
+
+                /* Determine parent name */
+<span class="nc" id="L419">                final String myParentName = myName.substring(0, myPos);</span>
+
+                /* Locate an existing parent category */
+<span class="nc" id="L422">                final MoneyWiseQIFParentCategory myParent = theParentMap.get(myParentName);</span>
+
+                /* Register against parent */
+<span class="nc" id="L425">                myParent.registerChild(pCategory);</span>
+            }
+        }
+<span class="nc" id="L428">    }</span>
+
+    /**
+     * Register account.
+     *
+     * @param pAccount the account
+     * @return the QIFAccount representation
+     */
+    public MoneyWiseQIFAccountEvents registerAccount(final MoneyWiseTransAsset pAccount) {
+        /* Locate an existing account */
+<span class="nc" id="L438">        final String myName = pAccount.getName();</span>
+<span class="nc" id="L439">        return theAccountMap.computeIfAbsent(myName, n -&gt; {</span>
+<span class="nc" id="L440">            final MoneyWiseQIFAccountEvents myAccount = new MoneyWiseQIFAccountEvents(this, pAccount);</span>
+<span class="nc" id="L441">            theAccounts.add(myAccount);</span>
+<span class="nc" id="L442">            return myAccount;</span>
+        });
+    }
+
+    /**
+     * Register holding account.
+     *
+     * @param pPortfolio the portfolio
+     * @return the QIFAccount representation
+     */
+    public MoneyWiseQIFAccountEvents registerHoldingAccount(final MoneyWisePortfolio pPortfolio) {
+        /* Locate an existing account */
+<span class="nc" id="L454">        final String myName = pPortfolio.getName() + HOLDING_SUFFIX;</span>
+<span class="nc" id="L455">        return theAccountMap.computeIfAbsent(myName, n -&gt; {</span>
+<span class="nc" id="L456">            final MoneyWiseQIFAccountEvents myAccount = new MoneyWiseQIFAccountEvents(this, myName);</span>
+<span class="nc" id="L457">            theAccounts.add(myAccount);</span>
+<span class="nc" id="L458">            return myAccount;</span>
+        });
+    }
+
+    /**
+     * Register account.
+     *
+     * @param pAccount the account
+     * @return the QIFAccount representation
+     */
+    public MoneyWiseQIFAccountEvents registerAccount(final MoneyWiseQIFAccount pAccount) {
+        /* Locate an existing account */
+<span class="nc" id="L470">        final String myName = pAccount.getName();</span>
+<span class="nc" id="L471">        return theAccountMap.computeIfAbsent(myName, n -&gt; {</span>
+<span class="nc" id="L472">            final MoneyWiseQIFAccountEvents myAccount = new MoneyWiseQIFAccountEvents(pAccount);</span>
+<span class="nc" id="L473">            theAccounts.add(myAccount);</span>
+<span class="nc" id="L474">            return myAccount;</span>
+        });
+    }
+
+    /**
+     * Register payee.
+     *
+     * @param pPayee the payee
+     * @return the QIFPayee representation
+     */
+    public MoneyWiseQIFPayee registerPayee(final MoneyWisePayee pPayee) {
+        /* Locate an existing payee */
+<span class="nc" id="L486">        final String myName = pPayee.getName();</span>
+<span class="nc" id="L487">        return thePayeeMap.computeIfAbsent(myName, n -&gt; {</span>
+<span class="nc" id="L488">            final MoneyWiseQIFPayee myPayee = new MoneyWiseQIFPayee(pPayee);</span>
+<span class="nc" id="L489">            thePayees.add(myPayee);</span>
+<span class="nc" id="L490">            return myPayee;</span>
+        });
+    }
+
+    /**
+     * Register payee.
+     *
+     * @param pPayee the payee
+     * @return the QIFPayee representation
+     */
+    public MoneyWiseQIFPayee registerPayee(final String pPayee) {
+        /* Locate an existing payee */
+<span class="nc" id="L502">        return thePayeeMap.computeIfAbsent(pPayee, n -&gt; {</span>
+<span class="nc" id="L503">            final MoneyWiseQIFPayee myPayee = new MoneyWiseQIFPayee(pPayee);</span>
+<span class="nc" id="L504">            thePayees.add(myPayee);</span>
+<span class="nc" id="L505">            return myPayee;</span>
+        });
+    }
+
+    /**
+     * Register security.
+     *
+     * @param pSecurity the security
+     * @return the QIFSecurity representation
+     */
+    public MoneyWiseQIFSecurity registerSecurity(final MoneyWiseSecurity pSecurity) {
+        /* Locate an existing security */
+<span class="nc" id="L517">        final String myName = pSecurity.getName();</span>
+<span class="nc" id="L518">        final MoneyWiseQIFSecurityPrices mySecurity = theSecurityMap.computeIfAbsent(myName, n -&gt; {</span>
+<span class="nc" id="L519">            final MoneyWiseQIFSecurityPrices mySec = new MoneyWiseQIFSecurityPrices(this, pSecurity);</span>
+<span class="nc" id="L520">            theSymbolMap.put(pSecurity.getSymbol(), mySec.getSecurity());</span>
+<span class="nc" id="L521">            theSecurities.add(mySec);</span>
+<span class="nc" id="L522">            return mySec;</span>
+        });
+
+        /* Return the security */
+<span class="nc" id="L526">        return mySecurity.getSecurity();</span>
+    }
+
+    /**
+     * Register security.
+     *
+     * @param pSecurity the security
+     */
+    public void registerSecurity(final MoneyWiseQIFSecurity pSecurity) {
+        /* Locate an existing security */
+<span class="nc" id="L536">        final String myName = pSecurity.getName();</span>
+<span class="nc" id="L537">        theSecurityMap.computeIfAbsent(myName, n -&gt; {</span>
+<span class="nc" id="L538">            final MoneyWiseQIFSecurityPrices mySecurity = new MoneyWiseQIFSecurityPrices(this, pSecurity);</span>
+<span class="nc" id="L539">            theSymbolMap.put(pSecurity.getSymbol(), mySecurity.getSecurity());</span>
+<span class="nc" id="L540">            theSecurities.add(mySecurity);</span>
+<span class="nc" id="L541">            return mySecurity;</span>
+        });
+<span class="nc" id="L543">    }</span>
+
+    /**
+     * Register price.
+     *
+     * @param pPrice the price
+     */
+    public void registerPrice(final MoneyWiseSecurityPrice pPrice) {
+        /* Locate an existing security price list */
+<span class="nc" id="L552">        final MoneyWiseSecurity mySecurity = pPrice.getSecurity();</span>
+<span class="nc" id="L553">        final MoneyWiseQIFSecurityPrices mySecurityList = theSecurityMap.get(mySecurity.getName());</span>
+<span class="nc bnc" id="L554" title="All 2 branches missed.">        if (mySecurityList != null) {</span>
+            /* Add price to the list */
+<span class="nc" id="L556">            mySecurityList.addPrice(pPrice);</span>
+        }
+<span class="nc" id="L558">    }</span>
+
+    /**
+     * Register price.
+     *
+     * @param pPrice the price
+     */
+    public void registerPrice(final MoneyWiseQIFPrice pPrice) {
+        /* Locate an existing security price list */
+<span class="nc" id="L567">        final MoneyWiseQIFSecurity mySecurity = pPrice.getSecurity();</span>
+<span class="nc" id="L568">        final MoneyWiseQIFSecurityPrices mySecurityList = theSecurityMap.get(mySecurity.getName());</span>
+<span class="nc bnc" id="L569" title="All 2 branches missed.">        if (mySecurityList != null) {</span>
+            /* Loop through the prices */
+<span class="nc" id="L571">            final Iterator&lt;MoneyWiseQIFPrice&gt; myIterator = pPrice.priceIterator();</span>
+<span class="nc bnc" id="L572" title="All 2 branches missed.">            while (myIterator.hasNext()) {</span>
+<span class="nc" id="L573">                final MoneyWiseQIFPrice myPrice = myIterator.next();</span>
+
+                /* Add price to the list */
+<span class="nc" id="L576">                mySecurityList.addPrice(myPrice);</span>
+<span class="nc" id="L577">            }</span>
+        }
+<span class="nc" id="L579">    }</span>
+
+    /**
+     * Obtain category.
+     *
+     * @param pName the name of the category
+     * @return the category
+     */
+    protected MoneyWiseQIFEventCategory getCategory(final String pName) {
+        /* Lookup the category */
+<span class="nc" id="L589">        return theCategories.get(pName);</span>
+    }
+
+    /**
+     * Obtain account.
+     *
+     * @param pName the name of the account
+     * @return the account
+     */
+    protected MoneyWiseQIFAccount getAccount(final String pName) {
+        /* Lookup the security */
+<span class="nc" id="L600">        final MoneyWiseQIFAccountEvents myAccount = getAccountEvents(pName);</span>
+<span class="nc bnc" id="L601" title="All 2 branches missed.">        return (myAccount == null)</span>
+<span class="nc" id="L602">                ? null</span>
+<span class="nc" id="L603">                : myAccount.getAccount();</span>
+    }
+
+    /**
+     * Obtain account events.
+     *
+     * @param pName the name of the account
+     * @return the account
+     */
+    protected MoneyWiseQIFAccountEvents getAccountEvents(final String pName) {
+        /* Lookup the account */
+<span class="nc" id="L614">        return theAccountMap.get(pName);</span>
+    }
+
+    /**
+     * Obtain security.
+     *
+     * @param pName the name of the security
+     * @return the security
+     */
+    protected MoneyWiseQIFSecurity getSecurity(final String pName) {
+        /* Lookup the security */
+<span class="nc" id="L625">        final MoneyWiseQIFSecurityPrices myList = getSecurityPrices(pName);</span>
+<span class="nc bnc" id="L626" title="All 2 branches missed.">        return myList == null</span>
+<span class="nc" id="L627">                ? null</span>
+<span class="nc" id="L628">                : myList.getSecurity();</span>
+    }
+
+    /**
+     * Obtain security by Symbol.
+     *
+     * @param pSymbol the symbol of the security
+     * @return the security
+     */
+    protected MoneyWiseQIFSecurity getSecurityBySymbol(final String pSymbol) {
+        /* Lookup the security */
+<span class="nc" id="L639">        return theSymbolMap.get(pSymbol);</span>
+    }
+
+    /**
+     * Obtain security prices.
+     *
+     * @param pName the name of the security
+     * @return the security
+     */
+    protected MoneyWiseQIFSecurityPrices getSecurityPrices(final String pName) {
+        /* Lookup the security */
+<span class="nc" id="L650">        return theSecurityMap.get(pName);</span>
+    }
+
+    /**
+     * Obtain class.
+     *
+     * @param pName the name of the class
+     * @return the class
+     */
+    protected MoneyWiseQIFClass getClass(final String pName) {
+        /* Lookup the class */
+<span class="nc" id="L661">        return theClassMap.get(pName);</span>
+    }
+
+    /**
+     * Build data.
+     *
+     * @param pData     the data
+     * @param pAnalysis the analysis
+     * @param pLastDate the last date
+     */
+    public void buildData(final MoneyWiseDataSet pData,
+                          final MoneyWiseAnalysis pAnalysis,
+                          final OceanusDate pLastDate) {
+        /* Create a builder */
+<span class="nc" id="L675">        final MoneyWiseQIFBuilder myBuilder = new MoneyWiseQIFBuilder(this, pData, pAnalysis);</span>
+
+        /* Store dates */
+<span class="nc" id="L678">        theStartDate = pData.getDateRange().getStart();</span>
+<span class="nc" id="L679">        theLastDate = pLastDate;</span>
+
+        /* Build opening balances */
+<span class="nc" id="L682">        buildOpeningBalances(myBuilder, pData.getDeposits());</span>
+
+        /* Loop through the events */
+<span class="nc" id="L685">        final MoneyWiseTransactionList myEvents = pData.getTransactions();</span>
+<span class="nc" id="L686">        final Iterator&lt;MoneyWiseTransaction&gt; myIterator = myEvents.iterator();</span>
+<span class="nc bnc" id="L687" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L688">            final MoneyWiseTransaction myEvent = myIterator.next();</span>
+
+            /* Break loop if the event is too late */
+<span class="nc" id="L691">            final OceanusDate myDate = myEvent.getDate();</span>
+<span class="nc bnc" id="L692" title="All 2 branches missed.">            if (myDate.compareTo(pLastDate) &gt; 0) {</span>
+<span class="nc" id="L693">                break;</span>
+            }
+
+            /* Process the event */
+<span class="nc" id="L697">            myBuilder.processEvent(myEvent);</span>
+<span class="nc" id="L698">        }</span>
+
+        /* Build prices for securities */
+<span class="nc" id="L701">        buildPrices(pData.getSecurityPrices());</span>
+<span class="nc" id="L702">    }</span>
+
+    /**
+     * Build opening balances.
+     *
+     * @param pBuilder     the builder
+     * @param pDepositList the deposit list
+     */
+    private void buildOpeningBalances(final MoneyWiseQIFBuilder pBuilder,
+                                      final MoneyWiseDepositList pDepositList) {
+        /* Loop through the prices */
+<span class="nc" id="L713">        final Iterator&lt;MoneyWiseDeposit&gt; myIterator = pDepositList.iterator();</span>
+<span class="nc bnc" id="L714" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L715">            final MoneyWiseDeposit myDeposit = myIterator.next();</span>
+
+            /* Ignore if no opening balance */
+<span class="nc" id="L718">            final OceanusMoney myBalance = myDeposit.getOpeningBalance();</span>
+<span class="nc bnc" id="L719" title="All 2 branches missed.">            if (myBalance == null) {</span>
+<span class="nc" id="L720">                continue;</span>
+            }
+
+            /* Process the balance */
+<span class="nc" id="L724">            pBuilder.processBalance(myDeposit, theStartDate, myBalance);</span>
+<span class="nc" id="L725">        }</span>
+<span class="nc" id="L726">    }</span>
+
+    /**
+     * Build prices.
+     *
+     * @param pPriceList the price list
+     */
+    private void buildPrices(final MoneyWiseSecurityPriceList pPriceList) {
+        /* Loop through the prices */
+<span class="nc" id="L735">        final Iterator&lt;MoneyWiseSecurityPrice&gt; myIterator = pPriceList.iterator();</span>
+<span class="nc bnc" id="L736" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L737">            final MoneyWiseSecurityPrice myPrice = myIterator.next();</span>
+
+            /* Break loop if the price is too late */
+<span class="nc" id="L740">            final OceanusDate myDate = myPrice.getDate();</span>
+<span class="nc bnc" id="L741" title="All 2 branches missed.">            if (myDate.compareTo(theLastDate) &gt; 0) {</span>
+<span class="nc" id="L742">                break;</span>
+            }
+
+            /* Register the price */
+<span class="nc" id="L746">            registerPrice(myPrice);</span>
+<span class="nc" id="L747">        }</span>
+<span class="nc" id="L748">    }</span>
+
+    @Override
+    public boolean equals(final Object pThat) {
+        /* Handle trivial cases */
+<span class="nc bnc" id="L753" title="All 2 branches missed.">        if (this == pThat) {</span>
+<span class="nc" id="L754">            return true;</span>
+        }
+<span class="nc bnc" id="L756" title="All 2 branches missed.">        if (pThat == null) {</span>
+<span class="nc" id="L757">            return false;</span>
+        }
+
+        /* Check class */
+<span class="nc bnc" id="L761" title="All 2 branches missed.">        if (!(pThat instanceof MoneyWiseQIFFile)) {</span>
+<span class="nc" id="L762">            return false;</span>
+        }
+
+        /* Cast correctly */
+<span class="nc" id="L766">        final MoneyWiseQIFFile myThat = (MoneyWiseQIFFile) pThat;</span>
+
+        /* Check file type */
+<span class="nc bnc" id="L769" title="All 2 branches missed.">        if (!theFileType.equals(myThat.theFileType)) {</span>
+<span class="nc" id="L770">            return false;</span>
+        }
+
+        /* Check class list */
+<span class="nc bnc" id="L774" title="All 2 branches missed.">        if (!theClasses.equals(myThat.theClasses)) {</span>
+<span class="nc" id="L775">            return false;</span>
+        }
+
+        /* Check parent categories */
+<span class="nc bnc" id="L779" title="All 2 branches missed.">        if (!theParentCategories.equals(myThat.theParentCategories)) {</span>
+<span class="nc" id="L780">            return false;</span>
+        }
+
+        /* Check securities list */
+<span class="nc bnc" id="L784" title="All 2 branches missed.">        if (!theSecurities.equals(myThat.theSecurities)) {</span>
+<span class="nc" id="L785">            return false;</span>
+        }
+
+        /* Check payees list */
+<span class="nc bnc" id="L789" title="All 2 branches missed.">        if (!thePayees.equals(myThat.thePayees)) {</span>
+<span class="nc" id="L790">            return false;</span>
+        }
+
+        /* Check accounts */
+<span class="nc" id="L794">        return theAccounts.equals(myThat.theAccounts);</span>
+    }
+
+    @Override
+    public int hashCode() {
+<span class="nc" id="L799">        int myResult = MoneyWiseQIFFile.HASH_BASE * theFileType.hashCode();</span>
+<span class="nc" id="L800">        myResult += theClasses.hashCode();</span>
+<span class="nc" id="L801">        myResult *= MoneyWiseQIFFile.HASH_BASE;</span>
+<span class="nc" id="L802">        myResult += theParentCategories.hashCode();</span>
+<span class="nc" id="L803">        myResult *= MoneyWiseQIFFile.HASH_BASE;</span>
+<span class="nc" id="L804">        myResult += theSecurities.hashCode();</span>
+<span class="nc" id="L805">        myResult *= MoneyWiseQIFFile.HASH_BASE;</span>
+<span class="nc" id="L806">        myResult += thePayees.hashCode();</span>
+<span class="nc" id="L807">        myResult *= MoneyWiseQIFFile.HASH_BASE;</span>
+<span class="nc" id="L808">        myResult += theAccounts.hashCode();</span>
+<span class="nc" id="L809">        return myResult;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

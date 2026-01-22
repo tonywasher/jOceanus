@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianMiniCertificateASN1.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.impl.core.cert</a> &gt; <span class="el_source">GordianMiniCertificateASN1.java</span></div><h1>GordianMiniCertificateASN1.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+package io.github.tonywasher.joceanus.gordianknot.impl.core.cert;
+
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairUsage;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianASN1Util.GordianASN1Object;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianIOException;
+import org.bouncycastle.asn1.ASN1EncodableVector;
+import org.bouncycastle.asn1.ASN1Encoding;
+import org.bouncycastle.asn1.ASN1Primitive;
+import org.bouncycastle.asn1.ASN1Sequence;
+import org.bouncycastle.asn1.ASN1TaggedObject;
+import org.bouncycastle.asn1.DERSequence;
+import org.bouncycastle.asn1.x500.X500Name;
+import org.bouncycastle.asn1.x509.Extensions;
+import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
+
+import java.io.IOException;
+import java.security.spec.X509EncodedKeySpec;
+import java.util.Enumeration;
+import java.util.Objects;
+
+/**
+ * ASN1 Encoding of MiniCertificate.
+ * &lt;pre&gt;
+ * GordianMiniCertificateASN1 ::= SEQUENCE {
+ *      subject                 Name,
+ *      publicKeyInfo           SubjectPublicKeyInfo,
+ *      usage                   Extensions
+ * }
+ * &lt;/pre&gt;
+ */
+public class GordianMiniCertificateASN1
+        extends GordianASN1Object {
+    /**
+     * The Subject.
+     */
+    private final X500Name theSubject;
+
+    /**
+     * The SubjectPublicKey.
+     */
+    private final X509EncodedKeySpec thePublicKey;
+
+    /**
+     * The extensions.
+     */
+    private final Extensions theExtensions;
+
+    /**
+     * Create the ASN1 sequence.
+     *
+     * @param pSubject   the subject
+     * @param pPublicKey the publicKey
+     * @param pUsage     the keyPairUsage
+     * @throws GordianException on error
+     */
+    public GordianMiniCertificateASN1(final X500Name pSubject,
+                                      final X509EncodedKeySpec pPublicKey,
+<span class="fc" id="L77">                                      final GordianKeyPairUsage pUsage) throws GordianException {</span>
+<span class="fc" id="L78">        theSubject = pSubject;</span>
+<span class="fc" id="L79">        thePublicKey = pPublicKey;</span>
+<span class="fc" id="L80">        theExtensions = GordianCertUtils.createExtensions(pUsage);</span>
+<span class="fc" id="L81">    }</span>
+
+    /**
+     * Constructor.
+     *
+     * @param pSequence the Sequence
+     * @throws GordianException on error
+     */
+<span class="fc" id="L89">    private GordianMiniCertificateASN1(final ASN1Sequence pSequence) throws GordianException {</span>
+        /* Protect against exceptions */
+        try {
+            /* Extract the parameters from the sequence */
+<span class="fc" id="L93">            final Enumeration&lt;?&gt; en = pSequence.getObjects();</span>
+<span class="fc" id="L94">            theSubject = X500Name.getInstance(en.nextElement());</span>
+<span class="fc" id="L95">            final SubjectPublicKeyInfo myInfo = SubjectPublicKeyInfo.getInstance(en.nextElement());</span>
+<span class="fc" id="L96">            final byte[] myBytes = myInfo.getEncoded(ASN1Encoding.DER);</span>
+<span class="fc" id="L97">            thePublicKey = new X509EncodedKeySpec(myBytes);</span>
+<span class="fc" id="L98">            theExtensions = Extensions.getInstance(en.nextElement());</span>
+
+            /* Make sure that we have completed the sequence */
+<span class="pc bpc" id="L101" title="1 of 2 branches missed.">            if (en.hasMoreElements()) {</span>
+<span class="nc" id="L102">                throw new GordianDataException(&quot;Unexpected additional values in ASN1 sequence&quot;);</span>
+            }
+
+            /* handle exceptions */
+<span class="nc" id="L106">        } catch (IllegalArgumentException</span>
+                 | IOException e) {
+<span class="nc" id="L108">            throw new GordianIOException(&quot;Unable to parse ASN1 sequence&quot;, e);</span>
+<span class="fc" id="L109">        }</span>
+<span class="fc" id="L110">    }</span>
+
+    /**
+     * Parse the ASN1 object.
+     *
+     * @param pObject  the tagged object
+     * @param explicit is the tagging explicit
+     * @return the parsed object
+     * @throws GordianException on error
+     */
+    public static GordianMiniCertificateASN1 getInstance(final ASN1TaggedObject pObject,
+                                                         final boolean explicit) throws GordianException {
+<span class="fc" id="L122">        return getInstance(ASN1Sequence.getInstance(pObject, explicit));</span>
+    }
+
+    /**
+     * Parse the ASN1 object.
+     *
+     * @param pObject the object to parse
+     * @return the parsed object
+     * @throws GordianException on error
+     */
+    public static GordianMiniCertificateASN1 getInstance(final Object pObject) throws GordianException {
+<span class="pc bpc" id="L133" title="1 of 2 branches missed.">        if (pObject instanceof GordianMiniCertificateASN1 myASN1) {</span>
+<span class="nc" id="L134">            return myASN1;</span>
+<span class="pc bpc" id="L135" title="1 of 2 branches missed.">        } else if (pObject != null) {</span>
+<span class="fc" id="L136">            return new GordianMiniCertificateASN1(ASN1Sequence.getInstance(pObject));</span>
+        }
+<span class="nc" id="L138">        throw new GordianDataException(&quot;Null sequence&quot;);</span>
+    }
+
+    /**
+     * Obtain the subject.
+     *
+     * @return the subject
+     */
+    public X500Name getSubject() {
+<span class="fc" id="L147">        return theSubject;</span>
+    }
+
+    /**
+     * Obtain the publicKey.
+     *
+     * @return the publicKey
+     */
+    public X509EncodedKeySpec getPublicKey() {
+<span class="fc" id="L156">        return thePublicKey;</span>
+    }
+
+    /**
+     * Obtain the keyPairUsage.
+     *
+     * @return the usage
+     */
+    public GordianKeyPairUsage getUsage() {
+<span class="fc" id="L165">        return GordianCertUtils.determineUsage(theExtensions);</span>
+    }
+
+    @Override
+    public ASN1Primitive toASN1Primitive() {
+<span class="fc" id="L170">        final ASN1EncodableVector v = new ASN1EncodableVector();</span>
+<span class="fc" id="L171">        v.add(theSubject);</span>
+<span class="fc" id="L172">        v.add(SubjectPublicKeyInfo.getInstance(thePublicKey.getEncoded()));</span>
+<span class="fc" id="L173">        v.add(theExtensions);</span>
+
+<span class="fc" id="L175">        return new DERSequence(v);</span>
+    }
+
+    @Override
+    public boolean equals(final Object pThat) {
+        /* Handle trivial cases */
+<span class="nc bnc" id="L181" title="All 2 branches missed.">        if (this == pThat) {</span>
+<span class="nc" id="L182">            return true;</span>
+        }
+<span class="nc bnc" id="L184" title="All 2 branches missed.">        if (pThat == null) {</span>
+<span class="nc" id="L185">            return false;</span>
+        }
+
+        /* Check that the fields are equal */
+<span class="nc" id="L189">        return pThat instanceof GordianMiniCertificateASN1 myThat</span>
+<span class="nc bnc" id="L190" title="All 2 branches missed.">                &amp;&amp; Objects.equals(theSubject, myThat.getSubject())</span>
+<span class="nc bnc" id="L191" title="All 2 branches missed.">                &amp;&amp; Objects.equals(thePublicKey, myThat.getPublicKey())</span>
+<span class="nc bnc" id="L192" title="All 4 branches missed.">                &amp;&amp; Objects.equals(theExtensions, myThat.theExtensions);</span>
+    }
+
+    @Override
+    public int hashCode() {
+<span class="nc" id="L197">        return Objects.hash(theSubject, thePublicKey, theExtensions);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

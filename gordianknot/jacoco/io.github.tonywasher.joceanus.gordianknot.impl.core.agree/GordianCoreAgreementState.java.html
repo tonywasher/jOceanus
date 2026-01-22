@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianCoreAgreementState.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.impl.core.agree</a> &gt; <span class="el_source">GordianCoreAgreementState.java</span></div><h1>GordianCoreAgreementState.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.gordianknot.impl.core.agree;
+
+import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementStatus;
+import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianCertificate;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignatureSpec;
+
+/**
+ * Agreement State.
+ */
+public class GordianCoreAgreementState {
+    /**
+     * The Spec.
+     */
+    private final GordianAgreementSpec theSpec;
+
+    /**
+     * The status.
+     */
+    private GordianAgreementStatus theStatus;
+
+    /**
+     * The resultType.
+     */
+    private Object theResultType;
+
+    /**
+     * The result.
+     */
+    private Object theResult;
+
+    /**
+     * The clientState.
+     */
+    private final GordianCoreAgreementParticipant theClient;
+
+    /**
+     * The serverState.
+     */
+    private final GordianCoreAgreementParticipant theServer;
+
+    /**
+     * The encapsulated.
+     */
+    private byte[] theEncapsulated;
+
+    /**
+     * Signer Certificate.
+     */
+    private GordianCertificate theSignerCertificate;
+
+    /**
+     * The signatureSpec.
+     */
+    private GordianSignatureSpec theSignSpec;
+
+    /**
+     * The additional data.
+     */
+    private byte[] theAdditional;
+
+    /**
+     * Constructor.
+     *
+     * @param pSpec the agreementSpec
+     */
+<span class="fc" id="L83">    GordianCoreAgreementState(final GordianAgreementSpec pSpec) {</span>
+        /* Store parameters */
+<span class="fc" id="L85">        theSpec = pSpec;</span>
+
+        /* Create participants */
+<span class="fc" id="L88">        theClient = new GordianCoreAgreementParticipant();</span>
+<span class="fc" id="L89">        theServer = new GordianCoreAgreementParticipant();</span>
+<span class="fc" id="L90">    }</span>
+
+    /**
+     * Obtain the Agreement Spec.
+     *
+     * @return the agreementSpec
+     */
+    public GordianAgreementSpec getSpec() {
+<span class="fc" id="L98">        return theSpec;</span>
+    }
+
+    /**
+     * Obtain the Status.
+     *
+     * @return the status
+     */
+    GordianAgreementStatus getStatus() {
+<span class="fc" id="L107">        return theStatus;</span>
+    }
+
+    /**
+     * Set the status.
+     *
+     * @param pStatus the status
+     * @return the state
+     */
+    GordianCoreAgreementState setStatus(final GordianAgreementStatus pStatus) {
+<span class="fc" id="L117">        theStatus = pStatus;</span>
+<span class="fc" id="L118">        return this;</span>
+    }
+
+    /**
+     * Obtain the ResultType.
+     *
+     * @return the resultType
+     */
+    Object getResultType() {
+<span class="fc" id="L127">        return theResultType;</span>
+    }
+
+    /**
+     * Set the resultType.
+     *
+     * @param pResultType the resultType
+     * @return the state
+     */
+    GordianCoreAgreementState setResultType(final Object pResultType) {
+<span class="fc" id="L137">        theResultType = pResultType;</span>
+<span class="fc" id="L138">        return this;</span>
+    }
+
+    /**
+     * Obtain the Result.
+     *
+     * @return the result
+     */
+    Object getResult() {
+<span class="fc" id="L147">        return theResult;</span>
+    }
+
+    /**
+     * Set the result.
+     *
+     * @param pResult the result
+     * @return the state
+     */
+    GordianCoreAgreementState setResult(final Object pResult) {
+<span class="fc" id="L157">        theResult = pResult;</span>
+<span class="fc" id="L158">        return this;</span>
+    }
+
+    /**
+     * Obtain the clientState.
+     *
+     * @return the state
+     */
+    public GordianCoreAgreementParticipant getClient() {
+<span class="fc" id="L167">        return theClient;</span>
+    }
+
+    /**
+     * Obtain the serverState.
+     *
+     * @return the state
+     */
+    public GordianCoreAgreementParticipant getServer() {
+<span class="fc" id="L176">        return theServer;</span>
+    }
+
+    /**
+     * Obtain the encapsulated.
+     *
+     * @return the encapsulated
+     */
+    public byte[] getEncapsulated() {
+<span class="fc" id="L185">        return theEncapsulated;</span>
+    }
+
+    /**
+     * Set the encapsulated.
+     *
+     * @param pEncapsulated the encapsulated
+     * @return the state
+     */
+    public GordianCoreAgreementState setEncapsulated(final byte[] pEncapsulated) {
+<span class="fc" id="L195">        theEncapsulated = pEncapsulated;</span>
+<span class="fc" id="L196">        return this;</span>
+    }
+
+    /**
+     * Obtain the signer certificate.
+     *
+     * @return the certificate
+     */
+    GordianCertificate getSignerCertificate() {
+<span class="fc" id="L205">        return theSignerCertificate;</span>
+    }
+
+    /**
+     * Set the signer certificate.
+     *
+     * @param pCertificate the certificate
+     * @return the state
+     */
+    GordianCoreAgreementState setSignerCertificate(final GordianCertificate pCertificate) {
+<span class="fc" id="L215">        theSignerCertificate = pCertificate;</span>
+<span class="fc" id="L216">        return this;</span>
+    }
+
+    /**
+     * Obtain the signatureSpec.
+     *
+     * @return the signatureSpec
+     */
+    GordianSignatureSpec getSignSpec() {
+<span class="fc" id="L225">        return theSignSpec;</span>
+    }
+
+    /**
+     * Set the signatureSpec.
+     *
+     * @param pSignSpec the signatureSpec
+     * @return the state
+     */
+    GordianCoreAgreementState setSignSpec(final GordianSignatureSpec pSignSpec) {
+<span class="fc" id="L235">        theSignSpec = pSignSpec;</span>
+<span class="fc" id="L236">        return this;</span>
+    }
+
+    /**
+     * Obtain the additional Data.
+     *
+     * @return the data
+     */
+    public byte[] getAdditionalData() {
+<span class="fc" id="L245">        return theAdditional;</span>
+    }
+
+    /**
+     * Set the encapsulated.
+     *
+     * @param pAdditional the encapsulated
+     * @return the state
+     */
+    public GordianCoreAgreementState setAdditionalData(final byte[] pAdditional) {
+<span class="fc" id="L255">        theAdditional = pAdditional;</span>
+<span class="fc" id="L256">        return this;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

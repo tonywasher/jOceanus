@@ -1,0 +1,795 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BouncyEllipticKeyPair.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.impl.bc</a> &gt; <span class="el_source">BouncyEllipticKeyPair.java</span></div><h1>BouncyEllipticKeyPair.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.gordianknot.impl.bc;
+
+import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianEncryptorSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianElliptic;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignParams;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignatureSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPrivateKey;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPublicKey;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncySignature.BouncyDERCoder;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncySignature.BouncyDigestSignature;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.agree.GordianCoreAgreementFactory;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.encrypt.GordianCoreEncryptor;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianIOException;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianLogicException;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianKeyPairValidity;
+import io.github.tonywasher.joceanus.gordianknot.impl.ext.engines.GordianEllipticEncryptor;
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
+import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
+import org.bouncycastle.asn1.x9.ECNamedCurveTable;
+import org.bouncycastle.asn1.x9.X9ECParameters;
+import org.bouncycastle.crypto.AsymmetricCipherKeyPair;
+import org.bouncycastle.crypto.DSA;
+import org.bouncycastle.crypto.DerivationFunction;
+import org.bouncycastle.crypto.InvalidCipherTextException;
+import org.bouncycastle.crypto.SecretWithEncapsulation;
+import org.bouncycastle.crypto.agreement.ECDHCBasicAgreement;
+import org.bouncycastle.crypto.agreement.ECDHCUnifiedAgreement;
+import org.bouncycastle.crypto.agreement.ECMQVBasicAgreement;
+import org.bouncycastle.crypto.generators.ECKeyPairGenerator;
+import org.bouncycastle.crypto.kems.ECIESKEMExtractor;
+import org.bouncycastle.crypto.kems.ECIESKEMGenerator;
+import org.bouncycastle.crypto.params.AsymmetricKeyParameter;
+import org.bouncycastle.crypto.params.ECDHUPrivateParameters;
+import org.bouncycastle.crypto.params.ECDHUPublicParameters;
+import org.bouncycastle.crypto.params.ECKeyGenerationParameters;
+import org.bouncycastle.crypto.params.ECNamedDomainParameters;
+import org.bouncycastle.crypto.params.ECPrivateKeyParameters;
+import org.bouncycastle.crypto.params.ECPublicKeyParameters;
+import org.bouncycastle.crypto.params.MQVPrivateParameters;
+import org.bouncycastle.crypto.params.MQVPublicParameters;
+import org.bouncycastle.crypto.params.ParametersWithRandom;
+import org.bouncycastle.crypto.util.PrivateKeyFactory;
+import org.bouncycastle.crypto.util.PrivateKeyInfoFactory;
+import org.bouncycastle.crypto.util.PublicKeyFactory;
+import org.bouncycastle.crypto.util.SubjectPublicKeyInfoFactory;
+import org.bouncycastle.jcajce.provider.asymmetric.util.ECUtil;
+import org.bouncycastle.util.BigIntegers;
+
+import javax.security.auth.DestroyFailedException;
+import java.io.IOException;
+import java.math.BigInteger;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
+
+/**
+ * EllipticCurve KeyPair classes.
+ */
+public final class BouncyEllipticKeyPair {
+    /**
+     * Private constructor.
+     */
+    private BouncyEllipticKeyPair() {
+    }
+
+    /**
+     * Bouncy Elliptic PublicKey.
+     */
+    public static class BouncyECPublicKey
+            extends BouncyPublicKey&lt;ECPublicKeyParameters&gt; {
+        /**
+         * Constructor.
+         *
+         * @param pKeySpec   the keySpec
+         * @param pPublicKey the public key
+         */
+        BouncyECPublicKey(final GordianKeyPairSpec pKeySpec,
+                          final ECPublicKeyParameters pPublicKey) {
+<span class="fc" id="L101">            super(pKeySpec, pPublicKey);</span>
+<span class="fc" id="L102">        }</span>
+
+        @Override
+        protected boolean matchKey(final AsymmetricKeyParameter pThat) {
+            /* Access keys */
+<span class="fc" id="L107">            final ECPublicKeyParameters myThis = getPublicKey();</span>
+<span class="fc" id="L108">            final ECPublicKeyParameters myThat = (ECPublicKeyParameters) pThat;</span>
+
+            /* Compare keys */
+<span class="fc" id="L111">            return compareKeys(myThis, myThat);</span>
+        }
+
+        /**
+         * Is the private key valid for this public key?
+         *
+         * @param pPrivate the private key
+         * @return true/false
+         */
+        public boolean validPrivate(final BouncyECPrivateKey pPrivate) {
+<span class="nc" id="L121">            final ECPrivateKeyParameters myPrivate = pPrivate.getPrivateKey();</span>
+<span class="nc" id="L122">            return getPublicKey().getParameters().equals(myPrivate.getParameters());</span>
+        }
+
+        /**
+         * CompareKeys.
+         *
+         * @param pFirst  the first key
+         * @param pSecond the second key
+         * @return true/false
+         */
+        private static boolean compareKeys(final ECPublicKeyParameters pFirst,
+                                           final ECPublicKeyParameters pSecond) {
+<span class="pc bpc" id="L134" title="1 of 2 branches missed.">            return pFirst.getQ().equals(pSecond.getQ())</span>
+<span class="pc bpc" id="L135" title="1 of 2 branches missed.">                    &amp;&amp; pFirst.getParameters().equals(pSecond.getParameters());</span>
+        }
+    }
+
+    /**
+     * Bouncy Elliptic PrivateKey.
+     */
+    public static class BouncyECPrivateKey
+            extends BouncyPrivateKey&lt;ECPrivateKeyParameters&gt; {
+        /**
+         * Constructor.
+         *
+         * @param pKeySpec    the keySpec
+         * @param pPrivateKey the private key
+         */
+        BouncyECPrivateKey(final GordianKeyPairSpec pKeySpec,
+                           final ECPrivateKeyParameters pPrivateKey) {
+<span class="fc" id="L152">            super(pKeySpec, pPrivateKey);</span>
+<span class="fc" id="L153">        }</span>
+
+        @Override
+        protected boolean matchKey(final AsymmetricKeyParameter pThat) {
+            /* Access keys */
+<span class="fc" id="L158">            final ECPrivateKeyParameters myThis = getPrivateKey();</span>
+<span class="fc" id="L159">            final ECPrivateKeyParameters myThat = (ECPrivateKeyParameters) pThat;</span>
+
+            /* Compare keys */
+<span class="fc" id="L162">            return compareKeys(myThis, myThat);</span>
+        }
+
+        /**
+         * CompareKeys.
+         *
+         * @param pFirst  the first key
+         * @param pSecond the second key
+         * @return true/false
+         */
+        private static boolean compareKeys(final ECPrivateKeyParameters pFirst,
+                                           final ECPrivateKeyParameters pSecond) {
+<span class="pc bpc" id="L174" title="1 of 2 branches missed.">            return pFirst.getD().equals(pSecond.getD())</span>
+<span class="pc bpc" id="L175" title="1 of 2 branches missed.">                    &amp;&amp; pFirst.getParameters().equals(pSecond.getParameters());</span>
+        }
+    }
+
+    /**
+     * BouncyCastle Elliptic KeyPair generator.
+     */
+    public static class BouncyECKeyPairGenerator
+            extends BouncyKeyPairGenerator {
+        /**
+         * Generator.
+         */
+        private final ECKeyPairGenerator theGenerator;
+
+        /**
+         * Constructor.
+         *
+         * @param pFactory the Security Factory
+         * @param pKeySpec the keySpec
+         * @throws GordianException on error
+         */
+        BouncyECKeyPairGenerator(final GordianBaseFactory pFactory,
+                                 final GordianKeyPairSpec pKeySpec) throws GordianException {
+            /* Initialise underlying class */
+<span class="fc" id="L199">            super(pFactory, pKeySpec);</span>
+
+            /* Create the generator */
+<span class="fc" id="L202">            theGenerator = newGenerator();</span>
+
+            /* Lookup the parameters */
+<span class="fc" id="L205">            final GordianElliptic myElliptic = pKeySpec.getElliptic();</span>
+<span class="fc" id="L206">            final String myCurve = myElliptic.getCurveName();</span>
+<span class="pc bpc" id="L207" title="1 of 2 branches missed.">            final X9ECParameters x9 = myElliptic.hasCustomCurve()</span>
+<span class="fc" id="L208">                    ? ECUtil.getNamedCurveByName(myCurve)</span>
+<span class="pc" id="L209">                    : ECNamedCurveTable.getByName(myCurve);</span>
+<span class="pc bpc" id="L210" title="1 of 2 branches missed.">            if (x9 == null) {</span>
+<span class="nc" id="L211">                throw new GordianLogicException(&quot;Invalid KeySpec - &quot; + pKeySpec);</span>
+            }
+
+            /* Initialise the generator */
+<span class="fc" id="L215">            final ASN1ObjectIdentifier myOid = ECUtil.getNamedCurveOid(myCurve);</span>
+<span class="fc" id="L216">            final ECNamedDomainParameters myDomain = new ECNamedDomainParameters(myOid, x9.getCurve(), x9.getG(), x9.getN(), x9.getH(), x9.getSeed());</span>
+<span class="fc" id="L217">            final ECKeyGenerationParameters myParams = new ECKeyGenerationParameters(myDomain, getRandom());</span>
+<span class="fc" id="L218">            theGenerator.init(myParams);</span>
+<span class="fc" id="L219">        }</span>
+
+        /**
+         * Create the generator.
+         *
+         * @return the generator
+         */
+        ECKeyPairGenerator newGenerator() {
+<span class="fc" id="L227">            return new ECKeyPairGenerator();</span>
+        }
+
+        @Override
+        public BouncyKeyPair generateKeyPair() {
+            /* Generate and return the keyPair */
+<span class="fc" id="L233">            final AsymmetricCipherKeyPair myPair = theGenerator.generateKeyPair();</span>
+<span class="fc" id="L234">            final BouncyECPublicKey myPublic = new BouncyECPublicKey(getKeySpec(), (ECPublicKeyParameters) myPair.getPublic());</span>
+<span class="fc" id="L235">            final BouncyECPrivateKey myPrivate = new BouncyECPrivateKey(getKeySpec(), (ECPrivateKeyParameters) myPair.getPrivate());</span>
+<span class="fc" id="L236">            return new BouncyKeyPair(myPublic, myPrivate);</span>
+        }
+
+        @Override
+        public PKCS8EncodedKeySpec getPKCS8Encoding(final GordianKeyPair pKeyPair) throws GordianException {
+            /* Protect against exceptions */
+            try {
+                /* Check the keyPair type and keySpecs */
+<span class="fc" id="L244">                BouncyKeyPair.checkKeyPair(pKeyPair, getKeySpec());</span>
+
+                /* build and return the encoding */
+<span class="fc" id="L247">                final BouncyECPrivateKey myPrivateKey = (BouncyECPrivateKey) getPrivateKey(pKeyPair);</span>
+<span class="fc" id="L248">                final ECPrivateKeyParameters myParms = myPrivateKey.getPrivateKey();</span>
+<span class="fc" id="L249">                final PrivateKeyInfo myInfo = PrivateKeyInfoFactory.createPrivateKeyInfo(myParms);</span>
+<span class="fc" id="L250">                return new PKCS8EncodedKeySpec(myInfo.getEncoded());</span>
+
+<span class="nc" id="L252">            } catch (IOException e) {</span>
+<span class="nc" id="L253">                throw new GordianCryptoException(ERROR_PARSE, e);</span>
+            }
+        }
+
+        @Override
+        public BouncyKeyPair deriveKeyPair(final X509EncodedKeySpec pPublicKey,
+                                           final PKCS8EncodedKeySpec pPrivateKey) throws GordianException {
+            /* Protect against exceptions */
+            try {
+                /* Check the keySpecs */
+<span class="fc" id="L263">                checkKeySpec(pPrivateKey);</span>
+
+                /* derive keyPair */
+<span class="fc" id="L266">                final BouncyECPublicKey myPublic = derivePublicKey(pPublicKey);</span>
+<span class="fc" id="L267">                final PrivateKeyInfo myInfo = PrivateKeyInfo.getInstance(pPrivateKey.getEncoded());</span>
+<span class="fc" id="L268">                final ECPrivateKeyParameters myParms = (ECPrivateKeyParameters) PrivateKeyFactory.createKey(myInfo);</span>
+<span class="fc" id="L269">                final BouncyECPrivateKey myPrivate = new BouncyECPrivateKey(getKeySpec(), myParms);</span>
+<span class="fc" id="L270">                final BouncyKeyPair myPair = new BouncyKeyPair(myPublic, myPrivate);</span>
+
+                /* Check that we have a matching pair */
+<span class="fc" id="L273">                GordianKeyPairValidity.checkValidity(getFactory(), myPair);</span>
+
+                /* Return the keyPair */
+<span class="fc" id="L276">                return myPair;</span>
+
+<span class="nc" id="L278">            } catch (IOException e) {</span>
+<span class="nc" id="L279">                throw new GordianCryptoException(ERROR_PARSE, e);</span>
+            }
+        }
+
+        @Override
+        public X509EncodedKeySpec getX509Encoding(final GordianKeyPair pKeyPair) throws GordianException {
+            /* Protect against exceptions */
+            try {
+                /* Check the keyPair type and keySpecs */
+<span class="fc" id="L288">                BouncyKeyPair.checkKeyPair(pKeyPair, getKeySpec());</span>
+
+                /* build and return the encoding */
+<span class="fc" id="L291">                final BouncyECPublicKey myPublicKey = (BouncyECPublicKey) getPublicKey(pKeyPair);</span>
+<span class="fc" id="L292">                final ECPublicKeyParameters myParms = myPublicKey.getPublicKey();</span>
+<span class="fc" id="L293">                final SubjectPublicKeyInfo myInfo = SubjectPublicKeyInfoFactory.createSubjectPublicKeyInfo(myParms);</span>
+<span class="fc" id="L294">                return new X509EncodedKeySpec(myInfo.getEncoded());</span>
+
+<span class="nc" id="L296">            } catch (IOException e) {</span>
+<span class="nc" id="L297">                throw new GordianCryptoException(ERROR_PARSE, e);</span>
+            }
+        }
+
+        @Override
+        public BouncyKeyPair derivePublicOnlyKeyPair(final X509EncodedKeySpec pEncodedKey) throws GordianException {
+<span class="fc" id="L303">            final BouncyECPublicKey myPublic = derivePublicKey(pEncodedKey);</span>
+<span class="fc" id="L304">            return new BouncyKeyPair(myPublic);</span>
+        }
+
+        /**
+         * Derive public key from encoded.
+         *
+         * @param pEncodedKey the encoded key
+         * @return the public key
+         * @throws GordianException on error
+         */
+        private BouncyECPublicKey derivePublicKey(final X509EncodedKeySpec pEncodedKey) throws GordianException {
+            /* Protect against exceptions */
+            try {
+                /* Check the keySpecs */
+<span class="fc" id="L318">                checkKeySpec(pEncodedKey);</span>
+
+                /* derive publicKey */
+<span class="fc" id="L321">                final SubjectPublicKeyInfo myInfo = SubjectPublicKeyInfo.getInstance(pEncodedKey.getEncoded());</span>
+<span class="fc" id="L322">                final ECPublicKeyParameters myParms = (ECPublicKeyParameters) PublicKeyFactory.createKey(myInfo);</span>
+<span class="fc" id="L323">                return new BouncyECPublicKey(getKeySpec(), myParms);</span>
+
+<span class="nc" id="L325">            } catch (IOException e) {</span>
+<span class="nc" id="L326">                throw new GordianCryptoException(ERROR_PARSE, e);</span>
+            }
+        }
+    }
+
+    /**
+     * EC signer.
+     */
+    public static class BouncyECSignature
+            extends BouncyDigestSignature {
+        /**
+         * The Signer.
+         */
+        private final DSA theSigner;
+
+        /**
+         * The Coder.
+         */
+        private final BouncyDERCoder theCoder;
+
+        /**
+         * Constructor.
+         *
+         * @param pFactory the factory
+         * @param pSpec    the signatureSpec.
+         * @throws GordianException on error
+         */
+        BouncyECSignature(final GordianBaseFactory pFactory,
+                          final GordianSignatureSpec pSpec) throws GordianException {
+            /* Initialise underlying class */
+<span class="fc" id="L356">            super(pFactory, pSpec);</span>
+
+            /* Create the signer and Coder */
+<span class="fc" id="L359">            theSigner = BouncySignature.getDSASigner(pFactory, pSpec);</span>
+<span class="fc" id="L360">            theCoder = new BouncyDERCoder();</span>
+<span class="fc" id="L361">        }</span>
+
+        @Override
+        public void initForSigning(final GordianSignParams pParams) throws GordianException {
+            /* Initialise detail */
+<span class="fc" id="L366">            super.initForSigning(pParams);</span>
+<span class="fc" id="L367">            final BouncyKeyPair myPair = getKeyPair();</span>
+<span class="fc" id="L368">            BouncyKeyPair.checkKeyPair(myPair);</span>
+
+            /* Initialise and set the signer */
+<span class="fc" id="L371">            final BouncyECPrivateKey myPrivate = (BouncyECPrivateKey) myPair.getPrivateKey();</span>
+<span class="fc" id="L372">            final ParametersWithRandom myParms = new ParametersWithRandom(myPrivate.getPrivateKey(), getRandom());</span>
+<span class="fc" id="L373">            theSigner.init(true, myParms);</span>
+<span class="fc" id="L374">        }</span>
+
+        @Override
+        public void initForVerify(final GordianSignParams pParams) throws GordianException {
+            /* Initialise detail */
+<span class="fc" id="L379">            super.initForVerify(pParams);</span>
+<span class="fc" id="L380">            final BouncyKeyPair myPair = getKeyPair();</span>
+<span class="fc" id="L381">            BouncyKeyPair.checkKeyPair(myPair);</span>
+
+            /* Initialise and set the signer */
+<span class="fc" id="L384">            final BouncyECPublicKey myPublic = (BouncyECPublicKey) myPair.getPublicKey();</span>
+<span class="fc" id="L385">            theSigner.init(false, myPublic.getPublicKey());</span>
+<span class="fc" id="L386">        }</span>
+
+        @Override
+        public byte[] sign() throws GordianException {
+            /* Check that we are in signing mode */
+<span class="fc" id="L391">            checkMode(GordianSignatureMode.SIGN);</span>
+
+            /* Sign the message */
+<span class="fc" id="L394">            final BigInteger[] myValues = theSigner.generateSignature(getDigest());</span>
+<span class="fc" id="L395">            return theCoder.dsaEncode(myValues[0], myValues[1]);</span>
+        }
+
+        @Override
+        public boolean verify(final byte[] pSignature) throws GordianException {
+            /* Check that we are in verify mode */
+<span class="fc" id="L401">            checkMode(GordianSignatureMode.VERIFY);</span>
+
+            /* Verify the message */
+<span class="fc" id="L404">            final BigInteger[] myValues = theCoder.dsaDecode(pSignature);</span>
+<span class="fc" id="L405">            return theSigner.verifySignature(getDigest(), myValues[0], myValues[1]);</span>
+        }
+    }
+
+    /**
+     * EC Agreement Engine.
+     */
+    public static class BouncyECIESAgreementEngine
+            extends BouncyAgreementBase {
+        /**
+         * Key Length.
+         */
+        private static final int KEYLEN = 32;
+
+        /**
+         * Derivation function.
+         */
+        private final DerivationFunction theDerivation;
+
+        /**
+         * Constructor.
+         *
+         * @param pFactory the security factory
+         * @param pSpec    the agreementSpec
+         * @throws GordianException on error
+         */
+        BouncyECIESAgreementEngine(final GordianCoreAgreementFactory pFactory,
+                                   final GordianAgreementSpec pSpec) throws GordianException {
+            /* Initialize underlying class */
+<span class="fc" id="L434">            super(pFactory, pSpec);</span>
+
+            /* Initialise the derivation function */
+<span class="fc" id="L437">            theDerivation = newDerivationFunction();</span>
+<span class="fc" id="L438">        }</span>
+
+        @Override
+        public void buildClientHello() throws GordianException {
+            /* Protect against exceptions */
+            try {
+                /* Create encapsulation */
+<span class="fc" id="L445">                final BouncyECPublicKey myPublic = (BouncyECPublicKey) getPublicKey(getServerKeyPair());</span>
+<span class="fc" id="L446">                final ECIESKEMGenerator myGenerator = new ECIESKEMGenerator(KEYLEN, theDerivation, getRandom());</span>
+<span class="fc" id="L447">                final SecretWithEncapsulation myResult = myGenerator.generateEncapsulated(myPublic.getPublicKey());</span>
+
+                /* Store the encapsulation */
+<span class="fc" id="L450">                setEncapsulated(myResult.getEncapsulation());</span>
+
+                /* Store secret and create initVector */
+<span class="fc" id="L453">                storeSecret(myResult.getSecret());</span>
+<span class="fc" id="L454">                myResult.destroy();</span>
+
+<span class="nc" id="L456">            } catch (DestroyFailedException e) {</span>
+<span class="nc" id="L457">                throw new GordianIOException(&quot;Failed to destroy secret&quot;, e);</span>
+<span class="fc" id="L458">            }</span>
+<span class="fc" id="L459">        }</span>
+
+        @Override
+        public void processClientHello() throws GordianException {
+            /* Create encapsulation */
+<span class="fc" id="L464">            final BouncyECPrivateKey myPrivate = (BouncyECPrivateKey) getPrivateKey(getServerKeyPair());</span>
+<span class="fc" id="L465">            final ECIESKEMExtractor myExtractor = new ECIESKEMExtractor(myPrivate.getPrivateKey(), KEYLEN, theDerivation);</span>
+
+            /* Parse encapsulated message and store secret */
+<span class="fc" id="L468">            final byte[] myMessage = getEncapsulated();</span>
+<span class="fc" id="L469">            storeSecret(myExtractor.extractSecret(myMessage));</span>
+<span class="fc" id="L470">        }</span>
+    }
+
+    /**
+     * EC Anonymous Agreement Engine.
+     */
+    public static class BouncyECAnonAgreementEngine
+            extends BouncyAgreementBase {
+        /**
+         * The agreement.
+         */
+        private final ECDHCBasicAgreement theAgreement;
+
+        /**
+         * Constructor.
+         *
+         * @param pFactory the security factory
+         * @param pSpec    the agreementSpec
+         * @throws GordianException on error
+         */
+        BouncyECAnonAgreementEngine(final GordianCoreAgreementFactory pFactory,
+                                    final GordianAgreementSpec pSpec) throws GordianException {
+            /* Initialize underlying class */
+<span class="fc" id="L493">            super(pFactory, pSpec);</span>
+
+            /* Create the agreement */
+<span class="fc" id="L496">            theAgreement = new ECDHCBasicAgreement();</span>
+<span class="fc" id="L497">        }</span>
+
+        @Override
+        public void buildClientHello() throws GordianException {
+            /* Access keys */
+<span class="fc" id="L502">            final BouncyECPublicKey myPublic = (BouncyECPublicKey) getPublicKey(getServerKeyPair());</span>
+<span class="fc" id="L503">            final BouncyECPrivateKey myPrivate = (BouncyECPrivateKey) getPrivateKey(getClientEphemeral());</span>
+
+            /* Derive the secret */
+<span class="fc" id="L506">            theAgreement.init(myPrivate.getPrivateKey());</span>
+<span class="fc" id="L507">            final BigInteger mySecretInt = theAgreement.calculateAgreement(myPublic.getPublicKey());</span>
+<span class="fc" id="L508">            final byte[] mySecret = BigIntegers.asUnsignedByteArray(theAgreement.getFieldSize(), mySecretInt);</span>
+
+            /* Store secret */
+<span class="fc" id="L511">            storeSecret(mySecret);</span>
+<span class="fc" id="L512">        }</span>
+
+        @Override
+        public void processClientHello() throws GordianException {
+            /* Access keys */
+<span class="fc" id="L517">            final BouncyECPublicKey myPublic = (BouncyECPublicKey) getPublicKey(getClientEphemeral());</span>
+<span class="fc" id="L518">            final BouncyECPrivateKey myPrivate = (BouncyECPrivateKey) getPrivateKey(getServerKeyPair());</span>
+
+            /* Derive the secret */
+<span class="fc" id="L521">            theAgreement.init(myPrivate.getPrivateKey());</span>
+<span class="fc" id="L522">            final BigInteger mySecretInt = theAgreement.calculateAgreement(myPublic.getPublicKey());</span>
+<span class="fc" id="L523">            final byte[] mySecret = BigIntegers.asUnsignedByteArray(theAgreement.getFieldSize(), mySecretInt);</span>
+
+            /* Store secret */
+<span class="fc" id="L526">            storeSecret(mySecret);</span>
+<span class="fc" id="L527">        }</span>
+    }
+
+    /**
+     * EC Basic Agreement Engine.
+     */
+    public static class BouncyECBasicAgreementEngine
+            extends BouncyAgreementBase {
+        /**
+         * The agreement.
+         */
+        private final ECDHCBasicAgreement theAgreement;
+
+        /**
+         * Constructor.
+         *
+         * @param pFactory the security factory
+         * @param pSpec    the agreementSpec
+         * @throws GordianException on error
+         */
+        BouncyECBasicAgreementEngine(final GordianCoreAgreementFactory pFactory,
+                                     final GordianAgreementSpec pSpec) throws GordianException {
+            /* Initialize underlying class */
+<span class="fc" id="L550">            super(pFactory, pSpec);</span>
+
+            /* Create the agreement */
+<span class="fc" id="L553">            theAgreement = new ECDHCBasicAgreement();</span>
+<span class="fc" id="L554">        }</span>
+
+        @Override
+        public void processClientHello() throws GordianException {
+            /* Access keys */
+<span class="fc" id="L559">            final BouncyECPublicKey myPublic = (BouncyECPublicKey) getPublicKey(getClientKeyPair());</span>
+<span class="fc" id="L560">            final BouncyECPrivateKey myPrivate = (BouncyECPrivateKey) getPrivateKey(getServerKeyPair());</span>
+
+            /* Derive the secret */
+<span class="fc" id="L563">            theAgreement.init(myPrivate.getPrivateKey());</span>
+<span class="fc" id="L564">            final BigInteger mySecretInt = theAgreement.calculateAgreement(myPublic.getPublicKey());</span>
+<span class="fc" id="L565">            final byte[] mySecret = BigIntegers.asUnsignedByteArray(theAgreement.getFieldSize(), mySecretInt);</span>
+
+            /* Store secret */
+<span class="fc" id="L568">            storeSecret(mySecret);</span>
+<span class="fc" id="L569">        }</span>
+
+        @Override
+        public void processServerHello() throws GordianException {
+            /* Access keys */
+<span class="fc" id="L574">            final BouncyECPublicKey myPublic = (BouncyECPublicKey) getPublicKey(getServerKeyPair());</span>
+<span class="fc" id="L575">            final BouncyECPrivateKey myPrivate = (BouncyECPrivateKey) getPrivateKey(getClientKeyPair());</span>
+
+            /* Derive the secret */
+<span class="fc" id="L578">            theAgreement.init(myPrivate.getPrivateKey());</span>
+<span class="fc" id="L579">            final BigInteger mySecretInt = theAgreement.calculateAgreement(myPublic.getPublicKey());</span>
+<span class="fc" id="L580">            final byte[] mySecret = BigIntegers.asUnsignedByteArray(theAgreement.getFieldSize(), mySecretInt);</span>
+
+            /* Store secret */
+<span class="fc" id="L583">            storeSecret(mySecret);</span>
+<span class="fc" id="L584">        }</span>
+    }
+
+    /**
+     * EC Unified Agreement Engine.
+     */
+    public static class BouncyECUnifiedAgreementEngine
+            extends BouncyAgreementBase {
+        /**
+         * The agreement.
+         */
+        private final ECDHCUnifiedAgreement theAgreement;
+
+        /**
+         * Constructor.
+         *
+         * @param pFactory the security factory
+         * @param pSpec    the agreementSpec
+         * @throws GordianException on error
+         */
+        BouncyECUnifiedAgreementEngine(final GordianCoreAgreementFactory pFactory,
+                                       final GordianAgreementSpec pSpec) throws GordianException {
+            /* Initialize underlying class */
+<span class="fc" id="L607">            super(pFactory, pSpec);</span>
+
+            /* Create the agreement */
+<span class="fc" id="L610">            theAgreement = new ECDHCUnifiedAgreement();</span>
+<span class="fc" id="L611">        }</span>
+
+        @Override
+        public void processClientHello() throws GordianException {
+            /* Access keys */
+<span class="fc" id="L616">            final BouncyECPublicKey myClientPublic = (BouncyECPublicKey) getPublicKey(getClientKeyPair());</span>
+<span class="fc" id="L617">            final BouncyECPublicKey myClientEphPublic = (BouncyECPublicKey) getPublicKey(getClientEphemeral());</span>
+<span class="fc" id="L618">            final BouncyECPrivateKey myPrivate = (BouncyECPrivateKey) getPrivateKey(getServerKeyPair());</span>
+<span class="fc" id="L619">            final BouncyECPublicKey myEphPublic = (BouncyECPublicKey) getPublicKey(getServerEphemeral());</span>
+<span class="fc" id="L620">            final BouncyECPrivateKey myEphPrivate = (BouncyECPrivateKey) getPrivateKey(getServerEphemeral());</span>
+
+            /* Derive the secret */
+<span class="fc" id="L623">            final ECDHUPrivateParameters myPrivParams</span>
+<span class="fc" id="L624">                    = new ECDHUPrivateParameters(myPrivate.getPrivateKey(), myEphPrivate.getPrivateKey(), myEphPublic.getPublicKey());</span>
+<span class="fc" id="L625">            theAgreement.init(myPrivParams);</span>
+<span class="fc" id="L626">            final ECDHUPublicParameters myPubParams</span>
+<span class="fc" id="L627">                    = new ECDHUPublicParameters(myClientPublic.getPublicKey(), myClientEphPublic.getPublicKey());</span>
+<span class="fc" id="L628">            storeSecret(theAgreement.calculateAgreement(myPubParams));</span>
+<span class="fc" id="L629">        }</span>
+
+        @Override
+        public void processServerHello() throws GordianException {
+            /* Access keys */
+<span class="fc" id="L634">            final BouncyECPublicKey myServerPublic = (BouncyECPublicKey) getPublicKey(getServerKeyPair());</span>
+<span class="fc" id="L635">            final BouncyECPublicKey myServerEphPublic = (BouncyECPublicKey) getPublicKey(getServerEphemeral());</span>
+<span class="fc" id="L636">            final BouncyECPrivateKey myPrivate = (BouncyECPrivateKey) getPrivateKey(getClientKeyPair());</span>
+<span class="fc" id="L637">            final BouncyECPublicKey myEphPublic = (BouncyECPublicKey) getPublicKey(getClientEphemeral());</span>
+<span class="fc" id="L638">            final BouncyECPrivateKey myEphPrivate = (BouncyECPrivateKey) getPrivateKey(getClientEphemeral());</span>
+
+            /* Derive the secret */
+<span class="fc" id="L641">            final ECDHUPrivateParameters myPrivParams</span>
+<span class="fc" id="L642">                    = new ECDHUPrivateParameters(myPrivate.getPrivateKey(), myEphPrivate.getPrivateKey(), myEphPublic.getPublicKey());</span>
+<span class="fc" id="L643">            theAgreement.init(myPrivParams);</span>
+<span class="fc" id="L644">            final ECDHUPublicParameters myPubParams</span>
+<span class="fc" id="L645">                    = new ECDHUPublicParameters(myServerPublic.getPublicKey(), myServerEphPublic.getPublicKey());</span>
+<span class="fc" id="L646">            storeSecret(theAgreement.calculateAgreement(myPubParams));</span>
+<span class="fc" id="L647">        }</span>
+    }
+
+    /**
+     * EC MQV Agreement Engine.
+     */
+    public static class BouncyECMQVAgreementEngine
+            extends BouncyAgreementBase {
+        /**
+         * The agreement.
+         */
+        private final ECMQVBasicAgreement theAgreement;
+
+        /**
+         * Constructor.
+         *
+         * @param pFactory the security factory
+         * @param pSpec    the agreementSpec
+         * @throws GordianException on error
+         */
+        BouncyECMQVAgreementEngine(final GordianCoreAgreementFactory pFactory,
+                                   final GordianAgreementSpec pSpec) throws GordianException {
+            /* Initialize underlying class */
+<span class="fc" id="L670">            super(pFactory, pSpec);</span>
+
+            /* Create the agreement */
+<span class="fc" id="L673">            theAgreement = new ECMQVBasicAgreement();</span>
+<span class="fc" id="L674">        }</span>
+
+        @Override
+        public void processClientHello() throws GordianException {
+            /* Access keys */
+<span class="fc" id="L679">            final BouncyECPublicKey myClientPublic = (BouncyECPublicKey) getPublicKey(getClientKeyPair());</span>
+<span class="fc" id="L680">            final BouncyECPublicKey myClientEphPublic = (BouncyECPublicKey) getPublicKey(getClientEphemeral());</span>
+<span class="fc" id="L681">            final BouncyECPrivateKey myPrivate = (BouncyECPrivateKey) getPrivateKey(getServerKeyPair());</span>
+<span class="fc" id="L682">            final BouncyECPublicKey myEphPublic = (BouncyECPublicKey) getPublicKey(getServerEphemeral());</span>
+<span class="fc" id="L683">            final BouncyECPrivateKey myEphPrivate = (BouncyECPrivateKey) getPrivateKey(getServerEphemeral());</span>
+
+            /* Derive the secret */
+<span class="fc" id="L686">            final MQVPrivateParameters myPrivParams</span>
+<span class="fc" id="L687">                    = new MQVPrivateParameters(myPrivate.getPrivateKey(), myEphPrivate.getPrivateKey(), myEphPublic.getPublicKey());</span>
+<span class="fc" id="L688">            theAgreement.init(myPrivParams);</span>
+<span class="fc" id="L689">            final MQVPublicParameters myPubParams</span>
+<span class="fc" id="L690">                    = new MQVPublicParameters(myClientPublic.getPublicKey(), myClientEphPublic.getPublicKey());</span>
+<span class="fc" id="L691">            storeSecret(BigIntegers.asUnsignedByteArray(theAgreement.getFieldSize(), theAgreement.calculateAgreement(myPubParams)));</span>
+<span class="fc" id="L692">        }</span>
+
+        @Override
+        public void processServerHello() throws GordianException {
+            /* Access keys */
+<span class="fc" id="L697">            final BouncyECPublicKey myServerPublic = (BouncyECPublicKey) getPublicKey(getServerKeyPair());</span>
+<span class="fc" id="L698">            final BouncyECPublicKey myServerEphPublic = (BouncyECPublicKey) getPublicKey(getServerEphemeral());</span>
+<span class="fc" id="L699">            final BouncyECPrivateKey myPrivate = (BouncyECPrivateKey) getPrivateKey(getClientKeyPair());</span>
+<span class="fc" id="L700">            final BouncyECPublicKey myEphPublic = (BouncyECPublicKey) getPublicKey(getClientEphemeral());</span>
+<span class="fc" id="L701">            final BouncyECPrivateKey myEphPrivate = (BouncyECPrivateKey) getPrivateKey(getClientEphemeral());</span>
+
+            /* Derive the secret */
+<span class="fc" id="L704">            final MQVPrivateParameters myPrivParams</span>
+<span class="fc" id="L705">                    = new MQVPrivateParameters(myPrivate.getPrivateKey(), myEphPrivate.getPrivateKey(), myEphPublic.getPublicKey());</span>
+<span class="fc" id="L706">            theAgreement.init(myPrivParams);</span>
+<span class="fc" id="L707">            final MQVPublicParameters myPubParams</span>
+<span class="fc" id="L708">                    = new MQVPublicParameters(myServerPublic.getPublicKey(), myServerEphPublic.getPublicKey());</span>
+<span class="fc" id="L709">            storeSecret(BigIntegers.asUnsignedByteArray(theAgreement.getFieldSize(), theAgreement.calculateAgreement(myPubParams)));</span>
+<span class="fc" id="L710">        }</span>
+    }
+
+    /**
+     * EC Encryptor.
+     */
+    public static class BouncyECEncryptor
+            extends GordianCoreEncryptor {
+        /**
+         * The underlying encryptor.
+         */
+        private final GordianEllipticEncryptor theEncryptor;
+
+        /**
+         * Constructor.
+         *
+         * @param pFactory the factory
+         * @param pSpec    the encryptorSpec
+         */
+        BouncyECEncryptor(final GordianBaseFactory pFactory,
+                          final GordianEncryptorSpec pSpec) {
+            /* Initialise underlying cipher */
+<span class="fc" id="L732">            super(pFactory, pSpec);</span>
+<span class="fc" id="L733">            theEncryptor = new GordianEllipticEncryptor();</span>
+<span class="fc" id="L734">        }</span>
+
+        @Override
+        protected BouncyPublicKey&lt;?&gt; getPublicKey() {
+<span class="fc" id="L738">            return (BouncyPublicKey&lt;?&gt;) super.getPublicKey();</span>
+        }
+
+        @Override
+        protected BouncyPrivateKey&lt;?&gt; getPrivateKey() {
+<span class="fc" id="L743">            return (BouncyPrivateKey&lt;?&gt;) super.getPrivateKey();</span>
+        }
+
+        @Override
+        public void initForEncrypt(final GordianKeyPair pKeyPair) throws GordianException {
+            /* Initialize underlying cipher */
+<span class="fc" id="L749">            BouncyKeyPair.checkKeyPair(pKeyPair);</span>
+<span class="fc" id="L750">            super.initForEncrypt(pKeyPair);</span>
+
+            /* Initialize for encryption */
+<span class="fc" id="L753">            final ECPublicKeyParameters myParms = (ECPublicKeyParameters) getPublicKey().getPublicKey();</span>
+<span class="fc" id="L754">            theEncryptor.initForEncrypt(myParms, getRandom());</span>
+<span class="fc" id="L755">        }</span>
+
+        @Override
+        public void initForDecrypt(final GordianKeyPair pKeyPair) throws GordianException {
+            /* Initialize underlying cipher */
+<span class="fc" id="L760">            BouncyKeyPair.checkKeyPair(pKeyPair);</span>
+<span class="fc" id="L761">            super.initForDecrypt(pKeyPair);</span>
+
+            /* Initialize for decryption */
+<span class="fc" id="L764">            final ECPrivateKeyParameters myParms = (ECPrivateKeyParameters) getPrivateKey().getPrivateKey();</span>
+<span class="fc" id="L765">            theEncryptor.initForDecrypt(myParms);</span>
+<span class="fc" id="L766">        }</span>
+
+        @Override
+        public byte[] encrypt(final byte[] pBytes) throws GordianException {
+            try {
+                /* Check that we are in encryption mode */
+<span class="fc" id="L772">                checkMode(GordianEncryptMode.ENCRYPT);</span>
+
+                /* Encrypt the message */
+<span class="fc" id="L775">                return theEncryptor.encrypt(pBytes);</span>
+<span class="nc" id="L776">            } catch (InvalidCipherTextException e) {</span>
+<span class="nc" id="L777">                throw new GordianCryptoException(&quot;Failed to process data&quot;, e);</span>
+            }
+        }
+
+        @Override
+        public byte[] decrypt(final byte[] pBytes) throws GordianException {
+            try {
+                /* Check that we are in decryption mode */
+<span class="fc" id="L785">                checkMode(GordianEncryptMode.DECRYPT);</span>
+
+                /* Decrypt the message */
+<span class="fc" id="L788">                return theEncryptor.decrypt(pBytes);</span>
+<span class="nc" id="L789">            } catch (InvalidCipherTextException e) {</span>
+<span class="nc" id="L790">                throw new GordianCryptoException(&quot;Failed to process data&quot;, e);</span>
+            }
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

@@ -1,0 +1,1643 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>JcaKeyPairGenerator.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.impl.jca</a> &gt; <span class="el_source">JcaKeyPairGenerator.java</span></div><h1>JcaKeyPairGenerator.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.gordianknot.impl.jca;
+
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianDHGroup;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianDSAKeyType;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianLMSKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianLMSKeySpec.GordianHSSKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianRSAModulus;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianXMSSKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianXMSSKeySpec.GordianXMSSDigestType;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianLogicException;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianCoreKeyPairGenerator;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianKeyPairValidity;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaKeyPair.JcaDHPrivateKey;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaKeyPair.JcaDHPublicKey;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaKeyPair.JcaPrivateKey;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaKeyPair.JcaPublicKey;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaKeyPair.JcaStateAwareKeyPair;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaKeyPair.JcaStateAwarePrivateKey;
+import org.bouncycastle.crypto.params.DHParameters;
+import org.bouncycastle.jcajce.provider.asymmetric.dh.BCDHPrivateKey;
+import org.bouncycastle.jcajce.provider.asymmetric.dh.BCDHPublicKey;
+import org.bouncycastle.jcajce.spec.DHDomainParameterSpec;
+import org.bouncycastle.jcajce.spec.EdDSAParameterSpec;
+import org.bouncycastle.jcajce.spec.MLDSAParameterSpec;
+import org.bouncycastle.jcajce.spec.MLKEMParameterSpec;
+import org.bouncycastle.jcajce.spec.SLHDSAParameterSpec;
+import org.bouncycastle.jcajce.spec.XDHParameterSpec;
+import org.bouncycastle.jce.spec.ElGamalParameterSpec;
+import org.bouncycastle.pqc.crypto.lms.LMSParameters;
+import org.bouncycastle.pqc.jcajce.spec.BIKEParameterSpec;
+import org.bouncycastle.pqc.jcajce.spec.CMCEParameterSpec;
+import org.bouncycastle.pqc.jcajce.spec.FalconParameterSpec;
+import org.bouncycastle.pqc.jcajce.spec.FrodoParameterSpec;
+import org.bouncycastle.pqc.jcajce.spec.HQCParameterSpec;
+import org.bouncycastle.pqc.jcajce.spec.LMSHSSKeyGenParameterSpec;
+import org.bouncycastle.pqc.jcajce.spec.LMSKeyGenParameterSpec;
+import org.bouncycastle.pqc.jcajce.spec.MayoParameterSpec;
+import org.bouncycastle.pqc.jcajce.spec.NTRULPRimeParameterSpec;
+import org.bouncycastle.pqc.jcajce.spec.NTRUParameterSpec;
+import org.bouncycastle.pqc.jcajce.spec.PicnicParameterSpec;
+import org.bouncycastle.pqc.jcajce.spec.SABERParameterSpec;
+import org.bouncycastle.pqc.jcajce.spec.SNTRUPrimeParameterSpec;
+import org.bouncycastle.pqc.jcajce.spec.SnovaParameterSpec;
+import org.bouncycastle.pqc.jcajce.spec.XMSSMTParameterSpec;
+import org.bouncycastle.pqc.jcajce.spec.XMSSParameterSpec;
+
+import java.security.InvalidAlgorithmParameterException;
+import java.security.KeyFactory;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
+import java.security.PublicKey;
+import java.security.spec.AlgorithmParameterSpec;
+import java.security.spec.ECGenParameterSpec;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
+import java.util.Arrays;
+
+/**
+ * Jca KeyPair generator.
+ */
+public abstract class JcaKeyPairGenerator
+        extends GordianCoreKeyPairGenerator {
+    /**
+     * Parse error.
+     */
+    private static final String PARSE_ERROR = &quot;Failed to parse encoding&quot;;
+
+    /**
+     * Factory.
+     */
+    private KeyFactory theFactory;
+
+    /**
+     * Constructor.
+     *
+     * @param pFactory the Security Factory
+     * @param pKeySpec the keySpec
+     */
+    JcaKeyPairGenerator(final GordianBaseFactory pFactory,
+                        final GordianKeyPairSpec pKeySpec) {
+<span class="fc" id="L105">        super(pFactory, pKeySpec);</span>
+<span class="fc" id="L106">    }</span>
+
+    /**
+     * Obtain Set the key factory.
+     *
+     * @return the keyFactory
+     */
+    KeyFactory getKeyFactory() {
+<span class="fc" id="L114">        return theFactory;</span>
+    }
+
+    /**
+     * Set the key factory.
+     *
+     * @param pFactory the keyFactory
+     */
+    void setKeyFactory(final KeyFactory pFactory) {
+<span class="fc" id="L123">        theFactory = pFactory;</span>
+<span class="fc" id="L124">    }</span>
+
+    @Override
+    public PKCS8EncodedKeySpec getPKCS8Encoding(final GordianKeyPair pKeyPair) throws GordianException {
+        /* Check the keyPair */
+<span class="fc" id="L129">        JcaKeyPair.checkKeyPair(pKeyPair);</span>
+
+        /* derive the encoding */
+<span class="fc" id="L132">        final JcaPrivateKey myPrivateKey = (JcaPrivateKey) getPrivateKey(pKeyPair);</span>
+<span class="fc" id="L133">        return new PKCS8EncodedKeySpec(myPrivateKey.getPrivateKey().getEncoded());</span>
+    }
+
+    @Override
+    public X509EncodedKeySpec getX509Encoding(final GordianKeyPair pKeyPair) throws GordianException {
+        /* Check the keyPair */
+<span class="fc" id="L139">        JcaKeyPair.checkKeyPair(pKeyPair);</span>
+
+        /* derive the encoding */
+<span class="fc" id="L142">        final JcaPublicKey myPublicKey = (JcaPublicKey) getPublicKey(pKeyPair);</span>
+<span class="fc" id="L143">        return new X509EncodedKeySpec(myPublicKey.getPublicKey().getEncoded());</span>
+    }
+
+    @Override
+    public JcaKeyPair deriveKeyPair(final X509EncodedKeySpec pPublicKey,
+                                    final PKCS8EncodedKeySpec pPrivateKey) throws GordianException {
+        /* Protect against exceptions */
+        try {
+            /* Check the keySpec */
+<span class="fc" id="L152">            checkKeySpec(pPrivateKey);</span>
+
+            /* derive the keyPair */
+<span class="fc" id="L155">            final JcaPublicKey myPublic = derivePublicKey(pPublicKey);</span>
+<span class="fc" id="L156">            final JcaPrivateKey myPrivate = createPrivate(theFactory.generatePrivate(pPrivateKey));</span>
+<span class="fc" id="L157">            final JcaKeyPair myPair = new JcaKeyPair(myPublic, myPrivate);</span>
+
+            /* Check that we have a matching pair */
+<span class="fc" id="L160">            GordianKeyPairValidity.checkValidity(getFactory(), myPair);</span>
+
+            /* Return the keyPair */
+<span class="fc" id="L163">            return myPair;</span>
+
+<span class="nc" id="L165">        } catch (InvalidKeySpecException e) {</span>
+<span class="nc" id="L166">            throw new GordianCryptoException(PARSE_ERROR, e);</span>
+        }
+    }
+
+    /**
+     * Create private key.
+     *
+     * @param pPrivateKey the private key
+     * @return the private key
+     */
+    protected JcaPrivateKey createPrivate(final PrivateKey pPrivateKey) {
+<span class="fc" id="L177">        return new JcaPrivateKey(getKeySpec(), pPrivateKey);</span>
+    }
+
+    /**
+     * Create public key.
+     *
+     * @param pPublicKey the public key
+     * @return the public key
+     */
+    protected JcaPublicKey createPublic(final PublicKey pPublicKey) {
+<span class="fc" id="L187">        return new JcaPublicKey(getKeySpec(), pPublicKey);</span>
+    }
+
+    @Override
+    public JcaKeyPair derivePublicOnlyKeyPair(final X509EncodedKeySpec pPublicKey) throws GordianException {
+<span class="fc" id="L192">        final JcaPublicKey myPublic = derivePublicKey(pPublicKey);</span>
+<span class="fc" id="L193">        return new JcaKeyPair(myPublic);</span>
+    }
+
+    /**
+     * Derive the public key.
+     *
+     * @param pEncodedKey the encoded public key
+     * @return the public key
+     * @throws GordianException on error
+     */
+    protected JcaPublicKey derivePublicKey(final X509EncodedKeySpec pEncodedKey) throws GordianException {
+        /* Protect against exceptions */
+        try {
+            /* Check the keySpec */
+<span class="fc" id="L207">            checkKeySpec(pEncodedKey);</span>
+
+            /* derive the key */
+<span class="fc" id="L210">            return createPublic(theFactory.generatePublic(pEncodedKey));</span>
+
+<span class="nc" id="L212">        } catch (InvalidKeySpecException e) {</span>
+<span class="nc" id="L213">            throw new GordianCryptoException(PARSE_ERROR, e);</span>
+        }
+    }
+
+    /**
+     * Jca RSA KeyPair generator.
+     */
+    public static class JcaRSAKeyPairGenerator
+            extends JcaKeyPairGenerator {
+        /**
+         * RSA algorithm.
+         */
+        private static final String RSA_ALGO = &quot;RSA&quot;;
+
+        /**
+         * Generator.
+         */
+        private final KeyPairGenerator theGenerator;
+
+        /**
+         * Constructor.
+         *
+         * @param pFactory the Security Factory
+         * @param pKeySpec the keySpec
+         * @throws GordianException on error
+         */
+        JcaRSAKeyPairGenerator(final GordianBaseFactory pFactory,
+                               final GordianKeyPairSpec pKeySpec) throws GordianException {
+            /* initialize underlying class */
+<span class="fc" id="L242">            super(pFactory, pKeySpec);</span>
+
+            /* Create and initialize the generator */
+<span class="fc" id="L245">            theGenerator = getJavaKeyPairGenerator(RSA_ALGO, false);</span>
+<span class="fc" id="L246">            theGenerator.initialize(pKeySpec.getRSAModulus().getLength(), getRandom());</span>
+
+            /* Create the factory */
+<span class="fc" id="L249">            setKeyFactory(getJavaKeyFactory(RSA_ALGO, false));</span>
+<span class="fc" id="L250">        }</span>
+
+        @Override
+        public JcaKeyPair generateKeyPair() {
+            /* Generate and return the keyPair */
+<span class="fc" id="L255">            final KeyPair myPair = theGenerator.generateKeyPair();</span>
+<span class="fc" id="L256">            final JcaPublicKey myPublic = createPublic(myPair.getPublic());</span>
+<span class="fc" id="L257">            final JcaPrivateKey myPrivate = createPrivate(myPair.getPrivate());</span>
+<span class="fc" id="L258">            return new JcaKeyPair(myPublic, myPrivate);</span>
+        }
+    }
+
+    /**
+     * Jca ElGamal KeyPair generator.
+     */
+    public static class JcaElGamalKeyPairGenerator
+            extends JcaKeyPairGenerator {
+        /**
+         * RSA algorithm.
+         */
+        private static final String ELGAMAL_ALGO = &quot;ELGAMAL&quot;;
+
+        /**
+         * Generator.
+         */
+        private final KeyPairGenerator theGenerator;
+
+        /**
+         * Constructor.
+         *
+         * @param pFactory the Security Factory
+         * @param pKeySpec the keySpec
+         * @throws GordianException on error
+         */
+        JcaElGamalKeyPairGenerator(final GordianBaseFactory pFactory,
+                                   final GordianKeyPairSpec pKeySpec) throws GordianException {
+            /* initialize underlying class */
+<span class="fc" id="L287">            super(pFactory, pKeySpec);</span>
+
+            /* Protect against exceptions */
+            try {
+                /* Create the parameter generator */
+<span class="fc" id="L292">                final GordianDHGroup myGroup = pKeySpec.getDHGroup();</span>
+<span class="fc" id="L293">                final DHParameters myParms = myGroup.getParameters();</span>
+<span class="fc" id="L294">                final ElGamalParameterSpec mySpec = new ElGamalParameterSpec(myParms.getP(), myParms.getQ());</span>
+
+                /* Create and initialize the generator */
+<span class="fc" id="L297">                theGenerator = getJavaKeyPairGenerator(ELGAMAL_ALGO, false);</span>
+<span class="fc" id="L298">                theGenerator.initialize(mySpec, getRandom());</span>
+
+                /* Create the factory */
+<span class="fc" id="L301">                setKeyFactory(getJavaKeyFactory(ELGAMAL_ALGO, false));</span>
+
+<span class="nc" id="L303">            } catch (InvalidAlgorithmParameterException e) {</span>
+<span class="nc" id="L304">                throw new GordianCryptoException(&quot;Failed to create ElGamalGenerator&quot;, e);</span>
+<span class="fc" id="L305">            }</span>
+<span class="fc" id="L306">        }</span>
+
+        @Override
+        public JcaKeyPair generateKeyPair() {
+            /* Generate and return the keyPair */
+<span class="fc" id="L311">            final KeyPair myPair = theGenerator.generateKeyPair();</span>
+<span class="fc" id="L312">            final JcaPublicKey myPublic = createPublic(myPair.getPublic());</span>
+<span class="fc" id="L313">            final JcaPrivateKey myPrivate = createPrivate(myPair.getPrivate());</span>
+<span class="fc" id="L314">            return new JcaKeyPair(myPublic, myPrivate);</span>
+        }
+    }
+
+    /**
+     * Jca Elliptic KeyPair generator.
+     */
+    public static class JcaECKeyPairGenerator
+            extends JcaKeyPairGenerator {
+        /**
+         * Generator.
+         */
+        private final KeyPairGenerator theGenerator;
+
+        /**
+         * Constructor.
+         *
+         * @param pFactory the Security Factory
+         * @param pKeySpec the keySpec
+         * @throws GordianException on error
+         */
+        JcaECKeyPairGenerator(final GordianBaseFactory pFactory,
+                              final GordianKeyPairSpec pKeySpec) throws GordianException {
+            /* initialize underlying class */
+<span class="fc" id="L338">            super(pFactory, pKeySpec);</span>
+
+            /* Protect against exceptions */
+            try {
+                /* Create and initialize the generator */
+<span class="fc" id="L343">                final String myAlgo = getAlgorithm();</span>
+<span class="fc" id="L344">                theGenerator = getJavaKeyPairGenerator(myAlgo, false);</span>
+<span class="fc" id="L345">                final ECGenParameterSpec myParms = new ECGenParameterSpec(pKeySpec.getElliptic().getCurveName());</span>
+<span class="fc" id="L346">                theGenerator.initialize(myParms, getRandom());</span>
+
+                /* Create the factory */
+<span class="fc" id="L349">                setKeyFactory(getJavaKeyFactory(myAlgo, false));</span>
+
+<span class="nc" id="L351">            } catch (InvalidAlgorithmParameterException e) {</span>
+<span class="nc" id="L352">                throw new GordianCryptoException(&quot;Failed to create ECgenerator for:  &quot; + pKeySpec, e);</span>
+<span class="fc" id="L353">            }</span>
+<span class="fc" id="L354">        }</span>
+
+        @Override
+        public JcaKeyPair generateKeyPair() {
+            /* Generate and return the keyPair */
+<span class="fc" id="L359">            final KeyPair myPair = theGenerator.generateKeyPair();</span>
+<span class="fc" id="L360">            final JcaPublicKey myPublic = createPublic(myPair.getPublic());</span>
+<span class="fc" id="L361">            final JcaPrivateKey myPrivate = createPrivate(myPair.getPrivate());</span>
+<span class="fc" id="L362">            return new JcaKeyPair(myPublic, myPrivate);</span>
+        }
+
+        /**
+         * Obtain algorithm for keySpec.
+         *
+         * @return the algorithm
+         */
+        private String getAlgorithm() {
+<span class="fc bfc" id="L371" title="All 3 branches covered.">            switch (this.getKeySpec().getKeyPairType()) {</span>
+                case DSTU4145:
+<span class="fc" id="L373">                    return &quot;DSTU4145&quot;;</span>
+                case GOST2012:
+<span class="fc" id="L375">                    return &quot;ECGOST3410-2012&quot;;</span>
+                default:
+<span class="fc" id="L377">                    return &quot;EC&quot;;</span>
+            }
+        }
+    }
+
+    /**
+     * Jca DSA KeyPair generator.
+     */
+    public static class JcaDSAKeyPairGenerator
+            extends JcaKeyPairGenerator {
+        /**
+         * DSA algorithm.
+         */
+        private static final String DSA_ALGO = &quot;DSA&quot;;
+
+        /**
+         * Generator.
+         */
+        private final KeyPairGenerator theGenerator;
+
+        /**
+         * Constructor.
+         *
+         * @param pFactory the Security Factory
+         * @param pKeySpec the keySpec
+         * @throws GordianException on error
+         */
+        JcaDSAKeyPairGenerator(final GordianBaseFactory pFactory,
+                               final GordianKeyPairSpec pKeySpec) throws GordianException {
+            /* initialize underlying class */
+<span class="fc" id="L407">            super(pFactory, pKeySpec);</span>
+
+            /* Create and initialize the generator */
+<span class="fc" id="L410">            final GordianDSAKeyType myKeyType = pKeySpec.getDSAKeyType();</span>
+<span class="fc" id="L411">            theGenerator = getJavaKeyPairGenerator(DSA_ALGO, false);</span>
+<span class="fc" id="L412">            theGenerator.initialize(myKeyType.getKeySize(), getRandom());</span>
+
+            /* Create the factory */
+<span class="fc" id="L415">            setKeyFactory(getJavaKeyFactory(DSA_ALGO, false));</span>
+<span class="fc" id="L416">        }</span>
+
+        @Override
+        public JcaKeyPair generateKeyPair() {
+            /* Generate and return the keyPair */
+<span class="fc" id="L421">            final KeyPair myPair = theGenerator.generateKeyPair();</span>
+<span class="fc" id="L422">            final JcaPublicKey myPublic = createPublic(myPair.getPublic());</span>
+<span class="fc" id="L423">            final JcaPrivateKey myPrivate = createPrivate(myPair.getPrivate());</span>
+<span class="fc" id="L424">            return new JcaKeyPair(myPublic, myPrivate);</span>
+        }
+    }
+
+    /**
+     * Jca DiffieHellman KeyPair generator.
+     */
+    public static class JcaDHKeyPairGenerator
+            extends JcaKeyPairGenerator {
+        /**
+         * DH algorithm.
+         */
+        private static final String DH_ALGO = &quot;DH&quot;;
+
+        /**
+         * Generator.
+         */
+        private final KeyPairGenerator theGenerator;
+
+        /**
+         * Constructor.
+         *
+         * @param pFactory the Security Factory
+         * @param pKeySpec the keySpec
+         * @throws GordianException on error
+         */
+        JcaDHKeyPairGenerator(final GordianBaseFactory pFactory,
+                              final GordianKeyPairSpec pKeySpec) throws GordianException {
+            /* initialize underlying class */
+<span class="fc" id="L453">            super(pFactory, pKeySpec);</span>
+
+            /* Protect against exceptions */
+            try {
+                /* Create the parameter generator */
+<span class="fc" id="L458">                final GordianDHGroup myGroup = pKeySpec.getDHGroup();</span>
+<span class="fc" id="L459">                final DHParameters myParms = myGroup.getParameters();</span>
+<span class="fc" id="L460">                final DHDomainParameterSpec mySpec = new DHDomainParameterSpec(myParms);</span>
+
+                /* Create and initialize the generator */
+<span class="fc" id="L463">                theGenerator = getJavaKeyPairGenerator(DH_ALGO, false);</span>
+<span class="fc" id="L464">                theGenerator.initialize(mySpec, getRandom());</span>
+
+                /* Create the factory */
+<span class="fc" id="L467">                setKeyFactory(getJavaKeyFactory(DH_ALGO, false));</span>
+
+<span class="nc" id="L469">            } catch (InvalidAlgorithmParameterException e) {</span>
+<span class="nc" id="L470">                throw new GordianCryptoException(&quot;Failed to create DHgenerator&quot;, e);</span>
+<span class="fc" id="L471">            }</span>
+<span class="fc" id="L472">        }</span>
+
+        @Override
+        public JcaKeyPair generateKeyPair() {
+            /* Generate and return the keyPair */
+<span class="fc" id="L477">            final KeyPair myPair = theGenerator.generateKeyPair();</span>
+<span class="fc" id="L478">            final JcaPublicKey myPublic = createPublic(myPair.getPublic());</span>
+<span class="fc" id="L479">            final JcaPrivateKey myPrivate = createPrivate(myPair.getPrivate());</span>
+<span class="fc" id="L480">            return new JcaKeyPair(myPublic, myPrivate);</span>
+        }
+
+        @Override
+        protected JcaPrivateKey createPrivate(final PrivateKey pPrivateKey) {
+<span class="fc" id="L485">            return new JcaDHPrivateKey(getKeySpec(), (BCDHPrivateKey) pPrivateKey);</span>
+        }
+
+        @Override
+        protected JcaPublicKey createPublic(final PublicKey pPublicKey) {
+<span class="fc" id="L490">            return new JcaDHPublicKey(getKeySpec(), (BCDHPublicKey) pPublicKey);</span>
+        }
+    }
+
+    /**
+     * Jca SLHDSA KeyPair generator.
+     */
+    public static class JcaSLHDSAKeyPairGenerator
+            extends JcaKeyPairGenerator {
+        /**
+         * SLHDSA algorithm.
+         */
+        private static final String SLHDSA_ALGO = &quot;SLH-DSA&quot;;
+
+        /**
+         * HASH indication.
+         */
+        private static final String SLHDSA_HASH = &quot;HASH-&quot; + SLHDSA_ALGO;
+
+        /**
+         * Generator.
+         */
+        private final KeyPairGenerator theGenerator;
+
+        /**
+         * Constructor.
+         *
+         * @param pFactory the Security Factory
+         * @param pKeySpec the keySpec
+         * @throws GordianException on error
+         */
+        JcaSLHDSAKeyPairGenerator(final GordianBaseFactory pFactory,
+                                  final GordianKeyPairSpec pKeySpec) throws GordianException {
+            /* initialize underlying class */
+<span class="fc" id="L524">            super(pFactory, pKeySpec);</span>
+
+            /* Protect against exceptions */
+            try {
+                /* Determine algorithm */
+<span class="pc bpc" id="L529" title="1 of 2 branches missed.">                final String myAlgo = pKeySpec.getSLHDSAKeySpec().isHash() ? SLHDSA_HASH : SLHDSA_ALGO;</span>
+
+                /* Create and initialize the generator */
+<span class="fc" id="L532">                theGenerator = getJavaKeyPairGenerator(myAlgo, false);</span>
+<span class="fc" id="L533">                final SLHDSAParameterSpec myParms = pKeySpec.getSLHDSAKeySpec().getParameterSpec();</span>
+<span class="fc" id="L534">                theGenerator.initialize(myParms, getRandom());</span>
+
+                /* Create the factory */
+<span class="fc" id="L537">                setKeyFactory(getJavaKeyFactory(myAlgo, false));</span>
+
+<span class="nc" id="L539">            } catch (InvalidAlgorithmParameterException e) {</span>
+<span class="nc" id="L540">                throw new GordianCryptoException(&quot;Failed to create SLHDSAgenerator&quot;, e);</span>
+<span class="fc" id="L541">            }</span>
+<span class="fc" id="L542">        }</span>
+
+        @Override
+        public JcaKeyPair generateKeyPair() {
+            /* Generate and return the keyPair */
+<span class="fc" id="L547">            final KeyPair myPair = theGenerator.generateKeyPair();</span>
+<span class="fc" id="L548">            final JcaPublicKey myPublic = createPublic(myPair.getPublic());</span>
+<span class="fc" id="L549">            final JcaPrivateKey myPrivate = createPrivate(myPair.getPrivate());</span>
+<span class="fc" id="L550">            return new JcaKeyPair(myPublic, myPrivate);</span>
+        }
+    }
+
+    /**
+     * Jca CMCE KeyPair generator.
+     */
+    public static class JcaCMCEKeyPairGenerator
+            extends JcaKeyPairGenerator {
+        /**
+         * FRODO algorithm.
+         */
+        private static final String CMCE_ALGO = &quot;CMCE&quot;;
+
+        /**
+         * Generator.
+         */
+        private final KeyPairGenerator theGenerator;
+
+        /**
+         * Constructor.
+         *
+         * @param pFactory the Security Factory
+         * @param pKeySpec the keySpec
+         * @throws GordianException on error
+         */
+        JcaCMCEKeyPairGenerator(final GordianBaseFactory pFactory,
+                                final GordianKeyPairSpec pKeySpec) throws GordianException {
+            /* initialize underlying class */
+<span class="fc" id="L579">            super(pFactory, pKeySpec);</span>
+
+            /* Protect against exceptions */
+            try {
+                /* Create and initialize the generator */
+<span class="fc" id="L584">                theGenerator = getJavaKeyPairGenerator(CMCE_ALGO, true);</span>
+<span class="fc" id="L585">                final CMCEParameterSpec myParms = pKeySpec.getCMCEKeySpec().getParameterSpec();</span>
+<span class="fc" id="L586">                theGenerator.initialize(myParms, getRandom());</span>
+
+                /* Create the factory */
+<span class="fc" id="L589">                setKeyFactory(getJavaKeyFactory(CMCE_ALGO, true));</span>
+
+<span class="nc" id="L591">            } catch (InvalidAlgorithmParameterException e) {</span>
+<span class="nc" id="L592">                throw new GordianCryptoException(&quot;Failed to create CMCEgenerator&quot;, e);</span>
+<span class="fc" id="L593">            }</span>
+<span class="fc" id="L594">        }</span>
+
+        @Override
+        public JcaKeyPair generateKeyPair() {
+            /* Generate and return the keyPair */
+<span class="fc" id="L599">            final KeyPair myPair = theGenerator.generateKeyPair();</span>
+<span class="fc" id="L600">            final JcaPublicKey myPublic = createPublic(myPair.getPublic());</span>
+<span class="fc" id="L601">            final JcaPrivateKey myPrivate = createPrivate(myPair.getPrivate());</span>
+<span class="fc" id="L602">            return new JcaKeyPair(myPublic, myPrivate);</span>
+        }
+    }
+
+    /**
+     * Jca Frodo KeyPair generator.
+     */
+    public static class JcaFrodoKeyPairGenerator
+            extends JcaKeyPairGenerator {
+        /**
+         * FRODO algorithm.
+         */
+        private static final String FRODO_ALGO = &quot;FRODO&quot;;
+
+        /**
+         * Generator.
+         */
+        private final KeyPairGenerator theGenerator;
+
+        /**
+         * Constructor.
+         *
+         * @param pFactory the Security Factory
+         * @param pKeySpec the keySpec
+         * @throws GordianException on error
+         */
+        JcaFrodoKeyPairGenerator(final GordianBaseFactory pFactory,
+                                 final GordianKeyPairSpec pKeySpec) throws GordianException {
+            /* initialize underlying class */
+<span class="fc" id="L631">            super(pFactory, pKeySpec);</span>
+
+            /* Protect against exceptions */
+            try {
+                /* Create and initialize the generator */
+<span class="fc" id="L636">                theGenerator = getJavaKeyPairGenerator(FRODO_ALGO, true);</span>
+<span class="fc" id="L637">                final FrodoParameterSpec myParms = pKeySpec.getFRODOKeySpec().getParameterSpec();</span>
+<span class="fc" id="L638">                theGenerator.initialize(myParms, getRandom());</span>
+
+                /* Create the factory */
+<span class="fc" id="L641">                setKeyFactory(getJavaKeyFactory(FRODO_ALGO, true));</span>
+
+<span class="nc" id="L643">            } catch (InvalidAlgorithmParameterException e) {</span>
+<span class="nc" id="L644">                throw new GordianCryptoException(&quot;Failed to create FRODOgenerator&quot;, e);</span>
+<span class="fc" id="L645">            }</span>
+<span class="fc" id="L646">        }</span>
+
+        @Override
+        public JcaKeyPair generateKeyPair() {
+            /* Generate and return the keyPair */
+<span class="fc" id="L651">            final KeyPair myPair = theGenerator.generateKeyPair();</span>
+<span class="fc" id="L652">            final JcaPublicKey myPublic = createPublic(myPair.getPublic());</span>
+<span class="fc" id="L653">            final JcaPrivateKey myPrivate = createPrivate(myPair.getPrivate());</span>
+<span class="fc" id="L654">            return new JcaKeyPair(myPublic, myPrivate);</span>
+        }
+    }
+
+    /**
+     * Jca SABER KeyPair generator.
+     */
+    public static class JcaSABERKeyPairGenerator
+            extends JcaKeyPairGenerator {
+        /**
+         * SABER algorithm.
+         */
+        private static final String SABER_ALGO = &quot;SABER&quot;;
+
+        /**
+         * Generator.
+         */
+        private final KeyPairGenerator theGenerator;
+
+        /**
+         * Constructor.
+         *
+         * @param pFactory the Security Factory
+         * @param pKeySpec the keySpec
+         * @throws GordianException on error
+         */
+        JcaSABERKeyPairGenerator(final GordianBaseFactory pFactory,
+                                 final GordianKeyPairSpec pKeySpec) throws GordianException {
+            /* initialize underlying class */
+<span class="fc" id="L683">            super(pFactory, pKeySpec);</span>
+
+            /* Protect against exceptions */
+            try {
+                /* Create and initialize the generator */
+<span class="fc" id="L688">                theGenerator = getJavaKeyPairGenerator(SABER_ALGO, true);</span>
+<span class="fc" id="L689">                final SABERParameterSpec myParms = pKeySpec.getSABERKeySpec().getParameterSpec();</span>
+<span class="fc" id="L690">                theGenerator.initialize(myParms, getRandom());</span>
+
+                /* Create the factory */
+<span class="fc" id="L693">                setKeyFactory(getJavaKeyFactory(SABER_ALGO, true));</span>
+
+<span class="nc" id="L695">            } catch (InvalidAlgorithmParameterException e) {</span>
+<span class="nc" id="L696">                throw new GordianCryptoException(&quot;Failed to create SABERgenerator&quot;, e);</span>
+<span class="fc" id="L697">            }</span>
+<span class="fc" id="L698">        }</span>
+
+        @Override
+        public JcaKeyPair generateKeyPair() {
+            /* Generate and return the keyPair */
+<span class="fc" id="L703">            final KeyPair myPair = theGenerator.generateKeyPair();</span>
+<span class="fc" id="L704">            final JcaPublicKey myPublic = createPublic(myPair.getPublic());</span>
+<span class="fc" id="L705">            final JcaPrivateKey myPrivate = createPrivate(myPair.getPrivate());</span>
+<span class="fc" id="L706">            return new JcaKeyPair(myPublic, myPrivate);</span>
+        }
+    }
+
+    /**
+     * Jca MLKEM KeyPair generator.
+     */
+    public static class JcaMLKEMKeyPairGenerator
+            extends JcaKeyPairGenerator {
+        /**
+         * MLKEM algorithm.
+         */
+        private static final String MLKEM_ALGO = &quot;MLKEM&quot;;
+
+        /**
+         * Generator.
+         */
+        private final KeyPairGenerator theGenerator;
+
+        /**
+         * Constructor.
+         *
+         * @param pFactory the Security Factory
+         * @param pKeySpec the keySpec
+         * @throws GordianException on error
+         */
+        JcaMLKEMKeyPairGenerator(final GordianBaseFactory pFactory,
+                                 final GordianKeyPairSpec pKeySpec) throws GordianException {
+            /* initialize underlying class */
+<span class="fc" id="L735">            super(pFactory, pKeySpec);</span>
+
+            /* Protect against exceptions */
+            try {
+                /* Create and initialize the generator */
+<span class="fc" id="L740">                theGenerator = getJavaKeyPairGenerator(MLKEM_ALGO, false);</span>
+<span class="fc" id="L741">                final MLKEMParameterSpec myParms = pKeySpec.getMLKEMKeySpec().getParameterSpec();</span>
+<span class="fc" id="L742">                theGenerator.initialize(myParms, getRandom());</span>
+
+                /* Create the factory */
+<span class="fc" id="L745">                setKeyFactory(getJavaKeyFactory(MLKEM_ALGO, false));</span>
+
+<span class="nc" id="L747">            } catch (InvalidAlgorithmParameterException e) {</span>
+<span class="nc" id="L748">                throw new GordianCryptoException(&quot;Failed to create MLKEMgenerator&quot;, e);</span>
+<span class="fc" id="L749">            }</span>
+<span class="fc" id="L750">        }</span>
+
+        @Override
+        public JcaKeyPair generateKeyPair() {
+            /* Generate and return the keyPair */
+<span class="fc" id="L755">            final KeyPair myPair = theGenerator.generateKeyPair();</span>
+<span class="fc" id="L756">            final JcaPublicKey myPublic = createPublic(myPair.getPublic());</span>
+<span class="fc" id="L757">            final JcaPrivateKey myPrivate = createPrivate(myPair.getPrivate());</span>
+<span class="fc" id="L758">            return new JcaKeyPair(myPublic, myPrivate);</span>
+        }
+    }
+
+    /**
+     * Jca MLDSA KeyPair generator.
+     */
+    public static class JcaMLDSAKeyPairGenerator
+            extends JcaKeyPairGenerator {
+        /**
+         * MLDSA algorithm.
+         */
+        private static final String MLDSA_ALGO = &quot;ML-DSA&quot;;
+
+        /**
+         * HASH indication.
+         */
+        private static final String MLDSA_HASH = &quot;HASH-&quot; + MLDSA_ALGO;
+
+        /**
+         * Generator.
+         */
+        private final KeyPairGenerator theGenerator;
+
+        /**
+         * Constructor.
+         *
+         * @param pFactory the Security Factory
+         * @param pKeySpec the keySpec
+         * @throws GordianException on error
+         */
+        JcaMLDSAKeyPairGenerator(final GordianBaseFactory pFactory,
+                                 final GordianKeyPairSpec pKeySpec) throws GordianException {
+            /* initialize underlying class */
+<span class="fc" id="L792">            super(pFactory, pKeySpec);</span>
+
+            /* Protect against exceptions */
+            try {
+                /* Determine algorithm */
+<span class="pc bpc" id="L797" title="1 of 2 branches missed.">                final String myAlgo = pKeySpec.getMLDSAKeySpec().isHash() ? MLDSA_HASH : MLDSA_ALGO;</span>
+
+                /* Create and initialize the generator */
+<span class="fc" id="L800">                theGenerator = getJavaKeyPairGenerator(myAlgo, false);</span>
+<span class="fc" id="L801">                final MLDSAParameterSpec myParms = pKeySpec.getMLDSAKeySpec().getParameterSpec();</span>
+<span class="fc" id="L802">                theGenerator.initialize(myParms, getRandom());</span>
+
+                /* Create the factory */
+<span class="fc" id="L805">                setKeyFactory(getJavaKeyFactory(myAlgo, false));</span>
+
+<span class="nc" id="L807">            } catch (InvalidAlgorithmParameterException e) {</span>
+<span class="nc" id="L808">                throw new GordianCryptoException(&quot;Failed to create MLDSAGenerator&quot;, e);</span>
+<span class="fc" id="L809">            }</span>
+<span class="fc" id="L810">        }</span>
+
+        @Override
+        public JcaKeyPair generateKeyPair() {
+            /* Generate and return the keyPair */
+<span class="fc" id="L815">            final KeyPair myPair = theGenerator.generateKeyPair();</span>
+<span class="fc" id="L816">            final JcaPublicKey myPublic = createPublic(myPair.getPublic());</span>
+<span class="fc" id="L817">            final JcaPrivateKey myPrivate = createPrivate(myPair.getPrivate());</span>
+<span class="fc" id="L818">            return new JcaKeyPair(myPublic, myPrivate);</span>
+        }
+    }
+
+    /**
+     * Jca HQC KeyPair generator.
+     */
+    public static class JcaHQCKeyPairGenerator
+            extends JcaKeyPairGenerator {
+        /**
+         * BIKE algorithm.
+         */
+        private static final String HQC_ALGO = &quot;HQC&quot;;
+
+        /**
+         * Generator.
+         */
+        private final KeyPairGenerator theGenerator;
+
+        /**
+         * Constructor.
+         *
+         * @param pFactory the Security Factory
+         * @param pKeySpec the keySpec
+         * @throws GordianException on error
+         */
+        JcaHQCKeyPairGenerator(final GordianBaseFactory pFactory,
+                               final GordianKeyPairSpec pKeySpec) throws GordianException {
+            /* initialize underlying class */
+<span class="fc" id="L847">            super(pFactory, pKeySpec);</span>
+
+            /* Protect against exceptions */
+            try {
+                /* Create and initialize the generator */
+<span class="fc" id="L852">                theGenerator = getJavaKeyPairGenerator(HQC_ALGO, true);</span>
+<span class="fc" id="L853">                final HQCParameterSpec myParms = pKeySpec.getHQCKeySpec().getParameterSpec();</span>
+<span class="fc" id="L854">                theGenerator.initialize(myParms, getRandom());</span>
+
+                /* Create the factory */
+<span class="fc" id="L857">                setKeyFactory(getJavaKeyFactory(HQC_ALGO, true));</span>
+
+<span class="nc" id="L859">            } catch (InvalidAlgorithmParameterException e) {</span>
+<span class="nc" id="L860">                throw new GordianCryptoException(&quot;Failed to create HQCgenerator&quot;, e);</span>
+<span class="fc" id="L861">            }</span>
+<span class="fc" id="L862">        }</span>
+
+        @Override
+        public JcaKeyPair generateKeyPair() {
+            /* Generate and return the keyPair */
+<span class="fc" id="L867">            final KeyPair myPair = theGenerator.generateKeyPair();</span>
+<span class="fc" id="L868">            final JcaPublicKey myPublic = createPublic(myPair.getPublic());</span>
+<span class="fc" id="L869">            final JcaPrivateKey myPrivate = createPrivate(myPair.getPrivate());</span>
+<span class="fc" id="L870">            return new JcaKeyPair(myPublic, myPrivate);</span>
+        }
+    }
+
+
+    /**
+     * Jca BIKE KeyPair generator.
+     */
+    public static class JcaBIKEKeyPairGenerator
+            extends JcaKeyPairGenerator {
+        /**
+         * BIKE algorithm.
+         */
+        private static final String BIKE_ALGO = &quot;BIKE&quot;;
+
+        /**
+         * Generator.
+         */
+        private final KeyPairGenerator theGenerator;
+
+        /**
+         * Constructor.
+         *
+         * @param pFactory the Security Factory
+         * @param pKeySpec the keySpec
+         * @throws GordianException on error
+         */
+        JcaBIKEKeyPairGenerator(final GordianBaseFactory pFactory,
+                                final GordianKeyPairSpec pKeySpec) throws GordianException {
+            /* initialize underlying class */
+<span class="fc" id="L900">            super(pFactory, pKeySpec);</span>
+
+            /* Protect against exceptions */
+            try {
+                /* Create and initialize the generator */
+<span class="fc" id="L905">                theGenerator = getJavaKeyPairGenerator(BIKE_ALGO, true);</span>
+<span class="fc" id="L906">                final BIKEParameterSpec myParms = pKeySpec.getBIKEKeySpec().getParameterSpec();</span>
+<span class="fc" id="L907">                theGenerator.initialize(myParms, getRandom());</span>
+
+                /* Create the factory */
+<span class="fc" id="L910">                setKeyFactory(getJavaKeyFactory(BIKE_ALGO, true));</span>
+
+<span class="nc" id="L912">            } catch (InvalidAlgorithmParameterException e) {</span>
+<span class="nc" id="L913">                throw new GordianCryptoException(&quot;Failed to create BIKEgenerator&quot;, e);</span>
+<span class="fc" id="L914">            }</span>
+<span class="fc" id="L915">        }</span>
+
+        @Override
+        public JcaKeyPair generateKeyPair() {
+            /* Generate and return the keyPair */
+<span class="fc" id="L920">            final KeyPair myPair = theGenerator.generateKeyPair();</span>
+<span class="fc" id="L921">            final JcaPublicKey myPublic = createPublic(myPair.getPublic());</span>
+<span class="fc" id="L922">            final JcaPrivateKey myPrivate = createPrivate(myPair.getPrivate());</span>
+<span class="fc" id="L923">            return new JcaKeyPair(myPublic, myPrivate);</span>
+        }
+    }
+
+    /**
+     * Jca NTRU KeyPair generator.
+     */
+    public static class JcaNTRUKeyPairGenerator
+            extends JcaKeyPairGenerator {
+        /**
+         * NTRU algorithm.
+         */
+        private static final String NTRU_ALGO = &quot;NTRU&quot;;
+
+        /**
+         * Generator.
+         */
+        private final KeyPairGenerator theGenerator;
+
+        /**
+         * Constructor.
+         *
+         * @param pFactory the Security Factory
+         * @param pKeySpec the keySpec
+         * @throws GordianException on error
+         */
+        JcaNTRUKeyPairGenerator(final GordianBaseFactory pFactory,
+                                final GordianKeyPairSpec pKeySpec) throws GordianException {
+            /* initialize underlying class */
+<span class="fc" id="L952">            super(pFactory, pKeySpec);</span>
+
+            /* Protect against exceptions */
+            try {
+                /* Create and initialize the generator */
+<span class="fc" id="L957">                theGenerator = getJavaKeyPairGenerator(NTRU_ALGO, true);</span>
+<span class="fc" id="L958">                final NTRUParameterSpec myParms = pKeySpec.getNTRUKeySpec().getParameterSpec();</span>
+<span class="fc" id="L959">                theGenerator.initialize(myParms, getRandom());</span>
+
+                /* Create the factory */
+<span class="fc" id="L962">                setKeyFactory(getJavaKeyFactory(NTRU_ALGO, true));</span>
+
+<span class="nc" id="L964">            } catch (InvalidAlgorithmParameterException e) {</span>
+<span class="nc" id="L965">                throw new GordianCryptoException(&quot;Failed to create NTRUgenerator&quot;, e);</span>
+<span class="fc" id="L966">            }</span>
+<span class="fc" id="L967">        }</span>
+
+        @Override
+        public JcaKeyPair generateKeyPair() {
+            /* Generate and return the keyPair */
+<span class="fc" id="L972">            final KeyPair myPair = theGenerator.generateKeyPair();</span>
+<span class="fc" id="L973">            final JcaPublicKey myPublic = createPublic(myPair.getPublic());</span>
+<span class="fc" id="L974">            final JcaPrivateKey myPrivate = createPrivate(myPair.getPrivate());</span>
+<span class="fc" id="L975">            return new JcaKeyPair(myPublic, myPrivate);</span>
+        }
+    }
+
+    /**
+     * Jca Falcon KeyPair generator.
+     */
+    public static class JcaFalconKeyPairGenerator
+            extends JcaKeyPairGenerator {
+        /**
+         * FALCON algorithm.
+         */
+        private static final String FALCON_ALGO = &quot;FALCON&quot;;
+
+        /**
+         * Generator.
+         */
+        private final KeyPairGenerator theGenerator;
+
+        /**
+         * Constructor.
+         *
+         * @param pFactory the Security Factory
+         * @param pKeySpec the keySpec
+         * @throws GordianException on error
+         */
+        JcaFalconKeyPairGenerator(final GordianBaseFactory pFactory,
+                                  final GordianKeyPairSpec pKeySpec) throws GordianException {
+            /* initialize underlying class */
+<span class="fc" id="L1004">            super(pFactory, pKeySpec);</span>
+
+            /* Protect against exceptions */
+            try {
+                /* Create and initialize the generator */
+<span class="fc" id="L1009">                theGenerator = getJavaKeyPairGenerator(FALCON_ALGO, true);</span>
+<span class="fc" id="L1010">                final FalconParameterSpec myParms = pKeySpec.getFalconKeySpec().getParameterSpec();</span>
+<span class="fc" id="L1011">                theGenerator.initialize(myParms, getRandom());</span>
+
+                /* Create the factory */
+<span class="fc" id="L1014">                setKeyFactory(getJavaKeyFactory(FALCON_ALGO, true));</span>
+
+<span class="nc" id="L1016">            } catch (InvalidAlgorithmParameterException e) {</span>
+<span class="nc" id="L1017">                throw new GordianCryptoException(&quot;Failed to create FALCONgenerator&quot;, e);</span>
+<span class="fc" id="L1018">            }</span>
+<span class="fc" id="L1019">        }</span>
+
+        @Override
+        public JcaKeyPair generateKeyPair() {
+            /* Generate and return the keyPair */
+<span class="fc" id="L1024">            final KeyPair myPair = theGenerator.generateKeyPair();</span>
+<span class="fc" id="L1025">            final JcaPublicKey myPublic = createPublic(myPair.getPublic());</span>
+<span class="fc" id="L1026">            final JcaPrivateKey myPrivate = createPrivate(myPair.getPrivate());</span>
+<span class="fc" id="L1027">            return new JcaKeyPair(myPublic, myPrivate);</span>
+        }
+    }
+
+    /**
+     * Jca Mayo KeyPair generator.
+     */
+    public static class JcaMayoKeyPairGenerator
+            extends JcaKeyPairGenerator {
+        /**
+         * Mayo algorithm.
+         */
+        private static final String MAYO_ALGO = &quot;MAYO&quot;;
+
+        /**
+         * Generator.
+         */
+        private final KeyPairGenerator theGenerator;
+
+        /**
+         * Constructor.
+         *
+         * @param pFactory the Security Factory
+         * @param pKeySpec the keySpec
+         * @throws GordianException on error
+         */
+        JcaMayoKeyPairGenerator(final GordianBaseFactory pFactory,
+                                final GordianKeyPairSpec pKeySpec) throws GordianException {
+            /* initialize underlying class */
+<span class="fc" id="L1056">            super(pFactory, pKeySpec);</span>
+
+            /* Protect against exceptions */
+            try {
+                /* Create and initialize the generator */
+<span class="fc" id="L1061">                theGenerator = getJavaKeyPairGenerator(MAYO_ALGO, true);</span>
+<span class="fc" id="L1062">                final MayoParameterSpec myParms = pKeySpec.getMayoKeySpec().getParameterSpec();</span>
+<span class="fc" id="L1063">                theGenerator.initialize(myParms, getRandom());</span>
+
+                /* Create the factory */
+<span class="fc" id="L1066">                setKeyFactory(getJavaKeyFactory(MAYO_ALGO, true));</span>
+
+<span class="nc" id="L1068">            } catch (InvalidAlgorithmParameterException e) {</span>
+<span class="nc" id="L1069">                throw new GordianCryptoException(&quot;Failed to create MayoGenerator&quot;, e);</span>
+<span class="fc" id="L1070">            }</span>
+<span class="fc" id="L1071">        }</span>
+
+        @Override
+        public JcaKeyPair generateKeyPair() {
+            /* Generate and return the keyPair */
+<span class="fc" id="L1076">            final KeyPair myPair = theGenerator.generateKeyPair();</span>
+<span class="fc" id="L1077">            final JcaPublicKey myPublic = createPublic(myPair.getPublic());</span>
+<span class="fc" id="L1078">            final JcaPrivateKey myPrivate = createPrivate(myPair.getPrivate());</span>
+<span class="fc" id="L1079">            return new JcaKeyPair(myPublic, myPrivate);</span>
+        }
+    }
+
+    /**
+     * Jca Snova KeyPair generator.
+     */
+    public static class JcaSnovaKeyPairGenerator
+            extends JcaKeyPairGenerator {
+        /**
+         * Snova algorithm.
+         */
+        private static final String SNOVA_ALGO = &quot;SNOVA&quot;;
+
+        /**
+         * Generator.
+         */
+        private final KeyPairGenerator theGenerator;
+
+        /**
+         * Constructor.
+         *
+         * @param pFactory the Security Factory
+         * @param pKeySpec the keySpec
+         * @throws GordianException on error
+         */
+        JcaSnovaKeyPairGenerator(final GordianBaseFactory pFactory,
+                                 final GordianKeyPairSpec pKeySpec) throws GordianException {
+            /* initialize underlying class */
+<span class="fc" id="L1108">            super(pFactory, pKeySpec);</span>
+
+            /* Protect against exceptions */
+            try {
+                /* Create and initialize the generator */
+<span class="fc" id="L1113">                theGenerator = getJavaKeyPairGenerator(SNOVA_ALGO, true);</span>
+<span class="fc" id="L1114">                final SnovaParameterSpec myParms = pKeySpec.getSnovaKeySpec().getParameterSpec();</span>
+<span class="fc" id="L1115">                theGenerator.initialize(myParms, getRandom());</span>
+
+                /* Create the factory */
+<span class="fc" id="L1118">                setKeyFactory(getJavaKeyFactory(SNOVA_ALGO, true));</span>
+
+<span class="nc" id="L1120">            } catch (InvalidAlgorithmParameterException e) {</span>
+<span class="nc" id="L1121">                throw new GordianCryptoException(&quot;Failed to create SnovaGenerator&quot;, e);</span>
+<span class="fc" id="L1122">            }</span>
+<span class="fc" id="L1123">        }</span>
+
+        @Override
+        public JcaKeyPair generateKeyPair() {
+            /* Generate and return the keyPair */
+<span class="fc" id="L1128">            final KeyPair myPair = theGenerator.generateKeyPair();</span>
+<span class="fc" id="L1129">            final JcaPublicKey myPublic = createPublic(myPair.getPublic());</span>
+<span class="fc" id="L1130">            final JcaPrivateKey myPrivate = createPrivate(myPair.getPrivate());</span>
+<span class="fc" id="L1131">            return new JcaKeyPair(myPublic, myPrivate);</span>
+        }
+    }
+
+    /**
+     * Jca NTRULPrime KeyPair generator.
+     */
+    public static class JcaNTRULPrimeKeyPairGenerator
+            extends JcaKeyPairGenerator {
+        /**
+         * NTRULPrime algorithm.
+         */
+        private static final String NTRU_ALGO = &quot;NTRULPRIME&quot;;
+
+        /**
+         * Generator.
+         */
+        private final KeyPairGenerator theGenerator;
+
+        /**
+         * Constructor.
+         *
+         * @param pFactory the Security Factory
+         * @param pKeySpec the keySpec
+         * @throws GordianException on error
+         */
+        JcaNTRULPrimeKeyPairGenerator(final GordianBaseFactory pFactory,
+                                      final GordianKeyPairSpec pKeySpec) throws GordianException {
+            /* initialize underlying class */
+<span class="fc" id="L1160">            super(pFactory, pKeySpec);</span>
+
+            /* Protect against exceptions */
+            try {
+                /* Create and initialize the generator */
+<span class="fc" id="L1165">                theGenerator = getJavaKeyPairGenerator(NTRU_ALGO, true);</span>
+<span class="fc" id="L1166">                final NTRULPRimeParameterSpec myParms = pKeySpec.getNTRUPrimeKeySpec().getParams().getNTRULParameterSpec();</span>
+<span class="fc" id="L1167">                theGenerator.initialize(myParms, getRandom());</span>
+
+                /* Create the factory */
+<span class="fc" id="L1170">                setKeyFactory(getJavaKeyFactory(NTRU_ALGO, true));</span>
+
+<span class="nc" id="L1172">            } catch (InvalidAlgorithmParameterException e) {</span>
+<span class="nc" id="L1173">                throw new GordianCryptoException(&quot;Failed to create NTRULPrimeGenerator&quot;, e);</span>
+<span class="fc" id="L1174">            }</span>
+<span class="fc" id="L1175">        }</span>
+
+        @Override
+        public JcaKeyPair generateKeyPair() {
+            /* Generate and return the keyPair */
+<span class="fc" id="L1180">            final KeyPair myPair = theGenerator.generateKeyPair();</span>
+<span class="fc" id="L1181">            final JcaPublicKey myPublic = createPublic(myPair.getPublic());</span>
+<span class="fc" id="L1182">            final JcaPrivateKey myPrivate = createPrivate(myPair.getPrivate());</span>
+<span class="fc" id="L1183">            return new JcaKeyPair(myPublic, myPrivate);</span>
+        }
+    }
+
+    /**
+     * Jca SNTRUPrime KeyPair generator.
+     */
+    public static class JcaSNTRUPrimeKeyPairGenerator
+            extends JcaKeyPairGenerator {
+        /**
+         * NTRULPrime algorithm.
+         */
+        private static final String NTRU_ALGO = &quot;SNTRUPRIME&quot;;
+
+        /**
+         * Generator.
+         */
+        private final KeyPairGenerator theGenerator;
+
+        /**
+         * Constructor.
+         *
+         * @param pFactory the Security Factory
+         * @param pKeySpec the keySpec
+         * @throws GordianException on error
+         */
+        JcaSNTRUPrimeKeyPairGenerator(final GordianBaseFactory pFactory,
+                                      final GordianKeyPairSpec pKeySpec) throws GordianException {
+            /* initialize underlying class */
+<span class="nc" id="L1212">            super(pFactory, pKeySpec);</span>
+
+            /* Protect against exceptions */
+            try {
+                /* Create and initialize the generator */
+<span class="nc" id="L1217">                theGenerator = getJavaKeyPairGenerator(NTRU_ALGO, true);</span>
+<span class="nc" id="L1218">                final SNTRUPrimeParameterSpec myParms = pKeySpec.getNTRUPrimeKeySpec().getParams().getSNTRUParameterSpec();</span>
+<span class="nc" id="L1219">                theGenerator.initialize(myParms, getRandom());</span>
+
+                /* Create the factory */
+<span class="nc" id="L1222">                setKeyFactory(getJavaKeyFactory(NTRU_ALGO, true));</span>
+
+<span class="nc" id="L1224">            } catch (InvalidAlgorithmParameterException e) {</span>
+<span class="nc" id="L1225">                throw new GordianCryptoException(&quot;Failed to create SNTRUPrimeGenerator&quot;, e);</span>
+<span class="nc" id="L1226">            }</span>
+<span class="nc" id="L1227">        }</span>
+
+        @Override
+        public JcaKeyPair generateKeyPair() {
+            /* Generate and return the keyPair */
+<span class="nc" id="L1232">            final KeyPair myPair = theGenerator.generateKeyPair();</span>
+<span class="nc" id="L1233">            final JcaPublicKey myPublic = createPublic(myPair.getPublic());</span>
+<span class="nc" id="L1234">            final JcaPrivateKey myPrivate = createPrivate(myPair.getPrivate());</span>
+<span class="nc" id="L1235">            return new JcaKeyPair(myPublic, myPrivate);</span>
+        }
+    }
+
+    /**
+     * Jca Picnic KeyPair generator.
+     */
+    public static class JcaPicnicKeyPairGenerator
+            extends JcaKeyPairGenerator {
+        /**
+         * Picnic algorithm.
+         */
+        private static final String PICNIC_ALGO = &quot;PICNIC&quot;;
+
+        /**
+         * Generator.
+         */
+        private final KeyPairGenerator theGenerator;
+
+        /**
+         * Constructor.
+         *
+         * @param pFactory the Security Factory
+         * @param pKeySpec the keySpec
+         * @throws GordianException on error
+         */
+        JcaPicnicKeyPairGenerator(final GordianBaseFactory pFactory,
+                                  final GordianKeyPairSpec pKeySpec) throws GordianException {
+            /* initialize underlying class */
+<span class="fc" id="L1264">            super(pFactory, pKeySpec);</span>
+
+            /* Protect against exceptions */
+            try {
+                /* Create and initialize the generator */
+<span class="fc" id="L1269">                theGenerator = getJavaKeyPairGenerator(PICNIC_ALGO, true);</span>
+<span class="fc" id="L1270">                final PicnicParameterSpec myParms = pKeySpec.getPicnicKeySpec().getParameterSpec();</span>
+<span class="fc" id="L1271">                theGenerator.initialize(myParms, getRandom());</span>
+
+                /* Create the factory */
+<span class="fc" id="L1274">                setKeyFactory(getJavaKeyFactory(PICNIC_ALGO, true));</span>
+
+<span class="nc" id="L1276">            } catch (InvalidAlgorithmParameterException e) {</span>
+<span class="nc" id="L1277">                throw new GordianCryptoException(&quot;Failed to create PICNICgenerator&quot;, e);</span>
+<span class="fc" id="L1278">            }</span>
+<span class="fc" id="L1279">        }</span>
+
+        @Override
+        public JcaKeyPair generateKeyPair() {
+            /* Generate and return the keyPair */
+<span class="fc" id="L1284">            final KeyPair myPair = theGenerator.generateKeyPair();</span>
+<span class="fc" id="L1285">            final JcaPublicKey myPublic = createPublic(myPair.getPublic());</span>
+<span class="fc" id="L1286">            final JcaPrivateKey myPrivate = createPrivate(myPair.getPrivate());</span>
+<span class="fc" id="L1287">            return new JcaKeyPair(myPublic, myPrivate);</span>
+        }
+    }
+
+    /**
+     * Jca XMSS KeyPair generator.
+     */
+    public static class JcaXMSSKeyPairGenerator
+            extends JcaKeyPairGenerator {
+        /**
+         * Generator.
+         */
+        private final KeyPairGenerator theGenerator;
+
+        /**
+         * Constructor.
+         *
+         * @param pFactory the Security Factory
+         * @param pKeySpec the keySpec
+         * @throws GordianException on error
+         */
+        JcaXMSSKeyPairGenerator(final GordianBaseFactory pFactory,
+                                final GordianKeyPairSpec pKeySpec) throws GordianException {
+            /* initialize underlying class */
+<span class="fc" id="L1311">            super(pFactory, pKeySpec);</span>
+
+            /* Protect against exceptions */
+            try {
+                /* Access the algorithm */
+<span class="fc" id="L1316">                final GordianXMSSKeySpec myXMSSKeySpec = pKeySpec.getXMSSKeySpec();</span>
+<span class="fc" id="L1317">                final boolean isXMSSMT = myXMSSKeySpec.isMT();</span>
+<span class="fc" id="L1318">                final GordianXMSSDigestType myType = myXMSSKeySpec.getDigestType();</span>
+
+                /* Create the parameters */
+<span class="pc bpc" id="L1321" title="1 of 2 branches missed.">                final AlgorithmParameterSpec myAlgo = isXMSSMT</span>
+<span class="nc" id="L1322">                        ? new XMSSMTParameterSpec(myXMSSKeySpec.getHeight().getHeight(),</span>
+<span class="nc" id="L1323">                        myXMSSKeySpec.getLayers().getLayers(), myType.name())</span>
+<span class="fc" id="L1324">                        : new XMSSParameterSpec(myXMSSKeySpec.getHeight().getHeight(), myType.name());</span>
+
+                /* Create and initialize the generator */
+<span class="fc" id="L1327">                final String myJavaType = myXMSSKeySpec.getKeyType().name();</span>
+<span class="fc" id="L1328">                theGenerator = getJavaKeyPairGenerator(myJavaType, true);</span>
+<span class="fc" id="L1329">                theGenerator.initialize(myAlgo, getRandom());</span>
+
+                /* Create the factory */
+<span class="fc" id="L1332">                setKeyFactory(getJavaKeyFactory(myJavaType, true));</span>
+
+<span class="nc" id="L1334">            } catch (InvalidAlgorithmParameterException e) {</span>
+<span class="nc" id="L1335">                throw new GordianCryptoException(&quot;Failed to create XMSSgenerator&quot;, e);</span>
+<span class="fc" id="L1336">            }</span>
+<span class="fc" id="L1337">        }</span>
+
+        @Override
+        public JcaKeyPair generateKeyPair() {
+            /* Generate and return the keyPair */
+<span class="fc" id="L1342">            final KeyPair myPair = theGenerator.generateKeyPair();</span>
+<span class="fc" id="L1343">            final JcaPublicKey myPublic = createPublic(myPair.getPublic());</span>
+<span class="fc" id="L1344">            final JcaStateAwarePrivateKey myPrivate = createPrivate(myPair.getPrivate());</span>
+<span class="fc" id="L1345">            return new JcaStateAwareKeyPair(myPublic, myPrivate);</span>
+        }
+
+        @Override
+        protected JcaStateAwarePrivateKey createPrivate(final PrivateKey pPrivateKey) {
+<span class="fc" id="L1350">            return new JcaStateAwarePrivateKey(getKeySpec(), pPrivateKey);</span>
+        }
+
+        @Override
+        public JcaKeyPair deriveKeyPair(final X509EncodedKeySpec pPublicKey,
+                                        final PKCS8EncodedKeySpec pPrivateKey) throws GordianException {
+            /* Protect against exceptions */
+            try {
+                /* Check the keySpecs */
+<span class="fc" id="L1359">                checkKeySpec(pPrivateKey);</span>
+
+                /* derive keyPair */
+<span class="fc" id="L1362">                final JcaPublicKey myPublic = derivePublicKey(pPublicKey);</span>
+<span class="fc" id="L1363">                JcaStateAwarePrivateKey myPrivate = createPrivate(getKeyFactory().generatePrivate(pPrivateKey));</span>
+<span class="fc" id="L1364">                final JcaKeyPair myPair = new JcaStateAwareKeyPair(myPublic, myPrivate);</span>
+
+                /* Check that we have a matching pair */
+<span class="fc" id="L1367">                GordianKeyPairValidity.checkValidity(getFactory(), myPair);</span>
+
+                /* Rebuild and return the keyPair to avoid incrementing usage count */
+<span class="fc" id="L1370">                myPrivate = createPrivate(getKeyFactory().generatePrivate(pPrivateKey));</span>
+<span class="fc" id="L1371">                return new JcaStateAwareKeyPair(myPublic, myPrivate);</span>
+
+<span class="nc" id="L1373">            } catch (InvalidKeySpecException e) {</span>
+<span class="nc" id="L1374">                throw new GordianCryptoException(PARSE_ERROR, e);</span>
+            }
+        }
+    }
+
+    /**
+     * Jca Edwards KeyPair generator.
+     */
+    public static class JcaEdKeyPairGenerator
+            extends JcaKeyPairGenerator {
+        /**
+         * Generator.
+         */
+        private final KeyPairGenerator theGenerator;
+
+        /**
+         * Constructor.
+         *
+         * @param pFactory the Security Factory
+         * @param pKeySpec the keySpec
+         * @throws GordianException on error
+         */
+        protected JcaEdKeyPairGenerator(final GordianBaseFactory pFactory,
+                                        final GordianKeyPairSpec pKeySpec) throws GordianException {
+            /* initialize underlying class */
+<span class="fc" id="L1399">            super(pFactory, pKeySpec);</span>
+
+            /* Protect against exceptions */
+            try {
+                /* Create the parameters */
+                final AlgorithmParameterSpec myAlgo;
+<span class="fc" id="L1405">                final boolean is25519 = pKeySpec.getEdwardsElliptic().is25519();</span>
+<span class="pc bpc" id="L1406" title="1 of 3 branches missed.">                switch (pKeySpec.getKeyPairType()) {</span>
+                    case XDH:
+<span class="fc bfc" id="L1408" title="All 2 branches covered.">                        myAlgo = is25519</span>
+<span class="fc" id="L1409">                                ? new XDHParameterSpec(XDHParameterSpec.X25519)</span>
+<span class="fc" id="L1410">                                : new XDHParameterSpec(XDHParameterSpec.X448);</span>
+<span class="fc" id="L1411">                        break;</span>
+                    case EDDSA:
+<span class="fc bfc" id="L1413" title="All 2 branches covered.">                        myAlgo = is25519</span>
+<span class="fc" id="L1414">                                ? new EdDSAParameterSpec(EdDSAParameterSpec.Ed25519)</span>
+<span class="fc" id="L1415">                                : new EdDSAParameterSpec(EdDSAParameterSpec.Ed448);</span>
+<span class="fc" id="L1416">                        break;</span>
+                    default:
+<span class="nc" id="L1418">                        throw new GordianLogicException(&quot;Invalid KeySpec&quot; + pKeySpec);</span>
+                }
+
+                /* Create and initialize the generator */
+<span class="fc" id="L1422">                final String myJavaType = pKeySpec.toString();</span>
+<span class="fc" id="L1423">                theGenerator = getJavaKeyPairGenerator(myJavaType, false);</span>
+<span class="fc" id="L1424">                theGenerator.initialize(myAlgo, getRandom());</span>
+
+                /* Create the factory */
+<span class="fc" id="L1427">                setKeyFactory(getJavaKeyFactory(myJavaType, false));</span>
+
+<span class="nc" id="L1429">            } catch (InvalidAlgorithmParameterException e) {</span>
+<span class="nc" id="L1430">                throw new GordianCryptoException(&quot;Failed to create EdwardsGenerator&quot;, e);</span>
+<span class="fc" id="L1431">            }</span>
+<span class="fc" id="L1432">        }</span>
+
+        @Override
+        public JcaKeyPair generateKeyPair() {
+            /* Generate and return the keyPair */
+<span class="fc" id="L1437">            final KeyPair myPair = theGenerator.generateKeyPair();</span>
+<span class="fc" id="L1438">            final JcaPublicKey myPublic = createPublic(myPair.getPublic());</span>
+<span class="fc" id="L1439">            final JcaPrivateKey myPrivate = createPrivate(myPair.getPrivate());</span>
+<span class="fc" id="L1440">            return new JcaKeyPair(myPublic, myPrivate);</span>
+        }
+    }
+
+    /**
+     * Jca NewHope KeyPair generator.
+     */
+    public static class JcaNewHopeKeyPairGenerator
+            extends JcaKeyPairGenerator {
+        /**
+         * NewHope algorithm.
+         */
+        private static final String NEWHOPE_ALGO = &quot;NH&quot;;
+
+        /**
+         * Generator.
+         */
+        private final KeyPairGenerator theGenerator;
+
+        /**
+         * Constructor.
+         *
+         * @param pFactory the Security Factory
+         * @param pKeySpec the keySpec
+         * @throws GordianException on error
+         */
+        JcaNewHopeKeyPairGenerator(final GordianBaseFactory pFactory,
+                                   final GordianKeyPairSpec pKeySpec) throws GordianException {
+            /* initialize underlying class */
+<span class="fc" id="L1469">            super(pFactory, pKeySpec);</span>
+
+            /* Create and initialize the generator */
+<span class="fc" id="L1472">            theGenerator = getJavaKeyPairGenerator(NEWHOPE_ALGO, true);</span>
+<span class="fc" id="L1473">            theGenerator.initialize(GordianRSAModulus.MOD1024.getLength(), getRandom());</span>
+
+            /* Create the factory */
+<span class="fc" id="L1476">            setKeyFactory(getJavaKeyFactory(NEWHOPE_ALGO, true));</span>
+<span class="fc" id="L1477">        }</span>
+
+        @Override
+        public JcaKeyPair generateKeyPair() {
+            /* Generate and return the keyPair */
+<span class="fc" id="L1482">            final KeyPair myPair = theGenerator.generateKeyPair();</span>
+<span class="fc" id="L1483">            final JcaPublicKey myPublic = createPublic(myPair.getPublic());</span>
+<span class="fc" id="L1484">            final JcaPrivateKey myPrivate = createPrivate(myPair.getPrivate());</span>
+<span class="fc" id="L1485">            return new JcaKeyPair(myPublic, myPrivate);</span>
+        }
+    }
+
+    /**
+     * Jca LMS KeyPair generator.
+     */
+    public static class JcaLMSKeyPairGenerator
+            extends JcaKeyPairGenerator {
+        /**
+         * Generator.
+         */
+        private final KeyPairGenerator theGenerator;
+
+        /**
+         * Constructor.
+         *
+         * @param pFactory the Security Factory
+         * @param pKeySpec the keySpec
+         * @throws GordianException on error
+         */
+        JcaLMSKeyPairGenerator(final GordianBaseFactory pFactory,
+                               final GordianKeyPairSpec pKeySpec) throws GordianException {
+            /* initialize underlying class */
+<span class="fc" id="L1509">            super(pFactory, pKeySpec);</span>
+
+            /* Create and initialize the generator */
+<span class="fc" id="L1512">            final String myJavaType = pKeySpec.getKeyPairType().toString();</span>
+<span class="fc" id="L1513">            theGenerator = getJavaKeyPairGenerator(myJavaType, true);</span>
+
+            /* Protect against exceptions */
+            try {
+<span class="pc bpc" id="L1517" title="1 of 2 branches missed.">                final AlgorithmParameterSpec myParms = pKeySpec.getSubKeyType() instanceof GordianHSSKeySpec</span>
+<span class="fc" id="L1518">                        ? deriveParameters(pKeySpec.getHSSKeySpec())</span>
+<span class="pc" id="L1519">                        : deriveParameters(pKeySpec.getLMSKeySpec());</span>
+<span class="fc" id="L1520">                theGenerator.initialize(myParms, getRandom());</span>
+
+<span class="nc" id="L1522">            } catch (InvalidAlgorithmParameterException e) {</span>
+<span class="nc" id="L1523">                throw new GordianCryptoException(&quot;Failed to initialize generator&quot;, e);</span>
+<span class="fc" id="L1524">            }</span>
+
+            /* Create the factory */
+<span class="fc" id="L1527">            setKeyFactory(getJavaKeyFactory(myJavaType, true));</span>
+<span class="fc" id="L1528">        }</span>
+
+        /**
+         * Derive the parameters.
+         *
+         * @param pKeySpec the keySPec
+         * @return the parameters.
+         */
+        private static LMSHSSKeyGenParameterSpec deriveParameters(final GordianHSSKeySpec pKeySpec) {
+            /* Generate and return the keyPair */
+<span class="fc" id="L1538">            final GordianLMSKeySpec myKeySpec = pKeySpec.getKeySpec();</span>
+<span class="fc" id="L1539">            final LMSKeyGenParameterSpec[] myParams = new LMSKeyGenParameterSpec[pKeySpec.getTreeDepth()];</span>
+<span class="fc" id="L1540">            Arrays.fill(myParams, deriveParameters(myKeySpec));</span>
+<span class="fc" id="L1541">            return new LMSHSSKeyGenParameterSpec(myParams);</span>
+        }
+
+        /**
+         * Derive the parameters.
+         *
+         * @param pKeySpec the keySpec
+         * @return the parameters.
+         */
+        private static LMSKeyGenParameterSpec deriveParameters(final GordianLMSKeySpec pKeySpec) {
+<span class="fc" id="L1551">            final LMSParameters myParms = pKeySpec.getParameters();</span>
+<span class="fc" id="L1552">            return new LMSKeyGenParameterSpec(myParms.getLMSigParam(), myParms.getLMOTSParam());</span>
+        }
+
+        @Override
+        public JcaKeyPair generateKeyPair() {
+            /* Generate and return the keyPair */
+<span class="fc" id="L1558">            final KeyPair myPair = theGenerator.generateKeyPair();</span>
+<span class="fc" id="L1559">            final JcaPublicKey myPublic = createPublic(myPair.getPublic());</span>
+<span class="fc" id="L1560">            final JcaStateAwarePrivateKey myPrivate = createPrivate(myPair.getPrivate());</span>
+<span class="fc" id="L1561">            return new JcaStateAwareKeyPair(myPublic, myPrivate);</span>
+        }
+
+        @Override
+        protected JcaStateAwarePrivateKey createPrivate(final PrivateKey pPrivateKey) {
+<span class="fc" id="L1566">            return new JcaStateAwarePrivateKey(getKeySpec(), pPrivateKey);</span>
+        }
+
+        @Override
+        public JcaKeyPair deriveKeyPair(final X509EncodedKeySpec pPublicKey,
+                                        final PKCS8EncodedKeySpec pPrivateKey) throws GordianException {
+            /* Protect against exceptions */
+            try {
+                /* Check the keySpecs */
+<span class="fc" id="L1575">                checkKeySpec(pPrivateKey);</span>
+
+                /* derive keyPair */
+<span class="fc" id="L1578">                final JcaPublicKey myPublic = derivePublicKey(pPublicKey);</span>
+<span class="fc" id="L1579">                JcaStateAwarePrivateKey myPrivate = createPrivate(getKeyFactory().generatePrivate(pPrivateKey));</span>
+<span class="fc" id="L1580">                final JcaKeyPair myPair = new JcaStateAwareKeyPair(myPublic, myPrivate);</span>
+
+                /* Check that we have a matching pair */
+<span class="fc" id="L1583">                GordianKeyPairValidity.checkValidity(getFactory(), myPair);</span>
+
+                /* Rebuild and return the keyPair to avoid incrementing usage count */
+<span class="fc" id="L1586">                myPrivate = createPrivate(getKeyFactory().generatePrivate(pPrivateKey));</span>
+<span class="fc" id="L1587">                return new JcaStateAwareKeyPair(myPublic, myPrivate);</span>
+
+<span class="nc" id="L1589">            } catch (InvalidKeySpecException e) {</span>
+<span class="nc" id="L1590">                throw new GordianCryptoException(PARSE_ERROR, e);</span>
+            }
+        }
+    }
+
+    /**
+     * Create the BouncyCastle KeyFactory via JCA.
+     *
+     * @param pAlgorithm  the Algorithm
+     * @param postQuantum is this a postQuantum algorithm?
+     * @return the KeyFactory
+     * @throws GordianException on error
+     */
+    static KeyFactory getJavaKeyFactory(final String pAlgorithm,
+                                        final boolean postQuantum) throws GordianException {
+        /* Protect against exceptions */
+        try {
+            /* Return a KeyFactory for the algorithm */
+<span class="fc bfc" id="L1608" title="All 2 branches covered.">            return KeyFactory.getInstance(pAlgorithm, postQuantum</span>
+<span class="fc" id="L1609">                    ? JcaProvider.BCPQPROV</span>
+<span class="fc" id="L1610">                    : JcaProvider.BCPROV);</span>
+
+            /* Catch exceptions */
+<span class="nc" id="L1613">        } catch (NoSuchAlgorithmException e) {</span>
+            /* Throw the exception */
+<span class="nc" id="L1615">            throw new GordianCryptoException(&quot;Failed to create KeyFactory&quot;, e);</span>
+        }
+    }
+
+    /**
+     * Create the BouncyCastle KeyPairGenerator via JCA.
+     *
+     * @param pAlgorithm  the Algorithm
+     * @param postQuantum is this a postQuantum algorithm?
+     * @return the KeyPairGenerator
+     * @throws GordianException on error
+     */
+    static KeyPairGenerator getJavaKeyPairGenerator(final String pAlgorithm,
+                                                    final boolean postQuantum) throws GordianException {
+        /* Protect against exceptions */
+        try {
+            /* Return a KeyPairGenerator for the algorithm */
+<span class="fc bfc" id="L1632" title="All 2 branches covered.">            return KeyPairGenerator.getInstance(pAlgorithm, postQuantum</span>
+<span class="fc" id="L1633">                    ? JcaProvider.BCPQPROV</span>
+<span class="fc" id="L1634">                    : JcaProvider.BCPROV);</span>
+
+            /* Catch exceptions */
+<span class="nc" id="L1637">        } catch (NoSuchAlgorithmException e) {</span>
+            /* Throw the exception */
+<span class="nc" id="L1639">            throw new GordianCryptoException(&quot;Failed to create KeyPairGenerator&quot;, e);</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

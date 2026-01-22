@@ -1,0 +1,293 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseView.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.moneywise.views</a> &gt; <span class="el_source">MoneyWiseView.java</span></div><h1>MoneyWiseView.java</h1><pre class="source lang-java linenums">/*
+ * MoneyWise: Finance Application
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.moneywise.views;
+
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
+import io.github.tonywasher.joceanus.oceanus.profile.OceanusProfile;
+import io.github.tonywasher.joceanus.metis.viewer.MetisViewerEntry;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDataSet;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTax.MoneyWiseTaxFactory;
+import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseCurrency;
+import io.github.tonywasher.joceanus.moneywise.data.validate.MoneyWiseValidatorFactory;
+import io.github.tonywasher.joceanus.moneywise.database.MoneyWiseDataStore;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.analyse.MoneyWiseAnalysisTransAnalyser;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysis;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisManager;
+import io.github.tonywasher.joceanus.moneywise.sheets.MoneyWiseSheet;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataSet;
+import io.github.tonywasher.joceanus.prometheus.database.PrometheusDBConfig;
+import io.github.tonywasher.joceanus.prometheus.database.PrometheusDataStore;
+import io.github.tonywasher.joceanus.prometheus.database.PrometheusDatabase.PrometheusDatabasePreferenceKey;
+import io.github.tonywasher.joceanus.prometheus.database.PrometheusDatabase.PrometheusDatabasePreferences;
+import io.github.tonywasher.joceanus.prometheus.sheets.PrometheusSpreadSheet;
+import io.github.tonywasher.joceanus.prometheus.toolkit.PrometheusToolkit;
+import io.github.tonywasher.joceanus.prometheus.views.PrometheusDataControl;
+import io.github.tonywasher.joceanus.prometheus.views.PrometheusEditSet;
+import io.github.tonywasher.joceanus.prometheus.views.PrometheusViewerEntryId;
+
+/**
+ * Data Control for MoneyWiseApp.
+ */
+public class MoneyWiseView
+        extends PrometheusDataControl {
+    /**
+     * The TaxFactory.
+     */
+    private final MoneyWiseTaxFactory theTaxFactory;
+
+    /**
+     * The Maps.
+     */
+    private final MoneyWiseMaps theMaps;
+
+    /**
+     * The DataSet.
+     */
+    private MoneyWiseDataSet theData;
+
+    /**
+     * The analysis manager.
+     */
+    private MoneyWiseAnalysisManager theAnalysisMgr;
+
+    /**
+     * Do we have security buckets?.
+     */
+    private boolean hasActiveSecurities;
+
+    /**
+     * Do we have multiple currencies?
+     */
+    private boolean hasMultiCurrency;
+
+    /**
+     * Constructor.
+     *
+     * @param pUtilitySet the utility set
+     * @param pTaxFactory the tax factory
+     */
+    public MoneyWiseView(final PrometheusToolkit pUtilitySet,
+                         final MoneyWiseTaxFactory pTaxFactory) {
+        /* Call super-constructor */
+<span class="fc" id="L87">        super(pUtilitySet);</span>
+
+        /* Record the tax factory */
+<span class="fc" id="L90">        theTaxFactory = pTaxFactory;</span>
+
+        /* Create the validator factory */
+<span class="fc" id="L93">        setValidatorFactory(new MoneyWiseValidatorFactory());</span>
+
+        /* Create an empty data set */
+<span class="fc" id="L96">        setData(getNewData());</span>
+
+        /* Create the maps */
+<span class="fc" id="L99">        theMaps = new MoneyWiseMaps(this);</span>
+<span class="fc" id="L100">    }</span>
+
+    /**
+     * Obtain the date range.
+     *
+     * @return the date range
+     */
+    public OceanusDateRange getRange() {
+<span class="nc" id="L108">        return theTaxFactory.getDateRange();</span>
+    }
+
+    /**
+     * Obtain the analysis manager.
+     *
+     * @return the analyser.
+     */
+    public MoneyWiseAnalysisManager getAnalysisManager() {
+<span class="nc" id="L117">        return theAnalysisMgr;</span>
+    }
+
+    /**
+     * Do we have active securities?
+     *
+     * @return true/false.
+     */
+    public boolean hasActiveSecurities() {
+<span class="nc" id="L126">        return hasActiveSecurities;</span>
+    }
+
+    /**
+     * Do we have multiple currencies?
+     *
+     * @return true/false.
+     */
+    public boolean hasMultipleCurrencies() {
+<span class="nc" id="L135">        return hasMultiCurrency;</span>
+    }
+
+    /**
+     * Obtain a new DataSet.
+     *
+     * @return new DataSet
+     */
+    @Override
+    public final MoneyWiseDataSet getNewData() {
+<span class="fc" id="L145">        final MoneyWiseDataSet myDataSet = new MoneyWiseDataSet(getToolkit(), theTaxFactory);</span>
+<span class="fc" id="L146">        myDataSet.setValidatorFactory(getValidatorFactory());</span>
+<span class="fc" id="L147">        return myDataSet;</span>
+    }
+
+    @Override
+    public String getDatabaseName() {
+<span class="nc" id="L152">        final PrometheusDatabasePreferences myPrefs = getPreferenceManager().getPreferenceSet(PrometheusDatabasePreferences.class);</span>
+<span class="nc" id="L153">        return myPrefs.getStringValue(PrometheusDatabasePreferenceKey.DBNAME);</span>
+    }
+
+    @Override
+    public PrometheusDataStore getDatabase() throws OceanusException {
+<span class="nc" id="L158">        final PrometheusDatabasePreferences myPrefs = getPreferenceManager().getPreferenceSet(PrometheusDatabasePreferences.class);</span>
+<span class="nc" id="L159">        final PrometheusDBConfig myConfig = PrometheusDBConfig.fromPrefs(myPrefs);</span>
+<span class="nc" id="L160">        return new MoneyWiseDataStore(myPrefs.getStringValue(PrometheusDatabasePreferenceKey.DBNAME), myConfig);</span>
+    }
+
+    @Override
+    public PrometheusDataStore getNullDatabase() throws OceanusException {
+<span class="nc" id="L165">        final PrometheusDatabasePreferences myPrefs = getPreferenceManager().getPreferenceSet(PrometheusDatabasePreferences.class);</span>
+<span class="nc" id="L166">        final PrometheusDBConfig myConfig = PrometheusDBConfig.fromPrefs(myPrefs);</span>
+<span class="nc" id="L167">        return new MoneyWiseDataStore(myConfig);</span>
+    }
+
+    /**
+     * Obtain a Database interface.
+     *
+     * @return new DataSet
+     */
+    @Override
+    public PrometheusSpreadSheet getSpreadSheet() {
+<span class="nc" id="L177">        return new MoneyWiseSheet(getGuiFactory());</span>
+    }
+
+    /**
+     * Update the data for a view.
+     *
+     * @param pData the new data set
+     */
+    @Override
+    public final void setData(final PrometheusDataSet pData) {
+        /* Record the data */
+<span class="fc" id="L188">        theData = (MoneyWiseDataSet) pData;</span>
+<span class="fc" id="L189">        super.setData(pData);</span>
+
+<span class="pc bpc" id="L191" title="1 of 2 branches missed.">        if (theMaps != null) {</span>
+<span class="nc" id="L192">            theMaps.adjustForDataSet(pData);</span>
+        }
+<span class="fc" id="L194">    }</span>
+
+    @Override
+    public MoneyWiseDataSet getData() {
+<span class="fc" id="L198">        return theData;</span>
+    }
+
+    /**
+     * Analyse the data.
+     *
+     * @param pData the data
+     * @return the analysis
+     * @throws OceanusException on error
+     */
+    public final MoneyWiseAnalysisTransAnalyser analyseData(final MoneyWiseDataSet pData) throws OceanusException {
+        /* Obtain the active profile */
+<span class="fc" id="L210">        OceanusProfile myTask = getActiveTask();</span>
+<span class="fc" id="L211">        myTask = myTask.startTask(&quot;analyseData&quot;);</span>
+
+        /* Update the maps */
+<span class="fc" id="L214">        myTask.startTask(&quot;updateMaps&quot;);</span>
+<span class="fc" id="L215">        pData.updateMaps();</span>
+
+        /* Create the analysis */
+<span class="fc" id="L218">        final PrometheusEditSet myEditSet = new PrometheusEditSet(this);</span>
+<span class="fc" id="L219">        final MoneyWiseAnalysisTransAnalyser myAnalyser = new MoneyWiseAnalysisTransAnalyser(myTask, myEditSet, getPreferenceManager());</span>
+
+        /* Post process the analysis */
+<span class="fc" id="L222">        myAnalyser.postProcessAnalysis();</span>
+
+        /* Complete the task */
+<span class="fc" id="L225">        myTask.end();</span>
+
+        /* Return the analyser */
+<span class="fc" id="L228">        return myAnalyser;</span>
+    }
+
+    @Override
+    protected boolean analyseData(final boolean bPreserve) {
+        /* Obtain the active profile */
+<span class="fc" id="L234">        OceanusProfile myTask = getActiveTask();</span>
+<span class="fc" id="L235">        myTask = myTask.startTask(&quot;analyseTheData&quot;);</span>
+
+        /* Clear the errors */
+<span class="pc bpc" id="L238" title="1 of 2 branches missed.">        if (!bPreserve) {</span>
+<span class="fc" id="L239">            clearErrors();</span>
+        }
+
+        /* Protect against exceptions */
+        try {
+            /* Analyse the data */
+<span class="fc" id="L245">            final MoneyWiseAnalysisTransAnalyser myAnalyser = analyseData(theData);</span>
+<span class="fc" id="L246">            final MoneyWiseAnalysis myAnalysis = myAnalyser.getAnalysis();</span>
+<span class="fc" id="L247">            theAnalysisMgr = new MoneyWiseAnalysisManager(myAnalysis);</span>
+
+            /* Analyse the basic ranged analysis */
+<span class="fc" id="L250">            myTask.startTask(&quot;AnalyseBase&quot;);</span>
+<span class="fc" id="L251">            theAnalysisMgr.analyseBase();</span>
+<span class="fc" id="L252">            hasMultiCurrency = theAnalysisMgr.haveForeignCurrency();</span>
+<span class="fc" id="L253">            hasActiveSecurities = theAnalysisMgr.haveActiveSecurities();</span>
+
+            /* Update the Data entry */
+<span class="fc" id="L256">            final MetisViewerEntry myData = getViewerEntry(PrometheusViewerEntryId.ANALYSIS);</span>
+<span class="fc" id="L257">            myData.setTreeObject(theAnalysisMgr);</span>
+
+            /* Derive the update Set */
+<span class="fc" id="L260">            myTask.startTask(&quot;deriveUpdates&quot;);</span>
+<span class="fc" id="L261">            deriveUpdates();</span>
+
+            /* Catch any exceptions */
+<span class="nc" id="L264">        } catch (OceanusException e) {</span>
+<span class="nc bnc" id="L265" title="All 2 branches missed.">            if (!bPreserve) {</span>
+<span class="nc" id="L266">                addError(e);</span>
+            }
+<span class="fc" id="L268">        }</span>
+
+        /* Complete the task */
+<span class="fc" id="L271">        myTask.end();</span>
+
+        /* Return whether there was success */
+<span class="fc" id="L274">        return getErrors().isEmpty();</span>
+    }
+
+    /**
+     * Set the reporting currency.
+     *
+     * @param pCurrency the new reporting currency
+     */
+    public void setReportingCurrency(final MoneyWiseCurrency pCurrency) {
+        /* Set default currency in AccountCurrencies */
+<span class="nc" id="L284">        theData.getAccountCurrencies().setReportingCurrency(pCurrency);</span>
+
+        /* Set default currency in ExchangeRates */
+<span class="nc" id="L287">        theData.getExchangeRates().setReportingCurrency(pCurrency);</span>
+
+        /* Register the changes */
+<span class="nc" id="L290">        incrementVersion();</span>
+<span class="nc" id="L291">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

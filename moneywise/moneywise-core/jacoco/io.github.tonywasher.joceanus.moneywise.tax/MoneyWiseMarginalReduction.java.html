@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseMarginalReduction.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.moneywise.tax</a> &gt; <span class="el_source">MoneyWiseMarginalReduction.java</span></div><h1>MoneyWiseMarginalReduction.java</h1><pre class="source lang-java linenums">/*
+ * MoneyWise: Finance Application
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.moneywise.tax;
+
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+
+import java.util.Currency;
+
+/**
+ * Marginal allowance reduction.
+ */
+<span class="fc" id="L26">public enum MoneyWiseMarginalReduction {</span>
+    /**
+     * Half.
+     */
+<span class="fc" id="L30">    ONEINTWO(1, 2),</span>
+
+    /**
+     * TwoThirds.
+     */
+<span class="fc" id="L35">    TWOINTHREE(2, 3);</span>
+
+    /**
+     * The String name.
+     */
+    private String theName;
+
+    /**
+     * The multiplier.
+     */
+    private final int theMultiplier;
+
+    /**
+     * The quotient.
+     */
+    private final int theQuotient;
+
+    /**
+     * Constructor.
+     *
+     * @param pMultiplier the multiplier
+     * @param pQuotient   the quotient
+     */
+    MoneyWiseMarginalReduction(final int pMultiplier,
+<span class="fc" id="L59">                               final int pQuotient) {</span>
+<span class="fc" id="L60">        theMultiplier = pMultiplier;</span>
+<span class="fc" id="L61">        theQuotient = pQuotient;</span>
+<span class="fc" id="L62">    }</span>
+
+    @Override
+    public String toString() {
+        /* If we have not yet loaded the name */
+<span class="nc bnc" id="L67" title="All 2 branches missed.">        if (theName == null) {</span>
+            /* Load the name */
+<span class="nc" id="L69">            theName = MoneyWiseTaxResource.getKeyForMarginalReduction(this).getValue();</span>
+        }
+
+        /* return the name */
+<span class="nc" id="L73">        return theName;</span>
+    }
+
+    /**
+     * Calculate the allowance reduction.
+     *
+     * @param pGrossTaxable the gross taxable income
+     * @param pLimit        the allowance limit
+     * @return the reduction
+     */
+    public OceanusMoney calculateReduction(final OceanusMoney pGrossTaxable,
+                                           final OceanusMoney pLimit) {
+        /* Determine the amount by which we are over the limit */
+<span class="nc" id="L86">        final OceanusMoney myExcess = new OceanusMoney(pGrossTaxable);</span>
+<span class="nc" id="L87">        myExcess.subtractAmount(pLimit);</span>
+
+        /* Determine the quotient and multiplier in the required currency */
+<span class="nc" id="L90">        final Currency myCurrency = myExcess.getCurrency();</span>
+<span class="nc" id="L91">        final OceanusMoney myQuotient = OceanusMoney.getWholeUnits(theQuotient, myCurrency);</span>
+<span class="nc" id="L92">        final OceanusMoney myMultiplier = OceanusMoney.getWholeUnits(theMultiplier, myCurrency);</span>
+
+        /* Calculate the reduction */
+<span class="nc" id="L95">        myExcess.divide(myQuotient.unscaledValue());</span>
+<span class="nc" id="L96">        myExcess.multiply(myMultiplier.unscaledValue());</span>
+
+        /* return the reduction */
+<span class="nc" id="L99">        return myExcess;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

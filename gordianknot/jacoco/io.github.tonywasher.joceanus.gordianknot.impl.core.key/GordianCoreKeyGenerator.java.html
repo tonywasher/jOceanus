@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianCoreKeyGenerator.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.impl.core.key</a> &gt; <span class="el_source">GordianCoreKeyGenerator.java</span></div><h1>GordianCoreKeyGenerator.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.gordianknot.impl.core.key;
+
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestType;
+import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKey;
+import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKeyGenerator;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMac;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianDataConverter;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianRandomSource;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.kdf.GordianHKDFMulti;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.kdf.GordianHKDFParams;
+
+import java.security.SecureRandom;
+import java.util.Arrays;
+import java.util.Random;
+
+/**
+ * GordianKnot interface for Key Generators.
+ *
+ * @param &lt;T&gt; the keyType
+ */
+public abstract class GordianCoreKeyGenerator&lt;T extends GordianKeySpec&gt;
+        implements GordianKeyGenerator&lt;T&gt; {
+    /**
+     * The Key Type.
+     */
+    private final T theKeyType;
+
+    /**
+     * The Key Length.
+     */
+    private final int theKeyLength;
+
+    /**
+     * The Security Factory.
+     */
+    private final GordianBaseFactory theFactory;
+
+    /**
+     * The Random Source.
+     */
+    private final GordianRandomSource theRandom;
+
+    /**
+     * Constructor.
+     *
+     * @param pFactory the Security Factory
+     * @param pKeyType the keyType
+     */
+    protected GordianCoreKeyGenerator(final GordianBaseFactory pFactory,
+<span class="fc" id="L72">                                      final T pKeyType) {</span>
+        /* Store parameters */
+<span class="fc" id="L74">        theKeyType = pKeyType;</span>
+<span class="fc" id="L75">        theFactory = pFactory;</span>
+
+        /* Cache some values */
+<span class="fc" id="L78">        theKeyLength = pKeyType.getKeyLength().getLength();</span>
+<span class="fc" id="L79">        theRandom = pFactory.getRandomSource();</span>
+<span class="fc" id="L80">    }</span>
+
+    @Override
+    public T getKeyType() {
+<span class="fc" id="L84">        return theKeyType;</span>
+    }
+
+    /**
+     * Obtain random generator.
+     *
+     * @return the generator
+     */
+    protected SecureRandom getRandom() {
+<span class="fc" id="L93">        return theRandom.getRandom();</span>
+    }
+
+    /**
+     * Obtain factory.
+     *
+     * @return the factory
+     */
+    protected GordianBaseFactory getFactory() {
+<span class="nc" id="L102">        return theFactory;</span>
+    }
+
+    /**
+     * Generate a new Key.
+     *
+     * @param pBytes the bytes for the key.
+     * @return the new Key
+     */
+    public abstract GordianKey&lt;T&gt; buildKeyFromBytes(byte[] pBytes);
+
+    /**
+     * Generate a Key from a Secret.
+     *
+     * @param pSecret       the derived Secret
+     * @param pSeededRandom the deterministic random
+     * @return the new Secret Key
+     * @throws GordianException on error
+     */
+    public GordianKey&lt;T&gt; generateKeyFromSecret(final byte[] pSecret,
+                                               final Random pSeededRandom) throws GordianException {
+        /* Determine the key length in bytes */
+<span class="fc" id="L124">        final int myKeyLen = theKeyLength</span>
+                / Byte.SIZE;
+
+        /* Create data that will be cleared */
+<span class="fc" id="L128">        byte[] myKeyBytes = null;</span>
+<span class="fc" id="L129">        GordianHKDFParams myParams = null;</span>
+
+        /* Derive the two digestTypes from the seededRandom */
+<span class="fc" id="L132">        final GordianDigestType[] myDigestTypes = theFactory.getIdManager().deriveKeyGenDigestTypesFromSeed(pSeededRandom, 2);</span>
+
+        /* Determine info bytes */
+<span class="fc" id="L135">        final byte[] myAlgo = GordianDataConverter.stringToByteArray(theKeyType.toString());</span>
+<span class="fc" id="L136">        final byte[] myKeyLenBytes = GordianDataConverter.integerToByteArray(theKeyLength);</span>
+<span class="fc" id="L137">        final byte[] mySeed = new byte[Long.BYTES];</span>
+<span class="fc" id="L138">        pSeededRandom.nextBytes(mySeed);</span>
+
+        /* Protect against exceptions */
+        try {
+            /* Create the HKDF and parameters */
+<span class="fc" id="L143">            final GordianHKDFMulti myEngine = new GordianHKDFMulti(theFactory,</span>
+                    new GordianDigestSpec(myDigestTypes[0], GordianLength.LEN_512),
+                    new GordianDigestSpec(myDigestTypes[1], GordianLength.LEN_512));
+<span class="fc" id="L146">            myParams = GordianHKDFParams.expandOnly(pSecret, myKeyLen)</span>
+<span class="fc" id="L147">                    .withInfo(myAlgo).withInfo(myKeyLenBytes).withInfo(mySeed);</span>
+<span class="fc" id="L148">            theFactory.getPersonalisation().updateInfo(myParams);</span>
+<span class="fc" id="L149">            myKeyBytes = myEngine.deriveBytes(myParams);</span>
+
+            /* Return the new key */
+<span class="fc" id="L152">            return buildKeyFromBytes(myKeyBytes);</span>
+
+            /* Clear build buffer */
+        } finally {
+<span class="pc bpc" id="L156" title="1 of 2 branches missed.">            if (myKeyBytes != null) {</span>
+<span class="fc" id="L157">                Arrays.fill(myKeyBytes, (byte) 0);</span>
+            }
+<span class="pc bpc" id="L159" title="1 of 2 branches missed.">            if (myParams != null) {</span>
+<span class="fc" id="L160">                myParams.clearParameters();</span>
+            }
+        }
+    }
+
+    @Override
+    public &lt;X extends GordianKeySpec&gt; GordianKey&lt;T&gt; translateKey(final GordianKey&lt;X&gt; pSource) throws GordianException {
+        /* Check that the keyLengths are compatible */
+<span class="nc bnc" id="L168" title="All 2 branches missed.">        if (pSource.getKeyType().getKeyLength() != theKeyType.getKeyLength()) {</span>
+<span class="nc" id="L169">            throw new GordianDataException(&quot;Incorrect length for key&quot;);</span>
+        }
+
+        /* Build the key */
+<span class="nc" id="L173">        final GordianCoreKey&lt;X&gt; mySource = (GordianCoreKey&lt;X&gt;) pSource;</span>
+<span class="nc" id="L174">        return buildKeyFromBytes(mySource.getKeyBytes());</span>
+    }
+
+    /**
+     * Init Mac keyBytes.
+     *
+     * @param pMac      the Mac.
+     * @param pKeyBytes the keyBytes
+     * @throws GordianException on error
+     */
+    public abstract void initMacKeyBytes(GordianMac pMac, byte[] pKeyBytes) throws GordianException;
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

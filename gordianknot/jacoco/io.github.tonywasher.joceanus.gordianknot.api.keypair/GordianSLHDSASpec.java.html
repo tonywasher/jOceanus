@@ -1,0 +1,366 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianSLHDSASpec.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.api.keypair</a> &gt; <span class="el_source">GordianSLHDSASpec.java</span></div><h1>GordianSLHDSASpec.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.gordianknot.api.keypair;
+
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.nist.NISTObjectIdentifiers;
+import org.bouncycastle.jcajce.spec.SLHDSAParameterSpec;
+import org.bouncycastle.pqc.crypto.slhdsa.SLHDSAParameters;
+
+/**
+ * SphincsPlus KeySpecs.
+ */
+<span class="fc" id="L27">public enum GordianSLHDSASpec {</span>
+    /**
+     * SHA2 128f.
+     */
+<span class="fc" id="L31">    SHA128F,</span>
+
+    /**
+     * SHA2 128s.
+     */
+<span class="fc" id="L36">    SHA128S,</span>
+
+    /**
+     * SHA2 192f.
+     */
+<span class="fc" id="L41">    SHA192F,</span>
+
+    /**
+     * SHA2 192s.
+     */
+<span class="fc" id="L46">    SHA192S,</span>
+
+    /**
+     * SHA2 256f.
+     */
+<span class="fc" id="L51">    SHA256F,</span>
+
+    /**
+     * SHA2 256s.
+     */
+<span class="fc" id="L56">    SHA256S,</span>
+
+    /**
+     * SHAKE 128f.
+     */
+<span class="fc" id="L61">    SHAKE128F,</span>
+
+    /**
+     * SHAKE 128s.
+     */
+<span class="fc" id="L66">    SHAKE128S,</span>
+
+    /**
+     * SHAKE 192f.
+     */
+<span class="fc" id="L71">    SHAKE192F,</span>
+
+    /**
+     * SHAKE 192s.
+     */
+<span class="fc" id="L76">    SHAKE192S,</span>
+
+    /**
+     * SHAKE 256f.
+     */
+<span class="fc" id="L81">    SHAKE256F,</span>
+
+    /**
+     * SHAKE 256s.
+     */
+<span class="fc" id="L86">    SHAKE256S,</span>
+
+    /**
+     * SHA2 128f hash.
+     */
+<span class="fc" id="L91">    SHA128F_HASH,</span>
+
+    /**
+     * SHA2 128s hash.
+     */
+<span class="fc" id="L96">    SHA128S_HASH,</span>
+
+    /**
+     * SHA2 192f hash.
+     */
+<span class="fc" id="L101">    SHA192F_HASH,</span>
+
+    /**
+     * SHA2 192s hash.
+     */
+<span class="fc" id="L106">    SHA192S_HASH,</span>
+
+    /**
+     * SHA2 256f hash.
+     */
+<span class="fc" id="L111">    SHA256F_HASH,</span>
+
+    /**
+     * SHA2 256s hash.
+     */
+<span class="fc" id="L116">    SHA256S_HASH,</span>
+
+    /**
+     * SHAKE 128f hash.
+     */
+<span class="fc" id="L121">    SHAKE128F_HASH,</span>
+
+    /**
+     * SHAKE 128s hash.
+     */
+<span class="fc" id="L126">    SHAKE128S_HASH,</span>
+
+    /**
+     * SHAKE 192f hash.
+     */
+<span class="fc" id="L131">    SHAKE192F_HASH,</span>
+
+    /**
+     * SHAKE 192s hash.
+     */
+<span class="fc" id="L136">    SHAKE192S_HASH,</span>
+
+    /**
+     * SHAKE 256f hash.
+     */
+<span class="fc" id="L141">    SHAKE256F_HASH,</span>
+
+    /**
+     * SHAKE 256s hash.
+     */
+<span class="fc" id="L146">    SHAKE256S_HASH;</span>
+
+
+    /**
+     * Is this a hash signer?
+     *
+     * @return true/false
+     */
+    public boolean isHash() {
+<span class="pc bpc" id="L155" title="1 of 2 branches missed.">        switch (this) {</span>
+            case SHA128F:
+            case SHA128S:
+            case SHA192F:
+            case SHA192S:
+            case SHA256F:
+            case SHA256S:
+            case SHAKE128F:
+            case SHAKE128S:
+            case SHAKE192F:
+            case SHAKE192S:
+            case SHAKE256F:
+            case SHAKE256S:
+<span class="fc" id="L168">                return false;</span>
+            case SHA128F_HASH:
+            case SHA128S_HASH:
+            case SHA192F_HASH:
+            case SHA192S_HASH:
+            case SHA256F_HASH:
+            case SHA256S_HASH:
+            case SHAKE128F_HASH:
+            case SHAKE128S_HASH:
+            case SHAKE192F_HASH:
+            case SHAKE192S_HASH:
+            case SHAKE256F_HASH:
+            case SHAKE256S_HASH:
+            default:
+<span class="nc" id="L182">                return true;</span>
+        }
+    }
+
+    /**
+     * Obtain SLHDSA Parameters.
+     *
+     * @return the parameters.
+     */
+    public SLHDSAParameters getParameters() {
+<span class="pc bpc" id="L192" title="24 of 25 branches missed.">        switch (this) {</span>
+            case SHA128F:
+<span class="fc" id="L194">                return SLHDSAParameters.sha2_128f;</span>
+            case SHA128S:
+<span class="nc" id="L196">                return SLHDSAParameters.sha2_128s;</span>
+            case SHA192F:
+<span class="nc" id="L198">                return SLHDSAParameters.sha2_192f;</span>
+            case SHA192S:
+<span class="nc" id="L200">                return SLHDSAParameters.sha2_192s;</span>
+            case SHA256F:
+<span class="nc" id="L202">                return SLHDSAParameters.sha2_256f;</span>
+            case SHA256S:
+<span class="nc" id="L204">                return SLHDSAParameters.sha2_256s;</span>
+            case SHAKE128F:
+<span class="nc" id="L206">                return SLHDSAParameters.shake_128f;</span>
+            case SHAKE128S:
+<span class="nc" id="L208">                return SLHDSAParameters.shake_128s;</span>
+            case SHAKE192F:
+<span class="nc" id="L210">                return SLHDSAParameters.shake_192f;</span>
+            case SHAKE192S:
+<span class="nc" id="L212">                return SLHDSAParameters.shake_192s;</span>
+            case SHAKE256F:
+<span class="nc" id="L214">                return SLHDSAParameters.shake_256f;</span>
+            case SHAKE256S:
+<span class="nc" id="L216">                return SLHDSAParameters.shake_256s;</span>
+            case SHA128F_HASH:
+<span class="nc" id="L218">                return SLHDSAParameters.sha2_128f_with_sha256;</span>
+            case SHA128S_HASH:
+<span class="nc" id="L220">                return SLHDSAParameters.sha2_128s_with_sha256;</span>
+            case SHA192F_HASH:
+<span class="nc" id="L222">                return SLHDSAParameters.sha2_192f_with_sha512;</span>
+            case SHA192S_HASH:
+<span class="nc" id="L224">                return SLHDSAParameters.sha2_192s_with_sha512;</span>
+            case SHA256F_HASH:
+<span class="nc" id="L226">                return SLHDSAParameters.sha2_256f_with_sha512;</span>
+            case SHA256S_HASH:
+<span class="nc" id="L228">                return SLHDSAParameters.sha2_256s_with_sha512;</span>
+            case SHAKE128F_HASH:
+<span class="nc" id="L230">                return SLHDSAParameters.shake_128f_with_shake128;</span>
+            case SHAKE128S_HASH:
+<span class="nc" id="L232">                return SLHDSAParameters.shake_128s_with_shake128;</span>
+            case SHAKE192F_HASH:
+<span class="nc" id="L234">                return SLHDSAParameters.shake_192f_with_shake256;</span>
+            case SHAKE192S_HASH:
+<span class="nc" id="L236">                return SLHDSAParameters.shake_192s_with_shake256;</span>
+            case SHAKE256F_HASH:
+<span class="nc" id="L238">                return SLHDSAParameters.shake_256f_with_shake256;</span>
+            case SHAKE256S_HASH:
+<span class="nc" id="L240">                return SLHDSAParameters.shake_256s_with_shake256;</span>
+            default:
+<span class="nc" id="L242">                throw new IllegalArgumentException();</span>
+        }
+    }
+
+    /**
+     * Obtain SPHINCSPlus ParameterSpec.
+     *
+     * @return the parameters.
+     */
+    public SLHDSAParameterSpec getParameterSpec() {
+<span class="pc bpc" id="L252" title="24 of 25 branches missed.">        switch (this) {</span>
+            case SHA128F:
+<span class="fc" id="L254">                return SLHDSAParameterSpec.slh_dsa_sha2_128f;</span>
+            case SHA128S:
+<span class="nc" id="L256">                return SLHDSAParameterSpec.slh_dsa_sha2_128s;</span>
+            case SHA192F:
+<span class="nc" id="L258">                return SLHDSAParameterSpec.slh_dsa_sha2_192f;</span>
+            case SHA192S:
+<span class="nc" id="L260">                return SLHDSAParameterSpec.slh_dsa_sha2_192s;</span>
+            case SHA256F:
+<span class="nc" id="L262">                return SLHDSAParameterSpec.slh_dsa_sha2_256f;</span>
+            case SHA256S:
+<span class="nc" id="L264">                return SLHDSAParameterSpec.slh_dsa_sha2_256s;</span>
+            case SHAKE128F:
+<span class="nc" id="L266">                return SLHDSAParameterSpec.slh_dsa_shake_128f;</span>
+            case SHAKE128S:
+<span class="nc" id="L268">                return SLHDSAParameterSpec.slh_dsa_shake_128s;</span>
+            case SHAKE192F:
+<span class="nc" id="L270">                return SLHDSAParameterSpec.slh_dsa_shake_192f;</span>
+            case SHAKE192S:
+<span class="nc" id="L272">                return SLHDSAParameterSpec.slh_dsa_shake_192s;</span>
+            case SHAKE256F:
+<span class="nc" id="L274">                return SLHDSAParameterSpec.slh_dsa_shake_256f;</span>
+            case SHAKE256S:
+<span class="nc" id="L276">                return SLHDSAParameterSpec.slh_dsa_shake_256s;</span>
+            case SHA128F_HASH:
+<span class="nc" id="L278">                return SLHDSAParameterSpec.slh_dsa_sha2_128f_with_sha256;</span>
+            case SHA128S_HASH:
+<span class="nc" id="L280">                return SLHDSAParameterSpec.slh_dsa_sha2_128s_with_sha256;</span>
+            case SHA192F_HASH:
+<span class="nc" id="L282">                return SLHDSAParameterSpec.slh_dsa_sha2_192f_with_sha512;</span>
+            case SHA192S_HASH:
+<span class="nc" id="L284">                return SLHDSAParameterSpec.slh_dsa_sha2_192s_with_sha512;</span>
+            case SHA256F_HASH:
+<span class="nc" id="L286">                return SLHDSAParameterSpec.slh_dsa_sha2_256f_with_sha512;</span>
+            case SHA256S_HASH:
+<span class="nc" id="L288">                return SLHDSAParameterSpec.slh_dsa_sha2_256s_with_sha512;</span>
+            case SHAKE128F_HASH:
+<span class="nc" id="L290">                return SLHDSAParameterSpec.slh_dsa_shake_128f_with_shake128;</span>
+            case SHAKE128S_HASH:
+<span class="nc" id="L292">                return SLHDSAParameterSpec.slh_dsa_shake_128s_with_shake128;</span>
+            case SHAKE192F_HASH:
+<span class="nc" id="L294">                return SLHDSAParameterSpec.slh_dsa_shake_192f_with_shake256;</span>
+            case SHAKE192S_HASH:
+<span class="nc" id="L296">                return SLHDSAParameterSpec.slh_dsa_shake_192s_with_shake256;</span>
+            case SHAKE256F_HASH:
+<span class="nc" id="L298">                return SLHDSAParameterSpec.slh_dsa_shake_256f_with_shake256;</span>
+            case SHAKE256S_HASH:
+<span class="nc" id="L300">                return SLHDSAParameterSpec.slh_dsa_shake_256s_with_shake256;</span>
+            default:
+<span class="nc" id="L302">                throw new IllegalArgumentException();</span>
+        }
+    }
+
+    /**
+     * Obtain SLHDSA algorithm Identifier.
+     *
+     * @return the identifier.
+     */
+    public ASN1ObjectIdentifier getIdentifier() {
+<span class="pc bpc" id="L312" title="1 of 25 branches missed.">        switch (this) {</span>
+            case SHA128F:
+<span class="fc" id="L314">                return NISTObjectIdentifiers.id_slh_dsa_sha2_128f;</span>
+            case SHA128S:
+<span class="fc" id="L316">                return NISTObjectIdentifiers.id_slh_dsa_sha2_128s;</span>
+            case SHA192F:
+<span class="fc" id="L318">                return NISTObjectIdentifiers.id_slh_dsa_sha2_192f;</span>
+            case SHA192S:
+<span class="fc" id="L320">                return NISTObjectIdentifiers.id_slh_dsa_sha2_192s;</span>
+            case SHA256F:
+<span class="fc" id="L322">                return NISTObjectIdentifiers.id_slh_dsa_sha2_256f;</span>
+            case SHA256S:
+<span class="fc" id="L324">                return NISTObjectIdentifiers.id_slh_dsa_sha2_256s;</span>
+            case SHAKE128F:
+<span class="fc" id="L326">                return NISTObjectIdentifiers.id_slh_dsa_shake_128f;</span>
+            case SHAKE128S:
+<span class="fc" id="L328">                return NISTObjectIdentifiers.id_slh_dsa_shake_128s;</span>
+            case SHAKE192F:
+<span class="fc" id="L330">                return NISTObjectIdentifiers.id_slh_dsa_shake_192f;</span>
+            case SHAKE192S:
+<span class="fc" id="L332">                return NISTObjectIdentifiers.id_slh_dsa_shake_192s;</span>
+            case SHAKE256F:
+<span class="fc" id="L334">                return NISTObjectIdentifiers.id_slh_dsa_shake_256f;</span>
+            case SHAKE256S:
+<span class="fc" id="L336">                return NISTObjectIdentifiers.id_slh_dsa_shake_256s;</span>
+            case SHA128F_HASH:
+<span class="fc" id="L338">                return NISTObjectIdentifiers.id_hash_slh_dsa_sha2_128f_with_sha256;</span>
+            case SHA128S_HASH:
+<span class="fc" id="L340">                return NISTObjectIdentifiers.id_hash_slh_dsa_sha2_128s_with_sha256;</span>
+            case SHA192F_HASH:
+<span class="fc" id="L342">                return NISTObjectIdentifiers.id_hash_slh_dsa_sha2_192f_with_sha512;</span>
+            case SHA192S_HASH:
+<span class="fc" id="L344">                return NISTObjectIdentifiers.id_hash_slh_dsa_sha2_192s_with_sha512;</span>
+            case SHA256F_HASH:
+<span class="fc" id="L346">                return NISTObjectIdentifiers.id_hash_slh_dsa_sha2_256f_with_sha512;</span>
+            case SHA256S_HASH:
+<span class="fc" id="L348">                return NISTObjectIdentifiers.id_hash_slh_dsa_sha2_256s_with_sha512;</span>
+            case SHAKE128F_HASH:
+<span class="fc" id="L350">                return NISTObjectIdentifiers.id_hash_slh_dsa_shake_128f_with_shake128;</span>
+            case SHAKE128S_HASH:
+<span class="fc" id="L352">                return NISTObjectIdentifiers.id_hash_slh_dsa_shake_128s_with_shake128;</span>
+            case SHAKE192F_HASH:
+<span class="fc" id="L354">                return NISTObjectIdentifiers.id_hash_slh_dsa_shake_192f_with_shake256;</span>
+            case SHAKE192S_HASH:
+<span class="fc" id="L356">                return NISTObjectIdentifiers.id_hash_slh_dsa_shake_192s_with_shake256;</span>
+            case SHAKE256F_HASH:
+<span class="fc" id="L358">                return NISTObjectIdentifiers.id_hash_slh_dsa_shake_256f_with_shake256;</span>
+            case SHAKE256S_HASH:
+<span class="fc" id="L360">                return NISTObjectIdentifiers.id_hash_slh_dsa_shake_256s_with_shake256;</span>
+            default:
+<span class="nc" id="L362">                throw new IllegalArgumentException();</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

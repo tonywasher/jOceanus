@@ -1,0 +1,335 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseCategoryTable.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.moneywise.ui.base</a> &gt; <span class="el_source">MoneyWiseCategoryTable.java</span></div><h1>MoneyWiseCategoryTable.java</h1><pre class="source lang-java linenums">/*
+ * MoneyWise: Finance Application
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.moneywise.ui.base;
+
+import io.github.tonywasher.joceanus.metis.data.MetisDataDifference;
+import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
+import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataNamedItem;
+import io.github.tonywasher.joceanus.metis.list.MetisListKey;
+import io.github.tonywasher.joceanus.metis.ui.MetisAction;
+import io.github.tonywasher.joceanus.metis.ui.MetisErrorPanel;
+import io.github.tonywasher.joceanus.metis.ui.MetisIcon;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseCategoryBase;
+import io.github.tonywasher.joceanus.moneywise.ui.MoneyWiseUIResource;
+import io.github.tonywasher.joceanus.moneywise.views.MoneyWiseView;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataResource;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusStaticDataItem;
+import io.github.tonywasher.joceanus.prometheus.views.PrometheusEditSet;
+import io.github.tonywasher.joceanus.tethys.api.base.TethysUIEvent;
+import io.github.tonywasher.joceanus.tethys.api.button.TethysUIButton;
+import io.github.tonywasher.joceanus.tethys.api.button.TethysUIButtonFactory;
+import io.github.tonywasher.joceanus.tethys.api.button.TethysUIScrollButtonManager;
+import io.github.tonywasher.joceanus.tethys.api.control.TethysUIControl.TethysUIIconMapSet;
+import io.github.tonywasher.joceanus.tethys.api.control.TethysUILabel;
+import io.github.tonywasher.joceanus.tethys.api.factory.TethysUIFactory;
+import io.github.tonywasher.joceanus.tethys.api.menu.TethysUIScrollItem;
+import io.github.tonywasher.joceanus.tethys.api.menu.TethysUIScrollMenu;
+import io.github.tonywasher.joceanus.tethys.api.pane.TethysUIBoxPaneManager;
+import io.github.tonywasher.joceanus.tethys.api.table.TethysUITableManager;
+
+import java.util.List;
+import java.util.Objects;
+
+/**
+ * MoneyWise Category Table.
+ *
+ * @param &lt;T&gt; the Category Data type
+ * @param &lt;S&gt; the Static Data type
+ */
+public abstract class MoneyWiseCategoryTable&lt;T extends MoneyWiseCategoryBase, S extends PrometheusStaticDataItem&gt;
+        extends MoneyWiseBaseTable&lt;T&gt; {
+    /**
+     * Filter Prompt.
+     */
+<span class="nc" id="L59">    private static final String TITLE_FILTER = MoneyWiseUIResource.CATEGORY_PROMPT_FILTER.getValue();</span>
+
+    /**
+     * Filter Parents Title.
+     */
+<span class="nc" id="L64">    private static final String FILTER_PARENTS = MoneyWiseUIResource.CATEGORY_FILTER_PARENT.getValue();</span>
+
+    /**
+     * The filter panel.
+     */
+    private final TethysUIBoxPaneManager theFilterPanel;
+
+    /**
+     * The select button.
+     */
+    private final TethysUIScrollButtonManager&lt;T&gt; theSelectButton;
+
+    /**
+     * Active parent.
+     */
+    private T theParent;
+
+    /**
+     * Constructor.
+     *
+     * @param pView     the view
+     * @param pEditSet  the editSet
+     * @param pError    the error panel
+     * @param pClazz    the dataType class
+     * @param pDataType the dataType
+     */
+    protected MoneyWiseCategoryTable(final MoneyWiseView pView,
+                                     final PrometheusEditSet pEditSet,
+                                     final MetisErrorPanel pError,
+                                     final Class&lt;T&gt; pClazz,
+                                     final MetisListKey pDataType) {
+        /* Store parameters */
+<span class="nc" id="L96">        super(pView, pEditSet, pError, pDataType);</span>
+
+        /* Access Gui factory */
+<span class="nc" id="L99">        final TethysUIFactory&lt;?&gt; myGuiFactory = pView.getGuiFactory();</span>
+<span class="nc" id="L100">        final TethysUITableManager&lt;MetisDataFieldId, T&gt; myTable = getTable();</span>
+
+        /* Create new button */
+<span class="nc" id="L103">        final TethysUIButtonFactory&lt;?&gt; myButtons = myGuiFactory.buttonFactory();</span>
+<span class="nc" id="L104">        final TethysUIButton myNewButton = myButtons.newButton();</span>
+<span class="nc" id="L105">        MetisIcon.configureNewIconButton(myNewButton);</span>
+
+        /* Create the filter components */
+<span class="nc" id="L108">        final TethysUILabel myPrompt = myGuiFactory.controlFactory().newLabel(TITLE_FILTER);</span>
+<span class="nc" id="L109">        theSelectButton = myButtons.newScrollButton(pClazz);</span>
+<span class="nc" id="L110">        theSelectButton.setValue(null, FILTER_PARENTS);</span>
+
+        /* Create a filter panel */
+<span class="nc" id="L113">        theFilterPanel = myGuiFactory.paneFactory().newHBoxPane();</span>
+<span class="nc" id="L114">        theFilterPanel.addSpacer();</span>
+<span class="nc" id="L115">        theFilterPanel.addNode(myPrompt);</span>
+<span class="nc" id="L116">        theFilterPanel.addNode(theSelectButton);</span>
+<span class="nc" id="L117">        theFilterPanel.addSpacer();</span>
+<span class="nc" id="L118">        theFilterPanel.addNode(myNewButton);</span>
+
+        /* Set table configuration */
+<span class="nc" id="L121">        myTable.setDisabled(MoneyWiseCategoryBase::isDisabled)</span>
+<span class="nc" id="L122">                .setComparator(MoneyWiseCategoryBase::compareTo);</span>
+
+        /* Create the short name column */
+<span class="nc" id="L125">        myTable.declareStringColumn(MoneyWiseBasicResource.CATEGORY_SUBCAT)</span>
+<span class="nc" id="L126">                .setValidator(this::isValidName)</span>
+<span class="nc" id="L127">                .setCellValueFactory(this::getShortName)</span>
+<span class="nc" id="L128">                .setEditable(true)</span>
+<span class="nc" id="L129">                .setColumnWidth(WIDTH_NAME)</span>
+<span class="nc" id="L130">                .setOnCommit((r, v) -&gt; updateField(MoneyWiseCategoryBase::setSubCategoryName, r, v));</span>
+
+        /* Create the full name column */
+<span class="nc" id="L133">        myTable.declareStringColumn(PrometheusDataResource.DATAITEM_FIELD_NAME)</span>
+<span class="nc" id="L134">                .setCellValueFactory(MoneyWiseCategoryBase::getName)</span>
+<span class="nc" id="L135">                .setEditable(false)</span>
+<span class="nc" id="L136">                .setColumnWidth(WIDTH_NAME);</span>
+
+        /* Create the category type column */
+<span class="nc" id="L139">        addCategoryTypeColumn();</span>
+
+        /* Create the description column */
+<span class="nc" id="L142">        myTable.declareStringColumn(PrometheusDataResource.DATAITEM_FIELD_DESC)</span>
+<span class="nc" id="L143">                .setValidator(this::isValidDesc)</span>
+<span class="nc" id="L144">                .setCellValueFactory(MoneyWiseCategoryBase::getDesc)</span>
+<span class="nc" id="L145">                .setEditable(true)</span>
+<span class="nc" id="L146">                .setColumnWidth(WIDTH_NAME)</span>
+<span class="nc" id="L147">                .setOnCommit((r, v) -&gt; updateField(MoneyWiseCategoryBase::setDescription, r, v));</span>
+
+        /* Create the Active column */
+<span class="nc" id="L150">        final TethysUIIconMapSet&lt;MetisAction&gt; myActionMapSet = MetisIcon.configureStatusIconButton(myGuiFactory);</span>
+<span class="nc" id="L151">        myTable.declareIconColumn(PrometheusDataResource.DATAITEM_TOUCH, MetisAction.class)</span>
+<span class="nc" id="L152">                .setIconMapSet(r -&gt; myActionMapSet)</span>
+<span class="nc bnc" id="L153" title="All 2 branches missed.">                .setCellValueFactory(r -&gt; r.isActive() ? MetisAction.ACTIVE : MetisAction.DELETE)</span>
+<span class="nc" id="L154">                .setName(MoneyWiseUIResource.STATICDATA_ACTIVE.getValue())</span>
+<span class="nc" id="L155">                .setEditable(true)</span>
+<span class="nc bnc" id="L156" title="All 2 branches missed.">                .setCellEditable(r -&gt; !r.isActive())</span>
+<span class="nc" id="L157">                .setColumnWidth(WIDTH_ICON)</span>
+<span class="nc" id="L158">                .setOnCommit((r, v) -&gt; updateField(this::deleteRow, r, v));</span>
+
+        /* Add listeners */
+<span class="nc" id="L161">        myNewButton.getEventRegistrar().addEventListener(e -&gt; addNewItem());</span>
+<span class="nc" id="L162">        theSelectButton.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -&gt; handleParentSelection());</span>
+<span class="nc" id="L163">        theSelectButton.setMenuConfigurator(e -&gt; buildSelectMenu());</span>
+<span class="nc" id="L164">    }</span>
+
+    /**
+     * Add categoryType column.
+     */
+    protected abstract void addCategoryTypeColumn();
+
+    /**
+     * Obtain the filter panel.
+     *
+     * @return the filter panel
+     */
+    public TethysUIBoxPaneManager getFilterPanel() {
+<span class="nc" id="L177">        return theFilterPanel;</span>
+    }
+
+    /**
+     * Obtain the short name.
+     *
+     * @param pCategory the category
+     * @return the name
+     */
+    protected String getShortName(final T pCategory) {
+<span class="nc" id="L187">        final String myName = pCategory.getSubCategory();</span>
+<span class="nc bnc" id="L188" title="All 2 branches missed.">        return myName == null ? pCategory.getName() : myName;</span>
+    }
+
+    /**
+     * Obtain the parent.
+     *
+     * @return the parent
+     */
+    protected T getParent() {
+<span class="nc" id="L197">        return theParent;</span>
+    }
+
+    /**
+     * Update parent.
+     *
+     * @param pParent the parent
+     */
+    protected void updateParent(final T pParent) {
+<span class="nc" id="L206">        theParent = pParent;</span>
+<span class="nc" id="L207">        theSelectButton.setValue(theParent);</span>
+<span class="nc" id="L208">    }</span>
+
+    /**
+     * Select parent.
+     *
+     * @param pParent the parent category
+     */
+    protected void selectParent(final T pParent) {
+        /* If the parent is being changed */
+<span class="nc bnc" id="L217" title="All 2 branches missed.">        if (!MetisDataDifference.isEqual(pParent, theParent)) {</span>
+            /* Store new value */
+<span class="nc" id="L219">            theParent = pParent;</span>
+
+            /* Update select button */
+<span class="nc bnc" id="L222" title="All 2 branches missed.">            if (pParent == null) {</span>
+<span class="nc" id="L223">                theSelectButton.setValue(null, FILTER_PARENTS);</span>
+            } else {
+<span class="nc" id="L225">                theSelectButton.setValue(pParent);</span>
+            }
+
+            /* Notify table of change */
+<span class="nc" id="L229">            updateTableData();</span>
+        }
+<span class="nc" id="L231">    }</span>
+
+    /**
+     * Handle parent selection.
+     */
+    private void handleParentSelection() {
+<span class="nc" id="L237">        selectParent(theSelectButton.getValue());</span>
+<span class="nc" id="L238">    }</span>
+
+    /**
+     * Build the category type list for the item.
+     *
+     * @param pCategory the item
+     * @param pMenu     the menu to build
+     */
+    protected abstract void buildCategoryTypeMenu(T pCategory,
+                                                  TethysUIScrollMenu&lt;S&gt; pMenu);
+
+    /**
+     * Obtain the categories.
+     *
+     * @return the categories
+     */
+    protected abstract List&lt;T&gt; getCategories();
+
+    /**
+     * Is the categoryType a child category.
+     *
+     * @param pCategoryType the categoryType
+     * @return true/false
+     */
+    protected abstract boolean isChildCategory(S pCategoryType);
+
+    /**
+     * Build Select menu.
+     */
+    private void buildSelectMenu() {
+        /* Clear the menu */
+<span class="nc" id="L269">        final TethysUIScrollMenu&lt;T&gt; myCategoryMenu = theSelectButton.getMenu();</span>
+<span class="nc" id="L270">        myCategoryMenu.removeAllItems();</span>
+
+        /* Cope if we have no categories */
+<span class="nc" id="L273">        final List&lt;T&gt; myCategories = getCategories();</span>
+<span class="nc bnc" id="L274" title="All 2 branches missed.">        if (myCategories == null) {</span>
+<span class="nc" id="L275">            return;</span>
+        }
+
+        /* Record active item */
+<span class="nc" id="L279">        TethysUIScrollItem&lt;T&gt; myActive = null;</span>
+
+        /* Create the no filter MenuItem and add it to the popUp */
+<span class="nc" id="L282">        TethysUIScrollItem&lt;T&gt; myItem = myCategoryMenu.addItem(null, FILTER_PARENTS);</span>
+
+        /* If this is the active parent */
+<span class="nc bnc" id="L285" title="All 2 branches missed.">        if (theParent == null) {</span>
+            /* Record it */
+<span class="nc" id="L287">            myActive = myItem;</span>
+        }
+
+        /* Loop through the available category values */
+<span class="nc bnc" id="L291" title="All 2 branches missed.">        for (T myCurr : myCategories) {</span>
+<span class="nc" id="L292">            @SuppressWarnings(&quot;unchecked&quot;) final S myType = (S) myCurr.getCategoryType();</span>
+
+            /* Ignore category if it is deleted or a child */
+<span class="nc bnc" id="L295" title="All 4 branches missed.">            if (myCurr.isDeleted() || isChildCategory(myType)) {</span>
+<span class="nc" id="L296">                continue;</span>
+            }
+
+            /* Create a new MenuItem and add it to the popUp */
+<span class="nc" id="L300">            myItem = myCategoryMenu.addItem(myCurr);</span>
+
+            /* If this is the active parent */
+<span class="nc bnc" id="L303" title="All 2 branches missed.">            if (myCurr.equals(theParent)) {</span>
+                /* Record it */
+<span class="nc" id="L305">                myActive = myItem;</span>
+            }
+<span class="nc" id="L307">        }</span>
+
+        /* Ensure active item is visible */
+<span class="nc bnc" id="L310" title="All 2 branches missed.">        if (myActive != null) {</span>
+<span class="nc" id="L311">            myActive.scrollToItem();</span>
+        }
+<span class="nc" id="L313">    }</span>
+
+    /**
+     * New item.
+     */
+    protected abstract void addNewItem();
+
+    @Override
+    protected String getInvalidNameChars() {
+<span class="nc" id="L322">        return &quot;:&quot;;</span>
+    }
+
+    @Override
+    protected boolean isDuplicateName(final String pNewName,
+                                      final T pRow,
+                                      final MetisDataNamedItem pCheck) {
+        /* Check for duplicate */
+<span class="nc" id="L330">        final MoneyWiseCategoryBase myCheck = (MoneyWiseCategoryBase) pCheck;</span>
+<span class="nc bnc" id="L331" title="All 2 branches missed.">        return Objects.equals(myCheck.getParentCategory(), pRow.getParentCategory())</span>
+<span class="nc bnc" id="L332" title="All 2 branches missed.">                &amp;&amp; pNewName.equals(myCheck.getSubCategory());</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

@@ -1,0 +1,703 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianSignatureAlgId.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.impl.core.sign</a> &gt; <span class="el_source">GordianSignatureAlgId.java</span></div><h1>GordianSignatureAlgId.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.gordianknot.impl.core.sign;
+
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestSubSpec.GordianDigestState;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianFalconSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairType;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianMLDSASpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianMayoSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianRSAModulus;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianSLHDSASpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianSnovaSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianXMSSKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianXMSSKeySpec.GordianXMSSDigestType;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignatureFactory;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignatureSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignatureSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignatureType;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianASN1Util;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianCompositeKeyPair;
+import org.bouncycastle.asn1.ASN1EncodableVector;
+import org.bouncycastle.asn1.ASN1Integer;
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.ASN1Sequence;
+import org.bouncycastle.asn1.DERNull;
+import org.bouncycastle.asn1.DERSequence;
+import org.bouncycastle.asn1.bc.BCObjectIdentifiers;
+import org.bouncycastle.asn1.edec.EdECObjectIdentifiers;
+import org.bouncycastle.asn1.gm.GMObjectIdentifiers;
+import org.bouncycastle.asn1.misc.MiscObjectIdentifiers;
+import org.bouncycastle.asn1.nist.NISTObjectIdentifiers;
+import org.bouncycastle.asn1.oiw.OIWObjectIdentifiers;
+import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
+import org.bouncycastle.asn1.pkcs.RSASSAPSSparams;
+import org.bouncycastle.asn1.rosstandart.RosstandartObjectIdentifiers;
+import org.bouncycastle.asn1.teletrust.TeleTrusTObjectIdentifiers;
+import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
+import org.bouncycastle.asn1.x9.X9ObjectIdentifiers;
+
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * OID Manager for Signatures.
+ */
+public class GordianSignatureAlgId {
+    /**
+     * SignatureOID branch.
+     */
+<span class="fc" id="L74">    private static final ASN1ObjectIdentifier SIGOID = GordianASN1Util.ASYMOID.branch(&quot;1&quot;);</span>
+
+    /**
+     * Map of SignatureSpec to Identifier.
+     */
+    private final Map&lt;GordianSignatureSpec, AlgorithmIdentifier&gt; theSpecMap;
+
+    /**
+     * Map of SignatureSpec to subTypeMap.
+     */
+    private final Map&lt;GordianSignatureSpec, Map&lt;Object, AlgorithmIdentifier&gt;&gt; theSpecSubTypeMap;
+
+    /**
+     * Map of Identifier to SignatureSpec.
+     */
+    private final Map&lt;AlgorithmIdentifier, GordianSignatureSpec&gt; theIdentifierMap;
+
+    /**
+     * The factory.
+     */
+    private final GordianSignatureFactory theFactory;
+
+    /**
+     * Constructor.
+     *
+     * @param pFactory the factory
+     */
+<span class="fc" id="L101">    GordianSignatureAlgId(final GordianBaseFactory pFactory) {</span>
+        /* Create the maps */
+<span class="fc" id="L103">        theSpecMap = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L104">        theSpecSubTypeMap = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L105">        theIdentifierMap = new HashMap&lt;&gt;();</span>
+
+        /* Access the asymFactory and digests */
+<span class="fc" id="L108">        theFactory = pFactory.getAsyncFactory().getSignatureFactory();</span>
+
+        /* Populate with the public standards */
+<span class="fc" id="L111">        addRSASignatures();</span>
+<span class="fc" id="L112">        addDSASignatures();</span>
+<span class="fc" id="L113">        addECSignatures();</span>
+<span class="fc" id="L114">        addSM2Signatures();</span>
+<span class="fc" id="L115">        addGOSTSignatures();</span>
+<span class="fc" id="L116">        addEdDSASignatures();</span>
+<span class="fc" id="L117">        addPostQuantumSignatures();</span>
+
+        /* Loop through the possible AsymKeys */
+<span class="fc bfc" id="L120" title="All 2 branches covered.">        for (GordianKeyPairType myKeyType : GordianKeyPairType.values()) {</span>
+            /* Ignore keyType if subTypes are used */
+<span class="fc bfc" id="L122" title="All 2 branches covered.">            if (myKeyType.subTypeForSignatures()) {</span>
+<span class="fc" id="L123">                continue;</span>
+            }
+
+            /* Add any non-standard signatureSpecs */
+<span class="fc" id="L127">            addSignatures(myKeyType);</span>
+        }
+<span class="fc" id="L129">    }</span>
+
+    /**
+     * Obtain Identifier for SignatureSpec.
+     *
+     * @param pSpec    the signatureSpec.
+     * @param pKeyPair the keyPair
+     * @return the Identifier
+     */
+    AlgorithmIdentifier getIdentifierForSpecAndKeyPair(final GordianSignatureSpec pSpec,
+                                                       final GordianKeyPair pKeyPair) {
+        /* Handle Composite keyPairs specially */
+<span class="fc bfc" id="L141" title="All 2 branches covered.">        if (pSpec.getKeyPairType() == GordianKeyPairType.COMPOSITE) {</span>
+<span class="fc" id="L142">            final GordianCompositeKeyPair myCompPair = (GordianCompositeKeyPair) pKeyPair;</span>
+<span class="fc" id="L143">            final Iterator&lt;GordianKeyPair&gt; pairIterator = myCompPair.iterator();</span>
+<span class="fc" id="L144">            final Iterator&lt;GordianSignatureSpec&gt; sigIterator = pSpec.signatureSpecIterator();</span>
+<span class="fc" id="L145">            final ASN1EncodableVector ks = new ASN1EncodableVector();</span>
+<span class="fc bfc" id="L146" title="All 2 branches covered.">            while (sigIterator.hasNext()) {</span>
+<span class="fc" id="L147">                ks.add(getIdentifierForSpecAndKeyPair(sigIterator.next(), pairIterator.next()));</span>
+            }
+<span class="fc" id="L149">            return new AlgorithmIdentifier(MiscObjectIdentifiers.id_alg_composite, new DERSequence(ks));</span>
+        }
+
+        /* If we need to use the subType */
+<span class="fc bfc" id="L153" title="All 2 branches covered.">        if (pSpec.getKeyPairType().subTypeForSignatures()) {</span>
+            /* Look up in the subKey map */
+<span class="fc" id="L155">            final Map&lt;Object, AlgorithmIdentifier&gt; myMap = theSpecSubTypeMap.get(pSpec);</span>
+<span class="pc bpc" id="L156" title="1 of 2 branches missed.">            return myMap == null</span>
+<span class="nc" id="L157">                    ? null</span>
+<span class="fc" id="L158">                    : myMap.get(pKeyPair.getKeyPairSpec().getSubKeyType());</span>
+        }
+
+        /* Look up in the standard map */
+<span class="fc" id="L162">        return theSpecMap.get(pSpec);</span>
+    }
+
+    /**
+     * Obtain SignatureSpec for Identifier.
+     *
+     * @param pIdentifier the identifier.
+     * @return the signatureSpec (or null if not found)
+     */
+    public GordianSignatureSpec getSpecForIdentifier(final AlgorithmIdentifier pIdentifier) {
+        /* Handle Composite keyPairs specially */
+<span class="fc bfc" id="L173" title="All 2 branches covered.">        if (MiscObjectIdentifiers.id_alg_composite.equals(pIdentifier.getAlgorithm())) {</span>
+<span class="fc" id="L174">            final List&lt;GordianSignatureSpec&gt; myList = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L175">            final ASN1Sequence myAlgs = ASN1Sequence.getInstance(pIdentifier.getParameters());</span>
+<span class="fc" id="L176">            final Enumeration&lt;?&gt; en = myAlgs.getObjects();</span>
+<span class="fc bfc" id="L177" title="All 2 branches covered.">            while (en.hasMoreElements()) {</span>
+<span class="fc" id="L178">                myList.add(getSpecForIdentifier(AlgorithmIdentifier.getInstance(en.nextElement())));</span>
+            }
+<span class="fc" id="L180">            return GordianSignatureSpecBuilder.composite(myList);</span>
+        }
+<span class="fc" id="L182">        return theIdentifierMap.get(pIdentifier);</span>
+    }
+
+    /**
+     * Add pair to maps.
+     *
+     * @param pSpec       the signatureSpec
+     * @param pIdentifier the identifier
+     */
+    private void addToMaps(final GordianSignatureSpec pSpec,
+                           final AlgorithmIdentifier pIdentifier) {
+<span class="fc" id="L193">        theSpecMap.put(pSpec, pIdentifier);</span>
+<span class="fc" id="L194">        theIdentifierMap.put(pIdentifier, pSpec);</span>
+<span class="fc" id="L195">    }</span>
+
+    /**
+     * Add pair to maps.
+     *
+     * @param pSpec       the signatureSpec
+     * @param pSubType    the subType
+     * @param pIdentifier the identifier
+     */
+    private void addToMaps(final GordianSignatureSpec pSpec,
+                           final Object pSubType,
+                           final AlgorithmIdentifier pIdentifier) {
+        /* Access the relevant map */
+<span class="fc" id="L208">        final Map&lt;Object, AlgorithmIdentifier&gt; myMap = theSpecSubTypeMap.computeIfAbsent(pSpec, p -&gt; new HashMap&lt;&gt;());</span>
+<span class="fc" id="L209">        myMap.put(pSubType, pIdentifier);</span>
+<span class="fc" id="L210">        theIdentifierMap.put(pIdentifier, pSpec);</span>
+<span class="fc" id="L211">    }</span>
+
+    /**
+     * Add RSA signatures.
+     */
+    private void addRSASignatures() {
+<span class="fc" id="L217">        addToMaps(GordianSignatureSpecBuilder.rsa(GordianSignatureType.PSSMGF1, GordianDigestSpecBuilder.sha1()),</span>
+                new AlgorithmIdentifier(PKCSObjectIdentifiers.id_RSASSA_PSS,
+<span class="fc" id="L219">                        createPSSParams(OIWObjectIdentifiers.idSHA1, GordianLength.LEN_160)));</span>
+<span class="fc" id="L220">        addToMaps(GordianSignatureSpecBuilder.rsa(GordianSignatureType.PSSMGF1, GordianDigestSpecBuilder.sha2(GordianLength.LEN_224)),</span>
+                new AlgorithmIdentifier(PKCSObjectIdentifiers.id_RSASSA_PSS,
+<span class="fc" id="L222">                        createPSSParams(NISTObjectIdentifiers.id_sha224, GordianLength.LEN_224)));</span>
+<span class="fc" id="L223">        addToMaps(GordianSignatureSpecBuilder.rsa(GordianSignatureType.PSSMGF1, GordianDigestSpecBuilder.sha2(GordianLength.LEN_256)),</span>
+                new AlgorithmIdentifier(PKCSObjectIdentifiers.id_RSASSA_PSS,
+<span class="fc" id="L225">                        createPSSParams(NISTObjectIdentifiers.id_sha256, GordianLength.LEN_256)));</span>
+<span class="fc" id="L226">        addToMaps(GordianSignatureSpecBuilder.rsa(GordianSignatureType.PSSMGF1, GordianDigestSpecBuilder.sha2(GordianLength.LEN_384)),</span>
+                new AlgorithmIdentifier(PKCSObjectIdentifiers.id_RSASSA_PSS,
+<span class="fc" id="L228">                        createPSSParams(NISTObjectIdentifiers.id_sha384, GordianLength.LEN_384)));</span>
+<span class="fc" id="L229">        addToMaps(GordianSignatureSpecBuilder.rsa(GordianSignatureType.PSSMGF1, GordianDigestSpecBuilder.sha2(GordianLength.LEN_512)),</span>
+                new AlgorithmIdentifier(PKCSObjectIdentifiers.id_RSASSA_PSS,
+<span class="fc" id="L231">                        createPSSParams(NISTObjectIdentifiers.id_sha512, GordianLength.LEN_512)));</span>
+<span class="fc" id="L232">        addToMaps(GordianSignatureSpecBuilder.rsa(GordianSignatureType.PSSMGF1, GordianDigestSpecBuilder.sha3(GordianLength.LEN_224)),</span>
+                new AlgorithmIdentifier(PKCSObjectIdentifiers.id_RSASSA_PSS,
+<span class="fc" id="L234">                        createPSSParams(NISTObjectIdentifiers.id_sha3_224, GordianLength.LEN_224)));</span>
+<span class="fc" id="L235">        addToMaps(GordianSignatureSpecBuilder.rsa(GordianSignatureType.PSSMGF1, GordianDigestSpecBuilder.sha3(GordianLength.LEN_256)),</span>
+                new AlgorithmIdentifier(PKCSObjectIdentifiers.id_RSASSA_PSS,
+<span class="fc" id="L237">                        createPSSParams(NISTObjectIdentifiers.id_sha3_256, GordianLength.LEN_256)));</span>
+<span class="fc" id="L238">        addToMaps(GordianSignatureSpecBuilder.rsa(GordianSignatureType.PSSMGF1, GordianDigestSpecBuilder.sha3(GordianLength.LEN_384)),</span>
+                new AlgorithmIdentifier(PKCSObjectIdentifiers.id_RSASSA_PSS,
+<span class="fc" id="L240">                        createPSSParams(NISTObjectIdentifiers.id_sha3_384, GordianLength.LEN_384)));</span>
+<span class="fc" id="L241">        addToMaps(GordianSignatureSpecBuilder.rsa(GordianSignatureType.PSSMGF1, GordianDigestSpecBuilder.sha3(GordianLength.LEN_512)),</span>
+                new AlgorithmIdentifier(PKCSObjectIdentifiers.id_RSASSA_PSS,
+<span class="fc" id="L243">                        createPSSParams(NISTObjectIdentifiers.id_sha3_512, GordianLength.LEN_512)));</span>
+
+<span class="fc" id="L245">        addPSS128Algorithms(GordianDigestSpecBuilder.sha2(GordianLength.LEN_224),</span>
+                NISTObjectIdentifiers.id_sha224, GordianLength.LEN_224);
+<span class="fc" id="L247">        addPSS128Algorithms(GordianDigestSpecBuilder.sha2(GordianLength.LEN_256),</span>
+                NISTObjectIdentifiers.id_sha256, GordianLength.LEN_256);
+<span class="fc" id="L249">        addPSS128Algorithms(GordianDigestSpecBuilder.sha2(GordianLength.LEN_384),</span>
+                NISTObjectIdentifiers.id_sha384, GordianLength.LEN_384);
+<span class="fc" id="L251">        addPSS128Algorithms(GordianDigestSpecBuilder.sha2(GordianLength.LEN_512),</span>
+                NISTObjectIdentifiers.id_sha512, GordianLength.LEN_512);
+<span class="fc" id="L253">        addPSS128Algorithms(GordianDigestSpecBuilder.sha3(GordianLength.LEN_224),</span>
+                NISTObjectIdentifiers.id_sha3_224, GordianLength.LEN_224);
+<span class="fc" id="L255">        addPSS128Algorithms(GordianDigestSpecBuilder.sha3(GordianLength.LEN_256),</span>
+                NISTObjectIdentifiers.id_sha3_256, GordianLength.LEN_256);
+<span class="fc" id="L257">        addPSS128Algorithms(GordianDigestSpecBuilder.sha3(GordianLength.LEN_384),</span>
+                NISTObjectIdentifiers.id_sha3_384, GordianLength.LEN_384);
+<span class="fc" id="L259">        addPSS128Algorithms(GordianDigestSpecBuilder.sha3(GordianLength.LEN_512),</span>
+                NISTObjectIdentifiers.id_sha3_512, GordianLength.LEN_512);
+<span class="fc" id="L261">        addPSS128Algorithms(GordianDigestSpecBuilder.shake128(),</span>
+                NISTObjectIdentifiers.id_shake128_len, GordianLength.LEN_256);
+
+<span class="fc" id="L264">        addPSS256Algorithms(GordianDigestSpecBuilder.sha2(GordianLength.LEN_224),</span>
+                NISTObjectIdentifiers.id_sha224, GordianLength.LEN_224);
+<span class="fc" id="L266">        addPSS256Algorithms(GordianDigestSpecBuilder.sha2(GordianLength.LEN_256),</span>
+                NISTObjectIdentifiers.id_sha256, GordianLength.LEN_256);
+<span class="fc" id="L268">        addPSS256Algorithms(GordianDigestSpecBuilder.sha2(GordianLength.LEN_384),</span>
+                NISTObjectIdentifiers.id_sha384, GordianLength.LEN_384);
+<span class="fc" id="L270">        addPSS256Algorithms(GordianDigestSpecBuilder.sha2(GordianLength.LEN_512),</span>
+                NISTObjectIdentifiers.id_sha512, GordianLength.LEN_512);
+<span class="fc" id="L272">        addPSS256Algorithms(GordianDigestSpecBuilder.sha3(GordianLength.LEN_224),</span>
+                NISTObjectIdentifiers.id_sha3_224, GordianLength.LEN_224);
+<span class="fc" id="L274">        addPSS256Algorithms(GordianDigestSpecBuilder.sha3(GordianLength.LEN_256),</span>
+                NISTObjectIdentifiers.id_sha3_256, GordianLength.LEN_256);
+<span class="fc" id="L276">        addPSS256Algorithms(GordianDigestSpecBuilder.sha3(GordianLength.LEN_384),</span>
+                NISTObjectIdentifiers.id_sha3_384, GordianLength.LEN_384);
+<span class="fc" id="L278">        addPSS256Algorithms(GordianDigestSpecBuilder.sha3(GordianLength.LEN_512),</span>
+                NISTObjectIdentifiers.id_sha3_512, GordianLength.LEN_512);
+<span class="fc" id="L280">        addPSS256Algorithms(GordianDigestSpecBuilder.shake256(),</span>
+                NISTObjectIdentifiers.id_shake256_len, GordianLength.LEN_512);
+
+<span class="fc" id="L283">        addToMaps(GordianSignatureSpecBuilder.rsa(GordianSignatureType.PREHASH, GordianDigestSpecBuilder.md2()),</span>
+                new AlgorithmIdentifier(PKCSObjectIdentifiers.md2WithRSAEncryption, DERNull.INSTANCE));
+<span class="fc" id="L285">        addToMaps(GordianSignatureSpecBuilder.rsa(GordianSignatureType.PREHASH, GordianDigestSpecBuilder.md4()),</span>
+                new AlgorithmIdentifier(PKCSObjectIdentifiers.md4WithRSAEncryption, DERNull.INSTANCE));
+<span class="fc" id="L287">        addToMaps(GordianSignatureSpecBuilder.rsa(GordianSignatureType.PREHASH, GordianDigestSpecBuilder.md5()),</span>
+                new AlgorithmIdentifier(PKCSObjectIdentifiers.md5WithRSAEncryption, DERNull.INSTANCE));
+<span class="fc" id="L289">        addToMaps(GordianSignatureSpecBuilder.rsa(GordianSignatureType.PREHASH, GordianDigestSpecBuilder.sha1()),</span>
+                new AlgorithmIdentifier(PKCSObjectIdentifiers.sha1WithRSAEncryption, DERNull.INSTANCE));
+<span class="fc" id="L291">        addToMaps(GordianSignatureSpecBuilder.rsa(GordianSignatureType.PREHASH, GordianDigestSpecBuilder.sha2(GordianLength.LEN_224)),</span>
+                new AlgorithmIdentifier(PKCSObjectIdentifiers.sha224WithRSAEncryption, DERNull.INSTANCE));
+<span class="fc" id="L293">        addToMaps(GordianSignatureSpecBuilder.rsa(GordianSignatureType.PREHASH, GordianDigestSpecBuilder.sha2(GordianLength.LEN_256)),</span>
+                new AlgorithmIdentifier(PKCSObjectIdentifiers.sha256WithRSAEncryption, DERNull.INSTANCE));
+<span class="fc" id="L295">        addToMaps(GordianSignatureSpecBuilder.rsa(GordianSignatureType.PREHASH, GordianDigestSpecBuilder.sha2(GordianLength.LEN_384)),</span>
+                new AlgorithmIdentifier(PKCSObjectIdentifiers.sha384WithRSAEncryption, DERNull.INSTANCE));
+<span class="fc" id="L297">        addToMaps(GordianSignatureSpecBuilder.rsa(GordianSignatureType.PREHASH, GordianDigestSpecBuilder.sha2(GordianLength.LEN_512)),</span>
+                new AlgorithmIdentifier(PKCSObjectIdentifiers.sha512WithRSAEncryption, DERNull.INSTANCE));
+<span class="fc" id="L299">        addToMaps(GordianSignatureSpecBuilder.rsa(GordianSignatureType.PREHASH, GordianDigestSpecBuilder.sha2(GordianDigestState.STATE512, GordianLength.LEN_224)),</span>
+                new AlgorithmIdentifier(PKCSObjectIdentifiers.sha512_224WithRSAEncryption, DERNull.INSTANCE));
+<span class="fc" id="L301">        addToMaps(GordianSignatureSpecBuilder.rsa(GordianSignatureType.PREHASH, GordianDigestSpecBuilder.sha2(GordianDigestState.STATE512, GordianLength.LEN_256)),</span>
+                new AlgorithmIdentifier(PKCSObjectIdentifiers.sha512_256WithRSAEncryption, DERNull.INSTANCE));
+<span class="fc" id="L303">        addToMaps(GordianSignatureSpecBuilder.rsa(GordianSignatureType.PREHASH, GordianDigestSpecBuilder.sha3(GordianLength.LEN_224)),</span>
+                new AlgorithmIdentifier(NISTObjectIdentifiers.id_rsassa_pkcs1_v1_5_with_sha3_224, DERNull.INSTANCE));
+<span class="fc" id="L305">        addToMaps(GordianSignatureSpecBuilder.rsa(GordianSignatureType.PREHASH, GordianDigestSpecBuilder.sha3(GordianLength.LEN_256)),</span>
+                new AlgorithmIdentifier(NISTObjectIdentifiers.id_rsassa_pkcs1_v1_5_with_sha3_256, DERNull.INSTANCE));
+<span class="fc" id="L307">        addToMaps(GordianSignatureSpecBuilder.rsa(GordianSignatureType.PREHASH, GordianDigestSpecBuilder.sha3(GordianLength.LEN_384)),</span>
+                new AlgorithmIdentifier(NISTObjectIdentifiers.id_rsassa_pkcs1_v1_5_with_sha3_384, DERNull.INSTANCE));
+<span class="fc" id="L309">        addToMaps(GordianSignatureSpecBuilder.rsa(GordianSignatureType.PREHASH, GordianDigestSpecBuilder.sha3(GordianLength.LEN_512)),</span>
+                new AlgorithmIdentifier(NISTObjectIdentifiers.id_rsassa_pkcs1_v1_5_with_sha3_512, DERNull.INSTANCE));
+<span class="fc" id="L311">        addToMaps(GordianSignatureSpecBuilder.rsa(GordianSignatureType.PREHASH, GordianDigestSpecBuilder.ripemd(GordianLength.LEN_128)),</span>
+                new AlgorithmIdentifier(TeleTrusTObjectIdentifiers.rsaSignatureWithripemd128, DERNull.INSTANCE));
+<span class="fc" id="L313">        addToMaps(GordianSignatureSpecBuilder.rsa(GordianSignatureType.PREHASH, GordianDigestSpecBuilder.ripemd(GordianLength.LEN_160)),</span>
+                new AlgorithmIdentifier(TeleTrusTObjectIdentifiers.rsaSignatureWithripemd160, DERNull.INSTANCE));
+<span class="fc" id="L315">        addToMaps(GordianSignatureSpecBuilder.rsa(GordianSignatureType.PREHASH, GordianDigestSpecBuilder.ripemd(GordianLength.LEN_256)),</span>
+                new AlgorithmIdentifier(TeleTrusTObjectIdentifiers.rsaSignatureWithripemd256, DERNull.INSTANCE));
+<span class="fc" id="L317">    }</span>
+
+    /**
+     * Add DSA signatures.
+     */
+    private void addDSASignatures() {
+<span class="fc" id="L323">        addToMaps(GordianSignatureSpecBuilder.dsa(GordianSignatureType.DSA, GordianDigestSpecBuilder.sha1()),</span>
+                new AlgorithmIdentifier(X9ObjectIdentifiers.id_dsa_with_sha1, DERNull.INSTANCE));
+<span class="fc" id="L325">        addToMaps(GordianSignatureSpecBuilder.dsa(GordianSignatureType.DSA, GordianDigestSpecBuilder.sha2(GordianLength.LEN_224)),</span>
+                new AlgorithmIdentifier(NISTObjectIdentifiers.dsa_with_sha224, DERNull.INSTANCE));
+<span class="fc" id="L327">        addToMaps(GordianSignatureSpecBuilder.dsa(GordianSignatureType.DSA, GordianDigestSpecBuilder.sha2(GordianLength.LEN_256)),</span>
+                new AlgorithmIdentifier(NISTObjectIdentifiers.dsa_with_sha256, DERNull.INSTANCE));
+<span class="fc" id="L329">        addToMaps(GordianSignatureSpecBuilder.dsa(GordianSignatureType.DSA, GordianDigestSpecBuilder.sha2(GordianLength.LEN_384)),</span>
+                new AlgorithmIdentifier(NISTObjectIdentifiers.dsa_with_sha384, DERNull.INSTANCE));
+<span class="fc" id="L331">        addToMaps(GordianSignatureSpecBuilder.dsa(GordianSignatureType.DSA, GordianDigestSpecBuilder.sha2(GordianLength.LEN_512)),</span>
+                new AlgorithmIdentifier(NISTObjectIdentifiers.dsa_with_sha512, DERNull.INSTANCE));
+<span class="fc" id="L333">        addToMaps(GordianSignatureSpecBuilder.dsa(GordianSignatureType.DSA, GordianDigestSpecBuilder.sha3(GordianLength.LEN_224)),</span>
+                new AlgorithmIdentifier(NISTObjectIdentifiers.id_dsa_with_sha3_224, DERNull.INSTANCE));
+<span class="fc" id="L335">        addToMaps(GordianSignatureSpecBuilder.dsa(GordianSignatureType.DSA, GordianDigestSpecBuilder.sha3(GordianLength.LEN_256)),</span>
+                new AlgorithmIdentifier(NISTObjectIdentifiers.id_dsa_with_sha3_256, DERNull.INSTANCE));
+<span class="fc" id="L337">        addToMaps(GordianSignatureSpecBuilder.dsa(GordianSignatureType.DSA, GordianDigestSpecBuilder.sha3(GordianLength.LEN_384)),</span>
+                new AlgorithmIdentifier(NISTObjectIdentifiers.id_dsa_with_sha3_384, DERNull.INSTANCE));
+<span class="fc" id="L339">        addToMaps(GordianSignatureSpecBuilder.dsa(GordianSignatureType.DSA, GordianDigestSpecBuilder.sha3(GordianLength.LEN_512)),</span>
+                new AlgorithmIdentifier(NISTObjectIdentifiers.id_dsa_with_sha3_512, DERNull.INSTANCE));
+<span class="fc" id="L341">    }</span>
+
+    /**
+     * Add EC signatures.
+     */
+    private void addECSignatures() {
+<span class="fc" id="L347">        addToMaps(GordianSignatureSpecBuilder.ec(GordianSignatureType.DSA, GordianDigestSpecBuilder.sha1()),</span>
+                new AlgorithmIdentifier(X9ObjectIdentifiers.ecdsa_with_SHA1, DERNull.INSTANCE));
+<span class="fc" id="L349">        addToMaps(GordianSignatureSpecBuilder.ec(GordianSignatureType.DSA, GordianDigestSpecBuilder.sha2(GordianLength.LEN_224)),</span>
+                new AlgorithmIdentifier(X9ObjectIdentifiers.ecdsa_with_SHA224, DERNull.INSTANCE));
+<span class="fc" id="L351">        addToMaps(GordianSignatureSpecBuilder.ec(GordianSignatureType.DSA, GordianDigestSpecBuilder.sha2(GordianLength.LEN_256)),</span>
+                new AlgorithmIdentifier(X9ObjectIdentifiers.ecdsa_with_SHA256, DERNull.INSTANCE));
+<span class="fc" id="L353">        addToMaps(GordianSignatureSpecBuilder.ec(GordianSignatureType.DSA, GordianDigestSpecBuilder.sha2(GordianLength.LEN_384)),</span>
+                new AlgorithmIdentifier(X9ObjectIdentifiers.ecdsa_with_SHA384, DERNull.INSTANCE));
+<span class="fc" id="L355">        addToMaps(GordianSignatureSpecBuilder.ec(GordianSignatureType.DSA, GordianDigestSpecBuilder.sha2(GordianLength.LEN_512)),</span>
+                new AlgorithmIdentifier(X9ObjectIdentifiers.ecdsa_with_SHA512, DERNull.INSTANCE));
+<span class="fc" id="L357">        addToMaps(GordianSignatureSpecBuilder.ec(GordianSignatureType.DSA, GordianDigestSpecBuilder.sha3(GordianLength.LEN_224)),</span>
+                new AlgorithmIdentifier(NISTObjectIdentifiers.id_ecdsa_with_sha3_224, DERNull.INSTANCE));
+<span class="fc" id="L359">        addToMaps(GordianSignatureSpecBuilder.ec(GordianSignatureType.DSA, GordianDigestSpecBuilder.sha3(GordianLength.LEN_256)),</span>
+                new AlgorithmIdentifier(NISTObjectIdentifiers.id_ecdsa_with_sha3_256, DERNull.INSTANCE));
+<span class="fc" id="L361">        addToMaps(GordianSignatureSpecBuilder.ec(GordianSignatureType.DSA, GordianDigestSpecBuilder.sha3(GordianLength.LEN_384)),</span>
+                new AlgorithmIdentifier(NISTObjectIdentifiers.id_ecdsa_with_sha3_384, DERNull.INSTANCE));
+<span class="fc" id="L363">        addToMaps(GordianSignatureSpecBuilder.ec(GordianSignatureType.DSA, GordianDigestSpecBuilder.sha3(GordianLength.LEN_512)),</span>
+                new AlgorithmIdentifier(NISTObjectIdentifiers.id_ecdsa_with_sha3_512, DERNull.INSTANCE));
+<span class="fc" id="L365">    }</span>
+
+    /**
+     * Add SM2 signatures.
+     */
+    private void addSM2Signatures() {
+<span class="fc" id="L371">        addToMaps(GordianSignatureSpecBuilder.sm2(GordianDigestSpecBuilder.sm3()),</span>
+                new AlgorithmIdentifier(GMObjectIdentifiers.sm2sign_with_sm3, DERNull.INSTANCE));
+<span class="fc" id="L373">        addToMaps(GordianSignatureSpecBuilder.sm2(GordianDigestSpecBuilder.sha2(GordianLength.LEN_256)),</span>
+                new AlgorithmIdentifier(GMObjectIdentifiers.sm2sign_with_sha256, DERNull.INSTANCE));
+<span class="fc" id="L375">    }</span>
+
+    /**
+     * Add GOST signatures.
+     */
+    private void addGOSTSignatures() {
+<span class="fc" id="L381">        addToMaps(GordianSignatureSpecBuilder.gost2012(GordianLength.LEN_256),</span>
+                new AlgorithmIdentifier(RosstandartObjectIdentifiers.id_tc26_signwithdigest_gost_3410_12_256, DERNull.INSTANCE));
+<span class="fc" id="L383">        addToMaps(GordianSignatureSpecBuilder.gost2012(GordianLength.LEN_512),</span>
+                new AlgorithmIdentifier(RosstandartObjectIdentifiers.id_tc26_signwithdigest_gost_3410_12_512, DERNull.INSTANCE));
+<span class="fc" id="L385">    }</span>
+
+    /**
+     * Add EdDSA signatures.
+     */
+    private void addEdDSASignatures() {
+<span class="fc" id="L391">        addToMaps(GordianSignatureSpecBuilder.edDSA(), GordianKeyPairSpecBuilder.ed25519(),</span>
+                new AlgorithmIdentifier(EdECObjectIdentifiers.id_Ed25519, DERNull.INSTANCE));
+<span class="fc" id="L393">        addToMaps(GordianSignatureSpecBuilder.edDSA(), GordianKeyPairSpecBuilder.ed448(),</span>
+                new AlgorithmIdentifier(EdECObjectIdentifiers.id_Ed448, DERNull.INSTANCE));
+<span class="fc" id="L395">    }</span>
+
+    /**
+     * Add postQuantum signatures.
+     */
+    private void addPostQuantumSignatures() {
+        /* Add Picnic signatures */
+<span class="fc" id="L402">        addToMaps(GordianSignatureSpecBuilder.picnic(),</span>
+                new AlgorithmIdentifier(BCObjectIdentifiers.picnic_signature, DERNull.INSTANCE));
+<span class="fc" id="L404">        addToMaps(GordianSignatureSpecBuilder.picnic(GordianDigestSpecBuilder.sha2(GordianLength.LEN_512)),</span>
+                new AlgorithmIdentifier(BCObjectIdentifiers.picnic_with_sha512, DERNull.INSTANCE));
+<span class="fc" id="L406">        addToMaps(GordianSignatureSpecBuilder.picnic(GordianDigestSpecBuilder.sha3(GordianLength.LEN_512)),</span>
+                new AlgorithmIdentifier(BCObjectIdentifiers.picnic_with_sha3_512, DERNull.INSTANCE));
+<span class="fc" id="L408">        addToMaps(GordianSignatureSpecBuilder.picnic(GordianDigestSpecBuilder.shake256()),</span>
+                new AlgorithmIdentifier(BCObjectIdentifiers.picnic_with_shake256, DERNull.INSTANCE));
+
+        /* Add LMS signatures */
+<span class="fc" id="L412">        addToMaps(GordianSignatureSpecBuilder.lms(),</span>
+                new AlgorithmIdentifier(PKCSObjectIdentifiers.id_alg_hss_lms_hashsig, DERNull.INSTANCE));
+
+        /* Add signatures that use keyPair id */
+<span class="fc" id="L416">        addMLDSASignatures();</span>
+<span class="fc" id="L417">        addSLHDSASignatures();</span>
+<span class="fc" id="L418">        addFalconSignatures();</span>
+<span class="fc" id="L419">        addMayoSignatures();</span>
+<span class="fc" id="L420">        addSnovaSignatures();</span>
+
+        /* Add XMSS signatures */
+<span class="fc" id="L423">        addXMSSSignatures();</span>
+<span class="fc" id="L424">    }</span>
+
+    /**
+     * Add SLHDSA signatures.
+     */
+    private void addMLDSASignatures() {
+<span class="fc bfc" id="L430" title="All 2 branches covered.">        for (GordianMLDSASpec mySpec : GordianMLDSASpec.values()) {</span>
+<span class="fc" id="L431">            addToMaps(GordianSignatureSpecBuilder.mldsa(), GordianKeyPairSpecBuilder.mldsa(mySpec).getSubKeyType(),</span>
+<span class="fc" id="L432">                    new AlgorithmIdentifier(mySpec.getIdentifier(), DERNull.INSTANCE));</span>
+        }
+<span class="fc" id="L434">    }</span>
+
+    /**
+     * Add SLHDSA signatures.
+     */
+    private void addSLHDSASignatures() {
+<span class="fc bfc" id="L440" title="All 2 branches covered.">        for (GordianSLHDSASpec mySpec : GordianSLHDSASpec.values()) {</span>
+<span class="fc" id="L441">            addToMaps(GordianSignatureSpecBuilder.slhdsa(), GordianKeyPairSpecBuilder.slhdsa(mySpec).getSubKeyType(),</span>
+<span class="fc" id="L442">                    new AlgorithmIdentifier(mySpec.getIdentifier(), DERNull.INSTANCE));</span>
+        }
+<span class="fc" id="L444">    }</span>
+
+    /**
+     * Add Falcon signatures.
+     */
+    private void addFalconSignatures() {
+<span class="fc bfc" id="L450" title="All 2 branches covered.">        for (GordianFalconSpec mySpec : GordianFalconSpec.values()) {</span>
+<span class="fc" id="L451">            addToMaps(GordianSignatureSpecBuilder.falcon(), GordianKeyPairSpecBuilder.falcon(mySpec).getSubKeyType(),</span>
+<span class="fc" id="L452">                    new AlgorithmIdentifier(mySpec.getIdentifier(), DERNull.INSTANCE));</span>
+        }
+<span class="fc" id="L454">    }</span>
+
+    /**
+     * Add Mayo signatures.
+     */
+    private void addMayoSignatures() {
+<span class="fc bfc" id="L460" title="All 2 branches covered.">        for (GordianMayoSpec mySpec : GordianMayoSpec.values()) {</span>
+<span class="fc" id="L461">            addToMaps(GordianSignatureSpecBuilder.mayo(), GordianKeyPairSpecBuilder.mayo(mySpec).getSubKeyType(),</span>
+<span class="fc" id="L462">                    new AlgorithmIdentifier(mySpec.getIdentifier(), DERNull.INSTANCE));</span>
+        }
+<span class="fc" id="L464">    }</span>
+
+    /**
+     * Add Snova signatures.
+     */
+    private void addSnovaSignatures() {
+<span class="fc bfc" id="L470" title="All 2 branches covered.">        for (GordianSnovaSpec mySpec : GordianSnovaSpec.values()) {</span>
+<span class="fc" id="L471">            addToMaps(GordianSignatureSpecBuilder.snova(), GordianKeyPairSpecBuilder.snova(mySpec).getSubKeyType(),</span>
+<span class="fc" id="L472">                    new AlgorithmIdentifier(mySpec.getIdentifier(), DERNull.INSTANCE));</span>
+        }
+<span class="fc" id="L474">    }</span>
+
+    /**
+     * Add XMSS signatures.
+     */
+    private void addXMSSSignatures() {
+        /* List XMSS Sha256 signatures */
+<span class="fc bfc" id="L481" title="All 2 branches covered.">        for (GordianXMSSKeySpec mySpec : GordianXMSSKeySpec.listPossibleKeySpecs(GordianXMSSDigestType.SHA256)) {</span>
+            /* If this is an XMSSMT spec */
+<span class="fc bfc" id="L483" title="All 2 branches covered.">            if (mySpec.isMT()) {</span>
+<span class="fc" id="L484">                addToMaps(GordianSignatureSpecBuilder.xmss(), mySpec,</span>
+                        new AlgorithmIdentifier(BCObjectIdentifiers.xmss_mt_SHA256, DERNull.INSTANCE));
+<span class="fc" id="L486">                addToMaps(GordianSignatureSpecBuilder.xmssph(), mySpec,</span>
+                        new AlgorithmIdentifier(BCObjectIdentifiers.xmss_mt_SHA256ph, DERNull.INSTANCE));
+
+            } else {
+<span class="fc" id="L490">                addToMaps(GordianSignatureSpecBuilder.xmss(), mySpec,</span>
+                        new AlgorithmIdentifier(BCObjectIdentifiers.xmss_SHA256, DERNull.INSTANCE));
+<span class="fc" id="L492">                addToMaps(GordianSignatureSpecBuilder.xmssph(), mySpec,</span>
+                        new AlgorithmIdentifier(BCObjectIdentifiers.xmss_SHA256ph, DERNull.INSTANCE));
+            }
+<span class="fc" id="L495">        }</span>
+
+        /* List XMSS Sha512 signatures */
+<span class="fc bfc" id="L498" title="All 2 branches covered.">        for (GordianXMSSKeySpec mySpec : GordianXMSSKeySpec.listPossibleKeySpecs(GordianXMSSDigestType.SHA512)) {</span>
+            /* If this is an XMSSMT spec */
+<span class="fc bfc" id="L500" title="All 2 branches covered.">            if (mySpec.isMT()) {</span>
+<span class="fc" id="L501">                addToMaps(GordianSignatureSpecBuilder.xmss(), mySpec,</span>
+                        new AlgorithmIdentifier(BCObjectIdentifiers.xmss_mt_SHA512, DERNull.INSTANCE));
+<span class="fc" id="L503">                addToMaps(GordianSignatureSpecBuilder.xmssph(), mySpec,</span>
+                        new AlgorithmIdentifier(BCObjectIdentifiers.xmss_mt_SHA512ph, DERNull.INSTANCE));
+
+            } else {
+<span class="fc" id="L507">                addToMaps(GordianSignatureSpecBuilder.xmss(), mySpec,</span>
+                        new AlgorithmIdentifier(BCObjectIdentifiers.xmss_SHA512, DERNull.INSTANCE));
+<span class="fc" id="L509">                addToMaps(GordianSignatureSpecBuilder.xmssph(), mySpec,</span>
+                        new AlgorithmIdentifier(BCObjectIdentifiers.xmss_SHA512ph, DERNull.INSTANCE));
+            }
+<span class="fc" id="L512">        }</span>
+
+        /* List XMSS Shake128 signatures */
+<span class="fc bfc" id="L515" title="All 2 branches covered.">        for (GordianXMSSKeySpec mySpec : GordianXMSSKeySpec.listPossibleKeySpecs(GordianXMSSDigestType.SHAKE128)) {</span>
+            /* If this is an XMSSMT spec */
+<span class="fc bfc" id="L517" title="All 2 branches covered.">            if (mySpec.isMT()) {</span>
+<span class="fc" id="L518">                addToMaps(GordianSignatureSpecBuilder.xmss(), mySpec,</span>
+                        new AlgorithmIdentifier(BCObjectIdentifiers.xmss_mt_SHAKE128, DERNull.INSTANCE));
+<span class="fc" id="L520">                addToMaps(GordianSignatureSpecBuilder.xmssph(), mySpec,</span>
+                        new AlgorithmIdentifier(BCObjectIdentifiers.xmss_mt_SHAKE128ph, DERNull.INSTANCE));
+
+            } else {
+<span class="fc" id="L524">                addToMaps(GordianSignatureSpecBuilder.xmss(), mySpec,</span>
+                        new AlgorithmIdentifier(BCObjectIdentifiers.xmss_SHAKE128, DERNull.INSTANCE));
+<span class="fc" id="L526">                addToMaps(GordianSignatureSpecBuilder.xmssph(), mySpec,</span>
+                        new AlgorithmIdentifier(BCObjectIdentifiers.xmss_SHAKE128ph, DERNull.INSTANCE));
+            }
+<span class="fc" id="L529">        }</span>
+
+        /* List XMSS Shake128 signatures */
+<span class="fc bfc" id="L532" title="All 2 branches covered.">        for (GordianXMSSKeySpec mySpec : GordianXMSSKeySpec.listPossibleKeySpecs(GordianXMSSDigestType.SHAKE256)) {</span>
+            /* If this is an XMSSMT spec */
+<span class="fc bfc" id="L534" title="All 2 branches covered.">            if (mySpec.isMT()) {</span>
+<span class="fc" id="L535">                addToMaps(GordianSignatureSpecBuilder.xmss(), mySpec,</span>
+                        new AlgorithmIdentifier(BCObjectIdentifiers.xmss_mt_SHAKE256, DERNull.INSTANCE));
+<span class="fc" id="L537">                addToMaps(GordianSignatureSpecBuilder.xmssph(), mySpec,</span>
+                        new AlgorithmIdentifier(BCObjectIdentifiers.xmss_mt_SHAKE256ph, DERNull.INSTANCE));
+
+            } else {
+<span class="fc" id="L541">                addToMaps(GordianSignatureSpecBuilder.xmss(), mySpec,</span>
+                        new AlgorithmIdentifier(BCObjectIdentifiers.xmss_SHAKE256, DERNull.INSTANCE));
+<span class="fc" id="L543">                addToMaps(GordianSignatureSpecBuilder.xmssph(), mySpec,</span>
+                        new AlgorithmIdentifier(BCObjectIdentifiers.xmss_SHAKE256ph, DERNull.INSTANCE));
+            }
+<span class="fc" id="L546">        }</span>
+<span class="fc" id="L547">    }</span>
+
+    /**
+     * Create PSS Parameters.
+     *
+     * @param pHash     the hash algorithmId
+     * @param pSaltSize the saltSize
+     * @return the params
+     */
+    private static RSASSAPSSparams createPSSParams(final ASN1ObjectIdentifier pHash,
+                                                   final GordianLength pSaltSize) {
+<span class="fc" id="L558">        final AlgorithmIdentifier myId = new AlgorithmIdentifier(pHash, DERNull.INSTANCE);</span>
+<span class="fc" id="L559">        return new RSASSAPSSparams(myId,</span>
+                new AlgorithmIdentifier(PKCSObjectIdentifiers.id_mgf1, myId),
+<span class="fc" id="L561">                new ASN1Integer(pSaltSize.getByteLength()),</span>
+                new ASN1Integer(1));
+    }
+
+    /**
+     * Add PSS SHAKE128 Algorithms.
+     *
+     * @param pSpec     the digestSpec
+     * @param pHash     the hash algorithmId
+     * @param pSaltSize the saltSize
+     */
+    private void addPSS128Algorithms(final GordianDigestSpec pSpec,
+                                     final ASN1ObjectIdentifier pHash,
+                                     final GordianLength pSaltSize) {
+        /* Loop through the RSAModulii */
+<span class="fc bfc" id="L576" title="All 2 branches covered.">        for (GordianRSAModulus myModulus : GordianRSAModulus.values()) {</span>
+<span class="fc" id="L577">            addToMaps(GordianSignatureSpecBuilder.rsa(GordianSignatureType.PSS128, pSpec),</span>
+                    myModulus, new AlgorithmIdentifier(PKCSObjectIdentifiers.id_RSASSA_PSS,
+<span class="fc" id="L579">                            createPSS128Params(pHash, myModulus, pSaltSize)));</span>
+        }
+<span class="fc" id="L581">    }</span>
+
+    /**
+     * Create PSS SHAKE128 Parameters.
+     *
+     * @param pHash     the hash algorithmId
+     * @param pModulus  the RSA modulus
+     * @param pSaltSize the saltSize
+     * @return the params
+     */
+    private static RSASSAPSSparams createPSS128Params(final ASN1ObjectIdentifier pHash,
+                                                      final GordianRSAModulus pModulus,
+                                                      final GordianLength pSaltSize) {
+<span class="fc bfc" id="L594" title="All 2 branches covered.">        final AlgorithmIdentifier myId = NISTObjectIdentifiers.id_shake128_len.equals(pHash)</span>
+<span class="fc" id="L595">                ? new AlgorithmIdentifier(pHash, new ASN1Integer(GordianLength.LEN_256.getByteLength()))</span>
+<span class="fc" id="L596">                : new AlgorithmIdentifier(pHash, DERNull.INSTANCE);</span>
+<span class="fc" id="L597">        final int myShakeLen = GordianLength.LEN_256.getLength();</span>
+<span class="fc" id="L598">        final int myLen = (pModulus.getLength() - myShakeLen - Byte.SIZE) / Byte.SIZE;</span>
+<span class="fc" id="L599">        return new RSASSAPSSparams(myId,</span>
+                new AlgorithmIdentifier(NISTObjectIdentifiers.id_shake128, new ASN1Integer(myLen)),
+<span class="fc" id="L601">                new ASN1Integer(pSaltSize.getByteLength()),</span>
+                new ASN1Integer(1));
+    }
+
+    /**
+     * Add PSS SHAKE256 Algorithms.
+     *
+     * @param pSpec     the digestSpec
+     * @param pHash     the hash algorithmId
+     * @param pSaltSize the saltSize
+     */
+    private void addPSS256Algorithms(final GordianDigestSpec pSpec,
+                                     final ASN1ObjectIdentifier pHash,
+                                     final GordianLength pSaltSize) {
+        /* Loop through the RSAModulii */
+<span class="fc bfc" id="L616" title="All 2 branches covered.">        for (GordianRSAModulus myModulus : GordianRSAModulus.values()) {</span>
+<span class="fc" id="L617">            addToMaps(GordianSignatureSpecBuilder.rsa(GordianSignatureType.PSS256, pSpec),</span>
+                    myModulus, new AlgorithmIdentifier(PKCSObjectIdentifiers.id_RSASSA_PSS,
+<span class="fc" id="L619">                            createPSS256Params(pHash, myModulus, pSaltSize)));</span>
+        }
+<span class="fc" id="L621">    }</span>
+
+    /**
+     * Create PSS SHAKE256 Parameters.
+     *
+     * @param pHash     the hash algorithmId
+     * @param pModulus  the RSA modulus
+     * @param pSaltSize the saltSize
+     * @return the params
+     */
+    private static RSASSAPSSparams createPSS256Params(final ASN1ObjectIdentifier pHash,
+                                                      final GordianRSAModulus pModulus,
+                                                      final GordianLength pSaltSize) {
+<span class="fc bfc" id="L634" title="All 2 branches covered.">        final AlgorithmIdentifier myId = NISTObjectIdentifiers.id_shake256_len.equals(pHash)</span>
+<span class="fc" id="L635">                ? new AlgorithmIdentifier(pHash, new ASN1Integer(GordianLength.LEN_512.getByteLength()))</span>
+<span class="fc" id="L636">                : new AlgorithmIdentifier(pHash, DERNull.INSTANCE);</span>
+<span class="fc" id="L637">        final int myShakeLen = GordianLength.LEN_512.getLength();</span>
+<span class="fc" id="L638">        final int myLen = (pModulus.getLength() - myShakeLen - Byte.SIZE) / Byte.SIZE;</span>
+<span class="fc" id="L639">        return new RSASSAPSSparams(myId,</span>
+                new AlgorithmIdentifier(NISTObjectIdentifiers.id_shake256, new ASN1Integer(myLen)),
+<span class="fc" id="L641">                new ASN1Integer(pSaltSize.getByteLength()),</span>
+                new ASN1Integer(1));
+    }
+
+    /**
+     * Create Identifiers for all valid SignatureTypes/DigestSpecs.
+     *
+     * @param pKeyType the keyType
+     */
+    private void addSignatures(final GordianKeyPairType pKeyType) {
+<span class="fc bfc" id="L651" title="All 2 branches covered.">        for (GordianSignatureSpec mySpec : theFactory.listAllSupportedSignatures(pKeyType)) {</span>
+<span class="fc" id="L652">            ensureSignature(mySpec);</span>
+<span class="fc" id="L653">        }</span>
+<span class="fc" id="L654">    }</span>
+
+    /**
+     * Add sigSpec to map if supported and not already present.
+     *
+     * @param pSigSpec the signatureSpec
+     */
+    private void ensureSignature(final GordianSignatureSpec pSigSpec) {
+        /* If the signature is not already known */
+<span class="fc bfc" id="L663" title="All 2 branches covered.">        if (!theSpecMap.containsKey(pSigSpec)) {</span>
+<span class="fc" id="L664">            addSignature(pSigSpec);</span>
+        }
+<span class="fc" id="L666">    }</span>
+
+    /**
+     * Create Identifier for a signatureSpec.
+     *
+     * @param pSigSpec the signatureSpec
+     */
+    private void addSignature(final GordianSignatureSpec pSigSpec) {
+        /* Create a branch for signatures based on the AsymKeyType */
+<span class="fc" id="L675">        final GordianKeyPairType myKeyType = pSigSpec.getKeyPairType();</span>
+<span class="fc" id="L676">        ASN1ObjectIdentifier myId = SIGOID.branch(Integer.toString(myKeyType.ordinal() + 1));</span>
+
+        /* Create a branch for signatures based on the SignatureType */
+<span class="fc" id="L679">        final GordianSignatureType mySigType = pSigSpec.getSignatureType();</span>
+<span class="fc" id="L680">        myId = myId.branch(Integer.toString(mySigType.ordinal() + 1));</span>
+
+        /* If we have a digestSpec */
+<span class="fc bfc" id="L683" title="All 2 branches covered.">        if (pSigSpec.getSignatureSpec() instanceof GordianDigestSpec) {</span>
+            /* Create a branch for digest based on the DigestType/Length/State */
+<span class="fc" id="L685">            final GordianDigestSpec myDigestSpec = pSigSpec.getDigestSpec();</span>
+<span class="fc" id="L686">            myId = myId.branch(Integer.toString(myDigestSpec.getDigestType().ordinal() + 1));</span>
+<span class="fc" id="L687">            myId = myId.branch(Integer.toString(myDigestSpec.getDigestLength().ordinal() + 1));</span>
+
+            /* Add a branch if there is a state */
+<span class="fc" id="L690">            final GordianDigestState myState = myDigestSpec.getDigestState();</span>
+<span class="fc bfc" id="L691" title="All 2 branches covered.">            if (myState != null) {</span>
+<span class="fc" id="L692">                myId = myId.branch(Integer.toString(myState.ordinal() + 1));</span>
+            }
+
+            /* Add Xof indication */
+<span class="fc bfc" id="L696" title="All 2 branches covered.">            myId = myId.branch(myDigestSpec.isXofMode() ? &quot;1&quot; : &quot;2&quot;);</span>
+        }
+
+        /* Add the id to the maps */
+<span class="fc" id="L700">        addToMaps(pSigSpec, new AlgorithmIdentifier(myId, DERNull.INSTANCE));</span>
+<span class="fc" id="L701">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

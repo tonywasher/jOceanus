@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ThemisXAnalysisSolverFile.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Themis Core Project Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.themis.xanalysis.solver.proj</a> &gt; <span class="el_source">ThemisXAnalysisSolverFile.java</span></div><h1>ThemisXAnalysisSolverFile.java</h1><pre class="source lang-java linenums">/*
+ * Themis: Java Project Framework
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.themis.xanalysis.solver.proj;
+
+import io.github.tonywasher.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance.ThemisXAnalysisClassInstance;
+import io.github.tonywasher.joceanus.themis.xanalysis.parser.proj.ThemisXAnalysisFile;
+import io.github.tonywasher.joceanus.themis.xanalysis.solver.proj.ThemisXAnalysisSolverDef.ThemisXAnalysisSolverFileDef;
+import io.github.tonywasher.joceanus.themis.xanalysis.solver.proj.ThemisXAnalysisSolverDef.ThemisXAnalysisSolverPackageDef;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Solver File.
+ */
+public class ThemisXAnalysisSolverFile
+        implements ThemisXAnalysisSolverFileDef {
+    /**
+     * The owning package.
+     */
+    private final ThemisXAnalysisSolverPackageDef thePackage;
+
+    /**
+     * The underlying file.
+     */
+    private final ThemisXAnalysisFile theFile;
+
+    /**
+     * The top-level class.
+     */
+    private final ThemisXAnalysisSolverClass theTopLevel;
+
+    /**
+     * The classes.
+     */
+    private final List&lt;ThemisXAnalysisSolverClass&gt; theClasses;
+
+    /**
+     * The referenced classes.
+     */
+    private final List&lt;ThemisXAnalysisSolverClass&gt; theReferenced;
+
+    /**
+     * Is the reference list circular?
+     */
+    private boolean isCircular;
+
+    /**
+     * Constructor.
+     *
+     * @param pPackage the owning package
+     * @param pFile    the parsed file
+     */
+    ThemisXAnalysisSolverFile(final ThemisXAnalysisSolverPackageDef pPackage,
+<span class="fc" id="L69">                              final ThemisXAnalysisFile pFile) {</span>
+        /* Store the parameters */
+<span class="fc" id="L71">        thePackage = pPackage;</span>
+<span class="fc" id="L72">        theFile = pFile;</span>
+
+        /* Populate the classList */
+<span class="fc" id="L75">        theClasses = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L76" title="All 2 branches covered.">        for (ThemisXAnalysisClassInstance myClass : theFile.getClasses()) {</span>
+<span class="fc" id="L77">            final ThemisXAnalysisSolverClass mySolverClass = new ThemisXAnalysisSolverClass(this, myClass);</span>
+<span class="fc" id="L78">            theClasses.add(mySolverClass);</span>
+<span class="fc" id="L79">        }</span>
+
+        /* Determine top-level class */
+<span class="fc" id="L82">        theTopLevel = theClasses.stream().filter(ThemisXAnalysisSolverClass::isTopLevel).findFirst().orElse(null);</span>
+
+        /* Create the referenced classes */
+<span class="fc" id="L85">        theReferenced = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L86">    }</span>
+
+    @Override
+    public ThemisXAnalysisSolverPackageDef getOwningPackage() {
+<span class="nc" id="L90">        return thePackage;</span>
+    }
+
+    @Override
+    public ThemisXAnalysisFile getUnderlyingFile() {
+<span class="fc" id="L95">        return theFile;</span>
+    }
+
+    /**
+     * Obtain the top-level class.
+     *
+     * @return the top-level
+     */
+    public ThemisXAnalysisSolverClass getTopLevel() {
+<span class="nc" id="L104">        return theTopLevel;</span>
+    }
+
+    /**
+     * Obtain the classes.
+     *
+     * @return the classes
+     */
+    public List&lt;ThemisXAnalysisSolverClass&gt; getClasses() {
+<span class="fc" id="L113">        return theClasses;</span>
+    }
+
+    /**
+     * Is the reference list circular?
+     *
+     * @return true/false
+     */
+    public boolean isCircular() {
+<span class="nc" id="L122">        return isCircular;</span>
+    }
+
+    @Override
+    public String toString() {
+<span class="nc" id="L127">        return theFile.toString();</span>
+    }
+
+    /**
+     * Obtain the list of classes that reference the named package.
+     *
+     * @param pPackage the package
+     * @return the list of referencing classes
+     */
+    public List&lt;ThemisXAnalysisSolverClass&gt; getReferencesTo(final String pPackage) {
+        /* Loop through the classes */
+<span class="nc" id="L138">        final List&lt;ThemisXAnalysisSolverClass&gt; myReferences = new ArrayList&lt;&gt;();</span>
+<span class="nc bnc" id="L139" title="All 2 branches missed.">        for (ThemisXAnalysisSolverClass myReference : theReferenced) {</span>
+<span class="nc bnc" id="L140" title="All 2 branches missed.">            if (pPackage.equals(myReference.getPackageName())) {</span>
+<span class="nc" id="L141">                myReferences.add(myReference);</span>
+            }
+<span class="nc" id="L143">        }</span>
+<span class="nc" id="L144">        return myReferences;</span>
+    }
+
+    /**
+     * Obtain the list of local classes that are referenced.
+     *
+     * @return the list of referencing classes
+     */
+    private List&lt;ThemisXAnalysisSolverClass&gt; getLocalReferences() {
+<span class="nc" id="L153">        return getReferencesTo(thePackage.toString());</span>
+    }
+
+    /**
+     * Set the referenced classes.
+     *
+     * @param pReferenced the referenced classes
+     */
+    public void setReferenced(final List&lt;ThemisXAnalysisSolverClass&gt; pReferenced) {
+        /* Add all references except for a self-reference */
+<span class="nc bnc" id="L163" title="All 2 branches missed.">        theReferenced.addAll(pReferenced.stream().filter(s -&gt; !s.equals(getTopLevel())).toList());</span>
+<span class="nc" id="L164">    }</span>
+
+    /**
+     * process local references.
+     */
+    public void processLocalReferences() {
+        /* Create a reference list */
+<span class="nc" id="L171">        final List&lt;ThemisXAnalysisSolverClass&gt; myFullyReferenced = new ArrayList&lt;&gt;();</span>
+
+        /* Loop through the referenced local classes */
+<span class="nc bnc" id="L174" title="All 2 branches missed.">        for (ThemisXAnalysisSolverClass myClass : getLocalReferences()) {</span>
+            /* Process the class */
+<span class="nc" id="L176">            processLocalReferences(myFullyReferenced, myClass);</span>
+<span class="nc" id="L177">        }</span>
+
+        /* Determine whether we are circular */
+<span class="nc" id="L180">        isCircular = myFullyReferenced.contains(theTopLevel);</span>
+<span class="nc" id="L181">    }</span>
+
+    /**
+     * process local references.
+     *
+     * @param pReferences the references list
+     * @param pClass      the class to process local references for
+     */
+    private void processLocalReferences(final List&lt;ThemisXAnalysisSolverClass&gt; pReferences,
+                                        final ThemisXAnalysisSolverClass pClass) {
+        /* If this is not already in the local reference list */
+<span class="nc bnc" id="L192" title="All 2 branches missed.">        if (!pReferences.contains(pClass)) {</span>
+            /* Add the class */
+<span class="nc" id="L194">            pReferences.add(pClass);</span>
+
+            /* Only process further if we have not found circularity */
+<span class="nc bnc" id="L197" title="All 2 branches missed.">            if (!pClass.equals(theTopLevel)) {</span>
+                /* Loop through the local references */
+<span class="nc bnc" id="L199" title="All 2 branches missed.">                for (ThemisXAnalysisSolverClass myClass : ((ThemisXAnalysisSolverFile) pClass.getOwningFile()).getLocalReferences()) {</span>
+                    /* Process the local references */
+<span class="nc" id="L201">                    processLocalReferences(pReferences, myClass);</span>
+<span class="nc" id="L202">                }</span>
+            }
+        }
+<span class="nc" id="L205">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

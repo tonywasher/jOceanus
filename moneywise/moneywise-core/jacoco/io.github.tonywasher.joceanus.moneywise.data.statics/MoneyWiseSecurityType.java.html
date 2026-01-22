@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseSecurityType.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.moneywise.data.statics</a> &gt; <span class="el_source">MoneyWiseSecurityType.java</span></div><h1>MoneyWiseSecurityType.java</h1><pre class="source lang-java linenums">/*
+ * MoneyWise: Finance Application
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.moneywise.data.statics;
+
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.metis.data.MetisDataResource;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
+import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataSet;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValues;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusStaticDataClass;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusStaticDataItem;
+
+/**
+ * SecurityType data type.
+ */
+public class MoneyWiseSecurityType
+        extends PrometheusStaticDataItem
+        implements MoneyWiseAssetCategory {
+    /**
+     * Object name.
+     */
+<span class="fc" id="L38">    public static final String OBJECT_NAME = MoneyWiseStaticDataType.SECURITYTYPE.getItemName();</span>
+
+    /**
+     * List name.
+     */
+<span class="fc" id="L43">    public static final String LIST_NAME = MoneyWiseStaticDataType.SECURITYTYPE.getListName();</span>
+
+    /**
+     * Symbol length.
+     */
+    public static final int SYMBOL_LEN = 30;
+
+    /**
+     * Report fields.
+     */
+<span class="fc" id="L53">    private static final MetisFieldSet&lt;MoneyWiseSecurityType&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseSecurityType.class);</span>
+
+    /**
+     * Copy Constructor.
+     *
+     * @param pList    The list to associate the SecurityType with
+     * @param pSecType The SecurityType to copy
+     */
+    protected MoneyWiseSecurityType(final MoneyWiseSecurityTypeList pList,
+                                    final MoneyWiseSecurityType pSecType) {
+<span class="fc" id="L63">        super(pList, pSecType);</span>
+<span class="fc" id="L64">    }</span>
+
+    /**
+     * Basic constructor.
+     *
+     * @param pList The list to associate the SecurityType with
+     * @param pName Name of SecurityType
+     * @throws OceanusException on error
+     */
+    private MoneyWiseSecurityType(final MoneyWiseSecurityTypeList pList,
+                                  final String pName) throws OceanusException {
+<span class="fc" id="L75">        super(pList, pName);</span>
+<span class="fc" id="L76">    }</span>
+
+    /**
+     * Basic constructor.
+     *
+     * @param pList  The list to associate the SecurityType with
+     * @param pClass Class of SecurityType
+     * @throws OceanusException on error
+     */
+    private MoneyWiseSecurityType(final MoneyWiseSecurityTypeList pList,
+                                  final MoneyWiseSecurityClass pClass) throws OceanusException {
+<span class="nc" id="L87">        super(pList, pClass);</span>
+<span class="nc" id="L88">    }</span>
+
+    /**
+     * Values constructor.
+     *
+     * @param pList   The list to associate the item with
+     * @param pValues the values
+     * @throws OceanusException on error
+     */
+    private MoneyWiseSecurityType(final MoneyWiseSecurityTypeList pList,
+                                  final PrometheusDataValues pValues) throws OceanusException {
+<span class="fc" id="L99">        super(pList, pValues);</span>
+<span class="fc" id="L100">    }</span>
+
+    @Override
+    public MetisFieldSetDef getDataFieldSet() {
+<span class="fc" id="L104">        return FIELD_DEFS;</span>
+    }
+
+    /**
+     * Return the SecurityTypeClass of the SecurityType.
+     *
+     * @return the class
+     */
+    public MoneyWiseSecurityClass getSecurityClass() {
+<span class="fc" id="L113">        return (MoneyWiseSecurityClass) super.getStaticClass();</span>
+    }
+
+    @Override
+    public MoneyWiseSecurityType getBase() {
+<span class="fc" id="L118">        return (MoneyWiseSecurityType) super.getBase();</span>
+    }
+
+    @Override
+    public MoneyWiseSecurityTypeList getList() {
+<span class="fc" id="L123">        return (MoneyWiseSecurityTypeList) super.getList();</span>
+    }
+
+    /**
+     * Represents a list of {@link MoneyWiseSecurityType} objects.
+     */
+    public static class MoneyWiseSecurityTypeList
+            extends PrometheusStaticList&lt;MoneyWiseSecurityType&gt; {
+        /**
+         * Report fields.
+         */
+<span class="fc" id="L134">        private static final MetisFieldSet&lt;MoneyWiseSecurityTypeList&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseSecurityTypeList.class);</span>
+
+        /**
+         * Construct an empty CORE securityType list.
+         *
+         * @param pData the DataSet for the list
+         */
+        public MoneyWiseSecurityTypeList(final PrometheusDataSet pData) {
+<span class="fc" id="L142">            super(MoneyWiseSecurityType.class, pData, MoneyWiseStaticDataType.SECURITYTYPE, PrometheusListStyle.CORE);</span>
+<span class="fc" id="L143">        }</span>
+
+        /**
+         * Constructor for a cloned List.
+         *
+         * @param pSource the source List
+         */
+        private MoneyWiseSecurityTypeList(final MoneyWiseSecurityTypeList pSource) {
+<span class="fc" id="L151">            super(pSource);</span>
+<span class="fc" id="L152">        }</span>
+
+        @Override
+        public MetisFieldSet&lt;MoneyWiseSecurityTypeList&gt; getDataFieldSet() {
+<span class="nc" id="L156">            return FIELD_DEFS;</span>
+        }
+
+        @Override
+        public String listName() {
+<span class="fc" id="L161">            return LIST_NAME;</span>
+        }
+
+        @Override
+        public MetisFieldSetDef getItemFields() {
+<span class="fc" id="L166">            return MoneyWiseSecurityType.FIELD_DEFS;</span>
+        }
+
+        @Override
+        protected Class&lt;MoneyWiseSecurityClass&gt; getEnumClass() {
+<span class="fc" id="L171">            return MoneyWiseSecurityClass.class;</span>
+        }
+
+        @Override
+        protected MoneyWiseSecurityTypeList getEmptyList(final PrometheusListStyle pStyle) {
+<span class="fc" id="L176">            final MoneyWiseSecurityTypeList myList = new MoneyWiseSecurityTypeList(this);</span>
+<span class="fc" id="L177">            myList.setStyle(pStyle);</span>
+<span class="fc" id="L178">            return myList;</span>
+        }
+
+        @Override
+        public MoneyWiseSecurityType addCopyItem(final PrometheusDataItem pItem) {
+            /* Can only clone a SecurityType */
+<span class="pc bpc" id="L184" title="1 of 2 branches missed.">            if (!(pItem instanceof MoneyWiseSecurityType)) {</span>
+<span class="nc" id="L185">                throw new UnsupportedOperationException();</span>
+            }
+
+<span class="fc" id="L188">            final MoneyWiseSecurityType myType = new MoneyWiseSecurityType(this, (MoneyWiseSecurityType) pItem);</span>
+<span class="fc" id="L189">            add(myType);</span>
+<span class="fc" id="L190">            return myType;</span>
+        }
+
+        @Override
+        public MoneyWiseSecurityType addNewItem() {
+<span class="nc" id="L195">            throw new UnsupportedOperationException();</span>
+        }
+
+        /**
+         * Obtain the type of the item.
+         *
+         * @return the type of the item
+         */
+        public String itemType() {
+<span class="nc" id="L204">            return LIST_NAME;</span>
+        }
+
+        /**
+         * Add a SecurityType to the list.
+         *
+         * @param pSecType the Name of the security type
+         * @return the new type
+         * @throws OceanusException on error
+         */
+        public MoneyWiseSecurityType addBasicItem(final String pSecType) throws OceanusException {
+            /* Create a new Security Type */
+<span class="fc" id="L216">            final MoneyWiseSecurityType mySecType = new MoneyWiseSecurityType(this, pSecType);</span>
+
+            /* Check that this SecurityTypeId has not been previously added */
+<span class="pc bpc" id="L219" title="1 of 2 branches missed.">            if (!isIdUnique(mySecType.getIndexedId())) {</span>
+<span class="nc" id="L220">                mySecType.addError(ERROR_DUPLICATE, MetisDataResource.DATA_ID);</span>
+<span class="nc" id="L221">                throw new MoneyWiseDataException(mySecType, ERROR_VALIDATION);</span>
+            }
+
+            /* Add the SecurityType to the list */
+<span class="fc" id="L225">            add(mySecType);</span>
+<span class="fc" id="L226">            return mySecType;</span>
+        }
+
+        @Override
+        public MoneyWiseSecurityType addValuesItem(final PrometheusDataValues pValues) throws OceanusException {
+            /* Create the type */
+<span class="fc" id="L232">            final MoneyWiseSecurityType myType = new MoneyWiseSecurityType(this, pValues);</span>
+
+            /* Check that this TypeId has not been previously added */
+<span class="pc bpc" id="L235" title="1 of 2 branches missed.">            if (!isIdUnique(myType.getIndexedId())) {</span>
+<span class="nc" id="L236">                myType.addError(ERROR_DUPLICATE, MetisDataResource.DATA_ID);</span>
+<span class="nc" id="L237">                throw new MoneyWiseDataException(myType, ERROR_VALIDATION);</span>
+            }
+
+            /* Add to the list */
+<span class="fc" id="L241">            add(myType);</span>
+
+            /* Return it */
+<span class="fc" id="L244">            return myType;</span>
+        }
+
+        @Override
+        protected MoneyWiseSecurityType newItem(final PrometheusStaticDataClass pClass) throws OceanusException {
+            /* Create the type */
+<span class="nc" id="L250">            final MoneyWiseSecurityType myType = new MoneyWiseSecurityType(this, (MoneyWiseSecurityClass) pClass);</span>
+
+            /* Check that this TypeId has not been previously added */
+<span class="nc bnc" id="L253" title="All 2 branches missed.">            if (!isIdUnique(myType.getIndexedId())) {</span>
+<span class="nc" id="L254">                myType.addError(ERROR_DUPLICATE, MetisDataResource.DATA_ID);</span>
+<span class="nc" id="L255">                throw new MoneyWiseDataException(myType, ERROR_VALIDATION);</span>
+            }
+
+            /* Add to the list */
+<span class="nc" id="L259">            add(myType);</span>
+
+            /* Return it */
+<span class="nc" id="L262">            return myType;</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

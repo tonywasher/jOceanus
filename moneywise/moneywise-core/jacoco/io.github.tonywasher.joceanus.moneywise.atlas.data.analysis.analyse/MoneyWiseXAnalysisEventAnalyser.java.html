@@ -1,0 +1,347 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseXAnalysisEventAnalyser.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.analyse</a> &gt; <span class="el_source">MoneyWiseXAnalysisEventAnalyser.java</span></div><h1>MoneyWiseXAnalysisEventAnalyser.java</h1><pre class="source lang-java linenums">/*
+ * MoneyWise: Finance Application
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.analyse;
+
+import io.github.tonywasher.joceanus.metis.preference.MetisPreferenceManager;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.base.MoneyWiseNewDepositRate;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.base.MoneyWiseXAnalysisEvent;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.base.MoneyWiseXAnalysisEventList;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysis;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisAccountBucket;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisDepositBucket;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisInterfaces.MoneyWiseXAnalysisBucketForeign;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisInterfaces.MoneyWiseXAnalysisBucketPriced;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseAssetBase;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseExchangeRate;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePortfolio.MoneyWisePortfolioList;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurityHolding.MoneyWiseSecurityHoldingMap;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurityPrice;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.profile.OceanusProfile;
+import io.github.tonywasher.joceanus.prometheus.views.PrometheusEditSet;
+
+import java.util.Iterator;
+
+/**
+ * Evebt Analyser.
+ */
+public class MoneyWiseXAnalysisEventAnalyser {
+    /**
+     * The profile.
+     */
+    private final OceanusProfile theProfile;
+
+    /**
+     * The analysis.
+     */
+    private final MoneyWiseXAnalysis theAnalysis;
+
+    /**
+     * The security holding map.
+     */
+    private final MoneyWiseSecurityHoldingMap theHoldingMap;
+
+    /**
+     * The State.
+     */
+    private final MoneyWiseXAnalysisState theState;
+
+    /**
+     * The market.
+     */
+    private final MoneyWiseXAnalysisMarket theMarket;
+
+    /**
+     * The tax.
+     */
+    private final MoneyWiseXAnalysisTax theTax;
+
+    /**
+     * The basic trans analyser.
+     */
+    private final MoneyWiseXAnalysisTransAnalyser theTrans;
+
+    /**
+     * The list of events.
+     */
+    private final MoneyWiseXAnalysisEventList theEvents;
+
+    /**
+     * Constructor.
+     *
+     * @param pTask          the task
+     * @param pEditSet       the editSet
+     * @param pPreferenceMgr the preference manager
+     * @throws OceanusException on error
+     */
+    public MoneyWiseXAnalysisEventAnalyser(final OceanusProfile pTask,
+                                           final PrometheusEditSet pEditSet,
+<span class="fc" id="L95">                                           final MetisPreferenceManager pPreferenceMgr) throws OceanusException {</span>
+        /* Initialise the task */
+<span class="fc" id="L97">        theProfile = pTask;</span>
+<span class="fc" id="L98">        final OceanusProfile myTask = theProfile.startTask(&quot;analyseEvents&quot;);</span>
+
+        /* Create the new Analysis */
+<span class="fc" id="L101">        myTask.startTask(&quot;Initialise&quot;);</span>
+<span class="fc" id="L102">        theState = new MoneyWiseXAnalysisState(pEditSet);</span>
+<span class="fc" id="L103">        theAnalysis = new MoneyWiseXAnalysis(pEditSet, theState, pPreferenceMgr);</span>
+<span class="fc" id="L104">        theHoldingMap = pEditSet.getDataList(MoneyWiseBasicDataType.PORTFOLIO, MoneyWisePortfolioList.class).getSecurityHoldingsMap();</span>
+
+        /* Create the analysers */
+<span class="fc" id="L107">        theMarket = new MoneyWiseXAnalysisMarket(this);</span>
+<span class="fc" id="L108">        theTax = new MoneyWiseXAnalysisTax(this);</span>
+<span class="fc" id="L109">        theTrans = new MoneyWiseXAnalysisTransAnalyser(this);</span>
+
+        /* Loop through the Events */
+        while (true) {
+            /* Access next event */
+<span class="fc" id="L114">            final MoneyWiseXAnalysisEvent myEvent = theState.nextEvent();</span>
+<span class="fc bfc" id="L115" title="All 2 branches covered.">            if (myEvent == null) {</span>
+<span class="fc" id="L116">                break;</span>
+            }
+
+            /* Switch on eventType */
+<span class="pc bpc" id="L120" title="1 of 5 branches missed.">            switch (myEvent.getEventType()) {</span>
+                case SECURITYPRICE:
+<span class="fc" id="L122">                    processSecurityPrice(myEvent);</span>
+<span class="fc" id="L123">                    break;</span>
+                case XCHANGERATE:
+<span class="fc" id="L125">                    processExchangeRate(myEvent);</span>
+<span class="fc" id="L126">                    break;</span>
+                case DEPOSITRATE:
+<span class="nc" id="L128">                    processDepositRate(myEvent);</span>
+<span class="nc" id="L129">                    break;</span>
+                case OPENINGBALANCE:
+<span class="fc" id="L131">                    processOpeningBalance(myEvent);</span>
+<span class="fc" id="L132">                    break;</span>
+                case TRANSACTION:
+                default:
+<span class="fc" id="L135">                    theTrans.processTransaction(myEvent);</span>
+                    break;
+            }
+<span class="fc" id="L138">        }</span>
+
+        /* Obtain the eventList */
+<span class="fc" id="L141">        theEvents = theState.getEventList();</span>
+
+        /* Complete the task */
+<span class="fc" id="L144">        myTask.end();</span>
+<span class="fc" id="L145">    }</span>
+
+    /**
+     * Obtain the analysis.
+     *
+     * @return the analysis
+     */
+    MoneyWiseXAnalysis getAnalysis() {
+<span class="fc" id="L153">        return theAnalysis;</span>
+    }
+
+    /**
+     * Obtain the securityHoldingMap.
+     *
+     * @return the map
+     */
+    MoneyWiseSecurityHoldingMap getSecurityHoldingMap() {
+<span class="fc" id="L162">        return theHoldingMap;</span>
+    }
+
+    /**
+     * Obtain the state.
+     *
+     * @return the state
+     */
+    MoneyWiseXAnalysisState getState() {
+<span class="fc" id="L171">        return theState;</span>
+    }
+
+    /**
+     * Obtain the market analysis.
+     *
+     * @return the market
+     */
+    MoneyWiseXAnalysisMarket getMarket() {
+<span class="fc" id="L180">        return theMarket;</span>
+    }
+
+    /**
+     * Obtain the tax analysis.
+     *
+     * @return the tax
+     */
+    MoneyWiseXAnalysisTax getTax() {
+<span class="fc" id="L189">        return theTax;</span>
+    }
+
+    /**
+     * Obtain the transaction analyser.
+     *
+     * @return the analyser
+     */
+    MoneyWiseXAnalysisTransAnalyser getTransAnalyser() {
+<span class="nc" id="L198">        return theTrans;</span>
+    }
+
+    /**
+     * Obtain the events iterator.
+     *
+     * @return the events iterator
+     */
+    Iterator&lt;MoneyWiseXAnalysisEvent&gt; eventsIterator() {
+<span class="nc" id="L207">        return theEvents.iterator();</span>
+    }
+
+    /**
+     * Mark active accounts.
+     *
+     * @throws OceanusException on error
+     */
+    public void postProcessAnalysis() throws OceanusException {
+        /* Start a new task */
+<span class="fc" id="L217">        final OceanusProfile myTask = theProfile.startTask(&quot;postProcessAnalysis1&quot;);</span>
+<span class="fc" id="L218">        myTask.startTask(&quot;markActiveAccounts&quot;);</span>
+
+        /* Mark relevant accounts */
+<span class="fc" id="L221">        theAnalysis.getDeposits().markActiveAccounts();</span>
+<span class="fc" id="L222">        theAnalysis.getCash().markActiveAccounts();</span>
+<span class="fc" id="L223">        theAnalysis.getLoans().markActiveAccounts();</span>
+
+        /* Mark relevant securities */
+<span class="fc" id="L226">        theAnalysis.getPortfolios().markActiveSecurities();</span>
+
+        /* Record the events */
+<span class="fc" id="L229">        theAnalysis.setEvents(theEvents);</span>
+
+        /* Complete the task */
+<span class="fc" id="L232">        myTask.end();</span>
+<span class="fc" id="L233">    }</span>
+
+    /**
+     * process securityPrice.
+     *
+     * @param pEvent the event
+     */
+    private void processSecurityPrice(final MoneyWiseXAnalysisEvent pEvent) {
+        /* Loop through the prices for this event */
+<span class="fc" id="L242">        final Iterator&lt;MoneyWiseSecurityPrice&gt; myPriceIterator = pEvent.priceIterator();</span>
+<span class="fc bfc" id="L243" title="All 2 branches covered.">        while (myPriceIterator.hasNext()) {</span>
+<span class="fc" id="L244">            final MoneyWiseSecurityPrice myPrice = myPriceIterator.next();</span>
+
+            /* Loop through the registered buckets */
+<span class="fc" id="L247">            final Iterator&lt;MoneyWiseXAnalysisBucketPriced&gt; myBucketIterator = theState.pricedBucketIterator(myPrice.getSecurity());</span>
+<span class="fc bfc" id="L248" title="All 2 branches covered.">            while (myBucketIterator.hasNext()) {</span>
+<span class="fc" id="L249">                final MoneyWiseXAnalysisBucketPriced myBucket = myBucketIterator.next();</span>
+
+                /* update the price and determine the value delta */
+<span class="fc" id="L252">                myBucket.recordSecurityPrice();</span>
+<span class="fc" id="L253">                myBucket.valueAsset();</span>
+<span class="fc" id="L254">                myBucket.calculateUnrealisedGains();</span>
+
+<span class="fc" id="L256">                final OceanusMoney myDelta = myBucket.getDeltaValuation();</span>
+
+                /* Register the bucket for the event */
+<span class="fc" id="L259">                theState.registerBucketInterest(myBucket);</span>
+
+                /* Record the delta as a market growth */
+<span class="fc" id="L262">                theMarket.adjustTotalsForMarketGrowth(pEvent, myDelta);</span>
+<span class="fc" id="L263">            }</span>
+<span class="fc" id="L264">        }</span>
+
+        /* Register all the buckets */
+<span class="fc" id="L267">        theMarket.adjustMarketTotals(pEvent);</span>
+<span class="fc" id="L268">        theState.registerInterestedBucketsForEvent(pEvent);</span>
+<span class="fc" id="L269">    }</span>
+
+    /**
+     * process ExchangeRate.
+     *
+     * @param pEvent the event
+     */
+    private void processExchangeRate(final MoneyWiseXAnalysisEvent pEvent) {
+        /* Loop through the rates for this event */
+<span class="fc" id="L278">        final Iterator&lt;MoneyWiseExchangeRate&gt; myRateIterator = pEvent.xchgRateIterator();</span>
+<span class="fc bfc" id="L279" title="All 2 branches covered.">        while (myRateIterator.hasNext()) {</span>
+<span class="fc" id="L280">            final MoneyWiseExchangeRate myRate = myRateIterator.next();</span>
+
+            /* Loop through the registered buckets */
+<span class="fc" id="L283">            final Iterator&lt;MoneyWiseXAnalysisBucketForeign&gt; myBucketIterator = theState.foreignBucketIterator(myRate.getToCurrency());</span>
+<span class="fc bfc" id="L284" title="All 2 branches covered.">            while (myBucketIterator.hasNext()) {</span>
+<span class="fc" id="L285">                final MoneyWiseXAnalysisBucketForeign myBucket = myBucketIterator.next();</span>
+
+                /* update the rate and determine the value delta */
+<span class="fc" id="L288">                myBucket.recordExchangeRate();</span>
+<span class="fc" id="L289">                myBucket.adjustValuation();</span>
+<span class="fc" id="L290">                final OceanusMoney myDelta = myBucket.getDeltaValuation();</span>
+
+                /* Register the bucket for the event */
+<span class="fc" id="L293">                theState.registerBucketInterest(myBucket);</span>
+
+                /* Record the delta as a currency fluctuation */
+<span class="fc" id="L296">                theMarket.adjustTotalsForCurrencyFluctuation(pEvent, myDelta);</span>
+<span class="fc" id="L297">            }</span>
+<span class="fc" id="L298">        }</span>
+
+        /* Register all the buckets */
+<span class="fc" id="L301">        theMarket.adjustMarketTotals(pEvent);</span>
+<span class="fc" id="L302">        theState.registerInterestedBucketsForEvent(pEvent);</span>
+<span class="fc" id="L303">    }</span>
+
+    /**
+     * process depositRate.
+     *
+     * @param pEvent the event
+     */
+    private void processDepositRate(final MoneyWiseXAnalysisEvent pEvent) {
+        /* Loop through the prices for this event */
+<span class="nc" id="L312">        final Iterator&lt;MoneyWiseNewDepositRate&gt; myRateIterator = pEvent.depRateIterator();</span>
+<span class="nc bnc" id="L313" title="All 2 branches missed.">        while (myRateIterator.hasNext()) {</span>
+<span class="nc" id="L314">            final MoneyWiseNewDepositRate myRate = myRateIterator.next();</span>
+
+            /* Access the bucket and update the depositRate */
+<span class="nc" id="L317">            final MoneyWiseXAnalysisDepositBucket myBucket = theAnalysis.getDeposits().getBucket(myRate.getDeposit());</span>
+<span class="nc" id="L318">            myBucket.recordDepositRate();</span>
+<span class="nc" id="L319">            theState.registerBucketInterest(myBucket);</span>
+<span class="nc" id="L320">        }</span>
+
+        /* Register all the buckets */
+<span class="nc" id="L323">        theState.registerInterestedBucketsForEvent(pEvent);</span>
+<span class="nc" id="L324">    }</span>
+
+    /**
+     * process OpeningBalance.
+     *
+     * @param pEvent the event
+     */
+    private void processOpeningBalance(final MoneyWiseXAnalysisEvent pEvent) {
+        /* Loop through the prices for this event */
+<span class="fc" id="L333">        final Iterator&lt;MoneyWiseAssetBase&gt; myBalanceIterator = pEvent.balanceIterator();</span>
+<span class="fc bfc" id="L334" title="All 2 branches covered.">        while (myBalanceIterator.hasNext()) {</span>
+<span class="fc" id="L335">            final MoneyWiseAssetBase myAsset = myBalanceIterator.next();</span>
+
+            /* Loop through the registered buckets */
+<span class="fc" id="L338">            final MoneyWiseXAnalysisAccountBucket&lt;?&gt; myBucket = theTrans.getAccountBucket(myAsset);</span>
+<span class="fc" id="L339">            myBucket.recordOpeningBalance();</span>
+<span class="fc" id="L340">            theState.registerBucketInterest(myBucket);</span>
+<span class="fc" id="L341">        }</span>
+
+        /* Register all the buckets */
+<span class="fc" id="L344">        theState.registerInterestedBucketsForEvent(pEvent);</span>
+<span class="fc" id="L345">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

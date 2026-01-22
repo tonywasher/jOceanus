@@ -1,0 +1,512 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianEllipticEncryptor.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.impl.ext.engines</a> &gt; <span class="el_source">GordianEllipticEncryptor.java</span></div><h1>GordianEllipticEncryptor.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.gordianknot.impl.ext.engines;
+
+import org.bouncycastle.crypto.InvalidCipherTextException;
+import org.bouncycastle.crypto.ec.ECElGamalDecryptor;
+import org.bouncycastle.crypto.ec.ECElGamalEncryptor;
+import org.bouncycastle.crypto.ec.ECPair;
+import org.bouncycastle.crypto.params.ECDomainParameters;
+import org.bouncycastle.crypto.params.ECPrivateKeyParameters;
+import org.bouncycastle.crypto.params.ECPublicKeyParameters;
+import org.bouncycastle.crypto.params.ParametersWithRandom;
+import org.bouncycastle.math.ec.ECCurve;
+import org.bouncycastle.math.ec.ECPoint;
+
+import java.math.BigInteger;
+import java.security.SecureRandom;
+import java.util.Arrays;
+
+/**
+ * Elliptic curve encryptor.
+ * Based on https://onlinelibrary.wiley.com/doi/pdf/10.1002/sec.1702
+ */
+public class GordianEllipticEncryptor {
+    /**
+     * CoFactor must be less than or equal to 20. Boundary is actually 10 &lt; b &lt; 76.
+     */
+    private static final int MAXCOFACTOR = 20;
+
+    /**
+     * The max iterations to try for a point.
+     */
+    private static final int MAXITERATION = 1 &lt;&lt; Byte.SIZE;
+
+    /**
+     * The encryptor.
+     */
+    private final ECElGamalEncryptor theEncryptor;
+
+    /**
+     * The decryptor.
+     */
+    private final ECElGamalDecryptor theDecryptor;
+
+    /**
+     * The ECCurve.
+     */
+    private ECCurve theCurve;
+
+    /**
+     * is encryption available?
+     */
+    private boolean isAvailable;
+
+    /**
+     * Are we encrypting or decrypting?
+     */
+    private boolean encrypting;
+
+    /**
+     * Constructor.
+     */
+<span class="fc" id="L77">    public GordianEllipticEncryptor() {</span>
+<span class="fc" id="L78">        theEncryptor = new ECElGamalEncryptor();</span>
+<span class="fc" id="L79">        theDecryptor = new ECElGamalDecryptor();</span>
+<span class="fc" id="L80">    }</span>
+
+    /**
+     * Initialise for encryption.
+     *
+     * @param pPublicKey the publicKey
+     * @param pRandom    the secureRandom
+     */
+    public void initForEncrypt(final ECPublicKeyParameters pPublicKey,
+                               final SecureRandom pRandom) {
+        /* Access domain parameters */
+<span class="fc" id="L91">        final ECDomainParameters myDomain = pPublicKey.getParameters();</span>
+<span class="pc bpc" id="L92" title="1 of 2 branches missed.">        if (isUnsupported(myDomain)) {</span>
+<span class="nc" id="L93">            throw new IllegalArgumentException(&quot;Unsupported curve&quot;);</span>
+        }
+
+        /* Record details */
+<span class="fc" id="L97">        theCurve = myDomain.getCurve();</span>
+<span class="fc" id="L98">        isAvailable = true;</span>
+<span class="fc" id="L99">        encrypting = true;</span>
+
+        /* Initialise for encryption */
+<span class="fc" id="L102">        final ParametersWithRandom myParms = new ParametersWithRandom(pPublicKey, pRandom);</span>
+<span class="fc" id="L103">        theEncryptor.init(myParms);</span>
+<span class="fc" id="L104">    }</span>
+
+    /**
+     * Initialise for decryption.
+     *
+     * @param pPrivateKey the privateKey
+     */
+    public void initForDecrypt(final ECPrivateKeyParameters pPrivateKey) {
+        /* Access domain parameters */
+<span class="fc" id="L113">        final ECDomainParameters myDomain = pPrivateKey.getParameters();</span>
+<span class="pc bpc" id="L114" title="1 of 2 branches missed.">        if (isUnsupported(myDomain)) {</span>
+<span class="nc" id="L115">            throw new IllegalArgumentException(&quot;Unsupported curve&quot;);</span>
+        }
+
+        /* Record details */
+<span class="fc" id="L119">        theCurve = myDomain.getCurve();</span>
+<span class="fc" id="L120">        isAvailable = true;</span>
+<span class="fc" id="L121">        encrypting = false;</span>
+
+        /* Initialise for decryption */
+<span class="fc" id="L124">        theDecryptor.init(pPrivateKey);</span>
+<span class="fc" id="L125">    }</span>
+
+    /**
+     * Check whether encryption is available for this domain.
+     *
+     * @param pDomain the domain
+     * @return true/false
+     */
+    private boolean isUnsupported(final ECDomainParameters pDomain) {
+<span class="pc bpc" id="L134" title="1 of 2 branches missed.">        return pDomain.getH().compareTo(BigInteger.valueOf(MAXCOFACTOR)) &gt; 0;</span>
+    }
+
+    /**
+     * Obtain the length of field.
+     *
+     * @return the length of the field.
+     */
+    private int getFieldLength() {
+<span class="fc" id="L143">        return (theCurve.getFieldSize() + Byte.SIZE - 1) / Byte.SIZE;</span>
+    }
+
+    /**
+     * Obtain the length of block (1 less than fieldLength).
+     *
+     * @return the length of the block.
+     */
+    private int getBlockLength() {
+<span class="fc" id="L152">        return getFieldLength() - 1;</span>
+    }
+
+    /**
+     * Obtain the length of the plain block (2 less than blockLength).
+     *
+     * @return the length of the block.
+     */
+    private int getPlainBlockLength() {
+<span class="fc" id="L161">        return getBlockLength() - 2;</span>
+    }
+
+    /**
+     * Obtain the length of the encrypted block.
+     *
+     * @return the length of the block.
+     */
+    private int getEncodedBlockLength() {
+<span class="fc" id="L170">        return (getFieldLength() + 1) &lt;&lt; 1;</span>
+    }
+
+    /**
+     * Obtain the length of the buffer required to receive the decrypted data.
+     *
+     * @param pLength the length of encrypted data
+     * @return the number of bytes.
+     */
+    private int getDecryptedLength(final int pLength) {
+<span class="fc" id="L180">        return getPlainBlockLength() * getNumBlocks(pLength, getEncodedBlockLength());</span>
+    }
+
+    /**
+     * Obtain the length of the buffer required for the encrypted output.
+     *
+     * @param pLength the length of clear data
+     * @return the number of bytes.
+     */
+    private int getEncryptedLength(final int pLength) {
+<span class="fc" id="L190">        return getEncodedBlockLength() * getNumBlocks(pLength, getPlainBlockLength());</span>
+    }
+
+    /**
+     * Obtain the number of blocks required for the length in terms of blocks.
+     *
+     * @param pLength      the length of clear data
+     * @param pBlockLength the blockLength
+     * @return the number of blocks.
+     */
+    private static int getNumBlocks(final int pLength, final int pBlockLength) {
+<span class="fc" id="L201">        return (pLength + pBlockLength - 1) / pBlockLength;</span>
+    }
+
+    /**
+     * Encrypt a data buffer.
+     *
+     * @param pData the buffer to encrypt
+     * @return the encrypted keyPair
+     * @throws InvalidCipherTextException on error
+     */
+    public byte[] encrypt(final byte[] pData) throws InvalidCipherTextException {
+        /* Check that we are set to encrypt */
+<span class="pc bpc" id="L213" title="2 of 4 branches missed.">        if (!isAvailable || !encrypting) {</span>
+<span class="nc" id="L214">            throw new IllegalStateException(&quot;Not initialised for encrypting&quot;);</span>
+        }
+
+        /* Create the output buffer */
+<span class="fc" id="L218">        int myInLen = pData.length;</span>
+<span class="fc" id="L219">        final byte[] myOutput = new byte[getEncryptedLength(pData.length)];</span>
+
+        /* Access block lengths */
+<span class="fc" id="L222">        final int myInBlockLength = getPlainBlockLength();</span>
+
+        /* Loop encrypting the blocks */
+<span class="fc" id="L225">        int myInOff = 0;</span>
+<span class="fc" id="L226">        int myOutOff = 0;</span>
+<span class="fc bfc" id="L227" title="All 2 branches covered.">        while (myInLen &gt; 0) {</span>
+            /* Encrypt to an ECPair */
+<span class="fc" id="L229">            final int myLen = Math.min(myInLen, myInBlockLength);</span>
+<span class="fc" id="L230">            final ECPair myPair = encryptToPair(pData, myInOff, myLen);</span>
+
+            /* Convert into the output buffer */
+<span class="fc" id="L233">            myOutOff += convertFromECPair(myPair, myOutput, myOutOff);</span>
+
+            /* Move to next block */
+<span class="fc" id="L236">            myInOff += myInBlockLength;</span>
+<span class="fc" id="L237">            myInLen -= myInBlockLength;</span>
+<span class="fc" id="L238">        }</span>
+
+        /* Return full buffer if possible */
+<span class="pc bpc" id="L241" title="1 of 2 branches missed.">        return myOutOff == myOutput.length</span>
+<span class="fc" id="L242">                ? myOutput</span>
+<span class="nc" id="L243">                : Arrays.copyOf(myOutput, myOutOff);</span>
+    }
+
+    /**
+     * Encrypt a value.
+     *
+     * @param pData  the buffer to encrypt
+     * @param pInOff the offset in the buffer
+     * @param pInLen the length of data to encrypt
+     * @return the encrypted keyPair
+     * @throws InvalidCipherTextException on error
+     */
+    private ECPair encryptToPair(final byte[] pData,
+                                 final int pInOff,
+                                 final int pInLen) throws InvalidCipherTextException {
+        /* Convert the data to an ECPoint */
+<span class="fc" id="L259">        final ECPoint myPoint = convertToECPoint(pData, pInOff, pInLen);</span>
+
+        /* Encrypt the data */
+<span class="fc" id="L262">        return theEncryptor.encrypt(myPoint);</span>
+    }
+
+    /**
+     * Convert to ECPoint.
+     *
+     * @param pInBuffer the input buffer
+     * @param pInOff    the input offset
+     * @param pInLen    the length of data to process
+     * @return the ECPair
+     * @throws InvalidCipherTextException on error
+     */
+    private ECPoint convertToECPoint(final byte[] pInBuffer,
+                                     final int pInOff,
+                                     final int pInLen) throws InvalidCipherTextException {
+        /* Check lengths */
+<span class="fc" id="L278">        final int myLen = getBlockLength();</span>
+<span class="pc bpc" id="L279" title="2 of 4 branches missed.">        if (pInLen &gt; myLen - 2</span>
+                || pInLen &lt;= 0) {
+<span class="nc" id="L281">            throw new IllegalArgumentException(&quot;Invalid input length&quot;);</span>
+        }
+<span class="pc bpc" id="L283" title="1 of 2 branches missed.">        if (pInBuffer.length - pInOff &lt; pInLen) {</span>
+<span class="nc" id="L284">            throw new IllegalArgumentException(&quot;Invalid input buffer&quot;);</span>
+        }
+
+        /* Create the work buffer and copy data in */
+<span class="fc" id="L288">        final byte[] myX = new byte[myLen + 1];</span>
+
+        /* Calculate the start position and place data and padding */
+<span class="fc" id="L291">        final int myStart = myLen - pInLen;</span>
+<span class="fc" id="L292">        System.arraycopy(pInBuffer, pInOff, myX, myStart, pInLen);</span>
+<span class="fc" id="L293">        myX[myStart - 1] = 1;</span>
+
+        /* Loop to obtain point on curve */
+<span class="pc bpc" id="L296" title="1 of 2 branches missed.">        for (int i = 0; i &lt; MAXITERATION; i++) {</span>
+            /* Check to see whether the value is on the curve */
+<span class="fc" id="L298">            final ECPoint myPoint = checkOnCurve(myX);</span>
+
+            /* If we have a valid point */
+<span class="fc bfc" id="L301" title="All 2 branches covered.">            if (myPoint != null) {</span>
+<span class="fc" id="L302">                return myPoint;</span>
+            }
+
+            /* Increment the test value */
+<span class="fc" id="L306">            myX[myLen]++;</span>
+        }
+
+        /* No possible value found */
+<span class="nc" id="L310">        throw new InvalidCipherTextException(&quot;Unable to find point on curve&quot;);</span>
+    }
+
+    /**
+     * Check whether the point is on the curve.
+     *
+     * @param pX the byte buffer representing X
+     * @return the ECPoint if on curve, else null
+     */
+    private ECPoint checkOnCurve(final byte[] pX) {
+        /* Protect against exceptions */
+        try {
+            /* Create a compressed point */
+<span class="fc" id="L323">            final int myFieldLen = getFieldLength();</span>
+<span class="fc" id="L324">            final byte[] myCompressed = new byte[myFieldLen + 1];</span>
+<span class="fc" id="L325">            System.arraycopy(pX, 0, myCompressed, 1, myFieldLen);</span>
+<span class="fc" id="L326">            myCompressed[0] = 2;</span>
+<span class="fc" id="L327">            final ECPoint myPoint = theCurve.decodePoint(myCompressed);</span>
+
+            /* Check the point */
+<span class="pc bpc" id="L330" title="1 of 2 branches missed.">            return myPoint.isValid()</span>
+<span class="fc" id="L331">                    ? myPoint</span>
+<span class="nc" id="L332">                    : null;</span>
+
+            /* Handle invalid coding */
+<span class="fc" id="L335">        } catch (IllegalArgumentException e) {</span>
+<span class="fc" id="L336">            return null;</span>
+        }
+    }
+
+    /**
+     * Convert from ECPair.
+     *
+     * @param pPair      the ECPoint
+     * @param pOutBuffer the output buffer
+     * @param pOutOff    the output offset
+     * @return the length of data decoded
+     * @throws InvalidCipherTextException on error
+     */
+    private int convertFromECPair(final ECPair pPair,
+                                  final byte[] pOutBuffer,
+                                  final int pOutOff) throws InvalidCipherTextException {
+        /* Check length */
+<span class="fc" id="L353">        final int myLen = getFieldLength() + 1;</span>
+<span class="pc bpc" id="L354" title="1 of 2 branches missed.">        if (pOutBuffer.length - pOutOff &lt; myLen &lt;&lt; 1) {</span>
+<span class="nc" id="L355">            throw new IllegalArgumentException(&quot;Output buffer too small&quot;);</span>
+        }
+
+        /* Access the two encoded parameters  */
+<span class="fc" id="L359">        final byte[] myX = pPair.getX().getEncoded(true);</span>
+<span class="fc" id="L360">        final byte[] myY = pPair.getY().getEncoded(true);</span>
+<span class="pc bpc" id="L361" title="2 of 4 branches missed.">        if (myX.length != myLen || myY.length != myLen) {</span>
+<span class="nc" id="L362">            throw new InvalidCipherTextException(&quot;Bad encoding&quot;);</span>
+        }
+
+        /* Copy to the output buffer */
+<span class="fc" id="L366">        System.arraycopy(myX, 0, pOutBuffer, pOutOff, myLen);</span>
+<span class="fc" id="L367">        System.arraycopy(myY, 0, pOutBuffer, pOutOff + myLen, myLen);</span>
+<span class="fc" id="L368">        return myLen &lt;&lt; 1;</span>
+    }
+
+    /**
+     * Decrypt a data buffer.
+     *
+     * @param pData the buffer to encrypt
+     * @return the encrypted keyPair
+     * @throws InvalidCipherTextException on error
+     */
+    public byte[] decrypt(final byte[] pData) throws InvalidCipherTextException {
+        /* Check that we are set to encrypt */
+<span class="pc bpc" id="L380" title="2 of 4 branches missed.">        if (!isAvailable || encrypting) {</span>
+<span class="nc" id="L381">            throw new IllegalStateException(&quot;Not initialised for decrypting&quot;);</span>
+        }
+
+        /* Create the output buffer */
+<span class="fc" id="L385">        int myInLen = pData.length;</span>
+<span class="fc" id="L386">        final byte[] myOutput = new byte[getDecryptedLength(pData.length)];</span>
+
+        /* Access block lengths */
+<span class="fc" id="L389">        final int myInBlockLength = getEncodedBlockLength();</span>
+
+        /* Loop decrypting the blocks */
+<span class="fc" id="L392">        int myInOff = 0;</span>
+<span class="fc" id="L393">        int myOutOff = 0;</span>
+<span class="fc bfc" id="L394" title="All 2 branches covered.">        while (myInLen &gt; 0) {</span>
+            /* Encrypt to an ECPair */
+<span class="fc" id="L396">            final ECPair myPair = convertToECPair(pData, myInOff);</span>
+
+            /* Convert into the output buffer */
+<span class="fc" id="L399">            myOutOff += decryptFromECPair(myPair, myOutput, myOutOff);</span>
+
+            /* Move to next block */
+<span class="fc" id="L402">            myInOff += myInBlockLength;</span>
+<span class="fc" id="L403">            myInLen -= myInBlockLength;</span>
+<span class="fc" id="L404">        }</span>
+
+        /* Return full buffer if possible */
+<span class="pc bpc" id="L407" title="1 of 2 branches missed.">        if (myOutOff == myOutput.length) {</span>
+<span class="nc" id="L408">            return myOutput;</span>
+        }
+
+        /* Cut down buffer */
+<span class="fc" id="L412">        final byte[] myReturn = Arrays.copyOf(myOutput, myOutOff);</span>
+<span class="fc" id="L413">        Arrays.fill(myOutput, (byte) 0);</span>
+<span class="fc" id="L414">        return myReturn;</span>
+    }
+
+    /**
+     * Decrypt a value.
+     *
+     * @param pPair      the pair to decrypt
+     * @param pOutBuffer the output buffer
+     * @param pOutOff    the output offset
+     * @return the length of data decoded
+     * @throws InvalidCipherTextException on error
+     */
+    private int decryptFromECPair(final ECPair pPair,
+                                  final byte[] pOutBuffer,
+                                  final int pOutOff) throws InvalidCipherTextException {
+        /* Decrypt the pair */
+<span class="fc" id="L430">        final ECPoint myPoint = theDecryptor.decrypt(pPair);</span>
+<span class="fc" id="L431">        return convertFromECPoint(myPoint, pOutBuffer, pOutOff);</span>
+    }
+
+    /**
+     * Convert from ECPoint.
+     *
+     * @param pPoint     the ECPoint
+     * @param pOutBuffer the output buffer
+     * @param pOutOff    the output offset
+     * @return the length of data decoded
+     * @throws InvalidCipherTextException on error
+     */
+    private int convertFromECPoint(final ECPoint pPoint,
+                                   final byte[] pOutBuffer,
+                                   final int pOutOff) throws InvalidCipherTextException {
+        /* Obtain the X co-ordinate */
+<span class="fc" id="L447">        final BigInteger myX = pPoint.getAffineXCoord().toBigInteger();</span>
+<span class="fc" id="L448">        final byte[] myBuf = myX.toByteArray();</span>
+
+        /* Set defaults */
+<span class="fc" id="L451">        int myStart = -1;</span>
+<span class="fc" id="L452">        final int myEnd = myBuf.length - 1;</span>
+
+        /* Loop through the data in fixed time */
+<span class="fc bfc" id="L455" title="All 2 branches covered.">        for (int myIndex = 0; myIndex &lt; myEnd; myIndex++) {</span>
+            /* If the value is non-zero and we have not yet found start */
+            /* Disable the short-circuit logic!! */
+<span class="fc bfc" id="L458" title="All 6 branches covered.">            if (myBuf[myIndex] != 0</span>
+                    &amp; myStart == -1) {
+<span class="fc" id="L460">                myStart = myIndex;</span>
+            }
+        }
+
+        /* Check validity */
+<span class="pc bpc" id="L465" title="2 of 4 branches missed.">        if (myStart == -1 || myBuf[myStart] != 1) {</span>
+<span class="nc" id="L466">            throw new InvalidCipherTextException(&quot;Invalid data&quot;);</span>
+        }
+
+        /* Bump past padding */
+<span class="fc" id="L470">        myStart++;</span>
+
+        /* Check length */
+<span class="fc" id="L473">        final int myOutLen = myEnd - myStart;</span>
+<span class="pc bpc" id="L474" title="1 of 2 branches missed.">        if (pOutBuffer.length - pOutOff &lt; myOutLen) {</span>
+<span class="nc" id="L475">            throw new IllegalArgumentException(&quot;Output buffer too small&quot;);</span>
+        }
+
+        /* Copy the data out */
+<span class="fc" id="L479">        System.arraycopy(myBuf, myStart, pOutBuffer, pOutOff, myOutLen);</span>
+<span class="fc" id="L480">        return myOutLen;</span>
+    }
+
+    /**
+     * Convert to ECPair.
+     *
+     * @param pInBuffer the input buffer
+     * @param pInOff    the input offset
+     * @return the ECPair
+     */
+    private ECPair convertToECPair(final byte[] pInBuffer,
+                                   final int pInOff) {
+        /* Check length */
+<span class="fc" id="L493">        final int myLen = getFieldLength() + 1;</span>
+<span class="pc bpc" id="L494" title="1 of 2 branches missed.">        if (pInBuffer.length - pInOff &lt; myLen &lt;&lt; 1) {</span>
+<span class="nc" id="L495">            throw new IllegalArgumentException(&quot;Invalid input buffer&quot;);</span>
+        }
+
+        /* Access the X point */
+<span class="fc" id="L499">        final byte[] myXbytes = new byte[myLen];</span>
+<span class="fc" id="L500">        System.arraycopy(pInBuffer, pInOff, myXbytes, 0, myLen);</span>
+<span class="fc" id="L501">        final ECPoint myX = theCurve.decodePoint(myXbytes);</span>
+
+        /* Access the Y point */
+<span class="fc" id="L504">        final byte[] myYbytes = new byte[myLen];</span>
+<span class="fc" id="L505">        System.arraycopy(pInBuffer, pInOff + myLen, myYbytes, 0, myLen);</span>
+<span class="fc" id="L506">        final ECPoint myY = theCurve.decodePoint(myYbytes);</span>
+
+        /* Create the ECPair */
+<span class="fc" id="L509">        return new ECPair(myX, myY);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

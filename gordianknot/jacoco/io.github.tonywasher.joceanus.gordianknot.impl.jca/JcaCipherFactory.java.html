@@ -1,0 +1,451 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>JcaCipherFactory.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.impl.jca</a> &gt; <span class="el_source">JcaCipherFactory.java</span></div><h1>JcaCipherFactory.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.gordianknot.impl.jca;
+
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherMode;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianPadding;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamCipher;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamKeySpec.GordianChaCha20Key;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamKeySpec.GordianSalsa20Key;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamKeySpec.GordianVMPCKey;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamKeyType;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymCipher;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymCipherSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianWrapper;
+import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKey;
+import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKeyGenerator;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseData;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.cipher.GordianCoreCipherFactory;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaAEADCipher.JcaStreamAEADCipher;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaAEADCipher.JcaSymAEADCipher;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaCipher.JcaStreamCipher;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaCipher.JcaSymCipher;
+
+import javax.crypto.Cipher;
+import javax.crypto.KeyGenerator;
+import javax.crypto.NoSuchPaddingException;
+import java.security.NoSuchAlgorithmException;
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * Jca Cipher Factory.
+ */
+public class JcaCipherFactory
+        extends GordianCoreCipherFactory {
+    /**
+     * Cipher Algorithm Separator.
+     */
+<span class="fc" id="L63">    private static final Character ALGO_SEP = '/';</span>
+
+    /**
+     * Kalyna algorithm name.
+     */
+    private static final String KALYNA_ALGORITHM = &quot;DSTU7624&quot;;
+
+    /**
+     * KeyGenerator Cache.
+     */
+    private final Map&lt;GordianKeySpec, JcaKeyGenerator&lt;? extends GordianKeySpec&gt;&gt; theCache;
+
+    /**
+     * Constructor.
+     *
+     * @param pFactory the factory
+     */
+    JcaCipherFactory(final GordianBaseFactory pFactory) {
+        /* Initialise underlying class */
+<span class="fc" id="L82">        super(pFactory);</span>
+
+        /* Create the cache */
+<span class="fc" id="L85">        theCache = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L86">    }</span>
+
+    @Override
+    @SuppressWarnings(&quot;unchecked&quot;)
+    public &lt;T extends GordianKeySpec&gt; GordianKeyGenerator&lt;T&gt; getKeyGenerator(final T pKeySpec) throws GordianException {
+        /* Look up in the cache */
+<span class="fc" id="L92">        JcaKeyGenerator&lt;T&gt; myGenerator = (JcaKeyGenerator&lt;T&gt;) theCache.get(pKeySpec);</span>
+<span class="fc bfc" id="L93" title="All 2 branches covered.">        if (myGenerator == null) {</span>
+            /* Check the KeySpec */
+<span class="fc" id="L95">            checkKeySpec(pKeySpec);</span>
+
+            /* Create the new generator */
+<span class="fc" id="L98">            final String myAlgorithm = getKeyAlgorithm(pKeySpec);</span>
+<span class="fc" id="L99">            final KeyGenerator myJavaGenerator = getJavaKeyGenerator(myAlgorithm);</span>
+<span class="fc" id="L100">            myGenerator = new JcaKeyGenerator&lt;&gt;(getFactory(), pKeySpec, myJavaGenerator);</span>
+
+            /* Add to cache */
+
+<span class="fc" id="L104">            theCache.put(pKeySpec, myGenerator);</span>
+        }
+<span class="fc" id="L106">        return myGenerator;</span>
+    }
+
+    @Override
+    public GordianSymCipher createSymKeyCipher(final GordianSymCipherSpec pCipherSpec) throws GordianException {
+        /* Check validity of SymKeySpec */
+<span class="fc" id="L112">        checkSymCipherSpec(pCipherSpec);</span>
+
+        /* If this is an AAD cipher */
+<span class="fc bfc" id="L115" title="All 2 branches covered.">        if (pCipherSpec.isAAD()) {</span>
+            /* Create the cipher */
+<span class="fc" id="L117">            final Cipher myBCCipher = getJavaCipher(pCipherSpec);</span>
+<span class="fc" id="L118">            return new JcaSymAEADCipher(getFactory(), pCipherSpec, myBCCipher);</span>
+
+            /* else create the standard cipher */
+        } else {
+            /* Create the cipher */
+<span class="fc" id="L123">            final Cipher myBCCipher = getJavaCipher(pCipherSpec);</span>
+<span class="fc" id="L124">            return new JcaSymCipher(getFactory(), pCipherSpec, myBCCipher);</span>
+        }
+    }
+
+    @Override
+    public GordianStreamCipher createStreamKeyCipher(final GordianStreamCipherSpec pCipherSpec) throws GordianException {
+        /* Check validity of StreamKeySpec */
+<span class="fc" id="L131">        checkStreamCipherSpec(pCipherSpec);</span>
+
+<span class="fc" id="L133">        final Cipher myJCACipher = getJavaCipher(pCipherSpec);</span>
+<span class="fc bfc" id="L134" title="All 2 branches covered.">        return pCipherSpec.isAEAD()</span>
+<span class="fc" id="L135">                ? new JcaStreamAEADCipher(getFactory(), pCipherSpec, myJCACipher)</span>
+<span class="fc" id="L136">                : new JcaStreamCipher(getFactory(), pCipherSpec, myJCACipher);</span>
+    }
+
+    @Override
+    public GordianWrapper createKeyWrapper(final GordianKey&lt;GordianSymKeySpec&gt; pKey) throws GordianException {
+        /* Create the cipher */
+<span class="fc" id="L142">        final JcaKey&lt;GordianSymKeySpec&gt; myKey = JcaKey.accessKey(pKey);</span>
+<span class="fc" id="L143">        final GordianSymCipherSpec mySpec = GordianSymCipherSpecBuilder.ecb(myKey.getKeyType(), GordianPadding.NONE);</span>
+<span class="fc" id="L144">        final JcaSymCipher myJcaCipher = (JcaSymCipher) createSymKeyCipher(mySpec);</span>
+<span class="fc" id="L145">        return createKeyWrapper(myKey, myJcaCipher);</span>
+    }
+
+    /**
+     * Obtain the algorithm for the keySpec.
+     *
+     * @param pKeySpec the keySpec
+     * @param &lt;T&gt;      the SpecType
+     * @return the name of the algorithm
+     * @throws GordianException on error
+     */
+    private static &lt;T extends GordianKeySpec&gt; String getKeyAlgorithm(final T pKeySpec) throws GordianException {
+<span class="fc bfc" id="L157" title="All 2 branches covered.">        if (pKeySpec instanceof GordianStreamKeySpec) {</span>
+<span class="fc" id="L158">            return getStreamKeyAlgorithm((GordianStreamKeySpec) pKeySpec);</span>
+        }
+<span class="pc bpc" id="L160" title="1 of 2 branches missed.">        if (pKeySpec instanceof GordianSymKeySpec) {</span>
+<span class="fc" id="L161">            return getSymKeyAlgorithm((GordianSymKeySpec) pKeySpec);</span>
+        }
+<span class="nc" id="L163">        throw new GordianDataException(GordianBaseData.getInvalidText(pKeySpec));</span>
+    }
+
+    /**
+     * Create the BouncyCastle KeyGenerator via JCA.
+     *
+     * @param pAlgorithm the Algorithm
+     * @return the KeyGenerator
+     * @throws GordianException on error
+     */
+    private static KeyGenerator getJavaKeyGenerator(final String pAlgorithm) throws GordianException {
+        /* Protect against exceptions */
+        try {
+            /* Massage the keyGenerator name */
+<span class="fc" id="L177">            String myAlgorithm = pAlgorithm;</span>
+
+            /* Note that DSTU7624 has only a single keyGenerator */
+<span class="fc bfc" id="L180" title="All 2 branches covered.">            if (myAlgorithm.startsWith(KALYNA_ALGORITHM)) {</span>
+<span class="fc" id="L181">                myAlgorithm = KALYNA_ALGORITHM;</span>
+            }
+
+            /* Return a KeyGenerator for the algorithm */
+<span class="fc" id="L185">            return KeyGenerator.getInstance(myAlgorithm, JcaProvider.BCPROV);</span>
+
+            /* Catch exceptions */
+<span class="nc" id="L188">        } catch (NoSuchAlgorithmException e) {</span>
+            /* Throw the exception */
+<span class="nc" id="L190">            throw new GordianCryptoException(&quot;Failed to create KeyGenerator&quot;, e);</span>
+        }
+    }
+
+    /**
+     * Create the BouncyCastle SymKey Cipher via JCA.
+     *
+     * @param pCipherSpec the cipherSpec
+     * @return the Cipher
+     * @throws GordianException on error
+     */
+    private static Cipher getJavaCipher(final GordianSymCipherSpec pCipherSpec) throws GordianException {
+<span class="fc" id="L202">        final String myAlgo = getSymKeyAlgorithm(pCipherSpec.getKeyType())</span>
+                + ALGO_SEP
+<span class="fc" id="L204">                + getCipherModeAlgorithm(pCipherSpec)</span>
+                + ALGO_SEP
+<span class="fc" id="L206">                + getPaddingAlgorithm(pCipherSpec.getPadding());</span>
+<span class="fc" id="L207">        return getJavaCipher(myAlgo);</span>
+    }
+
+    /**
+     * Create the BouncyCastle StreamKey Cipher via JCA.
+     *
+     * @param pCipherSpec the StreamCipherSpec
+     * @return the Cipher
+     * @throws GordianException on error
+     */
+    private static Cipher getJavaCipher(final GordianStreamCipherSpec pCipherSpec) throws GordianException {
+<span class="fc" id="L218">        final GordianStreamKeySpec myKeySpec = pCipherSpec.getKeyType();</span>
+<span class="fc" id="L219">        String myAlgo = getStreamKeyAlgorithm(myKeySpec);</span>
+<span class="fc bfc" id="L220" title="All 2 branches covered.">        if (pCipherSpec.isAEAD()</span>
+<span class="pc bpc" id="L221" title="1 of 2 branches missed.">                &amp;&amp; GordianStreamKeyType.CHACHA20 == myKeySpec.getStreamKeyType()) {</span>
+<span class="fc" id="L222">            myAlgo = &quot;CHACHA20-POLY1305&quot;;</span>
+        }
+<span class="fc" id="L224">        return getJavaCipher(myAlgo);</span>
+    }
+
+    /**
+     * Create the StreamKey Cipher via JCA.
+     *
+     * @param pAlgorithm the Algorithm
+     * @return the KeyGenerator
+     * @throws GordianException on error
+     */
+    private static Cipher getJavaCipher(final String pAlgorithm) throws GordianException {
+        /* Protect against exceptions */
+        try {
+            /* Return a Cipher for the algorithm */
+<span class="fc" id="L238">            return Cipher.getInstance(pAlgorithm, JcaProvider.BCPROV);</span>
+
+            /* Catch exceptions */
+<span class="nc" id="L241">        } catch (NoSuchAlgorithmException</span>
+                 | NoSuchPaddingException e) {
+            /* Throw the exception */
+<span class="nc" id="L244">            throw new GordianCryptoException(&quot;Failed to create Cipher&quot;, e);</span>
+        }
+    }
+
+    /**
+     * Obtain the SymKey algorithm.
+     *
+     * @param pKeySpec the keySpec
+     * @return the Algorithm
+     * @throws GordianException on error
+     */
+    static String getSymKeyAlgorithm(final GordianSymKeySpec pKeySpec) throws GordianException {
+<span class="pc bpc" id="L256" title="1 of 10 branches missed.">        switch (pKeySpec.getSymKeyType()) {</span>
+            case TWOFISH:
+<span class="fc" id="L258">                return &quot;TwoFish&quot;;</span>
+            case SERPENT:
+<span class="fc" id="L260">                return &quot;Serpent&quot;;</span>
+            case THREEFISH:
+<span class="fc" id="L262">                return &quot;ThreeFish-&quot; + pKeySpec.getBlockLength().getLength();</span>
+            case GOST:
+<span class="fc" id="L264">                return &quot;GOST28147&quot;;</span>
+            case SHACAL2:
+<span class="fc" id="L266">                return &quot;Shacal-2&quot;;</span>
+            case KUZNYECHIK:
+<span class="fc" id="L268">                return &quot;GOST3412-2015&quot;;</span>
+            case KALYNA:
+<span class="fc" id="L270">                return KALYNA_ALGORITHM + &quot;-&quot; + pKeySpec.getBlockLength().getLength();</span>
+            case RC5:
+<span class="fc bfc" id="L272" title="All 2 branches covered.">                return GordianLength.LEN_128.equals(pKeySpec.getBlockLength())</span>
+<span class="fc" id="L273">                        ? &quot;RC5-64&quot;</span>
+<span class="fc" id="L274">                        : &quot;RC5&quot;;</span>
+            case AES:
+            case CAMELLIA:
+            case CAST6:
+            case RC6:
+            case ARIA:
+            case NOEKEON:
+            case SM4:
+            case SEED:
+            case SKIPJACK:
+            case TEA:
+            case XTEA:
+            case IDEA:
+            case RC2:
+            case CAST5:
+            case BLOWFISH:
+            case DESEDE:
+<span class="fc" id="L291">                return pKeySpec.getSymKeyType().name();</span>
+            default:
+<span class="nc" id="L293">                throw new GordianDataException(GordianBaseData.getInvalidText(pKeySpec));</span>
+        }
+    }
+
+    /**
+     * Obtain the CipherMode algorithm.
+     *
+     * @param pSpec the cipherSpec
+     * @return the Algorithm
+     * @throws GordianException on error
+     */
+    private static String getCipherModeAlgorithm(final GordianSymCipherSpec pSpec) throws GordianException {
+<span class="fc" id="L305">        final GordianCipherMode myMode = pSpec.getCipherMode();</span>
+<span class="pc bpc" id="L306" title="3 of 8 branches missed.">        switch (pSpec.getCipherMode()) {</span>
+            case ECB:
+            case SIC:
+            case EAX:
+            case CCM:
+            case GCM:
+            case OCB:
+            case GOFB:
+            case GCFB:
+            case CFB8:
+            case OFB8:
+<span class="fc" id="L317">                return myMode.name();</span>
+            case CBC:
+            case G3413CBC:
+<span class="fc" id="L320">                return GordianCipherMode.CBC.name();</span>
+            case CFB:
+            case G3413CFB:
+<span class="fc" id="L323">                return &quot;CFB&quot;;</span>
+            case OFB:
+            case G3413OFB:
+<span class="fc" id="L326">                return GordianCipherMode.OFB.name();</span>
+            case KCTR:
+            case G3413CTR:
+<span class="fc" id="L329">                return &quot;CTR&quot;;</span>
+            case KCCM:
+<span class="nc" id="L331">                return GordianCipherMode.CCM.name();</span>
+            case KGCM:
+<span class="nc" id="L333">                return GordianCipherMode.GCM.name();</span>
+            default:
+<span class="nc" id="L335">                throw new GordianDataException(GordianBaseData.getInvalidText(myMode));</span>
+        }
+    }
+
+    /**
+     * Obtain the Padding algorithm.
+     *
+     * @param pPadding use padding true/false
+     * @return the Algorithm
+     */
+    private static String getPaddingAlgorithm(final GordianPadding pPadding) {
+<span class="fc bfc" id="L346" title="All 6 branches covered.">        switch (pPadding) {</span>
+            case CTS:
+<span class="fc" id="L348">                return &quot;withCTS&quot;;</span>
+            case X923:
+<span class="fc" id="L350">                return &quot;X923Padding&quot;;</span>
+            case PKCS7:
+<span class="fc" id="L352">                return &quot;PKCS7Padding&quot;;</span>
+            case ISO7816D4:
+<span class="fc" id="L354">                return &quot;ISO7816-4Padding&quot;;</span>
+            case TBC:
+<span class="fc" id="L356">                return &quot;TBCPadding&quot;;</span>
+            case NONE:
+            default:
+<span class="fc" id="L359">                return &quot;NoPadding&quot;;</span>
+        }
+    }
+
+    /**
+     * Obtain the StreamKey algorithm.
+     *
+     * @param pKeySpec the keySpec
+     * @return the Algorithm
+     * @throws GordianException on error
+     */
+    private static String getStreamKeyAlgorithm(final GordianStreamKeySpec pKeySpec) throws GordianException {
+<span class="pc bpc" id="L371" title="1 of 8 branches missed.">        switch (pKeySpec.getStreamKeyType()) {</span>
+            case HC:
+<span class="fc bfc" id="L373" title="All 2 branches covered.">                return GordianLength.LEN_128 == pKeySpec.getKeyLength()</span>
+<span class="fc" id="L374">                        ? &quot;HC128&quot;</span>
+<span class="fc" id="L375">                        : &quot;HC256&quot;;</span>
+            case ZUC:
+<span class="fc bfc" id="L377" title="All 2 branches covered.">                return GordianLength.LEN_128 == pKeySpec.getKeyLength()</span>
+<span class="fc" id="L378">                        ? &quot;ZUC-128&quot;</span>
+<span class="fc" id="L379">                        : &quot;ZUC-256&quot;;</span>
+            case CHACHA20:
+<span class="fc bfc" id="L381" title="All 2 branches covered.">                return pKeySpec.getSubKeyType() == GordianChaCha20Key.STD</span>
+<span class="fc" id="L382">                        ? &quot;CHACHA&quot;</span>
+<span class="fc" id="L383">                        : &quot;CHACHA7539&quot;;</span>
+            case SALSA20:
+<span class="fc bfc" id="L385" title="All 2 branches covered.">                return pKeySpec.getSubKeyType() == GordianSalsa20Key.STD</span>
+<span class="fc" id="L386">                        ? pKeySpec.getStreamKeyType().name()</span>
+<span class="fc" id="L387">                        : &quot;XSALSA20&quot;;</span>
+            case VMPC:
+<span class="fc bfc" id="L389" title="All 2 branches covered.">                return pKeySpec.getSubKeyType() == GordianVMPCKey.STD</span>
+<span class="fc" id="L390">                        ? pKeySpec.getStreamKeyType().name()</span>
+<span class="fc" id="L391">                        : &quot;VMPC-KSA3&quot;;</span>
+            case GRAIN:
+<span class="fc" id="L393">                return &quot;Grain128&quot;;</span>
+            case ISAAC:
+            case RC4:
+<span class="fc" id="L396">                return pKeySpec.getStreamKeyType().name();</span>
+            default:
+<span class="nc" id="L398">                throw new GordianDataException(GordianBaseData.getInvalidText(pKeySpec));</span>
+        }
+    }
+
+    @Override
+    protected boolean validStreamKeySpec(final GordianStreamKeySpec pKeySpec) {
+        /* Check basic validity */
+<span class="fc bfc" id="L405" title="All 2 branches covered.">        if (!super.validStreamKeySpec(pKeySpec)) {</span>
+<span class="fc" id="L406">            return false;</span>
+        }
+
+        /* Reject XChaCha20 */
+<span class="fc bfc" id="L410" title="All 2 branches covered.">        return pKeySpec.getStreamKeyType() != GordianStreamKeyType.CHACHA20</span>
+<span class="fc bfc" id="L411" title="All 2 branches covered.">                || pKeySpec.getSubKeyType() != GordianChaCha20Key.XCHACHA;</span>
+    }
+
+    @Override
+    protected boolean validSymCipherSpec(final GordianSymCipherSpec pCipherSpec) {
+        /* Check standard features */
+<span class="fc bfc" id="L417" title="All 2 branches covered.">        if (!super.validSymCipherSpec(pCipherSpec)) {</span>
+<span class="fc" id="L418">            return false;</span>
+        }
+
+        /* Disallow GCM-SIV */
+<span class="fc" id="L422">        final GordianCipherMode myMode = pCipherSpec.getCipherMode();</span>
+<span class="fc bfc" id="L423" title="All 2 branches covered.">        if (GordianCipherMode.GCMSIV.equals(myMode)) {</span>
+<span class="fc" id="L424">            return false;</span>
+        }
+
+        /* Additional Checks */
+<span class="fc bfc" id="L428" title="All 4 branches covered.">        switch (pCipherSpec.getKeyType().getSymKeyType()) {</span>
+            case KALYNA:
+                /* Disallow OCB, CCM and GCM */
+<span class="fc bfc" id="L431" title="All 2 branches covered.">                return !GordianCipherMode.OCB.equals(myMode)</span>
+<span class="fc bfc" id="L432" title="All 2 branches covered.">                        &amp;&amp; !GordianCipherMode.KCCM.equals(myMode)</span>
+<span class="fc bfc" id="L433" title="All 2 branches covered.">                        &amp;&amp; !GordianCipherMode.KGCM.equals(myMode)</span>
+<span class="fc bfc" id="L434" title="All 2 branches covered.">                        &amp;&amp; !GordianCipherMode.CCM.equals(myMode)</span>
+<span class="fc bfc" id="L435" title="All 2 branches covered.">                        &amp;&amp; !GordianCipherMode.GCM.equals(myMode);</span>
+            case GOST:
+                /* Disallow OFB and CFB */
+<span class="fc bfc" id="L438" title="All 2 branches covered.">                return !GordianCipherMode.OFB.equals(myMode)</span>
+<span class="fc bfc" id="L439" title="All 2 branches covered.">                        &amp;&amp; !GordianCipherMode.CFB.equals(myMode);</span>
+            case KUZNYECHIK:
+                /* Disallow OCB, OFB, CFB and CBC */
+<span class="fc bfc" id="L442" title="All 2 branches covered.">                return !GordianCipherMode.OCB.equals(myMode)</span>
+<span class="fc bfc" id="L443" title="All 2 branches covered.">                        &amp;&amp; !GordianCipherMode.OFB.equals(myMode)</span>
+<span class="fc bfc" id="L444" title="All 2 branches covered.">                        &amp;&amp; !GordianCipherMode.CFB.equals(myMode)</span>
+<span class="fc bfc" id="L445" title="All 2 branches covered.">                        &amp;&amp; !GordianCipherMode.CBC.equals(myMode);</span>
+            default:
+<span class="fc" id="L447">                return true;</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

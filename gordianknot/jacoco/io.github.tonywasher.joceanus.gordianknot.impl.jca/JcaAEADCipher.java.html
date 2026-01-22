@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>JcaAEADCipher.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.impl.jca</a> &gt; <span class="el_source">JcaAEADCipher.java</span></div><h1>JcaAEADCipher.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.gordianknot.impl.jca;
+
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianAEADCipher;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherParameters;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamAEADCipher;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymAEADCipher;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.cipher.GordianCoreCipher;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
+import org.bouncycastle.jcajce.spec.AEADParameterSpec;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.SecretKey;
+import javax.crypto.ShortBufferException;
+import javax.crypto.spec.IvParameterSpec;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.spec.AlgorithmParameterSpec;
+import java.util.Arrays;
+
+/**
+ * Cipher for JCA BouncyCastle AEAD Ciphers.
+ *
+ * @param &lt;T&gt; the key Type
+ */
+public class JcaAEADCipher&lt;T extends GordianKeySpec&gt;
+        extends GordianCoreCipher&lt;T&gt;
+        implements GordianAEADCipher {
+    /**
+     * Cipher.
+     */
+    private final Cipher theCipher;
+
+    /**
+     * is the cipher encrypting?
+     */
+    private boolean isEncrypting;
+
+    /**
+     * Constructor.
+     *
+     * @param pFactory    the Security Factory
+     * @param pCipherSpec the cipherSpec
+     * @param pCipher     the cipher
+     */
+    JcaAEADCipher(final GordianBaseFactory pFactory,
+                  final GordianCipherSpec&lt;T&gt; pCipherSpec,
+                  final Cipher pCipher) {
+<span class="fc" id="L74">        super(pFactory, pCipherSpec);</span>
+<span class="fc" id="L75">        theCipher = pCipher;</span>
+<span class="fc" id="L76">    }</span>
+
+    @Override
+    public JcaKey&lt;T&gt; getKey() {
+<span class="fc" id="L80">        return (JcaKey&lt;T&gt;) super.getKey();</span>
+    }
+
+
+    @Override
+    public void init(final boolean pEncrypt,
+                     final GordianCipherParameters pParams) throws GordianException {
+        /* Process the parameters and access the key */
+<span class="fc" id="L88">        processParameters(pParams);</span>
+<span class="fc" id="L89">        final JcaKey&lt;T&gt; myJcaKey = JcaKey.accessKey(getKey());</span>
+
+        /* Access details */
+<span class="fc bfc" id="L92" title="All 2 branches covered.">        final int myMode = pEncrypt</span>
+<span class="fc" id="L93">                ? Cipher.ENCRYPT_MODE</span>
+<span class="fc" id="L94">                : Cipher.DECRYPT_MODE;</span>
+<span class="fc" id="L95">        final SecretKey myKey = myJcaKey.getKey();</span>
+<span class="fc" id="L96">        final byte[] myAEAD = getInitialAEAD();</span>
+
+        /* Protect against exceptions */
+        try {
+            /* Initialise as required */
+<span class="fc bfc" id="L101" title="All 2 branches covered.">            final AlgorithmParameterSpec myParms = myAEAD == null</span>
+<span class="fc" id="L102">                    ? new IvParameterSpec(getInitVector())</span>
+<span class="fc" id="L103">                    : new AEADParameterSpec(getInitVector(), getAEADMacSize(), myAEAD);</span>
+<span class="fc" id="L104">            theCipher.init(myMode, myKey, myParms);</span>
+<span class="fc" id="L105">            isEncrypting = pEncrypt;</span>
+<span class="nc" id="L106">        } catch (InvalidKeyException</span>
+                 | InvalidAlgorithmParameterException e) {
+<span class="nc" id="L108">            throw new GordianCryptoException(&quot;Failed to initialise cipher&quot;, e);</span>
+<span class="fc" id="L109">        }</span>
+<span class="fc" id="L110">    }</span>
+
+    @Override
+    public int getOutputLength(final int pLength) {
+<span class="fc" id="L114">        return theCipher.getOutputSize(pLength);</span>
+    }
+
+    @Override
+    public int doUpdate(final byte[] pBytes,
+                        final int pOffset,
+                        final int pLength,
+                        final byte[] pOutput,
+                        final int pOutOffset) throws GordianException {
+        /* Protect against exceptions */
+        try {
+            /* Process the bytes */
+<span class="fc" id="L126">            return theCipher.update(pBytes, pOffset, pLength, pOutput, pOutOffset);</span>
+
+            /* Handle exceptions */
+<span class="nc" id="L129">        } catch (ShortBufferException e) {</span>
+<span class="nc" id="L130">            throw new GordianCryptoException(&quot;Failed to process bytes&quot;, e);</span>
+        }
+    }
+
+    @Override
+    public void updateAAD(final byte[] pBytes,
+                          final int pOffset,
+                          final int pLength) throws GordianException {
+        /* Protect against exceptions */
+        try {
+            /* Process the bytes */
+<span class="fc" id="L141">            theCipher.updateAAD(pBytes, pOffset, pLength);</span>
+
+            /* Handle exceptions */
+<span class="nc" id="L144">        } catch (IllegalStateException e) {</span>
+<span class="nc" id="L145">            throw new GordianCryptoException(&quot;Failed to process AAD bytes&quot;, e);</span>
+<span class="fc" id="L146">        }</span>
+<span class="fc" id="L147">    }</span>
+
+    @Override
+    public int doFinish(final byte[] pOutput,
+                        final int pOutOffset) throws GordianException {
+        /* Protect against exceptions */
+        try {
+            /* Finish the operation */
+<span class="fc" id="L155">            return theCipher.doFinal(pOutput, pOutOffset);</span>
+
+            /* Handle exceptions */
+<span class="nc" id="L158">        } catch (ShortBufferException</span>
+                 | IllegalBlockSizeException
+                 | BadPaddingException e) {
+<span class="nc" id="L161">            throw new GordianCryptoException(&quot;Failed to finish operation&quot;, e);</span>
+        }
+    }
+
+    @Override
+    public int getBlockSize() {
+<span class="nc" id="L167">        return 0;</span>
+    }
+
+    /**
+     * JcaSymAADCipher.
+     */
+    public static class JcaSymAEADCipher
+            extends JcaAEADCipher&lt;GordianSymKeySpec&gt;
+            implements GordianSymAEADCipher {
+        /**
+         * Constructor.
+         *
+         * @param pFactory    the Security Factory
+         * @param pCipherSpec the cipherSpec
+         * @param pCipher     the cipher
+         */
+        JcaSymAEADCipher(final GordianBaseFactory pFactory,
+                         final GordianSymCipherSpec pCipherSpec,
+                         final Cipher pCipher) {
+<span class="fc" id="L186">            super(pFactory, pCipherSpec, pCipher);</span>
+<span class="fc" id="L187">        }</span>
+    }
+
+    /**
+     * JcaStreamAEADCipher.
+     */
+    public static class JcaStreamAEADCipher
+            extends JcaAEADCipher&lt;GordianStreamKeySpec&gt;
+            implements GordianStreamAEADCipher {
+        /**
+         * Constructor.
+         *
+         * @param pFactory    the Security Factory
+         * @param pCipherSpec the cipherSpec
+         * @param pCipher     the cipher
+         */
+        JcaStreamAEADCipher(final GordianBaseFactory pFactory,
+                            final GordianStreamCipherSpec pCipherSpec,
+                            final Cipher pCipher) {
+<span class="fc" id="L206">            super(pFactory, pCipherSpec, pCipher);</span>
+<span class="fc" id="L207">        }</span>
+    }
+
+    @Override
+    public boolean equals(final Object pThat) {
+        /* Handle trivial cases */
+<span class="nc bnc" id="L213" title="All 2 branches missed.">        if (this == pThat) {</span>
+<span class="nc" id="L214">            return true;</span>
+        }
+<span class="nc bnc" id="L216" title="All 2 branches missed.">        if (pThat == null) {</span>
+<span class="nc" id="L217">            return false;</span>
+        }
+
+        /* Make sure that the classes are the same */
+<span class="nc bnc" id="L221" title="All 2 branches missed.">        if (!(pThat instanceof JcaAEADCipher)) {</span>
+<span class="nc" id="L222">            return false;</span>
+        }
+<span class="nc" id="L224">        final JcaAEADCipher&lt;?&gt; myThat = (JcaAEADCipher&lt;?&gt;) pThat;</span>
+
+        /* Check that the fields are equal */
+<span class="nc bnc" id="L227" title="All 2 branches missed.">        return isEncrypting == myThat.isEncrypting</span>
+<span class="nc bnc" id="L228" title="All 2 branches missed.">                &amp;&amp; Arrays.equals(getInitialAEAD(), myThat.getInitialAEAD())</span>
+<span class="nc bnc" id="L229" title="All 2 branches missed.">                &amp;&amp; super.equals(myThat);</span>
+    }
+
+    @Override
+    public int hashCode() {
+<span class="nc" id="L234">        return super.hashCode()</span>
+<span class="nc" id="L235">                + Arrays.hashCode(getInitialAEAD())</span>
+<span class="nc bnc" id="L236" title="All 2 branches missed.">                + (isEncrypting ? 1 : 0);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

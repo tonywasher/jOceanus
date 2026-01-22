@@ -1,0 +1,382 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWisePortfolioInfo.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.moneywise.data.basic</a> &gt; <span class="el_source">MoneyWisePortfolioInfo.java</span></div><h1>MoneyWisePortfolioInfo.java</h1><pre class="source lang-java linenums">/*
+ * MoneyWise: Finance Application
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.moneywise.data.basic;
+
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.metis.data.MetisDataDifference;
+import io.github.tonywasher.joceanus.metis.data.MetisDataResource;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePortfolio.MoneyWisePortfolioList;
+import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseAccountInfoClass;
+import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseAccountInfoType;
+import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseAccountInfoType.MoneyWiseAccountInfoTypeList;
+import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
+import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataInfoClass;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataInfoItem;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataResource;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValues;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusStaticDataItem;
+import io.github.tonywasher.joceanus.prometheus.views.PrometheusEditSet;
+
+/**
+ * Representation of an information extension of a portfolio.
+ *
+ * @author Tony Washer
+ */
+public class MoneyWisePortfolioInfo
+        extends PrometheusDataInfoItem {
+    /**
+     * Object name.
+     */
+<span class="fc" id="L47">    public static final String OBJECT_NAME = MoneyWiseBasicDataType.PORTFOLIOINFO.getItemName();</span>
+
+    /**
+     * List name.
+     */
+<span class="fc" id="L52">    public static final String LIST_NAME = MoneyWiseBasicDataType.PORTFOLIOINFO.getListName();</span>
+
+    /**
+     * Report fields.
+     */
+<span class="fc" id="L57">    private static final MetisFieldSet&lt;MoneyWisePortfolioInfo&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWisePortfolioInfo.class);</span>
+
+    /**
+     * Copy Constructor.
+     *
+     * @param pList the list
+     * @param pInfo The Info to copy
+     */
+    protected MoneyWisePortfolioInfo(final MoneyWisePortfolioInfoList pList,
+                                     final MoneyWisePortfolioInfo pInfo) {
+        /* Set standard values */
+<span class="nc" id="L68">        super(pList, pInfo);</span>
+<span class="nc" id="L69">    }</span>
+
+    /**
+     * Edit Constructor.
+     *
+     * @param pList      the list
+     * @param pPortfolio the portfolio
+     * @param pType      the type
+     */
+    private MoneyWisePortfolioInfo(final MoneyWisePortfolioInfoList pList,
+                                   final MoneyWisePortfolio pPortfolio,
+                                   final MoneyWiseAccountInfoType pType) {
+        /* Initialise the item */
+<span class="nc" id="L82">        super(pList);</span>
+<span class="nc" id="L83">        setNextDataKeySet();</span>
+
+        /* Record the Detail */
+<span class="nc" id="L86">        setValueInfoType(pType);</span>
+<span class="nc" id="L87">        setValueOwner(pPortfolio);</span>
+<span class="nc" id="L88">    }</span>
+
+    /**
+     * Values constructor.
+     *
+     * @param pList   the List to add to
+     * @param pValues the values constructor
+     * @throws OceanusException on error
+     */
+    private MoneyWisePortfolioInfo(final MoneyWisePortfolioInfoList pList,
+                                   final PrometheusDataValues pValues) throws OceanusException {
+        /* Initialise the item */
+<span class="nc" id="L100">        super(pList, pValues);</span>
+
+        /* Protect against exceptions */
+        try {
+            /* Resolve links */
+<span class="nc" id="L105">            final MoneyWiseDataSet myData = getDataSet();</span>
+<span class="nc" id="L106">            resolveDataLink(PrometheusDataResource.DATAINFO_TYPE, myData.getActInfoTypes());</span>
+<span class="nc" id="L107">            resolveDataLink(PrometheusDataResource.DATAINFO_OWNER, myData.getPortfolios());</span>
+
+            /* Set the value */
+<span class="nc" id="L110">            setValue(pValues.getValue(PrometheusDataResource.DATAINFO_VALUE));</span>
+
+            /* Access the PortfolioInfoSet and register this data */
+<span class="nc" id="L113">            final MoneyWisePortfolioInfoSet mySet = getOwner().getInfoSet();</span>
+<span class="nc" id="L114">            mySet.registerInfo(this);</span>
+
+<span class="nc" id="L116">        } catch (OceanusException e) {</span>
+            /* Pass on exception */
+<span class="nc" id="L118">            throw new MoneyWiseDataException(this, ERROR_CREATEITEM, e);</span>
+<span class="nc" id="L119">        }</span>
+<span class="nc" id="L120">    }</span>
+
+    @Override
+    public MetisFieldSetDef getDataFieldSet() {
+<span class="nc" id="L124">        return FIELD_DEFS;</span>
+    }
+
+    @Override
+    public MoneyWiseAccountInfoType getInfoType() {
+<span class="nc" id="L129">        return getValues().getValue(PrometheusDataResource.DATAINFO_TYPE, MoneyWiseAccountInfoType.class);</span>
+    }
+
+    @Override
+    public MoneyWiseAccountInfoClass getInfoClass() {
+<span class="nc" id="L134">        return getInfoType().getInfoClass();</span>
+    }
+
+    @Override
+    public MoneyWisePortfolio getOwner() {
+<span class="nc" id="L139">        return getValues().getValue(PrometheusDataResource.DATAINFO_OWNER, MoneyWisePortfolio.class);</span>
+    }
+
+    @Override
+    public MoneyWiseDataSet getDataSet() {
+<span class="nc" id="L144">        return (MoneyWiseDataSet) super.getDataSet();</span>
+    }
+
+    @Override
+    public MoneyWisePortfolioInfo getBase() {
+<span class="nc" id="L149">        return (MoneyWisePortfolioInfo) super.getBase();</span>
+    }
+
+    @Override
+    public MoneyWisePortfolioInfoList getList() {
+<span class="nc" id="L154">        return (MoneyWisePortfolioInfoList) super.getList();</span>
+    }
+
+    @Override
+    public void deRegister() {
+        /* Access the PortfolioInfoSet and register this value */
+<span class="nc" id="L160">        final MoneyWisePortfolioInfoSet mySet = getOwner().getInfoSet();</span>
+<span class="nc" id="L161">        mySet.deRegisterInfo(this);</span>
+<span class="nc" id="L162">    }</span>
+
+    @Override
+    public void resolveDataSetLinks() throws OceanusException {
+        /* Update the Encryption details */
+<span class="nc" id="L167">        super.resolveDataSetLinks();</span>
+
+        /* Resolve data links */
+<span class="nc" id="L170">        final MoneyWiseDataSet myData = getDataSet();</span>
+<span class="nc" id="L171">        resolveDataLink(PrometheusDataResource.DATAINFO_TYPE, myData.getActInfoTypes());</span>
+<span class="nc" id="L172">        resolveDataLink(PrometheusDataResource.DATAINFO_OWNER, myData.getPortfolios());</span>
+
+        /* Access the PortfolioInfoSet and register this data */
+<span class="nc" id="L175">        final MoneyWisePortfolioInfoSet mySet = getOwner().getInfoSet();</span>
+<span class="nc" id="L176">        mySet.registerInfo(this);</span>
+<span class="nc" id="L177">    }</span>
+
+    /**
+     * Resolve editSet links.
+     *
+     * @param pEditSet the editSet
+     * @throws OceanusException on error
+     */
+    public void resolveEditSetLinks(final PrometheusEditSet pEditSet) throws OceanusException {
+        /* Resolve data links */
+<span class="nc" id="L187">        resolveDataLink(PrometheusDataResource.DATAINFO_TYPE, pEditSet.getDataList(MoneyWiseStaticDataType.ACCOUNTINFOTYPE, MoneyWiseAccountInfoTypeList.class));</span>
+<span class="nc" id="L188">        resolveDataLink(PrometheusDataResource.DATAINFO_OWNER, pEditSet.getDataList(MoneyWiseBasicDataType.PORTFOLIO, MoneyWisePortfolioList.class));</span>
+<span class="nc" id="L189">    }</span>
+
+    /**
+     * Update portfolioInfo from a portfolioInfo extract.
+     *
+     * @param pInfo the changed portfolioInfo
+     * @return whether changes have been made
+     */
+    @Override
+    public boolean applyChanges(final PrometheusDataItem pInfo) {
+        /* Can only update from PortfolioInfo */
+<span class="nc bnc" id="L200" title="All 2 branches missed.">        if (!(pInfo instanceof MoneyWisePortfolioInfo)) {</span>
+<span class="nc" id="L201">            return false;</span>
+        }
+
+        /* Access as PortfolioInfo */
+<span class="nc" id="L205">        final MoneyWisePortfolioInfo myPortInfo = (MoneyWisePortfolioInfo) pInfo;</span>
+
+        /* Store the current detail into history */
+<span class="nc" id="L208">        pushHistory();</span>
+
+        /* Update the value if required */
+<span class="nc bnc" id="L211" title="All 2 branches missed.">        if (!MetisDataDifference.isEqual(getField(), myPortInfo.getField())) {</span>
+<span class="nc" id="L212">            setValueValue(myPortInfo.getField());</span>
+        }
+
+        /* Check for changes */
+<span class="nc" id="L216">        return checkForHistory();</span>
+    }
+
+    /**
+     * PortfolioInfoList.
+     */
+    public static class MoneyWisePortfolioInfoList
+            extends PrometheusDataInfoList&lt;MoneyWisePortfolioInfo&gt; {
+        /**
+         * Report fields.
+         */
+<span class="fc" id="L227">        private static final MetisFieldSet&lt;MoneyWisePortfolioInfoList&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWisePortfolioInfoList.class);</span>
+
+        /**
+         * Construct an empty CORE info list.
+         *
+         * @param pData the DataSet for the list
+         */
+        protected MoneyWisePortfolioInfoList(final MoneyWiseDataSet pData) {
+<span class="fc" id="L235">            super(MoneyWisePortfolioInfo.class, pData, MoneyWiseBasicDataType.PORTFOLIOINFO, PrometheusListStyle.CORE);</span>
+<span class="fc" id="L236">        }</span>
+
+        /**
+         * Constructor for a cloned List.
+         *
+         * @param pSource the source List
+         */
+        private MoneyWisePortfolioInfoList(final MoneyWisePortfolioInfoList pSource) {
+<span class="fc" id="L244">            super(pSource);</span>
+<span class="fc" id="L245">        }</span>
+
+        @Override
+        public MetisFieldSet&lt;MoneyWisePortfolioInfoList&gt; getDataFieldSet() {
+<span class="nc" id="L249">            return FIELD_DEFS;</span>
+        }
+
+        @Override
+        public String listName() {
+<span class="fc" id="L254">            return LIST_NAME;</span>
+        }
+
+        @Override
+        public MetisFieldSetDef getItemFields() {
+<span class="nc" id="L259">            return MoneyWisePortfolioInfo.FIELD_DEFS;</span>
+        }
+
+        @Override
+        public MoneyWiseDataSet getDataSet() {
+<span class="fc" id="L264">            return (MoneyWiseDataSet) super.getDataSet();</span>
+        }
+
+        /**
+         * Set base list for Edit InfoList.
+         *
+         * @param pBase the base list
+         */
+        protected void setBase(final MoneyWisePortfolioInfoList pBase) {
+            /* Set the style and base */
+<span class="nc" id="L274">            setStyle(PrometheusListStyle.EDIT);</span>
+<span class="nc" id="L275">            super.setBase(pBase);</span>
+<span class="nc" id="L276">        }</span>
+
+        @Override
+        protected MoneyWisePortfolioInfoList getEmptyList(final PrometheusListStyle pStyle) {
+<span class="fc" id="L280">            final MoneyWisePortfolioInfoList myList = new MoneyWisePortfolioInfoList(this);</span>
+<span class="fc" id="L281">            myList.setStyle(pStyle);</span>
+<span class="fc" id="L282">            return myList;</span>
+        }
+
+        @Override
+        public MoneyWisePortfolioInfo addCopyItem(final PrometheusDataItem pItem) {
+            /* Can only clone a PortfolioInfo */
+<span class="nc bnc" id="L288" title="All 2 branches missed.">            if (!(pItem instanceof MoneyWisePortfolioInfo)) {</span>
+<span class="nc" id="L289">                throw new UnsupportedOperationException();</span>
+            }
+
+<span class="nc" id="L292">            final MoneyWisePortfolioInfo myInfo = new MoneyWisePortfolioInfo(this, (MoneyWisePortfolioInfo) pItem);</span>
+<span class="nc" id="L293">            add(myInfo);</span>
+<span class="nc" id="L294">            return myInfo;</span>
+        }
+
+        @Override
+        public MoneyWisePortfolioInfo addNewItem() {
+<span class="nc" id="L299">            throw new UnsupportedOperationException();</span>
+        }
+
+        @Override
+        protected MoneyWisePortfolioInfo addNewItem(final PrometheusDataItem pOwner,
+                                                    final PrometheusStaticDataItem pInfoType) {
+            /* Allocate the new entry and add to list */
+<span class="nc" id="L306">            final MoneyWisePortfolioInfo myInfo = new MoneyWisePortfolioInfo(this, (MoneyWisePortfolio) pOwner, (MoneyWiseAccountInfoType) pInfoType);</span>
+<span class="nc" id="L307">            add(myInfo);</span>
+
+            /* return it */
+<span class="nc" id="L310">            return myInfo;</span>
+        }
+
+        @Override
+        public void addInfoItem(final Integer pId,
+                                final PrometheusDataItem pPortfolio,
+                                final PrometheusDataInfoClass pInfoClass,
+                                final Object pValue) throws OceanusException {
+            /* Ignore item if it is null */
+<span class="nc bnc" id="L319" title="All 2 branches missed.">            if (pValue == null) {</span>
+<span class="nc" id="L320">                return;</span>
+            }
+
+            /* Access the data set */
+<span class="nc" id="L324">            final MoneyWiseDataSet myData = getDataSet();</span>
+
+            /* Look up the Info Type */
+<span class="nc" id="L327">            final MoneyWiseAccountInfoType myInfoType = myData.getActInfoTypes().findItemByClass(pInfoClass);</span>
+<span class="nc bnc" id="L328" title="All 2 branches missed.">            if (myInfoType == null) {</span>
+<span class="nc" id="L329">                throw new MoneyWiseDataException(pPortfolio, ERROR_BADINFOCLASS + &quot; [&quot; + pInfoClass + &quot;]&quot;);</span>
+            }
+
+            /* Create the values */
+<span class="nc" id="L333">            final PrometheusDataValues myValues = new PrometheusDataValues(OBJECT_NAME);</span>
+<span class="nc" id="L334">            myValues.addValue(MetisDataResource.DATA_ID, pId);</span>
+<span class="nc" id="L335">            myValues.addValue(PrometheusDataResource.DATAINFO_TYPE, myInfoType);</span>
+<span class="nc" id="L336">            myValues.addValue(PrometheusDataResource.DATAINFO_OWNER, pPortfolio);</span>
+<span class="nc" id="L337">            myValues.addValue(PrometheusDataResource.DATAINFO_VALUE, pValue);</span>
+
+            /* Create a new Portfolio Info */
+<span class="nc" id="L340">            final MoneyWisePortfolioInfo myInfo = new MoneyWisePortfolioInfo(this, myValues);</span>
+
+            /* Check that this InfoTypeId has not been previously added */
+<span class="nc bnc" id="L343" title="All 2 branches missed.">            if (!isIdUnique(pId)) {</span>
+<span class="nc" id="L344">                myInfo.addError(ERROR_DUPLICATE, MetisDataResource.DATA_ID);</span>
+<span class="nc" id="L345">                throw new MoneyWiseDataException(myInfo, ERROR_VALIDATION);</span>
+            }
+
+            /* Add the Info to the list */
+<span class="nc" id="L349">            add(myInfo);</span>
+<span class="nc" id="L350">        }</span>
+
+        @Override
+        public MoneyWisePortfolioInfo addValuesItem(final PrometheusDataValues pValues) throws OceanusException {
+            /* Create the info */
+<span class="nc" id="L355">            final MoneyWisePortfolioInfo myInfo = new MoneyWisePortfolioInfo(this, pValues);</span>
+
+            /* Check that this InfoId has not been previously added */
+<span class="nc bnc" id="L358" title="All 2 branches missed.">            if (!isIdUnique(myInfo.getIndexedId())) {</span>
+<span class="nc" id="L359">                myInfo.addError(ERROR_DUPLICATE, MetisDataResource.DATA_ID);</span>
+<span class="nc" id="L360">                throw new MoneyWiseDataException(myInfo, ERROR_VALIDATION);</span>
+            }
+
+            /* Add to the list */
+<span class="nc" id="L364">            add(myInfo);</span>
+
+            /* Return it */
+<span class="nc" id="L367">            return myInfo;</span>
+        }
+
+        @Override
+        public void postProcessOnLoad() throws OceanusException {
+            /* Validate the PortfolioInfo */
+<span class="fc" id="L373">            validateOnLoad();</span>
+
+            /* Map and Validate the Portfolios */
+<span class="fc" id="L376">            final MoneyWisePortfolioList myPortfolios = getDataSet().getPortfolios();</span>
+<span class="fc" id="L377">            myPortfolios.mapData();</span>
+<span class="fc" id="L378">            myPortfolios.validateOnLoad();</span>
+<span class="fc" id="L379">        }</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

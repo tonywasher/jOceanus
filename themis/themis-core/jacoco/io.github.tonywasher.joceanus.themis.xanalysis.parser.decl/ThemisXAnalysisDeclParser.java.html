@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ThemisXAnalysisDeclParser.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Themis Core Project Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.themis.xanalysis.parser.decl</a> &gt; <span class="el_source">ThemisXAnalysisDeclParser.java</span></div><h1>ThemisXAnalysisDeclParser.java</h1><pre class="source lang-java linenums">/*
+ * Themis: Java Project Framework
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.themis.xanalysis.parser.decl;
+
+import com.github.javaparser.ast.body.BodyDeclaration;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance.ThemisXAnalysisDeclarationInstance;
+import io.github.tonywasher.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisParserDef;
+
+/**
+ * Analysis BodyType Parser.
+ */
+public final class ThemisXAnalysisDeclParser {
+    /**
+     * Private Constructor.
+     */
+    private ThemisXAnalysisDeclParser() {
+    }
+
+    /**
+     * Parse a declaration.
+     *
+     * @param pParser the parser
+     * @param pDecl   the declaration
+     * @return the parsed declaration
+     * @throws OceanusException on error
+     */
+    public static ThemisXAnalysisDeclarationInstance parseDeclaration(final ThemisXAnalysisParserDef pParser,
+                                                                      final BodyDeclaration&lt;?&gt; pDecl) throws OceanusException {
+        /* Handle null Declaration */
+<span class="pc bpc" id="L45" title="1 of 2 branches missed.">        if (pDecl == null) {</span>
+<span class="nc" id="L46">            return null;</span>
+        }
+
+        /* Create appropriate declaration */
+<span class="pc bpc" id="L50" title="3 of 12 branches missed.">        switch (ThemisXAnalysisDeclaration.determineDeclaration(pParser, pDecl)) {</span>
+            case ANNOTATION:
+<span class="fc" id="L52">                return new ThemisXAnalysisDeclAnnotation(pParser, pDecl.asAnnotationDeclaration());</span>
+            case ANNOTATIONMEMBER:
+<span class="fc" id="L54">                return new ThemisXAnalysisDeclAnnotationMember(pParser, pDecl.asAnnotationMemberDeclaration());</span>
+            case CLASSINTERFACE:
+<span class="fc" id="L56">                return new ThemisXAnalysisDeclClassInterface(pParser, pDecl.asClassOrInterfaceDeclaration());</span>
+            case COMPACT:
+<span class="nc" id="L58">                return new ThemisXAnalysisDeclCompact(pParser, pDecl.asCompactConstructorDeclaration());</span>
+            case CONSTRUCTOR:
+<span class="fc" id="L60">                return new ThemisXAnalysisDeclConstructor(pParser, pDecl.asConstructorDeclaration());</span>
+            case ENUM:
+<span class="fc" id="L62">                return new ThemisXAnalysisDeclEnum(pParser, pDecl.asEnumDeclaration());</span>
+            case ENUMVALUE:
+<span class="fc" id="L64">                return new ThemisXAnalysisDeclEnumValue(pParser, pDecl.asEnumConstantDeclaration());</span>
+            case FIELD:
+<span class="fc" id="L66">                return new ThemisXAnalysisDeclField(pParser, pDecl.asFieldDeclaration());</span>
+            case INITIALIZER:
+<span class="fc" id="L68">                return new ThemisXAnalysisDeclInitializer(pParser, pDecl.asInitializerDeclaration());</span>
+            case METHOD:
+<span class="fc" id="L70">                return new ThemisXAnalysisDeclMethod(pParser, pDecl.asMethodDeclaration());</span>
+            case RECORD:
+<span class="nc" id="L72">                return new ThemisXAnalysisDeclRecord(pParser, pDecl.asRecordDeclaration());</span>
+            default:
+<span class="nc" id="L74">                throw pParser.buildException(&quot;Unsupported Declaration Type&quot;, pDecl);</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

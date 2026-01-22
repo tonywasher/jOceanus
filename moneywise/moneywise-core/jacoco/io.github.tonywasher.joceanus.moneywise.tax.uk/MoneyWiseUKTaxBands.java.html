@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseUKTaxBands.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.moneywise.tax.uk</a> &gt; <span class="el_source">MoneyWiseUKTaxBands.java</span></div><h1>MoneyWiseUKTaxBands.java</h1><pre class="source lang-java linenums">/*
+ * MoneyWise: Finance Application
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.moneywise.tax.uk;
+
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRate;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldItem;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
+import io.github.tonywasher.joceanus.moneywise.tax.MoneyWiseTaxBandSet;
+import io.github.tonywasher.joceanus.moneywise.tax.MoneyWiseTaxBandSet.MoneyWiseTaxBand;
+import io.github.tonywasher.joceanus.moneywise.tax.MoneyWiseTaxResource;
+
+import java.util.Iterator;
+
+/**
+ * UK TaxBands.
+ */
+public class MoneyWiseUKTaxBands
+        implements MetisFieldItem {
+    /**
+     * Local Report fields.
+     */
+<span class="fc" id="L37">    private static final MetisFieldSet&lt;MoneyWiseUKTaxBands&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseUKTaxBands.class);</span>
+
+    /*
+     * Declare Fields.
+     */
+    static {
+<span class="fc" id="L43">        FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXBANDS_STANDARD, MoneyWiseUKTaxBands::getStandardSet);</span>
+<span class="fc" id="L44">        FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXBANDS_HASLOTAXBAND, MoneyWiseUKTaxBands::hasLoTaxBand);</span>
+<span class="fc" id="L45">        FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXBANDS_LOSAVINGS, MoneyWiseUKTaxBands::getLoSavings);</span>
+<span class="fc" id="L46">    }</span>
+
+    /**
+     * Standard TaxBandSet.
+     */
+    private final MoneyWiseTaxBandSet theStandard;
+
+    /**
+     * Low TaxBand present.
+     */
+    private final Boolean hasLoTaxBand;
+
+    /**
+     * Low Savings TaxBands.
+     */
+    private final MoneyWiseTaxBand theLoSavings;
+
+    /**
+     * Constructor.
+     *
+     * @param pStandard the standard taxBands
+     */
+    protected MoneyWiseUKTaxBands(final MoneyWiseTaxBandSet pStandard) {
+<span class="fc" id="L69">        this(pStandard, Boolean.FALSE);</span>
+<span class="fc" id="L70">    }</span>
+
+    /**
+     * Constructor.
+     *
+     * @param pStandard     the standard taxBands
+     * @param pHasLoTaxBand do we have a low tax band?
+     */
+    protected MoneyWiseUKTaxBands(final MoneyWiseTaxBandSet pStandard,
+                                  final Boolean pHasLoTaxBand) {
+<span class="fc" id="L80">        this(pStandard, pHasLoTaxBand, null);</span>
+<span class="fc" id="L81">    }</span>
+
+    /**
+     * Constructor.
+     *
+     * @param pStandard  the standard taxBands
+     * @param pLoSavings the loSavings taxBand
+     */
+    protected MoneyWiseUKTaxBands(final MoneyWiseTaxBandSet pStandard,
+                                  final MoneyWiseTaxBand pLoSavings) {
+<span class="fc" id="L91">        this(pStandard, Boolean.FALSE, pLoSavings);</span>
+<span class="fc" id="L92">    }</span>
+
+    /**
+     * Constructor.
+     *
+     * @param pStandard     the standard taxBands
+     * @param pHasLoTaxBand do we have a low tax band?
+     * @param pLoSavings    the loSavings taxBand
+     */
+    private MoneyWiseUKTaxBands(final MoneyWiseTaxBandSet pStandard,
+                                final Boolean pHasLoTaxBand,
+<span class="fc" id="L103">                                final MoneyWiseTaxBand pLoSavings) {</span>
+<span class="fc" id="L104">        theStandard = pStandard;</span>
+<span class="fc" id="L105">        hasLoTaxBand = pHasLoTaxBand;</span>
+<span class="fc" id="L106">        theLoSavings = pLoSavings;</span>
+<span class="fc" id="L107">    }</span>
+
+    /**
+     * Constructor.
+     *
+     * @param pSource the source taxBands
+     */
+<span class="nc" id="L114">    protected MoneyWiseUKTaxBands(final MoneyWiseUKTaxBands pSource) {</span>
+<span class="nc" id="L115">        theStandard = new MoneyWiseTaxBandSet(pSource.getStandardSet());</span>
+<span class="nc" id="L116">        hasLoTaxBand = pSource.hasLoTaxBand;</span>
+<span class="nc" id="L117">        final MoneyWiseTaxBand mySavings = pSource.getLoSavings();</span>
+<span class="nc bnc" id="L118" title="All 2 branches missed.">        theLoSavings = mySavings == null</span>
+<span class="nc" id="L119">                ? null</span>
+<span class="nc" id="L120">                : new MoneyWiseTaxBand(mySavings);</span>
+<span class="nc" id="L121">    }</span>
+
+    /**
+     * Obtain the standard taxBands.
+     *
+     * @return the taxBands
+     */
+    public MoneyWiseTaxBandSet getStandardSet() {
+<span class="nc" id="L129">        return theStandard;</span>
+    }
+
+    /**
+     * Do we have a Low taxBand?
+     *
+     * @return true/false
+     */
+    public Boolean hasLoTaxBand() {
+<span class="nc" id="L138">        return hasLoTaxBand;</span>
+    }
+
+    /**
+     * Obtain the low savings taxBand.
+     *
+     * @return the taxBands
+     */
+    public MoneyWiseTaxBand getLoSavings() {
+<span class="nc" id="L147">        return theLoSavings;</span>
+    }
+
+    /**
+     * Obtain the basic rate of income tax.
+     *
+     * @return the rate
+     */
+    protected OceanusRate getBasicTaxRate() {
+<span class="nc" id="L156">        final Iterator&lt;MoneyWiseTaxBand&gt; myIterator = theStandard.iterator();</span>
+<span class="nc bnc" id="L157" title="All 4 branches missed.">        if (hasLoTaxBand &amp;&amp; myIterator.hasNext()) {</span>
+<span class="nc" id="L158">            myIterator.next();</span>
+        }
+<span class="nc bnc" id="L160" title="All 2 branches missed.">        return myIterator.hasNext()</span>
+<span class="nc" id="L161">                ? myIterator.next().getRate()</span>
+<span class="nc" id="L162">                : null;</span>
+    }
+
+    @Override
+    public String formatObject(final OceanusDataFormatter pFormatter) {
+<span class="nc" id="L167">        return FIELD_DEFS.getName();</span>
+    }
+
+    @Override
+    public MetisFieldSet&lt;MoneyWiseUKTaxBands&gt; getDataFieldSet() {
+<span class="nc" id="L172">        return FIELD_DEFS;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

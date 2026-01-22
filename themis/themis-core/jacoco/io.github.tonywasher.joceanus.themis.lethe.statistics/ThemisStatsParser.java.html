@@ -1,0 +1,828 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ThemisStatsParser.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Themis Core Project Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.themis.lethe.statistics</a> &gt; <span class="el_source">ThemisStatsParser.java</span></div><h1>ThemisStatsParser.java</h1><pre class="source lang-java linenums">/*
+ * Themis: Java Project Framework
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.themis.lethe.statistics;
+
+import io.github.tonywasher.joceanus.themis.lethe.analysis.ThemisAnalysisAnnotation;
+import io.github.tonywasher.joceanus.themis.lethe.analysis.ThemisAnalysisAnonClass;
+import io.github.tonywasher.joceanus.themis.lethe.analysis.ThemisAnalysisBlank;
+import io.github.tonywasher.joceanus.themis.lethe.analysis.ThemisAnalysisBlock;
+import io.github.tonywasher.joceanus.themis.lethe.analysis.ThemisAnalysisCase;
+import io.github.tonywasher.joceanus.themis.lethe.analysis.ThemisAnalysisCatch;
+import io.github.tonywasher.joceanus.themis.lethe.analysis.ThemisAnalysisClass;
+import io.github.tonywasher.joceanus.themis.lethe.analysis.ThemisAnalysisComment;
+import io.github.tonywasher.joceanus.themis.lethe.analysis.ThemisAnalysisContainer;
+import io.github.tonywasher.joceanus.themis.lethe.analysis.ThemisAnalysisDoWhile;
+import io.github.tonywasher.joceanus.themis.lethe.analysis.ThemisAnalysisElement;
+import io.github.tonywasher.joceanus.themis.lethe.analysis.ThemisAnalysisElse;
+import io.github.tonywasher.joceanus.themis.lethe.analysis.ThemisAnalysisEmbedded;
+import io.github.tonywasher.joceanus.themis.lethe.analysis.ThemisAnalysisEnum;
+import io.github.tonywasher.joceanus.themis.lethe.analysis.ThemisAnalysisField;
+import io.github.tonywasher.joceanus.themis.lethe.analysis.ThemisAnalysisFile;
+import io.github.tonywasher.joceanus.themis.lethe.analysis.ThemisAnalysisFile.ThemisAnalysisObject;
+import io.github.tonywasher.joceanus.themis.lethe.analysis.ThemisAnalysisFinally;
+import io.github.tonywasher.joceanus.themis.lethe.analysis.ThemisAnalysisFor;
+import io.github.tonywasher.joceanus.themis.lethe.analysis.ThemisAnalysisIf;
+import io.github.tonywasher.joceanus.themis.lethe.analysis.ThemisAnalysisImports;
+import io.github.tonywasher.joceanus.themis.lethe.analysis.ThemisAnalysisInterface;
+import io.github.tonywasher.joceanus.themis.lethe.analysis.ThemisAnalysisLambda;
+import io.github.tonywasher.joceanus.themis.lethe.analysis.ThemisAnalysisMethod;
+import io.github.tonywasher.joceanus.themis.lethe.analysis.ThemisAnalysisModule;
+import io.github.tonywasher.joceanus.themis.lethe.analysis.ThemisAnalysisPackage;
+import io.github.tonywasher.joceanus.themis.lethe.analysis.ThemisAnalysisProject;
+import io.github.tonywasher.joceanus.themis.lethe.analysis.ThemisAnalysisStatement;
+import io.github.tonywasher.joceanus.themis.lethe.analysis.ThemisAnalysisSwitch;
+import io.github.tonywasher.joceanus.themis.lethe.analysis.ThemisAnalysisTry;
+import io.github.tonywasher.joceanus.themis.lethe.analysis.ThemisAnalysisWhile;
+
+/**
+ * Package Parser.
+ */
+<span class="nc" id="L54">public class ThemisStatsParser {</span>
+    /**
+     * The cached documentation comment.
+     */
+    private ThemisAnalysisComment theCachedDocComment;
+
+    /**
+     * The cached annotation.
+     */
+    private ThemisAnalysisAnnotation theCachedAnnotation;
+
+    /**
+     * parse a project.
+     *
+     * @param pProject the project to parse
+     * @return the stats
+     */
+    public ThemisStatsProject parseProject(final ThemisAnalysisProject pProject) {
+        /* Create the stats */
+<span class="nc" id="L73">        final ThemisStatsProject myStats = new ThemisStatsProject(pProject);</span>
+
+        /* Loop through the modules */
+<span class="nc bnc" id="L76" title="All 2 branches missed.">        for (ThemisAnalysisModule myModule : pProject.getModules()) {</span>
+            /* Process the module */
+<span class="nc" id="L78">            myStats.addModule(parseModule(myModule));</span>
+<span class="nc" id="L79">        }</span>
+
+        /* Return the projectStats */
+<span class="nc" id="L82">        return myStats;</span>
+    }
+
+    /**
+     * parse a module.
+     *
+     * @param pModule the module to parse
+     * @return the stats
+     */
+    public ThemisStatsModule parseModule(final ThemisAnalysisModule pModule) {
+        /* Create the stats */
+<span class="nc" id="L93">        final ThemisStatsModule myStats = new ThemisStatsModule(pModule);</span>
+
+        /* Loop through the packages */
+<span class="nc bnc" id="L96" title="All 2 branches missed.">        for (ThemisAnalysisPackage myPackage : pModule.getPackages()) {</span>
+            /* Process the package */
+<span class="nc" id="L98">            myStats.addPackage(parsePackage(myPackage));</span>
+<span class="nc" id="L99">        }</span>
+
+        /* Return the moduleStats */
+<span class="nc" id="L102">        return myStats;</span>
+    }
+
+    /**
+     * parse a package.
+     *
+     * @param pPackage the package to parse
+     * @return the stats
+     */
+    public ThemisStatsPackage parsePackage(final ThemisAnalysisPackage pPackage) {
+        /* Create the stats */
+<span class="nc" id="L113">        final ThemisStatsPackage myStats = new ThemisStatsPackage(pPackage);</span>
+
+        /* Loop through the files */
+<span class="nc bnc" id="L116" title="All 2 branches missed.">        for (ThemisAnalysisFile myFile : pPackage.getFiles()) {</span>
+            /* Process the file */
+<span class="nc" id="L118">            myStats.addFile(parseFile(myStats, myFile));</span>
+<span class="nc" id="L119">        }</span>
+
+        /* Return the packageStats */
+<span class="nc" id="L122">        return myStats;</span>
+    }
+
+    /**
+     * parse a file.
+     *
+     * @param pPackage the owning package
+     * @param pFile    the file to parse
+     * @return the stats
+     */
+    public ThemisStatsFile parseFile(final ThemisStatsPackage pPackage,
+                                     final ThemisAnalysisFile pFile) {
+        /* Create the stats */
+<span class="nc" id="L135">        final ThemisStatsFile myStats = new ThemisStatsFile(pFile);</span>
+
+        /* process the container */
+<span class="nc" id="L138">        processContainer(myStats, pFile);</span>
+
+        /* Return the fileStats */
+<span class="nc" id="L141">        return myStats;</span>
+    }
+
+    /**
+     * parse a class.
+     *
+     * @param pOwner the owner
+     * @param pClass the class to parse
+     * @return the stats
+     */
+    public ThemisStatsClass parseClass(final ThemisStatsBase pOwner,
+                                       final ThemisAnalysisObject pClass) {
+        /* Create the stats */
+<span class="nc" id="L154">        final ThemisStatsClass myStats = new ThemisStatsClass(pClass);</span>
+
+        /* process the container */
+<span class="nc" id="L157">        processCachedItems(pOwner, myStats);</span>
+<span class="nc" id="L158">        processContainer(myStats, pClass);</span>
+
+        /* Return the classStats */
+<span class="nc" id="L161">        return myStats;</span>
+    }
+
+    /**
+     * parse a method.
+     *
+     * @param pOwner  the owner
+     * @param pMethod the method to parse
+     * @return the stats
+     */
+    public ThemisStatsMethod parseMethod(final ThemisStatsBase pOwner,
+                                         final ThemisAnalysisMethod pMethod) {
+        /* Create the stats */
+<span class="nc" id="L174">        final ThemisStatsMethod myStats = new ThemisStatsMethod(pMethod);</span>
+
+        /* process the container */
+<span class="nc" id="L177">        processCachedItems(pOwner, myStats);</span>
+<span class="nc" id="L178">        processContainer(myStats, pMethod);</span>
+
+        /* Return the classStats */
+<span class="nc" id="L181">        return myStats;</span>
+    }
+
+    /**
+     * process container.
+     *
+     * @param pOwner     the owner
+     * @param pContainer the container
+     */
+    public void processContainer(final ThemisStatsBase pOwner,
+                                 final ThemisAnalysisContainer pContainer) {
+        /* Loop through the contents */
+<span class="nc bnc" id="L193" title="All 2 branches missed.">        for (ThemisAnalysisElement myElement : pContainer.getContents()) {</span>
+            /* If this is an annotation */
+<span class="nc bnc" id="L195" title="All 2 branches missed.">            if (myElement instanceof ThemisAnalysisAnnotation myAnnotation) {</span>
+<span class="nc" id="L196">                processAnnotation(pOwner, myAnnotation, true);</span>
+
+                /* If this is an anonymous class */
+<span class="nc bnc" id="L199" title="All 2 branches missed.">            } else if (myElement instanceof ThemisAnalysisAnonClass myAnon) {</span>
+<span class="nc" id="L200">                processAnonClass(pOwner, myAnon);</span>
+
+                /* If this is a blank */
+<span class="nc bnc" id="L203" title="All 2 branches missed.">            } else if (myElement instanceof ThemisAnalysisBlank myBlank) {</span>
+<span class="nc" id="L204">                processBlank(pOwner, myBlank);</span>
+
+                /* If this is a block */
+<span class="nc bnc" id="L207" title="All 2 branches missed.">            } else if (myElement instanceof ThemisAnalysisBlock myBlock) {</span>
+<span class="nc" id="L208">                processBlock(pOwner, myBlock);</span>
+
+                /* If this is a case */
+<span class="nc bnc" id="L211" title="All 2 branches missed.">            } else if (myElement instanceof ThemisAnalysisCase myCase) {</span>
+<span class="nc" id="L212">                processCase(pOwner, myCase);</span>
+
+                /* If this is a class */
+<span class="nc bnc" id="L215" title="All 2 branches missed.">            } else if (myElement instanceof ThemisAnalysisClass myClass) {</span>
+<span class="nc" id="L216">                processClass(pOwner, myClass);</span>
+
+                /* If this is a comment */
+<span class="nc bnc" id="L219" title="All 2 branches missed.">            } else if (myElement instanceof ThemisAnalysisComment myComment) {</span>
+<span class="nc" id="L220">                processComment(pOwner, myComment, true);</span>
+
+                /* If this is a doWhile */
+<span class="nc bnc" id="L223" title="All 2 branches missed.">            } else if (myElement instanceof ThemisAnalysisDoWhile myDoWhile) {</span>
+<span class="nc" id="L224">                processDoWhile(pOwner, myDoWhile);</span>
+
+                /* If this is an embedded */
+<span class="nc bnc" id="L227" title="All 2 branches missed.">            } else if (myElement instanceof ThemisAnalysisEmbedded myEmbedded) {</span>
+<span class="nc" id="L228">                processEmbedded(pOwner, myEmbedded);</span>
+
+                /* If this is an enum */
+<span class="nc bnc" id="L231" title="All 2 branches missed.">            } else if (myElement instanceof ThemisAnalysisEnum myEnum) {</span>
+<span class="nc" id="L232">                processEnum(pOwner, myEnum);</span>
+
+                /* If this is a field */
+<span class="nc bnc" id="L235" title="All 2 branches missed.">            } else if (myElement instanceof ThemisAnalysisField myField) {</span>
+<span class="nc" id="L236">                processField(pOwner, myField);</span>
+
+                /* If this is a for */
+<span class="nc bnc" id="L239" title="All 2 branches missed.">            } else if (myElement instanceof ThemisAnalysisFor myFor) {</span>
+<span class="nc" id="L240">                processFor(pOwner, myFor);</span>
+
+                /* If this is an if */
+<span class="nc bnc" id="L243" title="All 2 branches missed.">            } else if (myElement instanceof ThemisAnalysisIf myIf) {</span>
+<span class="nc" id="L244">                processIf(pOwner, myIf);</span>
+
+                /* If this is an imports */
+<span class="nc bnc" id="L247" title="All 2 branches missed.">            } else if (myElement instanceof ThemisAnalysisImports myImports) {</span>
+<span class="nc" id="L248">                processImports(pOwner, myImports);</span>
+
+                /* If this is an interface */
+<span class="nc bnc" id="L251" title="All 2 branches missed.">            } else if (myElement instanceof ThemisAnalysisInterface myInterface) {</span>
+<span class="nc" id="L252">                processInterface(pOwner, myInterface);</span>
+
+                /* If this is a lambda */
+<span class="nc bnc" id="L255" title="All 2 branches missed.">            } else if (myElement instanceof ThemisAnalysisLambda myLambda) {</span>
+<span class="nc" id="L256">                processLambda(pOwner, myLambda);</span>
+
+                /* If this is a method */
+<span class="nc bnc" id="L259" title="All 2 branches missed.">            } else if (myElement instanceof ThemisAnalysisMethod myMethod) {</span>
+<span class="nc" id="L260">                processMethod(pOwner, myMethod);</span>
+
+                /* If this is a package */
+<span class="nc bnc" id="L263" title="All 2 branches missed.">            } else if (myElement instanceof ThemisAnalysisPackage) {</span>
+<span class="nc" id="L264">                processPackage(pOwner);</span>
+
+                /* If this is a statement */
+<span class="nc bnc" id="L267" title="All 2 branches missed.">            } else if (myElement instanceof ThemisAnalysisStatement myStatement) {</span>
+<span class="nc" id="L268">                processStatement(pOwner, myStatement);</span>
+
+                /* If this is a switch */
+<span class="nc bnc" id="L271" title="All 2 branches missed.">            } else if (myElement instanceof ThemisAnalysisSwitch mySwitch) {</span>
+<span class="nc" id="L272">                processSwitch(pOwner, mySwitch);</span>
+
+                /* If this is a try */
+<span class="nc bnc" id="L275" title="All 2 branches missed.">            } else if (myElement instanceof ThemisAnalysisTry myTry) {</span>
+<span class="nc" id="L276">                processTry(pOwner, myTry);</span>
+
+                /* If this is a while */
+<span class="nc bnc" id="L279" title="All 2 branches missed.">            } else if (myElement instanceof ThemisAnalysisWhile myWhile) {</span>
+<span class="nc" id="L280">                processWhile(pOwner, myWhile);</span>
+            }
+
+            /* Adjust the cached items */
+<span class="nc" id="L284">            adjustCachedItems(myElement);</span>
+<span class="nc" id="L285">        }</span>
+<span class="nc" id="L286">    }</span>
+
+    /**
+     * process annotation.
+     *
+     * @param pOwner      the owner
+     * @param pAnnotation the annotation
+     * @param pAddToStats addTo stats or remove from Stats?
+     */
+    private static void processAnnotation(final ThemisStatsBase pOwner,
+                                          final ThemisAnalysisAnnotation pAnnotation,
+                                          final boolean pAddToStats) {
+        /* Adjust statistics */
+<span class="nc bnc" id="L299" title="All 2 branches missed.">        final int myAdjust = pAddToStats</span>
+<span class="nc" id="L300">                ? pAnnotation.getNumLines()</span>
+<span class="nc" id="L301">                : -pAnnotation.getNumLines();</span>
+<span class="nc" id="L302">        adjustLinesOfCode(pOwner, myAdjust);</span>
+<span class="nc" id="L303">    }</span>
+
+    /**
+     * process anonymous class.
+     *
+     * @param pOwner the owner
+     * @param pAnon  the anonymous class
+     */
+    private void processAnonClass(final ThemisStatsBase pOwner,
+                                  final ThemisAnalysisAnonClass pAnon) {
+        /* Parse the class */
+<span class="nc" id="L314">        final ThemisStatsClass myClass = parseClass(pOwner, pAnon);</span>
+
+        /* Adjust statistics */
+<span class="nc" id="L317">        pOwner.incrementStat(ThemisStat.NCL);</span>
+
+        /* Adjust the stats and add to owner */
+<span class="nc" id="L320">        adjustLinesOfCode(myClass, pAnon.getNumLines());</span>
+<span class="nc" id="L321">        pOwner.addClass(myClass);</span>
+<span class="nc" id="L322">    }</span>
+
+    /**
+     * process blank.
+     *
+     * @param pOwner the owner
+     * @param pBlank the blank
+     */
+    private static void processBlank(final ThemisStatsBase pOwner,
+                                     final ThemisAnalysisBlank pBlank) {
+        /* Adjust statistics */
+<span class="nc" id="L333">        final int myBlanks = pBlank.getNumLines();</span>
+<span class="nc" id="L334">        pOwner.adjustStat(ThemisStat.LOC, myBlanks);</span>
+<span class="nc" id="L335">    }</span>
+
+    /**
+     * process block.
+     *
+     * @param pOwner the owner
+     * @param pBlock the block
+     */
+    private void processBlock(final ThemisStatsBase pOwner,
+                              final ThemisAnalysisBlock pBlock) {
+        /* process the container */
+<span class="nc" id="L346">        processContainer(pOwner, pBlock);</span>
+
+        /* Adjust the owner stats */
+<span class="nc" id="L349">        adjustLinesOfCode(pOwner, pBlock.getNumLines());</span>
+<span class="nc bnc" id="L350" title="All 2 branches missed.">        if (pBlock.isSynchronized()) {</span>
+<span class="nc" id="L351">            adjustNumberOfStatements(pOwner, 1);</span>
+        }
+<span class="nc" id="L353">    }</span>
+
+    /**
+     * process class.
+     *
+     * @param pOwner the owner
+     * @param pClass the class
+     */
+    private void processClass(final ThemisStatsBase pOwner,
+                              final ThemisAnalysisClass pClass) {
+        /* Parse the class */
+<span class="nc" id="L364">        final ThemisStatsClass myClass = parseClass(pOwner, pClass);</span>
+
+        /* Adjust statistics */
+<span class="nc" id="L367">        pOwner.incrementStat(ThemisStat.NCL);</span>
+
+        /* Adjust the stats and add to owner */
+<span class="nc" id="L370">        adjustLinesOfCode(myClass, pClass.getNumLines());</span>
+<span class="nc" id="L371">        adjustNumberOfStatements(pOwner, 1);</span>
+<span class="nc" id="L372">        pOwner.addClass(myClass);</span>
+<span class="nc" id="L373">    }</span>
+
+    /**
+     * process comment.
+     *
+     * @param pOwner      the owner
+     * @param pComment    the comment
+     * @param pAddToStats addTo stats or remove from Stats?
+     */
+    private static void processComment(final ThemisStatsBase pOwner,
+                                       final ThemisAnalysisComment pComment,
+                                       final boolean pAddToStats) {
+        /* Adjust the stats */
+<span class="nc bnc" id="L386" title="All 2 branches missed.">        final int myAdjust = pAddToStats</span>
+<span class="nc" id="L387">                ? pComment.getNumLines()</span>
+<span class="nc" id="L388">                : -pComment.getNumLines();</span>
+<span class="nc" id="L389">        pOwner.adjustStat(ThemisStat.LOC, myAdjust);</span>
+<span class="nc" id="L390">        pOwner.adjustStat(ThemisStat.CLOC, myAdjust);</span>
+<span class="nc bnc" id="L391" title="All 2 branches missed.">        if (pComment.isJavaDoc()) {</span>
+<span class="nc" id="L392">            pOwner.adjustStat(ThemisStat.DLOC, myAdjust);</span>
+        }
+<span class="nc" id="L394">    }</span>
+
+    /**
+     * process doWhile.
+     *
+     * @param pOwner   the owner
+     * @param pDoWhile the doWhile
+     */
+    private void processDoWhile(final ThemisStatsBase pOwner,
+                                final ThemisAnalysisDoWhile pDoWhile) {
+        /* process the container */
+<span class="nc" id="L405">        processContainer(pOwner, pDoWhile);</span>
+
+        /* Adjust the owner stats */
+<span class="nc" id="L408">        adjustLinesOfCode(pOwner, pDoWhile.getNumLines());</span>
+<span class="nc" id="L409">        adjustNumberOfStatements(pOwner, 1);</span>
+<span class="nc" id="L410">    }</span>
+
+    /**
+     * process embedded element.
+     *
+     * @param pOwner    the owner
+     * @param pEmbedded the embedded
+     */
+    private void processEmbedded(final ThemisStatsBase pOwner,
+                                 final ThemisAnalysisEmbedded pEmbedded) {
+        /* process the container */
+<span class="nc" id="L421">        processContainer(pOwner, pEmbedded);</span>
+
+        /* Adjust statistics */
+<span class="nc" id="L424">        adjustNumberOfStatements(pOwner, 1);</span>
+<span class="nc" id="L425">        adjustLinesOfCode(pOwner, pEmbedded.getNumLines());</span>
+<span class="nc" id="L426">    }</span>
+
+    /**
+     * process enum.
+     *
+     * @param pOwner the owner
+     * @param pEnum  the enum
+     */
+    private void processEnum(final ThemisStatsBase pOwner,
+                             final ThemisAnalysisEnum pEnum) {
+        /* Parse the enum */
+<span class="nc" id="L437">        final ThemisStatsClass myEnum = parseClass(pOwner, pEnum);</span>
+
+        /* Adjust owner statistics */
+<span class="nc" id="L440">        pOwner.incrementStat(ThemisStat.NEN);</span>
+
+        /* Adjust the stats and add to owner */
+<span class="nc" id="L443">        adjustLinesOfCode(myEnum, pEnum.getNumLines());</span>
+<span class="nc" id="L444">        adjustNumberOfAttributes(myEnum, pEnum.getNumEnums());</span>
+<span class="nc" id="L445">        adjustNumberOfStatements(pOwner, 1);</span>
+<span class="nc" id="L446">        pOwner.addClass(myEnum);</span>
+<span class="nc" id="L447">    }</span>
+
+    /**
+     * process field.
+     *
+     * @param pOwner the owner
+     * @param pField the field
+     */
+    private static void processField(final ThemisStatsBase pOwner,
+                                     final ThemisAnalysisField pField) {
+        /* Adjust the stats */
+<span class="nc" id="L458">        adjustLinesOfCode(pOwner, pField.getNumLines());</span>
+
+        /* Counts as a statement if there is an initializer */
+<span class="nc bnc" id="L461" title="All 2 branches missed.">        if (pField.statementIterator().hasNext()) {</span>
+<span class="nc" id="L462">            adjustNumberOfStatements(pOwner, 1);</span>
+        }
+
+        /* Attributes are only relevant to classes */
+<span class="nc bnc" id="L466" title="All 2 branches missed.">        if (pOwner instanceof ThemisStatsClass) {</span>
+<span class="nc" id="L467">            adjustNumberOfAttributes(pOwner, 1);</span>
+        }
+<span class="nc" id="L469">    }</span>
+
+    /**
+     * process for.
+     *
+     * @param pOwner the owner
+     * @param pFor   the for
+     */
+    private void processFor(final ThemisStatsBase pOwner,
+                            final ThemisAnalysisFor pFor) {
+        /* process the container */
+<span class="nc" id="L480">        processContainer(pOwner, pFor);</span>
+
+        /* Adjust the owner stats */
+<span class="nc" id="L483">        adjustLinesOfCode(pOwner, pFor.getNumLines());</span>
+<span class="nc" id="L484">        adjustNumberOfStatements(pOwner, 1);</span>
+<span class="nc" id="L485">    }</span>
+
+    /**
+     * process if.
+     *
+     * @param pOwner the owner
+     * @param pIf    the if
+     */
+    private void processIf(final ThemisStatsBase pOwner,
+                           final ThemisAnalysisIf pIf) {
+        /* process the container */
+<span class="nc" id="L496">        processContainer(pOwner, pIf);</span>
+
+        /* Adjust the owner stats */
+<span class="nc" id="L499">        adjustLinesOfCode(pOwner, pIf.getNumLines());</span>
+<span class="nc" id="L500">        adjustNumberOfStatements(pOwner, 1);</span>
+
+        /* Handle else */
+<span class="nc" id="L503">        final ThemisAnalysisElse myElse = pIf.getElse();</span>
+<span class="nc bnc" id="L504" title="All 2 branches missed.">        if (myElse != null) {</span>
+<span class="nc" id="L505">            processElse(pOwner, myElse);</span>
+        }
+<span class="nc" id="L507">    }</span>
+
+    /**
+     * process else.
+     *
+     * @param pOwner the owner
+     * @param pElse  the else
+     */
+    private void processElse(final ThemisStatsBase pOwner,
+                             final ThemisAnalysisElse pElse) {
+        /* process the container */
+<span class="nc" id="L518">        processContainer(pOwner, pElse);</span>
+
+        /* Adjust the owner stats */
+<span class="nc" id="L521">        adjustLinesOfCode(pOwner, pElse.getNumLines());</span>
+<span class="nc" id="L522">        adjustNumberOfStatements(pOwner, 1);</span>
+
+        /* Handle additional else */
+<span class="nc" id="L525">        final ThemisAnalysisElse myElse = pElse.getElse();</span>
+<span class="nc bnc" id="L526" title="All 2 branches missed.">        if (myElse != null) {</span>
+<span class="nc" id="L527">            processElse(pOwner, myElse);</span>
+        }
+<span class="nc" id="L529">    }</span>
+
+    /**
+     * process imports.
+     *
+     * @param pOwner   the owner
+     * @param pImports the imports
+     */
+    private static void processImports(final ThemisStatsBase pOwner,
+                                       final ThemisAnalysisImports pImports) {
+        /* Adjust the stats */
+<span class="nc" id="L540">        adjustLinesOfCode(pOwner, pImports.getNumLines());</span>
+<span class="nc" id="L541">        adjustNumberOfStatements(pOwner, pImports.getNumLines());</span>
+<span class="nc" id="L542">    }</span>
+
+    /**
+     * process interface.
+     *
+     * @param pOwner     the owner
+     * @param pInterface the interface
+     */
+    private void processInterface(final ThemisStatsBase pOwner,
+                                  final ThemisAnalysisInterface pInterface) {
+        /* Parse the interface */
+<span class="nc" id="L553">        final ThemisStatsClass myIFace = parseClass(pOwner, pInterface);</span>
+
+        /* Adjust owner statistics */
+<span class="nc" id="L556">        pOwner.incrementStat(ThemisStat.NIN);</span>
+
+        /* Adjust the stats and add to owner */
+<span class="nc" id="L559">        adjustLinesOfCode(myIFace, pInterface.getNumLines());</span>
+<span class="nc" id="L560">        adjustNumberOfStatements(pOwner, 1);</span>
+<span class="nc" id="L561">        pOwner.addClass(myIFace);</span>
+<span class="nc" id="L562">    }</span>
+
+    /**
+     * process lambda.
+     *
+     * @param pOwner  the owner
+     * @param pLambda the lambda
+     */
+    private void processLambda(final ThemisStatsBase pOwner,
+                               final ThemisAnalysisLambda pLambda) {
+        /* process the container */
+<span class="nc" id="L573">        processContainer(pOwner, pLambda);</span>
+
+        /* Adjust the owner stats */
+<span class="nc" id="L576">        adjustLinesOfCode(pOwner, pLambda.getNumLines());</span>
+<span class="nc" id="L577">    }</span>
+
+    /**
+     * process method.
+     *
+     * @param pOwner  the owner
+     * @param pMethod the method
+     */
+    private void processMethod(final ThemisStatsBase pOwner,
+                               final ThemisAnalysisMethod pMethod) {
+        /*  Parse the method */
+<span class="nc" id="L588">        final ThemisStatsMethod myMethod = parseMethod(pOwner, pMethod);</span>
+
+        /* Adjust owner statistics */
+<span class="nc" id="L591">        pOwner.incrementStat(ThemisStat.NM);</span>
+
+        /* Adjust the lines of code and add to owner */
+<span class="nc" id="L594">        adjustLinesOfCode(myMethod, pMethod.getNumLines());</span>
+<span class="nc" id="L595">        adjustNumberOfStatements(pOwner, 1);</span>
+<span class="nc" id="L596">        pOwner.addMethod(myMethod);</span>
+<span class="nc" id="L597">    }</span>
+
+    /**
+     * process package.
+     *
+     * @param pOwner the owner
+     */
+    private static void processPackage(final ThemisStatsBase pOwner) {
+        /* Adjust the stats */
+<span class="nc" id="L606">        adjustLinesOfCode(pOwner, 1);</span>
+<span class="nc" id="L607">    }</span>
+
+    /**
+     * process statement.
+     *
+     * @param pOwner     the owner
+     * @param pStatement the statement
+     */
+    private static void processStatement(final ThemisStatsBase pOwner,
+                                         final ThemisAnalysisStatement pStatement) {
+        /* Adjust the owner stats */
+<span class="nc" id="L618">        adjustLinesOfCode(pOwner, pStatement.getNumLines());</span>
+<span class="nc" id="L619">        adjustNumberOfStatements(pOwner, 1);</span>
+<span class="nc" id="L620">    }</span>
+
+    /**
+     * process switch.
+     *
+     * @param pOwner  the owner
+     * @param pSwitch the switch
+     */
+    private void processSwitch(final ThemisStatsBase pOwner,
+                               final ThemisAnalysisSwitch pSwitch) {
+        /* process the container */
+<span class="nc" id="L631">        processContainer(pOwner, pSwitch);</span>
+
+        /* Adjust the owner stats */
+<span class="nc" id="L634">        adjustLinesOfCode(pOwner, pSwitch.getNumLines());</span>
+<span class="nc" id="L635">        adjustNumberOfStatements(pOwner, 1);</span>
+<span class="nc" id="L636">    }</span>
+
+    /**
+     * process case.
+     *
+     * @param pOwner the owner
+     * @param pCase  the case
+     */
+    private void processCase(final ThemisStatsBase pOwner,
+                             final ThemisAnalysisCase pCase) {
+        /* process the container */
+<span class="nc" id="L647">        processContainer(pOwner, pCase);</span>
+
+        /* Adjust the owner stats */
+<span class="nc" id="L650">        adjustLinesOfCode(pOwner, pCase.getNumLines());</span>
+<span class="nc" id="L651">    }</span>
+
+    /**
+     * process try.
+     *
+     * @param pOwner the owner
+     * @param pTry   the try
+     */
+    private void processTry(final ThemisStatsBase pOwner,
+                            final ThemisAnalysisTry pTry) {
+        /* process the container */
+<span class="nc" id="L662">        processContainer(pOwner, pTry);</span>
+
+        /* Adjust the owner stats */
+<span class="nc" id="L665">        adjustLinesOfCode(pOwner, pTry.getNumLines());</span>
+
+        /* Handle catch */
+<span class="nc" id="L668">        final ThemisAnalysisCatch myCatch = pTry.getCatch();</span>
+<span class="nc bnc" id="L669" title="All 2 branches missed.">        if (myCatch != null) {</span>
+<span class="nc" id="L670">            processCatch(pOwner, myCatch);</span>
+        }
+
+        /* Handle finally */
+<span class="nc" id="L674">        final ThemisAnalysisFinally myFinally = pTry.getFinally();</span>
+<span class="nc bnc" id="L675" title="All 2 branches missed.">        if (myFinally != null) {</span>
+<span class="nc" id="L676">            processFinally(pOwner, myFinally);</span>
+        }
+<span class="nc" id="L678">    }</span>
+
+    /**
+     * process catch.
+     *
+     * @param pOwner the owner
+     * @param pCatch the catch
+     */
+    private void processCatch(final ThemisStatsBase pOwner,
+                              final ThemisAnalysisCatch pCatch) {
+        /* process the container */
+<span class="nc" id="L689">        processContainer(pOwner, pCatch);</span>
+
+        /* Adjust the owner stats */
+<span class="nc" id="L692">        adjustLinesOfCode(pOwner, pCatch.getNumLines());</span>
+<span class="nc" id="L693">        adjustNumberOfStatements(pOwner, 1);</span>
+
+        /* Handle additional catch */
+<span class="nc" id="L696">        final ThemisAnalysisCatch myCatch = pCatch.getCatch();</span>
+<span class="nc bnc" id="L697" title="All 2 branches missed.">        if (myCatch != null) {</span>
+<span class="nc" id="L698">            processCatch(pOwner, myCatch);</span>
+        }
+<span class="nc" id="L700">    }</span>
+
+    /**
+     * process finally.
+     *
+     * @param pOwner   the owner
+     * @param pFinally the finally
+     */
+    private void processFinally(final ThemisStatsBase pOwner,
+                                final ThemisAnalysisFinally pFinally) {
+        /* process the container */
+<span class="nc" id="L711">        processContainer(pOwner, pFinally);</span>
+
+        /* Adjust the owner stats */
+<span class="nc" id="L714">        adjustLinesOfCode(pOwner, pFinally.getNumLines());</span>
+<span class="nc" id="L715">        adjustNumberOfStatements(pOwner, 1);</span>
+<span class="nc" id="L716">    }</span>
+
+    /**
+     * process while.
+     *
+     * @param pOwner the owner
+     * @param pWhile the while
+     */
+    private void processWhile(final ThemisStatsBase pOwner,
+                              final ThemisAnalysisWhile pWhile) {
+        /* process the container */
+<span class="nc" id="L727">        processContainer(pOwner, pWhile);</span>
+
+        /* Adjust the owner stats */
+<span class="nc" id="L730">        adjustLinesOfCode(pOwner, pWhile.getNumLines());</span>
+<span class="nc" id="L731">        adjustNumberOfStatements(pOwner, 1);</span>
+<span class="nc" id="L732">    }</span>
+
+    /**
+     * adjust lines of Code.
+     *
+     * @param pOwner the owner
+     * @param pCount the line count
+     */
+    private static void adjustLinesOfCode(final ThemisStatsBase pOwner,
+                                          final int pCount) {
+        /* Adjust the stats */
+<span class="nc" id="L743">        pOwner.adjustStat(ThemisStat.LOC, pCount);</span>
+<span class="nc" id="L744">        pOwner.adjustStat(ThemisStat.LLOC, pCount);</span>
+<span class="nc" id="L745">    }</span>
+
+    /**
+     * adjust number of statements.
+     *
+     * @param pOwner the owner
+     * @param pCount the statement count
+     */
+    private static void adjustNumberOfStatements(final ThemisStatsBase pOwner,
+                                                 final int pCount) {
+        /* Adjust the stats */
+<span class="nc" id="L756">        pOwner.adjustStat(ThemisStat.NOS, pCount);</span>
+<span class="nc" id="L757">    }</span>
+
+    /**
+     * adjust number of attributes.
+     *
+     * @param pOwner the owner
+     * @param pCount the attribute count
+     */
+    private static void adjustNumberOfAttributes(final ThemisStatsBase pOwner,
+                                                 final int pCount) {
+        /* Adjust the stats */
+<span class="nc" id="L768">        pOwner.adjustStat(ThemisStat.NA, pCount);</span>
+<span class="nc" id="L769">        adjustNumberOfStatements(pOwner, pCount);</span>
+<span class="nc" id="L770">    }</span>
+
+    /**
+     * adjust cached items.
+     *
+     * @param pElement the item
+     */
+    private void adjustCachedItems(final ThemisAnalysisElement pElement) {
+        /* Adjust for Annotation */
+<span class="nc bnc" id="L779" title="All 2 branches missed.">        if (pElement instanceof ThemisAnalysisAnnotation myAnnotation) {</span>
+<span class="nc" id="L780">            theCachedAnnotation = myAnnotation;</span>
+
+            /* Adjust for documentation comment */
+<span class="nc bnc" id="L783" title="All 2 branches missed.">        } else if (pElement instanceof ThemisAnalysisComment myComment</span>
+<span class="nc bnc" id="L784" title="All 2 branches missed.">                &amp;&amp; myComment.isJavaDoc()) {</span>
+<span class="nc" id="L785">            theCachedDocComment = myComment;</span>
+<span class="nc" id="L786">            theCachedAnnotation = null;</span>
+
+            /* else reset cache */
+        } else {
+<span class="nc" id="L790">            resetCache();</span>
+        }
+<span class="nc" id="L792">    }</span>
+
+    /**
+     * process cached items.
+     *
+     * @param pParent the parent
+     * @param pOwner  the stats owner
+     */
+    private void processCachedItems(final ThemisStatsBase pParent,
+                                    final ThemisStatsBase pOwner) {
+        /* If we have an annotation */
+<span class="nc bnc" id="L803" title="All 2 branches missed.">        if (theCachedAnnotation != null) {</span>
+            /* transfer stats from parent */
+<span class="nc" id="L805">            processAnnotation(pParent, theCachedAnnotation, false);</span>
+<span class="nc" id="L806">            processAnnotation(pOwner, theCachedAnnotation, true);</span>
+        }
+
+        /* If we have a documentation comment */
+<span class="nc bnc" id="L810" title="All 2 branches missed.">        if (theCachedDocComment != null) {</span>
+            /* transfer stats from parent */
+<span class="nc" id="L812">            processComment(pParent, theCachedDocComment, false);</span>
+<span class="nc" id="L813">            processComment(pOwner, theCachedDocComment, true);</span>
+        }
+
+        /* reset cache */
+<span class="nc" id="L817">        resetCache();</span>
+<span class="nc" id="L818">    }</span>
+
+    /**
+     * resetCache.
+     */
+    private void resetCache() {
+<span class="nc" id="L824">        theCachedDocComment = null;</span>
+<span class="nc" id="L825">        theCachedAnnotation = null;</span>
+<span class="nc" id="L826">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

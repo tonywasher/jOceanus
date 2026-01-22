@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseTransCategoryType.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.moneywise.data.statics</a> &gt; <span class="el_source">MoneyWiseTransCategoryType.java</span></div><h1>MoneyWiseTransCategoryType.java</h1><pre class="source lang-java linenums">/*
+ * MoneyWise: Finance Application
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.moneywise.data.statics;
+
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.metis.data.MetisDataResource;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
+import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataSet;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValues;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusStaticDataClass;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusStaticDataItem;
+
+/**
+ * TransactionCategoryType data type.
+ *
+ * @author Tony Washer
+ */
+public class MoneyWiseTransCategoryType
+        extends PrometheusStaticDataItem {
+    /**
+     * Object name.
+     */
+<span class="fc" id="L39">    public static final String OBJECT_NAME = MoneyWiseStaticDataType.TRANSTYPE.getItemName();</span>
+
+    /**
+     * List name.
+     */
+<span class="fc" id="L44">    public static final String LIST_NAME = MoneyWiseStaticDataType.TRANSTYPE.getListName();</span>
+
+    /**
+     * Report fields.
+     */
+<span class="fc" id="L49">    private static final MetisFieldSet&lt;MoneyWiseTransCategoryType&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseTransCategoryType.class);</span>
+
+    /**
+     * Copy Constructor.
+     *
+     * @param pList    The list to associate the Category Type with
+     * @param pCatType The Category Type to copy
+     */
+    protected MoneyWiseTransCategoryType(final MoneyWiseTransCategoryTypeList pList,
+                                         final MoneyWiseTransCategoryType pCatType) {
+<span class="fc" id="L59">        super(pList, pCatType);</span>
+<span class="fc" id="L60">    }</span>
+
+    /**
+     * Basic Constructor.
+     *
+     * @param pList The list to associate the Category Type with
+     * @param pName Name of Category Type
+     * @throws OceanusException on error
+     */
+    private MoneyWiseTransCategoryType(final MoneyWiseTransCategoryTypeList pList,
+                                       final String pName) throws OceanusException {
+<span class="fc" id="L71">        super(pList, pName);</span>
+<span class="fc" id="L72">    }</span>
+
+    /**
+     * Basic constructor.
+     *
+     * @param pList  The list to associate the Category Type with
+     * @param pClass Class of Category Type
+     * @throws OceanusException on error
+     */
+    private MoneyWiseTransCategoryType(final MoneyWiseTransCategoryTypeList pList,
+                                       final MoneyWiseTransCategoryClass pClass) throws OceanusException {
+<span class="nc" id="L83">        super(pList, pClass);</span>
+<span class="nc" id="L84">    }</span>
+
+    /**
+     * Values constructor.
+     *
+     * @param pList   The list to associate the item with
+     * @param pValues the values
+     * @throws OceanusException on error
+     */
+    private MoneyWiseTransCategoryType(final MoneyWiseTransCategoryTypeList pList,
+                                       final PrometheusDataValues pValues) throws OceanusException {
+<span class="fc" id="L95">        super(pList, pValues);</span>
+<span class="fc" id="L96">    }</span>
+
+    @Override
+    public MetisFieldSetDef getDataFieldSet() {
+<span class="fc" id="L100">        return FIELD_DEFS;</span>
+    }
+
+    /**
+     * Return the Category class of the Category Type.
+     *
+     * @return the class
+     */
+    public MoneyWiseTransCategoryClass getCategoryClass() {
+<span class="fc" id="L109">        return (MoneyWiseTransCategoryClass) super.getStaticClass();</span>
+    }
+
+    @Override
+    public boolean isActive() {
+<span class="nc bnc" id="L114" title="All 4 branches missed.">        return super.isActive() || getCategoryClass().isHiddenType();</span>
+    }
+
+    @Override
+    public MoneyWiseTransCategoryType getBase() {
+<span class="fc" id="L119">        return (MoneyWiseTransCategoryType) super.getBase();</span>
+    }
+
+    @Override
+    public MoneyWiseTransCategoryTypeList getList() {
+<span class="fc" id="L124">        return (MoneyWiseTransCategoryTypeList) super.getList();</span>
+    }
+
+    /**
+     * Represents a list of {@link MoneyWiseTransCategoryType} objects.
+     */
+    public static class MoneyWiseTransCategoryTypeList
+            extends PrometheusStaticList&lt;MoneyWiseTransCategoryType&gt; {
+        /**
+         * Report fields.
+         */
+<span class="fc" id="L135">        private static final MetisFieldSet&lt;MoneyWiseTransCategoryTypeList&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseTransCategoryTypeList.class);</span>
+
+        /**
+         * Construct an empty CORE category type list.
+         *
+         * @param pData the DataSet for the list
+         */
+        public MoneyWiseTransCategoryTypeList(final PrometheusDataSet pData) {
+<span class="fc" id="L143">            super(MoneyWiseTransCategoryType.class, pData, MoneyWiseStaticDataType.TRANSTYPE, PrometheusListStyle.CORE);</span>
+<span class="fc" id="L144">        }</span>
+
+        /**
+         * Constructor for a cloned List.
+         *
+         * @param pSource the source List
+         */
+        private MoneyWiseTransCategoryTypeList(final MoneyWiseTransCategoryTypeList pSource) {
+<span class="fc" id="L152">            super(pSource);</span>
+<span class="fc" id="L153">        }</span>
+
+        @Override
+        public MetisFieldSet&lt;MoneyWiseTransCategoryTypeList&gt; getDataFieldSet() {
+<span class="nc" id="L157">            return FIELD_DEFS;</span>
+        }
+
+        @Override
+        public String listName() {
+<span class="fc" id="L162">            return LIST_NAME;</span>
+        }
+
+        @Override
+        public MetisFieldSetDef getItemFields() {
+<span class="fc" id="L167">            return MoneyWiseTransCategoryType.FIELD_DEFS;</span>
+        }
+
+        @Override
+        protected Class&lt;MoneyWiseTransCategoryClass&gt; getEnumClass() {
+<span class="fc" id="L172">            return MoneyWiseTransCategoryClass.class;</span>
+        }
+
+        @Override
+        protected MoneyWiseTransCategoryTypeList getEmptyList(final PrometheusListStyle pStyle) {
+<span class="fc" id="L177">            final MoneyWiseTransCategoryTypeList myList = new MoneyWiseTransCategoryTypeList(this);</span>
+<span class="fc" id="L178">            myList.setStyle(pStyle);</span>
+<span class="fc" id="L179">            return myList;</span>
+        }
+
+        /**
+         * Add a new item to the list.
+         *
+         * @param pItem item to be added
+         * @return the newly added item
+         */
+        @Override
+        public MoneyWiseTransCategoryType addCopyItem(final PrometheusDataItem pItem) {
+            /* Can only clone a TransactionCategoryType */
+<span class="pc bpc" id="L191" title="1 of 2 branches missed.">            if (!(pItem instanceof MoneyWiseTransCategoryType)) {</span>
+<span class="nc" id="L192">                throw new UnsupportedOperationException();</span>
+            }
+
+<span class="fc" id="L195">            final MoneyWiseTransCategoryType myType = new MoneyWiseTransCategoryType(this, (MoneyWiseTransCategoryType) pItem);</span>
+<span class="fc" id="L196">            add(myType);</span>
+<span class="fc" id="L197">            return myType;</span>
+        }
+
+        /**
+         * Create a new empty element in the edit list (null-operation).
+         *
+         * @return the newly added item
+         */
+        @Override
+        public MoneyWiseTransCategoryType addNewItem() {
+<span class="nc" id="L207">            throw new UnsupportedOperationException();</span>
+        }
+
+        /**
+         * Obtain the type of the item.
+         *
+         * @return the type of the item
+         */
+        public String itemType() {
+<span class="nc" id="L216">            return LIST_NAME;</span>
+        }
+
+        /**
+         * Add a TransactionCategoryType.
+         *
+         * @param pCategoryType the Name of the category type
+         * @return the new type
+         * @throws OceanusException on error
+         */
+        public MoneyWiseTransCategoryType addBasicItem(final String pCategoryType) throws OceanusException {
+            /* Create a new Category Type */
+<span class="fc" id="L228">            final MoneyWiseTransCategoryType myCatType = new MoneyWiseTransCategoryType(this, pCategoryType);</span>
+
+            /* Check that this CategoryTypeId has not been previously added */
+<span class="pc bpc" id="L231" title="1 of 2 branches missed.">            if (!isIdUnique(myCatType.getIndexedId())) {</span>
+<span class="nc" id="L232">                myCatType.addError(ERROR_DUPLICATE, MetisDataResource.DATA_ID);</span>
+<span class="nc" id="L233">                throw new MoneyWiseDataException(myCatType, ERROR_VALIDATION);</span>
+            }
+
+            /* Add the Category Type to the list */
+<span class="fc" id="L237">            add(myCatType);</span>
+<span class="fc" id="L238">            return myCatType;</span>
+        }
+
+        @Override
+        public MoneyWiseTransCategoryType addValuesItem(final PrometheusDataValues pValues) throws OceanusException {
+            /* Create the type */
+<span class="fc" id="L244">            final MoneyWiseTransCategoryType myType = new MoneyWiseTransCategoryType(this, pValues);</span>
+
+            /* Check that this TypeId has not been previously added */
+<span class="pc bpc" id="L247" title="1 of 2 branches missed.">            if (!isIdUnique(myType.getIndexedId())) {</span>
+<span class="nc" id="L248">                myType.addError(ERROR_DUPLICATE, MetisDataResource.DATA_ID);</span>
+<span class="nc" id="L249">                throw new MoneyWiseDataException(myType, ERROR_VALIDATION);</span>
+            }
+
+            /* Add to the list */
+<span class="fc" id="L253">            add(myType);</span>
+
+            /* Return it */
+<span class="fc" id="L256">            return myType;</span>
+        }
+
+        @Override
+        protected MoneyWiseTransCategoryType newItem(final PrometheusStaticDataClass pClass) throws OceanusException {
+            /* Create the type */
+<span class="nc" id="L262">            final MoneyWiseTransCategoryType myType = new MoneyWiseTransCategoryType(this, (MoneyWiseTransCategoryClass) pClass);</span>
+
+            /* Check that this TypeId has not been previously added */
+<span class="nc bnc" id="L265" title="All 2 branches missed.">            if (!isIdUnique(myType.getIndexedId())) {</span>
+<span class="nc" id="L266">                myType.addError(ERROR_DUPLICATE, MetisDataResource.DATA_ID);</span>
+<span class="nc" id="L267">                throw new MoneyWiseDataException(myType, ERROR_VALIDATION);</span>
+            }
+
+            /* Add to the list */
+<span class="nc" id="L271">            add(myType);</span>
+
+            /* Return it */
+<span class="nc" id="L274">            return myType;</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

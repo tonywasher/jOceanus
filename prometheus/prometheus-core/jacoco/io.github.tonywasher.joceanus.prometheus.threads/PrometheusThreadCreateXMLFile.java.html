@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PrometheusThreadCreateXMLFile.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Prometheus Core Application Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.prometheus.threads</a> &gt; <span class="el_source">PrometheusThreadCreateXMLFile.java</span></div><h1>PrometheusThreadCreateXMLFile.java</h1><pre class="source lang-java linenums">/*
+ * Prometheus: Application Framework
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.prometheus.threads;
+
+import io.github.tonywasher.joceanus.gordianknot.util.GordianUtilities;
+import io.github.tonywasher.joceanus.metis.preference.MetisPreferenceManager;
+import io.github.tonywasher.joceanus.metis.toolkit.MetisToolkit;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataSet;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValuesFormatter;
+import io.github.tonywasher.joceanus.prometheus.exc.PrometheusDataException;
+import io.github.tonywasher.joceanus.prometheus.preference.PrometheusBackup.PrometheusBackupPreferenceKey;
+import io.github.tonywasher.joceanus.prometheus.preference.PrometheusBackup.PrometheusBackupPreferences;
+import io.github.tonywasher.joceanus.prometheus.security.PrometheusSecurityPasswordManager;
+import io.github.tonywasher.joceanus.prometheus.toolkit.PrometheusToolkit;
+import io.github.tonywasher.joceanus.prometheus.views.PrometheusDataControl;
+import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThread;
+import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadManager;
+
+import java.io.File;
+
+/**
+ * LoaderThread extension to create an XML backup.
+ */
+public class PrometheusThreadCreateXMLFile
+        implements TethysUIThread&lt;Void&gt; {
+    /**
+     * Buffer length.
+     */
+    private static final int BUFFER_LEN = 100;
+
+    /**
+     * Number 10.
+     */
+    private static final int TEN = 10;
+
+    /**
+     * File indicator.
+     */
+    private static final String SUFFIX_FILE = &quot;XML&quot;;
+
+    /**
+     * Data Control.
+     */
+    private final PrometheusDataControl theControl;
+
+    /**
+     * Is this a Secure backup?
+     */
+    private final boolean isSecure;
+
+    /**
+     * Constructor (Event Thread).
+     *
+     * @param pControl data control
+     * @param pSecure  is this a secure backup
+     */
+    public PrometheusThreadCreateXMLFile(final PrometheusDataControl pControl,
+<span class="nc" id="L74">                                         final boolean pSecure) {</span>
+<span class="nc" id="L75">        isSecure = pSecure;</span>
+<span class="nc" id="L76">        theControl = pControl;</span>
+<span class="nc" id="L77">    }</span>
+
+    @Override
+    public String getTaskName() {
+<span class="nc bnc" id="L81" title="All 2 branches missed.">        return isSecure</span>
+<span class="nc" id="L82">                ? PrometheusThreadId.CREATEXML.toString()</span>
+<span class="nc" id="L83">                : PrometheusThreadId.CREATEXTRACT.toString();</span>
+    }
+
+    @Override
+    public Void performTask(final TethysUIThreadManager pManager) throws OceanusException {
+        /* Access the thread manager */
+<span class="nc" id="L89">        final PrometheusToolkit myPromToolkit = (PrometheusToolkit) pManager.getThreadData();</span>
+<span class="nc" id="L90">        final PrometheusSecurityPasswordManager myPasswordMgr = myPromToolkit.getPasswordManager();</span>
+<span class="nc" id="L91">        boolean doDelete = false;</span>
+<span class="nc" id="L92">        File myFile = null;</span>
+
+        /* Catch Exceptions */
+        try {
+            /* Initialise the status window */
+<span class="nc" id="L97">            pManager.initTask(getTaskName());</span>
+
+            /* Access the Backup preferences */
+<span class="nc" id="L100">            final MetisPreferenceManager myMgr = theControl.getPreferenceManager();</span>
+<span class="nc" id="L101">            final PrometheusBackupPreferences myProperties = myMgr.getPreferenceSet(PrometheusBackupPreferences.class);</span>
+
+            /* Determine the archive name */
+<span class="nc" id="L104">            final String myBackupDir = myProperties.getStringValue(PrometheusBackupPreferenceKey.BACKUPDIR);</span>
+<span class="nc" id="L105">            final String myPrefix = myProperties.getStringValue(PrometheusBackupPreferenceKey.BACKUPPFIX);</span>
+<span class="nc" id="L106">            final boolean doTimeStamp = myProperties.getBooleanValue(PrometheusBackupPreferenceKey.BACKUPTIME);</span>
+
+            /* Create the name of the file */
+<span class="nc" id="L109">            final StringBuilder myName = new StringBuilder(BUFFER_LEN);</span>
+<span class="nc" id="L110">            myName.append(myBackupDir);</span>
+<span class="nc" id="L111">            myName.append(File.separator);</span>
+<span class="nc" id="L112">            myName.append(myPrefix);</span>
+<span class="nc" id="L113">            myName.append(SUFFIX_FILE);</span>
+
+            /* If we are doing time-stamps */
+<span class="nc bnc" id="L116" title="All 2 branches missed.">            if (doTimeStamp) {</span>
+                /* Obtain the current date/time */
+<span class="nc" id="L118">                final OceanusDate myNow = new OceanusDate();</span>
+
+<span class="nc" id="L120">                myName.append(myNow.getYear());</span>
+<span class="nc bnc" id="L121" title="All 2 branches missed.">                if (myNow.getMonth() &lt; TEN) {</span>
+<span class="nc" id="L122">                    myName.append('0');</span>
+                }
+<span class="nc" id="L124">                myName.append(myNow.getMonth());</span>
+<span class="nc bnc" id="L125" title="All 2 branches missed.">                if (myNow.getDay() &lt; TEN) {</span>
+<span class="nc" id="L126">                    myName.append('0');</span>
+                }
+<span class="nc" id="L128">                myName.append(myNow.getDay());</span>
+            }
+
+            /* Set the standard backup name */
+<span class="nc bnc" id="L132" title="All 2 branches missed.">            myFile = new File(myName.toString() + (isSecure</span>
+<span class="nc" id="L133">                    ? GordianUtilities.SECUREZIPFILE_EXT</span>
+<span class="nc" id="L134">                    : GordianUtilities.ZIPFILE_EXT));</span>
+
+            /* Access the data */
+<span class="nc" id="L137">            final PrometheusDataSet myOldData = theControl.getData();</span>
+
+            /* Create a new formatter */
+<span class="nc" id="L140">            final PrometheusDataValuesFormatter myFormatter = new PrometheusDataValuesFormatter(pManager, myPasswordMgr);</span>
+
+            /* Create backup */
+<span class="nc bnc" id="L143" title="All 2 branches missed.">            if (isSecure) {</span>
+<span class="nc" id="L144">                myFormatter.createBackup(myOldData, myFile);</span>
+            } else {
+<span class="nc" id="L146">                myFormatter.createExtract(myOldData, myFile);</span>
+            }
+
+            /* If this is a secure backup */
+<span class="nc bnc" id="L150" title="All 2 branches missed.">            if (isSecure) {</span>
+                /* File created, so delete on error */
+<span class="nc" id="L152">                doDelete = true;</span>
+
+                /* Check for cancellation */
+
+                /* Initialise the status window */
+<span class="nc" id="L157">                pManager.initTask(&quot;Reading Backup&quot;);</span>
+
+                /* Load workbook */
+<span class="nc" id="L160">                final PrometheusDataSet myNewData = theControl.getNewData();</span>
+<span class="nc" id="L161">                myFormatter.loadZipFile(myNewData, myFile);</span>
+
+                /* Initialise the security, from the original data */
+<span class="nc" id="L164">                myNewData.initialiseSecurity(pManager, myOldData);</span>
+
+                /* Initialise the status window */
+<span class="nc" id="L167">                pManager.initTask(&quot;Verifying Backup&quot;);</span>
+
+                /* Create a difference set between the two data copies */
+<span class="nc" id="L170">                final PrometheusDataSet myDiff = myNewData.getDifferenceSet(pManager, myOldData);</span>
+
+                /* If the difference set is non-empty */
+<span class="nc bnc" id="L173" title="All 2 branches missed.">                if (!myDiff.isEmpty()) {</span>
+                    /* Throw an exception */
+<span class="nc" id="L175">                    throw new PrometheusDataException(myDiff, &quot;Backup is inconsistent&quot;);</span>
+                }
+
+                /* OK so switch off flag */
+<span class="nc" id="L179">                doDelete = false;</span>
+            }
+
+        } finally {
+            /* Try to delete the file if required */
+<span class="nc bnc" id="L184" title="All 2 branches missed.">            if (doDelete) {</span>
+<span class="nc" id="L185">                MetisToolkit.cleanUpFile(myFile);</span>
+            }
+        }
+
+        /* Return nothing */
+<span class="nc" id="L190">        return null;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

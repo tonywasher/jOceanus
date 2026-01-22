@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianDigest.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.api.digest</a> &gt; <span class="el_source">GordianDigest.java</span></div><h1>GordianDigest.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.gordianknot.api.digest;
+
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianConsumer;
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
+
+/**
+ * GordianKnot interface for Message Digests.
+ */
+public interface GordianDigest
+        extends GordianConsumer {
+    /**
+     * Obtain DigestSpec.
+     *
+     * @return the digestSpec
+     */
+    GordianDigestSpec getDigestSpec();
+
+    /**
+     * Obtain the digest size.
+     *
+     * @return the digest size
+     */
+    int getDigestSize();
+
+    /**
+     * Calculate the digest.
+     *
+     * @return the digest
+     */
+    byte[] finish();
+
+    /**
+     * Calculate the Digest, and return it in the buffer provided.
+     *
+     * @param pBuffer the buffer to return the digest in.
+     * @param pOffset the offset in the buffer to store the digest.
+     * @return the number of bytes placed into buffer
+     * @throws GordianException on error
+     */
+    int finish(byte[] pBuffer,
+               int pOffset) throws GordianException;
+
+    /**
+     * Update the digest, calculate and reset it.
+     *
+     * @param pBytes the bytes to update with.
+     * @return the digest
+     */
+    default byte[] finish(final byte[] pBytes) {
+<span class="fc" id="L66">        update(pBytes);</span>
+<span class="fc" id="L67">        return finish();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

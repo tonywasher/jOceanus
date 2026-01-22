@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ThemisAnalysisInterface.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Themis Core Project Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.themis.lethe.analysis</a> &gt; <span class="el_source">ThemisAnalysisInterface.java</span></div><h1>ThemisAnalysisInterface.java</h1><pre class="source lang-java linenums">/*
+ * Themis: Java Project Framework
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.themis.lethe.analysis;
+
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.themis.lethe.analysis.ThemisAnalysisFile.ThemisAnalysisObject;
+import io.github.tonywasher.joceanus.themis.lethe.analysis.ThemisAnalysisGeneric.ThemisAnalysisGenericBase;
+
+import java.util.ArrayDeque;
+import java.util.Deque;
+import java.util.List;
+
+/**
+ * Interface representation.
+ */
+public class ThemisAnalysisInterface
+        implements ThemisAnalysisObject {
+    /**
+     * The short name of the class.
+     */
+    private final String theShortName;
+
+    /**
+     * The full name of the class.
+     */
+    private final String theFullName;
+
+    /**
+     * Is this an annotation definition.
+     */
+    private final boolean isAnnotation;
+
+    /**
+     * The ancestors.
+     */
+    private final List&lt;ThemisAnalysisReference&gt; theAncestors;
+
+    /**
+     * The contents.
+     */
+    private final Deque&lt;ThemisAnalysisElement&gt; theContents;
+
+    /**
+     * The dataMap.
+     */
+    private final ThemisAnalysisDataMap theDataMap;
+
+    /**
+     * The number of lines.
+     */
+    private final int theNumLines;
+
+    /**
+     * The properties.
+     */
+    private ThemisAnalysisProperties theProperties;
+
+    /**
+     * Constructor.
+     *
+     * @param pParser     the parser
+     * @param pAnnotation is this an annoitation definition?
+     * @param pLine       the initial interface line
+     * @throws OceanusException on error
+     */
+    ThemisAnalysisInterface(final ThemisAnalysisParser pParser,
+                            final boolean pAnnotation,
+<span class="nc" id="L82">                            final ThemisAnalysisLine pLine) throws OceanusException {</span>
+        /* Store parameters */
+<span class="nc" id="L84">        theShortName = pLine.stripNextToken();</span>
+<span class="nc" id="L85">        theProperties = pLine.getProperties();</span>
+<span class="nc" id="L86">        isAnnotation = pAnnotation;</span>
+<span class="nc" id="L87">        final ThemisAnalysisContainer myParent = pParser.getParent();</span>
+<span class="nc" id="L88">        final ThemisAnalysisDataMap myParentDataMap = myParent.getDataMap();</span>
+<span class="nc" id="L89">        theDataMap = new ThemisAnalysisDataMap(myParentDataMap);</span>
+
+        /* If this is a local interface */
+<span class="nc bnc" id="L92" title="All 4 branches missed.">        if (!(myParent instanceof ThemisAnalysisObject)</span>
+                &amp;&amp; (!(myParent instanceof ThemisAnalysisFile))) {
+<span class="nc" id="L94">            final int myId = myParentDataMap.getLocalId(theShortName);</span>
+<span class="nc" id="L95">            theFullName = myParent.determineFullChildName(myId + theShortName);</span>
+
+            /* else handle standard name */
+<span class="nc" id="L98">        } else {</span>
+<span class="nc" id="L99">            theFullName = myParent.determineFullChildName(theShortName);</span>
+        }
+
+        /* Handle generic variables */
+<span class="nc" id="L103">        ThemisAnalysisLine myLine = pLine;</span>
+<span class="nc bnc" id="L104" title="All 2 branches missed.">        if (ThemisAnalysisGeneric.isGeneric(pLine)) {</span>
+            /* Declare them to the properties */
+<span class="nc" id="L106">            theProperties = theProperties.setGenericVariables(new ThemisAnalysisGenericBase(pParser, myLine));</span>
+<span class="nc" id="L107">            myLine = (ThemisAnalysisLine) pParser.popNextLine();</span>
+        }
+
+        /* declare the interface */
+<span class="nc" id="L111">        theDataMap.declareObject(this);</span>
+
+        /* Parse the headers */
+<span class="nc" id="L114">        final Deque&lt;ThemisAnalysisElement&gt; myHeaders = ThemisAnalysisBuilder.parseHeaders(pParser, myLine);</span>
+<span class="nc" id="L115">        theNumLines = myHeaders.size() + 1;</span>
+
+        /* Parse the body */
+<span class="nc" id="L118">        final Deque&lt;ThemisAnalysisElement&gt; myLines = ThemisAnalysisBuilder.processBody(pParser);</span>
+
+        /* Create a parser */
+<span class="nc" id="L121">        theContents = new ArrayDeque&lt;&gt;();</span>
+<span class="nc" id="L122">        final ThemisAnalysisParser myParser = new ThemisAnalysisParser(myLines, theContents, this);</span>
+
+        /* Resolve the generics */
+<span class="nc" id="L125">        theProperties.resolveGeneric(myParser);</span>
+
+        /* Parse the ancestors and lines */
+<span class="nc" id="L128">        theAncestors = myParser.parseAncestors(myHeaders);</span>
+<span class="nc" id="L129">        myParser.processLines();</span>
+<span class="nc" id="L130">    }</span>
+
+    /**
+     * Is this an annotation?
+     *
+     * @return true/false
+     */
+    public boolean isAnnotation() {
+<span class="nc" id="L138">        return isAnnotation;</span>
+    }
+
+    @Override
+    public String getShortName() {
+<span class="nc" id="L143">        return theShortName;</span>
+    }
+
+    @Override
+    public String getFullName() {
+<span class="nc" id="L148">        return theFullName;</span>
+    }
+
+    @Override
+    public ThemisAnalysisDataMap getDataMap() {
+<span class="nc" id="L153">        return theDataMap;</span>
+    }
+
+    @Override
+    public ThemisAnalysisProperties getProperties() {
+<span class="nc" id="L158">        return theProperties;</span>
+    }
+
+    @Override
+    public Deque&lt;ThemisAnalysisElement&gt; getContents() {
+<span class="nc" id="L163">        return theContents;</span>
+    }
+
+    @Override
+    public ThemisAnalysisContainer getParent() {
+<span class="nc" id="L168">        return this;</span>
+    }
+
+    @Override
+    public List&lt;ThemisAnalysisReference&gt; getAncestors() {
+<span class="nc" id="L173">        return theAncestors;</span>
+    }
+
+    @Override
+    public int getNumLines() {
+<span class="nc" id="L178">        return theNumLines;</span>
+    }
+
+    @Override
+    public String toString() {
+<span class="nc" id="L183">        return getShortName();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

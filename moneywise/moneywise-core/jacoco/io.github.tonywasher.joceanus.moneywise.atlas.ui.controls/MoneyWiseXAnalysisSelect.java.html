@@ -1,0 +1,1351 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseXAnalysisSelect.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.moneywise.atlas.ui.controls</a> &gt; <span class="el_source">MoneyWiseXAnalysisSelect.java</span></div><h1>MoneyWiseXAnalysisSelect.java</h1><pre class="source lang-java linenums">/*
+ * MoneyWise: Finance Application
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.moneywise.atlas.ui.controls;
+
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateResource;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventManager;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
+import io.github.tonywasher.joceanus.metis.data.MetisDataDifference;
+import io.github.tonywasher.joceanus.metis.ui.MetisIcon;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.analyse.MoneyWiseXAnalysisManager;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.base.MoneyWiseXAnalysisAttribute;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysis;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisType;
+import io.github.tonywasher.joceanus.moneywise.atlas.views.MoneyWiseXAnalysisFilter;
+import io.github.tonywasher.joceanus.moneywise.atlas.views.MoneyWiseXAnalysisFilter.MoneyWiseXAnalysisAllFilter;
+import io.github.tonywasher.joceanus.moneywise.ui.MoneyWiseAnalysisColumnSet;
+import io.github.tonywasher.joceanus.moneywise.ui.MoneyWiseUIResource;
+import io.github.tonywasher.joceanus.moneywise.views.MoneyWiseView;
+import io.github.tonywasher.joceanus.prometheus.views.PrometheusDataEvent;
+import io.github.tonywasher.joceanus.tethys.api.base.TethysUIArrowIconId;
+import io.github.tonywasher.joceanus.tethys.api.base.TethysUIComponent;
+import io.github.tonywasher.joceanus.tethys.api.base.TethysUIEvent;
+import io.github.tonywasher.joceanus.tethys.api.button.TethysUIButton;
+import io.github.tonywasher.joceanus.tethys.api.button.TethysUIButtonFactory;
+import io.github.tonywasher.joceanus.tethys.api.button.TethysUIDateRangeSelector;
+import io.github.tonywasher.joceanus.tethys.api.button.TethysUIScrollButtonManager;
+import io.github.tonywasher.joceanus.tethys.api.control.TethysUIControlFactory;
+import io.github.tonywasher.joceanus.tethys.api.control.TethysUILabel;
+import io.github.tonywasher.joceanus.tethys.api.factory.TethysUIFactory;
+import io.github.tonywasher.joceanus.tethys.api.menu.TethysUIScrollMenu;
+import io.github.tonywasher.joceanus.tethys.api.pane.TethysUIBoxPaneManager;
+import io.github.tonywasher.joceanus.tethys.api.pane.TethysUICardPaneManager;
+import io.github.tonywasher.joceanus.tethys.api.pane.TethysUIPaneFactory;
+
+import java.util.EnumMap;
+import java.util.Map;
+import java.util.Map.Entry;
+
+/**
+ * Selection panel for Analysis Statement.
+ */
+public class MoneyWiseXAnalysisSelect
+        implements OceanusEventProvider&lt;PrometheusDataEvent&gt;, TethysUIComponent {
+    /**
+     * Text for DateRange Label.
+     */
+<span class="nc" id="L63">    private static final String NLS_RANGE = MoneyWiseUIResource.ANALYSIS_PROMPT_RANGE.getValue();</span>
+
+    /**
+     * Text for Filter Label.
+     */
+<span class="nc" id="L68">    private static final String NLS_FILTER = MoneyWiseUIResource.ANALYSIS_PROMPT_FILTER.getValue();</span>
+
+    /**
+     * Text for FilterType Label.
+     */
+<span class="nc" id="L73">    private static final String NLS_FILTERTYPE = MoneyWiseUIResource.ANALYSIS_PROMPT_FILTERTYPE.getValue();</span>
+
+    /**
+     * Text for ColumnSet Label.
+     */
+<span class="nc" id="L78">    private static final String NLS_COLUMNS = MoneyWiseUIResource.ANALYSIS_PROMPT_COLUMNSET.getValue();</span>
+
+    /**
+     * Text for BucketType Label.
+     */
+<span class="nc" id="L83">    private static final String NLS_BUCKET = MoneyWiseUIResource.ANALYSIS_PROMPT_BUCKET.getValue();</span>
+
+    /**
+     * Text for Title.
+     */
+<span class="nc" id="L88">    private static final String NLS_TITLE = MoneyWiseUIResource.ANALYSIS_TITLE.getValue();</span>
+
+    /**
+     * Text for NoBucket.
+     */
+<span class="nc" id="L93">    private static final String NLS_NONE = MoneyWiseUIResource.ANALYSIS_BUCKET_NONE.getValue();</span>
+
+    /**
+     * Text for Title.
+     */
+<span class="nc" id="L98">    private static final String NLS_FILTERTITLE = MoneyWiseUIResource.ANALYSIS_FILTER_TITLE.getValue();</span>
+
+    /**
+     * Text for Box Title.
+     */
+<span class="nc" id="L103">    private static final String NLS_RANGETITLE = OceanusDateResource.TITLE_BOX.getValue();</span>
+
+    /**
+     * The Event Manager.
+     */
+    private final OceanusEventManager&lt;PrometheusDataEvent&gt; theEventManager;
+
+    /**
+     * View.
+     */
+    private final MoneyWiseView theView;
+
+    /**
+     * Panel.
+     */
+    private final TethysUIBoxPaneManager thePanel;
+
+    /**
+     * Range Button.
+     */
+    private final TethysUIButton theRangeButton;
+
+    /**
+     * Filter Button.
+     */
+    private final TethysUIButton theFilterButton;
+
+    /**
+     * Filter Type Button.
+     */
+    private final TethysUIScrollButtonManager&lt;MoneyWiseXAnalysisType&gt; theFilterTypeButton;
+
+    /**
+     * Bucket Type Button.
+     */
+    private final TethysUIScrollButtonManager&lt;MoneyWiseXAnalysisAttribute&gt; theBucketButton;
+
+    /**
+     * ColumnSet Button.
+     */
+    private final TethysUIScrollButtonManager&lt;MoneyWiseAnalysisColumnSet&gt; theColumnButton;
+
+    /**
+     * The bucket label.
+     */
+    private final TethysUILabel theBucketLabel;
+
+    /**
+     * The column label.
+     */
+    private final TethysUILabel theColumnLabel;
+
+    /**
+     * The filter detail panel.
+     */
+    private final TethysUIBoxPaneManager theFilterDetail;
+
+    /**
+     * DateRange Select Panel.
+     */
+    private final TethysUIDateRangeSelector theRangeSelect;
+
+    /**
+     * Filter Select Panel.
+     */
+    private final TethysUIBoxPaneManager theFilterSelect;
+
+    /**
+     * Deposit Select Panel.
+     */
+    private final MoneyWiseXDepositAnalysisSelect theDepositSelect;
+
+    /**
+     * Cash Select Panel.
+     */
+    private final MoneyWiseXCashAnalysisSelect theCashSelect;
+
+    /**
+     * Loan Select Panel.
+     */
+    private final MoneyWiseXLoanAnalysisSelect theLoanSelect;
+
+    /**
+     * Security Select Panel.
+     */
+    private final MoneyWiseXSecurityAnalysisSelect theSecuritySelect;
+
+    /**
+     * Portfolio Select Panel.
+     */
+    private final MoneyWiseXPortfolioAnalysisSelect thePortfolioSelect;
+
+    /**
+     * Payee Select Panel.
+     */
+    private final MoneyWiseXPayeeAnalysisSelect thePayeeSelect;
+
+    /**
+     * TransCategory Select Panel.
+     */
+    private final MoneyWiseXTransCategoryAnalysisSelect theCategorySelect;
+
+    /**
+     * TaxBasis Select Panel.
+     */
+    private final MoneyWiseXTaxBasisAnalysisSelect theTaxBasisSelect;
+
+    /**
+     * TransactionTag Select Panel.
+     */
+    private final MoneyWiseXTransTagSelect theTagSelect;
+
+    /**
+     * All Select Panel.
+     */
+    private final MoneyWiseXAllSelect theAllSelect;
+
+    /**
+     * The card panel.
+     */
+    private final TethysUICardPaneManager&lt;MoneyWiseXAnalysisFilterSelection&gt; theCardPanel;
+
+    /**
+     * The analysis manager.
+     */
+    private final MoneyWiseXAnalysisManager theAnalysisMgr;
+
+    /**
+     * Select panel map.
+     */
+    private final Map&lt;MoneyWiseXAnalysisType, MoneyWiseXAnalysisFilterSelection&gt; theMap;
+
+    /**
+     * AnalysisType menu.
+     */
+    private final TethysUIScrollMenu&lt;MoneyWiseXAnalysisType&gt; theTypeMenu;
+
+    /**
+     * Bucket menu.
+     */
+    private final TethysUIScrollMenu&lt;MoneyWiseXAnalysisAttribute&gt; theBucketMenu;
+
+    /**
+     * Column menu.
+     */
+    private final TethysUIScrollMenu&lt;MoneyWiseAnalysisColumnSet&gt; theColumnMenu;
+
+    /**
+     * Analysis.
+     */
+    private MoneyWiseXAnalysis theAnalysis;
+
+    /**
+     * Analysis State.
+     */
+    private MoneyWiseAnalysisState theState;
+
+    /**
+     * The savePoint.
+     */
+    private MoneyWiseAnalysisState theSavePoint;
+
+    /**
+     * Is the control refreshing?
+     */
+    private boolean isRefreshing;
+
+    /**
+     * Is the range visible?
+     */
+    private boolean isRangeVisible;
+
+    /**
+     * Is the filter visible?
+     */
+    private boolean isFilterVisible;
+
+    /**
+     * Constructor.
+     *
+     * @param pFactory     the GUI factory
+     * @param pView        the view
+     * @param pAnalysisMgr the analysis manager
+     * @param pNewButton   the new button
+     */
+    public MoneyWiseXAnalysisSelect(final TethysUIFactory&lt;?&gt; pFactory,
+                                    final MoneyWiseView pView,
+                                    final MoneyWiseXAnalysisManager pAnalysisMgr,
+<span class="nc" id="L291">                                    final TethysUIButton pNewButton) {</span>
+        /* Access the analysis manager */
+<span class="nc" id="L293">        theView = pView;</span>
+<span class="nc" id="L294">        theAnalysisMgr = pAnalysisMgr;</span>
+
+        /* Create Event Manager */
+<span class="nc" id="L297">        theEventManager = new OceanusEventManager&lt;&gt;();</span>
+
+        /* Create the range button */
+<span class="nc" id="L300">        final TethysUIButtonFactory&lt;?&gt; myButtons = pFactory.buttonFactory();</span>
+<span class="nc" id="L301">        theRangeButton = myButtons.newButton();</span>
+<span class="nc" id="L302">        theRangeButton.setIcon(TethysUIArrowIconId.DOWN);</span>
+<span class="nc" id="L303">        theRangeButton.setTextAndIcon();</span>
+
+        /* Create the filter button */
+<span class="nc" id="L306">        theFilterButton = myButtons.newButton();</span>
+<span class="nc" id="L307">        theFilterButton.setIcon(TethysUIArrowIconId.DOWN);</span>
+<span class="nc" id="L308">        theFilterButton.setTextAndIcon();</span>
+
+        /* Create the filter type button */
+<span class="nc" id="L311">        theFilterTypeButton = myButtons.newScrollButton(MoneyWiseXAnalysisType.class);</span>
+
+        /* Create the columnSet button */
+<span class="nc" id="L314">        final TethysUIControlFactory myControls = pFactory.controlFactory();</span>
+<span class="nc" id="L315">        theColumnLabel = myControls.newLabel(NLS_COLUMNS);</span>
+<span class="nc" id="L316">        theColumnButton = myButtons.newScrollButton(MoneyWiseAnalysisColumnSet.class);</span>
+
+        /* Create the bucket button */
+<span class="nc" id="L319">        theBucketLabel = myControls.newLabel(NLS_BUCKET);</span>
+<span class="nc" id="L320">        theBucketButton = myButtons.newScrollButton(MoneyWiseXAnalysisAttribute.class);</span>
+
+        /* Create the Range Select panel */
+<span class="nc" id="L323">        theRangeSelect = myButtons.newDateRangeSelector();</span>
+<span class="nc" id="L324">        theRangeSelect.setBorderTitle(NLS_RANGETITLE);</span>
+
+        /* Create the panel map */
+<span class="nc" id="L327">        theMap = new EnumMap&lt;&gt;(MoneyWiseXAnalysisType.class);</span>
+
+        /* Create the filter selection panels */
+<span class="nc" id="L330">        theDepositSelect = new MoneyWiseXDepositAnalysisSelect(pFactory);</span>
+<span class="nc" id="L331">        theCashSelect = new MoneyWiseXCashAnalysisSelect(pFactory);</span>
+<span class="nc" id="L332">        theLoanSelect = new MoneyWiseXLoanAnalysisSelect(pFactory);</span>
+<span class="nc" id="L333">        theSecuritySelect = new MoneyWiseXSecurityAnalysisSelect(pFactory);</span>
+<span class="nc" id="L334">        thePortfolioSelect = new MoneyWiseXPortfolioAnalysisSelect(pFactory);</span>
+<span class="nc" id="L335">        thePayeeSelect = new MoneyWiseXPayeeAnalysisSelect(pFactory);</span>
+<span class="nc" id="L336">        theCategorySelect = new MoneyWiseXTransCategoryAnalysisSelect(pFactory);</span>
+<span class="nc" id="L337">        theTaxBasisSelect = new MoneyWiseXTaxBasisAnalysisSelect(pFactory);</span>
+<span class="nc" id="L338">        theTagSelect = new MoneyWiseXTransTagSelect(pFactory);</span>
+<span class="nc" id="L339">        theAllSelect = new MoneyWiseXAllSelect(pFactory);</span>
+
+        /* Create the card panel */
+<span class="nc" id="L342">        final TethysUIPaneFactory myPanes = pFactory.paneFactory();</span>
+<span class="nc" id="L343">        theCardPanel = myPanes.newCardPane();</span>
+
+        /* Create the filter detail panel */
+<span class="nc" id="L346">        theFilterDetail = buildFilterDetail(pFactory);</span>
+
+        /* Create the filter selection panel */
+<span class="nc" id="L349">        theFilterSelect = buildFilterSelect(pFactory);</span>
+
+        /* Create the control panel */
+<span class="nc" id="L352">        final TethysUIBoxPaneManager myPanel = buildControlPanel(pFactory, pNewButton);</span>
+
+        /* Create the panel */
+<span class="nc" id="L355">        thePanel = myPanes.newVBoxPane();</span>
+<span class="nc" id="L356">        thePanel.addNode(myPanel);</span>
+<span class="nc" id="L357">        thePanel.addNode(theRangeSelect);</span>
+<span class="nc" id="L358">        thePanel.addNode(theFilterSelect);</span>
+
+        /* Initially hide the select boxes */
+<span class="nc" id="L361">        theRangeSelect.setVisible(false);</span>
+<span class="nc" id="L362">        theFilterSelect.setVisible(false);</span>
+
+        /* Create initial state */
+<span class="nc" id="L365">        theState = new MoneyWiseAnalysisState();</span>
+<span class="nc" id="L366">        theState.showColumns(true);</span>
+<span class="nc" id="L367">        final MoneyWiseXStatementSelect mySelect = new MoneyWiseXStatementSelect(theRangeSelect, new MoneyWiseXAnalysisAllFilter());</span>
+<span class="nc" id="L368">        selectStatement(mySelect);</span>
+
+        /* Access the menus */
+<span class="nc" id="L371">        theTypeMenu = theFilterTypeButton.getMenu();</span>
+<span class="nc" id="L372">        theBucketMenu = theBucketButton.getMenu();</span>
+<span class="nc" id="L373">        theColumnMenu = theColumnButton.getMenu();</span>
+
+        /* Create the listeners */
+<span class="nc" id="L376">        OceanusEventRegistrar&lt;TethysUIEvent&gt; myRegistrar = theFilterTypeButton.getEventRegistrar();</span>
+<span class="nc" id="L377">        myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -&gt; handleFilterType());</span>
+<span class="nc" id="L378">        theFilterTypeButton.setMenuConfigurator(e -&gt; buildAnalysisTypeMenu());</span>
+<span class="nc" id="L379">        myRegistrar = theBucketButton.getEventRegistrar();</span>
+<span class="nc" id="L380">        myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -&gt; handleNewBucket());</span>
+<span class="nc" id="L381">        theBucketButton.setMenuConfigurator(e -&gt; buildBucketMenu());</span>
+<span class="nc" id="L382">        myRegistrar = theColumnButton.getEventRegistrar();</span>
+<span class="nc" id="L383">        myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -&gt; handleNewColumns());</span>
+<span class="nc" id="L384">        theColumnButton.setMenuConfigurator(e -&gt; buildColumnsMenu());</span>
+
+        /* Handle Analysis Manager */
+<span class="nc" id="L387">        theAnalysisMgr.getEventRegistrar().addEventListener(e -&gt; refreshData());</span>
+
+        /* Handle buttons */
+<span class="nc bnc" id="L390" title="All 2 branches missed.">        theRangeButton.getEventRegistrar().addEventListener(e -&gt; setRangeVisibility(!isRangeVisible));</span>
+<span class="nc bnc" id="L391" title="All 2 branches missed.">        theFilterButton.getEventRegistrar().addEventListener(e -&gt; setFilterVisibility(!isFilterVisible));</span>
+<span class="nc" id="L392">        theRangeSelect.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -&gt; handleNewRange());</span>
+
+        /* handle sub-selections */
+<span class="nc" id="L395">        theDepositSelect.getEventRegistrar().addEventListener(e -&gt; buildDepositFilter());</span>
+<span class="nc" id="L396">        theCashSelect.getEventRegistrar().addEventListener(e -&gt; buildCashFilter());</span>
+<span class="nc" id="L397">        theLoanSelect.getEventRegistrar().addEventListener(e -&gt; buildLoanFilter());</span>
+<span class="nc" id="L398">        theSecuritySelect.getEventRegistrar().addEventListener(e -&gt; buildSecurityFilter());</span>
+<span class="nc" id="L399">        thePortfolioSelect.getEventRegistrar().addEventListener(e -&gt; buildPortfolioFilter());</span>
+<span class="nc" id="L400">        thePayeeSelect.getEventRegistrar().addEventListener(e -&gt; buildPayeeFilter());</span>
+<span class="nc" id="L401">        theCategorySelect.getEventRegistrar().addEventListener(e -&gt; buildCategoryFilter());</span>
+<span class="nc" id="L402">        theTaxBasisSelect.getEventRegistrar().addEventListener(e -&gt; buildTaxBasisFilter());</span>
+<span class="nc" id="L403">        theTagSelect.getEventRegistrar().addEventListener(e -&gt; buildTagFilter());</span>
+<span class="nc" id="L404">    }</span>
+
+    @Override
+    public TethysUIComponent getUnderlying() {
+<span class="nc" id="L408">        return thePanel;</span>
+    }
+
+    @Override
+    public OceanusEventRegistrar&lt;PrometheusDataEvent&gt; getEventRegistrar() {
+<span class="nc" id="L413">        return theEventManager.getEventRegistrar();</span>
+    }
+
+    /**
+     * Obtain the DateDayRange.
+     *
+     * @return the range.
+     */
+    public OceanusDateRange getRange() {
+<span class="nc" id="L422">        return theState.getRange();</span>
+    }
+
+    /**
+     * Obtain the analysis.
+     *
+     * @return the range.
+     */
+    public MoneyWiseXAnalysis getAnalysis() {
+<span class="nc" id="L431">        return theAnalysis;</span>
+    }
+
+    /**
+     * Obtain the Filter.
+     *
+     * @return the filter.
+     */
+    public MoneyWiseXAnalysisFilter&lt;?, ?&gt; getFilter() {
+<span class="nc" id="L440">        return theState.getFilter();</span>
+    }
+
+    /**
+     * Obtain the ColumnSet.
+     *
+     * @return the columnSet.
+     */
+    public MoneyWiseAnalysisColumnSet getColumns() {
+<span class="nc" id="L449">        return theState.getColumns();</span>
+    }
+
+    /**
+     * Are we showing columns?
+     *
+     * @return true/false.
+     */
+    public boolean showColumns() {
+<span class="nc" id="L458">        return theState.showColumns();</span>
+    }
+
+    /**
+     * Create control panel.
+     *
+     * @param pFactory   the GUI factory
+     * @param pNewButton the new button
+     * @return the panel
+     */
+    private TethysUIBoxPaneManager buildControlPanel(final TethysUIFactory&lt;?&gt; pFactory,
+                                                     final TethysUIButton pNewButton) {
+        /* Create the control panel */
+<span class="nc" id="L471">        final TethysUIBoxPaneManager myPanel = pFactory.paneFactory().newHBoxPane();</span>
+
+        /* Create the labels */
+<span class="nc" id="L474">        final TethysUILabel myRangeLabel = pFactory.controlFactory().newLabel(NLS_RANGE);</span>
+
+        /* Create save button */
+<span class="nc" id="L477">        final TethysUIButton mySave = pFactory.buttonFactory().newButton();</span>
+<span class="nc" id="L478">        MetisIcon.configureSaveIconButton(mySave);</span>
+
+        /* Create the panel */
+<span class="nc" id="L481">        myPanel.setBorderTitle(NLS_TITLE);</span>
+<span class="nc" id="L482">        myPanel.addNode(myRangeLabel);</span>
+<span class="nc" id="L483">        myPanel.addNode(theRangeButton);</span>
+<span class="nc" id="L484">        myPanel.addSpacer();</span>
+<span class="nc" id="L485">        myPanel.addNode(theFilterDetail);</span>
+<span class="nc" id="L486">        myPanel.addSpacer();</span>
+<span class="nc" id="L487">        myPanel.addNode(mySave);</span>
+<span class="nc" id="L488">        myPanel.addNode(pNewButton);</span>
+
+        /* Pass through the save event */
+<span class="nc" id="L491">        final OceanusEventRegistrar&lt;TethysUIEvent&gt; myRegistrar = mySave.getEventRegistrar();</span>
+<span class="nc" id="L492">        myRegistrar.addEventListener(e -&gt; theEventManager.fireEvent(PrometheusDataEvent.SAVETOFILE));</span>
+
+        /* Return the panel */
+<span class="nc" id="L495">        return myPanel;</span>
+    }
+
+    /**
+     * Create filter detail panel.
+     *
+     * @param pFactory the GUI factory
+     * @return the panel
+     */
+    private TethysUIBoxPaneManager buildFilterDetail(final TethysUIFactory&lt;?&gt; pFactory) {
+        /* Create the control panel */
+<span class="nc" id="L506">        final TethysUIBoxPaneManager myPanel = pFactory.paneFactory().newHBoxPane();</span>
+
+        /* Create the labels */
+<span class="nc" id="L509">        final TethysUILabel myFilterLabel = pFactory.controlFactory().newLabel(NLS_FILTER);</span>
+
+        /* Create the panel */
+<span class="nc" id="L512">        myPanel.addNode(myFilterLabel);</span>
+<span class="nc" id="L513">        myPanel.addNode(theFilterButton);</span>
+<span class="nc" id="L514">        myPanel.addSpacer();</span>
+<span class="nc" id="L515">        myPanel.addNode(theBucketLabel);</span>
+<span class="nc" id="L516">        myPanel.addNode(theColumnLabel);</span>
+<span class="nc" id="L517">        myPanel.addNode(theBucketButton);</span>
+<span class="nc" id="L518">        myPanel.addNode(theColumnButton);</span>
+
+        /* Return the panel */
+<span class="nc" id="L521">        return myPanel;</span>
+    }
+
+    /**
+     * Create filter select panel.
+     *
+     * @param pFactory the GUI factory
+     * @return the panel
+     */
+    private TethysUIBoxPaneManager buildFilterSelect(final TethysUIFactory&lt;?&gt; pFactory) {
+        /* Create the filter panel */
+<span class="nc" id="L532">        final TethysUIBoxPaneManager myPanel = pFactory.paneFactory().newHBoxPane();</span>
+
+        /* Create the labels */
+<span class="nc" id="L535">        final TethysUILabel myTypeLabel = pFactory.controlFactory().newLabel(NLS_FILTERTYPE);</span>
+
+        /* Add to the card panels */
+<span class="nc" id="L538">        theCardPanel.addCard(MoneyWiseXAnalysisType.DEPOSIT.name(), theDepositSelect);</span>
+<span class="nc" id="L539">        theCardPanel.addCard(MoneyWiseXAnalysisType.CASH.name(), theCashSelect);</span>
+<span class="nc" id="L540">        theCardPanel.addCard(MoneyWiseXAnalysisType.LOAN.name(), theLoanSelect);</span>
+<span class="nc" id="L541">        theCardPanel.addCard(MoneyWiseXAnalysisType.SECURITY.name(), theSecuritySelect);</span>
+<span class="nc" id="L542">        theCardPanel.addCard(MoneyWiseXAnalysisType.PORTFOLIO.name(), thePortfolioSelect);</span>
+<span class="nc" id="L543">        theCardPanel.addCard(MoneyWiseXAnalysisType.PAYEE.name(), thePayeeSelect);</span>
+<span class="nc" id="L544">        theCardPanel.addCard(MoneyWiseXAnalysisType.CATEGORY.name(), theCategorySelect);</span>
+<span class="nc" id="L545">        theCardPanel.addCard(MoneyWiseXAnalysisType.TAXBASIS.name(), theTaxBasisSelect);</span>
+<span class="nc" id="L546">        theCardPanel.addCard(MoneyWiseXAnalysisType.TRANSTAG.name(), theTagSelect);</span>
+<span class="nc" id="L547">        theCardPanel.addCard(MoneyWiseXAnalysisType.ALL.name(), theAllSelect);</span>
+
+        /* Build the map */
+<span class="nc" id="L550">        theMap.put(MoneyWiseXAnalysisType.DEPOSIT, theDepositSelect);</span>
+<span class="nc" id="L551">        theMap.put(MoneyWiseXAnalysisType.CASH, theCashSelect);</span>
+<span class="nc" id="L552">        theMap.put(MoneyWiseXAnalysisType.LOAN, theLoanSelect);</span>
+<span class="nc" id="L553">        theMap.put(MoneyWiseXAnalysisType.SECURITY, theSecuritySelect);</span>
+<span class="nc" id="L554">        theMap.put(MoneyWiseXAnalysisType.PORTFOLIO, thePortfolioSelect);</span>
+<span class="nc" id="L555">        theMap.put(MoneyWiseXAnalysisType.PAYEE, thePayeeSelect);</span>
+<span class="nc" id="L556">        theMap.put(MoneyWiseXAnalysisType.TAXBASIS, theTaxBasisSelect);</span>
+<span class="nc" id="L557">        theMap.put(MoneyWiseXAnalysisType.TRANSTAG, theTagSelect);</span>
+<span class="nc" id="L558">        theMap.put(MoneyWiseXAnalysisType.ALL, theAllSelect);</span>
+
+        /* Create the panel */
+<span class="nc" id="L561">        myPanel.setBorderTitle(NLS_FILTERTITLE);</span>
+<span class="nc" id="L562">        myPanel.addNode(myTypeLabel);</span>
+<span class="nc" id="L563">        myPanel.addNode(theFilterTypeButton);</span>
+<span class="nc" id="L564">        myPanel.addSpacer();</span>
+<span class="nc" id="L565">        myPanel.addNode(theCardPanel);</span>
+
+        /* Return the panel */
+<span class="nc" id="L568">        return myPanel;</span>
+    }
+
+    /**
+     * Select Statement.
+     *
+     * @param pSelect the selection
+     */
+    public void selectStatement(final MoneyWiseXStatementSelect pSelect) {
+        /* Set refreshing flag */
+<span class="nc" id="L578">        isRefreshing = true;</span>
+
+        /* Update the range */
+<span class="nc" id="L581">        final TethysUIDateRangeSelector mySelect = pSelect.getRangeSelect();</span>
+<span class="nc bnc" id="L582" title="All 2 branches missed.">        if (mySelect != null) {</span>
+<span class="nc" id="L583">            theRangeSelect.setSelection(mySelect);</span>
+<span class="nc" id="L584">            theRangeSelect.lockPeriod(false);</span>
+<span class="nc" id="L585">            theState.setRange(mySelect);</span>
+
+            /* Update the analysis */
+<span class="nc" id="L588">            theAnalysis = theAnalysisMgr.getRangedAnalysis(mySelect.getRange());</span>
+<span class="nc" id="L589">            setAnalysis();</span>
+        }
+
+        /* Access the filter and the selection panel */
+<span class="nc" id="L593">        final MoneyWiseXAnalysisFilter&lt;?, ?&gt; myFilter = pSelect.getFilter();</span>
+<span class="nc" id="L594">        final MoneyWiseXAnalysisType myType = myFilter.getAnalysisType();</span>
+<span class="nc" id="L595">        final MoneyWiseXAnalysisFilterSelection myPanel = theMap.get(myType);</span>
+
+        /* Move correct card to front and update it */
+<span class="nc" id="L598">        theCardPanel.selectCard(myType.name());</span>
+<span class="nc" id="L599">        myPanel.setFilter(myFilter);</span>
+
+        /* Determine the state */
+<span class="nc" id="L602">        theState.determineState(myPanel);</span>
+
+        /* Clear refreshing flag */
+<span class="nc" id="L605">        isRefreshing = false;</span>
+<span class="nc" id="L606">    }</span>
+
+    /**
+     * Refresh data.
+     */
+    private void refreshData() {
+        /* Update the range selection */
+<span class="nc" id="L613">        final OceanusDateRange myRange = theView.getRange();</span>
+<span class="nc" id="L614">        theRangeSelect.setOverallRange(myRange);</span>
+
+        /* Refresh the analysisView */
+<span class="nc" id="L617">        theAnalysis = theAnalysisMgr.getRangedAnalysis(getRange());</span>
+
+        /* Update the filter selection */
+<span class="nc" id="L620">        checkType();</span>
+<span class="nc" id="L621">    }</span>
+
+    /**
+     * Declare analysis.
+     */
+    private void setAnalysis() {
+        /* Only update if we have an analysis */
+<span class="nc bnc" id="L628" title="All 2 branches missed.">        if (theAnalysis != null) {</span>
+            /* Update filters */
+<span class="nc" id="L630">            theDepositSelect.setAnalysis(theAnalysis);</span>
+<span class="nc" id="L631">            theCashSelect.setAnalysis(theAnalysis);</span>
+<span class="nc" id="L632">            theLoanSelect.setAnalysis(theAnalysis);</span>
+<span class="nc" id="L633">            theSecuritySelect.setAnalysis(theAnalysis);</span>
+<span class="nc" id="L634">            thePortfolioSelect.setAnalysis(theAnalysis);</span>
+<span class="nc" id="L635">            theCategorySelect.setAnalysis(theAnalysis);</span>
+<span class="nc" id="L636">            thePayeeSelect.setAnalysis(theAnalysis);</span>
+<span class="nc" id="L637">            theTaxBasisSelect.setAnalysis(theAnalysis);</span>
+<span class="nc" id="L638">            theTagSelect.setAnalysis(theAnalysis);</span>
+<span class="nc" id="L639">            theAllSelect.setAnalysis(theAnalysis);</span>
+
+            /* Update the filter */
+<span class="nc" id="L642">            updateFilter();</span>
+        }
+<span class="nc" id="L644">    }</span>
+
+    /**
+     * Update the filter.
+     */
+    private void updateFilter() {
+        /* Access the active panel */
+<span class="nc" id="L651">        final MoneyWiseXAnalysisType myType = theState.getType();</span>
+<span class="nc" id="L652">        final MoneyWiseXAnalysisFilterSelection myPanel = theMap.get(myType);</span>
+
+        /* Update filters */
+<span class="nc bnc" id="L655" title="All 2 branches missed.">        if (myPanel != null) {</span>
+<span class="nc" id="L656">            final MoneyWiseXAnalysisFilter&lt;?, ?&gt; myFilter = myPanel.getFilter();</span>
+<span class="nc" id="L657">            myFilter.setCurrentAttribute(theState.getBucket());</span>
+<span class="nc" id="L658">            theState.setFilter(myFilter);</span>
+        }
+
+        /* Notify updated filter */
+<span class="nc" id="L662">        theEventManager.fireEvent(PrometheusDataEvent.SELECTIONCHANGED);</span>
+<span class="nc" id="L663">    }</span>
+
+    /**
+     * Create SavePoint.
+     */
+    protected void createSavePoint() {
+        /* Create the savePoint */
+<span class="nc" id="L670">        theSavePoint = new MoneyWiseAnalysisState(theState);</span>
+<span class="nc" id="L671">    }</span>
+
+    /**
+     * Restore SavePoint.
+     */
+    protected void restoreSavePoint() {
+        /* Restore the savePoint */
+<span class="nc" id="L678">        theState = new MoneyWiseAnalysisState(theSavePoint);</span>
+
+        /* Apply the state */
+<span class="nc" id="L681">        theState.applyState();</span>
+<span class="nc" id="L682">    }</span>
+
+    @Override
+    public void setEnabled(final boolean bEnabled) {
+        /* If there are filters available */
+<span class="nc bnc" id="L687" title="All 2 branches missed.">        if (isAvailable()) {</span>
+            /* Enabled disable range selection */
+<span class="nc" id="L689">            theRangeButton.setEnabled(bEnabled);</span>
+
+            /* Enable filter detail */
+<span class="nc" id="L692">            theFilterDetail.setVisible(true);</span>
+<span class="nc" id="L693">            theFilterButton.setEnabled(bEnabled);</span>
+<span class="nc" id="L694">            theColumnButton.setEnabled(bEnabled);</span>
+<span class="nc" id="L695">            theBucketButton.setEnabled(bEnabled);</span>
+
+            /* If we are disabling */
+<span class="nc bnc" id="L698" title="All 2 branches missed.">            if (!bEnabled) {</span>
+                /* Hide panels */
+<span class="nc" id="L700">                setRangeVisibility(false);</span>
+<span class="nc" id="L701">                setFilterVisibility(false);</span>
+            }
+
+            /* else no filters available */
+        } else {
+            /* Enabled disable range selection */
+<span class="nc" id="L707">            theRangeButton.setEnabled(false);</span>
+
+            /* Hide panels */
+<span class="nc" id="L710">            setRangeVisibility(false);</span>
+<span class="nc" id="L711">            setFilterVisibility(false);</span>
+<span class="nc" id="L712">            theFilterDetail.setVisible(false);</span>
+<span class="nc" id="L713">            theRangeSelect.setEnabled(bEnabled);</span>
+        }
+<span class="nc" id="L715">    }</span>
+
+    @Override
+    public void setVisible(final boolean pVisible) {
+<span class="nc" id="L719">        thePanel.setVisible(pVisible);</span>
+<span class="nc" id="L720">    }</span>
+
+    /**
+     * Is there any filter available?
+     *
+     * @return true/false
+     */
+    private boolean isAvailable() {
+        /* Loop through the panels */
+<span class="nc bnc" id="L729" title="All 2 branches missed.">        for (MoneyWiseXAnalysisFilterSelection myEntry : theMap.values()) {</span>
+            /* If the filter is possible */
+<span class="nc bnc" id="L731" title="All 2 branches missed.">            if (myEntry.isAvailable()) {</span>
+                /* Filter available */
+<span class="nc" id="L733">                return true;</span>
+            }
+<span class="nc" id="L735">        }</span>
+
+        /* No available filters */
+<span class="nc" id="L738">        return false;</span>
+    }
+
+    /**
+     * Check analysis type.
+     */
+    private void checkType() {
+        /* If the type is not appropriate */
+<span class="nc" id="L746">        MoneyWiseXAnalysisType myType = theState.getType();</span>
+
+        /* If the type is selected */
+<span class="nc bnc" id="L749" title="All 2 branches missed.">        if (myType != null) {</span>
+            /* Check that the filter is appropriate */
+<span class="nc" id="L751">            final MoneyWiseXAnalysisFilterSelection myPanel = theMap.get(myType);</span>
+<span class="nc bnc" id="L752" title="All 2 branches missed.">            if (myPanel.isAvailable()) {</span>
+                /* We are OK */
+<span class="nc" id="L754">                final MoneyWiseXAnalysisFilter&lt;?, ?&gt; myFilter = myPanel.getFilter();</span>
+<span class="nc" id="L755">                theState.setFilter(myFilter);</span>
+<span class="nc" id="L756">                return;</span>
+            }
+        }
+
+        /* Loop through the panels */
+<span class="nc bnc" id="L761" title="All 2 branches missed.">        for (Entry&lt;MoneyWiseXAnalysisType, MoneyWiseXAnalysisFilterSelection&gt; myEntry : theMap.entrySet()) {</span>
+            /* If the filter is possible */
+<span class="nc" id="L763">            final MoneyWiseXAnalysisFilterSelection myPanel = myEntry.getValue();</span>
+<span class="nc bnc" id="L764" title="All 2 branches missed.">            if (myPanel.isAvailable()) {</span>
+                /* Access Analysis type */
+<span class="nc" id="L766">                myType = myEntry.getKey();</span>
+
+                /* Move correct card to front */
+<span class="nc" id="L769">                theCardPanel.selectCard(myType.name());</span>
+
+                /* Obtain the relevant filter */
+<span class="nc" id="L772">                final MoneyWiseXAnalysisFilter&lt;?, ?&gt; myFilter = myPanel.getFilter();</span>
+<span class="nc" id="L773">                final MoneyWiseXAnalysisAttribute myDefault = myType.getDefaultValue();</span>
+<span class="nc bnc" id="L774" title="All 2 branches missed.">                if (myFilter != null) {</span>
+<span class="nc" id="L775">                    myFilter.setCurrentAttribute(myDefault);</span>
+                }
+
+                /* Set new bucket type and apply state */
+<span class="nc" id="L779">                theState.setAnalysisType(myType);</span>
+<span class="nc" id="L780">                theState.setFilter(myFilter);</span>
+<span class="nc" id="L781">                theState.setBucket(myDefault);</span>
+<span class="nc" id="L782">                theState.applyState();</span>
+
+                /* Filter available */
+<span class="nc" id="L785">                return;</span>
+            }
+<span class="nc" id="L787">        }</span>
+
+        /* No available filters */
+<span class="nc" id="L790">        theState.setFilter(null);</span>
+<span class="nc" id="L791">        theState.setAnalysisType(null);</span>
+<span class="nc" id="L792">        theState.setBucket(null);</span>
+<span class="nc" id="L793">    }</span>
+
+    /**
+     * Build AnalysisType menu.
+     */
+    private void buildAnalysisTypeMenu() {
+        /* Reset the popUp menu */
+<span class="nc" id="L800">        theTypeMenu.removeAllItems();</span>
+
+        /* Loop through the panels */
+<span class="nc bnc" id="L803" title="All 2 branches missed.">        for (Entry&lt;MoneyWiseXAnalysisType, MoneyWiseXAnalysisFilterSelection&gt; myEntry : theMap.entrySet()) {</span>
+            /* If the filter is possible */
+<span class="nc bnc" id="L805" title="All 2 branches missed.">            if (myEntry.getValue().isAvailable()) {</span>
+                /* Create a new MenuItem and add it to the popUp */
+<span class="nc" id="L807">                theTypeMenu.addItem(myEntry.getKey());</span>
+            }
+<span class="nc" id="L809">        }</span>
+<span class="nc" id="L810">    }</span>
+
+    /**
+     * Build Bucket menu.
+     */
+    private void buildBucketMenu() {
+        /* Reset the popUp menu */
+<span class="nc" id="L817">        theBucketMenu.removeAllItems();</span>
+
+        /* Loop through the buckets */
+<span class="nc" id="L820">        final MoneyWiseXAnalysisFilter&lt;?, ?&gt; myFilter = theState.getFilter();</span>
+<span class="nc bnc" id="L821" title="All 2 branches missed.">        for (MoneyWiseXAnalysisAttribute myAttr : theState.getType().getValues()) {</span>
+            /* If the value is a counter */
+<span class="nc bnc" id="L823" title="All 2 branches missed.">            if (!myAttr.isPreserved()</span>
+<span class="nc bnc" id="L824" title="All 2 branches missed.">                    &amp;&amp; myFilter.isRelevantCounter(myAttr)) {</span>
+                /* Create a new MenuItem and add it to the popUp */
+<span class="nc" id="L826">                theBucketMenu.addItem(myAttr);</span>
+            }
+        }
+
+        /* Add the entry for null bucket */
+<span class="nc" id="L831">        theBucketMenu.addNullItem(NLS_NONE);</span>
+<span class="nc" id="L832">    }</span>
+
+    /**
+     * Build Columns menu.
+     */
+    private void buildColumnsMenu() {
+        /* Reset the popUp menu */
+<span class="nc" id="L839">        theColumnMenu.removeAllItems();</span>
+
+        /* Determine whether we have balances */
+<span class="nc" id="L842">        final boolean hasBalances = theState.getType().hasBalances();</span>
+
+        /* Loop through the sets */
+<span class="nc bnc" id="L845" title="All 2 branches missed.">        for (MoneyWiseAnalysisColumnSet mySet : MoneyWiseAnalysisColumnSet.values()) {</span>
+            /* if we have balances or this is not the balance set */
+<span class="nc bnc" id="L847" title="All 2 branches missed.">            if (hasBalances</span>
+<span class="nc bnc" id="L848" title="All 2 branches missed.">                    || !mySet.isBalance()) {</span>
+                /* Add the item */
+<span class="nc" id="L850">                theColumnMenu.addItem(mySet);</span>
+            }
+        }
+<span class="nc" id="L853">    }</span>
+
+    /**
+     * Build Deposit Filter.
+     */
+    private void buildDepositFilter() {
+<span class="nc" id="L859">        applyFilter(theDepositSelect.getFilter());</span>
+<span class="nc" id="L860">    }</span>
+
+    /**
+     * Build Cash Filter.
+     */
+    private void buildCashFilter() {
+<span class="nc" id="L866">        applyFilter(theCashSelect.getFilter());</span>
+<span class="nc" id="L867">    }</span>
+
+    /**
+     * Build Loan Filter.
+     */
+    private void buildLoanFilter() {
+<span class="nc" id="L873">        applyFilter(theLoanSelect.getFilter());</span>
+<span class="nc" id="L874">    }</span>
+
+    /**
+     * Build Security Filter.
+     */
+    private void buildSecurityFilter() {
+<span class="nc" id="L880">        applyFilter(theSecuritySelect.getFilter());</span>
+<span class="nc" id="L881">    }</span>
+
+    /**
+     * Build Portfolio Filter.
+     */
+    private void buildPortfolioFilter() {
+<span class="nc" id="L887">        applyFilter(thePortfolioSelect.getFilter());</span>
+<span class="nc" id="L888">    }</span>
+
+    /**
+     * Build Payee Filter.
+     */
+    private void buildPayeeFilter() {
+<span class="nc" id="L894">        applyFilter(thePayeeSelect.getFilter());</span>
+<span class="nc" id="L895">    }</span>
+
+    /**
+     * Build Category Filter.
+     */
+    private void buildCategoryFilter() {
+<span class="nc" id="L901">        applyFilter(theCategorySelect.getFilter());</span>
+<span class="nc" id="L902">    }</span>
+
+    /**
+     * Build TaxBasis Filter.
+     */
+    private void buildTaxBasisFilter() {
+<span class="nc" id="L908">        applyFilter(theTaxBasisSelect.getFilter());</span>
+<span class="nc" id="L909">    }</span>
+
+    /**
+     * Build Tag Filter.
+     */
+    private void buildTagFilter() {
+<span class="nc" id="L915">        applyFilter(theTagSelect.getFilter());</span>
+<span class="nc" id="L916">    }</span>
+
+    /**
+     * Apply Filter.
+     *
+     * @param pFilter the filter
+     */
+    private void applyFilter(final MoneyWiseXAnalysisFilter&lt;?, ?&gt; pFilter) {
+        /* Ignore if we are refreshing */
+<span class="nc bnc" id="L925" title="All 2 branches missed.">        if (!isRefreshing) {</span>
+<span class="nc" id="L926">            final MoneyWiseXAnalysisAttribute myBucket = theState.getBucket();</span>
+<span class="nc bnc" id="L927" title="All 2 branches missed.">            if (pFilter.isRelevantCounter(myBucket)) {</span>
+<span class="nc" id="L928">                pFilter.setCurrentAttribute(theState.getBucket());</span>
+            } else {
+<span class="nc" id="L930">                theState.setBucket(pFilter.getCurrentAttribute());</span>
+            }
+<span class="nc" id="L932">            theState.setFilter(pFilter);</span>
+<span class="nc" id="L933">            theState.applyState();</span>
+<span class="nc" id="L934">            theEventManager.fireEvent(PrometheusDataEvent.SELECTIONCHANGED);</span>
+        }
+<span class="nc" id="L936">    }</span>
+
+    /**
+     * Handle New Range.
+     */
+    private void handleNewRange() {
+        /* Ignore if we are refreshing */
+<span class="nc bnc" id="L943" title="All 2 branches missed.">        if (isRefreshing) {</span>
+<span class="nc" id="L944">            return;</span>
+        }
+
+        /* If we have a change to the range */
+<span class="nc bnc" id="L948" title="All 2 branches missed.">        if (theState.setRange(theRangeSelect)) {</span>
+            /* Note that we are refreshing */
+<span class="nc" id="L950">            isRefreshing = true;</span>
+
+            /* Obtain new analysis */
+<span class="nc" id="L953">            theAnalysis = theAnalysisMgr.getRangedAnalysis(getRange());</span>
+<span class="nc" id="L954">            setAnalysis();</span>
+
+            /* Validate state and apply */
+<span class="nc" id="L957">            checkType();</span>
+<span class="nc" id="L958">            theState.applyState();</span>
+
+            /* Remove refreshing flag and notify listeners */
+<span class="nc" id="L961">            isRefreshing = false;</span>
+<span class="nc" id="L962">            theEventManager.fireEvent(PrometheusDataEvent.SELECTIONCHANGED);</span>
+        }
+<span class="nc" id="L964">    }</span>
+
+    /**
+     * Set RangeSelect visibility.
+     *
+     * @param pVisible the visibility setting
+     */
+    private void setRangeVisibility(final boolean pVisible) {
+<span class="nc bnc" id="L972" title="All 2 branches missed.">        theRangeButton.setIcon(pVisible</span>
+<span class="nc" id="L973">                ? TethysUIArrowIconId.UP</span>
+<span class="nc" id="L974">                : TethysUIArrowIconId.DOWN);</span>
+<span class="nc" id="L975">        theRangeSelect.setVisible(pVisible);</span>
+<span class="nc" id="L976">        isRangeVisible = pVisible;</span>
+<span class="nc" id="L977">    }</span>
+
+    /**
+     * Set FilterSelect visibility.
+     *
+     * @param pVisible the visibility setting
+     */
+    private void setFilterVisibility(final boolean pVisible) {
+<span class="nc bnc" id="L985" title="All 2 branches missed.">        theFilterButton.setIcon(pVisible</span>
+<span class="nc" id="L986">                ? TethysUIArrowIconId.UP</span>
+<span class="nc" id="L987">                : TethysUIArrowIconId.DOWN);</span>
+<span class="nc" id="L988">        theFilterSelect.setVisible(pVisible);</span>
+<span class="nc" id="L989">        isFilterVisible = pVisible;</span>
+<span class="nc" id="L990">    }</span>
+
+    /**
+     * Handle New Bucket.
+     */
+    private void handleNewBucket() {
+        /* Ignore if we are refreshing */
+<span class="nc bnc" id="L997" title="All 2 branches missed.">        if (isRefreshing) {</span>
+<span class="nc" id="L998">            return;</span>
+        }
+
+<span class="nc" id="L1001">        final MoneyWiseXAnalysisAttribute myBucket = theBucketButton.getValue();</span>
+<span class="nc bnc" id="L1002" title="All 2 branches missed.">        if (theState.setBucket(myBucket)) {</span>
+<span class="nc" id="L1003">            final MoneyWiseXAnalysisFilter&lt;?, ?&gt; myFilter = theState.getFilter();</span>
+<span class="nc bnc" id="L1004" title="All 2 branches missed.">            if (myBucket != null) {</span>
+<span class="nc" id="L1005">                myFilter.setCurrentAttribute(myBucket);</span>
+            }
+<span class="nc" id="L1007">            theState.applyState();</span>
+<span class="nc" id="L1008">            theEventManager.fireEvent(PrometheusDataEvent.SELECTIONCHANGED);</span>
+        }
+<span class="nc" id="L1010">    }</span>
+
+    /**
+     * Handle New Columns.
+     */
+    private void handleNewColumns() {
+        /* Ignore if we are refreshing */
+<span class="nc bnc" id="L1017" title="All 2 branches missed.">        if (isRefreshing) {</span>
+<span class="nc" id="L1018">            return;</span>
+        }
+
+        /* Record the columns */
+<span class="nc" id="L1022">        final MoneyWiseAnalysisColumnSet mySet = theColumnButton.getValue();</span>
+<span class="nc bnc" id="L1023" title="All 2 branches missed.">        if (theState.setColumns(mySet)) {</span>
+<span class="nc" id="L1024">            theState.applyState();</span>
+<span class="nc" id="L1025">            theEventManager.fireEvent(PrometheusDataEvent.SELECTIONCHANGED);</span>
+        }
+<span class="nc" id="L1027">    }</span>
+
+    /**
+     * Handle FilterType.
+     */
+    private void handleFilterType() {
+        /* Ignore if we are refreshing */
+<span class="nc bnc" id="L1034" title="All 2 branches missed.">        if (isRefreshing) {</span>
+<span class="nc" id="L1035">            return;</span>
+        }
+
+        /* If the type has changed */
+<span class="nc" id="L1039">        final MoneyWiseXAnalysisType myType = theFilterTypeButton.getValue();</span>
+<span class="nc bnc" id="L1040" title="All 2 branches missed.">        if (theState.setAnalysisType(myType)) {</span>
+            /* Determine whether we are showing balances */
+<span class="nc bnc" id="L1042" title="All 2 branches missed.">            final boolean showingBalances = !theState.showColumns();</span>
+<span class="nc bnc" id="L1043" title="All 4 branches missed.">            if (showingBalances &amp;&amp; !myType.hasBalances()) {</span>
+                /* Move to columns if we have no balances */
+<span class="nc" id="L1045">                theState.showColumns(true);</span>
+            }
+
+            /* Move correct card to front */
+<span class="nc" id="L1049">            theCardPanel.selectCard(myType.name());</span>
+
+            /* Obtain the relevant filter */
+<span class="nc" id="L1052">            final MoneyWiseXAnalysisFilterSelection myPanel = theMap.get(myType);</span>
+<span class="nc" id="L1053">            final MoneyWiseXAnalysisFilter&lt;?, ?&gt; myFilter = myPanel.getFilter();</span>
+<span class="nc" id="L1054">            myFilter.setCurrentAttribute(myType.getDefaultValue());</span>
+
+            /* Set new bucket type and apply state */
+<span class="nc" id="L1057">            theState.setFilter(myFilter);</span>
+<span class="nc" id="L1058">            theState.setBucket(myFilter.getCurrentAttribute());</span>
+<span class="nc" id="L1059">            theState.applyState();</span>
+<span class="nc" id="L1060">            theEventManager.fireEvent(PrometheusDataEvent.SELECTIONCHANGED);</span>
+        }
+<span class="nc" id="L1062">    }</span>
+
+    /**
+     * SavePoint values.
+     */
+    private final class MoneyWiseAnalysisState {
+        /**
+         * The Range.
+         */
+        private OceanusDateRange theRange;
+
+        /**
+         * The AnalysisType.
+         */
+        private MoneyWiseXAnalysisType theType;
+
+        /**
+         * The BucketAttribute.
+         */
+        private MoneyWiseXAnalysisAttribute theBucket;
+
+        /**
+         * The ColumnSet.
+         */
+        private MoneyWiseAnalysisColumnSet theColumns;
+
+        /**
+         * The filter.
+         */
+        private MoneyWiseXAnalysisFilter&lt;?, ?&gt; theFilter;
+
+        /**
+         * Are we showing Columns?
+         */
+        private boolean showColumns;
+
+        /**
+         * Constructor.
+         */
+<span class="nc" id="L1101">        private MoneyWiseAnalysisState() {</span>
+<span class="nc" id="L1102">            theRange = null;</span>
+<span class="nc" id="L1103">            theFilter = null;</span>
+<span class="nc" id="L1104">            theType = null;</span>
+<span class="nc" id="L1105">            theBucket = null;</span>
+<span class="nc" id="L1106">            theColumns = MoneyWiseAnalysisColumnSet.STANDARD;</span>
+<span class="nc" id="L1107">            showColumns = true;</span>
+<span class="nc" id="L1108">        }</span>
+
+        /**
+         * Constructor.
+         *
+         * @param pState state to copy from
+         */
+<span class="nc" id="L1115">        private MoneyWiseAnalysisState(final MoneyWiseAnalysisState pState) {</span>
+<span class="nc" id="L1116">            theRange = pState.getRange();</span>
+<span class="nc" id="L1117">            theFilter = pState.getFilter();</span>
+<span class="nc" id="L1118">            theType = pState.getType();</span>
+<span class="nc" id="L1119">            theBucket = pState.getBucket();</span>
+<span class="nc" id="L1120">            theColumns = pState.getColumns();</span>
+<span class="nc" id="L1121">            showColumns = pState.showColumns();</span>
+<span class="nc" id="L1122">        }</span>
+
+        /**
+         * Obtain the DateDayRange.
+         *
+         * @return the range.
+         */
+        private OceanusDateRange getRange() {
+<span class="nc" id="L1130">            return theRange;</span>
+        }
+
+        /**
+         * Obtain the AnalysisType.
+         *
+         * @return the analysis type.
+         */
+        private MoneyWiseXAnalysisType getType() {
+<span class="nc" id="L1139">            return theType;</span>
+        }
+
+        /**
+         * Obtain the BucketType.
+         *
+         * @return the bucket type.
+         */
+        private MoneyWiseXAnalysisAttribute getBucket() {
+<span class="nc" id="L1148">            return theBucket;</span>
+        }
+
+        /**
+         * Obtain the Columns.
+         *
+         * @return the columns.
+         */
+        private MoneyWiseAnalysisColumnSet getColumns() {
+<span class="nc" id="L1157">            return theColumns;</span>
+        }
+
+        /**
+         * Obtain the Filter.
+         *
+         * @return the filter.
+         */
+        private MoneyWiseXAnalysisFilter&lt;?, ?&gt; getFilter() {
+<span class="nc" id="L1166">            return theFilter;</span>
+        }
+
+        /**
+         * Are we showing columns?
+         *
+         * @return true/false.
+         */
+        private boolean showColumns() {
+<span class="nc" id="L1175">            return showColumns;</span>
+        }
+
+        /**
+         * Determine selection from panels.
+         *
+         * @param pFilter selection panel
+         */
+        private void determineState(final MoneyWiseXAnalysisFilterSelection pFilter) {
+            /* Update the selection panels */
+<span class="nc" id="L1185">            theRange = theRangeSelect.getRange();</span>
+<span class="nc" id="L1186">            theFilter = pFilter.getFilter();</span>
+<span class="nc" id="L1187">            theType = theFilter.getAnalysisType();</span>
+<span class="nc" id="L1188">            theBucket = theFilter.getCurrentAttribute();</span>
+<span class="nc bnc" id="L1189" title="All 2 branches missed.">            showColumns = theBucket == null;</span>
+<span class="nc" id="L1190">            applyState();</span>
+<span class="nc" id="L1191">        }</span>
+
+        /**
+         * Set new Range from select panel.
+         *
+         * @param pSelect the selection panel
+         * @return true/false did a change occur
+         */
+        private boolean setRange(final TethysUIDateRangeSelector pSelect) {
+            /* Adjust the selected account */
+<span class="nc" id="L1201">            final OceanusDateRange myRange = pSelect.getRange();</span>
+<span class="nc bnc" id="L1202" title="All 2 branches missed.">            if (!MetisDataDifference.isEqual(myRange, theRange)) {</span>
+<span class="nc" id="L1203">                theRange = myRange;</span>
+<span class="nc" id="L1204">                return true;</span>
+            }
+<span class="nc" id="L1206">            return false;</span>
+        }
+
+        /**
+         * Set new analysis type.
+         *
+         * @param pType the analysis type
+         * @return true/false did a change occur
+         */
+        private boolean setAnalysisType(final MoneyWiseXAnalysisType pType) {
+<span class="nc bnc" id="L1216" title="All 2 branches missed.">            if (!MetisDataDifference.isEqual(pType, theType)) {</span>
+<span class="nc" id="L1217">                theType = pType;</span>
+<span class="nc" id="L1218">                return true;</span>
+            }
+<span class="nc" id="L1220">            return false;</span>
+        }
+
+        /**
+         * Set new bucket type.
+         *
+         * @param pBucket the bucket type
+         * @return true/false did a change occur
+         */
+        private boolean setBucket(final MoneyWiseXAnalysisAttribute pBucket) {
+<span class="nc bnc" id="L1230" title="All 2 branches missed.">            if (!MetisDataDifference.isEqual(pBucket, theBucket)) {</span>
+                /* If this is the null bucket */
+<span class="nc bnc" id="L1232" title="All 2 branches missed.">                if (pBucket == null) {</span>
+<span class="nc" id="L1233">                    showColumns = true;</span>
+                } else {
+<span class="nc" id="L1235">                    theBucket = pBucket;</span>
+                }
+<span class="nc" id="L1237">                return true;</span>
+            }
+<span class="nc" id="L1239">            return false;</span>
+        }
+
+        /**
+         * Set new column set.
+         *
+         * @param pColumnSet the column set
+         * @return true/false did a change occur
+         */
+        private boolean setColumns(final MoneyWiseAnalysisColumnSet pColumnSet) {
+<span class="nc bnc" id="L1249" title="All 2 branches missed.">            if (!MetisDataDifference.isEqual(pColumnSet, theColumns)) {</span>
+                /* If this is the balance bucket */
+<span class="nc bnc" id="L1251" title="All 2 branches missed.">                if (pColumnSet.equals(MoneyWiseAnalysisColumnSet.BALANCE)) {</span>
+<span class="nc" id="L1252">                    showColumns = false;</span>
+                } else {
+<span class="nc" id="L1254">                    theColumns = pColumnSet;</span>
+                }
+<span class="nc" id="L1256">                return true;</span>
+            }
+<span class="nc" id="L1258">            return false;</span>
+        }
+
+        /**
+         * Set filter.
+         *
+         * @param pFilter the filter
+         */
+        private void setFilter(final MoneyWiseXAnalysisFilter&lt;?, ?&gt; pFilter) {
+<span class="nc" id="L1267">            theFilter = pFilter;</span>
+<span class="nc" id="L1268">        }</span>
+
+        /**
+         * Apply the State.
+         */
+        private void applyState() {
+            /* Adjust the lock-down */
+<span class="nc" id="L1275">            setEnabled(true);</span>
+<span class="nc" id="L1276">            theRangeButton.setText(theRange.toString());</span>
+<span class="nc bnc" id="L1277" title="All 2 branches missed.">            theFilterButton.setText((theFilter == null)</span>
+<span class="nc" id="L1278">                    ? null</span>
+<span class="nc" id="L1279">                    : theFilter.getName());</span>
+<span class="nc" id="L1280">            theFilterTypeButton.setValue(theType);</span>
+<span class="nc" id="L1281">            theBucketButton.setValue(theBucket);</span>
+<span class="nc" id="L1282">            theColumnButton.setValue(theColumns);</span>
+<span class="nc" id="L1283">            showColumns(showColumns);</span>
+<span class="nc" id="L1284">        }</span>
+
+        /**
+         * Show Columns.
+         *
+         * @param pShow true/false
+         */
+        private void showColumns(final boolean pShow) {
+            /* Show columns */
+<span class="nc" id="L1293">            theColumnLabel.setVisible(pShow);</span>
+<span class="nc" id="L1294">            theColumnButton.setVisible(pShow);</span>
+
+            /* Hide buckets */
+<span class="nc bnc" id="L1297" title="All 2 branches missed.">            theBucketLabel.setVisible(!pShow);</span>
+<span class="nc bnc" id="L1298" title="All 2 branches missed.">            theBucketButton.setVisible(!pShow);</span>
+
+            /* Record details */
+<span class="nc" id="L1301">            showColumns = pShow;</span>
+<span class="nc" id="L1302">        }</span>
+    }
+
+    /**
+     * The Statement Select class.
+     */
+    public static final class MoneyWiseXStatementSelect {
+        /**
+         * The Range Selection.
+         */
+        private final TethysUIDateRangeSelector theRangeSelect;
+
+        /**
+         * The AnalysisFilter.
+         */
+        private final MoneyWiseXAnalysisFilter&lt;?, ?&gt; theFilter;
+
+        /**
+         * Constructor.
+         *
+         * @param pRangeSelect the range selection
+         * @param pFilter      the analysis filter
+         */
+        public MoneyWiseXStatementSelect(final TethysUIDateRangeSelector pRangeSelect,
+<span class="nc" id="L1326">                                         final MoneyWiseXAnalysisFilter&lt;?, ?&gt; pFilter) {</span>
+            /* Store parameters */
+<span class="nc" id="L1328">            theRangeSelect = pRangeSelect;</span>
+<span class="nc" id="L1329">            theFilter = pFilter;</span>
+<span class="nc" id="L1330">        }</span>
+
+        /**
+         * Obtain the RangeSelection.
+         *
+         * @return the filter
+         */
+        public TethysUIDateRangeSelector getRangeSelect() {
+<span class="nc" id="L1338">            return theRangeSelect;</span>
+        }
+
+        /**
+         * Obtain the Filter.
+         *
+         * @return the filter
+         */
+        public MoneyWiseXAnalysisFilter&lt;?, ?&gt; getFilter() {
+<span class="nc" id="L1347">            return theFilter;</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

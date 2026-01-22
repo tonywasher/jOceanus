@@ -1,0 +1,931 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianGCMSIVBlockCipher.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.impl.ext.modes</a> &gt; <span class="el_source">GordianGCMSIVBlockCipher.java</span></div><h1>GordianGCMSIVBlockCipher.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.gordianknot.impl.ext.modes;
+
+import org.bouncycastle.crypto.BlockCipher;
+import org.bouncycastle.crypto.CipherParameters;
+import org.bouncycastle.crypto.DataLengthException;
+import org.bouncycastle.crypto.InvalidCipherTextException;
+import org.bouncycastle.crypto.OutputLengthException;
+import org.bouncycastle.crypto.engines.AESEngine;
+import org.bouncycastle.crypto.modes.AEADBlockCipher;
+import org.bouncycastle.crypto.modes.gcm.GCMMultiplier;
+import org.bouncycastle.crypto.modes.gcm.Tables4kGCMMultiplier;
+import org.bouncycastle.crypto.params.AEADParameters;
+import org.bouncycastle.crypto.params.KeyParameter;
+import org.bouncycastle.crypto.params.ParametersWithIV;
+import org.bouncycastle.util.Arrays;
+import org.bouncycastle.util.Pack;
+
+import java.io.ByteArrayOutputStream;
+
+/**
+ * GCM-SIV Mode.
+ * Donated to BouncyCastle.
+ * &lt;p&gt;It should be noted that the specified limit of 2&lt;sup&gt;36&lt;/sup&gt; bytes is not checked. This is because all bytes are
+ * cached in a &lt;b&gt;ByteArrayOutputStream&lt;/b&gt; object (which has a limit of 2&lt;sup&gt;31&lt;/sup&gt; bytes), and are output
+ * on the &lt;b&gt;doFinal&lt;/b&gt;() call (which can only process a maximum of 2&lt;sup&gt;31&lt;/sup&gt; bytes).
+ * &lt;p&gt;The limit of 2&lt;sup&gt;31&lt;/sup&gt; bytes is not policed, and attempts to breach the limit will fail on writing to the
+ * &lt;b&gt;ByteArrayOutputStream&lt;/b&gt; with &lt;b&gt;OutOfMemoryError&lt;/b&gt;&lt;/p&gt;
+ * &lt;p&gt;In order to properly support the higher limit, the &lt;b&gt;GCMSIVCache&lt;/b&gt; would need to be extended to
+ * use multiple arrays to store the data. In addition, a new &lt;b&gt;doOutput&lt;/b&gt; method would be required (similar to that in
+ * &lt;b&gt;XOF&lt;/b&gt; digests), which would allow the data to be output over multiple calls. Alternatively an extended form
+ * of &lt;b&gt;ByteArrayInputStream&lt;/b&gt; could be used to deliver the data&lt;/p&gt;
+ */
+public class GordianGCMSIVBlockCipher
+        implements AEADBlockCipher {
+    /**
+     * The buffer length.
+     */
+    private static final int BUFLEN = 16;
+
+    /**
+     * The halfBuffer length.
+     */
+    private static final int HALFBUFLEN = BUFLEN &gt;&gt; 1;
+
+    /**
+     * The nonce length.
+     */
+    private static final int NONCELEN = 12;
+
+    /**
+     * The maximum data length (AEAD/PlainText). Due to implementation constraints this is restricted to the
+     * maximum array length (&lt;a href=&quot;https://programming.guide/java/array-maximum-length.html&quot;&gt;Java Maximum Array Length&lt;/a&gt;) - the BUFLEN
+     */
+    private static final int MAX_DATALEN = Integer.MAX_VALUE - 8 - BUFLEN;
+
+    /**
+     * The top bit mask.
+     */
+    private static final byte MASK = (byte) 0b10000000;
+
+    /**
+     * The addition constant.
+     */
+    private static final byte ADD = (byte) 0b11100001;
+
+    /**
+     * The initialisation flag.
+     */
+    private static final int INIT = 1;
+
+    /**
+     * The aeadComplete flag.
+     */
+    private static final int AEAD_COMPLETE = 2;
+
+    /**
+     * The cipher.
+     */
+    private final BlockCipher theCipher;
+
+    /**
+     * The multiplier.
+     */
+    private final GCMMultiplier theMultiplier;
+
+    /**
+     * The gHash buffer.
+     */
+<span class="fc" id="L105">    private final byte[] theGHash = new byte[BUFLEN];</span>
+
+    /**
+     * The reverse buffer.
+     */
+<span class="fc" id="L110">    private final byte[] theReverse = new byte[BUFLEN];</span>
+
+    /**
+     * The aeadHasher.
+     */
+    private final GCMSIVHasher theAEADHasher;
+
+    /**
+     * The dataHasher.
+     */
+    private final GCMSIVHasher theDataHasher;
+
+    /**
+     * The plainDataStream.
+     */
+    private GCMSIVCache thePlain;
+
+    /**
+     * The encryptedDataStream (decryption only).
+     */
+    private GCMSIVCache theEncData;
+
+    /**
+     * Are we encrypting?
+     */
+    private boolean forEncryption;
+
+    /**
+     * The initialAEAD.
+     */
+    private byte[] theInitialAEAD;
+
+    /**
+     * The nonce.
+     */
+    private byte[] theNonce;
+
+    /**
+     * The flags.
+     */
+    private int theFlags;
+
+    /**
+     * Constructor.
+     */
+    public GordianGCMSIVBlockCipher() {
+<span class="fc" id="L156">        this(AESEngine.newInstance());</span>
+<span class="fc" id="L157">    }</span>
+
+    /**
+     * Constructor.
+     *
+     * @param pCipher the underlying cipher
+     */
+    public GordianGCMSIVBlockCipher(final BlockCipher pCipher) {
+<span class="fc" id="L165">        this(pCipher, new Tables4kGCMMultiplier());</span>
+<span class="fc" id="L166">    }</span>
+
+    /**
+     * Constructor.
+     *
+     * @param pCipher     the underlying cipher
+     * @param pMultiplier the multiplier
+     */
+    public GordianGCMSIVBlockCipher(final BlockCipher pCipher,
+<span class="fc" id="L175">                                    final GCMMultiplier pMultiplier) {</span>
+        /* Ensure that the cipher is the correct size */
+<span class="pc bpc" id="L177" title="1 of 2 branches missed.">        if (pCipher.getBlockSize() != BUFLEN) {</span>
+<span class="nc" id="L178">            throw new IllegalArgumentException(&quot;Cipher required with a block size of &quot; + BUFLEN + &quot;.&quot;);</span>
+        }
+
+        /* Store parameters */
+<span class="fc" id="L182">        theCipher = pCipher;</span>
+<span class="fc" id="L183">        theMultiplier = pMultiplier;</span>
+
+        /* Create the hashers */
+<span class="fc" id="L186">        theAEADHasher = new GCMSIVHasher();</span>
+<span class="fc" id="L187">        theDataHasher = new GCMSIVHasher();</span>
+<span class="fc" id="L188">    }</span>
+
+    @Override
+    public BlockCipher getUnderlyingCipher() {
+<span class="nc" id="L192">        return theCipher;</span>
+    }
+
+    @Override
+    public void init(final boolean pEncrypt,
+                     final CipherParameters cipherParameters) throws IllegalArgumentException {
+        /* Set defaults */
+<span class="fc" id="L199">        byte[] myInitialAEAD = null;</span>
+        final byte[] myNonce;
+        final KeyParameter myKey;
+
+        /* Access parameters */
+<span class="fc bfc" id="L204" title="All 2 branches covered.">        if (cipherParameters instanceof AEADParameters) {</span>
+<span class="fc" id="L205">            final AEADParameters myAEAD = (AEADParameters) cipherParameters;</span>
+<span class="fc" id="L206">            myInitialAEAD = myAEAD.getAssociatedText();</span>
+<span class="fc" id="L207">            myNonce = myAEAD.getNonce();</span>
+<span class="fc" id="L208">            myKey = myAEAD.getKey();</span>
+<span class="pc bpc" id="L209" title="1 of 2 branches missed.">        } else if (cipherParameters instanceof ParametersWithIV) {</span>
+<span class="fc" id="L210">            final ParametersWithIV myParms = (ParametersWithIV) cipherParameters;</span>
+<span class="fc" id="L211">            myNonce = myParms.getIV();</span>
+<span class="fc" id="L212">            myKey = (KeyParameter) myParms.getParameters();</span>
+<span class="fc" id="L213">        } else {</span>
+<span class="nc" id="L214">            throw new IllegalArgumentException(&quot;invalid parameters passed to GCM_SIV&quot;);</span>
+        }
+
+        /* Check nonceSize */
+<span class="pc bpc" id="L218" title="2 of 4 branches missed.">        if (myNonce == null || myNonce.length != NONCELEN) {</span>
+<span class="nc" id="L219">            throw new IllegalArgumentException(&quot;Invalid nonce&quot;);</span>
+        }
+
+        /* Check keysize */
+<span class="pc bpc" id="L223" title="1 of 2 branches missed.">        if (myKey == null</span>
+<span class="fc bfc" id="L224" title="All 2 branches covered.">                || (myKey.getKey().length != BUFLEN</span>
+<span class="pc bpc" id="L225" title="1 of 2 branches missed.">                &amp;&amp; myKey.getKey().length != (BUFLEN &lt;&lt; 1))) {</span>
+<span class="nc" id="L226">            throw new IllegalArgumentException(&quot;Invalid key&quot;);</span>
+        }
+
+        /* Reset details */
+<span class="fc" id="L230">        forEncryption = pEncrypt;</span>
+<span class="fc" id="L231">        theInitialAEAD = myInitialAEAD;</span>
+<span class="fc" id="L232">        theNonce = myNonce;</span>
+
+        /* Initialise the keys */
+<span class="fc" id="L235">        deriveKeys(myKey);</span>
+<span class="fc" id="L236">        resetStreams();</span>
+<span class="fc" id="L237">    }</span>
+
+    @Override
+    public String getAlgorithmName() {
+<span class="nc" id="L241">        return theCipher.getAlgorithmName() + &quot;-GCM-SIV&quot;;</span>
+    }
+
+    /**
+     * check AEAD status.
+     *
+     * @param pLen the dataLength
+     */
+    private void checkAEADStatus(final int pLen) {
+        /* Check we are initialised */
+<span class="pc bpc" id="L251" title="1 of 2 branches missed.">        if ((theFlags &amp; INIT) == 0) {</span>
+<span class="nc" id="L252">            throw new IllegalStateException(&quot;Cipher is not initialised&quot;);</span>
+        }
+
+        /* Check AAD is allowed */
+<span class="pc bpc" id="L256" title="1 of 2 branches missed.">        if ((theFlags &amp; AEAD_COMPLETE) != 0) {</span>
+<span class="nc" id="L257">            throw new IllegalStateException(&quot;AEAD data cannot be processed after ordinary data&quot;);</span>
+        }
+
+        /* Make sure that we haven't breached AEAD data limit */
+<span class="pc bpc" id="L261" title="1 of 2 branches missed.">        if (theAEADHasher.getBytesProcessed() + Long.MIN_VALUE</span>
+                &gt; (MAX_DATALEN - pLen) + Long.MIN_VALUE) {
+<span class="nc" id="L263">            throw new IllegalStateException(&quot;AEAD byte count exceeded&quot;);</span>
+        }
+<span class="fc" id="L265">    }</span>
+
+    /**
+     * check status.
+     *
+     * @param pLen the dataLength
+     */
+    private void checkStatus(final int pLen) {
+        /* Check we are initialised */
+<span class="pc bpc" id="L274" title="1 of 2 branches missed.">        if ((theFlags &amp; INIT) == 0) {</span>
+<span class="nc" id="L275">            throw new IllegalStateException(&quot;Cipher is not initialised&quot;);</span>
+        }
+
+        /* Complete the AEAD section if this is the first data */
+<span class="fc bfc" id="L279" title="All 2 branches covered.">        if ((theFlags &amp; AEAD_COMPLETE) == 0) {</span>
+<span class="fc" id="L280">            theAEADHasher.completeHash();</span>
+<span class="fc" id="L281">            theFlags |= AEAD_COMPLETE;</span>
+        }
+
+        /* Make sure that we haven't breached data limit */
+<span class="fc" id="L285">        long dataLimit = MAX_DATALEN;</span>
+<span class="fc" id="L286">        long currBytes = thePlain.size();</span>
+<span class="fc bfc" id="L287" title="All 2 branches covered.">        if (!forEncryption) {</span>
+<span class="fc" id="L288">            dataLimit += BUFLEN;</span>
+<span class="fc" id="L289">            currBytes = theEncData.size();</span>
+        }
+<span class="pc bpc" id="L291" title="1 of 2 branches missed.">        if (currBytes + Long.MIN_VALUE</span>
+                &gt; (dataLimit - pLen) + Long.MIN_VALUE) {
+<span class="nc" id="L293">            throw new IllegalStateException(&quot;byte count exceeded&quot;);</span>
+        }
+<span class="fc" id="L295">    }</span>
+
+    @Override
+    public void processAADByte(final byte pByte) {
+        /* Check that we can supply AEAD */
+<span class="fc" id="L300">        checkAEADStatus(1);</span>
+
+        /* Process the aead */
+<span class="fc" id="L303">        theAEADHasher.updateHash(pByte);</span>
+<span class="fc" id="L304">    }</span>
+
+    @Override
+    public void processAADBytes(final byte[] pData,
+                                final int pOffset,
+                                final int pLen) {
+        /* Check that we can supply AEAD */
+<span class="fc" id="L311">        checkAEADStatus(pLen);</span>
+
+        /* Check input buffer */
+<span class="fc" id="L314">        checkBuffer(pData, pOffset, pLen, false);</span>
+
+        /* Process the aead */
+<span class="fc" id="L317">        theAEADHasher.updateHash(pData, pOffset, pLen);</span>
+<span class="fc" id="L318">    }</span>
+
+    @Override
+    public int processByte(final byte pByte,
+                           final byte[] pOutput,
+                           final int pOutOffset) throws DataLengthException {
+        /* Check that we have initialised */
+<span class="fc" id="L325">        checkStatus(1);</span>
+
+        /* Store the data */
+<span class="pc bpc" id="L328" title="1 of 2 branches missed.">        if (forEncryption) {</span>
+<span class="fc" id="L329">            thePlain.write(pByte);</span>
+<span class="fc" id="L330">            theDataHasher.updateHash(pByte);</span>
+        } else {
+<span class="nc" id="L332">            theEncData.write(pByte);</span>
+        }
+
+        /* No data returned */
+<span class="fc" id="L336">        return 0;</span>
+    }
+
+    @Override
+    public int processBytes(final byte[] pData,
+                            final int pOffset,
+                            final int pLen,
+                            final byte[] pOutput,
+                            final int pOutOffset) throws DataLengthException {
+        /* Check that we have initialised */
+<span class="fc" id="L346">        checkStatus(pLen);</span>
+
+        /* Check input buffer */
+<span class="fc" id="L349">        checkBuffer(pData, pOffset, pLen, false);</span>
+
+        /* Store the data */
+<span class="fc bfc" id="L352" title="All 2 branches covered.">        if (forEncryption) {</span>
+<span class="fc" id="L353">            thePlain.write(pData, pOffset, pLen);</span>
+<span class="fc" id="L354">            theDataHasher.updateHash(pData, pOffset, pLen);</span>
+        } else {
+<span class="fc" id="L356">            theEncData.write(pData, pOffset, pLen);</span>
+        }
+
+        /* No data returned */
+<span class="fc" id="L360">        return 0;</span>
+    }
+
+    @Override
+    public int doFinal(final byte[] pOutput,
+                       final int pOffset) throws IllegalStateException, InvalidCipherTextException {
+        /* Check that we have initialised */
+<span class="fc" id="L367">        checkStatus(0);</span>
+
+        /* Check output buffer */
+<span class="fc" id="L370">        checkBuffer(pOutput, pOffset, getOutputSize(0), true);</span>
+
+        /* If we are encrypting */
+<span class="fc bfc" id="L373" title="All 2 branches covered.">        if (forEncryption) {</span>
+            /* Derive the tag */
+<span class="fc" id="L375">            final byte[] myTag = calculateTag();</span>
+
+            /* encrypt the plain text */
+<span class="fc" id="L378">            final int myDataLen = BUFLEN + encryptPlain(myTag, pOutput, pOffset);</span>
+
+            /* Add the tag to the output */
+<span class="fc" id="L381">            System.arraycopy(myTag, 0, pOutput, pOffset + thePlain.size(), BUFLEN);</span>
+
+            /* Reset the streams */
+<span class="fc" id="L384">            resetStreams();</span>
+<span class="fc" id="L385">            return myDataLen;</span>
+
+            /* else we are decrypting */
+        } else {
+            /* decrypt to plain text */
+<span class="fc" id="L390">            decryptPlain();</span>
+
+            /* Release plain text */
+<span class="fc" id="L393">            final int myDataLen = thePlain.size();</span>
+<span class="fc" id="L394">            final byte[] mySrc = thePlain.getBuffer();</span>
+<span class="fc" id="L395">            System.arraycopy(mySrc, 0, pOutput, pOffset, myDataLen);</span>
+
+            /* Reset the streams */
+<span class="fc" id="L398">            resetStreams();</span>
+<span class="fc" id="L399">            return myDataLen;</span>
+        }
+    }
+
+    @Override
+    public byte[] getMac() {
+<span class="nc" id="L405">        throw new UnsupportedOperationException();</span>
+    }
+
+    @Override
+    public int getUpdateOutputSize(final int pLen) {
+<span class="nc" id="L410">        return 0;</span>
+    }
+
+    @Override
+    public int getOutputSize(final int pLen) {
+<span class="fc bfc" id="L415" title="All 2 branches covered.">        if (forEncryption) {</span>
+<span class="fc" id="L416">            return pLen + thePlain.size() + BUFLEN;</span>
+        }
+<span class="fc" id="L418">        final int myCurr = pLen + theEncData.size();</span>
+<span class="fc bfc" id="L419" title="All 2 branches covered.">        return myCurr &gt; BUFLEN ? myCurr - BUFLEN : 0;</span>
+    }
+
+    @Override
+    public void reset() {
+<span class="nc" id="L424">        resetStreams();</span>
+<span class="nc" id="L425">    }</span>
+
+    /**
+     * Reset Streams.
+     */
+    private void resetStreams() {
+        /* Clear the plainText buffer */
+<span class="fc bfc" id="L432" title="All 2 branches covered.">        if (thePlain != null) {</span>
+<span class="fc" id="L433">            thePlain.clearBuffer();</span>
+        }
+
+        /* Reset hashers */
+<span class="fc" id="L437">        theAEADHasher.reset();</span>
+<span class="fc" id="L438">        theDataHasher.reset();</span>
+
+        /* Recreate streams (to release memory) */
+<span class="fc" id="L441">        thePlain = new GCMSIVCache();</span>
+<span class="fc bfc" id="L442" title="All 2 branches covered.">        theEncData = forEncryption ? null : new GCMSIVCache();</span>
+
+        /* Initialise AEAD if required */
+<span class="fc" id="L445">        theFlags &amp;= ~AEAD_COMPLETE;</span>
+<span class="fc" id="L446">        Arrays.fill(theGHash, (byte) 0);</span>
+<span class="fc bfc" id="L447" title="All 2 branches covered.">        if (theInitialAEAD != null) {</span>
+<span class="fc" id="L448">            theAEADHasher.updateHash(theInitialAEAD, 0, theInitialAEAD.length);</span>
+        }
+<span class="fc" id="L450">    }</span>
+
+    /**
+     * Obtain buffer length (allowing for null).
+     *
+     * @param pBuffer the buffer
+     * @return the length
+     */
+    private static int bufLength(final byte[] pBuffer) {
+<span class="pc bpc" id="L459" title="1 of 2 branches missed.">        return pBuffer == null ? 0 : pBuffer.length;</span>
+    }
+
+    /**
+     * Check buffer.
+     *
+     * @param pBuffer the buffer
+     * @param pOffset the offset
+     * @param pLen    the length
+     * @param pOutput is this an output buffer?
+     */
+    private static void checkBuffer(final byte[] pBuffer,
+                                    final int pOffset,
+                                    final int pLen,
+                                    final boolean pOutput) {
+        /* Access lengths */
+<span class="fc" id="L475">        final int myBufLen = bufLength(pBuffer);</span>
+<span class="fc" id="L476">        final int myLast = pOffset + pLen;</span>
+
+        /* Check for negative values and buffer overflow */
+<span class="pc bpc" id="L479" title="3 of 6 branches missed.">        final boolean badLen = pLen &lt; 0 || pOffset &lt; 0 || myLast &lt; 0;</span>
+<span class="pc bpc" id="L480" title="2 of 4 branches missed.">        if (badLen || myLast &gt; myBufLen) {</span>
+<span class="nc bnc" id="L481" title="All 2 branches missed.">            throw pOutput</span>
+<span class="nc" id="L482">                    ? new OutputLengthException(&quot;Output buffer too short.&quot;)</span>
+<span class="nc" id="L483">                    : new DataLengthException(&quot;Input buffer too short.&quot;);</span>
+        }
+<span class="fc" id="L485">    }</span>
+
+    /**
+     * encrypt data stream.
+     *
+     * @param pCounter the counter
+     * @param pTarget  the target buffer
+     * @param pOffset  the target offset
+     * @return the length of data encrypted
+     */
+    private int encryptPlain(final byte[] pCounter,
+                             final byte[] pTarget,
+                             final int pOffset) {
+        /* Access buffer and length */
+<span class="fc" id="L499">        final byte[] mySrc = thePlain.getBuffer();</span>
+<span class="fc" id="L500">        final byte[] myCounter = Arrays.clone(pCounter);</span>
+<span class="fc" id="L501">        myCounter[BUFLEN - 1] |= MASK;</span>
+<span class="fc" id="L502">        final byte[] myMask = new byte[BUFLEN];</span>
+<span class="fc" id="L503">        int myRemaining = thePlain.size();</span>
+<span class="fc" id="L504">        int myOff = 0;</span>
+
+        /* While we have data to process */
+<span class="fc bfc" id="L507" title="All 2 branches covered.">        while (myRemaining &gt; 0) {</span>
+            /* Generate the next mask */
+<span class="fc" id="L509">            theCipher.processBlock(myCounter, 0, myMask, 0);</span>
+
+            /* Xor data into mask */
+<span class="fc" id="L512">            final int myLen = Math.min(BUFLEN, myRemaining);</span>
+<span class="fc" id="L513">            xorBlock(myMask, mySrc, myOff, myLen);</span>
+
+            /* Copy encrypted data to output */
+<span class="fc" id="L516">            System.arraycopy(myMask, 0, pTarget, pOffset + myOff, myLen);</span>
+
+            /* Adjust counters */
+<span class="fc" id="L519">            myRemaining -= myLen;</span>
+<span class="fc" id="L520">            myOff += myLen;</span>
+<span class="fc" id="L521">            incrementCounter(myCounter);</span>
+<span class="fc" id="L522">        }</span>
+
+        /* Return the amount of data processed */
+<span class="fc" id="L525">        return thePlain.size();</span>
+    }
+
+    /**
+     * decrypt data stream.
+     *
+     * @throws InvalidCipherTextException on data too short or mac check failed
+     */
+    private void decryptPlain() throws InvalidCipherTextException {
+        /* Access buffer and length */
+<span class="fc" id="L535">        final byte[] mySrc = theEncData.getBuffer();</span>
+<span class="fc" id="L536">        int myRemaining = theEncData.size() - BUFLEN;</span>
+
+        /* Check for insufficient data */
+<span class="pc bpc" id="L539" title="1 of 2 branches missed.">        if (myRemaining &lt; 0) {</span>
+<span class="nc" id="L540">            throw new InvalidCipherTextException(&quot;Data too short&quot;);</span>
+        }
+
+        /* Access counter */
+<span class="fc" id="L544">        final byte[] myExpected = Arrays.copyOfRange(mySrc, myRemaining, myRemaining + BUFLEN);</span>
+<span class="fc" id="L545">        final byte[] myCounter = Arrays.clone(myExpected);</span>
+<span class="fc" id="L546">        myCounter[BUFLEN - 1] |= MASK;</span>
+<span class="fc" id="L547">        final byte[] myMask = new byte[BUFLEN];</span>
+<span class="fc" id="L548">        int myOff = 0;</span>
+
+        /* While we have data to process */
+<span class="fc bfc" id="L551" title="All 2 branches covered.">        while (myRemaining &gt; 0) {</span>
+            /* Generate the next mask */
+<span class="fc" id="L553">            theCipher.processBlock(myCounter, 0, myMask, 0);</span>
+
+            /* Xor data into mask */
+<span class="fc" id="L556">            final int myLen = Math.min(BUFLEN, myRemaining);</span>
+<span class="fc" id="L557">            xorBlock(myMask, mySrc, myOff, myLen);</span>
+
+            /* Write data to plain dataStream */
+<span class="fc" id="L560">            thePlain.write(myMask, 0, myLen);</span>
+<span class="fc" id="L561">            theDataHasher.updateHash(myMask, 0, myLen);</span>
+
+            /* Adjust counters */
+<span class="fc" id="L564">            myRemaining -= myLen;</span>
+<span class="fc" id="L565">            myOff += myLen;</span>
+<span class="fc" id="L566">            incrementCounter(myCounter);</span>
+<span class="fc" id="L567">        }</span>
+
+        /* Derive and check the tag */
+<span class="fc" id="L570">        final byte[] myTag = calculateTag();</span>
+<span class="pc bpc" id="L571" title="1 of 2 branches missed.">        if (!Arrays.constantTimeAreEqual(myTag, myExpected)) {</span>
+<span class="nc" id="L572">            reset();</span>
+<span class="nc" id="L573">            throw new InvalidCipherTextException(&quot;mac check failed&quot;);</span>
+        }
+<span class="fc" id="L575">    }</span>
+
+    /**
+     * calculate tag.
+     *
+     * @return the calculated tag
+     */
+    private byte[] calculateTag() {
+        /* Complete the hash */
+<span class="fc" id="L584">        theDataHasher.completeHash();</span>
+<span class="fc" id="L585">        final byte[] myPolyVal = completePolyVal();</span>
+
+        /* calculate polyVal */
+<span class="fc" id="L588">        final byte[] myResult = new byte[BUFLEN];</span>
+
+        /* Fold in the nonce */
+<span class="fc bfc" id="L591" title="All 2 branches covered.">        for (int i = 0; i &lt; NONCELEN; i++) {</span>
+<span class="fc" id="L592">            myPolyVal[i] ^= theNonce[i];</span>
+        }
+
+        /* Clear top bit */
+<span class="fc" id="L596">        myPolyVal[BUFLEN - 1] &amp;= (byte) (MASK - 1);</span>
+
+        /* Calculate tag and return it */
+<span class="fc" id="L599">        theCipher.processBlock(myPolyVal, 0, myResult, 0);</span>
+<span class="fc" id="L600">        return myResult;</span>
+    }
+
+    /**
+     * complete polyVAL.
+     *
+     * @return the calculated value
+     */
+    private byte[] completePolyVal() {
+        /* Build the polyVal result */
+<span class="fc" id="L610">        final byte[] myResult = new byte[BUFLEN];</span>
+<span class="fc" id="L611">        gHashLengths();</span>
+<span class="fc" id="L612">        fillReverse(theGHash, 0, BUFLEN, myResult);</span>
+<span class="fc" id="L613">        return myResult;</span>
+    }
+
+    /**
+     * process lengths.
+     */
+    private void gHashLengths() {
+        /* Create reversed bigEndian buffer to keep it simple */
+<span class="fc" id="L621">        final byte[] myIn = new byte[BUFLEN];</span>
+<span class="fc" id="L622">        Pack.longToBigEndian(Byte.SIZE * theDataHasher.getBytesProcessed(), myIn, 0);</span>
+<span class="fc" id="L623">        Pack.longToBigEndian(Byte.SIZE * theAEADHasher.getBytesProcessed(), myIn, Long.BYTES);</span>
+
+        /* hash value */
+<span class="fc" id="L626">        gHASH(myIn);</span>
+<span class="fc" id="L627">    }</span>
+
+    /**
+     * perform the next GHASH step.
+     *
+     * @param pNext the next value
+     */
+    private void gHASH(final byte[] pNext) {
+<span class="fc" id="L635">        xorBlock(theGHash, pNext);</span>
+<span class="fc" id="L636">        theMultiplier.multiplyH(theGHash);</span>
+<span class="fc" id="L637">    }</span>
+
+    /**
+     * Byte reverse a buffer.
+     *
+     * @param pInput  the input buffer
+     * @param pOffset the offset
+     * @param pLength the length of data (&lt;= BUFLEN)
+     * @param pOutput the output buffer
+     */
+    private static void fillReverse(final byte[] pInput,
+                                    final int pOffset,
+                                    final int pLength,
+                                    final byte[] pOutput) {
+        /* Loop through the buffer */
+<span class="fc bfc" id="L652" title="All 2 branches covered.">        for (int i = 0, j = BUFLEN - 1; i &lt; pLength; i++, j--) {</span>
+            /* Copy byte */
+<span class="fc" id="L654">            pOutput[j] = pInput[pOffset + i];</span>
+        }
+<span class="fc" id="L656">    }</span>
+
+    /**
+     * xor a full block buffer.
+     *
+     * @param pLeft  the left operand and result
+     * @param pRight the right operand
+     */
+    private static void xorBlock(final byte[] pLeft,
+                                 final byte[] pRight) {
+        /* Loop through the bytes */
+<span class="fc bfc" id="L667" title="All 2 branches covered.">        for (int i = 0; i &lt; BUFLEN; i++) {</span>
+<span class="fc" id="L668">            pLeft[i] ^= pRight[i];</span>
+        }
+<span class="fc" id="L670">    }</span>
+
+    /**
+     * xor a partial block buffer.
+     *
+     * @param pLeft   the left operand and result
+     * @param pRight  the right operand
+     * @param pOffset the offset in the right operand
+     * @param pLength the length of data in the right operand
+     */
+    private static void xorBlock(final byte[] pLeft,
+                                 final byte[] pRight,
+                                 final int pOffset,
+                                 final int pLength) {
+        /* Loop through the bytes */
+<span class="fc bfc" id="L685" title="All 2 branches covered.">        for (int i = 0; i &lt; pLength; i++) {</span>
+<span class="fc" id="L686">            pLeft[i] ^= pRight[i + pOffset];</span>
+        }
+<span class="fc" id="L688">    }</span>
+
+    /**
+     * increment the counter.
+     *
+     * @param pCounter the counter to increment
+     */
+    private static void incrementCounter(final byte[] pCounter) {
+        /* Loop through the bytes incrementing counter */
+<span class="fc bfc" id="L697" title="All 2 branches covered.">        for (int i = 0; i &lt; Integer.BYTES; i++) {</span>
+<span class="fc bfc" id="L698" title="All 2 branches covered.">            if (++pCounter[i] != 0) {</span>
+<span class="fc" id="L699">                break;</span>
+            }
+        }
+<span class="fc" id="L702">    }</span>
+
+    /**
+     * multiply by X.
+     *
+     * @param pValue the value to adjust
+     */
+    private static void mulX(final byte[] pValue) {
+        /* Loop through the bytes */
+<span class="fc" id="L711">        byte myMask = (byte) 0;</span>
+<span class="fc bfc" id="L712" title="All 2 branches covered.">        for (int i = 0; i &lt; BUFLEN; i++) {</span>
+<span class="fc" id="L713">            final byte myValue = pValue[i];</span>
+<span class="fc" id="L714">            pValue[i] = (byte) (((myValue &gt;&gt; 1) &amp; ~MASK) | myMask);</span>
+<span class="fc bfc" id="L715" title="All 2 branches covered.">            myMask = (myValue &amp; 1) == 0 ? 0 : MASK;</span>
+        }
+
+        /* Xor in addition if last bit was set */
+<span class="fc bfc" id="L719" title="All 2 branches covered.">        if (myMask != 0) {</span>
+<span class="fc" id="L720">            pValue[0] ^= ADD;</span>
+        }
+<span class="fc" id="L722">    }</span>
+
+    /**
+     * Derive Keys.
+     *
+     * @param pKey the keyGeneration key
+     */
+    private void deriveKeys(final KeyParameter pKey) {
+        /* Create the buffers */
+<span class="fc" id="L731">        final byte[] myIn = new byte[BUFLEN];</span>
+<span class="fc" id="L732">        final byte[] myOut = new byte[BUFLEN];</span>
+<span class="fc" id="L733">        final byte[] myResult = new byte[BUFLEN];</span>
+<span class="fc" id="L734">        final byte[] myEncKey = new byte[pKey.getKey().length];</span>
+
+        /* Prepare for encryption */
+<span class="fc" id="L737">        System.arraycopy(theNonce, 0, myIn, BUFLEN - NONCELEN, NONCELEN);</span>
+<span class="fc" id="L738">        theCipher.init(true, pKey);</span>
+
+        /* Derive authentication key */
+<span class="fc" id="L741">        int myOff = 0;</span>
+<span class="fc" id="L742">        theCipher.processBlock(myIn, 0, myOut, 0);</span>
+<span class="fc" id="L743">        System.arraycopy(myOut, 0, myResult, myOff, HALFBUFLEN);</span>
+<span class="fc" id="L744">        myIn[0]++;</span>
+<span class="fc" id="L745">        myOff += HALFBUFLEN;</span>
+<span class="fc" id="L746">        theCipher.processBlock(myIn, 0, myOut, 0);</span>
+<span class="fc" id="L747">        System.arraycopy(myOut, 0, myResult, myOff, HALFBUFLEN);</span>
+
+        /* Derive encryption key */
+<span class="fc" id="L750">        myIn[0]++;</span>
+<span class="fc" id="L751">        myOff = 0;</span>
+<span class="fc" id="L752">        theCipher.processBlock(myIn, 0, myOut, 0);</span>
+<span class="fc" id="L753">        System.arraycopy(myOut, 0, myEncKey, myOff, HALFBUFLEN);</span>
+<span class="fc" id="L754">        myIn[0]++;</span>
+<span class="fc" id="L755">        myOff += HALFBUFLEN;</span>
+<span class="fc" id="L756">        theCipher.processBlock(myIn, 0, myOut, 0);</span>
+<span class="fc" id="L757">        System.arraycopy(myOut, 0, myEncKey, myOff, HALFBUFLEN);</span>
+
+        /* If we have a 32byte key */
+<span class="fc bfc" id="L760" title="All 2 branches covered.">        if (myEncKey.length == BUFLEN &lt;&lt; 1) {</span>
+            /* Derive remainder of encryption key */
+<span class="fc" id="L762">            myIn[0]++;</span>
+<span class="fc" id="L763">            myOff += HALFBUFLEN;</span>
+<span class="fc" id="L764">            theCipher.processBlock(myIn, 0, myOut, 0);</span>
+<span class="fc" id="L765">            System.arraycopy(myOut, 0, myEncKey, myOff, HALFBUFLEN);</span>
+<span class="fc" id="L766">            myIn[0]++;</span>
+<span class="fc" id="L767">            myOff += HALFBUFLEN;</span>
+<span class="fc" id="L768">            theCipher.processBlock(myIn, 0, myOut, 0);</span>
+<span class="fc" id="L769">            System.arraycopy(myOut, 0, myEncKey, myOff, HALFBUFLEN);</span>
+        }
+
+        /* Initialise the Cipher */
+<span class="fc" id="L773">        theCipher.init(true, new KeyParameter(myEncKey));</span>
+
+        /* Initialise the multiplier */
+<span class="fc" id="L776">        fillReverse(myResult, 0, BUFLEN, myOut);</span>
+<span class="fc" id="L777">        mulX(myOut);</span>
+<span class="fc" id="L778">        theMultiplier.init(myOut);</span>
+<span class="fc" id="L779">        theFlags |= INIT;</span>
+<span class="fc" id="L780">    }</span>
+
+    /**
+     * GCMSIVCache.
+     */
+    private static class GCMSIVCache
+            extends ByteArrayOutputStream {
+        /**
+         * number of bytes hashed.
+         */
+        private int numHashed;
+
+        /**
+         * Constructor.
+         */
+<span class="fc" id="L795">        GCMSIVCache() {</span>
+<span class="fc" id="L796">        }</span>
+
+        /**
+         * Obtain the buffer.
+         *
+         * @return the buffer
+         */
+        byte[] getBuffer() {
+<span class="fc" id="L804">            return this.buf;</span>
+        }
+
+        /**
+         * Clear the buffer.
+         */
+        void clearBuffer() {
+<span class="fc" id="L811">            Arrays.fill(getBuffer(), (byte) 0);</span>
+<span class="fc" id="L812">        }</span>
+    }
+
+    /**
+     * Hash Control.
+     */
+<span class="fc" id="L818">    private final class GCMSIVHasher {</span>
+        /**
+         * Cache.
+         */
+<span class="fc" id="L822">        private final byte[] theBuffer = new byte[BUFLEN];</span>
+
+        /**
+         * Single byte cache.
+         */
+<span class="fc" id="L827">        private final byte[] theByte = new byte[1];</span>
+
+        /**
+         * Count of active bytes in cache.
+         */
+        private int numActive;
+
+        /**
+         * Count of hashed bytes.
+         */
+        private long numHashed;
+
+        /**
+         * Obtain the count of bytes hashed.
+         *
+         * @return the count
+         */
+        long getBytesProcessed() {
+<span class="fc" id="L845">            return numHashed;</span>
+        }
+
+        /**
+         * Reset the hasher.
+         */
+        void reset() {
+<span class="fc" id="L852">            numActive = 0;</span>
+<span class="fc" id="L853">            numHashed = 0;</span>
+<span class="fc" id="L854">        }</span>
+
+        /**
+         * update hash.
+         *
+         * @param pByte the byte
+         */
+        void updateHash(final byte pByte) {
+<span class="fc" id="L862">            theByte[0] = pByte;</span>
+<span class="fc" id="L863">            updateHash(theByte, 0, 1);</span>
+<span class="fc" id="L864">        }</span>
+
+        /**
+         * update hash.
+         *
+         * @param pBuffer the buffer
+         * @param pOffset the offset within the buffer
+         * @param pLen    the length of data
+         */
+        void updateHash(final byte[] pBuffer,
+                        final int pOffset,
+                        final int pLen) {
+            /* If we should process the cache */
+<span class="fc" id="L877">            final int mySpace = BUFLEN - numActive;</span>
+<span class="fc" id="L878">            int numProcessed = 0;</span>
+<span class="fc" id="L879">            int myRemaining = pLen;</span>
+<span class="fc bfc" id="L880" title="All 4 branches covered.">            if (numActive &gt; 0</span>
+                    &amp;&amp; pLen &gt;= mySpace) {
+                /* Copy data into the cache and hash it */
+<span class="fc" id="L883">                System.arraycopy(pBuffer, pOffset, theBuffer, numActive, mySpace);</span>
+<span class="fc" id="L884">                fillReverse(theBuffer, 0, BUFLEN, theReverse);</span>
+<span class="fc" id="L885">                gHASH(theReverse);</span>
+
+                /* Adjust counters */
+<span class="fc" id="L888">                numProcessed += mySpace;</span>
+<span class="fc" id="L889">                myRemaining -= mySpace;</span>
+<span class="fc" id="L890">                numActive = 0;</span>
+            }
+
+            /* While we have full blocks */
+<span class="fc bfc" id="L894" title="All 2 branches covered.">            while (myRemaining &gt;= BUFLEN) {</span>
+                /* Access the next data */
+<span class="fc" id="L896">                fillReverse(pBuffer, pOffset + numProcessed, BUFLEN, theReverse);</span>
+<span class="fc" id="L897">                gHASH(theReverse);</span>
+
+                /* Adjust counters */
+<span class="fc" id="L900">                numProcessed += BUFLEN;</span>
+<span class="fc" id="L901">                myRemaining -= BUFLEN;</span>
+            }
+
+            /* If we have remaining data */
+<span class="fc bfc" id="L905" title="All 2 branches covered.">            if (myRemaining &gt; 0) {</span>
+                /* Copy data into the cache */
+<span class="fc" id="L907">                System.arraycopy(pBuffer, pOffset + numProcessed, theBuffer, numActive, myRemaining);</span>
+<span class="fc" id="L908">                numActive += myRemaining;</span>
+            }
+
+            /* Adjust the number of bytes processed */
+<span class="fc" id="L912">            numHashed += pLen;</span>
+<span class="fc" id="L913">        }</span>
+
+        /**
+         * complete hash.
+         */
+        void completeHash() {
+            /* If we have remaining data */
+<span class="fc bfc" id="L920" title="All 2 branches covered.">            if (numActive &gt; 0) {</span>
+                /* Access the next data */
+<span class="fc" id="L922">                Arrays.fill(theReverse, (byte) 0);</span>
+<span class="fc" id="L923">                fillReverse(theBuffer, 0, numActive, theReverse);</span>
+
+                /* hash value */
+<span class="fc" id="L926">                gHASH(theReverse);</span>
+            }
+<span class="fc" id="L928">        }</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

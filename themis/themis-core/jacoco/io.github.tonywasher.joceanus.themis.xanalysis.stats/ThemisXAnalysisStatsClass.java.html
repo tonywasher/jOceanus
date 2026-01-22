@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ThemisXAnalysisStatsClass.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Themis Core Project Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.themis.xanalysis.stats</a> &gt; <span class="el_source">ThemisXAnalysisStatsClass.java</span></div><h1>ThemisXAnalysisStatsClass.java</h1><pre class="source lang-java linenums">/*
+ * Themis: Java Project Framework
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.themis.xanalysis.stats;
+
+import io.github.tonywasher.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance;
+import io.github.tonywasher.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance.ThemisXAnalysisClassInstance;
+import io.github.tonywasher.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance.ThemisXAnalysisMethodInstance;
+
+import java.util.List;
+
+/**
+ * Statistics Class.
+ */
+public class ThemisXAnalysisStatsClass {
+    /**
+     * The underlying class.
+     */
+    private final ThemisXAnalysisClassInstance theClass;
+
+    /**
+     * The stats.
+     */
+    private final ThemisXAnalysisStats theStats;
+
+    /**
+     * The methods.
+     */
+    private final List&lt;ThemisXAnalysisStatsMethod&gt; theMethods;
+
+    /**
+     * Constructor.
+     *
+     * @param pClass the parsed class
+     */
+<span class="fc" id="L49">    ThemisXAnalysisStatsClass(final ThemisXAnalysisClassInstance pClass) {</span>
+        /* Store the class */
+<span class="fc" id="L51">        theClass = pClass;</span>
+
+        /* Create the stats */
+<span class="fc" id="L54">        theStats = new ThemisXAnalysisStats();</span>
+
+        /* Populate the methodList */
+<span class="fc" id="L57">        final ThemisXAnalysisInstance myClass = (ThemisXAnalysisInstance) theClass;</span>
+<span class="fc" id="L58">        final List&lt;ThemisXAnalysisInstance&gt; myMethods = myClass.discoverChildren(ThemisXAnalysisMethodInstance.class::isInstance);</span>
+<span class="fc" id="L59">        theMethods = myMethods.stream().map(ThemisXAnalysisStatsMethod::new).toList();</span>
+<span class="fc" id="L60">    }</span>
+
+    /**
+     * Obtain the class.
+     *
+     * @return the class
+     */
+    public ThemisXAnalysisClassInstance getUnderlying() {
+<span class="nc" id="L68">        return theClass;</span>
+    }
+
+    /**
+     * Obtain the stats.
+     *
+     * @return the stats
+     */
+    public ThemisXAnalysisStats getStats() {
+<span class="nc" id="L77">        return theStats;</span>
+    }
+
+    /**
+     * Obtain the methods.
+     *
+     * @return the methods
+     */
+    List&lt;ThemisXAnalysisStatsMethod&gt; getMethods() {
+<span class="nc" id="L86">        return theMethods;</span>
+    }
+
+    @Override
+    public boolean equals(final Object pThat) {
+        /* Handle the trivial cases */
+<span class="nc bnc" id="L92" title="All 2 branches missed.">        if (this == pThat) {</span>
+<span class="nc" id="L93">            return true;</span>
+        }
+<span class="nc bnc" id="L95" title="All 2 branches missed.">        if (pThat == null) {</span>
+<span class="nc" id="L96">            return false;</span>
+        }
+
+        /* Make sure that the object is a StatsClass */
+<span class="nc bnc" id="L100" title="All 2 branches missed.">        if (!(pThat instanceof ThemisXAnalysisStatsClass myThat)) {</span>
+<span class="nc" id="L101">            return false;</span>
+        }
+
+        /* Check equality of class */
+<span class="nc" id="L105">        return theClass.equals(myThat.getUnderlying());</span>
+    }
+
+    @Override
+    public int hashCode() {
+<span class="nc" id="L110">        return theClass.hashCode();</span>
+    }
+
+    @Override
+    public String toString() {
+<span class="nc" id="L115">        return theClass.toString();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

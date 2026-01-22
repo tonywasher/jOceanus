@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PrometheusSpreadSheet.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Prometheus Core Application Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.prometheus.sheets</a> &gt; <span class="el_source">PrometheusSpreadSheet.java</span></div><h1>PrometheusSpreadSheet.java</h1><pre class="source lang-java linenums">/*
+ * Prometheus: Application Framework
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.prometheus.sheets;
+
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataSet;
+import io.github.tonywasher.joceanus.prometheus.security.PrometheusSecurityPasswordManager;
+import io.github.tonywasher.joceanus.prometheus.service.sheet.PrometheusSheetWorkBookType;
+import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadStatusReport;
+
+import java.io.File;
+import java.io.InputStream;
+import java.io.OutputStream;
+
+/**
+ * Spreadsheet control.
+ *
+ * @author Tony Washer
+ */
+public abstract class PrometheusSpreadSheet {
+    /**
+     * The Data file name.
+     */
+    public static final String FILE_NAME = &quot;zipData&quot;;
+
+    /**
+     * Constructor.
+     */
+<span class="nc" id="L43">    protected PrometheusSpreadSheet() {</span>
+<span class="nc" id="L44">    }</span>
+
+    /**
+     * Obtain a sheet reader.
+     *
+     * @param pReport      the report
+     * @param pPasswordMgr the password manager
+     * @return the sheet reader
+     */
+    protected abstract PrometheusSheetReader getSheetReader(TethysUIThreadStatusReport pReport,
+                                                            PrometheusSecurityPasswordManager pPasswordMgr);
+
+    /**
+     * Obtain a sheet writer.
+     *
+     * @param pReport the report
+     * @return the sheet writer
+     */
+    protected abstract PrometheusSheetWriter getSheetWriter(TethysUIThreadStatusReport pReport);
+
+    /**
+     * Load a Backup Workbook.
+     *
+     * @param pReport      the report
+     * @param pPasswordMgr the password manager
+     * @param pData        the data to load into
+     * @param pFile        the backup file to load from
+     * @throws OceanusException on error
+     */
+    public void loadBackup(final TethysUIThreadStatusReport pReport,
+                           final PrometheusSecurityPasswordManager pPasswordMgr,
+                           final PrometheusDataSet pData,
+                           final File pFile) throws OceanusException {
+        /* Create a sheet reader object */
+<span class="nc" id="L78">        final PrometheusSheetReader myReader = getSheetReader(pReport, pPasswordMgr);</span>
+
+        /* Load the backup */
+<span class="nc" id="L81">        myReader.loadBackup(pFile, pData);</span>
+<span class="nc" id="L82">    }</span>
+
+    /**
+     * Load a Backup Workbook.
+     *
+     * @param pReport      the report
+     * @param pPasswordMgr the password manager
+     * @param pData        the data to load into
+     * @param pInStream    the input stream to load from
+     * @param pName        the filename
+     * @throws OceanusException on error
+     */
+    public void loadBackup(final TethysUIThreadStatusReport pReport,
+                           final PrometheusSecurityPasswordManager pPasswordMgr,
+                           final PrometheusDataSet pData,
+                           final InputStream pInStream,
+                           final String pName) throws OceanusException {
+        /* Create a sheet reader object */
+<span class="nc" id="L100">        final PrometheusSheetReader myReader = getSheetReader(pReport, pPasswordMgr);</span>
+
+        /* Load the backup */
+<span class="nc" id="L103">        myReader.loadBackup(pInStream, pData, pName);</span>
+<span class="nc" id="L104">    }</span>
+
+    /**
+     * Create a Backup Workbook.
+     *
+     * @param pReport the report
+     * @param pData   Data to write out
+     * @param pFile   the backup file to write to
+     * @param pType   the workBookType
+     * @throws OceanusException on error
+     */
+    public void createBackup(final TethysUIThreadStatusReport pReport,
+                             final PrometheusDataSet pData,
+                             final File pFile,
+                             final PrometheusSheetWorkBookType pType) throws OceanusException {
+        /* Create a sheet writer object */
+<span class="nc" id="L120">        final PrometheusSheetWriter myWriter = getSheetWriter(pReport);</span>
+
+        /* Create the backup */
+<span class="nc" id="L123">        myWriter.createBackup(pData, pFile, pType);</span>
+<span class="nc" id="L124">    }</span>
+
+    /**
+     * Create a Backup Workbook.
+     *
+     * @param pReport    the report
+     * @param pData      Data to write out
+     * @param pZipStream the stream to write to
+     * @param pType      the workBookType
+     * @throws OceanusException on error
+     */
+    public void createBackup(final TethysUIThreadStatusReport pReport,
+                             final PrometheusDataSet pData,
+                             final OutputStream pZipStream,
+                             final PrometheusSheetWorkBookType pType) throws OceanusException {
+        /* Create a sheet writer object */
+<span class="nc" id="L140">        final PrometheusSheetWriter myWriter = getSheetWriter(pReport);</span>
+
+        /* Create the backup */
+<span class="nc" id="L143">        myWriter.createBackup(pData, pZipStream, pType);</span>
+<span class="nc" id="L144">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

@@ -1,0 +1,1070 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PrometheusDataSet.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Prometheus Core Application Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.prometheus.data</a> &gt; <span class="el_source">PrometheusDataSet.java</span></div><h1>PrometheusDataSet.java</h1><pre class="source lang-java linenums">/*
+ * Prometheus: Application Framework
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.prometheus.data;
+
+import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactory.GordianFactoryLock;
+import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySetSpec;
+import io.github.tonywasher.joceanus.metis.data.MetisDataFieldValue;
+import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldItem;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldVersionedItem;
+import io.github.tonywasher.joceanus.metis.list.MetisListKey;
+import io.github.tonywasher.joceanus.metis.toolkit.MetisToolkit;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
+import io.github.tonywasher.joceanus.oceanus.profile.OceanusProfile;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusControlData.PrometheusControlDataList;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusControlKey.PrometheusControlKeyList;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusControlKeySet.PrometheusControlKeySetList;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataKeySet.PrometheusDataKeySetList;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataList.PrometheusDataListSet;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataList.PrometheusListStyle;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValidator.PrometheusDataValidatorFactory;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusEncryptedDataItem.PrometheusEncryptedList;
+import io.github.tonywasher.joceanus.prometheus.preference.PrometheusPreferenceManager;
+import io.github.tonywasher.joceanus.prometheus.preference.PrometheusPreferenceSecurity.PrometheusSecurityPreferenceKey;
+import io.github.tonywasher.joceanus.prometheus.preference.PrometheusPreferenceSecurity.PrometheusSecurityPreferences;
+import io.github.tonywasher.joceanus.prometheus.security.PrometheusSecurityPasswordManager;
+import io.github.tonywasher.joceanus.prometheus.toolkit.PrometheusToolkit;
+import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadStatusReport;
+
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+
+/**
+ * DataSet definition and list. A DataSet is a set of DataLists backed by the three security lists.
+ */
+public abstract class PrometheusDataSet
+        implements MetisFieldItem, PrometheusDataListSet {
+    /**
+     * The Hash prime.
+     */
+    protected static final int HASH_PRIME = 19;
+
+    /**
+     * Report fields.
+     */
+    @SuppressWarnings(&quot;rawtypes&quot;)
+<span class="nc" id="L65">    private static final MetisFieldSet&lt;PrometheusDataSet&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(PrometheusDataSet.class);</span>
+
+    /*
+     * Declare Fields.
+     */
+    static {
+<span class="nc" id="L71">        FIELD_DEFS.declareLocalField(PrometheusDataResource.DATASET_VERSION, PrometheusDataSet::getVersion);</span>
+<span class="nc" id="L72">        FIELD_DEFS.declareLocalFieldsForEnum(PrometheusCryptographyDataType.class, PrometheusDataSet::getFieldListValue);</span>
+    }
+
+    /**
+     * SecurityInit Task.
+     */
+<span class="nc" id="L78">    private static final String TASK_SECINIT = PrometheusDataResource.TASK_SECURITY_INIT.getValue();</span>
+
+    /**
+     * SecurityCheck Task.
+     */
+<span class="nc" id="L83">    private static final String TASK_SECCHECK = PrometheusDataResource.TASK_SECURITY_CHECK.getValue();</span>
+
+    /**
+     * SecurityUpdate Task.
+     */
+<span class="nc" id="L88">    private static final String TASK_SECUPDATE = PrometheusDataResource.TASK_SECURITY_UPDATE.getValue();</span>
+
+    /**
+     * SecurityReNew Task.
+     */
+<span class="nc" id="L93">    private static final String TASK_SECRENEW = PrometheusDataResource.TASK_SECURITY_RENEW.getValue();</span>
+
+    /**
+     * DataReBase Task.
+     */
+<span class="nc" id="L98">    private static final String TASK_DATAREBASE = PrometheusDataResource.TASK_DATA_REBASE.getValue();</span>
+
+    /**
+     * DataDiff Task.
+     */
+<span class="nc" id="L103">    private static final String TASK_DATADIFF = PrometheusDataResource.TASK_DATA_DIFF.getValue();</span>
+
+    /**
+     * Password Manager.
+     */
+    private final PrometheusSecurityPasswordManager thePasswordMgr;
+
+    /**
+     * KeySetSpec.
+     */
+    private final GordianKeySetSpec theKeySetSpec;
+
+    /**
+     * Number of activeKeySets.
+     */
+    private final int theNumActiveKeySets;
+
+    /**
+     * Number of encrypted lists.
+     */
+    private int theNumEncrypted;
+
+    /**
+     * Version of dataSet.
+     */
+    private int theVersion;
+
+    /**
+     * The DataList Map.
+     */
+    private final Map&lt;MetisListKey, PrometheusDataList&lt;?&gt;&gt; theListMap;
+
+    /**
+     * General formatter.
+     */
+    private final OceanusDataFormatter theFormatter;
+
+    /**
+     * Validator factory.
+     */
+    private PrometheusDataValidatorFactory theValidatorFactory;
+
+    /**
+     * Constructor for new empty DataSet.
+     *
+     * @param pToolkit the toolkit set
+     */
+<span class="nc" id="L150">    protected PrometheusDataSet(final PrometheusToolkit pToolkit) {</span>
+        /* Store the password manager and Enum class */
+<span class="nc" id="L152">        thePasswordMgr = pToolkit.getPasswordManager();</span>
+<span class="nc" id="L153">        theKeySetSpec = thePasswordMgr.getLockSpec().getKeySetSpec();</span>
+
+        /* Access the SecurityPreferences */
+<span class="nc" id="L156">        final PrometheusPreferenceManager myPrefMgr = pToolkit.getPreferenceManager();</span>
+<span class="nc" id="L157">        final PrometheusSecurityPreferences mySecPreferences = myPrefMgr.getPreferenceSet(PrometheusSecurityPreferences.class);</span>
+<span class="nc" id="L158">        theNumActiveKeySets = mySecPreferences.getIntegerValue(PrometheusSecurityPreferenceKey.ACTIVEKEYSETS);</span>
+
+        /* Create the map of additional DataLists */
+<span class="nc" id="L161">        theListMap = new LinkedHashMap&lt;&gt;();</span>
+
+        /* Loop through the list types */
+<span class="nc bnc" id="L164" title="All 2 branches missed.">        for (PrometheusCryptographyDataType myType : PrometheusCryptographyDataType.values()) {</span>
+            /* Create the empty list */
+<span class="nc" id="L166">            addList(myType, newList(myType));</span>
+        }
+
+        /* record formatter */
+<span class="nc" id="L170">        final MetisToolkit myToolkit = pToolkit.getToolkit();</span>
+<span class="nc" id="L171">        theFormatter = myToolkit.getFormatter();</span>
+<span class="nc" id="L172">    }</span>
+
+    /**
+     * Constructor for a cloned DataSet.
+     *
+     * @param pSource the source DataSet
+     */
+<span class="nc" id="L179">    protected PrometheusDataSet(final PrometheusDataSet pSource) {</span>
+
+        /* Access the #activeKeySets */
+<span class="nc" id="L182">        theNumActiveKeySets = pSource.getNumActiveKeySets();</span>
+
+        /* Store the password manager */
+<span class="nc" id="L185">        thePasswordMgr = pSource.getPasswordMgr();</span>
+
+        /* Store the keySetSpec */
+<span class="nc" id="L188">        theKeySetSpec = pSource.getKeySetSpec();</span>
+
+        /* Create the map of additional DataLists */
+<span class="nc" id="L191">        theListMap = new LinkedHashMap&lt;&gt;();</span>
+
+        /* Copy formatter */
+<span class="nc" id="L194">        theFormatter = pSource.getDataFormatter();</span>
+
+        /* Copy validator factory */
+<span class="nc" id="L197">        theValidatorFactory = pSource.theValidatorFactory;</span>
+<span class="nc" id="L198">    }</span>
+
+    @Override
+    public String formatObject(final OceanusDataFormatter pFormatter) {
+<span class="nc" id="L202">        return PrometheusDataSet.class.getSimpleName();</span>
+    }
+
+    /**
+     * Obtain the data formatter.
+     *
+     * @return the formatter
+     */
+    public OceanusDataFormatter getDataFormatter() {
+<span class="nc" id="L211">        return theFormatter;</span>
+    }
+
+    /**
+     * Set the validator factory.
+     *
+     * @param pFactory the validator factory
+     */
+    public void setValidatorFactory(final PrometheusDataValidatorFactory pFactory) {
+<span class="nc" id="L220">        theValidatorFactory = pFactory;</span>
+<span class="nc" id="L221">    }</span>
+
+    /**
+     * Obtain a validator fot=r the itemType.
+     *
+     * @param pItemType the itemType
+     * @return the validator.
+     */
+    PrometheusDataValidator getValidator(final MetisListKey pItemType) {
+<span class="nc bnc" id="L230" title="All 2 branches missed.">        if (theValidatorFactory == null) {</span>
+<span class="nc" id="L231">            throw new IllegalStateException(&quot;Validator factory not set&quot;);</span>
+        }
+<span class="nc" id="L233">        return theValidatorFactory.newValidator(pItemType);</span>
+    }
+
+    /**
+     * Get Password Manager.
+     *
+     * @return the password manager
+     */
+    public PrometheusSecurityPasswordManager getPasswordMgr() {
+<span class="nc" id="L242">        return thePasswordMgr;</span>
+    }
+
+    /**
+     * Get ControlKeys.
+     *
+     * @return the controlKeys
+     */
+    public PrometheusControlKeyList getControlKeys() {
+<span class="nc" id="L251">        return getDataList(PrometheusCryptographyDataType.CONTROLKEY, PrometheusControlKeyList.class);</span>
+    }
+
+    /**
+     * Get ControlKeySets.
+     *
+     * @return the controlKeySets
+     */
+    public PrometheusControlKeySetList getControlKeySets() {
+<span class="nc" id="L260">        return getDataList(PrometheusCryptographyDataType.CONTROLKEYSET, PrometheusControlKeySetList.class);</span>
+    }
+
+    /**
+     * Get DataKeySets.
+     *
+     * @return the dataKeySets
+     */
+    public PrometheusDataKeySetList getDataKeySets() {
+<span class="nc" id="L269">        return getDataList(PrometheusCryptographyDataType.DATAKEYSET, PrometheusDataKeySetList.class);</span>
+    }
+
+    /**
+     * Get ControlData.
+     *
+     * @return the controlData
+     */
+    public PrometheusControlDataList getControlData() {
+<span class="nc" id="L278">        return getDataList(PrometheusCryptographyDataType.CONTROLDATA, PrometheusControlDataList.class);</span>
+    }
+
+    /**
+     * Get Version.
+     *
+     * @return the version
+     */
+    public int getVersion() {
+<span class="nc" id="L287">        return theVersion;</span>
+    }
+
+    /**
+     * Get Number of activeKeySets.
+     *
+     * @return the # active KeySets
+     */
+    public int getNumActiveKeySets() {
+<span class="nc" id="L296">        return theNumActiveKeySets;</span>
+    }
+
+    /**
+     * Get KeySetSpec.
+     *
+     * @return the keySetSpec
+     */
+    public GordianKeySetSpec getKeySetSpec() {
+<span class="nc" id="L305">        return theKeySetSpec;</span>
+    }
+
+    /**
+     * Get List Map.
+     *
+     * @return the list map
+     */
+    protected Map&lt;MetisListKey, PrometheusDataList&lt;?&gt;&gt; getListMap() {
+<span class="nc" id="L314">        return theListMap;</span>
+    }
+
+    @Override
+    public boolean hasDataType(final MetisListKey pDataType) {
+<span class="nc" id="L319">        return theListMap.containsKey(pDataType);</span>
+    }
+
+    /**
+     * Construct a Clone for a DataSet.
+     *
+     * @return the extract
+     * @throws OceanusException on error
+     */
+    public abstract PrometheusDataSet deriveCloneSet() throws OceanusException;
+
+    /**
+     * Create new list of required type.
+     *
+     * @param pListType the list type
+     * @return the new list
+     */
+    private PrometheusDataList&lt;?&gt; newList(final PrometheusCryptographyDataType pListType) {
+        /* Switch on list Type */
+<span class="nc bnc" id="L338" title="All 5 branches missed.">        switch (pListType) {</span>
+            case CONTROLDATA:
+<span class="nc" id="L340">                return new PrometheusControlDataList(this);</span>
+            case CONTROLKEY:
+<span class="nc" id="L342">                return new PrometheusControlKeyList(this);</span>
+            case CONTROLKEYSET:
+<span class="nc" id="L344">                return new PrometheusControlKeySetList(this);</span>
+            case DATAKEYSET:
+<span class="nc" id="L346">                return new PrometheusDataKeySetList(this);</span>
+            default:
+<span class="nc" id="L348">                throw new IllegalArgumentException(pListType.toString());</span>
+        }
+    }
+
+    /**
+     * Build an empty clone dataSet.
+     *
+     * @param pSource the source DataSet
+     * @throws OceanusException on error
+     */
+    protected void buildEmptyCloneSet(final PrometheusDataSet pSource) throws OceanusException {
+        /* Loop through the source lists */
+<span class="nc" id="L360">        final Iterator&lt;Entry&lt;MetisListKey, PrometheusDataList&lt;?&gt;&gt;&gt; myIterator = pSource.entryIterator();</span>
+<span class="nc bnc" id="L361" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L362">            final Entry&lt;MetisListKey, PrometheusDataList&lt;?&gt;&gt; myEntry = myIterator.next();</span>
+
+            /* Access components */
+<span class="nc" id="L365">            final MetisListKey myType = myEntry.getKey();</span>
+<span class="nc" id="L366">            final PrometheusDataList&lt;?&gt; myList = myEntry.getValue();</span>
+
+            /* Create the empty cloned list */
+<span class="nc" id="L369">            addList(myType, myList.getEmptyList(PrometheusListStyle.CLONE));</span>
+<span class="nc" id="L370">        }</span>
+<span class="nc" id="L371">    }</span>
+
+    /**
+     * Construct a Clone for a DataSet.
+     *
+     * @param pSource the source DataSet
+     * @throws OceanusException on error
+     */
+    protected void deriveCloneSet(final PrometheusDataSet pSource) throws OceanusException {
+        /* Obtain listMaps */
+<span class="nc" id="L381">        final Map&lt;MetisListKey, PrometheusDataList&lt;?&gt;&gt; myOldMap = pSource.getListMap();</span>
+
+        /* Loop through the new lists */
+<span class="nc" id="L384">        final Iterator&lt;Entry&lt;MetisListKey, PrometheusDataList&lt;?&gt;&gt;&gt; myIterator = entryIterator();</span>
+<span class="nc bnc" id="L385" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L386">            final Entry&lt;MetisListKey, PrometheusDataList&lt;?&gt;&gt; myEntry = myIterator.next();</span>
+
+            /* Access components */
+<span class="nc" id="L389">            final MetisListKey myType = myEntry.getKey();</span>
+<span class="nc" id="L390">            final PrometheusDataList&lt;?&gt; myNew = myEntry.getValue();</span>
+<span class="nc" id="L391">            final PrometheusDataList&lt;?&gt; myOld = myOldMap.get(myType);</span>
+
+            /* Clone the list */
+<span class="nc" id="L394">            myNew.cloneList(this, myOld);</span>
+<span class="nc" id="L395">        }</span>
+<span class="nc" id="L396">    }</span>
+
+    /**
+     * Construct an update extract for a FinanceData Set.
+     *
+     * @return the extract
+     * @throws OceanusException on error
+     */
+    public abstract PrometheusDataSet deriveUpdateSet() throws OceanusException;
+
+    /**
+     * Construct an update extract for a DataSet.
+     *
+     * @param pSource the source of the extract
+     * @throws OceanusException on error
+     */
+    protected void deriveUpdateSet(final PrometheusDataSet pSource) throws OceanusException {
+        /* Loop through the source lists */
+<span class="nc" id="L414">        final Iterator&lt;Entry&lt;MetisListKey, PrometheusDataList&lt;?&gt;&gt;&gt; myIterator = pSource.entryIterator();</span>
+<span class="nc bnc" id="L415" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L416">            final Entry&lt;MetisListKey, PrometheusDataList&lt;?&gt;&gt; myEntry = myIterator.next();</span>
+
+            /* Access components */
+<span class="nc" id="L419">            final MetisListKey myType = myEntry.getKey();</span>
+<span class="nc" id="L420">            final PrometheusDataList&lt;?&gt; myList = myEntry.getValue();</span>
+
+            /* Create the update list */
+<span class="nc" id="L423">            addList(myType, myList.deriveList(PrometheusListStyle.UPDATE));</span>
+<span class="nc" id="L424">        }</span>
+
+        /* If we have updates */
+<span class="nc bnc" id="L427" title="All 2 branches missed.">        if (!isEmpty()) {</span>
+            /* Update the version */
+<span class="nc" id="L429">            setVersion(1);</span>
+        }
+<span class="nc" id="L431">    }</span>
+
+    /**
+     * Construct a difference extract between two DataSets. The difference extract will only contain
+     * items that differ between the two DataSets. Items that are in the new list, but not in the
+     * old list will be viewed as inserted. Items that are in the old list but not in the new list
+     * will be viewed as deleted. Items that are in both list but differ will be viewed as changed
+     *
+     * @param pReport the report
+     * @param pOld    The old list to extract from
+     * @return the difference set
+     * @throws OceanusException on error
+     */
+    public abstract PrometheusDataSet getDifferenceSet(TethysUIThreadStatusReport pReport,
+                                                       PrometheusDataSet pOld) throws OceanusException;
+
+    /**
+     * Construct a difference extract between two DataSets. The difference extract will only contain
+     * items that differ between the two DataSets. Items that are in the new list, but not in the
+     * old list will be viewed as inserted. Items that are in the old list but not in the new list
+     * will be viewed as deleted. Items that are in both list but differ will be viewed as changed
+     *
+     * @param pReport the report
+     * @param pNew    The new list to compare
+     * @param pOld    The old list to compare
+     * @throws OceanusException on error
+     */
+    protected void deriveDifferences(final TethysUIThreadStatusReport pReport,
+                                     final PrometheusDataSet pNew,
+                                     final PrometheusDataSet pOld) throws OceanusException {
+        /* Access current profile */
+<span class="nc" id="L462">        final OceanusProfile myTask = pReport.getActiveTask();</span>
+<span class="nc" id="L463">        final OceanusProfile myStage = myTask.startTask(TASK_DATADIFF);</span>
+
+        /* Obtain listMaps */
+<span class="nc" id="L466">        final Map&lt;MetisListKey, PrometheusDataList&lt;?&gt;&gt; myOldMap = pOld.getListMap();</span>
+
+        /* Loop through the new lists */
+<span class="nc" id="L469">        final Iterator&lt;Entry&lt;MetisListKey, PrometheusDataList&lt;?&gt;&gt;&gt; myIterator = pNew.entryIterator();</span>
+<span class="nc bnc" id="L470" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L471">            final Entry&lt;MetisListKey, PrometheusDataList&lt;?&gt;&gt; myEntry = myIterator.next();</span>
+
+            /* Access components */
+<span class="nc" id="L474">            final MetisListKey myType = myEntry.getKey();</span>
+<span class="nc" id="L475">            final PrometheusDataList&lt;?&gt; myNew = myEntry.getValue();</span>
+<span class="nc" id="L476">            final PrometheusDataList&lt;?&gt; myOld = myOldMap.get(myType);</span>
+
+            /* Derive Differences */
+<span class="nc" id="L479">            myStage.startTask(myNew.listName());</span>
+<span class="nc" id="L480">            addList(myType, myNew.deriveDifferences(this, myOld));</span>
+<span class="nc" id="L481">        }</span>
+
+        /* Complete task */
+<span class="nc" id="L484">        myStage.end();</span>
+<span class="nc" id="L485">    }</span>
+
+    /**
+     * ReBase this data set against an earlier version.
+     *
+     * @param pReport the report
+     * @param pOld    The old data to reBase against
+     * @throws OceanusException on error
+     */
+    public void reBase(final TethysUIThreadStatusReport pReport,
+                       final PrometheusDataSet pOld) throws OceanusException {
+        /* Access current profile */
+<span class="nc" id="L497">        final OceanusProfile myTask = pReport.getActiveTask();</span>
+<span class="nc" id="L498">        final OceanusProfile myStage = myTask.startTask(TASK_DATAREBASE);</span>
+
+        /* Obtain old listMap */
+<span class="nc" id="L501">        final Map&lt;MetisListKey, PrometheusDataList&lt;?&gt;&gt; myMap = pOld.getListMap();</span>
+
+        /* Loop through the lists */
+<span class="nc" id="L504">        boolean bUpdates = false;</span>
+<span class="nc" id="L505">        final Iterator&lt;Entry&lt;MetisListKey, PrometheusDataList&lt;?&gt;&gt;&gt; myIterator = entryIterator();</span>
+<span class="nc bnc" id="L506" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L507">            final Entry&lt;MetisListKey, PrometheusDataList&lt;?&gt;&gt; myEntry = myIterator.next();</span>
+
+            /* Access components */
+<span class="nc" id="L510">            final MetisListKey myType = myEntry.getKey();</span>
+<span class="nc" id="L511">            final PrometheusDataList&lt;?&gt; myList = myEntry.getValue();</span>
+
+            /* ReBase on Old dataList */
+<span class="nc" id="L514">            myStage.startTask(myList.listName());</span>
+<span class="nc" id="L515">            bUpdates |= myList.reBase(myMap.get(myType));</span>
+<span class="nc" id="L516">        }</span>
+
+        /* If we have updates */
+<span class="nc bnc" id="L519" title="All 2 branches missed.">        if (bUpdates) {</span>
+            /* Update the version */
+<span class="nc" id="L521">            setVersion(getVersion() + 1);</span>
+        }
+
+        /* Complete task */
+<span class="nc" id="L525">        myStage.end();</span>
+<span class="nc" id="L526">    }</span>
+
+    /**
+     * Add DataList to list of lists.
+     *
+     * @param pListType the list type
+     * @param pList     the list to add
+     */
+    protected void addList(final MetisListKey pListType,
+                           final PrometheusDataList&lt;?&gt; pList) {
+        /* Add the DataList to the map */
+<span class="nc" id="L537">        theListMap.put(pListType, pList);</span>
+
+        /* Note if the list is an encrypted list */
+<span class="nc bnc" id="L540" title="All 2 branches missed.">        if (pList instanceof PrometheusEncryptedList) {</span>
+<span class="nc" id="L541">            theNumEncrypted++;</span>
+        }
+<span class="nc" id="L543">    }</span>
+
+    @Override
+    public &lt;L extends PrometheusDataList&lt;?&gt;&gt; L getDataList(final MetisListKey pListType,
+                                                           final Class&lt;L&gt; pListClass) {
+        /* Access the list */
+<span class="nc" id="L549">        final PrometheusDataList&lt;?&gt; myList = theListMap.get(pListType);</span>
+
+        /* Cast correctly */
+<span class="nc bnc" id="L552" title="All 2 branches missed.">        return myList == null</span>
+<span class="nc" id="L553">                ? null</span>
+<span class="nc" id="L554">                : pListClass.cast(myList);</span>
+    }
+
+    /**
+     * Obtain debug value for list.
+     *
+     * @param pListType the list type
+     * @return true/false
+     */
+    protected Object getFieldListValue(final MetisListKey pListType) {
+        /* Access the class */
+<span class="nc" id="L565">        final PrometheusDataList&lt;?&gt; myList = theListMap.get(pListType);</span>
+
+        /* Cast correctly */
+<span class="nc" id="L568">        return myList == null</span>
+<span class="nc bnc" id="L569" title="All 4 branches missed.">                || myList.isEmpty()</span>
+<span class="nc" id="L570">                ? MetisDataFieldValue.SKIP</span>
+<span class="nc" id="L571">                : myList;</span>
+    }
+
+    /**
+     * Obtain DataList for an list class.
+     *
+     * @param &lt;L&gt;        the List type
+     * @param pListClass the class of the list
+     * @return the list of items
+     */
+    public &lt;L extends PrometheusDataList&lt;?&gt;&gt; L getDataList(final Class&lt;L&gt; pListClass) {
+        /* Loop through the lists */
+<span class="nc" id="L583">        final Iterator&lt;Entry&lt;MetisListKey, PrometheusDataList&lt;?&gt;&gt;&gt; myIterator = entryIterator();</span>
+<span class="nc bnc" id="L584" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L585">            final Entry&lt;MetisListKey, PrometheusDataList&lt;?&gt;&gt; myEntry = myIterator.next();</span>
+
+            /* Access components */
+<span class="nc" id="L588">            final PrometheusDataList&lt;?&gt; myList = myEntry.getValue();</span>
+<span class="nc bnc" id="L589" title="All 2 branches missed.">            if (pListClass.equals(myList.getClass())) {</span>
+<span class="nc" id="L590">                return pListClass.cast(myList);</span>
+            }
+<span class="nc" id="L592">        }</span>
+
+        /* Not found */
+<span class="nc" id="L595">        return null;</span>
+    }
+
+    /**
+     * Set Version.
+     *
+     * @param pVersion the version
+     */
+    public void setVersion(final int pVersion) {
+        /* Record the version */
+<span class="nc" id="L605">        theVersion = pVersion;</span>
+
+        /* Loop through the List values */
+<span class="nc" id="L608">        final Iterator&lt;PrometheusDataList&lt;?&gt;&gt; myIterator = iterator();</span>
+<span class="nc bnc" id="L609" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L610">            final PrometheusDataList&lt;?&gt; myList = myIterator.next();</span>
+
+            /* Set the Version */
+<span class="nc" id="L613">            myList.setVersion(pVersion);</span>
+<span class="nc" id="L614">        }</span>
+<span class="nc" id="L615">    }</span>
+
+    /**
+     * Rewind items to the required version.
+     *
+     * @param pVersion the version to rewind to
+     */
+    public void rewindToVersion(final int pVersion) {
+        /* Record the version */
+<span class="nc" id="L624">        theVersion = pVersion;</span>
+
+        /* Loop through the List values */
+<span class="nc" id="L627">        final Iterator&lt;PrometheusDataList&lt;?&gt;&gt; myIterator = iterator();</span>
+<span class="nc bnc" id="L628" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L629">            final PrometheusDataList&lt;?&gt; myList = myIterator.next();</span>
+
+            /* Rewind the list */
+<span class="nc" id="L632">            myList.rewindToVersion(pVersion);</span>
+<span class="nc" id="L633">        }</span>
+<span class="nc" id="L634">    }</span>
+
+    @Override
+    public boolean equals(final Object pThat) {
+        /* Handle the trivial cases */
+<span class="nc bnc" id="L639" title="All 2 branches missed.">        if (this == pThat) {</span>
+<span class="nc" id="L640">            return true;</span>
+        }
+<span class="nc bnc" id="L642" title="All 2 branches missed.">        if (pThat == null) {</span>
+<span class="nc" id="L643">            return false;</span>
+        }
+
+        /* Make sure that the object is a DataSet */
+<span class="nc bnc" id="L647" title="All 2 branches missed.">        if (pThat.getClass() != this.getClass()) {</span>
+<span class="nc" id="L648">            return false;</span>
+        }
+
+        /* Access the object as a DataSet */
+<span class="nc" id="L652">        final PrometheusDataSet myThat = (PrometheusDataSet) pThat;</span>
+
+        /* Check version and generation */
+<span class="nc bnc" id="L655" title="All 2 branches missed.">        if (myThat.getVersion() != theVersion) {</span>
+<span class="nc" id="L656">            return false;</span>
+        }
+
+        /* Compare the maps */
+<span class="nc" id="L660">        return theListMap.equals(myThat.getListMap());</span>
+    }
+
+    @Override
+    public int hashCode() {
+        /* Build initial hashCode */
+<span class="nc" id="L666">        int myHashCode = 0;</span>
+
+        /* Loop through the List values */
+<span class="nc" id="L669">        final Iterator&lt;PrometheusDataList&lt;?&gt;&gt; myIterator = iterator();</span>
+<span class="nc bnc" id="L670" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L671">            final PrometheusDataList&lt;?&gt; myList = myIterator.next();</span>
+
+            /* Access equivalent list */
+<span class="nc" id="L674">            myHashCode *= HASH_PRIME;</span>
+<span class="nc" id="L675">            myHashCode += myList.hashCode();</span>
+<span class="nc" id="L676">        }</span>
+
+        /* Return the hashCode */
+<span class="nc" id="L679">        return myHashCode;</span>
+    }
+
+    /**
+     * Determine whether a DataSet has entries.
+     *
+     * @return &lt;code&gt;true&lt;/code&gt; if the DataSet has entries
+     */
+    public boolean isEmpty() {
+        /* Loop through the List values */
+<span class="nc" id="L689">        final Iterator&lt;PrometheusDataList&lt;?&gt;&gt; myIterator = iterator();</span>
+<span class="nc bnc" id="L690" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L691">            final PrometheusDataList&lt;?&gt; myList = myIterator.next();</span>
+
+            /* Determine whether the list is empty */
+<span class="nc bnc" id="L694" title="All 2 branches missed.">            if (!myList.isEmpty()) {</span>
+<span class="nc" id="L695">                return false;</span>
+            }
+<span class="nc" id="L697">        }</span>
+
+        /* Return the indication */
+<span class="nc" id="L700">        return true;</span>
+    }
+
+    /**
+     * Determine whether the Data-set has updates.
+     *
+     * @return &lt;code&gt;true&lt;/code&gt; if the Data-set has updates, &lt;code&gt;false&lt;/code&gt; if not
+     */
+    public boolean hasUpdates() {
+        /* Loop through the List values */
+<span class="nc" id="L710">        final Iterator&lt;PrometheusDataList&lt;?&gt;&gt; myIterator = iterator();</span>
+<span class="nc bnc" id="L711" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L712">            final PrometheusDataList&lt;?&gt; myList = myIterator.next();</span>
+
+            /* Determine whether the list has updates */
+<span class="nc bnc" id="L715" title="All 2 branches missed.">            if (myList.hasUpdates()) {</span>
+<span class="nc" id="L716">                return true;</span>
+            }
+<span class="nc" id="L718">        }</span>
+
+        /* We have no updates */
+<span class="nc" id="L721">        return false;</span>
+    }
+
+    /**
+     * Get the control record.
+     *
+     * @return the control record
+     */
+    public PrometheusControlData getControl() {
+        /* Set the control */
+<span class="nc" id="L731">        return getControlData().getControl();</span>
+    }
+
+    /**
+     * Get the active control key.
+     *
+     * @return the control key
+     */
+    public PrometheusControlKey getControlKey() {
+        /* Access the control element from the database */
+<span class="nc" id="L741">        final PrometheusControlData myControl = getControl();</span>
+
+        /* Return the key */
+<span class="nc bnc" id="L744" title="All 2 branches missed.">        return myControl == null ? null : myControl.getControlKey();</span>
+    }
+
+    /**
+     * Initialise Security from database (if present).
+     *
+     * @param pReport the report
+     * @param pBase   the database data
+     * @throws OceanusException on error
+     */
+    public void initialiseSecurity(final TethysUIThreadStatusReport pReport,
+                                   final PrometheusDataSet pBase) throws OceanusException {
+        /* Access current profile */
+<span class="nc" id="L757">        final OceanusProfile myTask = pReport.getActiveTask();</span>
+<span class="nc" id="L758">        final OceanusProfile myStage = myTask.startTask(TASK_SECINIT);</span>
+
+        /* Set the number of stages */
+<span class="nc" id="L761">        pReport.initTask(TASK_SECINIT);</span>
+<span class="nc" id="L762">        pReport.setNumStages(theNumEncrypted);</span>
+
+        /* Initialise Security */
+<span class="nc" id="L765">        getControlKeys().initialiseSecurity(pBase);</span>
+
+        /* Obtain base listMap */
+<span class="nc" id="L768">        final Map&lt;MetisListKey, PrometheusDataList&lt;?&gt;&gt; myMap = pBase.getListMap();</span>
+
+        /* Loop through the List values */
+<span class="nc" id="L771">        final Iterator&lt;Entry&lt;MetisListKey, PrometheusDataList&lt;?&gt;&gt;&gt; myIterator = entryIterator();</span>
+<span class="nc bnc" id="L772" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L773">            final Entry&lt;MetisListKey, PrometheusDataList&lt;?&gt;&gt; myEntry = myIterator.next();</span>
+
+            /* Access the two lists */
+<span class="nc" id="L776">            final PrometheusDataList&lt;?&gt; myList = myEntry.getValue();</span>
+<span class="nc" id="L777">            final PrometheusDataList&lt;?&gt; myBase = myMap.get(myEntry.getKey());</span>
+
+            /* If the list is an encrypted list */
+<span class="nc bnc" id="L780" title="All 2 branches missed.">            if (myList instanceof PrometheusEncryptedList) {</span>
+                /* Adopt the security */
+<span class="nc" id="L782">                myStage.startTask(myList.listName());</span>
+<span class="nc" id="L783">                final PrometheusEncryptedList&lt;?&gt; myEncrypted = (PrometheusEncryptedList&lt;?&gt;) myList;</span>
+<span class="nc" id="L784">                myEncrypted.adoptSecurity(pReport, (PrometheusEncryptedList&lt;?&gt;) myBase);</span>
+            }
+<span class="nc" id="L786">        }</span>
+
+        /* Complete the task */
+<span class="nc" id="L789">        myStage.end();</span>
+<span class="nc" id="L790">    }</span>
+
+    /**
+     * Renew Security.
+     *
+     * @param pReport the report
+     * @throws OceanusException on error
+     */
+    public void renewSecurity(final TethysUIThreadStatusReport pReport) throws OceanusException {
+        /* Access current profile */
+<span class="nc" id="L800">        final OceanusProfile myTask = pReport.getActiveTask();</span>
+<span class="nc" id="L801">        final OceanusProfile myStage = myTask.startTask(TASK_SECRENEW);</span>
+
+        /* Access ControlData */
+<span class="nc" id="L804">        final PrometheusControlData myControl = getControl();</span>
+
+        /* Clone the control key */
+<span class="nc" id="L807">        final PrometheusControlKey myKey = getControlKeys().cloneItem(myControl.getControlKey());</span>
+
+        /* Declare the New Control Key */
+<span class="nc" id="L810">        myControl.setControlKey(myKey);</span>
+
+        /* Update Security */
+<span class="nc" id="L813">        updateSecurity(pReport);</span>
+
+        /* Complete task */
+<span class="nc" id="L816">        myStage.end();</span>
+<span class="nc" id="L817">    }</span>
+
+    /**
+     * Check Security for incomplete security operations.
+     *
+     * @param pReport the report
+     * @throws OceanusException on error
+     */
+    public void checkSecurity(final TethysUIThreadStatusReport pReport) throws OceanusException {
+        /* Access current profile */
+<span class="nc" id="L827">        final OceanusProfile myTask = pReport.getActiveTask();</span>
+<span class="nc" id="L828">        final OceanusProfile myStage = myTask.startTask(TASK_SECCHECK);</span>
+
+        /* If there is more than one controlKey */
+<span class="nc bnc" id="L831" title="All 2 branches missed.">        if (getControlKeys().size() &gt; 1) {</span>
+            /* Update to the selected controlKey */
+<span class="nc" id="L833">            updateSecurity(pReport);</span>
+        }
+
+        /* Complete task */
+<span class="nc" id="L837">        myStage.end();</span>
+<span class="nc" id="L838">    }</span>
+
+    /**
+     * Update Security.
+     *
+     * @param pReport the report
+     * @throws OceanusException on error
+     */
+    public void updateSecurity(final TethysUIThreadStatusReport pReport) throws OceanusException {
+        /* Access the control key */
+<span class="nc" id="L848">        final PrometheusControlKey myControl = getControlKey();</span>
+
+        /* Set the number of stages */
+<span class="nc" id="L851">        pReport.initTask(TASK_SECUPDATE);</span>
+<span class="nc" id="L852">        pReport.setNumStages(theNumEncrypted);</span>
+
+        /* Loop through the List values */
+<span class="nc" id="L855">        final Iterator&lt;PrometheusDataList&lt;?&gt;&gt; myIterator = iterator();</span>
+<span class="nc bnc" id="L856" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L857">            final PrometheusDataList&lt;?&gt; myList = myIterator.next();</span>
+
+            /* If the list is an encrypted list */
+<span class="nc bnc" id="L860" title="All 2 branches missed.">            if (myList instanceof PrometheusEncryptedList) {</span>
+                /* Update the security */
+<span class="nc" id="L862">                final PrometheusEncryptedList&lt;?&gt; myEncrypted = (PrometheusEncryptedList&lt;?&gt;) myList;</span>
+<span class="nc" id="L863">                myEncrypted.updateSecurity(pReport, myControl);</span>
+            }
+<span class="nc" id="L865">        }</span>
+
+        /* Delete old ControlSets */
+<span class="nc" id="L868">        getControlKeys().purgeOldControlKeys();</span>
+<span class="nc" id="L869">        setVersion(1);</span>
+<span class="nc" id="L870">    }</span>
+
+    /**
+     * Get the Password Hash.
+     *
+     * @return the password hash
+     * @throws OceanusException on error
+     */
+    public GordianFactoryLock getFactoryLock() throws OceanusException {
+        /* Access the active control key */
+<span class="nc" id="L880">        final PrometheusControlKey myKey = getControlKey();</span>
+
+        /* Set the control */
+<span class="nc bnc" id="L883" title="All 2 branches missed.">        return myKey == null</span>
+<span class="nc" id="L884">                ? null</span>
+<span class="nc" id="L885">                : myKey.getFactoryLock();</span>
+    }
+
+    /**
+     * Update data with a new password.
+     *
+     * @param pReport the report
+     * @param pSource the source of the data
+     * @throws OceanusException on error
+     */
+    public void updateFactoryLock(final TethysUIThreadStatusReport pReport,
+                                  final String pSource) throws OceanusException {
+        /* Update the control details */
+<span class="nc" id="L898">        getControlKey().updateFactoryLock(pSource);</span>
+<span class="nc" id="L899">    }</span>
+
+    /**
+     * Undo changes in a dataSet.
+     */
+    public void undoLastChange() {
+        /* Ignore if we have no changes */
+<span class="nc bnc" id="L906" title="All 2 branches missed.">        if (theVersion == 0) {</span>
+<span class="nc" id="L907">            return;</span>
+        }
+
+        /* Decrement version */
+<span class="nc" id="L911">        theVersion--;</span>
+
+        /* Rewind to the version */
+<span class="nc" id="L914">        rewindToVersion(theVersion);</span>
+<span class="nc" id="L915">    }</span>
+
+    /**
+     * Reset changes in a dataSet.
+     */
+    public void resetChanges() {
+        /* Ignore if we have no changes */
+<span class="nc bnc" id="L922" title="All 2 branches missed.">        if (theVersion == 0) {</span>
+<span class="nc" id="L923">            return;</span>
+        }
+
+        /* Decrement version */
+<span class="nc" id="L927">        theVersion = 0;</span>
+
+        /* Rewind to the version */
+<span class="nc" id="L930">        rewindToVersion(theVersion);</span>
+<span class="nc" id="L931">    }</span>
+
+    /**
+     * Obtain list iterator.
+     *
+     * @return the iterator
+     */
+    public Iterator&lt;PrometheusDataList&lt;?&gt;&gt; iterator() {
+<span class="nc" id="L939">        return theListMap.values().iterator();</span>
+    }
+
+    /**
+     * Obtain list iterator.
+     *
+     * @return the iterator
+     */
+    public Iterator&lt;Entry&lt;MetisListKey, PrometheusDataList&lt;?&gt;&gt;&gt; entryIterator() {
+<span class="nc" id="L948">        return theListMap.entrySet().iterator();</span>
+    }
+
+    /**
+     * Obtain listKey iterator.
+     *
+     * @return the iterator
+     */
+    public Iterator&lt;MetisListKey&gt; keyIterator() {
+<span class="nc" id="L957">        return theListMap.keySet().iterator();</span>
+    }
+
+    /**
+     * Cryptography Data Enum Types.
+     */
+<span class="nc" id="L963">    public enum PrometheusCryptographyDataType</span>
+            implements MetisListKey, MetisDataFieldId {
+        /**
+         * ControlKey.
+         */
+<span class="nc" id="L968">        CONTROLKEY(1),</span>
+
+        /**
+         * ControlKeySet.
+         */
+<span class="nc" id="L973">        CONTROLKEYSET(2),</span>
+
+        /**
+         * DataKeySet.
+         */
+<span class="nc" id="L978">        DATAKEYSET(3),</span>
+
+        /**
+         * ControlData.
+         */
+<span class="nc" id="L983">        CONTROLDATA(4);</span>
+
+        /**
+         * Maximum keyId.
+         */
+<span class="nc" id="L988">        public static final Integer MAXKEYID = CONTROLDATA.getItemKey();</span>
+
+        /**
+         * The list key.
+         */
+        private final Integer theKey;
+
+        /**
+         * The String name.
+         */
+        private String theName;
+
+        /**
+         * The list name.
+         */
+        private String theListName;
+
+        /**
+         * Constructor.
+         *
+         * @param pKey the key
+         */
+<span class="nc" id="L1010">        PrometheusCryptographyDataType(final Integer pKey) {</span>
+<span class="nc" id="L1011">            theKey = pKey;</span>
+<span class="nc" id="L1012">        }</span>
+
+        @Override
+        public String toString() {
+            /* If we have not yet loaded the name */
+<span class="nc bnc" id="L1017" title="All 2 branches missed.">            if (theName == null) {</span>
+                /* Load the name */
+<span class="nc" id="L1019">                theName = PrometheusDataResource.getKeyForCryptoItem(this).getValue();</span>
+            }
+
+            /* return the name */
+<span class="nc" id="L1023">            return theName;</span>
+        }
+
+        @Override
+        public String getItemName() {
+<span class="nc" id="L1028">            return toString();</span>
+        }
+
+        @Override
+        public Class&lt;? extends MetisFieldVersionedItem&gt; getClazz() {
+<span class="nc bnc" id="L1033" title="All 5 branches missed.">            switch (this) {</span>
+                case CONTROLDATA:
+<span class="nc" id="L1035">                    return PrometheusControlData.class;</span>
+                case CONTROLKEY:
+<span class="nc" id="L1037">                    return PrometheusControlKey.class;</span>
+                case CONTROLKEYSET:
+<span class="nc" id="L1039">                    return PrometheusControlKeySet.class;</span>
+                case DATAKEYSET:
+<span class="nc" id="L1041">                    return PrometheusDataKeySet.class;</span>
+                default:
+<span class="nc" id="L1043">                    return null;</span>
+            }
+        }
+
+        @Override
+        public String getListName() {
+            /* If we have not yet loaded the name */
+<span class="nc bnc" id="L1050" title="All 2 branches missed.">            if (theListName == null) {</span>
+                /* Load the name */
+<span class="nc" id="L1052">                theListName = PrometheusDataResource.getKeyForCryptoList(this).getValue();</span>
+            }
+
+            /* return the list name */
+<span class="nc" id="L1056">            return theListName;</span>
+        }
+
+        @Override
+        public Integer getItemKey() {
+<span class="nc" id="L1061">            return theKey;</span>
+        }
+
+        @Override
+        public String getId() {
+<span class="nc" id="L1066">            return toString();</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWisePayeeTable.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.moneywise.ui.panel</a> &gt; <span class="el_source">MoneyWisePayeeTable.java</span></div><h1>MoneyWisePayeeTable.java</h1><pre class="source lang-java linenums">/*
+ * MoneyWise: Finance Application
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.moneywise.ui.panel;
+
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.profile.OceanusProfile;
+import io.github.tonywasher.joceanus.metis.data.MetisDataDifference;
+import io.github.tonywasher.joceanus.metis.ui.MetisErrorPanel;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDataSet;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePayee;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePayee.MoneyWisePayeeList;
+import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseAssetCategory;
+import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
+import io.github.tonywasher.joceanus.moneywise.ui.base.MoneyWiseAssetTable;
+import io.github.tonywasher.joceanus.moneywise.ui.dialog.MoneyWisePayeeDialog;
+import io.github.tonywasher.joceanus.moneywise.views.MoneyWiseView;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
+import io.github.tonywasher.joceanus.prometheus.views.PrometheusDataEvent;
+import io.github.tonywasher.joceanus.prometheus.views.PrometheusEditSet;
+import io.github.tonywasher.joceanus.tethys.api.factory.TethysUIFactory;
+import io.github.tonywasher.joceanus.tethys.api.menu.TethysUIScrollMenu;
+
+import java.util.Iterator;
+
+/**
+ * MoneyWise Payee Table.
+ */
+public class MoneyWisePayeeTable
+        extends MoneyWiseAssetTable&lt;MoneyWisePayee&gt; {
+    /**
+     * The Payee dialog.
+     */
+    private final MoneyWisePayeeDialog theActivePayee;
+
+    /**
+     * The edit list.
+     */
+    private MoneyWisePayeeList thePayees;
+
+    /**
+     * Constructor.
+     *
+     * @param pView    the view
+     * @param pEditSet the editSet
+     * @param pError   the error panel
+     */
+    MoneyWisePayeeTable(final MoneyWiseView pView,
+                        final PrometheusEditSet pEditSet,
+                        final MetisErrorPanel pError) {
+        /* Store parameters */
+<span class="nc" id="L66">        super(pView, pEditSet, pError, MoneyWiseBasicDataType.PAYEE);</span>
+
+        /* register the infoEntry */
+<span class="nc" id="L69">        getEditSet().registerType(MoneyWiseBasicDataType.PAYEEINFO);</span>
+
+        /* Access Gui factory */
+<span class="nc" id="L72">        final TethysUIFactory&lt;?&gt; myGuiFactory = pView.getGuiFactory();</span>
+
+        /* Create a payee panel */
+<span class="nc" id="L75">        theActivePayee = new MoneyWisePayeeDialog(myGuiFactory, pEditSet, this);</span>
+<span class="nc" id="L76">        declareItemPanel(theActivePayee);</span>
+
+        /* Finish the table */
+<span class="nc" id="L79">        finishTable(false, false, true);</span>
+
+        /* Add listeners */
+<span class="nc" id="L82">        theActivePayee.getEventRegistrar().addEventListener(PrometheusDataEvent.ADJUSTVISIBILITY, e -&gt; handlePanelState());</span>
+<span class="nc" id="L83">    }</span>
+
+    @Override
+    protected boolean isItemEditing() {
+<span class="nc" id="L87">        return theActivePayee.isEditing();</span>
+    }
+
+    @Override
+    protected void refreshData() throws OceanusException {
+        /* Obtain the active profile */
+<span class="nc" id="L93">        OceanusProfile myTask = getView().getActiveTask();</span>
+<span class="nc" id="L94">        myTask = myTask.startTask(&quot;Payees&quot;);</span>
+
+        /* Access list */
+<span class="nc" id="L97">        final MoneyWiseDataSet myData = getView().getData();</span>
+<span class="nc" id="L98">        final MoneyWisePayeeList myBase = myData.getPayees();</span>
+<span class="nc" id="L99">        thePayees = myBase.deriveEditList(getEditSet());</span>
+<span class="nc" id="L100">        getTable().setItems(thePayees.getUnderlyingList());</span>
+
+        /* Notify panel of refresh */
+<span class="nc" id="L103">        theActivePayee.refreshData();</span>
+<span class="nc" id="L104">        restoreSelected();</span>
+
+        /* Complete the task */
+<span class="nc" id="L107">        myTask.end();</span>
+<span class="nc" id="L108">    }</span>
+
+    @Override
+    public void cancelEditing() {
+<span class="nc" id="L112">        super.cancelEditing();</span>
+<span class="nc" id="L113">        theActivePayee.setEditable(false);</span>
+<span class="nc" id="L114">    }</span>
+
+    /**
+     * Select payee.
+     *
+     * @param pPayee the payee to select
+     */
+    void selectPayee(final MoneyWisePayee pPayee) {
+        /* Check whether we need to showAll */
+<span class="nc" id="L123">        checkShowAll(pPayee);</span>
+
+        /* If we are changing the selection */
+<span class="nc" id="L126">        final MoneyWisePayee myCurrent = theActivePayee.getSelectedItem();</span>
+<span class="nc bnc" id="L127" title="All 2 branches missed.">        if (!MetisDataDifference.isEqual(myCurrent, pPayee)) {</span>
+            /* Select the row and ensure that it is visible */
+<span class="nc" id="L129">            getTable().selectRow(pPayee);</span>
+        }
+<span class="nc" id="L131">    }</span>
+
+    @Override
+    protected void handleRewind() {
+        /* Only action if we are not editing */
+<span class="nc bnc" id="L136" title="All 2 branches missed.">        if (!theActivePayee.isEditing()) {</span>
+            /* Handle the reWind */
+<span class="nc" id="L138">            setEnabled(true);</span>
+<span class="nc" id="L139">            super.handleRewind();</span>
+        }
+
+        /* Adjust for changes */
+<span class="nc" id="L143">        notifyChanges();</span>
+<span class="nc" id="L144">    }</span>
+
+    /**
+     * Handle panel state.
+     */
+    private void handlePanelState() {
+        /* Only action if we are not editing */
+<span class="nc bnc" id="L151" title="All 2 branches missed.">        if (!theActivePayee.isEditing()) {</span>
+            /* handle the edit transition */
+<span class="nc" id="L153">            setEnabled(true);</span>
+<span class="nc" id="L154">            final MoneyWisePayee myPayee = theActivePayee.getSelectedItem();</span>
+<span class="nc" id="L155">            updateTableData();</span>
+<span class="nc bnc" id="L156" title="All 2 branches missed.">            if (myPayee != null) {</span>
+<span class="nc" id="L157">                getTable().selectRow(myPayee);</span>
+            } else {
+<span class="nc" id="L159">                restoreSelected();</span>
+            }
+<span class="nc" id="L161">        } else {</span>
+<span class="nc" id="L162">            getTable().cancelEditing();</span>
+        }
+
+        /* Note changes */
+<span class="nc" id="L166">        notifyChanges();</span>
+<span class="nc" id="L167">    }</span>
+
+    @Override
+    protected void buildCategoryMenu(final MoneyWisePayee pPayee,
+                                     final TethysUIScrollMenu&lt;MoneyWiseAssetCategory&gt; pMenu) {
+        /* Build the menu */
+<span class="nc" id="L173">        theActivePayee.buildPayeeTypeMenu(pMenu, pPayee);</span>
+<span class="nc" id="L174">    }</span>
+
+    @Override
+    protected void addNewItem() {
+        /* Protect against Exceptions */
+        try {
+            /* Make sure that we have finished editing */
+<span class="nc" id="L181">            cancelEditing();</span>
+
+            /* Create a new profile */
+<span class="nc" id="L184">            final OceanusProfile myTask = getView().getNewProfile(&quot;addNewItem&quot;);</span>
+
+            /* Create the new asset */
+<span class="nc" id="L187">            myTask.startTask(&quot;buildItem&quot;);</span>
+<span class="nc" id="L188">            final MoneyWisePayee myPayee = thePayees.addNewItem();</span>
+<span class="nc" id="L189">            myPayee.setDefaults();</span>
+
+            /* Set as new and adjust map */
+<span class="nc" id="L192">            myTask.startTask(&quot;incrementVersion&quot;);</span>
+<span class="nc" id="L193">            myPayee.setNewVersion();</span>
+<span class="nc" id="L194">            myPayee.adjustMapForItem();</span>
+<span class="nc" id="L195">            getEditSet().incrementVersion();</span>
+
+            /* Validate the new item */
+<span class="nc" id="L198">            myTask.startTask(&quot;validate&quot;);</span>
+<span class="nc" id="L199">            myPayee.validate();</span>
+
+            /* update panel */
+<span class="nc" id="L202">            myTask.startTask(&quot;setItem&quot;);</span>
+<span class="nc" id="L203">            theActivePayee.setNewItem(myPayee);</span>
+
+            /* Lock the table */
+<span class="nc" id="L206">            setTableEnabled(false);</span>
+<span class="nc" id="L207">            myTask.end();</span>
+
+            /* Handle Exceptions */
+<span class="nc" id="L210">        } catch (OceanusException e) {</span>
+            /* Build the error */
+<span class="nc" id="L212">            final OceanusException myError = new MoneyWiseDataException(&quot;Failed to create new payee&quot;, e);</span>
+
+            /* Show the error */
+<span class="nc" id="L215">            setError(myError);</span>
+<span class="nc" id="L216">        }</span>
+<span class="nc" id="L217">    }</span>
+
+    @Override
+    protected Iterator&lt;PrometheusDataItem&gt; nameSpaceIterator() {
+<span class="nc" id="L221">        return assetNameSpaceIterator();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

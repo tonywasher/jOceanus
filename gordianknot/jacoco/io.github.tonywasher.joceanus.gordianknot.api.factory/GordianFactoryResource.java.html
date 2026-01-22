@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianFactoryResource.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.api.factory</a> &gt; <span class="el_source">GordianFactoryResource.java</span></div><h1>GordianFactoryResource.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.gordianknot.api.factory;
+
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianBundleLoader;
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianBundleLoader.GordianBundleId;
+
+/**
+ * Resource IDs for Factory package.
+ */
+<span class="fc" id="L25">public enum GordianFactoryResource</span>
+        implements GordianBundleId {
+    /**
+     * Factory BC.
+     */
+<span class="fc" id="L30">    FACTORY_BC(&quot;BC&quot;),</span>
+
+    /**
+     * Factory JCA.
+     */
+<span class="fc" id="L35">    FACTORY_JCA(&quot;JCA&quot;);</span>
+
+    /**
+     * The Resource Loader.
+     */
+<span class="fc" id="L40">    private static final GordianBundleLoader LOADER = GordianBundleLoader.getLoader(GordianFactoryResource.class.getCanonicalName());</span>
+
+    /**
+     * The Id.
+     */
+    private final String theKeyName;
+
+    /**
+     * The Value.
+     */
+    private String theValue;
+
+    /**
+     * Constructor.
+     *
+     * @param pKeyName the key name
+     */
+<span class="fc" id="L57">    GordianFactoryResource(final String pKeyName) {</span>
+<span class="fc" id="L58">        theKeyName = pKeyName;</span>
+<span class="fc" id="L59">    }</span>
+
+    @Override
+    public String getKeyName() {
+<span class="fc" id="L63">        return theKeyName;</span>
+    }
+
+    @Override
+    public String getNameSpace() {
+<span class="fc" id="L68">        return &quot;factory&quot;;</span>
+    }
+
+    @Override
+    public String getValue() {
+        /* If we have not initialized the value */
+<span class="pc bpc" id="L74" title="1 of 2 branches missed.">        if (theValue == null) {</span>
+            /* Derive the value */
+<span class="fc" id="L76">            theValue = LOADER.getValue(this);</span>
+        }
+
+        /* return the value */
+<span class="fc" id="L80">        return theValue;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

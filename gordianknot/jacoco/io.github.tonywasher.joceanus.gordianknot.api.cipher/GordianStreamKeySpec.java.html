@@ -1,0 +1,921 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianStreamKeySpec.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.api.cipher</a> &gt; <span class="el_source">GordianStreamKeySpec.java</span></div><h1>GordianStreamKeySpec.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.gordianknot.api.cipher;
+
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
+import org.bouncycastle.crypto.engines.ElephantEngine.ElephantParameters;
+import org.bouncycastle.crypto.engines.ISAPEngine.IsapType;
+import org.bouncycastle.crypto.engines.RomulusEngine.RomulusParameters;
+import org.bouncycastle.crypto.engines.SparkleEngine.SparkleParameters;
+
+import java.util.Objects;
+
+/**
+ * GordianKnot StreamKeySpec.
+ */
+public class GordianStreamKeySpec
+        implements GordianKeySpec {
+    /**
+     * The Separator.
+     */
+    private static final String SEP = &quot;-&quot;;
+
+    /**
+     * The StreamKey Type.
+     */
+    private final GordianStreamKeyType theStreamKeyType;
+
+    /**
+     * The Key Length.
+     */
+    private final GordianLength theKeyLength;
+
+    /**
+     * SubKeyType.
+     */
+    private final GordianStreamSubKeyType theSubKeyType;
+
+    /**
+     * The Validity.
+     */
+    private final boolean isValid;
+
+    /**
+     * The String name.
+     */
+    private String theName;
+
+    /**
+     * Constructor.
+     *
+     * @param pStreamKeyType the streamKeyType
+     * @param pKeyLength     the keyLength
+     */
+    public GordianStreamKeySpec(final GordianStreamKeyType pStreamKeyType,
+                                final GordianLength pKeyLength) {
+<span class="fc" id="L71">        this(pStreamKeyType, pKeyLength, defaultSubKeyType(pStreamKeyType));</span>
+<span class="fc" id="L72">    }</span>
+
+    /**
+     * Constructor.
+     *
+     * @param pStreamKeyType the streamKeyType
+     * @param pKeyLength     the keyLength
+     * @param pSubKeyType    the subKeyType
+     */
+    public GordianStreamKeySpec(final GordianStreamKeyType pStreamKeyType,
+                                final GordianLength pKeyLength,
+<span class="fc" id="L83">                                final GordianStreamSubKeyType pSubKeyType) {</span>
+        /* Store parameters */
+<span class="fc" id="L85">        theStreamKeyType = pStreamKeyType;</span>
+<span class="fc" id="L86">        theKeyLength = pKeyLength;</span>
+<span class="fc" id="L87">        theSubKeyType = pSubKeyType;</span>
+<span class="fc" id="L88">        isValid = checkValidity();</span>
+<span class="fc" id="L89">    }</span>
+
+    /**
+     * Obtain streamKey Type.
+     *
+     * @return the streamKeyType
+     */
+    public GordianStreamKeyType getStreamKeyType() {
+<span class="fc" id="L97">        return theStreamKeyType;</span>
+    }
+
+    @Override
+    public GordianLength getKeyLength() {
+<span class="fc" id="L102">        return theKeyLength;</span>
+    }
+
+    /**
+     * Obtain subKey Type.
+     *
+     * @return the subKeyType
+     */
+    public GordianStreamSubKeyType getSubKeyType() {
+<span class="fc" id="L111">        return theSubKeyType;</span>
+    }
+
+    /**
+     * Is the keySpec valid?
+     *
+     * @return true/false.
+     */
+    public boolean isValid() {
+<span class="fc" id="L120">        return isValid;</span>
+    }
+
+    /**
+     * Does this cipher need an IV?
+     *
+     * @return true/false
+     */
+    public boolean needsIV() {
+<span class="fc bfc" id="L129" title="All 2 branches covered.">        return getIVLength() &gt; 0;</span>
+    }
+
+    /**
+     * Check spec validity.
+     *
+     * @return valid true/false
+     */
+    private boolean checkValidity() {
+        /* Stream KeyType and Key length must be non-null */
+<span class="pc bpc" id="L139" title="2 of 4 branches missed.">        if (theStreamKeyType == null</span>
+                || theKeyLength == null) {
+<span class="nc" id="L141">            return false;</span>
+        }
+
+        /* Check subKeyTypes */
+<span class="fc bfc" id="L145" title="All 10 branches covered.">        switch (theStreamKeyType) {</span>
+            case SALSA20:
+<span class="fc" id="L147">                return checkSalsaValidity();</span>
+            case CHACHA20:
+<span class="fc" id="L149">                return checkChaChaValidity();</span>
+            case VMPC:
+<span class="fc" id="L151">                return checkVMPCValidity();</span>
+            case SKEINXOF:
+<span class="fc" id="L153">                return checkSkeinValidity();</span>
+            case BLAKE2XOF:
+<span class="fc" id="L155">                return checkBlake2Validity();</span>
+            case ELEPHANT:
+<span class="pc bpc" id="L157" title="1 of 2 branches missed.">                return theSubKeyType instanceof GordianElephantKey</span>
+<span class="pc bpc" id="L158" title="1 of 2 branches missed.">                        &amp;&amp; theStreamKeyType.validForKeyLength(theKeyLength);</span>
+            case ISAP:
+<span class="pc bpc" id="L160" title="1 of 2 branches missed.">                return theSubKeyType instanceof GordianISAPKey</span>
+<span class="pc bpc" id="L161" title="1 of 2 branches missed.">                        &amp;&amp; theStreamKeyType.validForKeyLength(theKeyLength);</span>
+            case ROMULUS:
+<span class="pc bpc" id="L163" title="1 of 2 branches missed.">                return theSubKeyType instanceof GordianRomulusKey</span>
+<span class="pc bpc" id="L164" title="1 of 2 branches missed.">                        &amp;&amp; theStreamKeyType.validForKeyLength(theKeyLength);</span>
+            case SPARKLE:
+<span class="fc" id="L166">                return checkSparkleValidity();</span>
+            default:
+<span class="pc bpc" id="L168" title="1 of 2 branches missed.">                return theSubKeyType == null</span>
+<span class="pc bpc" id="L169" title="1 of 2 branches missed.">                        &amp;&amp; theStreamKeyType.validForKeyLength(theKeyLength);</span>
+        }
+    }
+
+    /**
+     * Check salsa spec validity.
+     *
+     * @return valid true/false
+     */
+    private boolean checkSalsaValidity() {
+        /* SubKeyType must be a SalsaKey */
+<span class="pc bpc" id="L180" title="1 of 2 branches missed.">        if (!(theSubKeyType instanceof GordianSalsa20Key)) {</span>
+<span class="nc" id="L181">            return false;</span>
+        }
+
+        /* Check keyLength validity */
+<span class="fc bfc" id="L185" title="All 2 branches covered.">        return theSubKeyType != GordianSalsa20Key.STD</span>
+<span class="fc bfc" id="L186" title="All 2 branches covered.">                ? theKeyLength == GordianLength.LEN_256</span>
+<span class="fc" id="L187">                : theStreamKeyType.validForKeyLength(theKeyLength);</span>
+    }
+
+    /**
+     * Check chacha spec validity.
+     *
+     * @return valid true/false
+     */
+    private boolean checkChaChaValidity() {
+        /* SubKeyType must be a ChaChaKey */
+<span class="pc bpc" id="L197" title="1 of 2 branches missed.">        if (!(theSubKeyType instanceof GordianChaCha20Key)) {</span>
+<span class="nc" id="L198">            return false;</span>
+        }
+
+        /* Check keyLength validity */
+<span class="fc bfc" id="L202" title="All 2 branches covered.">        return theSubKeyType != GordianChaCha20Key.STD</span>
+<span class="fc bfc" id="L203" title="All 2 branches covered.">                ? theKeyLength == GordianLength.LEN_256</span>
+<span class="fc" id="L204">                : theStreamKeyType.validForKeyLength(theKeyLength);</span>
+    }
+
+    /**
+     * Check vmpc spec validity.
+     *
+     * @return valid true/false
+     */
+    private boolean checkVMPCValidity() {
+        /* SubKeyType must be a GordianVMPCKey */
+<span class="pc bpc" id="L214" title="1 of 2 branches missed.">        if (!(theSubKeyType instanceof GordianVMPCKey)) {</span>
+<span class="nc" id="L215">            return false;</span>
+        }
+
+        /* Check keyLength validity */
+<span class="fc" id="L219">        return theStreamKeyType.validForKeyLength(theKeyLength);</span>
+    }
+
+    /**
+     * Check skein spec validity.
+     *
+     * @return valid true/false
+     */
+    private boolean checkSkeinValidity() {
+        /* SubKeyType must be a GordianSkeinXofKey */
+<span class="pc bpc" id="L229" title="1 of 2 branches missed.">        if (!(theSubKeyType instanceof GordianSkeinXofKey)) {</span>
+<span class="nc" id="L230">            return false;</span>
+        }
+
+        /* Check keyLength validity */
+<span class="fc" id="L234">        return theStreamKeyType.validForKeyLength(theKeyLength);</span>
+    }
+
+    /**
+     * Check blake2 spec validity.
+     *
+     * @return valid true/false
+     */
+    private boolean checkBlake2Validity() {
+        /* SubKeyType must be a GordianBlakeXofKey */
+<span class="pc bpc" id="L244" title="1 of 2 branches missed.">        if (!(theSubKeyType instanceof GordianBlakeXofKey)) {</span>
+<span class="nc" id="L245">            return false;</span>
+        }
+
+        /* Check keyLength validity */
+<span class="fc" id="L249">        final GordianBlakeXofKey myType = (GordianBlakeXofKey) theSubKeyType;</span>
+<span class="pc bpc" id="L250" title="1 of 6 branches missed.">        return theStreamKeyType.validForKeyLength(theKeyLength)</span>
+                &amp;&amp; (myType != GordianBlakeXofKey.BLAKE2XS
+                || theKeyLength != GordianLength.LEN_512);
+    }
+
+    /**
+     * Check sparkle spec validity.
+     *
+     * @return valid true/false
+     */
+    private boolean checkSparkleValidity() {
+        /* SubKeyType must be a GordianSparkleKey */
+<span class="pc bpc" id="L262" title="1 of 2 branches missed.">        if (!(theSubKeyType instanceof GordianSparkleKey)) {</span>
+<span class="nc" id="L263">            return false;</span>
+        }
+
+        /* Check keyLength validity */
+<span class="fc bfc" id="L267" title="All 2 branches covered.">        return theKeyLength == ((GordianSparkleKey) theSubKeyType).requiredKeyLength();</span>
+    }
+
+    @Override
+    public String toString() {
+        /* If we have not yet loaded the name */
+<span class="fc bfc" id="L273" title="All 2 branches covered.">        if (theName == null) {</span>
+            /* If the keySpec is valid */
+<span class="pc bpc" id="L275" title="1 of 2 branches missed.">            if (isValid) {</span>
+                /* Load the name */
+<span class="fc" id="L277">                theName = getName();</span>
+<span class="fc" id="L278">                theName += SEP + theKeyLength;</span>
+            } else {
+                /* Report invalid spec */
+<span class="nc" id="L281">                theName = &quot;InvalidStreamKeySpec: &quot; + theStreamKeyType + &quot;:&quot; + theKeyLength;</span>
+            }
+        }
+
+        /* return the name */
+<span class="fc" id="L286">        return theName;</span>
+    }
+
+    /**
+     * Determine the name for the KeySpec.
+     *
+     * @return the name
+     */
+    private String getName() {
+        /* Handle VMPC-KSA */
+<span class="fc bfc" id="L296" title="All 4 branches covered.">        if (theStreamKeyType == GordianStreamKeyType.VMPC</span>
+                &amp;&amp; theSubKeyType == GordianVMPCKey.KSA) {
+<span class="fc" id="L298">            return theStreamKeyType + &quot;KSA3&quot;;</span>
+        }
+
+        /* Handle XSalsa20 */
+<span class="fc bfc" id="L302" title="All 4 branches covered.">        if (theStreamKeyType == GordianStreamKeyType.SALSA20</span>
+                &amp;&amp; theSubKeyType == GordianSalsa20Key.XSALSA) {
+<span class="fc" id="L304">            return &quot;X&quot; + theStreamKeyType;</span>
+        }
+
+        /* Handle XChaCha20 */
+<span class="fc bfc" id="L308" title="All 4 branches covered.">        if (theStreamKeyType == GordianStreamKeyType.CHACHA20</span>
+                &amp;&amp; theSubKeyType == GordianChaCha20Key.XCHACHA) {
+<span class="fc" id="L310">            return &quot;X&quot; + theStreamKeyType;</span>
+        }
+
+        /* Handle ChaCha7539 */
+<span class="fc bfc" id="L314" title="All 4 branches covered.">        if (theStreamKeyType == GordianStreamKeyType.CHACHA20</span>
+                &amp;&amp; theSubKeyType == GordianChaCha20Key.ISO7539) {
+<span class="fc" id="L316">            return &quot;ChaCha7539&quot;;</span>
+        }
+
+        /* Handle Skein */
+<span class="fc bfc" id="L320" title="All 2 branches covered.">        if (theStreamKeyType == GordianStreamKeyType.SKEINXOF) {</span>
+<span class="fc" id="L321">            return theStreamKeyType + SEP + theSubKeyType.toString();</span>
+        }
+
+        /* Handle Remaining types */
+<span class="fc bfc" id="L325" title="All 2 branches covered.">        switch (theStreamKeyType) {</span>
+            case BLAKE2XOF:
+            case ELEPHANT:
+            case ISAP:
+            case ROMULUS:
+            case SPARKLE:
+<span class="fc" id="L331">                return theSubKeyType.toString();</span>
+            default:
+<span class="fc" id="L333">                return theStreamKeyType.toString();</span>
+        }
+    }
+
+    /**
+     * Obtain the IV Length.
+     *
+     * @return the IV length.
+     */
+    public int getIVLength() {
+<span class="fc bfc" id="L343" title="All 11 branches covered.">        switch (theStreamKeyType) {</span>
+            case RABBIT:
+<span class="fc" id="L345">                return GordianLength.LEN_64.getByteLength();</span>
+            case GRAIN:
+            case ELEPHANT:
+<span class="fc" id="L348">                return GordianLength.LEN_96.getByteLength();</span>
+            case SOSEMANUK:
+            case SNOW3G:
+            case BLAKE3XOF:
+            case SKEINXOF:
+            case ASCON:
+            case ISAP:
+            case PHOTONBEETLE:
+            case ROMULUS:
+            case XOODYAK:
+<span class="fc" id="L358">                return GordianLength.LEN_128.getByteLength();</span>
+            case HC:
+<span class="fc bfc" id="L360" title="All 2 branches covered.">                return GordianLength.LEN_128 == theKeyLength</span>
+<span class="fc" id="L361">                        ? GordianLength.LEN_128.getByteLength()</span>
+<span class="fc" id="L362">                        : GordianLength.LEN_256.getByteLength();</span>
+            case ZUC:
+<span class="fc bfc" id="L364" title="All 2 branches covered.">                return GordianLength.LEN_128 == theKeyLength</span>
+<span class="fc" id="L365">                        ? GordianLength.LEN_128.getByteLength()</span>
+<span class="fc" id="L366">                        : GordianLength.LEN_200.getByteLength();</span>
+            case VMPC:
+<span class="fc" id="L368">                return theKeyLength.getByteLength();</span>
+            case BLAKE2XOF:
+<span class="fc" id="L370">                return ((GordianBlakeXofKey) theSubKeyType).requiredIVLength().getByteLength();</span>
+            case CHACHA20:
+<span class="fc" id="L372">                return ((GordianChaCha20Key) theSubKeyType).requiredIVLength().getByteLength();</span>
+            case SALSA20:
+<span class="fc" id="L374">                return ((GordianSalsa20Key) theSubKeyType).requiredIVLength().getByteLength();</span>
+            case SPARKLE:
+<span class="fc" id="L376">                return ((GordianSparkleKey) theSubKeyType).requiredIVLength().getByteLength();</span>
+            case ISAAC:
+            case RC4:
+            default:
+<span class="fc" id="L380">                return 0;</span>
+        }
+    }
+
+    /**
+     * Does this keySpec optionally support AEAD?
+     *
+     * @return true/false
+     */
+    public boolean supportsAEAD() {
+<span class="fc bfc" id="L390" title="All 4 branches covered.">        return theStreamKeyType == GordianStreamKeyType.CHACHA20</span>
+                &amp;&amp; theSubKeyType != GordianChaCha20Key.STD;
+    }
+
+    /**
+     * Is this keySpec an AEAD keySpec?
+     *
+     * @return true/false
+     */
+    public boolean isAEAD() {
+<span class="fc bfc" id="L400" title="All 2 branches covered.">        switch (theStreamKeyType) {</span>
+            case ASCON:
+            case ELEPHANT:
+            case ISAP:
+            case PHOTONBEETLE:
+            case ROMULUS:
+            case SPARKLE:
+            case XOODYAK:
+<span class="fc" id="L408">                return true;</span>
+            default:
+<span class="fc" id="L410">                return false;</span>
+        }
+    }
+
+    @Override
+    public boolean equals(final Object pThat) {
+        /* Handle the trivial cases */
+<span class="fc bfc" id="L417" title="All 2 branches covered.">        if (this == pThat) {</span>
+<span class="fc" id="L418">            return true;</span>
+        }
+<span class="pc bpc" id="L420" title="1 of 2 branches missed.">        if (pThat == null) {</span>
+<span class="nc" id="L421">            return false;</span>
+        }
+
+        /* Check subFields */
+<span class="fc" id="L425">        return pThat instanceof GordianStreamKeySpec myThat</span>
+<span class="fc bfc" id="L426" title="All 2 branches covered.">                &amp;&amp; theStreamKeyType == myThat.getStreamKeyType()</span>
+<span class="pc bpc" id="L427" title="1 of 2 branches missed.">                &amp;&amp; theKeyLength == myThat.getKeyLength()</span>
+<span class="pc bpc" id="L428" title="1 of 4 branches missed.">                &amp;&amp; theSubKeyType == myThat.getSubKeyType();</span>
+    }
+
+    @Override
+    public int hashCode() {
+<span class="fc" id="L433">        return Objects.hash(theStreamKeyType, theKeyLength, theSubKeyType);</span>
+    }
+
+    /**
+     * Default subKeyType.
+     *
+     * @param pKeyType the keyType
+     * @return the default
+     */
+    private static GordianStreamSubKeyType defaultSubKeyType(final GordianStreamKeyType pKeyType) {
+        /* Switch on keyType */
+<span class="pc bpc" id="L444" title="9 of 10 branches missed.">        switch (pKeyType) {</span>
+            case SALSA20:
+<span class="nc" id="L446">                return GordianSalsa20Key.STD;</span>
+            case CHACHA20:
+<span class="nc" id="L448">                return GordianChaCha20Key.STD;</span>
+            case VMPC:
+<span class="nc" id="L450">                return GordianVMPCKey.STD;</span>
+            case SKEINXOF:
+<span class="nc" id="L452">                return GordianSkeinXofKey.STATE1024;</span>
+            case BLAKE2XOF:
+<span class="nc" id="L454">                return GordianBlakeXofKey.BLAKE2XB;</span>
+            case ELEPHANT:
+<span class="nc" id="L456">                return GordianElephantKey.ELEPHANT160;</span>
+            case ISAP:
+<span class="nc" id="L458">                return GordianISAPKey.ISAPA128;</span>
+            case ROMULUS:
+<span class="nc" id="L460">                return GordianRomulusKey.ROMULUS_M;</span>
+            case SPARKLE:
+<span class="nc" id="L462">                return GordianSparkleKey.SPARKLE128_128;</span>
+            default:
+<span class="fc" id="L464">                return null;</span>
+        }
+    }
+
+    /**
+     * SubKeyType.
+     */
+    public interface GordianStreamSubKeyType {
+    }
+
+    /**
+     * VMPC Key styles.
+     */
+<span class="fc" id="L477">    public enum GordianVMPCKey</span>
+            implements GordianStreamSubKeyType {
+        /**
+         * VMPC.
+         */
+<span class="fc" id="L482">        STD,</span>
+
+        /**
+         * VMPC-KSA.
+         */
+<span class="fc" id="L487">        KSA;</span>
+    }
+
+    /**
+     * Salsa20 Key styles.
+     */
+<span class="fc" id="L493">    public enum GordianSalsa20Key</span>
+            implements GordianStreamSubKeyType {
+        /**
+         * Salsa20.
+         */
+<span class="fc" id="L498">        STD,</span>
+
+        /**
+         * XSalsa20.
+         */
+<span class="fc" id="L503">        XSALSA;</span>
+
+        /**
+         * Obtain required ivLength.
+         *
+         * @return the ivLength
+         */
+        GordianLength requiredIVLength() {
+<span class="fc bfc" id="L511" title="All 2 branches covered.">            switch (this) {</span>
+                case STD:
+<span class="fc" id="L513">                    return GordianLength.LEN_64;</span>
+                case XSALSA:
+                default:
+<span class="fc" id="L516">                    return GordianLength.LEN_192;</span>
+            }
+        }
+    }
+
+    /**
+     * ChaCha20 Key styles.
+     */
+<span class="fc" id="L524">    public enum GordianChaCha20Key</span>
+            implements GordianStreamSubKeyType {
+        /**
+         * ChaCha20.
+         */
+<span class="fc" id="L529">        STD,</span>
+
+        /**
+         * ChaCha7539.
+         */
+<span class="fc" id="L534">        ISO7539,</span>
+
+        /**
+         * XChaCha20.
+         */
+<span class="fc" id="L539">        XCHACHA;</span>
+
+        /**
+         * Obtain required ivLength.
+         *
+         * @return the ivLength
+         */
+        GordianLength requiredIVLength() {
+<span class="fc bfc" id="L547" title="All 3 branches covered.">            switch (this) {</span>
+                case STD:
+<span class="fc" id="L549">                    return GordianLength.LEN_64;</span>
+                case ISO7539:
+<span class="fc" id="L551">                    return GordianLength.LEN_96;</span>
+                case XCHACHA:
+                default:
+<span class="fc" id="L554">                    return GordianLength.LEN_192;</span>
+            }
+        }
+    }
+
+    /**
+     * SkeinXof Key styles.
+     */
+<span class="fc" id="L562">    public enum GordianSkeinXofKey</span>
+            implements GordianStreamSubKeyType {
+        /**
+         * 256State.
+         */
+<span class="fc" id="L567">        STATE256(GordianLength.LEN_256),</span>
+
+        /**
+         * 512State.
+         */
+<span class="fc" id="L572">        STATE512(GordianLength.LEN_512),</span>
+
+        /**
+         * 1024State.
+         */
+<span class="fc" id="L577">        STATE1024(GordianLength.LEN_1024);</span>
+
+        /**
+         * The length.
+         */
+        private final GordianLength theLength;
+
+        /**
+         * Constructor.
+         *
+         * @param pLength the stateLength
+         */
+<span class="fc" id="L589">        GordianSkeinXofKey(final GordianLength pLength) {</span>
+<span class="fc" id="L590">            theLength = pLength;</span>
+<span class="fc" id="L591">        }</span>
+
+        /**
+         * Obtain length.
+         *
+         * @return the length.
+         */
+        public GordianLength getLength() {
+<span class="fc" id="L599">            return theLength;</span>
+        }
+
+        @Override
+        public String toString() {
+<span class="fc" id="L604">            return theLength.toString();</span>
+        }
+
+        /**
+         * Obtain subKeyType for stateLength.
+         *
+         * @param pLength the length
+         * @return the subKeyType
+         */
+        public static GordianSkeinXofKey getKeyTypeForLength(final GordianLength pLength) {
+<span class="nc bnc" id="L614" title="All 2 branches missed.">            for (GordianSkeinXofKey myType : values()) {</span>
+<span class="nc bnc" id="L615" title="All 2 branches missed.">                if (pLength == myType.theLength) {</span>
+<span class="nc" id="L616">                    return myType;</span>
+                }
+            }
+<span class="nc" id="L619">            throw new IllegalArgumentException(&quot;Unsupported state length&quot;);</span>
+        }
+    }
+
+    /**
+     * BlakeXof Key styles.
+     */
+<span class="fc" id="L626">    public enum GordianBlakeXofKey</span>
+            implements GordianStreamSubKeyType {
+        /**
+         * Blake2S.
+         */
+<span class="fc" id="L631">        BLAKE2XS,</span>
+
+        /**
+         * Blake2B.
+         */
+<span class="fc" id="L636">        BLAKE2XB;</span>
+
+        @Override
+        public String toString() {
+<span class="fc bfc" id="L640" title="All 2 branches covered.">            return this == BLAKE2XB ? &quot;Blake2Xb&quot; : &quot;Blake2Xs&quot;;</span>
+        }
+
+        /**
+         * Obtain required ivLength.
+         *
+         * @return the ivLength
+         */
+        GordianLength requiredIVLength() {
+<span class="fc bfc" id="L649" title="All 2 branches covered.">            switch (this) {</span>
+                case BLAKE2XS:
+<span class="fc" id="L651">                    return GordianLength.LEN_64;</span>
+                case BLAKE2XB:
+                default:
+<span class="fc" id="L654">                    return GordianLength.LEN_128;</span>
+            }
+        }
+    }
+
+    /**
+     * Elephant Key styles.
+     */
+<span class="fc" id="L662">    public enum GordianElephantKey</span>
+            implements GordianStreamSubKeyType {
+        /**
+         * Elephant160.
+         */
+<span class="fc" id="L667">        ELEPHANT160,</span>
+
+        /**
+         * Elephant176.
+         */
+<span class="fc" id="L672">        ELEPHANT176,</span>
+
+        /**
+         * Elephant200.
+         */
+<span class="fc" id="L677">        ELEPHANT200;</span>
+
+        @Override
+        public String toString() {
+<span class="fc" id="L681">            final String myBase = GordianStreamKeyType.ELEPHANT.toString();</span>
+<span class="fc bfc" id="L682" title="All 3 branches covered.">            switch (this) {</span>
+                case ELEPHANT160:
+<span class="fc" id="L684">                    return myBase + &quot;160&quot;;</span>
+                case ELEPHANT176:
+<span class="fc" id="L686">                    return myBase + &quot;176&quot;;</span>
+                case ELEPHANT200:
+                default:
+<span class="fc" id="L689">                    return myBase + &quot;200&quot;;</span>
+            }
+        }
+
+        /**
+         * Obtain the elephant parameters.
+         *
+         * @return the parameters
+         */
+        public ElephantParameters getParameters() {
+<span class="fc bfc" id="L699" title="All 3 branches covered.">            switch (this) {</span>
+                case ELEPHANT160:
+<span class="fc" id="L701">                    return ElephantParameters.elephant160;</span>
+                case ELEPHANT176:
+<span class="fc" id="L703">                    return ElephantParameters.elephant176;</span>
+                case ELEPHANT200:
+                default:
+<span class="fc" id="L706">                    return ElephantParameters.elephant200;</span>
+            }
+        }
+    }
+
+    /**
+     * ISAP Key styles.
+     */
+<span class="fc" id="L714">    public enum GordianISAPKey</span>
+            implements GordianStreamSubKeyType {
+        /**
+         * ISAPA128.
+         */
+<span class="fc" id="L719">        ISAPA128,</span>
+
+        /**
+         * ISAPA128A.
+         */
+<span class="fc" id="L724">        ISAPA128A,</span>
+
+        /**
+         * ISAPK128.
+         */
+<span class="fc" id="L729">        ISAPK128,</span>
+
+        /**
+         * ISAPK128A.
+         */
+<span class="fc" id="L734">        ISAPK128A;</span>
+
+        @Override
+        public String toString() {
+<span class="fc" id="L738">            final String myBase = GordianStreamKeyType.ISAP.toString();</span>
+<span class="fc bfc" id="L739" title="All 4 branches covered.">            switch (this) {</span>
+                case ISAPA128:
+<span class="fc" id="L741">                    return myBase + &quot;A128&quot;;</span>
+                case ISAPA128A:
+<span class="fc" id="L743">                    return myBase + &quot;A128A&quot;;</span>
+                case ISAPK128:
+<span class="fc" id="L745">                    return myBase + &quot;K128&quot;;</span>
+                case ISAPK128A:
+                default:
+<span class="fc" id="L748">                    return myBase + &quot;K128A&quot;;</span>
+            }
+        }
+
+        /**
+         * Obtain the ISAP type.
+         *
+         * @return the type
+         */
+        public IsapType getType() {
+<span class="fc bfc" id="L758" title="All 4 branches covered.">            switch (this) {</span>
+                case ISAPA128:
+<span class="fc" id="L760">                    return IsapType.ISAP_A_128;</span>
+                case ISAPA128A:
+<span class="fc" id="L762">                    return IsapType.ISAP_A_128A;</span>
+                case ISAPK128:
+<span class="fc" id="L764">                    return IsapType.ISAP_K_128;</span>
+                case ISAPK128A:
+                default:
+<span class="fc" id="L767">                    return IsapType.ISAP_K_128A;</span>
+            }
+        }
+    }
+
+    /**
+     * Romulus Key styles.
+     */
+<span class="fc" id="L775">    public enum GordianRomulusKey</span>
+            implements GordianStreamSubKeyType {
+        /**
+         * Romulus-M.
+         */
+<span class="fc" id="L780">        ROMULUS_M,</span>
+
+        /**
+         * Romulus-N.
+         */
+<span class="fc" id="L785">        ROMULUS_N,</span>
+
+        /**
+         * Romulus-T.
+         */
+<span class="fc" id="L790">        ROMULUS_T;</span>
+
+        @Override
+        public String toString() {
+<span class="fc" id="L794">            final String myBase = GordianStreamKeyType.ROMULUS.toString();</span>
+<span class="fc bfc" id="L795" title="All 3 branches covered.">            switch (this) {</span>
+                case ROMULUS_M:
+<span class="fc" id="L797">                    return myBase + &quot;-M&quot;;</span>
+                case ROMULUS_N:
+<span class="fc" id="L799">                    return myBase + &quot;-N&quot;;</span>
+                case ROMULUS_T:
+                default:
+<span class="fc" id="L802">                    return myBase + &quot;-T&quot;;</span>
+            }
+        }
+
+        /**
+         * Obtain the RomulusParameters.
+         *
+         * @return the parameters
+         */
+        public RomulusParameters getParameters() {
+<span class="fc bfc" id="L812" title="All 3 branches covered.">            switch (this) {</span>
+                case ROMULUS_M:
+<span class="fc" id="L814">                    return RomulusParameters.RomulusM;</span>
+                case ROMULUS_N:
+<span class="fc" id="L816">                    return RomulusParameters.RomulusN;</span>
+                case ROMULUS_T:
+                default:
+<span class="fc" id="L819">                    return RomulusParameters.RomulusT;</span>
+            }
+        }
+    }
+
+    /**
+     * Sparkle Key styles.
+     */
+<span class="fc" id="L827">    public enum GordianSparkleKey</span>
+            implements GordianStreamSubKeyType {
+        /**
+         * Sparkle128_128.
+         */
+<span class="fc" id="L832">        SPARKLE128_128,</span>
+
+        /**
+         * Sparkle256_128.
+         */
+<span class="fc" id="L837">        SPARKLE256_128,</span>
+
+        /**
+         * Sparkle192_192.
+         */
+<span class="fc" id="L842">        SPARKLE192_192,</span>
+
+        /**
+         * Sparkle256_256.
+         */
+<span class="fc" id="L847">        SPARKLE256_256;</span>
+
+        @Override
+        public String toString() {
+<span class="fc" id="L851">            final String myBase = GordianStreamKeyType.SPARKLE.toString();</span>
+<span class="fc bfc" id="L852" title="All 4 branches covered.">            switch (this) {</span>
+                case SPARKLE128_128:
+<span class="fc" id="L854">                    return myBase + &quot;128_128&quot;;</span>
+                case SPARKLE256_128:
+<span class="fc" id="L856">                    return myBase + &quot;256_128&quot;;</span>
+                case SPARKLE192_192:
+<span class="fc" id="L858">                    return myBase + &quot;192_192&quot;;</span>
+                case SPARKLE256_256:
+                default:
+<span class="fc" id="L861">                    return myBase + &quot;256_256&quot;;</span>
+            }
+        }
+
+        /**
+         * Obtain required keyLength.
+         *
+         * @return the keyLength
+         */
+        GordianLength requiredKeyLength() {
+<span class="fc bfc" id="L871" title="All 3 branches covered.">            switch (this) {</span>
+                case SPARKLE128_128:
+                case SPARKLE256_128:
+<span class="fc" id="L874">                    return GordianLength.LEN_128;</span>
+                case SPARKLE192_192:
+<span class="fc" id="L876">                    return GordianLength.LEN_192;</span>
+                case SPARKLE256_256:
+                default:
+<span class="fc" id="L879">                    return GordianLength.LEN_256;</span>
+            }
+        }
+
+        /**
+         * Obtain required ivLength.
+         *
+         * @return the ivLength
+         */
+        GordianLength requiredIVLength() {
+<span class="fc bfc" id="L889" title="All 3 branches covered.">            switch (this) {</span>
+                case SPARKLE128_128:
+<span class="fc" id="L891">                    return GordianLength.LEN_128;</span>
+                case SPARKLE192_192:
+<span class="fc" id="L893">                    return GordianLength.LEN_192;</span>
+                case SPARKLE256_128:
+                case SPARKLE256_256:
+                default:
+<span class="fc" id="L897">                    return GordianLength.LEN_256;</span>
+            }
+        }
+
+        /**
+         * Obtain the Sparkle parameters.
+         *
+         * @return the parameters
+         */
+        public SparkleParameters getParameters() {
+<span class="fc bfc" id="L907" title="All 4 branches covered.">            switch (this) {</span>
+                case SPARKLE128_128:
+<span class="fc" id="L909">                    return SparkleParameters.SCHWAEMM128_128;</span>
+                case SPARKLE256_128:
+<span class="fc" id="L911">                    return SparkleParameters.SCHWAEMM256_128;</span>
+                case SPARKLE192_192:
+<span class="fc" id="L913">                    return SparkleParameters.SCHWAEMM192_192;</span>
+                case SPARKLE256_256:
+                default:
+<span class="fc" id="L916">                    return SparkleParameters.SCHWAEMM256_256;</span>
+            }
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

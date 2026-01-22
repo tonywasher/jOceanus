@@ -1,0 +1,340 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianCipherAlgId.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.impl.core.cipher</a> &gt; <span class="el_source">GordianCipherAlgId.java</span></div><h1>GordianCipherAlgId.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.gordianknot.impl.core.cipher;
+
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherFactory;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherMode;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianPadding;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymCipherSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymKeySpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKeyLengths;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianASN1Util;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.key.GordianKeyAlgId;
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.DERNull;
+import org.bouncycastle.asn1.gm.GMObjectIdentifiers;
+import org.bouncycastle.asn1.nist.NISTObjectIdentifiers;
+import org.bouncycastle.asn1.nsri.NSRIObjectIdentifiers;
+import org.bouncycastle.asn1.ntt.NTTObjectIdentifiers;
+import org.bouncycastle.asn1.ua.UAObjectIdentifiers;
+import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
+
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
+/**
+ * Mappings from EncodedId to CipherSpec.
+ */
+public class GordianCipherAlgId {
+    /**
+     * CipherOID branch.
+     */
+<span class="fc" id="L54">    private static final ASN1ObjectIdentifier CIPHEROID = GordianASN1Util.SYMOID.branch(&quot;4&quot;);</span>
+
+    /**
+     * Map of cipherSpec to Identifier.
+     */
+    private final Map&lt;GordianCipherSpec&lt;?&gt;, AlgorithmIdentifier&gt; theSpecMap;
+
+    /**
+     * Map of Identifier to cipherSpec.
+     */
+    private final Map&lt;AlgorithmIdentifier, GordianCipherSpec&lt;?&gt;&gt; theIdentifierMap;
+
+    /**
+     * Constructor.
+     *
+     * @param pFactory the factory
+     */
+<span class="fc" id="L71">    GordianCipherAlgId(final GordianBaseFactory pFactory) {</span>
+        /* Create the maps */
+<span class="fc" id="L73">        theSpecMap = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L74">        theIdentifierMap = new HashMap&lt;&gt;();</span>
+
+        /* Access the cipherFactory  */
+<span class="fc" id="L77">        final GordianCipherFactory myFactory = pFactory.getCipherFactory();</span>
+
+        /* Populate with the public standards */
+<span class="fc" id="L80">        addWellKnownCiphers128();</span>
+<span class="fc" id="L81">        addWellKnownCiphers192();</span>
+<span class="fc" id="L82">        addWellKnownCiphers256();</span>
+
+        /* For each KeyLength */
+<span class="fc" id="L85">        final Iterator&lt;GordianLength&gt; myIterator = GordianKeyLengths.iterator();</span>
+<span class="fc bfc" id="L86" title="All 2 branches covered.">        while (myIterator.hasNext()) {</span>
+<span class="fc" id="L87">            final GordianLength myKeyLen = myIterator.next();</span>
+
+            /* Loop through the possible SymKeySpecs */
+<span class="fc bfc" id="L90" title="All 2 branches covered.">            for (GordianSymKeySpec mySymKey : myFactory.listAllSupportedSymKeySpecs(myKeyLen)) {</span>
+                /* Loop through the possible CipherSpecs */
+<span class="fc bfc" id="L92" title="All 2 branches covered.">                for (GordianSymCipherSpec mySpec : myFactory.listAllSupportedSymCipherSpecs(mySymKey)) {</span>
+                    /* Add any non-standard symCiphers */
+<span class="fc" id="L94">                    ensureSymCipher(mySpec);</span>
+<span class="fc" id="L95">                }</span>
+<span class="fc" id="L96">            }</span>
+
+            /* Loop through the possible StreamCipherSpecs */
+<span class="fc bfc" id="L99" title="All 2 branches covered.">            for (GordianStreamCipherSpec mySpec : myFactory.listAllSupportedStreamCipherSpecs(myKeyLen)) {</span>
+                /* Add any non-standard streamCiphers */
+<span class="fc" id="L101">                ensureStreamCipher(mySpec);</span>
+<span class="fc" id="L102">            }</span>
+<span class="fc" id="L103">        }</span>
+<span class="fc" id="L104">    }</span>
+
+    /**
+     * Obtain Identifier for cipherSpec.
+     *
+     * @param pSpec the cipherSpec.
+     * @return the Identifier
+     */
+    public AlgorithmIdentifier getIdentifierForSpec(final GordianCipherSpec&lt;?&gt; pSpec) {
+<span class="fc" id="L113">        return theSpecMap.get(pSpec);</span>
+    }
+
+    /**
+     * Obtain symCipherSpec for Identifier.
+     *
+     * @param pIdentifier the identifier.
+     * @return the cipherSpec (or null if not found)
+     */
+    GordianCipherSpec&lt;?&gt; getCipherSpecForIdentifier(final AlgorithmIdentifier pIdentifier) {
+<span class="fc" id="L123">        return theIdentifierMap.get(pIdentifier);</span>
+    }
+
+    /**
+     * Add WellKnown Ciphers for 128bit keys.
+     */
+    private void addWellKnownCiphers128() {
+<span class="fc" id="L130">        addToMaps(GordianSymCipherSpecBuilder.ecb(GordianSymKeySpecBuilder.sm4(), GordianPadding.NONE), new AlgorithmIdentifier(GMObjectIdentifiers.sms4_ecb, DERNull.INSTANCE));</span>
+<span class="fc" id="L131">        addToMaps(GordianSymCipherSpecBuilder.cbc(GordianSymKeySpecBuilder.sm4(), GordianPadding.NONE), new AlgorithmIdentifier(GMObjectIdentifiers.sms4_cbc, DERNull.INSTANCE));</span>
+<span class="fc" id="L132">        addToMaps(GordianSymCipherSpecBuilder.sic(GordianSymKeySpecBuilder.sm4()), new AlgorithmIdentifier(GMObjectIdentifiers.sms4_ctr, DERNull.INSTANCE));</span>
+<span class="fc" id="L133">        addToMaps(GordianSymCipherSpecBuilder.ofb(GordianSymKeySpecBuilder.sm4()), new AlgorithmIdentifier(GMObjectIdentifiers.sms4_ofb128, DERNull.INSTANCE));</span>
+<span class="fc" id="L134">        addToMaps(GordianSymCipherSpecBuilder.cfb(GordianSymKeySpecBuilder.sm4()), new AlgorithmIdentifier(GMObjectIdentifiers.sms4_cfb8, DERNull.INSTANCE));</span>
+<span class="fc" id="L135">        addToMaps(GordianSymCipherSpecBuilder.ccm(GordianSymKeySpecBuilder.sm4()), new AlgorithmIdentifier(GMObjectIdentifiers.sms4_ccm, DERNull.INSTANCE));</span>
+<span class="fc" id="L136">        addToMaps(GordianSymCipherSpecBuilder.gcm(GordianSymKeySpecBuilder.sm4()), new AlgorithmIdentifier(GMObjectIdentifiers.sms4_gcm, DERNull.INSTANCE));</span>
+<span class="fc" id="L137">        addToMaps(GordianSymCipherSpecBuilder.ocb(GordianSymKeySpecBuilder.sm4()), new AlgorithmIdentifier(GMObjectIdentifiers.sms4_ocb, DERNull.INSTANCE));</span>
+<span class="fc" id="L138">        addToMaps(GordianSymCipherSpecBuilder.ecb(GordianSymKeySpecBuilder.aes(GordianLength.LEN_128), GordianPadding.NONE),</span>
+                new AlgorithmIdentifier(NISTObjectIdentifiers.id_aes128_ECB, DERNull.INSTANCE));
+<span class="fc" id="L140">        addToMaps(GordianSymCipherSpecBuilder.cbc(GordianSymKeySpecBuilder.aes(GordianLength.LEN_128), GordianPadding.NONE),</span>
+                new AlgorithmIdentifier(NISTObjectIdentifiers.id_aes128_CBC, DERNull.INSTANCE));
+<span class="fc" id="L142">        addToMaps(GordianSymCipherSpecBuilder.ofb(GordianSymKeySpecBuilder.aes(GordianLength.LEN_128)),</span>
+                new AlgorithmIdentifier(NISTObjectIdentifiers.id_aes128_OFB, DERNull.INSTANCE));
+<span class="fc" id="L144">        addToMaps(GordianSymCipherSpecBuilder.cfb(GordianSymKeySpecBuilder.aes(GordianLength.LEN_128)),</span>
+                new AlgorithmIdentifier(NISTObjectIdentifiers.id_aes128_CFB, DERNull.INSTANCE));
+<span class="fc" id="L146">        addToMaps(GordianSymCipherSpecBuilder.ccm(GordianSymKeySpecBuilder.aes(GordianLength.LEN_128)),</span>
+                new AlgorithmIdentifier(NISTObjectIdentifiers.id_aes128_CCM, DERNull.INSTANCE));
+<span class="fc" id="L148">        addToMaps(GordianSymCipherSpecBuilder.gcm(GordianSymKeySpecBuilder.aes(GordianLength.LEN_128)),</span>
+                new AlgorithmIdentifier(NISTObjectIdentifiers.id_aes128_GCM, DERNull.INSTANCE));
+<span class="fc" id="L150">        addToMaps(GordianSymCipherSpecBuilder.ecb(GordianSymKeySpecBuilder.aria(GordianLength.LEN_128), GordianPadding.NONE),</span>
+                new AlgorithmIdentifier(NSRIObjectIdentifiers.id_aria128_ecb, DERNull.INSTANCE));
+<span class="fc" id="L152">        addToMaps(GordianSymCipherSpecBuilder.cbc(GordianSymKeySpecBuilder.aria(GordianLength.LEN_128), GordianPadding.NONE),</span>
+                new AlgorithmIdentifier(NSRIObjectIdentifiers.id_aria128_cbc, DERNull.INSTANCE));
+<span class="fc" id="L154">        addToMaps(GordianSymCipherSpecBuilder.sic(GordianSymKeySpecBuilder.aria(GordianLength.LEN_128)),</span>
+                new AlgorithmIdentifier(NSRIObjectIdentifiers.id_aria128_ctr, DERNull.INSTANCE));
+<span class="fc" id="L156">        addToMaps(GordianSymCipherSpecBuilder.ofb(GordianSymKeySpecBuilder.aria(GordianLength.LEN_128)),</span>
+                new AlgorithmIdentifier(NSRIObjectIdentifiers.id_aria128_ofb, DERNull.INSTANCE));
+<span class="fc" id="L158">        addToMaps(GordianSymCipherSpecBuilder.cfb(GordianSymKeySpecBuilder.aria(GordianLength.LEN_128)),</span>
+                new AlgorithmIdentifier(NSRIObjectIdentifiers.id_aria128_cfb, DERNull.INSTANCE));
+<span class="fc" id="L160">        addToMaps(GordianSymCipherSpecBuilder.ccm(GordianSymKeySpecBuilder.aria(GordianLength.LEN_128)),</span>
+                new AlgorithmIdentifier(NSRIObjectIdentifiers.id_aria128_ccm, DERNull.INSTANCE));
+<span class="fc" id="L162">        addToMaps(GordianSymCipherSpecBuilder.gcm(GordianSymKeySpecBuilder.aria(GordianLength.LEN_128)),</span>
+                new AlgorithmIdentifier(NSRIObjectIdentifiers.id_aria128_gcm, DERNull.INSTANCE));
+<span class="fc" id="L164">        addToMaps(GordianSymCipherSpecBuilder.cbc(GordianSymKeySpecBuilder.camellia(GordianLength.LEN_128), GordianPadding.NONE),</span>
+                new AlgorithmIdentifier(NTTObjectIdentifiers.id_camellia128_cbc, DERNull.INSTANCE));
+<span class="fc" id="L166">        addToMaps(GordianSymCipherSpecBuilder.ecb(GordianSymKeySpecBuilder.kalyna(GordianLength.LEN_128), GordianPadding.NONE),</span>
+                new AlgorithmIdentifier(UAObjectIdentifiers.dstu7624ecb_128, DERNull.INSTANCE));
+<span class="fc" id="L168">        addToMaps(GordianSymCipherSpecBuilder.cbc(GordianSymKeySpecBuilder.kalyna(GordianLength.LEN_128), GordianPadding.NONE),</span>
+                new AlgorithmIdentifier(UAObjectIdentifiers.dstu7624cbc_128, DERNull.INSTANCE));
+<span class="fc" id="L170">        addToMaps(GordianSymCipherSpecBuilder.sic(GordianSymKeySpecBuilder.kalyna(GordianLength.LEN_128, GordianLength.LEN_128)),</span>
+                new AlgorithmIdentifier(UAObjectIdentifiers.dstu7624ctr_128, DERNull.INSTANCE));
+<span class="fc" id="L172">        addToMaps(GordianSymCipherSpecBuilder.ofb(GordianSymKeySpecBuilder.kalyna(GordianLength.LEN_128, GordianLength.LEN_128)),</span>
+                new AlgorithmIdentifier(UAObjectIdentifiers.dstu7624ofb_128, DERNull.INSTANCE));
+<span class="fc" id="L174">        addToMaps(GordianSymCipherSpecBuilder.cfb(GordianSymKeySpecBuilder.kalyna(GordianLength.LEN_128, GordianLength.LEN_128)),</span>
+                new AlgorithmIdentifier(UAObjectIdentifiers.dstu7624cfb_128, DERNull.INSTANCE));
+<span class="fc" id="L176">        addToMaps(GordianSymCipherSpecBuilder.ccm(GordianSymKeySpecBuilder.kalyna(GordianLength.LEN_128, GordianLength.LEN_128)),</span>
+                new AlgorithmIdentifier(UAObjectIdentifiers.dstu7624ccm_128, DERNull.INSTANCE));
+<span class="fc" id="L178">        addToMaps(GordianSymCipherSpecBuilder.gcm(GordianSymKeySpecBuilder.kalyna(GordianLength.LEN_128, GordianLength.LEN_128)),</span>
+                new AlgorithmIdentifier(UAObjectIdentifiers.dstu7624gmac_128, DERNull.INSTANCE));
+<span class="fc" id="L180">    }</span>
+
+    /**
+     * Add WellKnown ciphers for 192bit keys.
+     */
+    private void addWellKnownCiphers192() {
+<span class="fc" id="L186">        addToMaps(GordianSymCipherSpecBuilder.ecb(GordianSymKeySpecBuilder.aes(GordianLength.LEN_192), GordianPadding.NONE),</span>
+                new AlgorithmIdentifier(NISTObjectIdentifiers.id_aes192_ECB, DERNull.INSTANCE));
+<span class="fc" id="L188">        addToMaps(GordianSymCipherSpecBuilder.cbc(GordianSymKeySpecBuilder.aes(GordianLength.LEN_192), GordianPadding.NONE),</span>
+                new AlgorithmIdentifier(NISTObjectIdentifiers.id_aes192_CBC, DERNull.INSTANCE));
+<span class="fc" id="L190">        addToMaps(GordianSymCipherSpecBuilder.ofb(GordianSymKeySpecBuilder.aes(GordianLength.LEN_192)),</span>
+                new AlgorithmIdentifier(NISTObjectIdentifiers.id_aes192_OFB, DERNull.INSTANCE));
+<span class="fc" id="L192">        addToMaps(GordianSymCipherSpecBuilder.cfb(GordianSymKeySpecBuilder.aes(GordianLength.LEN_192)),</span>
+                new AlgorithmIdentifier(NISTObjectIdentifiers.id_aes192_CFB, DERNull.INSTANCE));
+<span class="fc" id="L194">        addToMaps(GordianSymCipherSpecBuilder.ccm(GordianSymKeySpecBuilder.aes(GordianLength.LEN_192)),</span>
+                new AlgorithmIdentifier(NISTObjectIdentifiers.id_aes192_CCM, DERNull.INSTANCE));
+<span class="fc" id="L196">        addToMaps(GordianSymCipherSpecBuilder.gcm(GordianSymKeySpecBuilder.aes(GordianLength.LEN_192)),</span>
+                new AlgorithmIdentifier(NISTObjectIdentifiers.id_aes192_GCM, DERNull.INSTANCE));
+<span class="fc" id="L198">        addToMaps(GordianSymCipherSpecBuilder.ecb(GordianSymKeySpecBuilder.aria(GordianLength.LEN_192), GordianPadding.NONE),</span>
+                new AlgorithmIdentifier(NSRIObjectIdentifiers.id_aria192_ecb, DERNull.INSTANCE));
+<span class="fc" id="L200">        addToMaps(GordianSymCipherSpecBuilder.cbc(GordianSymKeySpecBuilder.aria(GordianLength.LEN_192), GordianPadding.NONE),</span>
+                new AlgorithmIdentifier(NSRIObjectIdentifiers.id_aria192_cbc, DERNull.INSTANCE));
+<span class="fc" id="L202">        addToMaps(GordianSymCipherSpecBuilder.sic(GordianSymKeySpecBuilder.aria(GordianLength.LEN_192)),</span>
+                new AlgorithmIdentifier(NSRIObjectIdentifiers.id_aria192_ctr, DERNull.INSTANCE));
+<span class="fc" id="L204">        addToMaps(GordianSymCipherSpecBuilder.ofb(GordianSymKeySpecBuilder.aria(GordianLength.LEN_192)),</span>
+                new AlgorithmIdentifier(NSRIObjectIdentifiers.id_aria192_ofb, DERNull.INSTANCE));
+<span class="fc" id="L206">        addToMaps(GordianSymCipherSpecBuilder.cfb(GordianSymKeySpecBuilder.aria(GordianLength.LEN_192)),</span>
+                new AlgorithmIdentifier(NSRIObjectIdentifiers.id_aria192_cfb, DERNull.INSTANCE));
+<span class="fc" id="L208">        addToMaps(GordianSymCipherSpecBuilder.ccm(GordianSymKeySpecBuilder.aria(GordianLength.LEN_192)),</span>
+                new AlgorithmIdentifier(NSRIObjectIdentifiers.id_aria192_ccm, DERNull.INSTANCE));
+<span class="fc" id="L210">        addToMaps(GordianSymCipherSpecBuilder.gcm(GordianSymKeySpecBuilder.aria(GordianLength.LEN_192)),</span>
+                new AlgorithmIdentifier(NSRIObjectIdentifiers.id_aria192_gcm, DERNull.INSTANCE));
+<span class="fc" id="L212">        addToMaps(GordianSymCipherSpecBuilder.cbc(GordianSymKeySpecBuilder.camellia(GordianLength.LEN_192), GordianPadding.NONE),</span>
+                new AlgorithmIdentifier(NTTObjectIdentifiers.id_camellia192_cbc, DERNull.INSTANCE));
+<span class="fc" id="L214">    }</span>
+
+
+    /**
+     * Add WellKnown Ciphers for 256bit keys.
+     */
+    private void addWellKnownCiphers256() {
+<span class="fc" id="L221">        addToMaps(GordianSymCipherSpecBuilder.ecb(GordianSymKeySpecBuilder.aes(GordianLength.LEN_256), GordianPadding.NONE),</span>
+                new AlgorithmIdentifier(NISTObjectIdentifiers.id_aes256_ECB, DERNull.INSTANCE));
+<span class="fc" id="L223">        addToMaps(GordianSymCipherSpecBuilder.cbc(GordianSymKeySpecBuilder.aes(GordianLength.LEN_256), GordianPadding.NONE),</span>
+                new AlgorithmIdentifier(NISTObjectIdentifiers.id_aes256_CBC, DERNull.INSTANCE));
+<span class="fc" id="L225">        addToMaps(GordianSymCipherSpecBuilder.ofb(GordianSymKeySpecBuilder.aes(GordianLength.LEN_256)),</span>
+                new AlgorithmIdentifier(NISTObjectIdentifiers.id_aes256_OFB, DERNull.INSTANCE));
+<span class="fc" id="L227">        addToMaps(GordianSymCipherSpecBuilder.cfb(GordianSymKeySpecBuilder.aes(GordianLength.LEN_256)),</span>
+                new AlgorithmIdentifier(NISTObjectIdentifiers.id_aes256_CFB, DERNull.INSTANCE));
+<span class="fc" id="L229">        addToMaps(GordianSymCipherSpecBuilder.ccm(GordianSymKeySpecBuilder.aes(GordianLength.LEN_256)),</span>
+                new AlgorithmIdentifier(NISTObjectIdentifiers.id_aes256_CCM, DERNull.INSTANCE));
+<span class="fc" id="L231">        addToMaps(GordianSymCipherSpecBuilder.gcm(GordianSymKeySpecBuilder.aes(GordianLength.LEN_256)),</span>
+                new AlgorithmIdentifier(NISTObjectIdentifiers.id_aes256_GCM, DERNull.INSTANCE));
+<span class="fc" id="L233">        addToMaps(GordianSymCipherSpecBuilder.ecb(GordianSymKeySpecBuilder.aria(GordianLength.LEN_256), GordianPadding.NONE),</span>
+                new AlgorithmIdentifier(NSRIObjectIdentifiers.id_aria256_ecb, DERNull.INSTANCE));
+<span class="fc" id="L235">        addToMaps(GordianSymCipherSpecBuilder.cbc(GordianSymKeySpecBuilder.aria(GordianLength.LEN_256), GordianPadding.NONE),</span>
+                new AlgorithmIdentifier(NSRIObjectIdentifiers.id_aria256_cbc, DERNull.INSTANCE));
+<span class="fc" id="L237">        addToMaps(GordianSymCipherSpecBuilder.sic(GordianSymKeySpecBuilder.aria(GordianLength.LEN_256)),</span>
+                new AlgorithmIdentifier(NSRIObjectIdentifiers.id_aria256_ctr, DERNull.INSTANCE));
+<span class="fc" id="L239">        addToMaps(GordianSymCipherSpecBuilder.ofb(GordianSymKeySpecBuilder.aria(GordianLength.LEN_256)),</span>
+                new AlgorithmIdentifier(NSRIObjectIdentifiers.id_aria256_ofb, DERNull.INSTANCE));
+<span class="fc" id="L241">        addToMaps(GordianSymCipherSpecBuilder.cfb(GordianSymKeySpecBuilder.aria(GordianLength.LEN_256)),</span>
+                new AlgorithmIdentifier(NSRIObjectIdentifiers.id_aria256_cfb, DERNull.INSTANCE));
+<span class="fc" id="L243">        addToMaps(GordianSymCipherSpecBuilder.ccm(GordianSymKeySpecBuilder.aria(GordianLength.LEN_256)),</span>
+                new AlgorithmIdentifier(NSRIObjectIdentifiers.id_aria256_ccm, DERNull.INSTANCE));
+<span class="fc" id="L245">        addToMaps(GordianSymCipherSpecBuilder.gcm(GordianSymKeySpecBuilder.aria(GordianLength.LEN_256)),</span>
+                new AlgorithmIdentifier(NSRIObjectIdentifiers.id_aria256_gcm, DERNull.INSTANCE));
+<span class="fc" id="L247">        addToMaps(GordianSymCipherSpecBuilder.cbc(GordianSymKeySpecBuilder.camellia(GordianLength.LEN_256), GordianPadding.NONE),</span>
+                new AlgorithmIdentifier(NTTObjectIdentifiers.id_camellia256_cbc, DERNull.INSTANCE));
+<span class="fc" id="L249">        addToMaps(GordianSymCipherSpecBuilder.ecb(GordianSymKeySpecBuilder.kalyna(GordianLength.LEN_256, GordianLength.LEN_256), GordianPadding.NONE),</span>
+                new AlgorithmIdentifier(UAObjectIdentifiers.dstu7624ecb_256, DERNull.INSTANCE));
+<span class="fc" id="L251">        addToMaps(GordianSymCipherSpecBuilder.cbc(GordianSymKeySpecBuilder.kalyna(GordianLength.LEN_256, GordianLength.LEN_256), GordianPadding.NONE),</span>
+                new AlgorithmIdentifier(UAObjectIdentifiers.dstu7624cbc_256, DERNull.INSTANCE));
+<span class="fc" id="L253">        addToMaps(GordianSymCipherSpecBuilder.sic(GordianSymKeySpecBuilder.kalyna(GordianLength.LEN_256, GordianLength.LEN_256)),</span>
+                new AlgorithmIdentifier(UAObjectIdentifiers.dstu7624ctr_256, DERNull.INSTANCE));
+<span class="fc" id="L255">        addToMaps(GordianSymCipherSpecBuilder.ofb(GordianSymKeySpecBuilder.kalyna(GordianLength.LEN_256, GordianLength.LEN_256)),</span>
+                new AlgorithmIdentifier(UAObjectIdentifiers.dstu7624ofb_256, DERNull.INSTANCE));
+<span class="fc" id="L257">        addToMaps(GordianSymCipherSpecBuilder.cfb(GordianSymKeySpecBuilder.kalyna(GordianLength.LEN_256, GordianLength.LEN_256)),</span>
+                new AlgorithmIdentifier(UAObjectIdentifiers.dstu7624cfb_256, DERNull.INSTANCE));
+<span class="fc" id="L259">        addToMaps(GordianSymCipherSpecBuilder.ccm(GordianSymKeySpecBuilder.kalyna(GordianLength.LEN_256, GordianLength.LEN_256)),</span>
+                new AlgorithmIdentifier(UAObjectIdentifiers.dstu7624ccm_256, DERNull.INSTANCE));
+<span class="fc" id="L261">        addToMaps(GordianSymCipherSpecBuilder.gcm(GordianSymKeySpecBuilder.kalyna(GordianLength.LEN_256, GordianLength.LEN_256)),</span>
+                new AlgorithmIdentifier(UAObjectIdentifiers.dstu7624gmac_256, DERNull.INSTANCE));
+<span class="fc" id="L263">    }</span>
+
+    /**
+     * Add symCipherSpec to map if supported and not already present.
+     *
+     * @param pSpec the symCipherSpec
+     */
+    private void ensureSymCipher(final GordianSymCipherSpec pSpec) {
+        /* If the cipher is not already known */
+<span class="fc bfc" id="L272" title="All 2 branches covered.">        if (!theSpecMap.containsKey(pSpec)) {</span>
+<span class="fc" id="L273">            addSymCipher(pSpec);</span>
+        }
+<span class="fc" id="L275">    }</span>
+
+    /**
+     * Create Identifier for a symCipherSpec.
+     *
+     * @param pSpec the cipherSpec
+     */
+    private void addSymCipher(final GordianSymCipherSpec pSpec) {
+        /* Build SymKey id */
+<span class="fc" id="L284">        ASN1ObjectIdentifier myId = GordianKeyAlgId.appendSymKeyOID(CIPHEROID.branch(&quot;1&quot;), true, pSpec.getKeyType());</span>
+
+        /* Add mode */
+<span class="fc" id="L287">        final GordianCipherMode myMode = pSpec.getCipherMode();</span>
+<span class="fc" id="L288">        myId = myId.branch(Integer.toString(myMode.ordinal() + 1));</span>
+
+        /* Add padding if necessary */
+<span class="fc bfc" id="L291" title="All 2 branches covered.">        if (myMode.hasPadding()) {</span>
+<span class="fc" id="L292">            myId = myId.branch(Integer.toString(pSpec.getPadding().ordinal() + 1));</span>
+        }
+
+        /* Add the spec to the maps */
+<span class="fc" id="L296">        addToMaps(pSpec, new AlgorithmIdentifier(myId, DERNull.INSTANCE));</span>
+<span class="fc" id="L297">    }</span>
+
+    /**
+     * Add streamCipherSpec to map if supported and not already present.
+     *
+     * @param pSpec the streamCipherSpec
+     */
+    private void ensureStreamCipher(final GordianStreamCipherSpec pSpec) {
+        /* If the cipher is not already known */
+<span class="pc bpc" id="L306" title="1 of 2 branches missed.">        if (!theSpecMap.containsKey(pSpec)) {</span>
+<span class="fc" id="L307">            addStreamCipher(pSpec);</span>
+        }
+<span class="fc" id="L309">    }</span>
+
+    /**
+     * Create Identifier for a streamCipherSpec.
+     *
+     * @param pSpec the cipherSpec
+     */
+    private void addStreamCipher(final GordianStreamCipherSpec pSpec) {
+        /* Create a branch for cipher based on the KeyType */
+<span class="fc" id="L318">        final GordianStreamKeySpec mySpec = pSpec.getKeyType();</span>
+<span class="fc" id="L319">        ASN1ObjectIdentifier myId = GordianKeyAlgId.appendStreamKeyOID(CIPHEROID.branch(&quot;2&quot;), mySpec);</span>
+<span class="fc bfc" id="L320" title="All 2 branches covered.">        if (mySpec.supportsAEAD()) {</span>
+<span class="fc bfc" id="L321" title="All 2 branches covered.">            myId = myId.branch(Integer.toString(pSpec.isAEAD() ? 2 : 1));</span>
+        }
+
+        /* Add the spec to the maps */
+<span class="fc" id="L325">        addToMaps(pSpec, new AlgorithmIdentifier(myId, DERNull.INSTANCE));</span>
+<span class="fc" id="L326">    }</span>
+
+    /**
+     * Add symCipherSpec to maps.
+     *
+     * @param pSpec       the cipherSpec
+     * @param pIdentifier the identifier
+     */
+    private void addToMaps(final GordianCipherSpec&lt;?&gt; pSpec,
+                           final AlgorithmIdentifier pIdentifier) {
+<span class="fc" id="L336">        theSpecMap.put(pSpec, pIdentifier);</span>
+<span class="fc" id="L337">        theIdentifierMap.put(pIdentifier, pSpec);</span>
+<span class="fc" id="L338">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

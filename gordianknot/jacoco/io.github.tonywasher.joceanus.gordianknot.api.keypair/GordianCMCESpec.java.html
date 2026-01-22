@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianCMCESpec.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.api.keypair</a> &gt; <span class="el_source">GordianCMCESpec.java</span></div><h1>GordianCMCESpec.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.gordianknot.api.keypair;
+
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.bc.BCObjectIdentifiers;
+import org.bouncycastle.pqc.crypto.cmce.CMCEParameters;
+import org.bouncycastle.pqc.jcajce.spec.CMCEParameterSpec;
+
+/**
+ * CMCE KeySpecs.
+ */
+<span class="fc" id="L27">public enum GordianCMCESpec {</span>
+    /**
+     * Base 3488.
+     */
+<span class="fc" id="L31">    BASE3488,</span>
+
+    /**
+     * Pivot 3488.
+     */
+<span class="fc" id="L36">    PIVOT3488,</span>
+
+    /**
+     * Base 4608.
+     */
+<span class="fc" id="L41">    BASE4608,</span>
+
+    /**
+     * Pivot 4608.
+     */
+<span class="fc" id="L46">    PIVOT4608,</span>
+
+    /**
+     * Base 6688.
+     */
+<span class="fc" id="L51">    BASE6688,</span>
+
+    /**
+     * Pivot 6688.
+     */
+<span class="fc" id="L56">    PIVOT6688,</span>
+
+    /**
+     * Base 6960.
+     */
+<span class="fc" id="L61">    BASE6960,</span>
+
+    /**
+     * Pivot 6960.
+     */
+<span class="fc" id="L66">    PIVOT6960,</span>
+
+    /**
+     * Base 8192.
+     */
+<span class="fc" id="L71">    BASE8192,</span>
+
+    /**
+     * Pivot 8192.
+     */
+<span class="fc" id="L76">    PIVOT8192;</span>
+
+    /**
+     * Obtain CMCE Parameters.
+     *
+     * @return the parameters.
+     */
+    public CMCEParameters getParameters() {
+<span class="pc bpc" id="L84" title="10 of 11 branches missed.">        switch (this) {</span>
+            case BASE3488:
+<span class="fc" id="L86">                return CMCEParameters.mceliece348864r3;</span>
+            case PIVOT3488:
+<span class="nc" id="L88">                return CMCEParameters.mceliece348864fr3;</span>
+            case BASE4608:
+<span class="nc" id="L90">                return CMCEParameters.mceliece460896r3;</span>
+            case PIVOT4608:
+<span class="nc" id="L92">                return CMCEParameters.mceliece460896fr3;</span>
+            case BASE6688:
+<span class="nc" id="L94">                return CMCEParameters.mceliece6688128r3;</span>
+            case PIVOT6688:
+<span class="nc" id="L96">                return CMCEParameters.mceliece6688128fr3;</span>
+            case BASE6960:
+<span class="nc" id="L98">                return CMCEParameters.mceliece6960119r3;</span>
+            case PIVOT6960:
+<span class="nc" id="L100">                return CMCEParameters.mceliece6960119fr3;</span>
+            case BASE8192:
+<span class="nc" id="L102">                return CMCEParameters.mceliece8192128r3;</span>
+            case PIVOT8192:
+<span class="nc" id="L104">                return CMCEParameters.mceliece8192128fr3;</span>
+            default:
+<span class="nc" id="L106">                throw new IllegalArgumentException();</span>
+        }
+    }
+
+    /**
+     * Obtain CMCE ParameterSpec.
+     *
+     * @return the parameters.
+     */
+    public CMCEParameterSpec getParameterSpec() {
+<span class="pc bpc" id="L116" title="10 of 11 branches missed.">        switch (this) {</span>
+            case BASE3488:
+<span class="fc" id="L118">                return CMCEParameterSpec.mceliece348864;</span>
+            case PIVOT3488:
+<span class="nc" id="L120">                return CMCEParameterSpec.mceliece348864f;</span>
+            case BASE4608:
+<span class="nc" id="L122">                return CMCEParameterSpec.mceliece460896;</span>
+            case PIVOT4608:
+<span class="nc" id="L124">                return CMCEParameterSpec.mceliece460896f;</span>
+            case BASE6688:
+<span class="nc" id="L126">                return CMCEParameterSpec.mceliece6688128;</span>
+            case PIVOT6688:
+<span class="nc" id="L128">                return CMCEParameterSpec.mceliece6688128f;</span>
+            case BASE6960:
+<span class="nc" id="L130">                return CMCEParameterSpec.mceliece6960119;</span>
+            case PIVOT6960:
+<span class="nc" id="L132">                return CMCEParameterSpec.mceliece6960119f;</span>
+            case BASE8192:
+<span class="nc" id="L134">                return CMCEParameterSpec.mceliece8192128;</span>
+            case PIVOT8192:
+<span class="nc" id="L136">                return CMCEParameterSpec.mceliece8192128f;</span>
+            default:
+<span class="nc" id="L138">                throw new IllegalArgumentException();</span>
+        }
+    }
+
+    /**
+     * Obtain CMCE algorithm Identifier.
+     *
+     * @return the identifier.
+     */
+    public ASN1ObjectIdentifier getIdentifier() {
+<span class="pc bpc" id="L148" title="1 of 11 branches missed.">        switch (this) {</span>
+            case BASE3488:
+<span class="fc" id="L150">                return BCObjectIdentifiers.mceliece348864_r3;</span>
+            case PIVOT3488:
+<span class="fc" id="L152">                return BCObjectIdentifiers.mceliece348864f_r3;</span>
+            case BASE4608:
+<span class="fc" id="L154">                return BCObjectIdentifiers.mceliece460896_r3;</span>
+            case PIVOT4608:
+<span class="fc" id="L156">                return BCObjectIdentifiers.mceliece460896f_r3;</span>
+            case BASE6688:
+<span class="fc" id="L158">                return BCObjectIdentifiers.mceliece6688128_r3;</span>
+            case PIVOT6688:
+<span class="fc" id="L160">                return BCObjectIdentifiers.mceliece6688128f_r3;</span>
+            case BASE6960:
+<span class="fc" id="L162">                return BCObjectIdentifiers.mceliece6960119_r3;</span>
+            case PIVOT6960:
+<span class="fc" id="L164">                return BCObjectIdentifiers.mceliece6960119f_r3;</span>
+            case BASE8192:
+<span class="fc" id="L166">                return BCObjectIdentifiers.mceliece8192128_r3;</span>
+            case PIVOT8192:
+<span class="fc" id="L168">                return BCObjectIdentifiers.mceliece8192128f_r3;</span>
+            default:
+<span class="nc" id="L170">                throw new IllegalArgumentException();</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

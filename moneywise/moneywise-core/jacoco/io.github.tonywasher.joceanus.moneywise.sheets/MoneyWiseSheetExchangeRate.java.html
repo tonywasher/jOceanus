@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseSheetExchangeRate.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.moneywise.sheets</a> &gt; <span class="el_source">MoneyWiseSheetExchangeRate.java</span></div><h1>MoneyWiseSheetExchangeRate.java</h1><pre class="source lang-java linenums">/*
+ * MoneyWise: Finance Application
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.moneywise.sheets;
+
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDataSet;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseExchangeRate;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValues;
+import io.github.tonywasher.joceanus.prometheus.sheets.PrometheusSheetDataItem;
+
+/**
+ * SheetDataItem extension for ExchangeRate.
+ *
+ * @author Tony Washer
+ */
+public final class MoneyWiseSheetExchangeRate
+        extends PrometheusSheetDataItem&lt;MoneyWiseExchangeRate&gt; {
+    /**
+     * NamedArea for Rates.
+     */
+<span class="fc" id="L36">    private static final String AREA_XCHGRATES = MoneyWiseExchangeRate.LIST_NAME;</span>
+
+    /**
+     * Date column.
+     */
+    private static final int COL_DATE = COL_ID + 1;
+
+    /**
+     * From column.
+     */
+    private static final int COL_FROM = COL_DATE + 1;
+
+    /**
+     * To column.
+     */
+    private static final int COL_TO = COL_FROM + 1;
+
+    /**
+     * Rate column.
+     */
+    private static final int COL_RATE = COL_TO + 1;
+
+    /**
+     * Constructor for loading a spreadsheet.
+     *
+     * @param pReader the spreadsheet reader
+     */
+    MoneyWiseSheetExchangeRate(final MoneyWiseReader pReader) {
+        /* Call super constructor */
+<span class="fc" id="L65">        super(pReader, AREA_XCHGRATES);</span>
+
+        /* Access the Rates list */
+<span class="fc" id="L68">        final MoneyWiseDataSet myData = (MoneyWiseDataSet) pReader.getData();</span>
+<span class="fc" id="L69">        setDataList(myData.getExchangeRates());</span>
+<span class="fc" id="L70">    }</span>
+
+    /**
+     * Constructor for creating a spreadsheet.
+     *
+     * @param pWriter the spreadsheet writer
+     */
+    MoneyWiseSheetExchangeRate(final MoneyWiseWriter pWriter) {
+        /* Call super constructor */
+<span class="fc" id="L79">        super(pWriter, AREA_XCHGRATES);</span>
+
+        /* Access the Rates list */
+<span class="fc" id="L82">        final MoneyWiseDataSet myData = (MoneyWiseDataSet) pWriter.getData();</span>
+<span class="fc" id="L83">        setDataList(myData.getExchangeRates());</span>
+<span class="fc" id="L84">    }</span>
+
+    @Override
+    protected PrometheusDataValues loadSecureValues() throws OceanusException {
+        /* Build data values */
+<span class="fc" id="L89">        final PrometheusDataValues myValues = getRowValues(MoneyWiseExchangeRate.OBJECT_NAME);</span>
+<span class="fc" id="L90">        myValues.addValue(MoneyWiseBasicResource.MONEYWISEDATA_FIELD_DATE, loadDate(COL_DATE));</span>
+<span class="fc" id="L91">        myValues.addValue(MoneyWiseBasicResource.XCHGRATE_FROM, loadInteger(COL_FROM));</span>
+<span class="fc" id="L92">        myValues.addValue(MoneyWiseBasicResource.XCHGRATE_TO, loadInteger(COL_TO));</span>
+<span class="fc" id="L93">        myValues.addValue(MoneyWiseBasicResource.XCHGRATE_RATE, loadRatio(COL_RATE));</span>
+
+        /* Return the values */
+<span class="fc" id="L96">        return myValues;</span>
+    }
+
+    @Override
+    protected void insertSecureItem(final MoneyWiseExchangeRate pItem) throws OceanusException {
+        /* Set the fields */
+<span class="fc" id="L102">        super.insertSecureItem(pItem);</span>
+<span class="fc" id="L103">        writeInteger(COL_FROM, pItem.getFromCurrencyId());</span>
+<span class="fc" id="L104">        writeInteger(COL_TO, pItem.getToCurrencyId());</span>
+<span class="fc" id="L105">        writeDate(COL_DATE, pItem.getDate());</span>
+<span class="fc" id="L106">        writeDecimal(COL_RATE, pItem.getExchangeRate());</span>
+<span class="fc" id="L107">    }</span>
+
+    @Override
+    protected int getLastColumn() {
+        /* Return the last column */
+<span class="fc" id="L112">        return COL_RATE;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseValidatorFactory.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.moneywise.data.validate</a> &gt; <span class="el_source">MoneyWiseValidatorFactory.java</span></div><h1>MoneyWiseValidatorFactory.java</h1><pre class="source lang-java linenums">/*
+ * MoneyWise: Finance Application
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.moneywise.data.validate;
+
+import io.github.tonywasher.joceanus.metis.list.MetisListKey;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
+import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataSet.PrometheusCryptographyDataType;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValidator;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValidator.PrometheusDataValidatorFactory;
+import io.github.tonywasher.joceanus.prometheus.validate.PrometheusValidateBasic;
+import io.github.tonywasher.joceanus.prometheus.validate.PrometheusValidateInfo;
+import io.github.tonywasher.joceanus.prometheus.validate.PrometheusValidateStatic;
+
+/**
+ * Validator factory.
+ */
+public class MoneyWiseValidatorFactory
+        implements PrometheusDataValidatorFactory {
+    /**
+     * Are we using new Validation?
+     */
+    private final boolean newValidation;
+
+    /**
+     * Constructor.
+     */
+    public MoneyWiseValidatorFactory() {
+<span class="fc" id="L43">        this(false);</span>
+<span class="fc" id="L44">    }</span>
+
+    /**
+     * Constructor.
+     *
+     * @param pNewValidation true/false
+     */
+<span class="fc" id="L51">    public MoneyWiseValidatorFactory(final boolean pNewValidation) {</span>
+<span class="fc" id="L52">        newValidation = pNewValidation;</span>
+<span class="fc" id="L53">    }</span>
+
+    @Override
+    public PrometheusDataValidator newValidator(final MetisListKey pItemType) {
+<span class="pc bpc" id="L57" title="1 of 2 branches missed.">        if (pItemType instanceof PrometheusCryptographyDataType) {</span>
+<span class="nc" id="L58">            return new PrometheusValidateBasic();</span>
+<span class="fc bfc" id="L59" title="All 2 branches covered.">        } else if (MoneyWiseStaticDataType.CURRENCY.equals(pItemType)) {</span>
+<span class="fc" id="L60">            return new MoneyWiseValidateCurrency();</span>
+<span class="fc bfc" id="L61" title="All 2 branches covered.">        } else if (pItemType instanceof MoneyWiseStaticDataType) {</span>
+<span class="fc" id="L62">            return new PrometheusValidateStatic();</span>
+<span class="pc bpc" id="L63" title="1 of 2 branches missed.">        } else if (pItemType instanceof MoneyWiseBasicDataType myType) {</span>
+<span class="pc bpc" id="L64" title="2 of 18 branches missed.">            switch (myType) {</span>
+                case TRANSTAG:
+<span class="fc" id="L66">                    return new MoneyWiseValidateTransTag();</span>
+                case REGION:
+<span class="fc" id="L68">                    return new MoneyWiseValidateRegion();</span>
+                case DEPOSITCATEGORY:
+<span class="fc" id="L70">                    return new MoneyWiseValidateDepositCategory();</span>
+                case CASHCATEGORY:
+<span class="fc" id="L72">                    return new MoneyWiseValidateCashCategory();</span>
+                case LOANCATEGORY:
+<span class="fc" id="L74">                    return new MoneyWiseValidateLoanCategory();</span>
+                case TRANSCATEGORY:
+<span class="fc" id="L76">                    return new MoneyWiseValidateTransCategory();</span>
+                case EXCHANGERATE:
+<span class="fc" id="L78">                    return new MoneyWiseValidateXchangeRate();</span>
+                case PAYEE:
+<span class="fc" id="L80">                    return new MoneyWiseValidatePayee();</span>
+                case SECURITY:
+<span class="fc" id="L82">                    return new MoneyWiseValidateSecurity();</span>
+                case SECURITYPRICE:
+<span class="fc" id="L84">                    return new MoneyWiseValidateSecurityPrice();</span>
+                case DEPOSIT:
+<span class="fc" id="L86">                    return new MoneyWiseValidateDeposit();</span>
+                case DEPOSITRATE:
+<span class="nc" id="L88">                    return new MoneyWiseValidateDepositRate();</span>
+                case CASH:
+<span class="fc" id="L90">                    return new MoneyWiseValidateCash();</span>
+                case LOAN:
+<span class="fc" id="L92">                    return new MoneyWiseValidateLoan();</span>
+                case PORTFOLIO:
+<span class="fc" id="L94">                    return new MoneyWiseValidatePortfolio();</span>
+                case TRANSACTION:
+<span class="fc" id="L96">                    return new MoneyWiseValidateTransaction(newValidation);</span>
+                case PAYEEINFO:
+                case DEPOSITINFO:
+                case SECURITYINFO:
+                case CASHINFO:
+                case LOANINFO:
+                case PORTFOLIOINFO:
+                case TRANSACTIONINFO:
+<span class="fc" id="L104">                    return new PrometheusValidateInfo();</span>
+                default:
+                    break;
+            }
+        }
+
+        /* Throw error */
+<span class="nc" id="L111">        throw new IllegalArgumentException(&quot;Unexpected itemType &quot; + pItemType);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

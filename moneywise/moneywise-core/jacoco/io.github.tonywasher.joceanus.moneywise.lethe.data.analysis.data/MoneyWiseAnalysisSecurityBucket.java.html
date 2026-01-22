@@ -1,0 +1,1027 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseAnalysisSecurityBucket.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data</a> &gt; <span class="el_source">MoneyWiseAnalysisSecurityBucket.java</span></div><h1>MoneyWiseAnalysisSecurityBucket.java</h1><pre class="source lang-java linenums">/*
+ * MoneyWise: Finance Application
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data;
+
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimal;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
+import io.github.tonywasher.joceanus.metis.data.MetisDataDifference;
+import io.github.tonywasher.joceanus.metis.data.MetisDataFieldValue;
+import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataList;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldItem;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldItem.MetisFieldTableItem;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
+import io.github.tonywasher.joceanus.metis.list.MetisListIndexed;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDataSet;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseExchangeRate.MoneyWiseExchangeRateDataMap;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePortfolio;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurity;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurityHolding;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurityPrice.MoneyWiseSecurityPriceDataMap;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransaction;
+import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseCurrency;
+import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseSecurityType;
+import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
+import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.base.MoneyWiseAnalysisHistory;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisSecurityAttr;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisSecurityValues;
+
+import java.util.Currency;
+import java.util.Iterator;
+import java.util.List;
+
+/**
+ * The Security Bucket class.
+ */
+public final class MoneyWiseAnalysisSecurityBucket
+        implements MetisFieldTableItem {
+    /**
+     * Local Report fields.
+     */
+<span class="nc" id="L63">    private static final MetisFieldSet&lt;MoneyWiseAnalysisSecurityBucket&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseAnalysisSecurityBucket.class);</span>
+
+    /*
+     * Declare Fields.
+     */
+    static {
+<span class="nc" id="L69">        FIELD_DEFS.declareLocalField(MoneyWiseAnalysisDataResource.ANALYSIS_NAME, MoneyWiseAnalysisSecurityBucket::getAnalysis);</span>
+<span class="nc" id="L70">        FIELD_DEFS.declareLocalField(MoneyWiseBasicResource.ASSETTYPE_SECURITYHOLDING, MoneyWiseAnalysisSecurityBucket::getSecurityHolding);</span>
+<span class="nc" id="L71">        FIELD_DEFS.declareLocalField(MoneyWiseStaticDataType.SECURITYTYPE, MoneyWiseAnalysisSecurityBucket::getSecurityType);</span>
+<span class="nc" id="L72">        FIELD_DEFS.declareLocalField(MoneyWiseStaticDataType.CURRENCY, MoneyWiseAnalysisSecurityBucket::getCurrency);</span>
+<span class="nc" id="L73">        FIELD_DEFS.declareLocalField(MoneyWiseAnalysisDataResource.BUCKET_BASEVALUES, MoneyWiseAnalysisSecurityBucket::getBaseValues);</span>
+<span class="nc" id="L74">        FIELD_DEFS.declareLocalField(MoneyWiseAnalysisDataResource.BUCKET_HISTORY, MoneyWiseAnalysisSecurityBucket::getHistoryMap);</span>
+<span class="nc" id="L75">        FIELD_DEFS.declareLocalFieldsForEnum(MoneyWiseAnalysisSecurityAttr.class, MoneyWiseAnalysisSecurityBucket::getAttributeValue);</span>
+<span class="nc" id="L76">    }</span>
+
+    /**
+     * The analysis.
+     */
+    private final MoneyWiseAnalysis theAnalysis;
+
+    /**
+     * The security holding.
+     */
+    private final MoneyWiseSecurityHolding theHolding;
+
+    /**
+     * The security.
+     */
+    private final MoneyWiseSecurity theSecurity;
+
+    /**
+     * The portfolio.
+     */
+    private final MoneyWisePortfolio thePortfolio;
+
+    /**
+     * The currency.
+     */
+    private final MoneyWiseCurrency theCurrency;
+
+    /**
+     * Is this a foreign currency?
+     */
+    private final Boolean isForeignCurrency;
+
+    /**
+     * The security type.
+     */
+    private final MoneyWiseSecurityType theCategory;
+
+    /**
+     * Values.
+     */
+    private final MoneyWiseAnalysisSecurityValues theValues;
+
+    /**
+     * The base values.
+     */
+    private final MoneyWiseAnalysisSecurityValues theBaseValues;
+
+    /**
+     * History Map.
+     */
+    private final MoneyWiseAnalysisHistory&lt;MoneyWiseAnalysisSecurityValues, MoneyWiseAnalysisSecurityAttr&gt; theHistory;
+
+    /**
+     * Constructor.
+     *
+     * @param pAnalysis the analysis
+     * @param pHolding  the security holding
+     */
+    MoneyWiseAnalysisSecurityBucket(final MoneyWiseAnalysis pAnalysis,
+<span class="nc" id="L135">                                    final MoneyWiseSecurityHolding pHolding) {</span>
+        /* Store the details */
+<span class="nc" id="L137">        theHolding = pHolding;</span>
+<span class="nc" id="L138">        theCurrency = pHolding.getAssetCurrency();</span>
+<span class="nc" id="L139">        theSecurity = pHolding.getSecurity();</span>
+<span class="nc" id="L140">        thePortfolio = pHolding.getPortfolio();</span>
+<span class="nc" id="L141">        theAnalysis = pAnalysis;</span>
+
+        /* Obtain category */
+<span class="nc" id="L144">        theCategory = theSecurity.getCategory();</span>
+
+        /* Determine currency */
+<span class="nc" id="L147">        final MoneyWiseCurrency myReportingCurrency = pAnalysis.getCurrency();</span>
+<span class="nc" id="L148">        final MoneyWiseCurrency myHoldingCurrency = pHolding.getAssetCurrency();</span>
+
+        /* Determine whether we are a foreign currency */
+<span class="nc bnc" id="L151" title="All 2 branches missed.">        isForeignCurrency = !MetisDataDifference.isEqual(myReportingCurrency, myHoldingCurrency);</span>
+<span class="nc" id="L152">        final Currency myCurrency = MoneyWiseAnalysisAccountBucket.deriveCurrency(myHoldingCurrency);</span>
+<span class="nc" id="L153">        final Currency myRepCurrency = MoneyWiseAnalysisAccountBucket.deriveCurrency(myReportingCurrency);</span>
+
+        /* Create the history map */
+<span class="nc bnc" id="L156" title="All 2 branches missed.">        final MoneyWiseAnalysisSecurityValues myValues = Boolean.TRUE.equals(isForeignCurrency)</span>
+<span class="nc" id="L157">                ? new MoneyWiseAnalysisSecurityValues(myCurrency, myRepCurrency)</span>
+<span class="nc" id="L158">                : new MoneyWiseAnalysisSecurityValues(myCurrency);</span>
+<span class="nc" id="L159">        theHistory = new MoneyWiseAnalysisHistory&lt;&gt;(myValues);</span>
+
+        /* Access the key value maps */
+<span class="nc" id="L162">        theValues = theHistory.getValues();</span>
+<span class="nc" id="L163">        theBaseValues = theHistory.getBaseValues();</span>
+<span class="nc" id="L164">    }</span>
+
+    /**
+     * Constructor.
+     *
+     * @param pAnalysis the analysis
+     * @param pBase     the underlying bucket
+     */
+    private MoneyWiseAnalysisSecurityBucket(final MoneyWiseAnalysis pAnalysis,
+<span class="nc" id="L173">                                            final MoneyWiseAnalysisSecurityBucket pBase) {</span>
+        /* Copy details from base */
+<span class="nc" id="L175">        theHolding = pBase.getSecurityHolding();</span>
+<span class="nc" id="L176">        theCurrency = pBase.getCurrency();</span>
+<span class="nc" id="L177">        theSecurity = pBase.getSecurity();</span>
+<span class="nc" id="L178">        thePortfolio = pBase.getPortfolio();</span>
+<span class="nc" id="L179">        theCategory = pBase.getSecurityType();</span>
+<span class="nc" id="L180">        theAnalysis = pAnalysis;</span>
+<span class="nc" id="L181">        isForeignCurrency = pBase.isForeignCurrency();</span>
+
+        /* Access the relevant history */
+<span class="nc" id="L184">        theHistory = new MoneyWiseAnalysisHistory&lt;&gt;(pBase.getHistoryMap());</span>
+
+        /* Access the key value maps */
+<span class="nc" id="L187">        theValues = theHistory.getValues();</span>
+<span class="nc" id="L188">        theBaseValues = theHistory.getBaseValues();</span>
+<span class="nc" id="L189">    }</span>
+
+    /**
+     * Constructor.
+     *
+     * @param pAnalysis the analysis
+     * @param pBase     the underlying bucket
+     * @param pDate     the date for the bucket
+     */
+    private MoneyWiseAnalysisSecurityBucket(final MoneyWiseAnalysis pAnalysis,
+                                            final MoneyWiseAnalysisSecurityBucket pBase,
+<span class="nc" id="L200">                                            final OceanusDate pDate) {</span>
+        /* Copy details from base */
+<span class="nc" id="L202">        theHolding = pBase.getSecurityHolding();</span>
+<span class="nc" id="L203">        theCurrency = pBase.getCurrency();</span>
+<span class="nc" id="L204">        theSecurity = pBase.getSecurity();</span>
+<span class="nc" id="L205">        thePortfolio = pBase.getPortfolio();</span>
+<span class="nc" id="L206">        theCategory = pBase.getSecurityType();</span>
+<span class="nc" id="L207">        theAnalysis = pAnalysis;</span>
+<span class="nc" id="L208">        isForeignCurrency = pBase.isForeignCurrency();</span>
+
+        /* Access the relevant history */
+<span class="nc" id="L211">        theHistory = new MoneyWiseAnalysisHistory&lt;&gt;(pBase.getHistoryMap(), pDate);</span>
+
+        /* Access the key value maps */
+<span class="nc" id="L214">        theValues = theHistory.getValues();</span>
+<span class="nc" id="L215">        theBaseValues = theHistory.getBaseValues();</span>
+<span class="nc" id="L216">    }</span>
+
+    /**
+     * Constructor.
+     *
+     * @param pAnalysis the analysis
+     * @param pBase     the underlying bucket
+     * @param pRange    the range for the bucket
+     */
+    private MoneyWiseAnalysisSecurityBucket(final MoneyWiseAnalysis pAnalysis,
+                                            final MoneyWiseAnalysisSecurityBucket pBase,
+<span class="nc" id="L227">                                            final OceanusDateRange pRange) {</span>
+        /* Copy details from base */
+<span class="nc" id="L229">        theHolding = pBase.getSecurityHolding();</span>
+<span class="nc" id="L230">        theCurrency = pBase.getCurrency();</span>
+<span class="nc" id="L231">        theSecurity = pBase.getSecurity();</span>
+<span class="nc" id="L232">        thePortfolio = pBase.getPortfolio();</span>
+<span class="nc" id="L233">        theCategory = pBase.getSecurityType();</span>
+<span class="nc" id="L234">        theAnalysis = pAnalysis;</span>
+<span class="nc" id="L235">        isForeignCurrency = pBase.isForeignCurrency();</span>
+
+        /* Access the relevant history */
+<span class="nc" id="L238">        theHistory = new MoneyWiseAnalysisHistory&lt;&gt;(pBase.getHistoryMap(), pRange);</span>
+
+        /* Access the key value maps */
+<span class="nc" id="L241">        theValues = theHistory.getValues();</span>
+<span class="nc" id="L242">        theBaseValues = theHistory.getBaseValues();</span>
+<span class="nc" id="L243">    }</span>
+
+    @Override
+    public MetisFieldSet&lt;MoneyWiseAnalysisSecurityBucket&gt; getDataFieldSet() {
+<span class="nc" id="L247">        return FIELD_DEFS;</span>
+    }
+
+    @Override
+    public String formatObject(final OceanusDataFormatter pFormatter) {
+<span class="nc" id="L252">        return toString();</span>
+    }
+
+    @Override
+    public String toString() {
+<span class="nc" id="L257">        return getDecoratedName();</span>
+    }
+
+    /**
+     * Obtain the name.
+     *
+     * @return the name
+     */
+    public String getSecurityName() {
+<span class="nc" id="L266">        return theSecurity.getName();</span>
+    }
+
+    /**
+     * Obtain the decorated name.
+     *
+     * @return the decorated name
+     */
+    public String getDecoratedName() {
+<span class="nc" id="L275">        return theHolding.getName();</span>
+    }
+
+    /**
+     * Obtain the holding.
+     *
+     * @return the holding
+     */
+    public MoneyWiseSecurityHolding getSecurityHolding() {
+<span class="nc" id="L284">        return theHolding;</span>
+    }
+
+    /**
+     * Obtain the security.
+     *
+     * @return the security
+     */
+    public MoneyWiseSecurity getSecurity() {
+<span class="nc" id="L293">        return theSecurity;</span>
+    }
+
+    /**
+     * Obtain the portfolio.
+     *
+     * @return the portfolio
+     */
+    public MoneyWisePortfolio getPortfolio() {
+<span class="nc" id="L302">        return thePortfolio;</span>
+    }
+
+    /**
+     * Obtain the currency.
+     *
+     * @return the currency
+     */
+    public MoneyWiseCurrency getCurrency() {
+<span class="nc" id="L311">        return theCurrency;</span>
+    }
+
+    /**
+     * Is this a foreign currency?
+     *
+     * @return true/false
+     */
+    public Boolean isForeignCurrency() {
+<span class="nc" id="L320">        return isForeignCurrency;</span>
+    }
+
+    @Override
+    public Integer getIndexedId() {
+<span class="nc" id="L325">        return theSecurity.getIndexedId();</span>
+    }
+
+    /**
+     * Obtain the security type.
+     *
+     * @return the security type
+     */
+    public MoneyWiseSecurityType getSecurityType() {
+<span class="nc" id="L334">        return theCategory;</span>
+    }
+
+    /**
+     * Is this bucket idle?
+     *
+     * @return true/false
+     */
+    public Boolean isIdle() {
+<span class="nc" id="L343">        return theHistory.isIdle();</span>
+    }
+
+    /**
+     * Obtain the analysis.
+     *
+     * @return the analysis
+     */
+    MoneyWiseAnalysis getAnalysis() {
+<span class="nc" id="L352">        return theAnalysis;</span>
+    }
+
+    /**
+     * Obtain date range.
+     *
+     * @return the range
+     */
+    public OceanusDateRange getDateRange() {
+<span class="nc" id="L361">        return theAnalysis.getDateRange();</span>
+    }
+
+    /**
+     * Obtain the value map.
+     *
+     * @return the value map
+     */
+    public MoneyWiseAnalysisSecurityValues getValues() {
+<span class="nc" id="L370">        return theValues;</span>
+    }
+
+    /**
+     * Obtain the base value map.
+     *
+     * @return the base value map
+     */
+    public MoneyWiseAnalysisSecurityValues getBaseValues() {
+<span class="nc" id="L379">        return theBaseValues;</span>
+    }
+
+    /**
+     * Obtain values for transaction.
+     *
+     * @param pTrans the transaction
+     * @return the values (or null)
+     */
+    public MoneyWiseAnalysisSecurityValues getValuesForTransaction(final MoneyWiseTransaction pTrans) {
+<span class="nc" id="L389">        return theHistory.getValuesForTransaction(pTrans);</span>
+    }
+
+    /**
+     * Obtain previous values for transaction.
+     *
+     * @param pTrans the transaction
+     * @return the values (or null)
+     */
+    public MoneyWiseAnalysisSecurityValues getPreviousValuesForTransaction(final MoneyWiseTransaction pTrans) {
+<span class="nc" id="L399">        return theHistory.getPreviousValuesForTransaction(pTrans);</span>
+    }
+
+    /**
+     * Obtain delta for transaction.
+     *
+     * @param pTrans the transaction
+     * @param pAttr  the attribute
+     * @return the delta (or null)
+     */
+    public OceanusDecimal getDeltaForTransaction(final MoneyWiseTransaction pTrans,
+                                                 final MoneyWiseAnalysisSecurityAttr pAttr) {
+        /* Obtain delta for transaction */
+<span class="nc" id="L412">        return theHistory.getDeltaValue(pTrans, pAttr);</span>
+    }
+
+    /**
+     * Obtain money delta for transaction.
+     *
+     * @param pTrans the transaction
+     * @param pAttr  the attribute
+     * @return the delta (or null)
+     */
+    public OceanusMoney getMoneyDeltaForTransaction(final MoneyWiseTransaction pTrans,
+                                                    final MoneyWiseAnalysisSecurityAttr pAttr) {
+        /* Obtain delta for transaction */
+<span class="nc" id="L425">        return theHistory.getDeltaMoneyValue(pTrans, pAttr);</span>
+    }
+
+    /**
+     * Obtain units delta for transaction.
+     *
+     * @param pTrans the transaction
+     * @param pAttr  the attribute
+     * @return the delta (or null)
+     */
+    public OceanusUnits getUnitsDeltaForTransaction(final MoneyWiseTransaction pTrans,
+                                                    final MoneyWiseAnalysisSecurityAttr pAttr) {
+        /* Obtain delta for transaction */
+<span class="nc" id="L438">        return theHistory.getDeltaUnitsValue(pTrans, pAttr);</span>
+    }
+
+    /**
+     * Obtain the history map.
+     *
+     * @return the history map
+     */
+    private MoneyWiseAnalysisHistory&lt;MoneyWiseAnalysisSecurityValues, MoneyWiseAnalysisSecurityAttr&gt; getHistoryMap() {
+<span class="nc" id="L447">        return theHistory;</span>
+    }
+
+    /**
+     * Set Attribute.
+     *
+     * @param pAttr  the attribute
+     * @param pValue the value of the attribute
+     */
+    public void setValue(final MoneyWiseAnalysisSecurityAttr pAttr,
+                         final Object pValue) {
+        /* Set the value into the list */
+<span class="nc" id="L459">        theValues.setValue(pAttr, pValue);</span>
+<span class="nc" id="L460">    }</span>
+
+    /**
+     * Get an attribute value.
+     *
+     * @param pAttr the attribute
+     * @return the value to set
+     */
+    private Object getAttributeValue(final MoneyWiseAnalysisSecurityAttr pAttr) {
+        /* Access value of object */
+<span class="nc" id="L470">        final Object myValue = getAttribute(pAttr);</span>
+
+        /* Return the value */
+<span class="nc bnc" id="L473" title="All 2 branches missed.">        return myValue != null</span>
+<span class="nc" id="L474">                ? myValue</span>
+<span class="nc" id="L475">                : MetisDataFieldValue.SKIP;</span>
+    }
+
+    /**
+     * Obtain an attribute value.
+     *
+     * @param pAttr the attribute
+     * @return the value of the attribute or null
+     */
+    private Object getAttribute(final MoneyWiseAnalysisSecurityAttr pAttr) {
+        /* Obtain the value */
+<span class="nc" id="L486">        return theValues.getValue(pAttr);</span>
+    }
+
+    /**
+     * Adjust counter.
+     *
+     * @param pAttr  the attribute
+     * @param pDelta the delta
+     */
+    public void adjustCounter(final MoneyWiseAnalysisSecurityAttr pAttr,
+                              final OceanusMoney pDelta) {
+<span class="nc" id="L497">        OceanusMoney myValue = theValues.getMoneyValue(pAttr);</span>
+<span class="nc" id="L498">        myValue = new OceanusMoney(myValue);</span>
+<span class="nc" id="L499">        myValue.addAmount(pDelta);</span>
+<span class="nc" id="L500">        setValue(pAttr, myValue);</span>
+<span class="nc" id="L501">    }</span>
+
+    /**
+     * Adjust counter.
+     *
+     * @param pAttr  the attribute
+     * @param pDelta the delta
+     */
+    public void adjustCounter(final MoneyWiseAnalysisSecurityAttr pAttr,
+                              final OceanusUnits pDelta) {
+<span class="nc" id="L511">        OceanusUnits myValue = theValues.getUnitsValue(pAttr);</span>
+<span class="nc" id="L512">        myValue = new OceanusUnits(myValue);</span>
+<span class="nc" id="L513">        myValue.addUnits(pDelta);</span>
+<span class="nc" id="L514">        setValue(pAttr, myValue);</span>
+<span class="nc" id="L515">    }</span>
+
+    /**
+     * Register the transaction.
+     *
+     * @param pHelper the helper
+     * @return the registered values
+     */
+    public MoneyWiseAnalysisSecurityValues registerTransaction(final MoneyWiseAnalysisTransactionHelper pHelper) {
+        /* Register the event in the history */
+<span class="nc" id="L525">        return theHistory.registerTransaction(pHelper.getTransaction(), theValues);</span>
+    }
+
+    /**
+     * value the asset for a particular range.
+     *
+     * @param pRange the range of valuation
+     */
+    private void valueAsset(final OceanusDateRange pRange) {
+        /* Obtain the appropriate price */
+<span class="nc" id="L535">        final MoneyWiseDataSet myData = theAnalysis.getData();</span>
+<span class="nc" id="L536">        final MoneyWiseSecurityPriceDataMap myPriceMap = myData.getSecurityPriceDataMap();</span>
+<span class="nc" id="L537">        final OceanusPrice[] myPrices = myPriceMap.getPricesForRange(theSecurity, pRange);</span>
+
+        /* Access base units */
+<span class="nc" id="L540">        OceanusUnits myUnits = theBaseValues.getUnitsValue(MoneyWiseAnalysisSecurityAttr.UNITS);</span>
+<span class="nc" id="L541">        OceanusPrice myPrice = myPrices[0];</span>
+
+        /* Calculate the value */
+<span class="nc" id="L544">        theBaseValues.setValue(MoneyWiseAnalysisSecurityAttr.PRICE, myPrice);</span>
+<span class="nc" id="L545">        theBaseValues.setValue(MoneyWiseAnalysisSecurityAttr.VALUATION, myUnits.valueAtPrice(myPrice));</span>
+
+        /* Access units */
+<span class="nc" id="L548">        myUnits = theValues.getUnitsValue(MoneyWiseAnalysisSecurityAttr.UNITS);</span>
+<span class="nc" id="L549">        myPrice = myPrices[1];</span>
+
+        /* Calculate the value */
+<span class="nc" id="L552">        setValue(MoneyWiseAnalysisSecurityAttr.PRICE, myPrice);</span>
+<span class="nc" id="L553">        setValue(MoneyWiseAnalysisSecurityAttr.VALUATION, myUnits.valueAtPrice(myPrice));</span>
+<span class="nc" id="L554">    }</span>
+
+    /**
+     * value the foreign asset for a particular range.
+     *
+     * @param pRange the range of valuation
+     */
+    private void valueForeignAsset(final OceanusDateRange pRange) {
+        /* Obtain the appropriate price */
+<span class="nc" id="L563">        final MoneyWiseDataSet myData = theAnalysis.getData();</span>
+<span class="nc" id="L564">        final MoneyWiseSecurityPriceDataMap myPriceMap = myData.getSecurityPriceDataMap();</span>
+<span class="nc" id="L565">        final OceanusPrice[] myPrices = myPriceMap.getPricesForRange(theSecurity, pRange);</span>
+<span class="nc" id="L566">        final MoneyWiseExchangeRateDataMap myRateMap = myData.getExchangeRateDataMap();</span>
+<span class="nc" id="L567">        final OceanusRatio[] myRates = myRateMap.getRatesForRange(theSecurity.getAssetCurrency(), pRange);</span>
+<span class="nc" id="L568">        final Currency myCurrency = theAnalysis.getCurrency().getCurrency();</span>
+
+        /* Access base units */
+<span class="nc" id="L571">        OceanusUnits myUnits = theBaseValues.getUnitsValue(MoneyWiseAnalysisSecurityAttr.UNITS);</span>
+<span class="nc" id="L572">        OceanusPrice myPrice = myPrices[0];</span>
+<span class="nc" id="L573">        OceanusRatio myRate = myRates[0];</span>
+
+        /* Calculate the value */
+<span class="nc" id="L576">        OceanusMoney myValue = myUnits.valueAtPrice(myPrice);</span>
+<span class="nc" id="L577">        OceanusMoney myLocalValue = myValue.convertCurrency(myCurrency, myRate);</span>
+
+        /* Record it */
+<span class="nc" id="L580">        theBaseValues.setValue(MoneyWiseAnalysisSecurityAttr.PRICE, myPrice);</span>
+<span class="nc" id="L581">        theBaseValues.setValue(MoneyWiseAnalysisSecurityAttr.FOREIGNVALUE, myValue);</span>
+<span class="nc" id="L582">        theBaseValues.setValue(MoneyWiseAnalysisSecurityAttr.EXCHANGERATE, myRate);</span>
+<span class="nc" id="L583">        theBaseValues.setValue(MoneyWiseAnalysisSecurityAttr.VALUATION, myLocalValue);</span>
+
+        /* Access units */
+<span class="nc" id="L586">        myUnits = theValues.getUnitsValue(MoneyWiseAnalysisSecurityAttr.UNITS);</span>
+<span class="nc" id="L587">        myPrice = myPrices[1];</span>
+<span class="nc" id="L588">        myRate = myRates[1];</span>
+
+        /* Calculate the value */
+<span class="nc" id="L591">        myValue = myUnits.valueAtPrice(myPrice);</span>
+<span class="nc" id="L592">        myLocalValue = myValue.convertCurrency(myCurrency, myRate);</span>
+
+        /* Record it */
+<span class="nc" id="L595">        setValue(MoneyWiseAnalysisSecurityAttr.PRICE, myPrice);</span>
+<span class="nc" id="L596">        setValue(MoneyWiseAnalysisSecurityAttr.EXCHANGERATE, myRate);</span>
+<span class="nc" id="L597">        setValue(MoneyWiseAnalysisSecurityAttr.FOREIGNVALUE, myValue);</span>
+<span class="nc" id="L598">        setValue(MoneyWiseAnalysisSecurityAttr.VALUATION, myLocalValue);</span>
+<span class="nc" id="L599">    }</span>
+
+    /**
+     * calculate the profit for a priced asset.
+     */
+    private void calculateProfit() {
+        /* Calculate the profit */
+<span class="nc" id="L606">        final OceanusMoney myValuation = theValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.VALUEDELTA);</span>
+<span class="nc" id="L607">        final OceanusMoney myProfit = new OceanusMoney(myValuation);</span>
+<span class="nc" id="L608">        myProfit.subtractAmount(theValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.INVESTED));</span>
+<span class="nc" id="L609">        myProfit.addAmount(theValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.DIVIDEND));</span>
+<span class="nc" id="L610">        myProfit.addAmount(theValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.GROWTHADJUST));</span>
+
+        /* Set the attribute */
+<span class="nc" id="L613">        setValue(MoneyWiseAnalysisSecurityAttr.PROFIT, myProfit);</span>
+
+        /* Calculate the profit minus the dividend */
+<span class="nc" id="L616">        final OceanusMoney myMarketProfit = new OceanusMoney(myProfit);</span>
+<span class="nc" id="L617">        myMarketProfit.subtractAmount(theValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.DIVIDEND));</span>
+<span class="nc" id="L618">        setValue(MoneyWiseAnalysisSecurityAttr.MARKETPROFIT, myMarketProfit);</span>
+<span class="nc" id="L619">    }</span>
+
+    /**
+     * calculate the deltas for a priced asset.
+     */
+    private void calculateDeltas() {
+        /* Obtain a copy of the value */
+<span class="nc" id="L626">        OceanusMoney myValue = theValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.VALUATION);</span>
+<span class="nc" id="L627">        myValue = new OceanusMoney(myValue);</span>
+
+        /* Subtract any base value */
+<span class="nc" id="L630">        myValue.subtractAmount(theBaseValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.VALUATION));</span>
+
+        /* Set the delta */
+<span class="nc" id="L633">        setValue(MoneyWiseAnalysisSecurityAttr.VALUEDELTA, myValue);</span>
+
+<span class="nc bnc" id="L635" title="All 2 branches missed.">        if (Boolean.TRUE.equals(isForeignCurrency)) {</span>
+            /* Obtain a copy of the value */
+<span class="nc" id="L637">            myValue = theValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.FOREIGNVALUE);</span>
+<span class="nc" id="L638">            myValue = new OceanusMoney(myValue);</span>
+
+            /* Subtract any base value */
+<span class="nc" id="L641">            myValue.subtractAmount(theBaseValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.FOREIGNVALUE));</span>
+
+            /* Set the delta */
+<span class="nc" id="L644">            setValue(MoneyWiseAnalysisSecurityAttr.FOREIGNVALUEDELTA, myValue);</span>
+        }
+<span class="nc" id="L646">    }</span>
+
+    /**
+     * Analyse the bucket.
+     *
+     * @param pRange the range of valuation
+     */
+    void analyseBucket(final OceanusDateRange pRange) {
+        /* Value the asset over the range */
+<span class="nc bnc" id="L655" title="All 2 branches missed.">        if (Boolean.TRUE.equals(isForeignCurrency)) {</span>
+<span class="nc" id="L656">            valueForeignAsset(pRange);</span>
+        } else {
+<span class="nc" id="L658">            valueAsset(pRange);</span>
+        }
+
+        /* Calculate the deltas */
+<span class="nc" id="L662">        calculateDeltas();</span>
+
+        /* Calculate the profit */
+<span class="nc" id="L665">        calculateProfit();</span>
+
+        /* Calculate the market movement */
+<span class="nc bnc" id="L668" title="All 2 branches missed.">        if (Boolean.TRUE.equals(isForeignCurrency)) {</span>
+<span class="nc" id="L669">            calculateForeignMarket();</span>
+        } else {
+<span class="nc" id="L671">            calculateMarket();</span>
+        }
+<span class="nc" id="L673">    }</span>
+
+    /**
+     * Adjust to base.
+     */
+    void adjustToBase() {
+        /* Adjust to base values */
+<span class="nc" id="L680">        theValues.adjustToBaseValues(theBaseValues);</span>
+<span class="nc" id="L681">        theBaseValues.resetBaseValues();</span>
+<span class="nc" id="L682">    }</span>
+
+    /**
+     * Calculate market movement.
+     */
+    private void calculateMarket() {
+        /* Obtain the delta value */
+<span class="nc" id="L689">        OceanusMoney myValue = theValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.VALUEDELTA);</span>
+<span class="nc" id="L690">        myValue = new OceanusMoney(myValue);</span>
+
+        /* Subtract the investment */
+<span class="nc" id="L693">        myValue.subtractAmount(theValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.INVESTED));</span>
+
+        /* Set the delta */
+<span class="nc" id="L696">        setValue(MoneyWiseAnalysisSecurityAttr.MARKETGROWTH, myValue);</span>
+<span class="nc" id="L697">    }</span>
+
+    /**
+     * Calculate foreign market movement.
+     */
+    private void calculateForeignMarket() {
+        /* Obtain the local market growth */
+<span class="nc" id="L704">        OceanusMoney myBaseValue = theValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.VALUEDELTA);</span>
+<span class="nc" id="L705">        myBaseValue = new OceanusMoney(myBaseValue);</span>
+
+        /* Subtract the investment */
+<span class="nc" id="L708">        myBaseValue.subtractAmount(theValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.INVESTED));</span>
+
+        /* Set the basic growth */
+<span class="nc" id="L711">        setValue(MoneyWiseAnalysisSecurityAttr.LOCALMARKETGROWTH, myBaseValue);</span>
+
+        /* Obtain the foreign growth */
+<span class="nc" id="L714">        OceanusMoney myValue = theValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.FOREIGNVALUEDELTA);</span>
+<span class="nc" id="L715">        myValue = new OceanusMoney(myValue);</span>
+
+        /* Subtract the investment */
+<span class="nc" id="L718">        myValue.subtractAmount(theValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.FOREIGNINVESTED));</span>
+
+        /* Set the foreign growth */
+<span class="nc" id="L721">        setValue(MoneyWiseAnalysisSecurityAttr.FOREIGNMARKETGROWTH, myValue);</span>
+
+        /* Calculate the local equivalent */
+<span class="nc" id="L724">        final Currency myCurrency = theAnalysis.getCurrency().getCurrency();</span>
+<span class="nc" id="L725">        final OceanusRatio myRate = theValues.getRatioValue(MoneyWiseAnalysisSecurityAttr.EXCHANGERATE);</span>
+<span class="nc" id="L726">        myValue = myValue.convertCurrency(myCurrency, myRate);</span>
+
+        /* Set the market growth */
+<span class="nc" id="L729">        setValue(MoneyWiseAnalysisSecurityAttr.MARKETGROWTH, myValue);</span>
+
+        /* Calculate the fluctuation */
+<span class="nc" id="L732">        final OceanusMoney myFluct = new OceanusMoney(myBaseValue);</span>
+<span class="nc" id="L733">        myFluct.subtractAmount(myValue);</span>
+<span class="nc" id="L734">        setValue(MoneyWiseAnalysisSecurityAttr.CURRENCYFLUCT, myFluct);</span>
+<span class="nc" id="L735">    }</span>
+
+    /**
+     * Adjust security for natInsurance payments.
+     *
+     * @param pTrans the transaction causing the payments
+     */
+    public void adjustForNIPayments(final MoneyWiseAnalysisTransactionHelper pTrans) {
+        /* Assume no NatInsurance */
+<span class="nc" id="L744">        OceanusMoney myAmount = null;</span>
+
+        /* Access Employer NatInsurance */
+<span class="nc" id="L747">        OceanusMoney myNatIns = pTrans.getEmployerNatIns();</span>
+<span class="nc bnc" id="L748" title="All 2 branches missed.">        if (myNatIns != null</span>
+<span class="nc bnc" id="L749" title="All 2 branches missed.">                &amp;&amp; myNatIns.isNonZero()) {</span>
+<span class="nc" id="L750">            myAmount = new OceanusMoney(myNatIns);</span>
+        }
+
+        /* Access Employee natInsurance */
+<span class="nc" id="L754">        myNatIns = pTrans.getEmployeeNatIns();</span>
+<span class="nc bnc" id="L755" title="All 2 branches missed.">        if (myNatIns != null</span>
+<span class="nc bnc" id="L756" title="All 2 branches missed.">                &amp;&amp; myNatIns.isNonZero()) {</span>
+<span class="nc bnc" id="L757" title="All 2 branches missed.">            if (myAmount == null) {</span>
+<span class="nc" id="L758">                myAmount = new OceanusMoney(myNatIns);</span>
+            } else {
+<span class="nc" id="L760">                myAmount.addAmount(myNatIns);</span>
+            }
+        }
+
+        /* If we have natInsurance */
+<span class="nc bnc" id="L765" title="All 2 branches missed.">        if (myAmount != null) {</span>
+            /* Handle autoUnits */
+<span class="nc" id="L767">            OceanusUnits myUnits = getValues().getUnitsValue(MoneyWiseAnalysisSecurityAttr.UNITS);</span>
+<span class="nc bnc" id="L768" title="All 2 branches missed.">            if (myUnits.isZero()) {</span>
+<span class="nc" id="L769">                myUnits = OceanusUnits.getWholeUnits(theSecurity.getCategoryClass().getAutoUnits());</span>
+<span class="nc" id="L770">                setValue(MoneyWiseAnalysisSecurityAttr.UNITS, myUnits);</span>
+            }
+
+            /* Adjust invested */
+<span class="nc" id="L774">            adjustCounter(MoneyWiseAnalysisSecurityAttr.INVESTED, myAmount);</span>
+<span class="nc" id="L775">            adjustCounter(MoneyWiseAnalysisSecurityAttr.RESIDUALCOST, myAmount);</span>
+
+            /* Register the transaction in the history */
+<span class="nc" id="L778">            registerTransaction(pTrans);</span>
+        }
+<span class="nc" id="L780">    }</span>
+
+    /**
+     * Is the bucket active?
+     *
+     * @return true/false
+     */
+    public boolean isActive() {
+<span class="nc" id="L788">        return theValues.isActive();</span>
+    }
+
+    /**
+     * SecurityBucket list class.
+     */
+    public static final class MoneyWiseAnalysisSecurityBucketList
+            implements MetisFieldItem, MetisDataList&lt;MoneyWiseAnalysisSecurityBucket&gt; {
+        /**
+         * Local Report fields.
+         */
+<span class="nc" id="L799">        private static final MetisFieldSet&lt;MoneyWiseAnalysisSecurityBucketList&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseAnalysisSecurityBucketList.class);</span>
+
+        /*
+         * Declare Fields.
+         */
+        static {
+<span class="nc" id="L805">            FIELD_DEFS.declareLocalField(MoneyWiseAnalysisDataResource.ANALYSIS_NAME, MoneyWiseAnalysisSecurityBucketList::getAnalysis);</span>
+<span class="nc" id="L806">        }</span>
+
+        /**
+         * The analysis.
+         */
+        private final MoneyWiseAnalysis theAnalysis;
+
+        /**
+         * The list.
+         */
+        private final MetisListIndexed&lt;MoneyWiseAnalysisSecurityBucket&gt; theList;
+
+        /**
+         * Construct a top-level List.
+         *
+         * @param pAnalysis the analysis
+         */
+<span class="nc" id="L823">        MoneyWiseAnalysisSecurityBucketList(final MoneyWiseAnalysis pAnalysis) {</span>
+<span class="nc" id="L824">            theAnalysis = pAnalysis;</span>
+<span class="nc" id="L825">            theList = new MetisListIndexed&lt;&gt;();</span>
+<span class="nc" id="L826">            theList.setComparator((l, r) -&gt; l.getSecurity().compareTo(r.getSecurity()));</span>
+<span class="nc" id="L827">        }</span>
+
+        /**
+         * Construct a view List.
+         *
+         * @param pAnalysis the analysis
+         * @param pBase     the base list
+         */
+        MoneyWiseAnalysisSecurityBucketList(final MoneyWiseAnalysis pAnalysis,
+                                            final MoneyWiseAnalysisSecurityBucketList pBase) {
+            /* Initialise class */
+<span class="nc" id="L838">            this(pAnalysis);</span>
+
+            /* Loop through the buckets */
+<span class="nc" id="L841">            final Iterator&lt;MoneyWiseAnalysisSecurityBucket&gt; myIterator = pBase.iterator();</span>
+<span class="nc bnc" id="L842" title="All 2 branches missed.">            while (myIterator.hasNext()) {</span>
+<span class="nc" id="L843">                final MoneyWiseAnalysisSecurityBucket myCurr = myIterator.next();</span>
+
+                /* Access the bucket */
+<span class="nc" id="L846">                final MoneyWiseAnalysisSecurityBucket myBucket = new MoneyWiseAnalysisSecurityBucket(pAnalysis, myCurr);</span>
+
+                /*
+                 * Ignore idle securities. Note that we must include securities that have been
+                 * closed in order to adjust Market Growth.
+                 */
+<span class="nc bnc" id="L852" title="All 2 branches missed.">                if (Boolean.FALSE.equals(myBucket.isIdle())) {</span>
+                    /* Add to the list */
+<span class="nc" id="L854">                    theList.add(myBucket);</span>
+                }
+<span class="nc" id="L856">            }</span>
+<span class="nc" id="L857">        }</span>
+
+        /**
+         * Construct a dated List.
+         *
+         * @param pAnalysis the analysis
+         * @param pBase     the base list
+         * @param pDate     the Date
+         */
+        MoneyWiseAnalysisSecurityBucketList(final MoneyWiseAnalysis pAnalysis,
+                                            final MoneyWiseAnalysisSecurityBucketList pBase,
+                                            final OceanusDate pDate) {
+            /* Initialise class */
+<span class="nc" id="L870">            this(pAnalysis);</span>
+
+            /* Loop through the buckets */
+<span class="nc" id="L873">            final Iterator&lt;MoneyWiseAnalysisSecurityBucket&gt; myIterator = pBase.iterator();</span>
+<span class="nc bnc" id="L874" title="All 2 branches missed.">            while (myIterator.hasNext()) {</span>
+<span class="nc" id="L875">                final MoneyWiseAnalysisSecurityBucket myCurr = myIterator.next();</span>
+
+                /* Access the bucket for this date */
+<span class="nc" id="L878">                final MoneyWiseAnalysisSecurityBucket myBucket = new MoneyWiseAnalysisSecurityBucket(pAnalysis, myCurr, pDate);</span>
+
+                /*
+                 * Ignore idle securities. Note that we must include securities that have been
+                 * closed in order to adjust Market Growth.
+                 */
+<span class="nc bnc" id="L884" title="All 2 branches missed.">                if (Boolean.FALSE.equals(myBucket.isIdle())) {</span>
+                    /* Add to the list */
+<span class="nc" id="L886">                    theList.add(myBucket);</span>
+                }
+<span class="nc" id="L888">            }</span>
+<span class="nc" id="L889">        }</span>
+
+        /**
+         * Construct a ranged List.
+         *
+         * @param pAnalysis the analysis
+         * @param pBase     the base list
+         * @param pRange    the Date Range
+         */
+        MoneyWiseAnalysisSecurityBucketList(final MoneyWiseAnalysis pAnalysis,
+                                            final MoneyWiseAnalysisSecurityBucketList pBase,
+                                            final OceanusDateRange pRange) {
+            /* Initialise class */
+<span class="nc" id="L902">            this(pAnalysis);</span>
+
+            /* Loop through the buckets */
+<span class="nc" id="L905">            final Iterator&lt;MoneyWiseAnalysisSecurityBucket&gt; myIterator = pBase.iterator();</span>
+<span class="nc bnc" id="L906" title="All 2 branches missed.">            while (myIterator.hasNext()) {</span>
+<span class="nc" id="L907">                final MoneyWiseAnalysisSecurityBucket myCurr = myIterator.next();</span>
+
+                /* Access the bucket for this range */
+<span class="nc" id="L910">                final MoneyWiseAnalysisSecurityBucket myBucket = new MoneyWiseAnalysisSecurityBucket(pAnalysis, myCurr, pRange);</span>
+
+                /* If the bucket is non-idle or active */
+<span class="nc bnc" id="L913" title="All 6 branches missed.">                if (myBucket.isActive() || Boolean.TRUE.equals(!myBucket.isIdle())) {</span>
+                    /* Adjust to base and add to the list */
+<span class="nc" id="L915">                    myBucket.adjustToBase();</span>
+<span class="nc" id="L916">                    theList.add(myBucket);</span>
+                }
+<span class="nc" id="L918">            }</span>
+<span class="nc" id="L919">        }</span>
+
+        @Override
+        public MetisFieldSet&lt;MoneyWiseAnalysisSecurityBucketList&gt; getDataFieldSet() {
+<span class="nc" id="L923">            return FIELD_DEFS;</span>
+        }
+
+        @Override
+        public List&lt;MoneyWiseAnalysisSecurityBucket&gt; getUnderlyingList() {
+<span class="nc" id="L928">            return theList.getUnderlyingList();</span>
+        }
+
+        @Override
+        public String formatObject(final OceanusDataFormatter pFormatter) {
+<span class="nc" id="L933">            return getDataFieldSet().getName();</span>
+        }
+
+        /**
+         * Obtain the analysis.
+         *
+         * @return the analysis
+         */
+        MoneyWiseAnalysis getAnalysis() {
+<span class="nc" id="L942">            return theAnalysis;</span>
+        }
+
+        /**
+         * Obtain item by id.
+         *
+         * @param pId the id to lookup
+         * @return the item (or null if not present)
+         */
+        public MoneyWiseAnalysisSecurityBucket findItemById(final Integer pId) {
+            /* Return results */
+<span class="nc" id="L953">            return theList.getItemById(pId);</span>
+        }
+
+        /**
+         * SortBuckets.
+         */
+        void sortBuckets() {
+<span class="nc" id="L960">            theList.sortList();</span>
+<span class="nc" id="L961">        }</span>
+
+        /**
+         * Obtain the SecurityBucket for a given security holding.
+         *
+         * @param pHolding the security holding
+         * @return the bucket
+         */
+        public MoneyWiseAnalysisSecurityBucket getBucket(final MoneyWiseSecurityHolding pHolding) {
+            /* Locate the bucket in the list */
+<span class="nc" id="L971">            final MoneyWiseSecurity mySecurity = pHolding.getSecurity();</span>
+<span class="nc" id="L972">            MoneyWiseAnalysisSecurityBucket myItem = findItemById(mySecurity.getIndexedId());</span>
+
+            /* If the item does not yet exist */
+<span class="nc bnc" id="L975" title="All 2 branches missed.">            if (myItem == null) {</span>
+                /* Create the new bucket */
+<span class="nc" id="L977">                myItem = new MoneyWiseAnalysisSecurityBucket(theAnalysis, pHolding);</span>
+
+                /* Add to the list */
+<span class="nc" id="L980">                theList.add(myItem);</span>
+            }
+
+            /* Return the bucket */
+<span class="nc" id="L984">            return myItem;</span>
+        }
+
+        /**
+         * Mark active securities.
+         *
+         * @return true/false are there active securities?
+         * @throws OceanusException on error
+         */
+        boolean markActiveSecurities() throws OceanusException {
+            /* Loop through the buckets */
+<span class="nc" id="L995">            boolean areActive = false;</span>
+<span class="nc" id="L996">            final Iterator&lt;MoneyWiseAnalysisSecurityBucket&gt; myIterator = iterator();</span>
+<span class="nc bnc" id="L997" title="All 2 branches missed.">            while (myIterator.hasNext()) {</span>
+<span class="nc" id="L998">                final MoneyWiseAnalysisSecurityBucket myCurr = myIterator.next();</span>
+<span class="nc" id="L999">                final MoneyWiseSecurity mySecurity = myCurr.getSecurity();</span>
+
+                /* If we are active */
+<span class="nc bnc" id="L1002" title="All 2 branches missed.">                if (myCurr.isActive()) {</span>
+                    /* Set the security as relevant */
+<span class="nc" id="L1004">                    mySecurity.setRelevant();</span>
+<span class="nc" id="L1005">                    areActive = true;</span>
+                }
+
+                /* If we are closed */
+<span class="nc bnc" id="L1009" title="All 2 branches missed.">                if (Boolean.TRUE.equals(mySecurity.isClosed())) {</span>
+                    /* Ensure that we have correct closed dates */
+<span class="nc" id="L1011">                    mySecurity.adjustClosed();</span>
+
+                    /* If we are Relevant */
+<span class="nc bnc" id="L1014" title="All 2 branches missed.">                    if (mySecurity.isRelevant()</span>
+<span class="nc bnc" id="L1015" title="All 2 branches missed.">                            &amp;&amp; theAnalysis.getData().checkClosedAccounts()) {</span>
+                        /* throw exception */
+<span class="nc" id="L1017">                        throw new MoneyWiseDataException(myCurr, &quot;Illegally closed security&quot;);</span>
+                    }
+                }
+<span class="nc" id="L1020">            }</span>
+
+            /* Return active indication */
+<span class="nc" id="L1023">            return areActive;</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

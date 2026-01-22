@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianCertificateASN1.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.impl.core.cert</a> &gt; <span class="el_source">GordianCertificateASN1.java</span></div><h1>GordianCertificateASN1.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+package io.github.tonywasher.joceanus.gordianknot.impl.core.cert;
+
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianCertificate;
+import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactory;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianASN1Util.GordianASN1Object;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianIOException;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianLogicException;
+import org.bouncycastle.asn1.ASN1EncodableVector;
+import org.bouncycastle.asn1.ASN1Primitive;
+import org.bouncycastle.asn1.ASN1Sequence;
+import org.bouncycastle.asn1.ASN1TaggedObject;
+import org.bouncycastle.asn1.DERSequence;
+import org.bouncycastle.asn1.DERTaggedObject;
+import org.bouncycastle.asn1.x509.Certificate;
+
+import java.util.Enumeration;
+import java.util.Objects;
+
+/**
+ * ASN1 Encoding of KeySetSpec.
+ * &lt;pre&gt;
+ * GordianCertificateASN1 ::= SEQUENCE {
+ *      fullCertificate [1] Certificate OPTIONAL
+ *      miniCertificate [2] GordianMiniCertificateASN1 OPTIONAL
+ * }
+ * &lt;/pre&gt;
+ */
+public class GordianCertificateASN1
+        extends GordianASN1Object {
+    /**
+     * The fullCertificate tag.
+     */
+    private static final int TAG_FULL = 1;
+
+    /**
+     * The miniCertificate tag.
+     */
+    private static final int TAG_MINI = 2;
+
+    /**
+     * The full Certificate.
+     */
+    private final Certificate theFull;
+
+    /**
+     * The MiniCertificate.
+     */
+    private final GordianMiniCertificateASN1 theMini;
+
+    /**
+     * Create the ASN1 sequence.
+     *
+     * @param pCertificate the certificate
+     * @throws GordianException on error
+     */
+<span class="fc" id="L76">    public GordianCertificateASN1(final GordianCertificate pCertificate) throws GordianException {</span>
+        /* Handle core Certificate */
+<span class="pc bpc" id="L78" title="1 of 2 branches missed.">        if (pCertificate instanceof GordianCoreCertificate myCore) {</span>
+<span class="nc" id="L79">            theFull = myCore.getCertificate();</span>
+<span class="nc" id="L80">            theMini = null;</span>
+
+            /* Handle miniCertificate */
+<span class="pc bpc" id="L83" title="1 of 2 branches missed.">        } else if (pCertificate instanceof GordianMiniCertificate myMini) {</span>
+<span class="fc" id="L84">            theFull = null;</span>
+<span class="fc" id="L85">            theMini = myMini.getASN1();</span>
+
+        } else {
+<span class="nc" id="L88">            throw new GordianLogicException(&quot;Unexpected certificate type&quot;);</span>
+        }
+<span class="fc" id="L90">    }</span>
+
+    /**
+     * Constructor.
+     *
+     * @param pSequence the Sequence
+     * @throws GordianException on error
+     */
+<span class="fc" id="L98">    private GordianCertificateASN1(final ASN1Sequence pSequence) throws GordianException {</span>
+        /* Protect against exceptions */
+        try {
+            /* Extract the parameters from the sequence */
+<span class="fc" id="L102">            final Enumeration&lt;?&gt; en = pSequence.getObjects();</span>
+<span class="fc" id="L103">            final ASN1TaggedObject myTagged = ASN1TaggedObject.getInstance(en.nextElement());</span>
+<span class="pc bpc" id="L104" title="1 of 2 branches missed.">            theFull = myTagged.getTagNo() == TAG_FULL ? Certificate.getInstance(myTagged, false) : null;</span>
+<span class="pc bpc" id="L105" title="1 of 2 branches missed.">            theMini = myTagged.getTagNo() == TAG_MINI ? GordianMiniCertificateASN1.getInstance(myTagged, false) : null;</span>
+
+            /* handle exceptions */
+<span class="nc" id="L108">        } catch (IllegalArgumentException e) {</span>
+<span class="nc" id="L109">            throw new GordianIOException(&quot;Unable to parse ASN1 sequence&quot;, e);</span>
+<span class="fc" id="L110">        }</span>
+<span class="fc" id="L111">    }</span>
+
+    /**
+     * Parse the ASN1 object.
+     *
+     * @param pObject  the tagged object
+     * @param explicit is the tagging explicit
+     * @return the parsed object
+     * @throws GordianException on error
+     */
+    public static GordianCertificateASN1 getInstance(final ASN1TaggedObject pObject,
+                                                     final boolean explicit) throws GordianException {
+<span class="fc" id="L123">        return getInstance(ASN1Sequence.getInstance(pObject, explicit));</span>
+    }
+
+    /**
+     * Parse the ASN1 object.
+     *
+     * @param pObject the object to parse
+     * @return the parsed object
+     * @throws GordianException on error
+     */
+    public static GordianCertificateASN1 getInstance(final Object pObject) throws GordianException {
+<span class="pc bpc" id="L134" title="1 of 2 branches missed.">        if (pObject instanceof GordianCertificateASN1 myASN1) {</span>
+<span class="nc" id="L135">            return myASN1;</span>
+<span class="pc bpc" id="L136" title="1 of 2 branches missed.">        } else if (pObject != null) {</span>
+<span class="fc" id="L137">            return new GordianCertificateASN1(ASN1Sequence.getInstance(pObject));</span>
+        }
+<span class="nc" id="L139">        throw new GordianDataException(&quot;Null sequence&quot;);</span>
+    }
+
+    /**
+     * Obtain the subject.
+     *
+     * @param pFactory the factory
+     * @return the certificate
+     */
+    public GordianCertificate getCertificate(final GordianFactory pFactory) throws GordianException {
+<span class="pc bpc" id="L149" title="1 of 2 branches missed.">        return theFull != null</span>
+<span class="nc" id="L150">                ? new GordianCoreCertificate((GordianBaseFactory) pFactory, theFull)</span>
+<span class="fc" id="L151">                : new GordianMiniCertificate(pFactory, theMini);</span>
+    }
+
+    @Override
+    public ASN1Primitive toASN1Primitive() {
+<span class="fc" id="L156">        final ASN1EncodableVector v = new ASN1EncodableVector();</span>
+<span class="pc bpc" id="L157" title="1 of 2 branches missed.">        if (theFull != null) {</span>
+<span class="nc" id="L158">            v.add(new DERTaggedObject(false, TAG_FULL, theFull));</span>
+        }
+<span class="pc bpc" id="L160" title="1 of 2 branches missed.">        if (theMini != null) {</span>
+<span class="fc" id="L161">            v.add(new DERTaggedObject(false, TAG_MINI, theMini));</span>
+        }
+
+<span class="fc" id="L164">        return new DERSequence(v);</span>
+    }
+
+    @Override
+    public boolean equals(final Object pThat) {
+        /* Handle trivial cases */
+<span class="nc bnc" id="L170" title="All 2 branches missed.">        if (this == pThat) {</span>
+<span class="nc" id="L171">            return true;</span>
+        }
+<span class="nc bnc" id="L173" title="All 2 branches missed.">        if (pThat == null) {</span>
+<span class="nc" id="L174">            return false;</span>
+        }
+
+        /* Check that the fields are equal */
+<span class="nc" id="L178">        return pThat instanceof GordianCertificateASN1 myThat</span>
+<span class="nc bnc" id="L179" title="All 2 branches missed.">                &amp;&amp; Objects.equals(theFull, myThat.theFull)</span>
+<span class="nc bnc" id="L180" title="All 4 branches missed.">                &amp;&amp; Objects.equals(theMini, myThat.theMini);</span>
+    }
+
+    @Override
+    public int hashCode() {
+<span class="nc" id="L185">        return Objects.hash(theFull, theMini);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

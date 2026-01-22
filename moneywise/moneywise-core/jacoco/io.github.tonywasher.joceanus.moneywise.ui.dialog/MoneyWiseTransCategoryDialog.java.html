@@ -1,0 +1,408 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseTransCategoryDialog.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.moneywise.ui.dialog</a> &gt; <span class="el_source">MoneyWiseTransCategoryDialog.java</span></div><h1>MoneyWiseTransCategoryDialog.java</h1><pre class="source lang-java linenums">/*
+ * MoneyWise: Finance Application
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.moneywise.ui.dialog;
+
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransCategory;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransCategory.MoneyWiseTransCategoryList;
+import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
+import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTransCategoryClass;
+import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTransCategoryType;
+import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTransCategoryType.MoneyWiseTransCategoryTypeList;
+import io.github.tonywasher.joceanus.moneywise.ui.base.MoneyWiseBaseTable;
+import io.github.tonywasher.joceanus.moneywise.ui.base.MoneyWiseItemPanel;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataResource;
+import io.github.tonywasher.joceanus.prometheus.ui.fieldset.PrometheusFieldSet;
+import io.github.tonywasher.joceanus.prometheus.ui.fieldset.PrometheusFieldSetEvent;
+import io.github.tonywasher.joceanus.prometheus.views.PrometheusEditSet;
+import io.github.tonywasher.joceanus.tethys.api.factory.TethysUIFactory;
+import io.github.tonywasher.joceanus.tethys.api.field.TethysUIDataEditField.TethysUIScrollButtonField;
+import io.github.tonywasher.joceanus.tethys.api.field.TethysUIDataEditField.TethysUIStringEditField;
+import io.github.tonywasher.joceanus.tethys.api.field.TethysUIFieldFactory;
+import io.github.tonywasher.joceanus.tethys.api.menu.TethysUIScrollItem;
+import io.github.tonywasher.joceanus.tethys.api.menu.TethysUIScrollMenu;
+
+import java.util.Iterator;
+
+/**
+ * Dialog to display/edit/create a TransactionCategory.
+ */
+public class MoneyWiseTransCategoryDialog
+        extends MoneyWiseItemPanel&lt;MoneyWiseTransCategory&gt; {
+    /**
+     * Constructor.
+     *
+     * @param pFactory the GUI factory
+     * @param pEditSet the edit set
+     * @param pOwner   the owning table
+     */
+    public MoneyWiseTransCategoryDialog(final TethysUIFactory&lt;?&gt; pFactory,
+                                        final PrometheusEditSet pEditSet,
+                                        final MoneyWiseBaseTable&lt;MoneyWiseTransCategory&gt; pOwner) {
+        /* Initialise the panel */
+<span class="nc" id="L60">        super(pFactory, pEditSet, pOwner);</span>
+
+        /* Create a new panel */
+<span class="nc" id="L63">        final PrometheusFieldSet&lt;MoneyWiseTransCategory&gt; myFieldSet = getFieldSet();</span>
+
+        /* Create the text fields */
+<span class="nc" id="L66">        final TethysUIFieldFactory myFields = pFactory.fieldFactory();</span>
+<span class="nc" id="L67">        final TethysUIStringEditField myName = myFields.newStringField();</span>
+<span class="nc" id="L68">        final TethysUIStringEditField mySubName = myFields.newStringField();</span>
+<span class="nc" id="L69">        final TethysUIStringEditField myDesc = myFields.newStringField();</span>
+
+        /* Create the buttons */
+<span class="nc" id="L72">        final TethysUIScrollButtonField&lt;MoneyWiseTransCategoryType&gt; myTypeButton = myFields.newScrollField(MoneyWiseTransCategoryType.class);</span>
+<span class="nc" id="L73">        final TethysUIScrollButtonField&lt;MoneyWiseTransCategory&gt; myParentButton = myFields.newScrollField(MoneyWiseTransCategory.class);</span>
+
+        /* Assign the fields to the panel */
+<span class="nc" id="L76">        myFieldSet.addField(PrometheusDataResource.DATAITEM_FIELD_NAME, myName, MoneyWiseTransCategory::getName);</span>
+<span class="nc" id="L77">        myFieldSet.addField(MoneyWiseBasicResource.CATEGORY_SUBCAT, mySubName, MoneyWiseTransCategory::getSubCategory);</span>
+<span class="nc" id="L78">        myFieldSet.addField(PrometheusDataResource.DATAITEM_FIELD_DESC, myDesc, MoneyWiseTransCategory::getDesc);</span>
+<span class="nc" id="L79">        myFieldSet.addField(MoneyWiseStaticDataType.TRANSTYPE, myTypeButton, MoneyWiseTransCategory::getCategoryType);</span>
+<span class="nc" id="L80">        myFieldSet.addField(PrometheusDataResource.DATAGROUP_PARENT, myParentButton, MoneyWiseTransCategory::getParentCategory);</span>
+
+        /* Configure the menuBuilders */
+<span class="nc" id="L83">        myTypeButton.setMenuConfigurator(c -&gt; buildCategoryTypeMenu(c, getItem()));</span>
+<span class="nc" id="L84">        myParentButton.setMenuConfigurator(c -&gt; buildParentMenu(c, getItem()));</span>
+
+        /* Configure name checks */
+<span class="nc" id="L87">        mySubName.setValidator(this::isValidName);</span>
+<span class="nc" id="L88">        mySubName.setReporter(pOwner::showValidateError);</span>
+
+        /* Configure description checks */
+<span class="nc" id="L91">        myDesc.setValidator(this::isValidDesc);</span>
+<span class="nc" id="L92">        myDesc.setReporter(pOwner::showValidateError);</span>
+<span class="nc" id="L93">    }</span>
+
+    @Override
+    public void refreshData() {
+        /* If we have an item */
+<span class="nc" id="L98">        final MoneyWiseTransCategory myItem = getItem();</span>
+<span class="nc bnc" id="L99" title="All 2 branches missed.">        if (myItem != null) {</span>
+<span class="nc" id="L100">            final MoneyWiseTransCategoryList myCategories = getDataList(MoneyWiseBasicDataType.TRANSCATEGORY, MoneyWiseTransCategoryList.class);</span>
+<span class="nc" id="L101">            setItem(myCategories.findItemById(myItem.getIndexedId()));</span>
+        }
+
+        /* Make sure that the item is not editable */
+<span class="nc" id="L105">        setEditable(false);</span>
+<span class="nc" id="L106">    }</span>
+
+    @Override
+    protected void adjustFields(final boolean isEditable) {
+        /* Access the fieldSet */
+<span class="nc" id="L111">        final PrometheusFieldSet&lt;MoneyWiseTransCategory&gt; myFieldSet = getFieldSet();</span>
+
+        /* Determine whether parent/full-name fields are visible */
+<span class="nc" id="L114">        final MoneyWiseTransCategory myCategory = getItem();</span>
+<span class="nc" id="L115">        final MoneyWiseTransCategoryType myType = myCategory.getCategoryType();</span>
+<span class="nc" id="L116">        final CategoryType myCurrType = CategoryType.determineType(myType);</span>
+<span class="nc" id="L117">        final boolean showParent = myCurrType.hasSubCatName();</span>
+
+        /* Determine whether the description field should be visible */
+<span class="nc bnc" id="L120" title="All 4 branches missed.">        final boolean bShowDesc = isEditable || myCategory.getDesc() != null;</span>
+<span class="nc" id="L121">        myFieldSet.setFieldVisible(PrometheusDataResource.DATAITEM_FIELD_DESC, bShowDesc);</span>
+
+        /* Set visibility */
+<span class="nc" id="L124">        myFieldSet.setFieldVisible(PrometheusDataResource.DATAGROUP_PARENT, showParent);</span>
+<span class="nc" id="L125">        myFieldSet.setFieldVisible(MoneyWiseBasicResource.CATEGORY_SUBCAT, showParent);</span>
+
+        /* Category type cannot be changed if the item is active */
+<span class="nc bnc" id="L128" title="All 6 branches missed.">        final boolean canEdit = isEditable &amp;&amp; !myCategory.isActive() &amp;&amp; myCurrType.isChangeable();</span>
+<span class="nc" id="L129">        myFieldSet.setFieldEditable(MoneyWiseStaticDataType.TRANSTYPE, canEdit);</span>
+
+        /* If the category is not a parent then we cannot edit the full name */
+<span class="nc bnc" id="L132" title="All 4 branches missed.">        myFieldSet.setFieldEditable(PrometheusDataResource.DATAITEM_FIELD_NAME, isEditable &amp;&amp; !showParent);</span>
+<span class="nc" id="L133">    }</span>
+
+    @Override
+    protected void updateField(final PrometheusFieldSetEvent pUpdate) throws OceanusException {
+        /* Access the field */
+<span class="nc" id="L138">        final MetisDataFieldId myField = pUpdate.getFieldId();</span>
+<span class="nc" id="L139">        final MoneyWiseTransCategory myCategory = getItem();</span>
+
+        /* Process updates */
+<span class="nc bnc" id="L142" title="All 2 branches missed.">        if (PrometheusDataResource.DATAITEM_FIELD_NAME.equals(myField)) {</span>
+            /* Update the SUBCATEGORY(!!) Name */
+<span class="nc" id="L144">            myCategory.setSubCategoryName(pUpdate.getValue(String.class));</span>
+<span class="nc bnc" id="L145" title="All 2 branches missed.">        } else if (MoneyWiseBasicResource.CATEGORY_SUBCAT.equals(myField)) {</span>
+            /* Update the SubCategory */
+<span class="nc" id="L147">            myCategory.setSubCategoryName(pUpdate.getValue(String.class));</span>
+<span class="nc bnc" id="L148" title="All 2 branches missed.">        } else if (PrometheusDataResource.DATAGROUP_PARENT.equals(myField)) {</span>
+            /* Update the Parent */
+<span class="nc" id="L150">            myCategory.setParentCategory(pUpdate.getValue(MoneyWiseTransCategory.class));</span>
+<span class="nc bnc" id="L151" title="All 2 branches missed.">        } else if (PrometheusDataResource.DATAITEM_FIELD_DESC.equals(myField)) {</span>
+            /* Update the Description */
+<span class="nc" id="L153">            myCategory.setDescription(pUpdate.getValue(String.class));</span>
+<span class="nc bnc" id="L154" title="All 2 branches missed.">        } else if (MoneyWiseStaticDataType.TRANSTYPE.equals(myField)) {</span>
+            /* Update the Category Type */
+<span class="nc" id="L156">            myCategory.setCategoryType(pUpdate.getValue(MoneyWiseTransCategoryType.class));</span>
+        }
+<span class="nc" id="L158">    }</span>
+
+    @Override
+    protected void declareGoToItems(final boolean pUpdates) {
+<span class="nc" id="L162">        final MoneyWiseTransCategory myItem = getItem();</span>
+<span class="nc" id="L163">        final MoneyWiseTransCategory myParent = myItem.getParentCategory();</span>
+<span class="nc bnc" id="L164" title="All 2 branches missed.">        if (!pUpdates) {</span>
+<span class="nc" id="L165">            final MoneyWiseTransCategoryType myType = myItem.getCategoryType();</span>
+<span class="nc" id="L166">            declareGoToItem(myType);</span>
+        }
+<span class="nc" id="L168">        declareGoToItem(myParent);</span>
+<span class="nc" id="L169">    }</span>
+
+    /**
+     * Build the category type list for an item.
+     *
+     * @param pMenu     the menu
+     * @param pCategory the category to build for
+     */
+    public void buildCategoryTypeMenu(final TethysUIScrollMenu&lt;MoneyWiseTransCategoryType&gt; pMenu,
+                                      final MoneyWiseTransCategory pCategory) {
+        /* Clear the menu */
+<span class="nc" id="L180">        pMenu.removeAllItems();</span>
+
+        /* Record active item */
+<span class="nc" id="L183">        final MoneyWiseTransCategoryType myCurr = pCategory.getCategoryType();</span>
+<span class="nc" id="L184">        final CategoryType myCurrType = CategoryType.determineType(myCurr);</span>
+<span class="nc" id="L185">        TethysUIScrollItem&lt;MoneyWiseTransCategoryType&gt; myActive = null;</span>
+
+        /* Access Transaction Category types */
+<span class="nc" id="L188">        final MoneyWiseTransCategoryTypeList myCategoryTypes = getDataList(MoneyWiseStaticDataType.TRANSTYPE, MoneyWiseTransCategoryTypeList.class);</span>
+
+        /* Loop through the TransCategoryTypes */
+<span class="nc" id="L191">        final Iterator&lt;MoneyWiseTransCategoryType&gt; myIterator = myCategoryTypes.iterator();</span>
+<span class="nc bnc" id="L192" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L193">            final MoneyWiseTransCategoryType myType = myIterator.next();</span>
+
+            /* Ignore deleted or disabled */
+<span class="nc bnc" id="L196" title="All 4 branches missed.">            boolean bIgnore = myType.isDeleted() || !myType.getEnabled();</span>
+
+            /* Ignore category if wrong type */
+<span class="nc bnc" id="L199" title="All 2 branches missed.">            bIgnore |= !myCurrType.equals(CategoryType.determineType(myType));</span>
+<span class="nc bnc" id="L200" title="All 2 branches missed.">            if (bIgnore) {</span>
+<span class="nc" id="L201">                continue;</span>
+            }
+
+            /* Create a new action for the type */
+<span class="nc" id="L205">            final TethysUIScrollItem&lt;MoneyWiseTransCategoryType&gt; myItem = pMenu.addItem(myType);</span>
+
+            /* If this is the active type */
+<span class="nc bnc" id="L208" title="All 2 branches missed.">            if (myType.equals(myCurr)) {</span>
+                /* Record it */
+<span class="nc" id="L210">                myActive = myItem;</span>
+            }
+<span class="nc" id="L212">        }</span>
+
+        /* Ensure active item is visible */
+<span class="nc bnc" id="L215" title="All 2 branches missed.">        if (myActive != null) {</span>
+<span class="nc" id="L216">            myActive.scrollToItem();</span>
+        }
+<span class="nc" id="L218">    }</span>
+
+    /**
+     * Build the parent menu for the item.
+     *
+     * @param pMenu     the menu
+     * @param pCategory the category to build for
+     */
+    private void buildParentMenu(final TethysUIScrollMenu&lt;MoneyWiseTransCategory&gt; pMenu,
+                                 final MoneyWiseTransCategory pCategory) {
+        /* Clear the menu */
+<span class="nc" id="L229">        pMenu.removeAllItems();</span>
+
+        /* Record active item */
+<span class="nc" id="L232">        final MoneyWiseTransCategory myCurr = pCategory.getParentCategory();</span>
+<span class="nc" id="L233">        final CategoryType myCurrType = CategoryType.determineType(pCategory);</span>
+<span class="nc" id="L234">        TethysUIScrollItem&lt;MoneyWiseTransCategory&gt; myActive = null;</span>
+
+        /* Loop through the TransactionCategories */
+<span class="nc" id="L237">        final MoneyWiseTransCategoryList myCategories = getItem().getList();</span>
+<span class="nc" id="L238">        final Iterator&lt;MoneyWiseTransCategory&gt; myIterator = myCategories.iterator();</span>
+<span class="nc bnc" id="L239" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L240">            final MoneyWiseTransCategory myCat = myIterator.next();</span>
+
+            /* Ignore deleted and non-subTotal items */
+<span class="nc" id="L243">            final MoneyWiseTransCategoryClass myClass = myCat.getCategoryTypeClass();</span>
+<span class="nc bnc" id="L244" title="All 4 branches missed.">            if (myCat.isDeleted() || !myClass.isSubTotal()) {</span>
+<span class="nc" id="L245">                continue;</span>
+            }
+
+            /* If we are interested */
+<span class="nc bnc" id="L249" title="All 2 branches missed.">            if (myCurrType.isParentMatch(myClass)) {</span>
+                /* Create a new action for the type */
+<span class="nc" id="L251">                final TethysUIScrollItem&lt;MoneyWiseTransCategory&gt; myItem = pMenu.addItem(myCat);</span>
+
+                /* If this is the active parent */
+<span class="nc bnc" id="L254" title="All 2 branches missed.">                if (myCat.equals(myCurr)) {</span>
+                    /* Record it */
+<span class="nc" id="L256">                    myActive = myItem;</span>
+                }
+            }
+<span class="nc" id="L259">        }</span>
+
+        /* Ensure active item is visible */
+<span class="nc bnc" id="L262" title="All 2 branches missed.">        if (myActive != null) {</span>
+<span class="nc" id="L263">            myActive.scrollToItem();</span>
+        }
+<span class="nc" id="L265">    }</span>
+
+    /**
+     * Category Type.
+     */
+<span class="nc" id="L270">    private enum CategoryType {</span>
+        /**
+         * Income.
+         */
+<span class="nc" id="L274">        INCOME,</span>
+
+        /**
+         * Expense.
+         */
+<span class="nc" id="L279">        EXPENSE,</span>
+
+        /**
+         * Totals.
+         */
+<span class="nc" id="L284">        TOTALS,</span>
+
+        /**
+         * SubTotal.
+         */
+<span class="nc" id="L289">        SUBTOTAL,</span>
+
+        /**
+         * Singular.
+         */
+<span class="nc" id="L294">        SINGULAR,</span>
+
+        /**
+         * SecurityXfer.
+         */
+<span class="nc" id="L299">        SECURITYXFER,</span>
+
+        /**
+         * Transfer.
+         */
+<span class="nc" id="L304">        XFER;</span>
+
+        /**
+         * Determine type.
+         *
+         * @param pCategory the transaction category
+         * @return the category type
+         */
+        public static CategoryType determineType(final MoneyWiseTransCategory pCategory) {
+<span class="nc" id="L313">            return determineType(pCategory.getCategoryType());</span>
+        }
+
+        /**
+         * Determine type.
+         *
+         * @param pType the transaction category type
+         * @return the category type
+         */
+        public static CategoryType determineType(final MoneyWiseTransCategoryType pType) {
+            /* Access class */
+<span class="nc" id="L324">            final MoneyWiseTransCategoryClass myClass = pType.getCategoryClass();</span>
+
+            /* Handle Totals */
+<span class="nc bnc" id="L327" title="All 2 branches missed.">            if (myClass.isTotals()) {</span>
+<span class="nc" id="L328">                return TOTALS;</span>
+            }
+
+            /* Handle SubTotals */
+<span class="nc bnc" id="L332" title="All 2 branches missed.">            if (myClass.isSubTotal()) {</span>
+<span class="nc" id="L333">                return SUBTOTAL;</span>
+            }
+
+            /* Handle Singular */
+<span class="nc bnc" id="L337" title="All 2 branches missed.">            if (myClass.isSingular()) {</span>
+<span class="nc" id="L338">                return SINGULAR;</span>
+            }
+
+            /* Handle Income */
+<span class="nc bnc" id="L342" title="All 2 branches missed.">            if (myClass.isIncome()) {</span>
+<span class="nc" id="L343">                return INCOME;</span>
+            }
+
+            /* Handle Transfer */
+<span class="nc bnc" id="L347" title="All 2 branches missed.">            if (myClass.isTransfer()) {</span>
+<span class="nc bnc" id="L348" title="All 2 branches missed.">                return myClass.isSecurityTransfer()</span>
+<span class="nc" id="L349">                        ? SECURITYXFER</span>
+<span class="nc" id="L350">                        : XFER;</span>
+            }
+
+            /* Must be expense */
+<span class="nc" id="L354">            return EXPENSE;</span>
+        }
+
+        /**
+         * Is this type changeable?
+         *
+         * @return true/false
+         */
+        public boolean isChangeable() {
+<span class="nc bnc" id="L363" title="All 2 branches missed.">            switch (this) {</span>
+                case TOTALS:
+                case XFER:
+                case SINGULAR:
+<span class="nc" id="L367">                    return false;</span>
+                default:
+<span class="nc" id="L369">                    return true;</span>
+            }
+        }
+
+        /**
+         * Is this type changeable?
+         *
+         * @return true/false
+         */
+        public boolean hasSubCatName() {
+<span class="nc bnc" id="L379" title="All 2 branches missed.">            switch (this) {</span>
+                case TOTALS:
+                case SUBTOTAL:
+<span class="nc" id="L382">                    return false;</span>
+                default:
+<span class="nc" id="L384">                    return true;</span>
+            }
+        }
+
+        /**
+         * is this parent class a match?
+         *
+         * @param pClass the parent class
+         * @return true/false
+         */
+        public boolean isParentMatch(final MoneyWiseTransCategoryClass pClass) {
+<span class="nc bnc" id="L395" title="All 4 branches missed.">            switch (this) {</span>
+                case INCOME:
+<span class="nc" id="L397">                    return pClass.isIncome();</span>
+                case EXPENSE:
+<span class="nc" id="L399">                    return pClass.isExpense();</span>
+                case SECURITYXFER:
+<span class="nc" id="L401">                    return pClass.isSecurityTransfer();</span>
+                default:
+<span class="nc" id="L403">                    return false;</span>
+            }
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ThemisXAnalysisSolverDataMap.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Themis Core Project Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.themis.xanalysis.solver</a> &gt; <span class="el_source">ThemisXAnalysisSolverDataMap.java</span></div><h1>ThemisXAnalysisSolverDataMap.java</h1><pre class="source lang-java linenums">/*
+ * Themis: Java Project Framework
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.themis.xanalysis.solver;
+
+import io.github.tonywasher.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance.ThemisXAnalysisNodeInstance;
+import io.github.tonywasher.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance.ThemisXAnalysisTypeInstance;
+import io.github.tonywasher.joceanus.themis.xanalysis.parser.decl.ThemisXAnalysisDeclField;
+import io.github.tonywasher.joceanus.themis.xanalysis.parser.expr.ThemisXAnalysisExprVarDecl;
+import io.github.tonywasher.joceanus.themis.xanalysis.parser.node.ThemisXAnalysisNodeParameter;
+import io.github.tonywasher.joceanus.themis.xanalysis.parser.node.ThemisXAnalysisNodeVariable;
+import io.github.tonywasher.joceanus.themis.xanalysis.parser.type.ThemisXAnalysisTypeParameter;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * Data Map.
+ */
+public class ThemisXAnalysisSolverDataMap {
+    /**
+     * Parent map.
+     */
+    private final ThemisXAnalysisSolverDataMap theParent;
+
+    /**
+     * The named variables map.
+     */
+    private final Map&lt;String, ThemisXAnalysisTypeInstance&gt; theNames;
+
+    /**
+     * The type variables map.
+     */
+    private final Map&lt;String, ThemisXAnalysisTypeParameter&gt; theTypes;
+
+    /**
+     * Constructor.
+     */
+    ThemisXAnalysisSolverDataMap() {
+<span class="nc" id="L54">        this(null);</span>
+<span class="nc" id="L55">    }</span>
+
+    /**
+     * Constructor.
+     *
+     * @param pParent the parent
+     */
+<span class="nc" id="L62">    ThemisXAnalysisSolverDataMap(final ThemisXAnalysisSolverDataMap pParent) {</span>
+<span class="nc" id="L63">        theParent = pParent;</span>
+<span class="nc" id="L64">        theNames = new HashMap&lt;&gt;();</span>
+<span class="nc" id="L65">        theTypes = new HashMap&lt;&gt;();</span>
+<span class="nc" id="L66">    }</span>
+
+    /**
+     * Declare field.
+     *
+     * @param pField the field
+     */
+    void declareField(final ThemisXAnalysisDeclField pField) {
+<span class="nc bnc" id="L74" title="All 2 branches missed.">        for (ThemisXAnalysisNodeInstance myNode : pField.getVariables()) {</span>
+<span class="nc" id="L75">            final ThemisXAnalysisNodeVariable myVar = (ThemisXAnalysisNodeVariable) myNode;</span>
+<span class="nc" id="L76">            theNames.put(myVar.getName().toString(), myVar.getType());</span>
+<span class="nc" id="L77">        }</span>
+<span class="nc" id="L78">    }</span>
+
+    /**
+     * Declare variables.
+     *
+     * @param pVar the variable declarator
+     */
+    void declareVars(final ThemisXAnalysisExprVarDecl pVar) {
+<span class="nc bnc" id="L86" title="All 2 branches missed.">        for (ThemisXAnalysisNodeInstance myNode : pVar.getVariables()) {</span>
+<span class="nc" id="L87">            final ThemisXAnalysisNodeVariable myVar = (ThemisXAnalysisNodeVariable) myNode;</span>
+<span class="nc" id="L88">            theNames.put(myVar.getName().toString(), myVar.getType());</span>
+<span class="nc" id="L89">        }</span>
+<span class="nc" id="L90">    }</span>
+
+    /**
+     * Declare parameters.
+     *
+     * @param pParams the parameters
+     */
+    void declareParams(final List&lt;ThemisXAnalysisNodeInstance&gt; pParams) {
+<span class="nc bnc" id="L98" title="All 2 branches missed.">        for (ThemisXAnalysisNodeInstance myNode : pParams) {</span>
+<span class="nc" id="L99">            final ThemisXAnalysisNodeParameter myParam = (ThemisXAnalysisNodeParameter) myNode;</span>
+<span class="nc" id="L100">            theNames.put(myParam.getName().toString(), myParam.getType());</span>
+<span class="nc" id="L101">        }</span>
+<span class="nc" id="L102">    }</span>
+
+    /**
+     * Declare type parameters.
+     *
+     * @param pParams the parameters
+     */
+    void declareTypeParams(final List&lt;ThemisXAnalysisTypeInstance&gt; pParams) {
+<span class="nc bnc" id="L110" title="All 2 branches missed.">        for (ThemisXAnalysisTypeInstance myNode : pParams) {</span>
+<span class="nc" id="L111">            final ThemisXAnalysisTypeParameter myParam = (ThemisXAnalysisTypeParameter) myNode;</span>
+<span class="nc" id="L112">            theTypes.put(myParam.getName(), myParam);</span>
+<span class="nc" id="L113">        }</span>
+<span class="nc" id="L114">    }</span>
+
+    /**
+     * Look up name.
+     *
+     * @param pName the name of the variable
+     * @return the type
+     */
+    ThemisXAnalysisTypeInstance lookUpName(final String pName) {
+        /* Look up name in map */
+<span class="nc" id="L124">        final ThemisXAnalysisTypeInstance myType = theNames.get(pName);</span>
+<span class="nc bnc" id="L125" title="All 2 branches missed.">        if (myType != null) {</span>
+<span class="nc" id="L126">            return myType;</span>
+        }
+
+        /* If we did not find the name, try the parent map */
+<span class="nc bnc" id="L130" title="All 2 branches missed.">        return theParent == null ? null : theParent.lookUpName(pName);</span>
+    }
+
+    /**
+     * Look up type.
+     *
+     * @param pName the name of the type
+     * @return the type
+     */
+    ThemisXAnalysisTypeInstance lookUpType(final String pName) {
+        /* Look up name in map */
+<span class="nc" id="L141">        final ThemisXAnalysisTypeInstance myType = theTypes.get(pName);</span>
+<span class="nc bnc" id="L142" title="All 2 branches missed.">        if (myType != null) {</span>
+<span class="nc" id="L143">            return myType;</span>
+        }
+
+        /* If we did not find the type, try the parent map */
+<span class="nc bnc" id="L147" title="All 2 branches missed.">        return theParent == null ? null : theParent.lookUpType(pName);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

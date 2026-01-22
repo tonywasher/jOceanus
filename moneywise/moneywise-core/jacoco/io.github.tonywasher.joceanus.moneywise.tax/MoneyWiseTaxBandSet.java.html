@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseTaxBandSet.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.moneywise.tax</a> &gt; <span class="el_source">MoneyWiseTaxBandSet.java</span></div><h1>MoneyWiseTaxBandSet.java</h1><pre class="source lang-java linenums">/*
+ * MoneyWise: Finance Application
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.moneywise.tax;
+
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRate;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
+import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataList;
+import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataObjectFormat;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldItem;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
+import io.github.tonywasher.joceanus.moneywise.tax.MoneyWiseTaxBandSet.MoneyWiseTaxBand;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+
+/**
+ * Set of taxBands.
+ */
+public class MoneyWiseTaxBandSet
+        implements MetisDataList&lt;MoneyWiseTaxBand&gt;, MetisDataObjectFormat, Iterable&lt;MoneyWiseTaxBand&gt; {
+    /**
+     * List of Tax Bands.
+     */
+    private final List&lt;MoneyWiseTaxBand&gt; theTaxBands;
+
+    /**
+     * Constructor.
+     */
+<span class="fc" id="L46">    public MoneyWiseTaxBandSet() {</span>
+<span class="fc" id="L47">        theTaxBands = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L48">    }</span>
+
+    /**
+     * Constructor.
+     *
+     * @param pBands the set of tax bands
+     */
+    public MoneyWiseTaxBandSet(final MoneyWiseTaxBand... pBands) {
+<span class="fc" id="L56">        this();</span>
+<span class="fc" id="L57">        Collections.addAll(theTaxBands, pBands);</span>
+<span class="fc" id="L58">    }</span>
+
+    /**
+     * Constructor.
+     *
+     * @param pSource the source to clone
+     */
+    public MoneyWiseTaxBandSet(final MoneyWiseTaxBandSet pSource) {
+<span class="nc" id="L66">        this();</span>
+<span class="nc bnc" id="L67" title="All 2 branches missed.">        for (MoneyWiseTaxBand myBand : pSource.theTaxBands) {</span>
+<span class="nc" id="L68">            theTaxBands.add(new MoneyWiseTaxBand(myBand));</span>
+<span class="nc" id="L69">        }</span>
+<span class="nc" id="L70">    }</span>
+
+    @Override
+    public Iterator&lt;MoneyWiseTaxBand&gt; iterator() {
+<span class="nc" id="L74">        return theTaxBands.iterator();</span>
+    }
+
+    @Override
+    public List&lt;MoneyWiseTaxBand&gt; getUnderlyingList() {
+<span class="nc" id="L79">        return theTaxBands;</span>
+    }
+
+    @Override
+    public String formatObject(final OceanusDataFormatter pFormatter) {
+<span class="nc" id="L84">        return theTaxBands.toString();</span>
+    }
+
+    /**
+     * Add a tax band.
+     *
+     * @param pBand the tax band
+     */
+    public void addTaxBand(final MoneyWiseTaxBand pBand) {
+<span class="nc" id="L93">        theTaxBands.add(pBand);</span>
+<span class="nc" id="L94">    }</span>
+
+    /**
+     * Obtain a zero amount.
+     *
+     * @return the zero amount
+     */
+    public OceanusMoney getZeroAmount() {
+<span class="nc" id="L102">        OceanusMoney myAmount = theTaxBands.get(0).getAmount();</span>
+<span class="nc" id="L103">        myAmount = new OceanusMoney(myAmount);</span>
+<span class="nc" id="L104">        myAmount.setZero();</span>
+<span class="nc" id="L105">        return myAmount;</span>
+    }
+
+    /**
+     * Are there multiple taxBands?
+     *
+     * @return true/false
+     */
+    public boolean multipleBands() {
+<span class="nc bnc" id="L114" title="All 2 branches missed.">        return theTaxBands.size() &gt; 1;</span>
+    }
+
+    /**
+     * MoneyWiseTaxBand class.
+     */
+    public static class MoneyWiseTaxBand
+            implements MetisFieldItem {
+        /**
+         * Local Report fields.
+         */
+<span class="fc" id="L125">        private static final MetisFieldSet&lt;MoneyWiseTaxBand&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseTaxBand.class);</span>
+
+        /*
+         * Declare Fields.
+         */
+        static {
+<span class="fc" id="L131">            FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXBANDS_RATE, MoneyWiseTaxBand::getAmount);</span>
+<span class="fc" id="L132">            FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXBANDS_AMOUNT, MoneyWiseTaxBand::getRate);</span>
+<span class="fc" id="L133">        }</span>
+
+        /**
+         * Amount.
+         */
+        private final OceanusMoney theAmount;
+
+        /**
+         * Rate.
+         */
+        private final OceanusRate theRate;
+
+        /**
+         * Constructor.
+         *
+         * @param pAmount the amount
+         * @param pRate   the rate
+         */
+        public MoneyWiseTaxBand(final OceanusMoney pAmount,
+<span class="fc" id="L152">                                final OceanusRate pRate) {</span>
+<span class="fc bfc" id="L153" title="All 2 branches covered.">            theAmount = pAmount == null</span>
+<span class="fc" id="L154">                    ? null</span>
+<span class="fc" id="L155">                    : new OceanusMoney(pAmount);</span>
+<span class="fc" id="L156">            theRate = pRate;</span>
+<span class="fc" id="L157">        }</span>
+
+        /**
+         * Constructor.
+         *
+         * @param pRate the rate
+         */
+        public MoneyWiseTaxBand(final OceanusRate pRate) {
+<span class="fc" id="L165">            this(null, pRate);</span>
+<span class="fc" id="L166">        }</span>
+
+        /**
+         * Constructor.
+         *
+         * @param pSource the source band
+         */
+<span class="nc" id="L173">        public MoneyWiseTaxBand(final MoneyWiseTaxBand pSource) {</span>
+<span class="nc" id="L174">            final OceanusMoney myAmount = pSource.getAmount();</span>
+<span class="nc bnc" id="L175" title="All 2 branches missed.">            theAmount = myAmount == null</span>
+<span class="nc" id="L176">                    ? null</span>
+<span class="nc" id="L177">                    : new OceanusMoney(myAmount);</span>
+<span class="nc" id="L178">            theRate = pSource.getRate();</span>
+<span class="nc" id="L179">        }</span>
+
+        /**
+         * Obtain the amount.
+         *
+         * @return the amount
+         */
+        public OceanusMoney getAmount() {
+<span class="nc" id="L187">            return theAmount;</span>
+        }
+
+        /**
+         * Obtain the rate.
+         *
+         * @return the rate
+         */
+        public OceanusRate getRate() {
+<span class="nc" id="L196">            return theRate;</span>
+        }
+
+        @Override
+        public String formatObject(final OceanusDataFormatter pFormatter) {
+<span class="nc" id="L201">            return toString();</span>
+        }
+
+        @Override
+        public String toString() {
+<span class="nc" id="L206">            final StringBuilder myBuilder = new StringBuilder();</span>
+<span class="nc bnc" id="L207" title="All 2 branches missed.">            if (theAmount != null) {</span>
+<span class="nc" id="L208">                myBuilder.append(theAmount);</span>
+<span class="nc" id="L209">                myBuilder.append('@');</span>
+            }
+<span class="nc" id="L211">            myBuilder.append(theRate);</span>
+<span class="nc" id="L212">            return myBuilder.toString();</span>
+        }
+
+        @Override
+        public MetisFieldSet&lt;MoneyWiseTaxBand&gt; getDataFieldSet() {
+<span class="nc" id="L217">            return FIELD_DEFS;</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

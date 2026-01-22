@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseValidateLoan.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.moneywise.data.validate</a> &gt; <span class="el_source">MoneyWiseValidateLoan.java</span></div><h1>MoneyWiseValidateLoan.java</h1><pre class="source lang-java linenums">/*
+ * MoneyWise: Finance Application
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.moneywise.data.validate;
+
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDataValidator.MoneyWiseDataValidatorAutoCorrect;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseLoan;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseLoan.MoneyWiseLoanList;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseLoanCategory;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseLoanCategory.MoneyWiseLoanCategoryList;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePayee;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePayee.MoneyWisePayeeList;
+import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseCurrency;
+import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseLoanCategoryClass;
+import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
+import io.github.tonywasher.joceanus.prometheus.views.PrometheusEditSet;
+
+import java.util.Iterator;
+
+/**
+ * Validator for Loan.
+ */
+public class MoneyWiseValidateLoan
+        extends MoneyWiseValidateAccount&lt;MoneyWiseLoan&gt;
+        implements MoneyWiseDataValidatorAutoCorrect&lt;MoneyWiseLoan&gt; {
+    /**
+     * New Account name.
+     */
+<span class="fc" id="L46">    private static final String NAME_NEWACCOUNT = MoneyWiseBasicResource.LOAN_NEWACCOUNT.getValue();</span>
+
+    /**
+     * The infoSet validator.
+     */
+    private final MoneyWiseValidateLoanInfoSet theInfoSet;
+
+    /**
+     * Constructor.
+     */
+<span class="fc" id="L56">    MoneyWiseValidateLoan() {</span>
+<span class="fc" id="L57">        theInfoSet = new MoneyWiseValidateLoanInfoSet();</span>
+<span class="fc" id="L58">    }</span>
+
+    @Override
+    public void setEditSet(final PrometheusEditSet pEditSet) {
+<span class="fc" id="L62">        super.setEditSet(pEditSet);</span>
+<span class="fc" id="L63">        theInfoSet.storeEditSet(pEditSet);</span>
+<span class="fc" id="L64">    }</span>
+
+    @Override
+    public void validate(final PrometheusDataItem pLoan) {
+<span class="fc" id="L68">        final MoneyWiseLoan myLoan = (MoneyWiseLoan) pLoan;</span>
+<span class="fc" id="L69">        final MoneyWisePayee myParent = myLoan.getParent();</span>
+<span class="fc" id="L70">        final MoneyWiseLoanCategory myCategory = myLoan.getCategory();</span>
+<span class="fc" id="L71">        final MoneyWiseCurrency myCurrency = myLoan.getAssetCurrency();</span>
+<span class="fc" id="L72">        final MoneyWiseLoanCategoryClass myClass = myLoan.getCategoryClass();</span>
+
+        /* Validate base components */
+<span class="fc" id="L75">        super.validate(pLoan);</span>
+
+        /* Category must be non-null */
+<span class="pc bpc" id="L78" title="1 of 2 branches missed.">        if (myCategory == null) {</span>
+<span class="nc" id="L79">            pLoan.addError(PrometheusDataItem.ERROR_MISSING, MoneyWiseBasicResource.CATEGORY_NAME);</span>
+<span class="pc bpc" id="L80" title="1 of 2 branches missed.">        } else if (myCategory.getCategoryTypeClass().isParentCategory()) {</span>
+<span class="nc" id="L81">            pLoan.addError(ERROR_BADCATEGORY, MoneyWiseBasicResource.CATEGORY_NAME);</span>
+        }
+
+        /* Currency must be non-null and enabled */
+<span class="pc bpc" id="L85" title="1 of 2 branches missed.">        if (myCurrency == null) {</span>
+<span class="nc" id="L86">            pLoan.addError(PrometheusDataItem.ERROR_MISSING, MoneyWiseStaticDataType.CURRENCY);</span>
+<span class="pc bpc" id="L87" title="1 of 2 branches missed.">        } else if (!myCurrency.getEnabled()) {</span>
+<span class="nc" id="L88">            pLoan.addError(PrometheusDataItem.ERROR_DISABLED, MoneyWiseStaticDataType.CURRENCY);</span>
+        }
+
+        /* Loan must be a child */
+<span class="pc bpc" id="L92" title="1 of 2 branches missed.">        if (!myClass.isChild()) {</span>
+<span class="nc" id="L93">            pLoan.addError(PrometheusDataItem.ERROR_EXIST, MoneyWiseBasicResource.ASSET_PARENT);</span>
+
+            /* Must have parent */
+<span class="pc bpc" id="L96" title="1 of 2 branches missed.">        } else if (myParent == null) {</span>
+<span class="nc" id="L97">            pLoan.addError(PrometheusDataItem.ERROR_MISSING, MoneyWiseBasicResource.ASSET_PARENT);</span>
+        } else {
+            /* Parent must be suitable */
+<span class="pc bpc" id="L100" title="1 of 2 branches missed.">            if (!myParent.getCategoryClass().canParentLoan(myClass)) {</span>
+<span class="nc" id="L101">                pLoan.addError(ERROR_BADPARENT, MoneyWiseBasicResource.ASSET_PARENT);</span>
+            }
+
+            /* If we are open then parent must be open */
+<span class="pc bpc" id="L105" title="2 of 4 branches missed.">            if (!myLoan.isClosed() &amp;&amp; Boolean.TRUE.equals(myParent.isClosed())) {</span>
+<span class="nc" id="L106">                pLoan.addError(ERROR_PARCLOSED, MoneyWiseBasicResource.ASSET_CLOSED);</span>
+            }
+        }
+
+        /* If we have an infoSet */
+<span class="pc bpc" id="L111" title="1 of 2 branches missed.">        if (myLoan.getInfoSet() != null) {</span>
+            /* Validate the InfoSet */
+<span class="fc" id="L113">            theInfoSet.validate(myLoan.getInfoSet());</span>
+        }
+
+        /* Set validation flag */
+<span class="pc bpc" id="L117" title="1 of 2 branches missed.">        if (!pLoan.hasErrors()) {</span>
+<span class="fc" id="L118">            pLoan.setValidEdit();</span>
+        }
+<span class="fc" id="L120">    }</span>
+
+    @Override
+    public void setDefaults(final MoneyWiseLoan pLoan) throws OceanusException {
+        /* Set values */
+<span class="nc" id="L125">        final MoneyWiseLoanList myList = pLoan.getList();</span>
+<span class="nc" id="L126">        pLoan.setName(getUniqueName(myList, NAME_NEWACCOUNT));</span>
+<span class="nc" id="L127">        pLoan.setCategory(getDefaultCategory());</span>
+<span class="nc" id="L128">        pLoan.setAssetCurrency(getReportingCurrency());</span>
+<span class="nc" id="L129">        pLoan.setClosed(Boolean.FALSE);</span>
+<span class="nc" id="L130">        autoCorrect(pLoan);</span>
+<span class="nc" id="L131">    }</span>
+
+    @Override
+    public void autoCorrect(final MoneyWiseLoan pLoan) throws OceanusException {
+        /* Access category class and parent */
+<span class="nc" id="L136">        final MoneyWiseLoanCategoryClass myClass = pLoan.getCategoryClass();</span>
+<span class="nc" id="L137">        final MoneyWisePayee myParent = pLoan.getParent();</span>
+
+        /* Ensure that we have valid parent */
+<span class="nc bnc" id="L140" title="All 2 branches missed.">        if (myParent == null</span>
+<span class="nc bnc" id="L141" title="All 2 branches missed.">                || !myParent.getCategoryClass().canParentLoan(myClass)) {</span>
+<span class="nc" id="L142">            pLoan.setParent(getDefaultParent(pLoan));</span>
+        }
+
+        /* autoCorrect the infoSet */
+<span class="nc" id="L146">        theInfoSet.autoCorrect(pLoan.getInfoSet());</span>
+<span class="nc" id="L147">    }</span>
+
+    /**
+     * Obtain default category for new loan account.
+     *
+     * @return the default category
+     */
+    private MoneyWiseLoanCategory getDefaultCategory() {
+        /* loop through the categories */
+<span class="nc" id="L156">        final MoneyWiseLoanCategoryList myCategories</span>
+<span class="nc" id="L157">                = getEditSet().getDataList(MoneyWiseBasicDataType.LOANCATEGORY, MoneyWiseLoanCategoryList.class);</span>
+<span class="nc" id="L158">        final Iterator&lt;MoneyWiseLoanCategory&gt; myIterator = myCategories.iterator();</span>
+<span class="nc bnc" id="L159" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L160">            final MoneyWiseLoanCategory myCategory = myIterator.next();</span>
+
+            /* Ignore deleted categories */
+<span class="nc bnc" id="L163" title="All 2 branches missed.">            if (myCategory.isDeleted()) {</span>
+<span class="nc" id="L164">                continue;</span>
+            }
+
+            /* If the category is not a parent */
+<span class="nc bnc" id="L168" title="All 2 branches missed.">            if (!myCategory.isCategoryClass(MoneyWiseLoanCategoryClass.PARENT)) {</span>
+<span class="nc" id="L169">                return myCategory;</span>
+            }
+<span class="nc" id="L171">        }</span>
+
+        /* Return no category */
+<span class="nc" id="L174">        return null;</span>
+    }
+
+    /**
+     * Obtain default parent for new loan.
+     *
+     * @param pLoan the loan
+     * @return the default parent
+     */
+    private MoneyWisePayee getDefaultParent(final MoneyWiseLoan pLoan) {
+        /* Access details */
+<span class="nc" id="L185">        final MoneyWisePayeeList myPayees = getEditSet().getDataList(MoneyWiseBasicDataType.PAYEE, MoneyWisePayeeList.class);</span>
+<span class="nc" id="L186">        final MoneyWiseLoanCategoryClass myClass = pLoan.getCategoryClass();</span>
+
+        /* loop through the payees */
+<span class="nc" id="L189">        final Iterator&lt;MoneyWisePayee&gt; myIterator = myPayees.iterator();</span>
+<span class="nc bnc" id="L190" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L191">            final MoneyWisePayee myPayee = myIterator.next();</span>
+
+            /* Ignore deleted and closed payees */
+<span class="nc bnc" id="L194" title="All 4 branches missed.">            if (myPayee.isDeleted() || Boolean.TRUE.equals(myPayee.isClosed())) {</span>
+<span class="nc" id="L195">                continue;</span>
+            }
+
+            /* If the payee can parent */
+<span class="nc bnc" id="L199" title="All 2 branches missed.">            if (myPayee.getCategoryClass().canParentLoan(myClass)) {</span>
+<span class="nc" id="L200">                return myPayee;</span>
+            }
+<span class="nc" id="L202">        }</span>
+
+        /* Return no payee */
+<span class="nc" id="L205">        return null;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

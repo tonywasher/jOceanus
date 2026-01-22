@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseCashInfoSet.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.moneywise.data.basic</a> &gt; <span class="el_source">MoneyWiseCashInfoSet.java</span></div><h1>MoneyWiseCashInfoSet.java</h1><pre class="source lang-java linenums">/*
+ * MoneyWise: Finance Application
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.moneywise.data.basic;
+
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.metis.data.MetisDataFieldValue;
+import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseCashInfo.MoneyWiseCashInfoList;
+import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseAccountInfoClass;
+import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseAccountInfoType.MoneyWiseAccountInfoTypeList;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataInfoClass;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataInfoSet;
+import io.github.tonywasher.joceanus.prometheus.views.PrometheusEditSet;
+
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.Map;
+
+/**
+ * CashInfoSet class.
+ *
+ * @author Tony Washer
+ */
+public class MoneyWiseCashInfoSet
+        extends PrometheusDataInfoSet&lt;MoneyWiseCashInfo&gt; {
+    /**
+     * Report fields.
+     */
+<span class="fc" id="L44">    private static final MetisFieldSet&lt;MoneyWiseCashInfoSet&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseCashInfoSet.class);</span>
+
+    /**
+     * FieldSet map.
+     */
+<span class="fc" id="L49">    private static final Map&lt;MetisDataFieldId, MoneyWiseAccountInfoClass&gt; FIELDSET_MAP = FIELD_DEFS.buildFieldMap(MoneyWiseAccountInfoClass.class, MoneyWiseCashInfoSet::getFieldValue);</span>
+
+    /**
+     * Reverse FieldSet map.
+     */
+<span class="fc" id="L54">    private static final Map&lt;MoneyWiseAccountInfoClass, MetisDataFieldId&gt; REVERSE_FIELDMAP = MetisFieldSet.reverseFieldMap(FIELDSET_MAP, MoneyWiseAccountInfoClass.class);</span>
+
+    /**
+     * AutoExpense Not Expense Error Text.
+     */
+<span class="fc" id="L59">    public static final String ERROR_AUTOEXP = MoneyWiseBasicResource.CASH_ERROR_AUTOEXPENSE.getValue();</span>
+
+    /**
+     * Constructor.
+     *
+     * @param pOwner    the Owner to which this Set belongs
+     * @param pTypeList the infoTypeList for the set
+     * @param pInfoList the InfoList for the set
+     */
+    protected MoneyWiseCashInfoSet(final MoneyWiseCash pOwner,
+                                   final MoneyWiseAccountInfoTypeList pTypeList,
+                                   final MoneyWiseCashInfoList pInfoList) {
+        /* Store the Owner and Info List */
+<span class="fc" id="L72">        super(pOwner, pTypeList, pInfoList);</span>
+<span class="fc" id="L73">    }</span>
+
+    @Override
+    public MetisFieldSetDef getDataFieldSet() {
+<span class="nc" id="L77">        return FIELD_DEFS;</span>
+    }
+
+    @Override
+    public MoneyWiseCash getOwner() {
+<span class="fc" id="L82">        return (MoneyWiseCash) super.getOwner();</span>
+    }
+
+    /**
+     * Obtain fieldValue for infoSet.
+     *
+     * @param pFieldId the fieldId
+     * @return the value
+     */
+    public Object getFieldValue(final MetisDataFieldId pFieldId) {
+        /* Handle InfoSet fields */
+<span class="fc" id="L93">        final MoneyWiseAccountInfoClass myClass = getClassForField(pFieldId);</span>
+<span class="pc bpc" id="L94" title="1 of 2 branches missed.">        if (myClass != null) {</span>
+<span class="fc" id="L95">            return getInfoSetValue(myClass);</span>
+        }
+
+        /* Pass onwards */
+<span class="nc" id="L99">        return null;</span>
+    }
+
+    /**
+     * Get an infoSet value.
+     *
+     * @param pInfoClass the class of info to get
+     * @return the value to set
+     */
+    private Object getInfoSetValue(final MoneyWiseAccountInfoClass pInfoClass) {
+        final Object myValue;
+
+<span class="fc bfc" id="L111" title="All 3 branches covered.">        switch (pInfoClass) {</span>
+            case AUTOPAYEE:
+                /* Access payee of object */
+<span class="fc" id="L114">                myValue = getPayee(pInfoClass);</span>
+<span class="fc" id="L115">                break;</span>
+            case AUTOEXPENSE:
+                /* Access event category of object */
+<span class="fc" id="L118">                myValue = getEventCategory(pInfoClass);</span>
+<span class="fc" id="L119">                break;</span>
+            default:
+                /* Access value of object */
+<span class="fc" id="L122">                myValue = getField(pInfoClass);</span>
+                break;
+        }
+
+        /* Return the value */
+<span class="fc bfc" id="L127" title="All 2 branches covered.">        return myValue != null</span>
+<span class="fc" id="L128">                ? myValue</span>
+<span class="fc" id="L129">                : MetisDataFieldValue.SKIP;</span>
+    }
+
+    /**
+     * Obtain the class of the field if it is an infoSet field.
+     *
+     * @param pField the field
+     * @return the class
+     */
+    public static MoneyWiseAccountInfoClass getClassForField(final MetisDataFieldId pField) {
+        /* Look up field in map */
+<span class="fc" id="L140">        return FIELDSET_MAP.get(pField);</span>
+    }
+
+    /**
+     * Obtain the field for the infoSet class.
+     *
+     * @param pClass the class
+     * @return the field
+     */
+    public static MetisDataFieldId getFieldForClass(final MoneyWiseAccountInfoClass pClass) {
+        /* Look up field in map */
+<span class="nc" id="L151">        return REVERSE_FIELDMAP.get(pClass);</span>
+    }
+
+    @Override
+    public MetisDataFieldId getFieldForClass(final PrometheusDataInfoClass pClass) {
+<span class="nc" id="L156">        return getFieldForClass((MoneyWiseAccountInfoClass) pClass);</span>
+    }
+
+    /**
+     * Obtain the payee for the infoClass.
+     *
+     * @param pInfoClass the Info Class
+     * @return the payee
+     */
+    public MoneyWisePayee getPayee(final MoneyWiseAccountInfoClass pInfoClass) {
+        /* Access existing entry */
+<span class="fc" id="L167">        final MoneyWiseCashInfo myValue = getInfo(pInfoClass);</span>
+
+        /* If we have no entry, return null */
+<span class="fc bfc" id="L170" title="All 2 branches covered.">        if (myValue == null) {</span>
+<span class="fc" id="L171">            return null;</span>
+        }
+
+        /* Return the payee */
+<span class="fc" id="L175">        return myValue.getPayee();</span>
+    }
+
+    /**
+     * Obtain the event category for the infoClass.
+     *
+     * @param pInfoClass the Info Class
+     * @return the event category
+     */
+    public MoneyWiseTransCategory getEventCategory(final MoneyWiseAccountInfoClass pInfoClass) {
+        /* Access existing entry */
+<span class="fc" id="L186">        final MoneyWiseCashInfo myValue = getInfo(pInfoClass);</span>
+
+        /* If we have no entry, return null */
+<span class="fc bfc" id="L189" title="All 2 branches covered.">        if (myValue == null) {</span>
+<span class="fc" id="L190">            return null;</span>
+        }
+
+        /* Return the event category */
+<span class="fc" id="L194">        return myValue.getEventCategory();</span>
+    }
+
+    @Override
+    public Iterator&lt;PrometheusDataInfoClass&gt; classIterator() {
+<span class="fc" id="L199">        final PrometheusDataInfoClass[] myValues = MoneyWiseAccountInfoClass.values();</span>
+<span class="fc" id="L200">        return Arrays.stream(myValues).iterator();</span>
+    }
+
+    /**
+     * Clone the dataInfoSet.
+     *
+     * @param pSource the InfoSet to clone
+     */
+    protected void cloneDataInfoSet(final MoneyWiseCashInfoSet pSource) {
+        /* Clone the dataInfoSet */
+<span class="fc" id="L210">        cloneTheDataInfoSet(pSource);</span>
+<span class="fc" id="L211">    }</span>
+
+    /**
+     * Resolve editSetLinks.
+     *
+     * @param pEditSet the editSet
+     * @throws OceanusException on error
+     */
+    void resolveEditSetLinks(final PrometheusEditSet pEditSet) throws OceanusException {
+        /* Loop through the items */
+<span class="fc bfc" id="L221" title="All 2 branches covered.">        for (MoneyWiseCashInfo myInfo : this) {</span>
+<span class="fc" id="L222">            myInfo.resolveEditSetLinks(pEditSet);</span>
+<span class="fc" id="L223">        }</span>
+<span class="fc" id="L224">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

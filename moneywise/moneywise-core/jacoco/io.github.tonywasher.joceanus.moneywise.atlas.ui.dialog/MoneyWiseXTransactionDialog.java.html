@@ -1,0 +1,1000 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseXTransactionDialog.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.moneywise.atlas.ui.dialog</a> &gt; <span class="el_source">MoneyWiseXTransactionDialog.java</span></div><h1>MoneyWiseXTransactionDialog.java</h1><pre class="source lang-java linenums">/*
+ * MoneyWise: Finance Application
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.moneywise.atlas.ui.dialog;
+
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateConfig;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
+import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldRequired;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.base.MoneyWiseXAnalysisEvent;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysis;
+import io.github.tonywasher.joceanus.moneywise.atlas.ui.controls.MoneyWiseXAnalysisSelect;
+import io.github.tonywasher.joceanus.moneywise.atlas.views.MoneyWiseXAnalysisFilter;
+import io.github.tonywasher.joceanus.moneywise.atlas.views.MoneyWiseXTransactionFilters;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseAssetBase;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseAssetBase.MoneyWiseAssetBaseList;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseAssetDirection;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseAssetType;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseCash.MoneyWiseCashList;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDataSet;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDataValidator.MoneyWiseDataValidatorTrans;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDeposit.MoneyWiseDepositList;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseLoan.MoneyWiseLoanList;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePayee.MoneyWisePayeeList;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePortfolio;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePortfolio.MoneyWisePortfolioList;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurity;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurityHolding;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurityHolding.MoneyWiseSecurityHoldingMap;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransAsset;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransCategory;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransCategory.MoneyWiseTransCategoryList;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransInfoSet;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransTag;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransTag.MoneyWiseTransTagList;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransaction;
+import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTransCategoryClass;
+import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTransInfoClass;
+import io.github.tonywasher.joceanus.moneywise.data.validate.MoneyWiseValidateTransaction;
+import io.github.tonywasher.joceanus.moneywise.ui.MoneyWiseIcon;
+import io.github.tonywasher.joceanus.moneywise.ui.MoneyWiseUIResource;
+import io.github.tonywasher.joceanus.moneywise.ui.base.MoneyWiseBaseTable;
+import io.github.tonywasher.joceanus.moneywise.ui.base.MoneyWiseItemPanel;
+import io.github.tonywasher.joceanus.prometheus.ui.fieldset.PrometheusFieldSet;
+import io.github.tonywasher.joceanus.prometheus.ui.fieldset.PrometheusFieldSetEvent;
+import io.github.tonywasher.joceanus.prometheus.views.PrometheusEditSet;
+import io.github.tonywasher.joceanus.tethys.api.control.TethysUIControl.TethysUIIconMapSet;
+import io.github.tonywasher.joceanus.tethys.api.factory.TethysUIFactory;
+import io.github.tonywasher.joceanus.tethys.api.field.TethysUIDataEditField.TethysUIDateButtonField;
+import io.github.tonywasher.joceanus.tethys.api.field.TethysUIDataEditField.TethysUIIconButtonField;
+import io.github.tonywasher.joceanus.tethys.api.field.TethysUIDataEditField.TethysUIIntegerEditField;
+import io.github.tonywasher.joceanus.tethys.api.field.TethysUIDataEditField.TethysUIListButtonField;
+import io.github.tonywasher.joceanus.tethys.api.field.TethysUIDataEditField.TethysUIMoneyEditField;
+import io.github.tonywasher.joceanus.tethys.api.field.TethysUIDataEditField.TethysUIRatioEditField;
+import io.github.tonywasher.joceanus.tethys.api.field.TethysUIDataEditField.TethysUIScrollButtonField;
+import io.github.tonywasher.joceanus.tethys.api.field.TethysUIDataEditField.TethysUIStringEditField;
+import io.github.tonywasher.joceanus.tethys.api.field.TethysUIDataEditField.TethysUIUnitsEditField;
+import io.github.tonywasher.joceanus.tethys.api.field.TethysUIFieldFactory;
+import io.github.tonywasher.joceanus.tethys.api.menu.TethysUIScrollItem;
+import io.github.tonywasher.joceanus.tethys.api.menu.TethysUIScrollMenu;
+import io.github.tonywasher.joceanus.tethys.api.menu.TethysUIScrollSubMenu;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * Panel to display/edit/create a Transaction.
+ */
+public class MoneyWiseXTransactionDialog
+        extends MoneyWiseItemPanel&lt;MoneyWiseXAnalysisEvent&gt; {
+    /**
+     * Info Tab Title.
+     */
+<span class="nc" id="L98">    private static final String TAB_INFO = MoneyWiseUIResource.TRANSPANEL_TAB_INFO.getValue();</span>
+
+    /**
+     * Tax Tab Title.
+     */
+<span class="nc" id="L103">    private static final String TAB_TAXES = MoneyWiseUIResource.TRANSPANEL_TAB_TAXES.getValue();</span>
+
+    /**
+     * Securities Tab Title.
+     */
+<span class="nc" id="L108">    private static final String TAB_SECURITIES = MoneyWiseUIResource.TRANSPANEL_TAB_SECURITIES.getValue();</span>
+
+    /**
+     * Returned Tab Title.
+     */
+<span class="nc" id="L113">    private static final String TAB_RETURNED = MoneyWiseUIResource.TRANSPANEL_TAB_RETURNED.getValue();</span>
+
+    /**
+     * The fieldSet.
+     */
+    private final PrometheusFieldSet&lt;MoneyWiseXAnalysisEvent&gt; theFieldSet;
+
+    /**
+     * Analysis selection panel.
+     */
+    private final MoneyWiseXAnalysisSelect theAnalysisSelect;
+
+    /**
+     * dateRange.
+     */
+    private OceanusDateRange theRange;
+
+    /**
+     * transaction.
+     */
+    private MoneyWiseTransaction theTransaction;
+
+    /**
+     * reconciledState.
+     */
+<span class="nc" id="L138">    private Boolean theReconciledState = Boolean.FALSE;</span>
+
+    /**
+     * directionState.
+     */
+<span class="nc" id="L143">    private Boolean theDirectionState = Boolean.FALSE;</span>
+
+    /**
+     * Constructor.
+     *
+     * @param pFactory        the GUI factory
+     * @param pEditSet        the edit set
+     * @param pAnalysisSelect the analysis selection panel
+     * @param pOwner          the owning table
+     */
+    public MoneyWiseXTransactionDialog(final TethysUIFactory&lt;?&gt; pFactory,
+                                       final PrometheusEditSet pEditSet,
+                                       final MoneyWiseXAnalysisSelect pAnalysisSelect,
+                                       final MoneyWiseBaseTable&lt;MoneyWiseXAnalysisEvent&gt; pOwner) {
+        /* Initialise the panel */
+<span class="nc" id="L158">        super(pFactory, pEditSet, pOwner);</span>
+<span class="nc" id="L159">        theAnalysisSelect = pAnalysisSelect;</span>
+
+        /* Access the fieldSet */
+<span class="nc" id="L162">        theFieldSet = getFieldSet();</span>
+
+        /* Build the main panel */
+<span class="nc" id="L165">        buildMainPanel(pFactory);</span>
+
+        /* Build the info panel */
+<span class="nc" id="L168">        buildInfoPanel(pFactory);</span>
+
+        /* Build the tax panel */
+<span class="nc" id="L171">        buildTaxPanel(pFactory);</span>
+
+        /* Build the securities panel */
+<span class="nc" id="L174">        buildSecuritiesPanel(pFactory);</span>
+
+        /* Build the returned panel */
+<span class="nc" id="L177">        buildReturnedPanel(pFactory);</span>
+<span class="nc" id="L178">    }</span>
+
+    /**
+     * Build Main subPanel.
+     *
+     * @param pFactory the GUI factory
+     */
+    private void buildMainPanel(final TethysUIFactory&lt;?&gt; pFactory) {
+        /* Allocate fields */
+<span class="nc" id="L187">        final TethysUIFieldFactory myFields = pFactory.fieldFactory();</span>
+<span class="nc" id="L188">        final TethysUIMoneyEditField myAmount = myFields.newMoneyField();</span>
+
+        /* Create the buttons */
+<span class="nc" id="L191">        final TethysUIDateButtonField myDateButton = myFields.newDateField();</span>
+<span class="nc" id="L192">        final TethysUIScrollButtonField&lt;MoneyWiseTransAsset&gt; myAccountButton = myFields.newScrollField(MoneyWiseTransAsset.class);</span>
+<span class="nc" id="L193">        final TethysUIScrollButtonField&lt;MoneyWiseTransAsset&gt; myPartnerButton = myFields.newScrollField(MoneyWiseTransAsset.class);</span>
+<span class="nc" id="L194">        final TethysUIScrollButtonField&lt;MoneyWiseTransCategory&gt; myCategoryButton = myFields.newScrollField(MoneyWiseTransCategory.class);</span>
+<span class="nc" id="L195">        final TethysUIIconButtonField&lt;Boolean&gt; myReconciledButton = myFields.newIconField(Boolean.class);</span>
+<span class="nc" id="L196">        final TethysUIIconButtonField&lt;MoneyWiseAssetDirection&gt; myDirectionButton = myFields.newIconField(MoneyWiseAssetDirection.class);</span>
+
+        /* Assign the fields to the panel */
+<span class="nc" id="L199">        theFieldSet.addField(MoneyWiseBasicResource.MONEYWISEDATA_FIELD_DATE, myDateButton, MoneyWiseXAnalysisEvent::getDate);</span>
+<span class="nc" id="L200">        theFieldSet.addField(MoneyWiseBasicResource.TRANSACTION_ACCOUNT, myAccountButton, MoneyWiseXAnalysisEvent::getAccount);</span>
+<span class="nc" id="L201">        theFieldSet.addField(MoneyWiseBasicDataType.TRANSCATEGORY, myCategoryButton, MoneyWiseXAnalysisEvent::getCategory);</span>
+<span class="nc" id="L202">        theFieldSet.addField(MoneyWiseBasicResource.TRANSACTION_DIRECTION, myDirectionButton, MoneyWiseXAnalysisEvent::getDirection);</span>
+<span class="nc" id="L203">        theFieldSet.addField(MoneyWiseBasicResource.TRANSACTION_PARTNER, myPartnerButton, MoneyWiseXAnalysisEvent::getPartner);</span>
+<span class="nc" id="L204">        theFieldSet.addField(MoneyWiseBasicResource.TRANSACTION_AMOUNT, myAmount, MoneyWiseXAnalysisEvent::getAmount);</span>
+<span class="nc" id="L205">        theFieldSet.addField(MoneyWiseBasicResource.TRANSACTION_RECONCILED, myReconciledButton, MoneyWiseXAnalysisEvent::isReconciled);</span>
+
+        /* Configure the menuBuilders */
+<span class="nc" id="L208">        myDateButton.setDateConfigurator(this::handleDateConfig);</span>
+<span class="nc" id="L209">        myAccountButton.setMenuConfigurator(c -&gt; buildAccountMenu(c, getItem()));</span>
+<span class="nc" id="L210">        myCategoryButton.setMenuConfigurator(c -&gt; buildCategoryMenu(c, getItem()));</span>
+<span class="nc" id="L211">        myPartnerButton.setMenuConfigurator(c -&gt; buildPartnerMenu(c, getItem()));</span>
+<span class="nc" id="L212">        final Map&lt;Boolean, TethysUIIconMapSet&lt;Boolean&gt;&gt; myRecMapSets = MoneyWiseIcon.configureReconciledIconButton(pFactory);</span>
+<span class="nc" id="L213">        myReconciledButton.setIconMapSet(() -&gt; myRecMapSets.get(theReconciledState));</span>
+<span class="nc" id="L214">        final Map&lt;Boolean, TethysUIIconMapSet&lt;MoneyWiseAssetDirection&gt;&gt; myDirMapSets = MoneyWiseIcon.configureDirectionIconButton(pFactory);</span>
+<span class="nc" id="L215">        myDirectionButton.setIconMapSet(() -&gt; myDirMapSets.get(theDirectionState));</span>
+<span class="nc" id="L216">        myAmount.setDeemedCurrency(() -&gt; getItem().getAccount().getCurrency());</span>
+<span class="nc" id="L217">    }</span>
+
+    /**
+     * Build info subPanel.
+     *
+     * @param pFactory the GUI factory
+     */
+    private void buildInfoPanel(final TethysUIFactory&lt;?&gt; pFactory) {
+        /* Create a new panel */
+<span class="nc" id="L226">        theFieldSet.newPanel(TAB_INFO);</span>
+
+        /* Allocate fields */
+<span class="nc" id="L229">        final TethysUIFieldFactory myFields = pFactory.fieldFactory();</span>
+<span class="nc" id="L230">        final TethysUIMoneyEditField myAmount = myFields.newMoneyField();</span>
+<span class="nc" id="L231">        final TethysUIStringEditField myComments = myFields.newStringField();</span>
+<span class="nc" id="L232">        final TethysUIStringEditField myReference = myFields.newStringField();</span>
+
+        /* Create the buttons */
+<span class="nc" id="L235">        final TethysUIListButtonField&lt;MoneyWiseTransTag&gt; myTagButton = myFields.newListField();</span>
+
+        /* Assign the fields to the panel */
+<span class="nc" id="L238">        theFieldSet.addField(MoneyWiseTransInfoClass.PARTNERAMOUNT, myAmount, MoneyWiseXAnalysisEvent::getPartnerAmount);</span>
+<span class="nc" id="L239">        theFieldSet.addField(MoneyWiseTransInfoClass.COMMENTS, myComments, MoneyWiseXAnalysisEvent::getComments);</span>
+<span class="nc" id="L240">        theFieldSet.addField(MoneyWiseTransInfoClass.REFERENCE, myReference, MoneyWiseXAnalysisEvent::getReference);</span>
+<span class="nc" id="L241">        theFieldSet.addField(MoneyWiseTransInfoClass.TRANSTAG, myTagButton, MoneyWiseXAnalysisEvent::getTransactionTags);</span>
+
+        /* Configure the tag button */
+<span class="nc" id="L244">        myTagButton.setSelectables(this::buildTransactionTags);</span>
+
+        /* Set currency */
+<span class="nc" id="L247">        myAmount.setDeemedCurrency(() -&gt; getItem().getPartner().getCurrency());</span>
+<span class="nc" id="L248">    }</span>
+
+    /**
+     * Build tax subPanel.
+     *
+     * @param pFactory the GUI factory
+     */
+    private void buildTaxPanel(final TethysUIFactory&lt;?&gt; pFactory) {
+        /* Create a new panel */
+<span class="nc" id="L257">        theFieldSet.newPanel(TAB_TAXES);</span>
+
+        /* Allocate fields */
+<span class="nc" id="L260">        final TethysUIFieldFactory myFields = pFactory.fieldFactory();</span>
+<span class="nc" id="L261">        final TethysUIMoneyEditField myTaxCredit = myFields.newMoneyField();</span>
+<span class="nc" id="L262">        final TethysUIMoneyEditField myEeNatIns = myFields.newMoneyField();</span>
+<span class="nc" id="L263">        final TethysUIMoneyEditField myErNatIns = myFields.newMoneyField();</span>
+<span class="nc" id="L264">        final TethysUIMoneyEditField myBenefit = myFields.newMoneyField();</span>
+<span class="nc" id="L265">        final TethysUIMoneyEditField myWithheld = myFields.newMoneyField();</span>
+<span class="nc" id="L266">        final TethysUIIntegerEditField myYears = myFields.newIntegerField();</span>
+
+        /* Assign the fields to the panel */
+<span class="nc" id="L269">        theFieldSet.addField(MoneyWiseTransInfoClass.TAXCREDIT, myTaxCredit, MoneyWiseXAnalysisEvent::getTaxCredit);</span>
+<span class="nc" id="L270">        theFieldSet.addField(MoneyWiseTransInfoClass.EMPLOYEENATINS, myEeNatIns, MoneyWiseXAnalysisEvent::getEmployeeNatIns);</span>
+<span class="nc" id="L271">        theFieldSet.addField(MoneyWiseTransInfoClass.EMPLOYERNATINS, myErNatIns, MoneyWiseXAnalysisEvent::getEmployerNatIns);</span>
+<span class="nc" id="L272">        theFieldSet.addField(MoneyWiseTransInfoClass.DEEMEDBENEFIT, myBenefit, MoneyWiseXAnalysisEvent::getDeemedBenefit);</span>
+<span class="nc" id="L273">        theFieldSet.addField(MoneyWiseTransInfoClass.WITHHELD, myWithheld, MoneyWiseXAnalysisEvent::getWithheld);</span>
+
+        /* Set currency */
+<span class="nc" id="L276">        myTaxCredit.setDeemedCurrency(() -&gt; getItem().getAccount().getCurrency());</span>
+<span class="nc" id="L277">        myEeNatIns.setDeemedCurrency(() -&gt; getItem().getAccount().getCurrency());</span>
+<span class="nc" id="L278">        myErNatIns.setDeemedCurrency(() -&gt; getItem().getAccount().getCurrency());</span>
+<span class="nc" id="L279">        myBenefit.setDeemedCurrency(() -&gt; getItem().getAccount().getCurrency());</span>
+<span class="nc" id="L280">        myWithheld.setDeemedCurrency(() -&gt; getItem().getAccount().getCurrency());</span>
+<span class="nc" id="L281">    }</span>
+
+    /**
+     * Build securities subPanel.
+     *
+     * @param pFactory the GUI factory
+     */
+    private void buildSecuritiesPanel(final TethysUIFactory&lt;?&gt; pFactory) {
+        /* Create a new panel */
+<span class="nc" id="L290">        theFieldSet.newPanel(TAB_SECURITIES);</span>
+
+        /* Allocate fields */
+<span class="nc" id="L293">        final TethysUIFieldFactory myFields = pFactory.fieldFactory();</span>
+<span class="nc" id="L294">        final TethysUIUnitsEditField myAccountUnits = myFields.newUnitsField();</span>
+<span class="nc" id="L295">        final TethysUIUnitsEditField myPartnerUnits = myFields.newUnitsField();</span>
+<span class="nc" id="L296">        final TethysUIRatioEditField myDilution = myFields.newRatioField();</span>
+
+        /* Assign the fields to the panel */
+<span class="nc" id="L299">        theFieldSet.addField(MoneyWiseTransInfoClass.ACCOUNTDELTAUNITS, myAccountUnits, MoneyWiseXAnalysisEvent::getAccountDeltaUnits);</span>
+<span class="nc" id="L300">        theFieldSet.addField(MoneyWiseTransInfoClass.PARTNERDELTAUNITS, myPartnerUnits, MoneyWiseXAnalysisEvent::getPartnerDeltaUnits);</span>
+<span class="nc" id="L301">        theFieldSet.addField(MoneyWiseTransInfoClass.DILUTION, myDilution, MoneyWiseXAnalysisEvent::getDilution);</span>
+<span class="nc" id="L302">    }</span>
+
+    /**
+     * Build returned subPanel.
+     *
+     * @param pFactory the GUI factory
+     */
+    private void buildReturnedPanel(final TethysUIFactory&lt;?&gt; pFactory) {
+        /* Create a new panel */
+<span class="nc" id="L311">        theFieldSet.newPanel(TAB_RETURNED);</span>
+
+        /* Allocate fields */
+<span class="nc" id="L314">        final TethysUIFieldFactory myFields = pFactory.fieldFactory();</span>
+<span class="nc" id="L315">        final TethysUIMoneyEditField myReturnedCash = myFields.newMoneyField();</span>
+
+        /* Create the buttons */
+<span class="nc" id="L318">        final TethysUIScrollButtonField&lt;MoneyWiseTransAsset&gt; myReturnedAccountButton = myFields.newScrollField(MoneyWiseTransAsset.class);</span>
+
+        /* Assign the fields to the panel */
+<span class="nc" id="L321">        theFieldSet.addField(MoneyWiseTransInfoClass.RETURNEDCASHACCOUNT, myReturnedAccountButton, MoneyWiseXAnalysisEvent::getReturnedCashAccount);</span>
+<span class="nc" id="L322">        theFieldSet.addField(MoneyWiseTransInfoClass.RETURNEDCASH, myReturnedCash, MoneyWiseXAnalysisEvent::getReturnedCash);</span>
+
+        /* Configure the menuBuilders */
+<span class="nc" id="L325">        myReturnedAccountButton.setMenuConfigurator(c -&gt; buildReturnedAccountMenu(c, getItem()));</span>
+
+        /* Set currency */
+<span class="nc" id="L328">        myReturnedCash.setDeemedCurrency(() -&gt; getItem().getReturnedCashAccount().getCurrency());</span>
+<span class="nc" id="L329">    }</span>
+
+    @Override
+    public void refreshData() {
+        /* If we have an item */
+<span class="nc" id="L334">        final MoneyWiseXAnalysisEvent myItem = getItem();</span>
+        //if (myItem != null) {
+        /* TODO Reselect from list of Events - Where is this list? */
+        //setItem(myTrans.findItemById(myItem.getIndexedId()));
+        //}
+
+        /* Make sure that the item is not editable */
+<span class="nc" id="L341">        setEditable(false);</span>
+<span class="nc" id="L342">    }</span>
+
+    /**
+     * Update editors.
+     *
+     * @param pRange the date range.
+     */
+    public void updateEditors(final OceanusDateRange pRange) {
+        /* Update the range */
+<span class="nc" id="L351">        theRange = pRange;</span>
+<span class="nc" id="L352">    }</span>
+
+    /**
+     * Handle dateConfig.
+     *
+     * @param pConfig the dateConfig
+     */
+    private void handleDateConfig(final OceanusDateConfig pConfig) {
+        /* Update Date button */
+<span class="nc bnc" id="L361" title="All 2 branches missed.">        pConfig.setEarliestDate(theRange != null</span>
+<span class="nc" id="L362">                ? theRange.getStart()</span>
+<span class="nc" id="L363">                : null);</span>
+<span class="nc bnc" id="L364" title="All 2 branches missed.">        pConfig.setLatestDate(theRange != null</span>
+<span class="nc" id="L365">                ? theRange.getEnd()</span>
+<span class="nc" id="L366">                : null);</span>
+<span class="nc" id="L367">    }</span>
+
+    @Override
+    public boolean isDeletable() {
+<span class="nc bnc" id="L371" title="All 4 branches missed.">        return getItem() != null &amp;&amp; !getItem().isReconciled();</span>
+    }
+
+    @Override
+    protected void adjustFields(final boolean isEditable) {
+        /* Access the item */
+<span class="nc" id="L377">        final MoneyWiseTransaction myTrans = getItem().getTransaction();</span>
+<span class="nc" id="L378">        final boolean bIsReconciled = myTrans.isReconciled();</span>
+<span class="nc" id="L379">        final boolean bIsLocked = myTrans.isLocked();</span>
+
+        /* Determine whether the comments field should be visible */
+<span class="nc bnc" id="L382" title="All 4 branches missed.">        boolean bShowField = isEditable || myTrans.getComments() != null;</span>
+<span class="nc" id="L383">        theFieldSet.setFieldVisible(MoneyWiseTransInfoClass.COMMENTS, bShowField);</span>
+
+        /* Determine whether the reference field should be visible */
+<span class="nc bnc" id="L386" title="All 4 branches missed.">        bShowField = isEditable || myTrans.getReference() != null;</span>
+<span class="nc" id="L387">        theFieldSet.setFieldVisible(MoneyWiseTransInfoClass.REFERENCE, bShowField);</span>
+
+        /* Determine whether the tags field should be visible */
+<span class="nc bnc" id="L390" title="All 4 branches missed.">        bShowField = isEditable || myTrans.getTransactionTags() != null;</span>
+<span class="nc" id="L391">        theFieldSet.setFieldVisible(MoneyWiseTransInfoClass.TRANSTAG, bShowField);</span>
+
+        /* Determine whether the partnerAmount field should be visible */
+<span class="nc bnc" id="L394" title="All 4 branches missed.">        boolean bEditField = isEditable &amp;&amp; isEditableField(myTrans, MoneyWiseTransInfoClass.PARTNERAMOUNT);</span>
+<span class="nc bnc" id="L395" title="All 4 branches missed.">        bShowField = bEditField || myTrans.getPartnerAmount() != null;</span>
+<span class="nc" id="L396">        theFieldSet.setFieldVisible(MoneyWiseTransInfoClass.PARTNERAMOUNT, bShowField);</span>
+<span class="nc" id="L397">        theFieldSet.setFieldEditable(MoneyWiseTransInfoClass.PARTNERAMOUNT, bEditField);</span>
+
+        /* Determine whether the taxCredit field should be visible */
+<span class="nc bnc" id="L400" title="All 4 branches missed.">        bEditField = isEditable &amp;&amp; isEditableField(myTrans, MoneyWiseTransInfoClass.TAXCREDIT);</span>
+<span class="nc bnc" id="L401" title="All 4 branches missed.">        bShowField = bEditField || myTrans.getTaxCredit() != null;</span>
+<span class="nc" id="L402">        theFieldSet.setFieldVisible(MoneyWiseTransInfoClass.TAXCREDIT, bShowField);</span>
+<span class="nc" id="L403">        theFieldSet.setFieldEditable(MoneyWiseTransInfoClass.TAXCREDIT, bEditField);</span>
+
+        /* Determine whether the EeNatIns field should be visible */
+<span class="nc bnc" id="L406" title="All 4 branches missed.">        bEditField = isEditable &amp;&amp; isEditableField(myTrans, MoneyWiseTransInfoClass.EMPLOYEENATINS);</span>
+<span class="nc bnc" id="L407" title="All 4 branches missed.">        bShowField = bEditField || myTrans.getEmployeeNatIns() != null;</span>
+<span class="nc" id="L408">        theFieldSet.setFieldVisible(MoneyWiseTransInfoClass.EMPLOYEENATINS, bShowField);</span>
+<span class="nc" id="L409">        theFieldSet.setFieldEditable(MoneyWiseTransInfoClass.EMPLOYEENATINS, bEditField);</span>
+
+        /* Determine whether the ErnatIns field should be visible */
+<span class="nc bnc" id="L412" title="All 4 branches missed.">        bEditField = isEditable &amp;&amp; isEditableField(myTrans, MoneyWiseTransInfoClass.EMPLOYERNATINS);</span>
+<span class="nc bnc" id="L413" title="All 4 branches missed.">        bShowField = bEditField || myTrans.getEmployerNatIns() != null;</span>
+<span class="nc" id="L414">        theFieldSet.setFieldVisible(MoneyWiseTransInfoClass.EMPLOYERNATINS, bShowField);</span>
+<span class="nc" id="L415">        theFieldSet.setFieldEditable(MoneyWiseTransInfoClass.EMPLOYERNATINS, bEditField);</span>
+
+        /* Determine whether the benefit field should be visible */
+<span class="nc bnc" id="L418" title="All 4 branches missed.">        bEditField = isEditable &amp;&amp; isEditableField(myTrans, MoneyWiseTransInfoClass.DEEMEDBENEFIT);</span>
+<span class="nc bnc" id="L419" title="All 4 branches missed.">        bShowField = bEditField || myTrans.getDeemedBenefit() != null;</span>
+<span class="nc" id="L420">        theFieldSet.setFieldVisible(MoneyWiseTransInfoClass.DEEMEDBENEFIT, bShowField);</span>
+<span class="nc" id="L421">        theFieldSet.setFieldEditable(MoneyWiseTransInfoClass.DEEMEDBENEFIT, bEditField);</span>
+
+        /* Determine whether the donation field should be visible */
+<span class="nc bnc" id="L424" title="All 4 branches missed.">        bEditField = isEditable &amp;&amp; isEditableField(myTrans, MoneyWiseTransInfoClass.WITHHELD);</span>
+<span class="nc bnc" id="L425" title="All 4 branches missed.">        bShowField = bEditField || myTrans.getWithheld() != null;</span>
+<span class="nc" id="L426">        theFieldSet.setFieldVisible(MoneyWiseTransInfoClass.WITHHELD, bShowField);</span>
+<span class="nc" id="L427">        theFieldSet.setFieldEditable(MoneyWiseTransInfoClass.WITHHELD, bEditField);</span>
+
+        /* Determine whether the account units field should be visible */
+<span class="nc bnc" id="L430" title="All 4 branches missed.">        bEditField = isEditable &amp;&amp; isEditableField(myTrans, MoneyWiseTransInfoClass.ACCOUNTDELTAUNITS);</span>
+<span class="nc bnc" id="L431" title="All 4 branches missed.">        bShowField = bEditField || myTrans.getAccountDeltaUnits() != null;</span>
+<span class="nc" id="L432">        theFieldSet.setFieldVisible(MoneyWiseTransInfoClass.ACCOUNTDELTAUNITS, bShowField);</span>
+<span class="nc" id="L433">        theFieldSet.setFieldEditable(MoneyWiseTransInfoClass.ACCOUNTDELTAUNITS, bEditField);</span>
+
+        /* Determine whether the partnerDeltaUnits field should be visible */
+<span class="nc bnc" id="L436" title="All 4 branches missed.">        bEditField = isEditable &amp;&amp; isEditableField(myTrans, MoneyWiseTransInfoClass.PARTNERDELTAUNITS);</span>
+<span class="nc bnc" id="L437" title="All 4 branches missed.">        bShowField = bEditField || myTrans.getPartnerDeltaUnits() != null;</span>
+<span class="nc" id="L438">        theFieldSet.setFieldVisible(MoneyWiseTransInfoClass.PARTNERDELTAUNITS, bShowField);</span>
+<span class="nc" id="L439">        theFieldSet.setFieldEditable(MoneyWiseTransInfoClass.PARTNERDELTAUNITS, bEditField);</span>
+
+        /* Determine whether the dilution field should be visible */
+<span class="nc bnc" id="L442" title="All 4 branches missed.">        bEditField = isEditable &amp;&amp; isEditableField(myTrans, MoneyWiseTransInfoClass.DILUTION);</span>
+<span class="nc bnc" id="L443" title="All 4 branches missed.">        bShowField = bEditField || myTrans.getDilution() != null;</span>
+<span class="nc" id="L444">        theFieldSet.setFieldVisible(MoneyWiseTransInfoClass.DILUTION, bShowField);</span>
+<span class="nc" id="L445">        theFieldSet.setFieldEditable(MoneyWiseTransInfoClass.DILUTION, bEditField);</span>
+
+        /* Determine whether the returnedAccount field should be visible */
+<span class="nc bnc" id="L448" title="All 4 branches missed.">        bEditField = isEditable &amp;&amp; isEditableField(myTrans, MoneyWiseTransInfoClass.RETURNEDCASHACCOUNT);</span>
+<span class="nc bnc" id="L449" title="All 4 branches missed.">        bShowField = bEditField || myTrans.getReturnedCashAccount() != null;</span>
+<span class="nc" id="L450">        theFieldSet.setFieldVisible(MoneyWiseTransInfoClass.RETURNEDCASHACCOUNT, bShowField);</span>
+<span class="nc" id="L451">        theFieldSet.setFieldEditable(MoneyWiseTransInfoClass.RETURNEDCASHACCOUNT, bEditField);</span>
+
+        /* Determine whether the returnedCash field should be visible */
+<span class="nc bnc" id="L454" title="All 4 branches missed.">        bEditField = isEditable &amp;&amp; isEditableField(myTrans, MoneyWiseTransInfoClass.RETURNEDCASH);</span>
+<span class="nc bnc" id="L455" title="All 4 branches missed.">        bShowField = bEditField || myTrans.getReturnedCash() != null;</span>
+<span class="nc" id="L456">        theFieldSet.setFieldVisible(MoneyWiseTransInfoClass.RETURNEDCASH, bShowField);</span>
+<span class="nc" id="L457">        theFieldSet.setFieldEditable(MoneyWiseTransInfoClass.RETURNEDCASH, bEditField);</span>
+
+        /* Determine whether the reconciled field should be visible */
+<span class="nc bnc" id="L460" title="All 4 branches missed.">        final boolean bShowReconciled = isEditable || bIsReconciled;</span>
+<span class="nc" id="L461">        theReconciledState = bIsLocked;</span>
+<span class="nc" id="L462">        theDirectionState = bIsReconciled;</span>
+<span class="nc" id="L463">        theFieldSet.setFieldVisible(MoneyWiseBasicResource.TRANSACTION_RECONCILED, bShowReconciled);</span>
+<span class="nc bnc" id="L464" title="All 4 branches missed.">        theFieldSet.setFieldEditable(MoneyWiseBasicResource.TRANSACTION_RECONCILED, isEditable &amp;&amp; !bIsLocked);</span>
+
+        /* Determine basic editing */
+<span class="nc bnc" id="L467" title="All 4 branches missed.">        final boolean canEdit = isEditable &amp;&amp; !bIsReconciled;</span>
+<span class="nc" id="L468">        final boolean needsNullAmount = myTrans.needsNullAmount();</span>
+<span class="nc bnc" id="L469" title="All 4 branches missed.">        theFieldSet.setFieldEditable(MoneyWiseBasicResource.TRANSACTION_DIRECTION, canEdit &amp;&amp; myTrans.canSwitchDirection());</span>
+<span class="nc" id="L470">        theFieldSet.setFieldEditable(MoneyWiseBasicResource.TRANSACTION_ACCOUNT, canEdit);</span>
+<span class="nc" id="L471">        theFieldSet.setFieldEditable(MoneyWiseBasicResource.TRANSACTION_PARTNER, canEdit);</span>
+<span class="nc" id="L472">        theFieldSet.setFieldEditable(MoneyWiseBasicDataType.TRANSCATEGORY, canEdit);</span>
+<span class="nc" id="L473">        theFieldSet.setFieldEditable(MoneyWiseBasicResource.MONEYWISEDATA_FIELD_DATE, canEdit);</span>
+<span class="nc bnc" id="L474" title="All 4 branches missed.">        theFieldSet.setFieldEditable(MoneyWiseBasicResource.TRANSACTION_AMOUNT, canEdit &amp;&amp; !needsNullAmount);</span>
+<span class="nc bnc" id="L475" title="All 2 branches missed.">        theFieldSet.setFieldVisible(MoneyWiseBasicResource.TRANSACTION_AMOUNT, !needsNullAmount);</span>
+
+        /* Set the range for the dateButton */
+<span class="nc" id="L478">        final MoneyWiseValidateTransaction myBuilder = (MoneyWiseValidateTransaction) myTrans.getList().getValidator();</span>
+<span class="nc" id="L479">        theRange = myBuilder.getRange();</span>
+<span class="nc" id="L480">    }</span>
+
+    /**
+     * Is the field editable?
+     *
+     * @param pTrans the transaction
+     * @param pField the field class
+     * @return true/false
+     */
+    public static boolean isEditableField(final MoneyWiseTransaction pTrans,
+                                          final MoneyWiseTransInfoClass pField) {
+        /* Access the infoSet */
+<span class="nc" id="L492">        final MoneyWiseTransInfoSet myInfoSet = pTrans.getInfoSet();</span>
+
+        /* If the transaction is reconciled */
+<span class="nc bnc" id="L495" title="All 2 branches missed.">        if (Boolean.TRUE.equals(pTrans.isReconciled())) {</span>
+            /* Only allow editing of metaData */
+<span class="nc" id="L497">            return myInfoSet.isMetaData(pField);</span>
+        }
+
+        /* Check whether the field is available */
+<span class="nc" id="L501">        final MoneyWiseValidateTransaction myValidator = (MoneyWiseValidateTransaction) pTrans.getList().getValidator();</span>
+<span class="nc" id="L502">        final MetisFieldRequired isRequired = myValidator.isClassRequired(pTrans, pField);</span>
+<span class="nc bnc" id="L503" title="All 2 branches missed.">        return !isRequired.equals(MetisFieldRequired.NOTALLOWED);</span>
+    }
+
+    @SuppressWarnings(&quot;unchecked&quot;)
+    @Override
+    protected void updateField(final PrometheusFieldSetEvent pUpdate) throws OceanusException {
+        /* Access the field */
+<span class="nc" id="L510">        final MetisDataFieldId myField = pUpdate.getFieldId();</span>
+<span class="nc" id="L511">        final MoneyWiseTransaction myTrans = getItem().getTransaction();</span>
+<span class="nc" id="L512">        final MoneyWiseValidateTransaction myBuilder = (MoneyWiseValidateTransaction) myTrans.getList().getValidator();</span>
+
+        /* Process updates */
+<span class="nc bnc" id="L515" title="All 2 branches missed.">        if (MoneyWiseBasicResource.MONEYWISEDATA_FIELD_DATE.equals(myField)) {</span>
+            /* Update the Date */
+<span class="nc" id="L517">            myTrans.setDate(pUpdate.getValue(OceanusDate.class));</span>
+<span class="nc bnc" id="L518" title="All 2 branches missed.">        } else if (MoneyWiseBasicResource.TRANSACTION_AMOUNT.equals(myField)) {</span>
+            /* Update the Amount */
+<span class="nc" id="L520">            myTrans.setAmount(pUpdate.getValue(OceanusMoney.class));</span>
+<span class="nc" id="L521">            myBuilder.autoCorrect(myTrans);</span>
+<span class="nc bnc" id="L522" title="All 2 branches missed.">        } else if (MoneyWiseBasicResource.TRANSACTION_ACCOUNT.equals(myField)) {</span>
+            /* Update the Account */
+<span class="nc" id="L524">            myTrans.setAccount(resolveAsset(pUpdate.getValue(MoneyWiseTransAsset.class)));</span>
+<span class="nc" id="L525">            myBuilder.autoCorrect(myTrans);</span>
+<span class="nc bnc" id="L526" title="All 2 branches missed.">        } else if (MoneyWiseBasicResource.TRANSACTION_DIRECTION.equals(myField)) {</span>
+            /* Update the Direction */
+<span class="nc" id="L528">            myTrans.switchDirection();</span>
+<span class="nc" id="L529">            myBuilder.autoCorrect(myTrans);</span>
+<span class="nc bnc" id="L530" title="All 2 branches missed.">        } else if (MoneyWiseBasicResource.TRANSACTION_PARTNER.equals(myField)) {</span>
+            /* Update the Partner */
+<span class="nc" id="L532">            myTrans.setPartner(resolveAsset(pUpdate.getValue(MoneyWiseTransAsset.class)));</span>
+<span class="nc" id="L533">            myBuilder.autoCorrect(myTrans);</span>
+<span class="nc bnc" id="L534" title="All 2 branches missed.">        } else if (MoneyWiseBasicDataType.TRANSCATEGORY.equals(myField)) {</span>
+            /* Update the Category */
+<span class="nc" id="L536">            myTrans.setCategory(pUpdate.getValue(MoneyWiseTransCategory.class));</span>
+<span class="nc" id="L537">            myBuilder.autoCorrect(myTrans);</span>
+<span class="nc bnc" id="L538" title="All 2 branches missed.">        } else if (MoneyWiseBasicResource.TRANSACTION_RECONCILED.equals(myField)) {</span>
+            /* Update the Reconciled indication */
+<span class="nc" id="L540">            myTrans.setReconciled(pUpdate.getValue(Boolean.class));</span>
+<span class="nc bnc" id="L541" title="All 2 branches missed.">        } else if (MoneyWiseTransInfoClass.COMMENTS.equals(myField)) {</span>
+            /* Update the Comments */
+<span class="nc" id="L543">            myTrans.setComments(pUpdate.getValue(String.class));</span>
+<span class="nc bnc" id="L544" title="All 2 branches missed.">        } else if (MoneyWiseTransInfoClass.REFERENCE.equals(myField)) {</span>
+            /* Update the Reference */
+<span class="nc" id="L546">            myTrans.setReference(pUpdate.getValue(String.class));</span>
+<span class="nc bnc" id="L547" title="All 2 branches missed.">        } else if (MoneyWiseTransInfoClass.TRANSTAG.equals(myField)) {</span>
+            /* Update the Tag indication */
+<span class="nc" id="L549">            myTrans.setTransactionTags(pUpdate.getValue(List.class));</span>
+<span class="nc bnc" id="L550" title="All 2 branches missed.">        } else if (MoneyWiseTransInfoClass.PARTNERAMOUNT.equals(myField)) {</span>
+            /* Update the PartnerAmount */
+<span class="nc" id="L552">            myTrans.setPartnerAmount(pUpdate.getValue(OceanusMoney.class));</span>
+<span class="nc bnc" id="L553" title="All 2 branches missed.">        } else if (MoneyWiseTransInfoClass.XCHANGERATE.equals(myField)) {</span>
+            /* Update the ExchangeRate */
+<span class="nc" id="L555">            myTrans.setExchangeRate(pUpdate.getValue(OceanusRatio.class));</span>
+<span class="nc bnc" id="L556" title="All 2 branches missed.">        } else if (MoneyWiseTransInfoClass.ACCOUNTDELTAUNITS.equals(myField)) {</span>
+            /* Update the AccountDeltaUnits */
+<span class="nc" id="L558">            myTrans.setAccountDeltaUnits(pUpdate.getValue(OceanusUnits.class));</span>
+<span class="nc bnc" id="L559" title="All 2 branches missed.">        } else if (MoneyWiseTransInfoClass.PARTNERDELTAUNITS.equals(myField)) {</span>
+            /* Update the PartnerDeltaUnits */
+<span class="nc" id="L561">            myTrans.setPartnerDeltaUnits(pUpdate.getValue(OceanusUnits.class));</span>
+<span class="nc bnc" id="L562" title="All 2 branches missed.">        } else if (MoneyWiseTransInfoClass.PRICE.equals(myField)) {</span>
+            /* Update the Price */
+<span class="nc" id="L564">            myTrans.setPrice(pUpdate.getValue(OceanusPrice.class));</span>
+<span class="nc bnc" id="L565" title="All 2 branches missed.">        } else if (MoneyWiseTransInfoClass.COMMISSION.equals(myField)) {</span>
+            /* Update the Commission */
+<span class="nc" id="L567">            myTrans.setCommission(pUpdate.getValue(OceanusMoney.class));</span>
+<span class="nc bnc" id="L568" title="All 2 branches missed.">        } else if (MoneyWiseTransInfoClass.DILUTION.equals(myField)) {</span>
+            /* Update the Dilution */
+<span class="nc" id="L570">            myTrans.setDilution(pUpdate.getValue(OceanusRatio.class));</span>
+<span class="nc bnc" id="L571" title="All 2 branches missed.">        } else if (MoneyWiseTransInfoClass.QUALIFYYEARS.equals(myField)) {</span>
+            /* Update the QualifyYears */
+<span class="nc" id="L573">            myTrans.setYears(pUpdate.getValue(Integer.class));</span>
+<span class="nc bnc" id="L574" title="All 2 branches missed.">        } else if (MoneyWiseTransInfoClass.RETURNEDCASHACCOUNT.equals(myField)) {</span>
+            /* Update the ReturnedCashAccount */
+<span class="nc" id="L576">            myTrans.setReturnedCashAccount(pUpdate.getValue(MoneyWiseTransAsset.class));</span>
+<span class="nc" id="L577">            myBuilder.autoCorrect(myTrans);</span>
+<span class="nc bnc" id="L578" title="All 2 branches missed.">        } else if (MoneyWiseTransInfoClass.RETURNEDCASH.equals(myField)) {</span>
+            /* Update the ReturnedCash */
+<span class="nc" id="L580">            myTrans.setReturnedCash(pUpdate.getValue(OceanusMoney.class));</span>
+<span class="nc bnc" id="L581" title="All 2 branches missed.">        } else if (MoneyWiseTransInfoClass.TAXCREDIT.equals(myField)) {</span>
+            /* Update the TaxCredit */
+<span class="nc" id="L583">            myTrans.setTaxCredit(pUpdate.getValue(OceanusMoney.class));</span>
+<span class="nc bnc" id="L584" title="All 2 branches missed.">        } else if (MoneyWiseTransInfoClass.EMPLOYEENATINS.equals(myField)) {</span>
+            /* Update the EmployeeNatIns */
+<span class="nc" id="L586">            myTrans.setEmployeeNatIns(pUpdate.getValue(OceanusMoney.class));</span>
+<span class="nc bnc" id="L587" title="All 2 branches missed.">        } else if (MoneyWiseTransInfoClass.EMPLOYERNATINS.equals(myField)) {</span>
+            /* Update the EmployerNayIns */
+<span class="nc" id="L589">            myTrans.setEmployerNatIns(pUpdate.getValue(OceanusMoney.class));</span>
+<span class="nc bnc" id="L590" title="All 2 branches missed.">        } else if (MoneyWiseTransInfoClass.DEEMEDBENEFIT.equals(myField)) {</span>
+            /* Update the Benefit */
+<span class="nc" id="L592">            myTrans.setDeemedBenefit(pUpdate.getValue(OceanusMoney.class));</span>
+<span class="nc bnc" id="L593" title="All 2 branches missed.">        } else if (MoneyWiseTransInfoClass.WITHHELD.equals(myField)) {</span>
+            /* Update the Withheld */
+<span class="nc" id="L595">            myTrans.setWithheld(pUpdate.getValue(OceanusMoney.class));</span>
+        }
+<span class="nc" id="L597">    }</span>
+
+    @Override
+    protected void declareGoToItems(final boolean pUpdates) {
+        /* Access the item */
+<span class="nc" id="L602">        final MoneyWiseXAnalysisEvent myItem = getItem();</span>
+
+        /* Access the analysis and the relevant filters */
+<span class="nc" id="L605">        final MoneyWiseXAnalysis myAnalysis = theAnalysisSelect.getAnalysis();</span>
+<span class="nc" id="L606">        final OceanusDateRange myDateRange = theAnalysisSelect.getRange();</span>
+<span class="nc" id="L607">        final MoneyWiseXTransactionFilters myFilters = new MoneyWiseXTransactionFilters(myAnalysis, myDateRange, myItem);</span>
+
+        /* Remove the current filter */
+<span class="nc" id="L610">        final MoneyWiseXAnalysisFilter&lt;?, ?&gt; myCurrent = theAnalysisSelect.getFilter();</span>
+<span class="nc" id="L611">        myFilters.remove(myCurrent);</span>
+
+        /* Loop through the filters */
+<span class="nc" id="L614">        final Iterator&lt;MoneyWiseXAnalysisFilter&lt;?, ?&gt;&gt; myIterator = myFilters.iterator();</span>
+<span class="nc bnc" id="L615" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L616">            final MoneyWiseXAnalysisFilter&lt;?, ?&gt; myFilter = myIterator.next();</span>
+
+            /* declare it */
+<span class="nc" id="L619">            declareGoToFilter(myFilter);</span>
+<span class="nc" id="L620">        }</span>
+
+        /* If we have not had updates */
+<span class="nc bnc" id="L623" title="All 2 branches missed.">        if (!pUpdates) {</span>
+            /* Allow GoTo different panels */
+<span class="nc" id="L625">            buildAssetGoTo(myItem.getAccount());</span>
+<span class="nc" id="L626">            buildAssetGoTo(myItem.getPartner());</span>
+<span class="nc" id="L627">            declareGoToItem(myItem.getCategory());</span>
+<span class="nc" id="L628">            buildAssetGoTo(myItem.getReturnedCashAccount());</span>
+        }
+<span class="nc" id="L630">    }</span>
+
+    /**
+     * Handle goto declarations for TransactionAssets.
+     *
+     * @param pAsset the asset
+     */
+    private void buildAssetGoTo(final MoneyWiseTransAsset pAsset) {
+<span class="nc bnc" id="L638" title="All 2 branches missed.">        if (pAsset instanceof MoneyWiseSecurityHolding myHolding) {</span>
+            /* Build menu Items for Portfolio and Security */
+<span class="nc" id="L640">            declareGoToItem(myHolding.getPortfolio());</span>
+<span class="nc" id="L641">            declareGoToItem(myHolding.getSecurity());</span>
+<span class="nc bnc" id="L642" title="All 2 branches missed.">        } else if (pAsset instanceof MoneyWiseAssetBase myAsset) {</span>
+<span class="nc" id="L643">            declareGoToItem(myAsset);</span>
+        }
+<span class="nc" id="L645">    }</span>
+
+    /**
+     * Resolve Asset.
+     *
+     * @param pAsset the asset to resolve
+     * @return the resolved asset
+     */
+    public static MoneyWiseTransAsset resolveAsset(final MoneyWiseTransAsset pAsset) {
+        /* If this is a security holding */
+<span class="nc bnc" id="L655" title="All 2 branches missed.">        if (pAsset instanceof MoneyWiseSecurityHolding myHolding) {</span>
+            /* declare holding via map */
+<span class="nc" id="L657">            final MoneyWisePortfolio myPortfolio = myHolding.getPortfolio();</span>
+<span class="nc" id="L658">            final MoneyWiseSecurity mySecurity = myHolding.getSecurity();</span>
+<span class="nc" id="L659">            final MoneyWiseDataSet myData = myPortfolio.getDataSet();</span>
+<span class="nc" id="L660">            final MoneyWiseSecurityHoldingMap myMap = myData.getPortfolios().getSecurityHoldingsMap();</span>
+<span class="nc" id="L661">            return myMap.declareHolding(myPortfolio, mySecurity);</span>
+        }
+
+        /* Just return the asset */
+<span class="nc" id="L665">        return pAsset;</span>
+    }
+
+    /**
+     * Build the account menu for an item.
+     *
+     * @param pMenu  the menu
+     * @param pEvent the event to build for
+     */
+    public void buildAccountMenu(final TethysUIScrollMenu&lt;MoneyWiseTransAsset&gt; pMenu,
+                                 final MoneyWiseXAnalysisEvent pEvent) {
+        /* Clear the menu */
+<span class="nc" id="L677">        pMenu.removeAllItems();</span>
+
+        /* Add possible items */
+<span class="nc" id="L680">        final MoneyWiseTransaction myTrans = pEvent.getTransaction();</span>
+<span class="nc" id="L681">        buildAssetMenu(pMenu, getDataList(MoneyWiseBasicDataType.DEPOSIT, MoneyWiseDepositList.class), true, myTrans);</span>
+<span class="nc" id="L682">        buildAssetMenu(pMenu, getDataList(MoneyWiseBasicDataType.CASH, MoneyWiseCashList.class), true, myTrans);</span>
+<span class="nc" id="L683">        buildAssetMenu(pMenu, getDataList(MoneyWiseBasicDataType.LOAN, MoneyWiseLoanList.class), true, myTrans);</span>
+<span class="nc" id="L684">        buildHoldingMenu(pMenu, true, myTrans);</span>
+<span class="nc" id="L685">        buildAssetMenu(pMenu, getDataList(MoneyWiseBasicDataType.PORTFOLIO, MoneyWisePortfolioList.class), true, myTrans);</span>
+<span class="nc" id="L686">    }</span>
+
+    /**
+     * Build the partner menu for an item.
+     *
+     * @param pMenu  the menu
+     * @param pEvent the event to build for
+     */
+    public void buildPartnerMenu(final TethysUIScrollMenu&lt;MoneyWiseTransAsset&gt; pMenu,
+                                 final MoneyWiseXAnalysisEvent pEvent) {
+        /* Clear the menu */
+<span class="nc" id="L697">        pMenu.removeAllItems();</span>
+
+        /* Add possible items */
+<span class="nc" id="L700">        final MoneyWiseTransaction myTrans = pEvent.getTransaction();</span>
+<span class="nc" id="L701">        buildAssetMenu(pMenu, getDataList(MoneyWiseBasicDataType.DEPOSIT, MoneyWiseDepositList.class), false, myTrans);</span>
+<span class="nc" id="L702">        buildAssetMenu(pMenu, getDataList(MoneyWiseBasicDataType.CASH, MoneyWiseCashList.class), false, myTrans);</span>
+<span class="nc" id="L703">        buildAssetMenu(pMenu, getDataList(MoneyWiseBasicDataType.LOAN, MoneyWiseLoanList.class), false, myTrans);</span>
+<span class="nc" id="L704">        buildHoldingMenu(pMenu, false, myTrans);</span>
+<span class="nc" id="L705">        buildAssetMenu(pMenu, getDataList(MoneyWiseBasicDataType.PORTFOLIO, MoneyWisePortfolioList.class), false, myTrans);</span>
+<span class="nc" id="L706">        buildAssetMenu(pMenu, getDataList(MoneyWiseBasicDataType.PAYEE, MoneyWisePayeeList.class), false, myTrans);</span>
+<span class="nc" id="L707">    }</span>
+
+    /**
+     * Build the asset menu for an item.
+     *
+     * @param &lt;T&gt;        the Asset type
+     * @param pMenu      the menu
+     * @param pIsAccount is this item the account rather than partner
+     * @param pList      the asset list
+     * @param pTrans     the transaction to build for
+     */
+    private static &lt;T extends MoneyWiseAssetBase&gt; void buildAssetMenu(final TethysUIScrollMenu&lt;MoneyWiseTransAsset&gt; pMenu,
+                                                                      final MoneyWiseAssetBaseList&lt;T&gt; pList,
+                                                                      final boolean pIsAccount,
+                                                                      final MoneyWiseTransaction pTrans) {
+        /* Record active item */
+<span class="nc" id="L723">        final MoneyWiseTransAsset myAccount = pTrans.getAccount();</span>
+<span class="nc" id="L724">        final MoneyWiseTransCategory myCategory = pTrans.getCategory();</span>
+<span class="nc" id="L725">        final MoneyWiseDataValidatorTrans&lt;?&gt; myValidator = pTrans.getList().getValidator();</span>
+<span class="nc bnc" id="L726" title="All 2 branches missed.">        final MoneyWiseTransAsset myCurr = pIsAccount</span>
+<span class="nc" id="L727">                ? myAccount</span>
+<span class="nc" id="L728">                : pTrans.getPartner();</span>
+<span class="nc" id="L729">        TethysUIScrollItem&lt;MoneyWiseTransAsset&gt; myActive = null;</span>
+<span class="nc" id="L730">        TethysUIScrollSubMenu&lt;MoneyWiseTransAsset&gt; myMenu = null;</span>
+
+        /* Loop through the available values */
+<span class="nc" id="L733">        final Iterator&lt;T&gt; myIterator = pList.iterator();</span>
+<span class="nc bnc" id="L734" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L735">            final T myAsset = myIterator.next();</span>
+
+            /* Only process non-deleted/non-closed items */
+<span class="nc bnc" id="L738" title="All 4 branches missed.">            boolean bIgnore = myAsset.isDeleted() || myAsset.isClosed();</span>
+
+            /* Check whether the asset is allowable for the owner */
+<span class="nc bnc" id="L741" title="All 2 branches missed.">            bIgnore |= !(pIsAccount</span>
+<span class="nc bnc" id="L742" title="All 2 branches missed.">                    ? myValidator.isValidAccount(myAsset)</span>
+<span class="nc bnc" id="L743" title="All 2 branches missed.">                    : myValidator.isValidPartner(myAccount, myCategory, myAsset));</span>
+<span class="nc bnc" id="L744" title="All 2 branches missed.">            if (bIgnore) {</span>
+<span class="nc" id="L745">                continue;</span>
+            }
+
+            /* If this the first item */
+<span class="nc bnc" id="L749" title="All 2 branches missed.">            if (myMenu == null) {</span>
+                /* Create a new subMenu and add it to the popUp */
+<span class="nc" id="L751">                myMenu = pMenu.addSubMenu(pList.getItemType().getItemName());</span>
+            }
+
+            /* Create a new MenuItem and add it to the popUp */
+<span class="nc" id="L755">            final TethysUIScrollItem&lt;MoneyWiseTransAsset&gt; myItem = myMenu.getSubMenu().addItem(myAsset);</span>
+
+            /* If this is the active category */
+<span class="nc bnc" id="L758" title="All 2 branches missed.">            if (myAsset.equals(myCurr)) {</span>
+                /* Record it */
+<span class="nc" id="L760">                myActive = myItem;</span>
+            }
+<span class="nc" id="L762">        }</span>
+
+        /* Ensure active item is visible */
+<span class="nc bnc" id="L765" title="All 2 branches missed.">        if (myActive != null) {</span>
+<span class="nc" id="L766">            myActive.scrollToItem();</span>
+        }
+<span class="nc" id="L768">    }</span>
+
+    /**
+     * Build the holding asset menu for an item.
+     *
+     * @param pMenu      the menu
+     * @param pIsAccount is this item the account rather than partner
+     * @param pTrans     the transaction to build for
+     */
+    private static void buildHoldingMenu(final TethysUIScrollMenu&lt;MoneyWiseTransAsset&gt; pMenu,
+                                         final boolean pIsAccount,
+                                         final MoneyWiseTransaction pTrans) {
+        /* Record active item */
+<span class="nc" id="L781">        final MoneyWiseTransAsset myAccount = pTrans.getAccount();</span>
+<span class="nc" id="L782">        final MoneyWiseTransCategory myCategory = pTrans.getCategory();</span>
+<span class="nc" id="L783">        final MoneyWiseDataValidatorTrans&lt;?&gt; myValidator = pTrans.getList().getValidator();</span>
+<span class="nc bnc" id="L784" title="All 2 branches missed.">        final MoneyWiseTransAsset myCurr = pIsAccount</span>
+<span class="nc" id="L785">                ? myAccount</span>
+<span class="nc" id="L786">                : pTrans.getPartner();</span>
+<span class="nc" id="L787">        TethysUIScrollItem&lt;MoneyWiseTransAsset&gt; myActive = null;</span>
+<span class="nc" id="L788">        TethysUIScrollSubMenu&lt;MoneyWiseTransAsset&gt; myMenu = null;</span>
+
+        /* Access Portfolios and Holdings Map */
+<span class="nc" id="L791">        final MoneyWiseDataSet myData = pTrans.getDataSet();</span>
+<span class="nc" id="L792">        final MoneyWisePortfolioList myPortfolios = myData.getPortfolios();</span>
+<span class="nc" id="L793">        final MoneyWiseSecurityHoldingMap myMap = myPortfolios.getSecurityHoldingsMap();</span>
+
+        /* Loop through the Portfolios */
+<span class="nc" id="L796">        final Iterator&lt;MoneyWisePortfolio&gt; myPortIterator = myPortfolios.iterator();</span>
+<span class="nc bnc" id="L797" title="All 2 branches missed.">        while (myPortIterator.hasNext()) {</span>
+<span class="nc" id="L798">            final MoneyWisePortfolio myPortfolio = myPortIterator.next();</span>
+<span class="nc" id="L799">            TethysUIScrollSubMenu&lt;MoneyWiseTransAsset&gt; myCoreMenu = null;</span>
+
+            /* Ignore deleted or closed */
+<span class="nc bnc" id="L802" title="All 2 branches missed.">            if (myPortfolio.isDeleted()</span>
+<span class="nc bnc" id="L803" title="All 2 branches missed.">                    || Boolean.TRUE.equals(myPortfolio.isClosed())) {</span>
+<span class="nc" id="L804">                continue;</span>
+            }
+
+            /* Look for existing and new holdings */
+<span class="nc" id="L808">            final Iterator&lt;MoneyWiseSecurityHolding&gt; myExistIterator = myMap.existingIterator(myPortfolio);</span>
+<span class="nc" id="L809">            final Iterator&lt;MoneyWiseSecurityHolding&gt; myNewIterator = myMap.newIterator(myPortfolio);</span>
+<span class="nc bnc" id="L810" title="All 4 branches missed.">            if ((myExistIterator != null) || (myNewIterator != null)) {</span>
+                /* If there are existing elements */
+<span class="nc bnc" id="L812" title="All 2 branches missed.">                if (myExistIterator != null) {</span>
+                    /* Loop through them */
+<span class="nc bnc" id="L814" title="All 2 branches missed.">                    while (myExistIterator.hasNext()) {</span>
+<span class="nc" id="L815">                        final MoneyWiseSecurityHolding myHolding = myExistIterator.next();</span>
+<span class="nc" id="L816">                        final MoneyWiseSecurity mySecurity = myHolding.getSecurity();</span>
+
+                        /* Check whether the asset is allowable for the owner */
+<span class="nc bnc" id="L819" title="All 2 branches missed.">                        final boolean bIgnore = !(pIsAccount</span>
+<span class="nc bnc" id="L820" title="All 2 branches missed.">                                ? myValidator.isValidAccount(myHolding)</span>
+<span class="nc bnc" id="L821" title="All 2 branches missed.">                                : myValidator.isValidPartner(myAccount, myCategory, myHolding));</span>
+<span class="nc bnc" id="L822" title="All 2 branches missed.">                        if (bIgnore) {</span>
+<span class="nc" id="L823">                            continue;</span>
+                        }
+
+                        /* Ensure that hierarchy is created */
+<span class="nc bnc" id="L827" title="All 2 branches missed.">                        if (myMenu == null) {</span>
+                            /* Create a new JMenu and add it to the popUp */
+<span class="nc" id="L829">                            myMenu = pMenu.addSubMenu(MoneyWiseAssetType.SECURITYHOLDING.toString());</span>
+                        }
+<span class="nc bnc" id="L831" title="All 2 branches missed.">                        if (myCoreMenu == null) {</span>
+                            /* Create a new Menu and add it to the popUp */
+<span class="nc" id="L833">                            myCoreMenu = myMenu.getSubMenu().addSubMenu(myPortfolio.getName());</span>
+                        }
+
+                        /* Add the item to the menu */
+<span class="nc" id="L837">                        final TethysUIScrollItem&lt;MoneyWiseTransAsset&gt; myItem = myCoreMenu.getSubMenu().addItem(myHolding, mySecurity.getName());</span>
+
+                        /* If this is the active holding */
+<span class="nc bnc" id="L840" title="All 2 branches missed.">                        if (mySecurity.equals(myCurr)) {</span>
+                            /* Record it */
+<span class="nc" id="L842">                            myActive = myItem;</span>
+                        }
+<span class="nc" id="L844">                    }</span>
+                }
+
+                /* If there are new elements */
+<span class="nc bnc" id="L848" title="All 2 branches missed.">                if (myNewIterator != null) {</span>
+                    /* Loop through them */
+<span class="nc" id="L850">                    TethysUIScrollSubMenu&lt;MoneyWiseTransAsset&gt; mySubMenu = null;</span>
+<span class="nc bnc" id="L851" title="All 2 branches missed.">                    while (myNewIterator.hasNext()) {</span>
+<span class="nc" id="L852">                        final MoneyWiseSecurityHolding myHolding = myNewIterator.next();</span>
+<span class="nc" id="L853">                        final MoneyWiseSecurity mySecurity = myHolding.getSecurity();</span>
+
+                        /* Check whether the asset is allowable for the owner */
+<span class="nc bnc" id="L856" title="All 2 branches missed.">                        final boolean bIgnore = !(pIsAccount</span>
+<span class="nc bnc" id="L857" title="All 2 branches missed.">                                ? myValidator.isValidAccount(myHolding)</span>
+<span class="nc bnc" id="L858" title="All 2 branches missed.">                                : myValidator.isValidPartner(myAccount, myCategory, myHolding));</span>
+<span class="nc bnc" id="L859" title="All 2 branches missed.">                        if (bIgnore) {</span>
+<span class="nc" id="L860">                            continue;</span>
+                        }
+
+                        /* Ensure that hierarchy is created */
+<span class="nc bnc" id="L864" title="All 2 branches missed.">                        if (myMenu == null) {</span>
+                            /* Create a new subMenu and add it to the popUp */
+<span class="nc" id="L866">                            myMenu = pMenu.addSubMenu(MoneyWiseAssetType.SECURITYHOLDING.toString());</span>
+                        }
+<span class="nc bnc" id="L868" title="All 2 branches missed.">                        if (myCoreMenu == null) {</span>
+                            /* Create a new subMenu and add it to the popUp */
+<span class="nc" id="L870">                            myCoreMenu = myMenu.getSubMenu().addSubMenu(myPortfolio.getName());</span>
+                        }
+<span class="nc bnc" id="L872" title="All 2 branches missed.">                        if (mySubMenu == null) {</span>
+                            /* Create a new subMenu */
+<span class="nc" id="L874">                            mySubMenu = myCoreMenu.getSubMenu().addSubMenu(MoneyWiseSecurityHolding.SECURITYHOLDING_NEW);</span>
+                        }
+
+                        /* Add the item to the menu */
+<span class="nc" id="L878">                        mySubMenu.getSubMenu().addItem(myHolding, mySecurity.getName());</span>
+<span class="nc" id="L879">                    }</span>
+                }
+            }
+<span class="nc" id="L882">        }</span>
+
+        /* Ensure active item is visible */
+<span class="nc bnc" id="L885" title="All 2 branches missed.">        if (myActive != null) {</span>
+<span class="nc" id="L886">            myActive.scrollToItem();</span>
+        }
+<span class="nc" id="L888">    }</span>
+
+    /**
+     * Build the category menu for an item.
+     *
+     * @param pMenu  the menu
+     * @param pEvent the event to build for
+     */
+    public void buildCategoryMenu(final TethysUIScrollMenu&lt;MoneyWiseTransCategory&gt; pMenu,
+                                  final MoneyWiseXAnalysisEvent pEvent) {
+        /* Clear the menu */
+<span class="nc" id="L899">        pMenu.removeAllItems();</span>
+
+        /* Record active item */
+<span class="nc" id="L902">        final MoneyWiseTransAsset myAccount = pEvent.getAccount();</span>
+<span class="nc" id="L903">        final MoneyWiseTransCategory myCurr = pEvent.getCategory();</span>
+<span class="nc" id="L904">        TethysUIScrollItem&lt;MoneyWiseTransCategory&gt; myActive = null;</span>
+        TethysUIScrollItem&lt;MoneyWiseTransCategory&gt; myItem;
+
+        /* Create a simple map for top-level categories */
+<span class="nc" id="L908">        final Map&lt;String, TethysUIScrollSubMenu&lt;MoneyWiseTransCategory&gt;&gt; myMap = new HashMap&lt;&gt;();</span>
+
+        /* Access Categories */
+<span class="nc" id="L911">        final MoneyWiseTransCategoryList myCategories = getDataList(MoneyWiseBasicDataType.TRANSCATEGORY, MoneyWiseTransCategoryList.class);</span>
+<span class="nc" id="L912">        final MoneyWiseDataValidatorTrans&lt;?&gt; myValidator = pEvent.getTransaction().getList().getValidator();</span>
+
+        /* Loop through the available category values */
+<span class="nc" id="L915">        final Iterator&lt;MoneyWiseTransCategory&gt; myIterator = myCategories.iterator();</span>
+<span class="nc bnc" id="L916" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L917">            final MoneyWiseTransCategory myCategory = myIterator.next();</span>
+
+            /* Only process non-deleted low-level items */
+<span class="nc" id="L920">            final MoneyWiseTransCategoryClass myClass = myCategory.getCategoryTypeClass();</span>
+<span class="nc bnc" id="L921" title="All 4 branches missed.">            boolean bIgnore = myCategory.isDeleted() || myClass.canParentCategory();</span>
+
+            /* Check whether the category is allowable for the owner */
+<span class="nc bnc" id="L924" title="All 2 branches missed.">            bIgnore |= !myValidator.isValidCategory(myAccount, myCategory);</span>
+<span class="nc bnc" id="L925" title="All 2 branches missed.">            if (bIgnore) {</span>
+<span class="nc" id="L926">                continue;</span>
+            }
+
+            /* Determine parent */
+<span class="nc" id="L930">            final MoneyWiseTransCategory myParent = myCategory.getParentCategory();</span>
+
+            /* If we have a parent */
+<span class="nc bnc" id="L933" title="All 2 branches missed.">            if (myParent != null) {</span>
+<span class="nc" id="L934">                final String myParentName = myParent.getName();</span>
+<span class="nc" id="L935">                final TethysUIScrollSubMenu&lt;MoneyWiseTransCategory&gt; myMenu = myMap.computeIfAbsent(myParentName, pMenu::addSubMenu);</span>
+
+                /* Create a new MenuItem and add it to the subMenu */
+<span class="nc" id="L938">                myItem = myMenu.getSubMenu().addItem(myCategory, myCategory.getSubCategory());</span>
+
+<span class="nc" id="L940">            } else {</span>
+                /* Create a new MenuItem and add it to the popUp */
+<span class="nc" id="L942">                myItem = pMenu.addItem(myCategory);</span>
+            }
+
+            /* If this is the active category */
+<span class="nc bnc" id="L946" title="All 2 branches missed.">            if (myCategory.equals(myCurr)) {</span>
+                /* Record it */
+<span class="nc" id="L948">                myActive = myItem;</span>
+            }
+<span class="nc" id="L950">        }</span>
+
+        /* Ensure active item is visible */
+<span class="nc bnc" id="L953" title="All 2 branches missed.">        if (myActive != null) {</span>
+<span class="nc" id="L954">            myActive.scrollToItem();</span>
+        }
+<span class="nc" id="L956">    }</span>
+
+    /**
+     * Build the ReturnedAccount menu for an item.
+     *
+     * @param pMenu  the menu
+     * @param pEvent the event to build for
+     */
+    public void buildReturnedAccountMenu(final TethysUIScrollMenu&lt;MoneyWiseTransAsset&gt; pMenu,
+                                         final MoneyWiseXAnalysisEvent pEvent) {
+        /* Clear the menu */
+<span class="nc" id="L967">        pMenu.removeAllItems();</span>
+
+        /* Add possible items */
+<span class="nc" id="L970">        final MoneyWiseTransaction myTrans = pEvent.getTransaction();</span>
+<span class="nc" id="L971">        buildAssetMenu(pMenu, getDataList(MoneyWiseBasicDataType.DEPOSIT, MoneyWiseDepositList.class), false, myTrans);</span>
+<span class="nc" id="L972">        buildAssetMenu(pMenu, getDataList(MoneyWiseBasicDataType.PORTFOLIO, MoneyWisePortfolioList.class), false, myTrans);</span>
+<span class="nc" id="L973">    }</span>
+
+    /**
+     * Build the possible TransactionTag list.
+     *
+     * @return the transaction tag iterator
+     */
+    public Iterator&lt;MoneyWiseTransTag&gt; buildTransactionTags() {
+        /* Create a list */
+<span class="nc" id="L982">        final List&lt;MoneyWiseTransTag&gt; myList = new ArrayList&lt;&gt;();</span>
+
+        /* Loop through the TransactionTags */
+<span class="nc" id="L985">        final Iterator&lt;MoneyWiseTransTag&gt; myIterator = getEditSet()</span>
+<span class="nc" id="L986">                .getDataList(MoneyWiseBasicDataType.TRANSTAG, MoneyWiseTransTagList.class).iterator();</span>
+<span class="nc bnc" id="L987" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L988">            final MoneyWiseTransTag myTag = myIterator.next();</span>
+
+            /* Add to list if available */
+<span class="nc bnc" id="L991" title="All 2 branches missed.">            if (!myTag.isDeleted()) {</span>
+<span class="nc" id="L992">                myList.add(myTag);</span>
+            }
+<span class="nc" id="L994">        }</span>
+
+        /* Return the iterator */
+<span class="nc" id="L997">        return myList.iterator();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

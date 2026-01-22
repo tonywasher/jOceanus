@@ -1,0 +1,522 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ThemisDSMPanel.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Themis Core Project Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.themis.lethe.ui</a> &gt; <span class="el_source">ThemisDSMPanel.java</span></div><h1>ThemisDSMPanel.java</h1><pre class="source lang-java linenums">/*
+ * Themis: Java Project Framework
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.themis.lethe.ui;
+
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.tethys.api.base.TethysUIEvent;
+import io.github.tonywasher.joceanus.tethys.api.button.TethysUIButton;
+import io.github.tonywasher.joceanus.tethys.api.button.TethysUIButtonFactory;
+import io.github.tonywasher.joceanus.tethys.api.button.TethysUIScrollButtonManager;
+import io.github.tonywasher.joceanus.tethys.api.control.TethysUIControlFactory;
+import io.github.tonywasher.joceanus.tethys.api.control.TethysUIHTMLManager;
+import io.github.tonywasher.joceanus.tethys.api.dialog.TethysUIDialogFactory;
+import io.github.tonywasher.joceanus.tethys.api.dialog.TethysUIDirectorySelector;
+import io.github.tonywasher.joceanus.tethys.api.factory.TethysUIFactory;
+import io.github.tonywasher.joceanus.tethys.api.factory.TethysUILogTextArea;
+import io.github.tonywasher.joceanus.tethys.api.factory.TethysUIMainPanel;
+import io.github.tonywasher.joceanus.tethys.api.menu.TethysUIScrollMenu;
+import io.github.tonywasher.joceanus.tethys.api.pane.TethysUIBorderPaneManager;
+import io.github.tonywasher.joceanus.tethys.api.pane.TethysUIBoxPaneManager;
+import io.github.tonywasher.joceanus.tethys.api.pane.TethysUIPaneFactory;
+import io.github.tonywasher.joceanus.tethys.api.pane.TethysUITabPaneManager;
+import io.github.tonywasher.joceanus.tethys.api.pane.TethysUITabPaneManager.TethysUITabItem;
+import io.github.tonywasher.joceanus.themis.exc.ThemisIOException;
+import io.github.tonywasher.joceanus.themis.lethe.analysis.ThemisAnalysisProject;
+import io.github.tonywasher.joceanus.themis.lethe.dsm.ThemisDSMModule;
+import io.github.tonywasher.joceanus.themis.lethe.dsm.ThemisDSMPackage;
+import io.github.tonywasher.joceanus.themis.lethe.dsm.ThemisDSMProject;
+import io.github.tonywasher.joceanus.themis.lethe.dsm.ThemisDSMReport;
+import io.github.tonywasher.joceanus.themis.lethe.statistics.ThemisStatsParser;
+import io.github.tonywasher.joceanus.themis.lethe.statistics.ThemisStatsProject;
+
+import java.io.File;
+import java.util.prefs.BackingStoreException;
+import java.util.prefs.Preferences;
+
+/**
+ * DSMPanel.
+ */
+public class ThemisDSMPanel
+        implements TethysUIMainPanel {
+    /**
+     * The GUI Factory.
+     */
+    private final TethysUIFactory&lt;?&gt; theGuiFactory;
+
+    /**
+     * The Tab Manager Pane.
+     */
+    private final TethysUITabPaneManager theTabPane;
+
+    /**
+     * The Matrix HTML Pane.
+     */
+    private final TethysUIHTMLManager theMatrixHTML;
+
+    /**
+     * The Dependency HTML Pane.
+     */
+    private final TethysUIHTMLManager theDependencyHTML;
+
+    /**
+     * The Dependency Tab.
+     */
+    private final TethysUITabItem theDependencyTab;
+
+    /**
+     * The Statistics Panel.
+     */
+    private final ThemisStatsPanel theStatsPanel;
+
+    /**
+     * The Source Panel.
+     */
+    private final ThemisSourcePanel theSourcePanel;
+
+    /**
+     * The Log Tab.
+     */
+    private final TethysUITabItem theLogTab;
+
+    /**
+     * The log sink.
+     */
+    private final TethysUILogTextArea theLogSink;
+
+    /**
+     * The ProjectButton.
+     */
+    private final TethysUIButton theProjectButton;
+
+    /**
+     * The ModuleButton.
+     */
+    private final TethysUIScrollButtonManager&lt;ThemisDSMModule&gt; theModuleButton;
+
+    /**
+     * The FromButton.
+     */
+    private final TethysUIScrollButtonManager&lt;ThemisDSMPackage&gt; theFromButton;
+
+    /**
+     * The ToButton.
+     */
+    private final TethysUIScrollButtonManager&lt;ThemisDSMPackage&gt; theToButton;
+
+    /**
+     * The current project.
+     */
+    private ThemisDSMProject theProject;
+
+    /**
+     * The current module.
+     */
+    private ThemisDSMModule theModule;
+
+    /**
+     * The current from package.
+     */
+    private ThemisDSMPackage theFrom;
+
+    /**
+     * The error.
+     */
+    private OceanusException theError;
+
+    /**
+     * Constructor.
+     *
+     * @param pFactory the GuiFactory
+     * @throws OceanusException on error
+     */
+<span class="nc" id="L146">    public ThemisDSMPanel(final TethysUIFactory&lt;?&gt; pFactory) throws OceanusException {</span>
+        /* Access GuiFactory */
+<span class="nc" id="L148">        theGuiFactory = pFactory;</span>
+
+        /* Create the HTML Panes */
+<span class="nc" id="L151">        final TethysUIControlFactory myControls = theGuiFactory.controlFactory();</span>
+<span class="nc" id="L152">        final TethysUIButtonFactory&lt;?&gt; myButtons = theGuiFactory.buttonFactory();</span>
+<span class="nc" id="L153">        theDependencyHTML = myControls.newHTMLManager();</span>
+<span class="nc" id="L154">        theDependencyHTML.setCSSContent(ThemisDSMStyleSheet.CSS_DSM);</span>
+<span class="nc" id="L155">        theMatrixHTML = myControls.newHTMLManager();</span>
+<span class="nc" id="L156">        theMatrixHTML.setCSSContent(ThemisDSMStyleSheet.CSS_DSM);</span>
+<span class="nc" id="L157">        theMatrixHTML.getEventRegistrar().addEventListener(TethysUIEvent.BUILDPAGE, e -&gt; {</span>
+<span class="nc" id="L158">            processReference(e.getDetails(String.class));</span>
+<span class="nc" id="L159">            e.consume();</span>
+<span class="nc" id="L160">        });</span>
+
+        /* Create the module selection panel */
+<span class="nc" id="L163">        final TethysUIPaneFactory myPanes = theGuiFactory.paneFactory();</span>
+<span class="nc" id="L164">        final TethysUIBoxPaneManager myModuleSelect = myPanes.newHBoxPane();</span>
+<span class="nc" id="L165">        myModuleSelect.addNode(myControls.newLabel(&quot;Module:&quot;));</span>
+<span class="nc" id="L166">        theModuleButton = myButtons.newScrollButton(ThemisDSMModule.class);</span>
+<span class="nc" id="L167">        myModuleSelect.addNode(theModuleButton);</span>
+<span class="nc" id="L168">        theModuleButton.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -&gt; handleNewModule());</span>
+<span class="nc" id="L169">        theModuleButton.setMenuConfigurator(e -&gt; buildModuleMenu());</span>
+
+        /* Create the project selection panel */
+<span class="nc" id="L172">        final TethysUIBoxPaneManager myProjectSelect = myPanes.newHBoxPane();</span>
+<span class="nc" id="L173">        myProjectSelect.addNode(myControls.newLabel(&quot;Project:&quot;));</span>
+<span class="nc" id="L174">        theProjectButton = myButtons.newButton();</span>
+<span class="nc" id="L175">        theProjectButton.setTextOnly();</span>
+<span class="nc" id="L176">        myProjectSelect.addNode(theProjectButton);</span>
+<span class="nc" id="L177">        theProjectButton.getEventRegistrar().addEventListener(e -&gt; selectProject());</span>
+
+        /* create the overall matrix status panel */
+<span class="nc" id="L180">        final TethysUIBoxPaneManager myMatrixControl = myPanes.newHBoxPane();</span>
+<span class="nc" id="L181">        myMatrixControl.addSpacer();</span>
+<span class="nc" id="L182">        myMatrixControl.addNode(myProjectSelect);</span>
+<span class="nc" id="L183">        myMatrixControl.addSpacer();</span>
+<span class="nc" id="L184">        myMatrixControl.addNode(myModuleSelect);</span>
+<span class="nc" id="L185">        myMatrixControl.addSpacer();</span>
+
+        /* create the matrix panel */
+<span class="nc" id="L188">        final TethysUIBorderPaneManager myMatrixPanel = myPanes.newBorderPane();</span>
+<span class="nc" id="L189">        myMatrixPanel.setCentre(theMatrixHTML);</span>
+<span class="nc" id="L190">        myMatrixPanel.setNorth(myMatrixControl);</span>
+
+        /* Create the from selection panel */
+<span class="nc" id="L193">        final TethysUIBoxPaneManager myFromSelect = myPanes.newHBoxPane();</span>
+<span class="nc" id="L194">        myFromSelect.addNode(myControls.newLabel(&quot;From:&quot;));</span>
+<span class="nc" id="L195">        theFromButton = myButtons.newScrollButton(ThemisDSMPackage.class);</span>
+<span class="nc" id="L196">        myFromSelect.addNode(theFromButton);</span>
+<span class="nc" id="L197">        theFromButton.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -&gt; handleNewFrom());</span>
+<span class="nc" id="L198">        theFromButton.setMenuConfigurator(e -&gt; buildFromMenu());</span>
+
+        /* Create the project selection panel */
+<span class="nc" id="L201">        final TethysUIBoxPaneManager myToSelect = myPanes.newHBoxPane();</span>
+<span class="nc" id="L202">        myToSelect.addNode(myControls.newLabel(&quot;To:&quot;));</span>
+<span class="nc" id="L203">        theToButton = myButtons.newScrollButton(ThemisDSMPackage.class);</span>
+<span class="nc" id="L204">        myToSelect.addNode(theToButton);</span>
+<span class="nc" id="L205">        theToButton.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -&gt; handleNewTo());</span>
+<span class="nc" id="L206">        theToButton.setMenuConfigurator(e -&gt; buildToMenu());</span>
+
+        /* create the overall matrix status panel */
+<span class="nc" id="L209">        final TethysUIBoxPaneManager myDependencyControl = myPanes.newHBoxPane();</span>
+<span class="nc" id="L210">        myDependencyControl.addSpacer();</span>
+<span class="nc" id="L211">        myDependencyControl.addNode(myFromSelect);</span>
+<span class="nc" id="L212">        myDependencyControl.addSpacer();</span>
+<span class="nc" id="L213">        myDependencyControl.addNode(myToSelect);</span>
+<span class="nc" id="L214">        myDependencyControl.addSpacer();</span>
+
+        /* create the matrix panel */
+<span class="nc" id="L217">        final TethysUIBorderPaneManager myDependencyPanel = myPanes.newBorderPane();</span>
+<span class="nc" id="L218">        myDependencyPanel.setCentre(theDependencyHTML);</span>
+<span class="nc" id="L219">        myDependencyPanel.setNorth(myDependencyControl);</span>
+
+        /* Create the TabPane */
+<span class="nc" id="L222">        theTabPane = myPanes.newTabPane();</span>
+<span class="nc" id="L223">        theTabPane.addTabItem(&quot;Matrix&quot;, myMatrixPanel);</span>
+<span class="nc" id="L224">        theDependencyTab = theTabPane.addTabItem(&quot;Dependencies&quot;, myDependencyPanel);</span>
+
+        /* Create the Stats panel */
+<span class="nc" id="L227">        theStatsPanel = new ThemisStatsPanel(theGuiFactory);</span>
+<span class="nc" id="L228">        theTabPane.addTabItem(&quot;Stats&quot;, theStatsPanel.getComponent());</span>
+
+        /* Create the Source panel */
+<span class="nc" id="L231">        theSourcePanel = new ThemisSourcePanel(theGuiFactory);</span>
+<span class="nc" id="L232">        theTabPane.addTabItem(&quot;Source&quot;, theSourcePanel.getComponent());</span>
+
+        /* Create the log tab */
+<span class="nc" id="L235">        theLogSink = theGuiFactory.getLogSink();</span>
+<span class="nc" id="L236">        theLogTab = theTabPane.addTabItem(&quot;Log&quot;, theLogSink);</span>
+<span class="nc" id="L237">        theLogSink.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -&gt; theLogTab.setVisible(true));</span>
+<span class="nc" id="L238">        theLogSink.getEventRegistrar().addEventListener(TethysUIEvent.WINDOWCLOSED, e -&gt; theLogTab.setVisible(false));</span>
+<span class="nc" id="L239">        theLogTab.setVisible(theLogSink.isActive());</span>
+
+        /* Initialise status */
+<span class="nc" id="L242">        theProjectButton.setText(&quot;None&quot;);</span>
+<span class="nc" id="L243">        theDependencyTab.setVisible(false);</span>
+<span class="nc" id="L244">        theModuleButton.setEnabled(false);</span>
+<span class="nc" id="L245">        theFromButton.setEnabled(false);</span>
+<span class="nc" id="L246">        theToButton.setEnabled(false);</span>
+
+        /* Handle the default location */
+<span class="nc" id="L249">        final File myLocation = getDefaultLocation();</span>
+<span class="nc bnc" id="L250" title="All 2 branches missed.">        if (myLocation != null) {</span>
+<span class="nc" id="L251">            handleNewProject(myLocation);</span>
+        }
+<span class="nc" id="L253">    }</span>
+
+    @Override
+    public TethysUITabPaneManager getComponent() {
+<span class="nc" id="L257">        return theTabPane;</span>
+    }
+
+    /**
+     * Handle select project.
+     */
+    void selectProject() {
+        /* Determine initial directory */
+<span class="nc" id="L265">        File myInit = getDefaultLocation();</span>
+<span class="nc bnc" id="L266" title="All 2 branches missed.">        if (myInit == null) {</span>
+<span class="nc" id="L267">            myInit = new File(System.getProperty(&quot;user.home&quot;));</span>
+        }
+
+        /* Determine the name of the directory to load */
+<span class="nc" id="L271">        final TethysUIDialogFactory myDialogs = theGuiFactory.dialogFactory();</span>
+<span class="nc" id="L272">        final TethysUIDirectorySelector myDialog = myDialogs.newDirectorySelector();</span>
+<span class="nc" id="L273">        myDialog.setTitle(&quot;Select Project&quot;);</span>
+<span class="nc" id="L274">        myDialog.setInitialDirectory(myInit);</span>
+<span class="nc" id="L275">        final File myFile = myDialog.selectDirectory();</span>
+
+        /* If we selected a file */
+<span class="nc bnc" id="L278" title="All 2 branches missed.">        if (myFile != null) {</span>
+            /* Handle the new project */
+<span class="nc" id="L280">            handleNewProject(myFile);</span>
+        }
+<span class="nc" id="L282">    }</span>
+
+    /**
+     * Handle the new project.
+     *
+     * @param pProjectDir the new project directory
+     */
+    private void handleNewProject(final File pProjectDir) {
+        /* Parse the project*/
+<span class="nc" id="L291">        theError = null;</span>
+<span class="nc" id="L292">        final ThemisDSMProject myProject = new ThemisDSMProject(pProjectDir);</span>
+<span class="nc bnc" id="L293" title="All 2 branches missed.">        if (myProject.getError() != null) {</span>
+<span class="nc" id="L294">            theError = myProject.getError();</span>
+
+<span class="nc bnc" id="L296" title="All 2 branches missed.">        } else if (myProject.hasModules()) {</span>
+            /* Save details */
+<span class="nc" id="L298">            storeDefaultLocation(pProjectDir);</span>
+
+            /* Store details */
+<span class="nc" id="L301">            theProject = myProject;</span>
+<span class="nc" id="L302">            theProjectButton.setText(theProject.toString());</span>
+
+            /* Set the new module */
+<span class="nc" id="L305">            processNewModule(theProject.getDefaultModule());</span>
+
+            /* Load statistics */
+<span class="nc" id="L308">            handleNewStats(pProjectDir);</span>
+        }
+
+        /* Display the error */
+<span class="nc bnc" id="L312" title="All 2 branches missed.">        if (theError != null) {</span>
+<span class="nc" id="L313">            theLogSink.writeLogMessage(theError.getMessage());</span>
+<span class="nc" id="L314">            theLogTab.setVisible(true);</span>
+        }
+<span class="nc" id="L316">    }</span>
+
+    /**
+     * Handle the new project.
+     *
+     * @param pProjectDir the new project directory
+     */
+    private void handleNewStats(final File pProjectDir) {
+        /* Analyse source of project */
+<span class="nc" id="L325">        final ThemisAnalysisProject myProj = new ThemisAnalysisProject(pProjectDir);</span>
+<span class="nc bnc" id="L326" title="All 2 branches missed.">        if (myProj.getError() != null) {</span>
+<span class="nc" id="L327">            theError = myProj.getError();</span>
+        } else {
+            /* Parse the base project */
+<span class="nc" id="L330">            final ThemisStatsParser myParser = new ThemisStatsParser();</span>
+<span class="nc" id="L331">            final ThemisStatsProject myProject = myParser.parseProject(myProj);</span>
+<span class="nc" id="L332">            theStatsPanel.initialiseTree(myProject);</span>
+<span class="nc" id="L333">            theSourcePanel.initialiseTree(myProj);</span>
+        }
+<span class="nc" id="L335">    }</span>
+
+    /**
+     * Handle the new module.
+     */
+    private void handleNewModule() {
+<span class="nc" id="L341">        processNewModule(theModuleButton.getValue());</span>
+<span class="nc" id="L342">    }</span>
+
+    /**
+     * Process new module.
+     *
+     * @param pModule the new Module
+     */
+    private void processNewModule(final ThemisDSMModule pModule) {
+        /* Store the module */
+<span class="nc" id="L351">        theModule = pModule;</span>
+<span class="nc" id="L352">        theModuleButton.setValue(pModule);</span>
+<span class="nc" id="L353">        theModuleButton.setEnabled(true);</span>
+
+        /* Build matrix report */
+<span class="nc" id="L356">        final String myDoc = ThemisDSMReport.reportOnModule(theModule);</span>
+<span class="nc" id="L357">        theMatrixHTML.setHTMLContent(myDoc, &quot;&quot;);</span>
+
+        /* Process the new from Package */
+<span class="nc" id="L360">        processNewFrom(theModule.getDefaultPackage());</span>
+<span class="nc" id="L361">    }</span>
+
+    /**
+     * Build the module menu.
+     */
+    private void buildModuleMenu() {
+        /* Access builder */
+<span class="nc" id="L368">        final TethysUIScrollMenu&lt;ThemisDSMModule&gt; myBuilder = theModuleButton.getMenu();</span>
+<span class="nc" id="L369">        myBuilder.removeAllItems();</span>
+
+        /* Loop through to add each module */
+<span class="nc bnc" id="L372" title="All 2 branches missed.">        for (ThemisDSMModule myModule : theProject.listModules()) {</span>
+<span class="nc" id="L373">            myBuilder.addItem(myModule);</span>
+<span class="nc" id="L374">        }</span>
+<span class="nc" id="L375">    }</span>
+
+    /**
+     * Handle the new fromPackage.
+     */
+    private void handleNewFrom() {
+<span class="nc" id="L381">        processNewFrom(theFromButton.getValue());</span>
+<span class="nc" id="L382">    }</span>
+
+    /**
+     * Process new module.
+     *
+     * @param pPackage the new fromPackage
+     */
+    private void processNewFrom(final ThemisDSMPackage pPackage) {
+        /* Store the module */
+<span class="nc" id="L391">        theFrom = pPackage;</span>
+<span class="nc" id="L392">        theFromButton.setValue(pPackage);</span>
+<span class="nc" id="L393">        theFromButton.setEnabled(true);</span>
+<span class="nc" id="L394">        theDependencyTab.setVisible(true);</span>
+
+        /* Process the new from Package */
+<span class="nc" id="L397">        processNewTo(theFrom.getDefaultReference());</span>
+<span class="nc" id="L398">    }</span>
+
+    /**
+     * Build the from menu.
+     */
+    private void buildFromMenu() {
+        /* Access builder */
+<span class="nc" id="L405">        final TethysUIScrollMenu&lt;ThemisDSMPackage&gt; myBuilder = theFromButton.getMenu();</span>
+<span class="nc" id="L406">        myBuilder.removeAllItems();</span>
+
+        /* Loop through to add each package */
+<span class="nc bnc" id="L409" title="All 2 branches missed.">        for (ThemisDSMPackage myPackage : theModule.listPackages()) {</span>
+<span class="nc bnc" id="L410" title="All 2 branches missed.">            if (myPackage.hasReferences()) {</span>
+<span class="nc" id="L411">                myBuilder.addItem(myPackage);</span>
+            }
+<span class="nc" id="L413">        }</span>
+<span class="nc" id="L414">    }</span>
+
+    /**
+     * Handle the new toPackage.
+     */
+    private void handleNewTo() {
+<span class="nc" id="L420">        processNewTo(theToButton.getValue());</span>
+<span class="nc" id="L421">    }</span>
+
+    /**
+     * Process new toPackage.
+     *
+     * @param pPackage the new toPackage
+     */
+    private void processNewTo(final ThemisDSMPackage pPackage) {
+        /* Store the package */
+<span class="nc" id="L430">        theToButton.setValue(pPackage);</span>
+<span class="nc" id="L431">        theToButton.setEnabled(true);</span>
+
+        /* Build matrix report */
+<span class="nc" id="L434">        final String myDoc = ThemisDSMReport.reportOnPackageLinks(theFrom, pPackage);</span>
+<span class="nc" id="L435">        theDependencyHTML.setHTMLContent(myDoc, &quot;&quot;);</span>
+<span class="nc" id="L436">    }</span>
+
+    /**
+     * Build the to menu.
+     */
+    private void buildToMenu() {
+        /* Access builder */
+<span class="nc" id="L443">        final TethysUIScrollMenu&lt;ThemisDSMPackage&gt; myBuilder = theToButton.getMenu();</span>
+<span class="nc" id="L444">        myBuilder.removeAllItems();</span>
+
+        /* Loop through to add each package */
+<span class="nc bnc" id="L447" title="All 2 branches missed.">        for (ThemisDSMPackage myPackage : theFrom.listReferences()) {</span>
+<span class="nc" id="L448">            myBuilder.addItem(myPackage);</span>
+<span class="nc" id="L449">        }</span>
+<span class="nc" id="L450">    }</span>
+
+    /**
+     * Process the reference.
+     *
+     * @param pReference the reference
+     */
+    private void processReference(final String pReference) {
+        /* Split on the &quot;-&quot; */
+<span class="nc" id="L459">        final String[] myTokens = pReference.split(ThemisDSMReport.SEP_REF);</span>
+<span class="nc bnc" id="L460" title="All 2 branches missed.">        if (myTokens.length == 2) {</span>
+            /* Access the relevant packages */
+<span class="nc" id="L462">            final ThemisDSMPackage myFrom = theModule.getIndexedPackage(ThemisDSMReport.getIndexForKey(myTokens[0]));</span>
+<span class="nc" id="L463">            final ThemisDSMPackage myTo = theModule.getIndexedPackage(ThemisDSMReport.getIndexForKey(myTokens[1]));</span>
+
+            /* Set the new details */
+<span class="nc" id="L466">            processNewFrom(myFrom);</span>
+<span class="nc" id="L467">            processNewTo(myTo);</span>
+
+            /* Select the tab */
+<span class="nc" id="L470">            theDependencyTab.selectItem();</span>
+        }
+<span class="nc" id="L472">    }</span>
+
+    /**
+     * Obtain the default location.
+     *
+     * @return the default location
+     */
+    private File getDefaultLocation() {
+<span class="nc" id="L480">        final Preferences myPreferences = deriveHandle();</span>
+<span class="nc" id="L481">        final String myLocation = myPreferences.get(&quot;DefaultProject&quot;, null);</span>
+<span class="nc bnc" id="L482" title="All 2 branches missed.">        return myLocation == null ? null : new File(myLocation);</span>
+    }
+
+    /**
+     * Store the default location.
+     *
+     * @param pLocation the default location
+     */
+    private void storeDefaultLocation(final File pLocation) {
+        /* Protect against exceptions */
+        try {
+<span class="nc" id="L493">            final Preferences myPreferences = deriveHandle();</span>
+<span class="nc" id="L494">            myPreferences.put(&quot;DefaultProject&quot;, pLocation.getAbsolutePath());</span>
+<span class="nc" id="L495">            myPreferences.flush();</span>
+<span class="nc" id="L496">        } catch (BackingStoreException e) {</span>
+<span class="nc" id="L497">            theError = new ThemisIOException(&quot;Failed to save preference&quot;, e);</span>
+<span class="nc" id="L498">        }</span>
+<span class="nc" id="L499">    }</span>
+
+    /**
+     * Derive handle for node.
+     *
+     * @return the class name
+     */
+    private Preferences deriveHandle() {
+        /* Obtain the class name */
+<span class="nc" id="L508">        final Class&lt;?&gt; myClass = this.getClass();</span>
+<span class="nc" id="L509">        String myName = myClass.getCanonicalName();</span>
+
+        /* Obtain the package name */
+<span class="nc" id="L512">        final String myPackage = myClass.getPackage().getName();</span>
+
+        /* Strip off the package name */
+<span class="nc" id="L515">        myName = myName.substring(myPackage.length() + 1);</span>
+
+        /* Derive the handle */
+<span class="nc" id="L518">        final Preferences myHandle = Preferences.userNodeForPackage(myClass);</span>
+<span class="nc" id="L519">        return myHandle.node(myName);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

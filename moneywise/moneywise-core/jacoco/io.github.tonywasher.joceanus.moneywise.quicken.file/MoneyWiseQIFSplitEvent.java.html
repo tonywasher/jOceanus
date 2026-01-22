@@ -1,0 +1,365 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseQIFSplitEvent.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.moneywise.quicken.file</a> &gt; <span class="el_source">MoneyWiseQIFSplitEvent.java</span></div><h1>MoneyWiseQIFSplitEvent.java</h1><pre class="source lang-java linenums">/*
+ * MoneyWise: Finance Application
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.moneywise.quicken.file;
+
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRate;
+import io.github.tonywasher.joceanus.moneywise.quicken.definitions.MoneyWiseQEventLineType;
+import io.github.tonywasher.joceanus.moneywise.quicken.file.MoneyWiseQIFLine.MoneyWiseQIFCategoryLine;
+import io.github.tonywasher.joceanus.moneywise.quicken.file.MoneyWiseQIFLine.MoneyWiseQIFMoneyLine;
+import io.github.tonywasher.joceanus.moneywise.quicken.file.MoneyWiseQIFLine.MoneyWiseQIFRateLine;
+import io.github.tonywasher.joceanus.moneywise.quicken.file.MoneyWiseQIFLine.MoneyWiseQIFStringLine;
+import io.github.tonywasher.joceanus.moneywise.quicken.file.MoneyWiseQIFLine.MoneyWiseQIFXferAccountLine;
+
+import java.util.List;
+
+/**
+ * Split Event Record.
+ */
+public class MoneyWiseQIFSplitEvent
+        extends MoneyWiseQIFRecord&lt;MoneyWiseQEventLineType&gt; {
+    /**
+     * The Event Category.
+     */
+    private final MoneyWiseQIFEventCategory theCategory;
+
+    /**
+     * The Transfer Account.
+     */
+    private final MoneyWiseQIFAccount theAccount;
+
+    /**
+     * The Amount.
+     */
+    private OceanusMoney theAmount;
+
+    /**
+     * The Percentage.
+     */
+    private OceanusRate thePercentage;
+
+    /**
+     * The Comment.
+     */
+    private String theComment;
+
+    /**
+     * Constructor.
+     *
+     * @param pFile     the QIF File
+     * @param pCategory the category
+     */
+    protected MoneyWiseQIFSplitEvent(final MoneyWiseQIFFile pFile,
+                                     final MoneyWiseQIFEventCategory pCategory) {
+<span class="nc" id="L68">        this(pFile, pCategory, null);</span>
+<span class="nc" id="L69">    }</span>
+
+    /**
+     * Constructor.
+     *
+     * @param pFile     the QIF File
+     * @param pCategory the category
+     * @param pClasses  the classes
+     */
+    protected MoneyWiseQIFSplitEvent(final MoneyWiseQIFFile pFile,
+                                     final MoneyWiseQIFEventCategory pCategory,
+                                     final List&lt;MoneyWiseQIFClass&gt; pClasses) {
+        /* Call Super-constructor */
+<span class="nc" id="L82">        super(pFile, MoneyWiseQEventLineType.class);</span>
+
+        /* Set values */
+<span class="nc" id="L85">        theCategory = pCategory;</span>
+<span class="nc" id="L86">        theAccount = null;</span>
+<span class="nc" id="L87">        theAmount = null;</span>
+<span class="nc" id="L88">        thePercentage = null;</span>
+<span class="nc" id="L89">        theComment = null;</span>
+
+        /* Add the line */
+<span class="nc" id="L92">        addLine(new MoneyWiseQIFEventSplitCategoryLine(theCategory, pClasses));</span>
+<span class="nc" id="L93">    }</span>
+
+    /**
+     * Constructor.
+     *
+     * @param pFile    the QIF File
+     * @param pAccount the transfer account
+     */
+    protected MoneyWiseQIFSplitEvent(final MoneyWiseQIFFile pFile,
+                                     final MoneyWiseQIFAccount pAccount) {
+        /* Call Super-constructor */
+<span class="nc" id="L104">        this(pFile, pAccount, null);</span>
+<span class="nc" id="L105">    }</span>
+
+    /**
+     * Constructor.
+     *
+     * @param pFile    the QIF File
+     * @param pAccount the transfer account
+     * @param pClasses the classes
+     */
+    protected MoneyWiseQIFSplitEvent(final MoneyWiseQIFFile pFile,
+                                     final MoneyWiseQIFAccount pAccount,
+                                     final List&lt;MoneyWiseQIFClass&gt; pClasses) {
+        /* Call Super-constructor */
+<span class="nc" id="L118">        super(pFile, MoneyWiseQEventLineType.class);</span>
+
+        /* Set values */
+<span class="nc" id="L121">        theCategory = null;</span>
+<span class="nc" id="L122">        theAccount = pAccount;</span>
+<span class="nc" id="L123">        theAmount = null;</span>
+<span class="nc" id="L124">        thePercentage = null;</span>
+<span class="nc" id="L125">        theComment = null;</span>
+
+        /* Add the line */
+<span class="nc" id="L128">        addLine(new MoneyWiseQIFEventSplitAccountLine(pAccount, pClasses));</span>
+<span class="nc" id="L129">    }</span>
+
+    /**
+     * Obtain the event category.
+     *
+     * @return the event category.
+     */
+    public MoneyWiseQIFEventCategory getCategory() {
+<span class="nc" id="L137">        return theCategory;</span>
+    }
+
+    /**
+     * Obtain the account.
+     *
+     * @return the account.
+     */
+    public MoneyWiseQIFAccount getAccount() {
+<span class="nc" id="L146">        return theAccount;</span>
+    }
+
+    /**
+     * Obtain the amount.
+     *
+     * @return the amount.
+     */
+    public OceanusMoney getAmount() {
+<span class="nc" id="L155">        return theAmount;</span>
+    }
+
+    /**
+     * Obtain the percentage.
+     *
+     * @return the percentage.
+     */
+    public OceanusRate getPercentage() {
+<span class="nc" id="L164">        return thePercentage;</span>
+    }
+
+    /**
+     * Obtain the comment.
+     *
+     * @return the comment.
+     */
+    public String getComment() {
+<span class="nc" id="L173">        return theComment;</span>
+    }
+
+    /**
+     * Set the split amount.
+     *
+     * @param pAmount the amount
+     */
+    protected void setSplitAmount(final OceanusMoney pAmount) {
+        /* Add the line */
+<span class="nc" id="L183">        addLine(new MoneyWiseQIFEventSplitAmountLine(pAmount));</span>
+<span class="nc" id="L184">        theAmount = pAmount;</span>
+<span class="nc" id="L185">    }</span>
+
+    /**
+     * Set the split percentage.
+     *
+     * @param pPercent the percentage
+     */
+    protected void setSplitPercentage(final OceanusRate pPercent) {
+        /* Add the line */
+<span class="nc" id="L194">        addLine(new MoneyWiseQIFEventSplitPercentLine(pPercent));</span>
+<span class="nc" id="L195">        thePercentage = pPercent;</span>
+<span class="nc" id="L196">    }</span>
+
+    /**
+     * Set the split comment.
+     *
+     * @param pComment the comment
+     */
+    protected void setSplitComment(final String pComment) {
+        /* Add the line */
+<span class="nc" id="L205">        addLine(new MoneyWiseQIFEventSplitCommentLine(pComment));</span>
+<span class="nc" id="L206">        theComment = pComment;</span>
+<span class="nc" id="L207">    }</span>
+
+    /**
+     * The Event Split Account line.
+     */
+    public class MoneyWiseQIFEventSplitAccountLine
+            extends MoneyWiseQIFXferAccountLine&lt;MoneyWiseQEventLineType&gt; {
+        /**
+         * Constructor.
+         *
+         * @param pAccount the account
+         */
+        protected MoneyWiseQIFEventSplitAccountLine(final MoneyWiseQIFAccount pAccount) {
+            /* Call super-constructor */
+<span class="nc" id="L221">            super(pAccount);</span>
+<span class="nc" id="L222">        }</span>
+
+        /**
+         * Constructor.
+         *
+         * @param pAccount the account
+         * @param pClasses the classes
+         */
+        protected MoneyWiseQIFEventSplitAccountLine(final MoneyWiseQIFAccount pAccount,
+                                                    final List&lt;MoneyWiseQIFClass&gt; pClasses) {
+            /* Call super-constructor */
+<span class="nc" id="L233">            super(pAccount, pClasses);</span>
+<span class="nc" id="L234">        }</span>
+
+        @Override
+        public MoneyWiseQEventLineType getLineType() {
+<span class="nc" id="L238">            return MoneyWiseQEventLineType.SPLITCATEGORY;</span>
+        }
+    }
+
+    /**
+     * The Event Split Category line.
+     */
+    public class MoneyWiseQIFEventSplitCategoryLine
+            extends MoneyWiseQIFCategoryLine&lt;MoneyWiseQEventLineType&gt; {
+        /**
+         * Constructor.
+         *
+         * @param pCategory the category
+         */
+        protected MoneyWiseQIFEventSplitCategoryLine(final MoneyWiseQIFEventCategory pCategory) {
+            /* Call super-constructor */
+<span class="nc" id="L254">            super(pCategory);</span>
+<span class="nc" id="L255">        }</span>
+
+        /**
+         * Constructor.
+         *
+         * @param pCategory the category
+         * @param pClasses  the classes
+         */
+        protected MoneyWiseQIFEventSplitCategoryLine(final MoneyWiseQIFEventCategory pCategory,
+                                                     final List&lt;MoneyWiseQIFClass&gt; pClasses) {
+            /* Call super-constructor */
+<span class="nc" id="L266">            super(pCategory, pClasses);</span>
+<span class="nc" id="L267">        }</span>
+
+        @Override
+        public MoneyWiseQEventLineType getLineType() {
+<span class="nc" id="L271">            return MoneyWiseQEventLineType.SPLITCATEGORY;</span>
+        }
+    }
+
+    /**
+     * The Event Split Amount line.
+     */
+    public class MoneyWiseQIFEventSplitAmountLine
+            extends MoneyWiseQIFMoneyLine&lt;MoneyWiseQEventLineType&gt; {
+        /**
+         * Constructor.
+         *
+         * @param pAmount the amount
+         */
+        protected MoneyWiseQIFEventSplitAmountLine(final OceanusMoney pAmount) {
+            /* Call super-constructor */
+<span class="nc" id="L287">            super(pAmount);</span>
+<span class="nc" id="L288">        }</span>
+
+        /**
+         * Obtain Amount.
+         *
+         * @return the amount
+         */
+        public OceanusMoney getAmount() {
+<span class="nc" id="L296">            return getMoney();</span>
+        }
+
+        @Override
+        public MoneyWiseQEventLineType getLineType() {
+<span class="nc" id="L301">            return MoneyWiseQEventLineType.SPLITAMOUNT;</span>
+        }
+    }
+
+    /**
+     * The Event Split Percent line.
+     */
+    public class MoneyWiseQIFEventSplitPercentLine
+            extends MoneyWiseQIFRateLine&lt;MoneyWiseQEventLineType&gt; {
+        /**
+         * Constructor.
+         *
+         * @param pPercent the percentage
+         */
+        protected MoneyWiseQIFEventSplitPercentLine(final OceanusRate pPercent) {
+            /* Call super-constructor */
+<span class="nc" id="L317">            super(pPercent);</span>
+<span class="nc" id="L318">        }</span>
+
+        /**
+         * Obtain Percentage.
+         *
+         * @return the percentage
+         */
+        public OceanusRate getPercentage() {
+<span class="nc" id="L326">            return getRate();</span>
+        }
+
+        @Override
+        public MoneyWiseQEventLineType getLineType() {
+<span class="nc" id="L331">            return MoneyWiseQEventLineType.SPLITPERCENT;</span>
+        }
+    }
+
+    /**
+     * The Event Split Comment line.
+     */
+    public class MoneyWiseQIFEventSplitCommentLine
+            extends MoneyWiseQIFStringLine&lt;MoneyWiseQEventLineType&gt; {
+        /**
+         * Constructor.
+         *
+         * @param pComment the comment
+         */
+        protected MoneyWiseQIFEventSplitCommentLine(final String pComment) {
+            /* Call super-constructor */
+<span class="nc" id="L347">            super(pComment);</span>
+<span class="nc" id="L348">        }</span>
+
+        @Override
+        public MoneyWiseQEventLineType getLineType() {
+<span class="nc" id="L352">            return MoneyWiseQEventLineType.SPLITCOMMENT;</span>
+        }
+
+        /**
+         * Obtain Comment.
+         *
+         * @return the comment
+         */
+        public String getComment() {
+<span class="nc" id="L361">            return getValue();</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

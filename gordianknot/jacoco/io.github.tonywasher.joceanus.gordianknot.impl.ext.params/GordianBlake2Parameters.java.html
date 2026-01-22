@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianBlake2Parameters.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.impl.ext.params</a> &gt; <span class="el_source">GordianBlake2Parameters.java</span></div><h1>GordianBlake2Parameters.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+package io.github.tonywasher.joceanus.gordianknot.impl.ext.params;
+
+import org.bouncycastle.crypto.CipherParameters;
+import org.bouncycastle.util.Arrays;
+
+/**
+ * Blake2 Parameters.
+ */
+<span class="fc" id="L26">public class GordianBlake2Parameters</span>
+        implements CipherParameters {
+    /**
+     * The key.
+     */
+    private byte[] theKey;
+
+    /**
+     * The salt.
+     */
+    private byte[] theSalt;
+
+    /**
+     * The personalisation.
+     */
+    private byte[] thePersonal;
+
+    /**
+     * The maximum xofLen.
+     */
+    private long theMaxXofLen;
+
+    /**
+     * The fanOut.
+     */
+    private short theFanOut;
+
+    /**
+     * The maxDepth.
+     */
+    private short theMaxDepth;
+
+    /**
+     * The leafLength.
+     */
+    private int theLeafLen;
+
+    /**
+     * Obtain the key.
+     *
+     * @return the key
+     */
+    public byte[] getKey() {
+<span class="fc" id="L69">        return Arrays.clone(theKey);</span>
+    }
+
+    /**
+     * Obtain the salt.
+     *
+     * @return the salt
+     */
+    public byte[] getSalt() {
+<span class="fc" id="L78">        return Arrays.clone(theSalt);</span>
+    }
+
+    /**
+     * Obtain the personalisation.
+     *
+     * @return the personalisation
+     */
+    public byte[] getPersonalisation() {
+<span class="fc" id="L87">        return Arrays.clone(thePersonal);</span>
+    }
+
+    /**
+     * Obtain the maximum output length.
+     *
+     * @return the output length
+     */
+    public long getMaxOutputLength() {
+<span class="fc" id="L96">        return theMaxXofLen;</span>
+    }
+
+    /**
+     * Obtain the treeLeafLength.
+     *
+     * @return the leafLength
+     */
+    public int getTreeLeafLen() {
+<span class="fc" id="L105">        return theLeafLen;</span>
+    }
+
+    /**
+     * Obtain the treeFanOut.
+     *
+     * @return the fanOut
+     */
+    public short getTreeFanOut() {
+<span class="fc" id="L114">        return theFanOut;</span>
+    }
+
+    /**
+     * Obtain the treeMaxDepth.
+     *
+     * @return the maxDepth
+     */
+    public short getTreeMaxDepth() {
+<span class="fc" id="L123">        return theMaxDepth;</span>
+    }
+
+    /**
+     * Parameter Builder.
+     */
+<span class="fc" id="L129">    public static class GordianBlake2ParametersBuilder {</span>
+        /**
+         * The key.
+         */
+        private byte[] theKey;
+
+        /**
+         * The salt.
+         */
+        private byte[] theSalt;
+
+        /**
+         * The personalisation.
+         */
+        private byte[] thePersonal;
+
+        /**
+         * The maximum xofLen.
+         */
+        private long theMaxXofLen;
+
+        /**
+         * The fanOut.
+         */
+<span class="fc" id="L153">        private short theFanOut = 1;</span>
+
+        /**
+         * The maxDepth.
+         */
+<span class="fc" id="L158">        private short theMaxDepth = 1;</span>
+
+        /**
+         * The leafLength.
+         */
+        private int theLeafLen;
+
+        /**
+         * Set the key.
+         *
+         * @param pKey the key
+         * @return the Builder
+         */
+        public GordianBlake2ParametersBuilder setKey(final byte[] pKey) {
+<span class="fc" id="L172">            theKey = Arrays.clone(pKey);</span>
+<span class="fc" id="L173">            return this;</span>
+        }
+
+        /**
+         * Set the salt.
+         *
+         * @param pSalt the salt
+         * @return the Builder
+         */
+        public GordianBlake2ParametersBuilder setSalt(final byte[] pSalt) {
+<span class="fc" id="L183">            theSalt = Arrays.clone(pSalt);</span>
+<span class="fc" id="L184">            return this;</span>
+        }
+
+        /**
+         * Set the personalisation.
+         *
+         * @param pPersonal the personalisation
+         * @return the Builder
+         */
+        public GordianBlake2ParametersBuilder setPersonalisation(final byte[] pPersonal) {
+<span class="nc" id="L194">            thePersonal = Arrays.clone(pPersonal);</span>
+<span class="nc" id="L195">            return this;</span>
+        }
+
+        /**
+         * Set the maximum output length. (-1=unlimited)
+         *
+         * @param pMaxOutLen the maximum output length
+         * @return the Builder
+         */
+        public GordianBlake2ParametersBuilder setMaxOutputLen(final long pMaxOutLen) {
+<span class="fc" id="L205">            theMaxXofLen = pMaxOutLen;</span>
+<span class="fc" id="L206">            return this;</span>
+        }
+
+        /**
+         * Set the treeConfig.
+         *
+         * @param pFanOut   the fanOut (0=unlimited, 1-255).
+         * @param pMaxDepth the maxDepth (2-255).
+         * @param pLeafLen  the leafLength (in bytes).
+         * @return the Builder
+         */
+        public GordianBlake2ParametersBuilder setTreeConfig(final int pFanOut,
+                                                            final int pMaxDepth,
+                                                            final int pLeafLen) {
+<span class="fc" id="L220">            theFanOut = (short) pFanOut;</span>
+<span class="fc" id="L221">            theMaxDepth = (short) pMaxDepth;</span>
+<span class="fc" id="L222">            theLeafLen = pLeafLen;</span>
+<span class="fc" id="L223">            return this;</span>
+        }
+
+        /**
+         * Build the parameters.
+         *
+         * @return the parameters
+         */
+        public GordianBlake2Parameters build() {
+            /* Create params */
+<span class="fc" id="L233">            final GordianBlake2Parameters myParams = new GordianBlake2Parameters();</span>
+
+            /* Record key and Salt */
+<span class="fc bfc" id="L236" title="All 2 branches covered.">            if (theKey != null) {</span>
+<span class="fc" id="L237">                myParams.theKey = theKey;</span>
+            }
+<span class="fc bfc" id="L239" title="All 2 branches covered.">            if (theSalt != null) {</span>
+<span class="fc" id="L240">                myParams.theSalt = theSalt;</span>
+            }
+
+            /* Record personalisation and xof length */
+<span class="pc bpc" id="L244" title="1 of 2 branches missed.">            if (thePersonal != null) {</span>
+<span class="nc" id="L245">                myParams.thePersonal = thePersonal;</span>
+            }
+<span class="fc" id="L247">            myParams.theMaxXofLen = theMaxXofLen;</span>
+
+            /* Record tree details */
+<span class="fc" id="L250">            myParams.theFanOut = theFanOut;</span>
+<span class="fc" id="L251">            myParams.theMaxDepth = theMaxDepth;</span>
+<span class="fc" id="L252">            myParams.theLeafLen = theLeafLen;</span>
+
+            /* Return the parameters */
+<span class="fc" id="L255">            return myParams;</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

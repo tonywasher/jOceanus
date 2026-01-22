@@ -1,0 +1,868 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseValidateTransaction.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.moneywise.data.validate</a> &gt; <span class="el_source">MoneyWiseValidateTransaction.java</span></div><h1>MoneyWiseValidateTransaction.java</h1><pre class="source lang-java linenums">/*
+ * MoneyWise: Finance Application
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.moneywise.data.validate;
+
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
+import io.github.tonywasher.joceanus.metis.data.MetisDataDifference;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldRequired;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseAssetDirection;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseAssetType;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDataValidator.MoneyWiseDataValidatorTrans;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDeposit;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseLoan;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePayee;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePortfolio;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurity;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurityHolding;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransAsset;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransBase;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransCategory;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransInfoSet;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransaction;
+import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseDepositCategoryClass;
+import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWisePayeeClass;
+import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWisePortfolioClass;
+import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseSecurityClass;
+import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTransCategoryClass;
+import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTransInfoClass;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
+import io.github.tonywasher.joceanus.prometheus.views.PrometheusEditSet;
+
+import java.util.Currency;
+import java.util.Objects;
+
+/**
+ * Validator for transaction.
+ */
+public class MoneyWiseValidateTransaction
+        implements MoneyWiseDataValidatorTrans&lt;MoneyWiseTransaction&gt; {
+    /**
+     * Are we using new validation?
+     */
+    private final boolean newValidation;
+
+    /**
+     * The infoSet validator.
+     */
+    private final MoneyWiseValidateTransInfoSet theInfoSet;
+
+    /**
+     * The defaults engine.
+     */
+    private final MoneyWiseValidateTransDefaults theDefaults;
+
+    /**
+     * Set the editSet.
+     */
+    private PrometheusEditSet theEditSet;
+
+    /**
+     * Constructor.
+     *
+     * @param pNewValidation true/false
+     */
+<span class="fc" id="L84">    MoneyWiseValidateTransaction(final boolean pNewValidation) {</span>
+<span class="fc" id="L85">        newValidation = pNewValidation;</span>
+<span class="fc" id="L86">        theInfoSet = new MoneyWiseValidateTransInfoSet(pNewValidation);</span>
+<span class="fc" id="L87">        theDefaults = new MoneyWiseValidateTransDefaults(this);</span>
+<span class="fc" id="L88">    }</span>
+
+    @Override
+    public void setEditSet(final PrometheusEditSet pEditSet) {
+<span class="fc" id="L92">        theEditSet = pEditSet;</span>
+<span class="fc" id="L93">        theInfoSet.storeEditSet(pEditSet);</span>
+<span class="fc" id="L94">    }</span>
+
+    /**
+     * Obtain the editSet.
+     *
+     * @return the editSet
+     */
+    PrometheusEditSet getEditSet() {
+<span class="nc bnc" id="L102" title="All 2 branches missed.">        if (theEditSet == null) {</span>
+<span class="nc" id="L103">            throw new IllegalStateException(&quot;editSet not set up&quot;);</span>
+        }
+<span class="nc" id="L105">        return theEditSet;</span>
+    }
+
+    /**
+     * Obtain the transInfoSet validator.
+     *
+     * @return the validator
+     */
+    public MoneyWiseValidateTransInfoSet getInfoSetValidator() {
+<span class="nc" id="L114">        return theInfoSet;</span>
+    }
+
+    /**
+     * Should we perform new validity checks?
+     *
+     * @return true/false
+     */
+    public boolean newValidation() {
+<span class="nc" id="L123">        return newValidation;</span>
+    }
+
+    @Override
+    public void validate(final PrometheusDataItem pTrans) {
+<span class="fc" id="L128">        final MoneyWiseTransaction myTrans = (MoneyWiseTransaction) pTrans;</span>
+<span class="fc" id="L129">        final OceanusDate myDate = myTrans.getDate();</span>
+<span class="fc" id="L130">        final MoneyWiseTransAsset myAccount = myTrans.getAccount();</span>
+<span class="fc" id="L131">        final MoneyWiseTransAsset myPartner = myTrans.getPartner();</span>
+<span class="fc" id="L132">        final MoneyWiseTransCategory myCategory = myTrans.getCategory();</span>
+<span class="fc" id="L133">        final MoneyWiseAssetDirection myDir = myTrans.getDirection();</span>
+<span class="fc" id="L134">        final OceanusMoney myAmount = myTrans.getAmount();</span>
+<span class="fc" id="L135">        final OceanusUnits myAccountUnits = myTrans.getAccountDeltaUnits();</span>
+<span class="fc" id="L136">        final OceanusUnits myPartnerUnits = myTrans.getPartnerDeltaUnits();</span>
+<span class="fc" id="L137">        boolean doCheckCombo = true;</span>
+
+        /* Header is always valid */
+<span class="pc bpc" id="L140" title="1 of 2 branches missed.">        if (pTrans.isHeader()) {</span>
+<span class="nc" id="L141">            pTrans.setValidEdit();</span>
+<span class="nc" id="L142">            return;</span>
+        }
+
+        /* Determine date range to check for */
+<span class="fc" id="L146">        final OceanusDateRange myRange = myTrans.getDataSet().getDateRange();</span>
+
+        /* The date must be non-null */
+<span class="pc bpc" id="L149" title="1 of 2 branches missed.">        if (myDate == null) {</span>
+<span class="nc" id="L150">            pTrans.addError(PrometheusDataItem.ERROR_MISSING, MoneyWiseBasicResource.MONEYWISEDATA_FIELD_DATE);</span>
+            /* The date must be in-range */
+<span class="pc bpc" id="L152" title="1 of 2 branches missed.">        } else if (myRange.compareToDate(myDate) != 0) {</span>
+<span class="nc" id="L153">            pTrans.addError(PrometheusDataItem.ERROR_RANGE, MoneyWiseBasicResource.MONEYWISEDATA_FIELD_DATE);</span>
+        }
+
+        /* Account must be non-null */
+<span class="pc bpc" id="L157" title="1 of 2 branches missed.">        if (myAccount == null) {</span>
+<span class="nc" id="L158">            pTrans.addError(PrometheusDataItem.ERROR_MISSING, MoneyWiseBasicResource.TRANSACTION_ACCOUNT);</span>
+<span class="nc" id="L159">            doCheckCombo = false;</span>
+
+        } else {
+            /* Account must be valid */
+<span class="pc bpc" id="L163" title="1 of 2 branches missed.">            if (!isValidAccount(myAccount)) {</span>
+<span class="nc" id="L164">                pTrans.addError(MoneyWiseTransBase.ERROR_COMBO, MoneyWiseBasicResource.TRANSACTION_ACCOUNT);</span>
+<span class="nc" id="L165">                doCheckCombo = false;</span>
+            }
+        }
+
+        /* Category must be non-null */
+<span class="pc bpc" id="L170" title="1 of 2 branches missed.">        if (myCategory == null) {</span>
+<span class="nc" id="L171">            pTrans.addError(PrometheusDataItem.ERROR_MISSING, MoneyWiseBasicDataType.TRANSCATEGORY);</span>
+<span class="nc" id="L172">            doCheckCombo = false;</span>
+
+            /* Category must be valid for Account */
+<span class="pc bpc" id="L175" title="1 of 2 branches missed.">        } else if (doCheckCombo</span>
+<span class="pc bpc" id="L176" title="1 of 2 branches missed.">                &amp;&amp; !isValidCategory(myAccount, myCategory)) {</span>
+<span class="nc" id="L177">            pTrans.addError(MoneyWiseTransBase.ERROR_COMBO, MoneyWiseBasicDataType.TRANSCATEGORY);</span>
+<span class="nc" id="L178">            doCheckCombo = false;</span>
+        }
+
+        /* Direction must be non-null */
+<span class="pc bpc" id="L182" title="1 of 2 branches missed.">        if (myDir == null) {</span>
+<span class="nc" id="L183">            pTrans.addError(PrometheusDataItem.ERROR_MISSING, MoneyWiseBasicResource.TRANSACTION_DIRECTION);</span>
+<span class="nc" id="L184">            doCheckCombo = false;</span>
+
+            /* Direction must be valid for Account */
+<span class="pc bpc" id="L187" title="1 of 2 branches missed.">        } else if (doCheckCombo</span>
+<span class="pc bpc" id="L188" title="1 of 2 branches missed.">                &amp;&amp; !isValidDirection(myAccount, myCategory, myDir)) {</span>
+<span class="nc" id="L189">            pTrans.addError(MoneyWiseTransBase.ERROR_COMBO, MoneyWiseBasicResource.TRANSACTION_DIRECTION);</span>
+<span class="nc" id="L190">            doCheckCombo = false;</span>
+        }
+
+        /* Partner must be non-null */
+<span class="pc bpc" id="L194" title="1 of 2 branches missed.">        if (myPartner == null) {</span>
+<span class="nc" id="L195">            pTrans.addError(PrometheusDataItem.ERROR_MISSING, MoneyWiseBasicResource.TRANSACTION_PARTNER);</span>
+
+        } else {
+            /* Partner must be valid for Account */
+<span class="pc bpc" id="L199" title="1 of 2 branches missed.">            if (doCheckCombo</span>
+<span class="fc bfc" id="L200" title="All 2 branches covered.">                    &amp;&amp; !isValidPartner(myAccount, myCategory, myPartner)) {</span>
+<span class="fc" id="L201">                pTrans.addError(MoneyWiseTransBase.ERROR_COMBO, MoneyWiseBasicResource.TRANSACTION_PARTNER);</span>
+            }
+        }
+
+        /* If money is null */
+<span class="fc bfc" id="L206" title="All 2 branches covered.">        if (myAmount == null) {</span>
+            /* Check that it must be null */
+<span class="pc bpc" id="L208" title="1 of 2 branches missed.">            if (!needsNullAmount(myTrans)) {</span>
+<span class="nc" id="L209">                pTrans.addError(PrometheusDataItem.ERROR_MISSING, MoneyWiseBasicResource.TRANSACTION_AMOUNT);</span>
+            }
+
+            /* else non-null money */
+        } else {
+            /* Check that it must be null */
+<span class="pc bpc" id="L215" title="1 of 2 branches missed.">            if (needsNullAmount(myTrans)) {</span>
+<span class="nc" id="L216">                pTrans.addError(PrometheusDataItem.ERROR_EXIST, MoneyWiseBasicResource.TRANSACTION_AMOUNT);</span>
+            }
+
+            /* Money must not be negative */
+<span class="pc bpc" id="L220" title="1 of 2 branches missed.">            if (!myAmount.isPositive()) {</span>
+<span class="nc" id="L221">                pTrans.addError(PrometheusDataItem.ERROR_NEGATIVE, MoneyWiseBasicResource.TRANSACTION_AMOUNT);</span>
+            }
+
+            /* Check that amount is correct currency */
+<span class="pc bpc" id="L225" title="1 of 2 branches missed.">            if (myAccount != null) {</span>
+<span class="fc" id="L226">                final Currency myCurrency = myAccount.getCurrency();</span>
+<span class="pc bpc" id="L227" title="1 of 2 branches missed.">                if (!myAmount.getCurrency().equals(myCurrency)) {</span>
+<span class="nc" id="L228">                    pTrans.addError(MoneyWiseTransBase.ERROR_CURRENCY, MoneyWiseBasicResource.TRANSACTION_AMOUNT);</span>
+                }
+            }
+        }
+
+        /* Cannot have PartnerUnits if securities are identical */
+<span class="pc bpc" id="L234" title="1 of 4 branches missed.">        if (myAccountUnits != null</span>
+                &amp;&amp; myPartnerUnits != null
+<span class="nc bnc" id="L236" title="All 2 branches missed.">                &amp;&amp; MetisDataDifference.isEqual(myAccount, myPartner)) {</span>
+<span class="nc" id="L237">            pTrans.addError(MoneyWiseTransaction.ERROR_CIRCULAR, MoneyWiseTransInfoSet.getFieldForClass(MoneyWiseTransInfoClass.PARTNERDELTAUNITS));</span>
+        }
+
+        /* If we have a category and an infoSet */
+<span class="pc bpc" id="L241" title="1 of 2 branches missed.">        if (myCategory != null</span>
+<span class="pc bpc" id="L242" title="1 of 2 branches missed.">                &amp;&amp; myTrans.getInfoSet() != null) {</span>
+            /* Validate the InfoSet */
+<span class="fc" id="L244">            theInfoSet.validate(myTrans.getInfoSet());</span>
+        }
+
+        /* Set validation flag */
+<span class="fc bfc" id="L248" title="All 2 branches covered.">        if (!pTrans.hasErrors()) {</span>
+<span class="fc" id="L249">            pTrans.setValidEdit();</span>
+        }
+<span class="fc" id="L251">    }</span>
+
+    /**
+     * Determines whether an event needs a zero amount.
+     *
+     * @param pTrans the transaction
+     * @return true/false
+     */
+    public boolean needsNullAmount(final MoneyWiseTransaction pTrans) {
+<span class="fc" id="L260">        final MoneyWiseTransCategoryClass myClass = pTrans.getCategoryClass();</span>
+<span class="pc bpc" id="L261" title="1 of 2 branches missed.">        return myClass != null</span>
+<span class="fc bfc" id="L262" title="All 2 branches covered.">                &amp;&amp; myClass.needsNullAmount();</span>
+    }
+
+    @Override
+    public boolean isValidAccount(final MoneyWiseTransAsset pAccount) {
+        /* Validate securityHolding */
+<span class="fc bfc" id="L268" title="All 2 branches covered.">        if (pAccount instanceof MoneyWiseSecurityHolding myHolding</span>
+<span class="pc bpc" id="L269" title="1 of 2 branches missed.">                &amp;&amp; !checkSecurityHolding(myHolding)) {</span>
+<span class="nc" id="L270">            return false;</span>
+        }
+
+        /* Reject pensions portfolio */
+<span class="pc bpc" id="L274" title="1 of 2 branches missed.">        if (pAccount instanceof MoneyWisePortfolio myPortfolio</span>
+<span class="nc bnc" id="L275" title="All 2 branches missed.">                &amp;&amp; myPortfolio.getCategoryClass().holdsPensions()) {</span>
+<span class="nc" id="L276">            return false;</span>
+        }
+
+        /* Check type of account */
+<span class="fc" id="L280">        final MoneyWiseAssetType myType = pAccount.getAssetType();</span>
+<span class="pc bpc" id="L281" title="2 of 4 branches missed.">        return myType.isBaseAccount() &amp;&amp; !pAccount.isHidden();</span>
+    }
+
+    @Override
+    public boolean isValidCategory(final MoneyWiseTransAsset pAccount,
+                                   final MoneyWiseTransCategory pCategory) {
+        /* Access details */
+<span class="fc" id="L288">        final MoneyWiseAssetType myType = pAccount.getAssetType();</span>
+<span class="fc" id="L289">        final MoneyWiseTransCategoryClass myCatClass = Objects.requireNonNull(pCategory.getCategoryTypeClass());</span>
+
+        /* Immediately reject hidden categories */
+<span class="pc bpc" id="L292" title="1 of 2 branches missed.">        if (myCatClass.isHiddenType()) {</span>
+<span class="nc" id="L293">            return false;</span>
+        }
+
+        /* Switch on the CategoryClass */
+<span class="pc bpc" id="L297" title="6 of 17 branches missed.">        switch (myCatClass) {</span>
+            case TAXEDINCOME:
+            case GROSSINCOME:
+            case RECOVEREDEXPENSES:
+            case OTHERINCOME:
+                /* Taxed/Other income must be to deposit/cash/loan */
+<span class="fc" id="L303">                return myType.isValued();</span>
+
+            case PENSIONCONTRIB:
+                /* Pension contribution must be to a Pension holding or to a SIPP */
+<span class="nc" id="L307">                return (pAccount instanceof MoneyWiseSecurityHolding myHolding</span>
+<span class="nc bnc" id="L308" title="All 4 branches missed.">                        &amp;&amp; myHolding.getSecurity().getCategoryClass().isPension())</span>
+<span class="nc bnc" id="L309" title="All 2 branches missed.">                        || (pAccount instanceof MoneyWisePortfolio myPortfolio</span>
+<span class="nc bnc" id="L310" title="All 2 branches missed.">                        &amp;&amp; myPortfolio.isPortfolioClass(MoneyWisePortfolioClass.SIPP));</span>
+
+            case GIFTEDINCOME:
+            case INHERITED:
+                /* Inheritance/Gifted must be to asset */
+<span class="fc" id="L315">                return myType.isAsset();</span>
+
+            case INTEREST:
+                /* Account must be deposit or portfolio */
+<span class="pc bpc" id="L319" title="3 of 4 branches missed.">                return myType.isDeposit() || myType.isPortfolio();</span>
+
+            case DIVIDEND:
+            case SECURITYCLOSURE:
+                /* Account must be SecurityHolding */
+<span class="fc" id="L324">                return myType.isSecurityHolding();</span>
+
+            case BADDEBTCAPITAL:
+            case BADDEBTINTEREST:
+                /* Account must be peer2Peer */
+<span class="nc" id="L329">                return pAccount instanceof MoneyWiseDeposit myDeposit</span>
+<span class="nc bnc" id="L330" title="All 4 branches missed.">                        &amp;&amp; myDeposit.isDepositClass(MoneyWiseDepositCategoryClass.PEER2PEER);</span>
+
+            case CASHBACK:
+<span class="fc" id="L333">                return checkCashBack(pAccount);</span>
+
+            case LOYALTYBONUS:
+<span class="fc" id="L336">                return checkLoyaltyBonus(pAccount);</span>
+
+            case RENTALINCOME:
+            case RENTALEXPENSE:
+            case ROOMRENTALINCOME:
+                /* Account must be property */
+<span class="nc" id="L342">                return pAccount instanceof MoneyWiseSecurityHolding myHolding</span>
+<span class="nc bnc" id="L343" title="All 4 branches missed.">                        &amp;&amp; myHolding.getSecurity().isSecurityClass(MoneyWiseSecurityClass.PROPERTY);</span>
+
+            case UNITSADJUST:
+            case SECURITYREPLACE:
+                /* Account must be capital */
+<span class="fc" id="L348">                return pAccount.isCapital();</span>
+
+            case STOCKSPLIT:
+            case STOCKTAKEOVER:
+            case STOCKDEMERGER:
+            case STOCKRIGHTSISSUE:
+                /* Account must be shares */
+<span class="fc" id="L355">                return pAccount.isShares();</span>
+
+            case WRITEOFF:
+            case LOANINTERESTEARNED:
+            case LOANINTERESTCHARGED:
+            case TAXRELIEF:
+<span class="fc" id="L361">                return myType.isLoan();</span>
+
+            case LOCALTAXES:
+            case INCOMETAX:
+<span class="nc" id="L365">                return myType.isValued();</span>
+
+            case EXPENSE:
+<span class="pc bpc" id="L368" title="1 of 4 branches missed.">                return myType.isValued() || myType.isAutoExpense();</span>
+
+            case PORTFOLIOXFER:
+<span class="nc bnc" id="L371" title="All 4 branches missed.">                return pAccount instanceof MoneyWiseSecurityHolding</span>
+                        || pAccount instanceof MoneyWisePortfolio;
+
+            case TRANSFER:
+<span class="fc" id="L375">                return true;</span>
+
+            /* Reject other categories */
+            default:
+<span class="nc" id="L379">                return false;</span>
+        }
+    }
+
+    @Override
+    public boolean isValidDirection(final MoneyWiseTransAsset pAccount,
+                                    final MoneyWiseTransCategory pCategory,
+                                    final MoneyWiseAssetDirection pDirection) {
+        /* TODO relax some of these rules */
+
+        /* Access details */
+<span class="fc" id="L390">        final MoneyWiseTransCategoryClass myCatClass = pCategory.getCategoryTypeClass();</span>
+
+        /* Switch on the CategoryClass */
+<span class="pc bpc" id="L393" title="3 of 12 branches missed.">        switch (myCatClass) {</span>
+            case TAXEDINCOME:
+            case GROSSINCOME:
+                /* Cannot refund Taxed Income yet */
+<span class="pc bpc" id="L397" title="3 of 4 branches missed.">                return newValidation || pDirection.isFrom();</span>
+
+            case PENSIONCONTRIB:
+                /* Cannot refund Pension Contribution */
+<span class="nc" id="L401">                return pDirection.isFrom();</span>
+
+            case GIFTEDINCOME:
+            case INHERITED:
+                /* Cannot refund Gifted/Inherited Income yet */
+<span class="pc bpc" id="L406" title="3 of 4 branches missed.">                return newValidation || pDirection.isFrom();</span>
+
+            case RENTALINCOME:
+            case ROOMRENTALINCOME:
+                /* Cannot refund Rental Income */
+<span class="nc" id="L411">                return pDirection.isTo();</span>
+
+            case RENTALEXPENSE:
+                /* Cannot refund Rental Expense */
+<span class="nc" id="L415">                return pDirection.isFrom();</span>
+
+            case INTEREST:
+                /* Cannot refund Interest yet */
+<span class="pc bpc" id="L419" title="3 of 4 branches missed.">                return newValidation || pDirection.isTo();</span>
+
+            case DIVIDEND:
+            case SECURITYCLOSURE:
+                /* Cannot refund Dividend yet */
+<span class="fc" id="L424">                return pDirection.isTo();</span>
+
+            case LOYALTYBONUS:
+                /* Cannot refund loyaltyBonus yet */
+<span class="pc bpc" id="L428" title="3 of 4 branches missed.">                return newValidation || pDirection.isTo();</span>
+
+            case WRITEOFF:
+            case LOANINTERESTCHARGED:
+                /* All need to be TO */
+<span class="pc bpc" id="L433" title="3 of 4 branches missed.">                return newValidation || pDirection.isTo();</span>
+
+            case LOANINTERESTEARNED:
+                /* All need to be FROM */
+<span class="pc bpc" id="L437" title="3 of 4 branches missed.">                return newValidation || pDirection.isFrom();</span>
+
+            case UNITSADJUST:
+            case STOCKSPLIT:
+            case STOCKDEMERGER:
+            case STOCKTAKEOVER:
+            case SECURITYREPLACE:
+            case PORTFOLIOXFER:
+                /* All need to be To */
+<span class="fc" id="L446">                return pDirection.isTo();</span>
+
+            default:
+<span class="fc" id="L449">                return true;</span>
+        }
+    }
+
+    @Override
+    public boolean isValidPartner(final MoneyWiseTransAsset pAccount,
+                                  final MoneyWiseTransCategory pCategory,
+                                  final MoneyWiseTransAsset pPartner) {
+        /* Access details */
+<span class="fc" id="L458">        final boolean isRecursive = MetisDataDifference.isEqual(pAccount, pPartner);</span>
+<span class="fc" id="L459">        final MoneyWiseAssetType myPartnerType = pPartner.getAssetType();</span>
+<span class="fc" id="L460">        final MoneyWiseTransCategoryClass myCatClass = Objects.requireNonNull(pCategory.getCategoryTypeClass());</span>
+
+        /* Immediately reject hidden partners */
+<span class="pc bpc" id="L463" title="1 of 2 branches missed.">        if (pPartner.isHidden()) {</span>
+<span class="nc" id="L464">            return false;</span>
+        }
+
+        /* Validate securityHolding */
+<span class="fc bfc" id="L468" title="All 2 branches covered.">        if (pPartner instanceof MoneyWiseSecurityHolding myHolding</span>
+<span class="pc bpc" id="L469" title="1 of 2 branches missed.">                &amp;&amp; !checkSecurityHolding(myHolding)) {</span>
+<span class="nc" id="L470">            return false;</span>
+        }
+
+        /* Reject pensions portfolio */
+<span class="pc bpc" id="L474" title="1 of 2 branches missed.">        if (pPartner instanceof MoneyWisePortfolio myPortfolio</span>
+<span class="nc bnc" id="L475" title="All 2 branches missed.">                &amp;&amp; myPortfolio.getCategoryClass().holdsPensions()) {</span>
+<span class="nc" id="L476">            return false;</span>
+        }
+
+        /* If this involves auto-expense */
+<span class="fc bfc" id="L480" title="All 2 branches covered.">        if (pAccount.isAutoExpense()</span>
+<span class="fc bfc" id="L481" title="All 2 branches covered.">                || pPartner.isAutoExpense()) {</span>
+            /* Access account type */
+<span class="fc" id="L483">            final MoneyWiseAssetType myAccountType = pAccount.getAssetType();</span>
+
+            /* Special processing */
+<span class="pc bpc" id="L486" title="1 of 3 branches missed.">            switch (myCatClass) {</span>
+                case TRANSFER:
+                    /* Transfer must be to/from deposit/cash/loan */
+<span class="fc bfc" id="L489" title="All 2 branches covered.">                    return myPartnerType.isAutoExpense()</span>
+<span class="fc" id="L490">                            ? myAccountType.isValued()</span>
+<span class="fc" id="L491">                            : myPartnerType.isValued();</span>
+
+                case EXPENSE:
+                    /* Transfer must be to/from payee */
+<span class="fc" id="L495">                    return pPartner instanceof MoneyWisePayee;</span>
+
+                /* Auto Expense cannot be used for other categories */
+                default:
+<span class="nc" id="L499">                    return false;</span>
+            }
+        }
+
+        /* Switch on the CategoryClass */
+<span class="pc bpc" id="L504" title="9 of 20 branches missed.">        switch (myCatClass) {</span>
+            case TAXEDINCOME:
+            case GROSSINCOME:
+                /* Taxed Income must have a Payee that can provide income */
+<span class="fc" id="L508">                return pPartner instanceof MoneyWisePayee myPayee</span>
+<span class="pc bpc" id="L509" title="2 of 4 branches missed.">                        &amp;&amp; myPayee.getCategoryClass().canProvideTaxedIncome();</span>
+
+            case PENSIONCONTRIB:
+                /* Pension Contribution must be a payee that can parent */
+<span class="nc" id="L513">                return pPartner instanceof MoneyWisePayee myPayee</span>
+<span class="nc bnc" id="L514" title="All 4 branches missed.">                        &amp;&amp; myPayee.getCategoryClass().canContribPension();</span>
+
+            case OTHERINCOME:
+            case RECOVEREDEXPENSES:
+                /* Other Income must have a Payee partner */
+<span class="nc" id="L519">                return pPartner instanceof MoneyWisePayee;</span>
+
+            case LOCALTAXES:
+                /* LocalTaxes must have a Government Payee partner */
+<span class="nc" id="L523">                return pPartner instanceof MoneyWisePayee myPayee</span>
+<span class="nc bnc" id="L524" title="All 4 branches missed.">                        &amp;&amp; myPayee.isPayeeClass(MoneyWisePayeeClass.GOVERNMENT);</span>
+
+            case GIFTEDINCOME:
+            case INHERITED:
+                /* Gifted/Inherited Income must have an Individual Payee partner */
+<span class="fc" id="L529">                return pPartner instanceof MoneyWisePayee myPayee</span>
+<span class="pc bpc" id="L530" title="2 of 4 branches missed.">                        &amp;&amp; myPayee.isPayeeClass(MoneyWisePayeeClass.INDIVIDUAL);</span>
+
+            case RENTALINCOME:
+            case RENTALEXPENSE:
+            case ROOMRENTALINCOME:
+                /* RentalIncome/Expense must have a loan partner */
+<span class="nc" id="L536">                return myPartnerType.isLoan();</span>
+
+            case WRITEOFF:
+            case LOANINTERESTEARNED:
+            case LOANINTERESTCHARGED:
+                /* WriteOff/LoanInterestEarned/Charged must be recursive */
+<span class="fc" id="L542">                return isRecursive;</span>
+
+            case INTEREST:
+            case CASHBACK:
+                /* Interest/CashBack is to a valued account */
+<span class="fc" id="L547">                return myPartnerType.isValued();</span>
+
+            case DIVIDEND:
+<span class="fc" id="L550">                return checkDividend(pAccount, pPartner);</span>
+
+            case LOYALTYBONUS:
+<span class="fc" id="L553">                return checkLoyaltyBonus(pAccount, pPartner);</span>
+
+            case BADDEBTCAPITAL:
+            case BADDEBTINTEREST:
+<span class="nc bnc" id="L557" title="All 2 branches missed.">                return pPartner instanceof MoneyWisePayee</span>
+<span class="nc bnc" id="L558" title="All 2 branches missed.">                        &amp;&amp; MetisDataDifference.isEqual(pPartner, pAccount.getParent());</span>
+
+            case UNITSADJUST:
+            case STOCKSPLIT:
+                /* Must be recursive */
+<span class="fc" id="L563">                return isRecursive;</span>
+
+            case SECURITYREPLACE:
+            case STOCKTAKEOVER:
+            case STOCKDEMERGER:
+<span class="nc" id="L568">                return checkTakeOver(pAccount, pPartner);</span>
+
+            case STOCKRIGHTSISSUE:
+<span class="fc" id="L571">                return checkStockRights(pAccount, pPartner);</span>
+
+            case TRANSFER:
+<span class="fc" id="L574">                return checkTransfer(pAccount, pPartner);</span>
+
+            case SECURITYCLOSURE:
+<span class="fc" id="L577">                return checkSecurityClosure(pAccount, pPartner);</span>
+
+            case EXPENSE:
+                /* Expense must have a Payee partner */
+<span class="fc" id="L581">                return pPartner instanceof MoneyWisePayee;</span>
+
+            case INCOMETAX:
+            case TAXRELIEF:
+<span class="nc" id="L585">                return pPartner instanceof MoneyWisePayee myPayee</span>
+<span class="nc bnc" id="L586" title="All 4 branches missed.">                        &amp;&amp; myPayee.isPayeeClass(MoneyWisePayeeClass.TAXMAN);</span>
+
+            case PORTFOLIOXFER:
+<span class="nc" id="L589">                return checkPortfolioXfer(pAccount, pPartner);</span>
+
+            default:
+<span class="nc" id="L592">                return false;</span>
+        }
+    }
+
+    /**
+     * Check securityHolding.
+     *
+     * @param pHolding the securityHolding
+     * @return valid true/false
+     */
+    private static boolean checkSecurityHolding(final MoneyWiseSecurityHolding pHolding) {
+        /* Access the components */
+<span class="fc" id="L604">        final MoneyWisePortfolio myPortfolio = pHolding.getPortfolio();</span>
+<span class="fc" id="L605">        final MoneyWiseSecurity mySecurity = pHolding.getSecurity();</span>
+
+        /* If the portfolio can hold pensions */
+<span class="pc bpc" id="L608" title="1 of 2 branches missed.">        if (myPortfolio.getCategoryClass().holdsPensions()) {</span>
+            /* Can only hold pensions */
+<span class="nc" id="L610">            return mySecurity.getCategoryClass().isPension();</span>
+        }
+
+        /* cannot be a pension */
+<span class="pc bpc" id="L614" title="1 of 2 branches missed.">        return !mySecurity.getCategoryClass().isPension();</span>
+    }
+
+    /**
+     * Check dividend.
+     *
+     * @param pAccount the holding providing the dividend.
+     * @param pPartner the partner
+     * @return valid true/false
+     */
+    private static boolean checkDividend(final MoneyWiseTransAsset pAccount,
+                                         final MoneyWiseTransAsset pPartner) {
+        /* Recursive is allowed */
+<span class="fc bfc" id="L627" title="All 2 branches covered.">        if (MetisDataDifference.isEqual(pAccount, pPartner)) {</span>
+<span class="fc" id="L628">            return true;</span>
+        }
+
+        /* partner must be valued */
+<span class="fc" id="L632">        return pPartner.getAssetType().isValued();</span>
+    }
+
+    /**
+     * Check TakeOver.
+     *
+     * @param pAccount the holding being acted on.
+     * @param pPartner the partner
+     * @return valid true/false
+     */
+    private static boolean checkTakeOver(final MoneyWiseTransAsset pAccount,
+                                         final MoneyWiseTransAsset pPartner) {
+        /* Must be holding &lt;-&gt; holding */
+<span class="nc bnc" id="L645" title="All 4 branches missed.">        if (!(pAccount instanceof MoneyWiseSecurityHolding)</span>
+                || !(pPartner instanceof MoneyWiseSecurityHolding)) {
+<span class="nc" id="L647">            return false;</span>
+        }
+
+        /* Recursive is not allowed */
+<span class="nc bnc" id="L651" title="All 2 branches missed.">        if (MetisDataDifference.isEqual(pAccount, pPartner)) {</span>
+<span class="nc" id="L652">            return false;</span>
+        }
+
+        /* Access holdings */
+<span class="nc" id="L656">        final MoneyWiseSecurityHolding myAccount = (MoneyWiseSecurityHolding) pAccount;</span>
+<span class="nc" id="L657">        final MoneyWiseSecurityHolding myPartner = (MoneyWiseSecurityHolding) pPartner;</span>
+
+        /* Portfolios must be the same */
+<span class="nc bnc" id="L660" title="All 2 branches missed.">        if (!MetisDataDifference.isEqual(myAccount.getPortfolio(), myPartner.getPortfolio())) {</span>
+<span class="nc" id="L661">            return false;</span>
+        }
+
+        /* Security types must be the same */
+<span class="nc" id="L665">        return MetisDataDifference.isEqual(myAccount.getSecurity().getCategory(), myPartner.getSecurity().getCategory());</span>
+    }
+
+    /**
+     * Check stock rights.
+     *
+     * @param pAccount the account being transferred.
+     * @param pPartner the partner
+     * @return valid true/false
+     */
+    private static boolean checkStockRights(final MoneyWiseTransAsset pAccount,
+                                            final MoneyWiseTransAsset pPartner) {
+        /* If this is security -&gt; portfolio */
+<span class="pc bpc" id="L678" title="2 of 4 branches missed.">        if (pAccount instanceof MoneyWiseSecurityHolding myHolding</span>
+                &amp;&amp; pPartner instanceof MoneyWisePortfolio) {
+            /* Must be same portfolios */
+<span class="nc" id="L681">            return MetisDataDifference.isEqual(myHolding.getPortfolio(), pPartner);</span>
+        }
+
+        /* partner must be valued */
+<span class="fc" id="L685">        return pPartner.getAssetType().isValued();</span>
+    }
+
+    /**
+     * Check cashBack.
+     *
+     * @param pAccount the account providing cashBack.
+     * @return valid true/false
+     */
+    private static boolean checkCashBack(final MoneyWiseTransAsset pAccount) {
+        /* If this is deposit then check whether it can support cashBack */
+<span class="fc bfc" id="L696" title="All 2 branches covered.">        if (pAccount instanceof MoneyWiseDeposit myDeposit) {</span>
+<span class="fc" id="L697">            return myDeposit.getCategoryClass().canCashBack();</span>
+        }
+
+        /* If this is loan then check whether it can support cashBack */
+<span class="pc bpc" id="L701" title="1 of 2 branches missed.">        if (pAccount instanceof MoneyWiseLoan myLoan) {</span>
+<span class="fc" id="L702">            return myLoan.getCategoryClass().canCashBack();</span>
+        }
+
+        /* not allowed */
+<span class="nc" id="L706">        return false;</span>
+    }
+
+    /**
+     * Check loyalty bonus.
+     *
+     * @param pAccount the account providing bonus.
+     * @return valid true/false
+     */
+    private boolean checkLoyaltyBonus(final MoneyWiseTransAsset pAccount) {
+        /* If this is deposit then check whether it can support loyaltyBonus */
+<span class="pc bpc" id="L717" title="1 of 2 branches missed.">        if (pAccount instanceof MoneyWiseDeposit myDeposit) {</span>
+<span class="pc bpc" id="L718" title="1 of 2 branches missed.">            return newValidation</span>
+<span class="pc bnc" id="L719" title="All 2 branches missed.">                    || myDeposit.getCategoryClass().canLoyaltyBonus();</span>
+        }
+
+        /* must be portfolio */
+<span class="nc" id="L723">        return pAccount instanceof MoneyWisePortfolio;</span>
+    }
+
+    /**
+     * Check loyalty bonus.
+     *
+     * @param pAccount the account providing bonus.
+     * @param pPartner the partner
+     * @return valid true/false
+     */
+    private static boolean checkLoyaltyBonus(final MoneyWiseTransAsset pAccount,
+                                             final MoneyWiseTransAsset pPartner) {
+        /* If this is portfolio -&gt; security holding */
+<span class="pc bpc" id="L736" title="3 of 4 branches missed.">        if (pAccount instanceof MoneyWisePortfolio</span>
+<span class="nc" id="L737">                &amp;&amp; pPartner instanceof MoneyWiseSecurityHolding myHolding) {</span>
+            /* Must be same portfolios */
+<span class="nc" id="L739">            return MetisDataDifference.isEqual(myHolding.getPortfolio(), pAccount);</span>
+        }
+
+        /* must be recursive */
+<span class="fc" id="L743">        return MetisDataDifference.isEqual(pAccount, pPartner);</span>
+    }
+
+    /**
+     * Check transfer.
+     *
+     * @param pAccount the account being transferred.
+     * @param pPartner the partner
+     * @return valid true/false
+     */
+    private static boolean checkTransfer(final MoneyWiseTransAsset pAccount,
+                                         final MoneyWiseTransAsset pPartner) {
+        /* Must not be recursive */
+<span class="fc bfc" id="L756" title="All 2 branches covered.">        if (MetisDataDifference.isEqual(pAccount, pPartner)) {</span>
+<span class="fc" id="L757">            return false;</span>
+        }
+
+        /* If this is security -&gt; portfolio */
+<span class="pc bpc" id="L761" title="1 of 4 branches missed.">        if (pAccount instanceof MoneyWiseSecurityHolding myHolding</span>
+                &amp;&amp; pPartner instanceof MoneyWisePortfolio) {
+            /* Must be same portfolios */
+<span class="nc bnc" id="L764" title="All 2 branches missed.">            if (!MetisDataDifference.isEqual(myHolding.getPortfolio(), pPartner)) {</span>
+<span class="nc" id="L765">                return false;</span>
+            }
+        }
+
+        /* If this is security &lt;- portfolio */
+<span class="pc bpc" id="L770" title="1 of 4 branches missed.">        if (pPartner instanceof MoneyWiseSecurityHolding myHolding</span>
+                &amp;&amp; pAccount instanceof MoneyWisePortfolio) {
+            /* Must be same portfolios */
+<span class="nc bnc" id="L773" title="All 2 branches missed.">            if (!MetisDataDifference.isEqual(myHolding.getPortfolio(), pAccount)) {</span>
+<span class="nc" id="L774">                return false;</span>
+            }
+        }
+
+        /* partner must be asset */
+<span class="fc" id="L779">        return pPartner.getAssetType().isAsset();</span>
+    }
+
+    /**
+     * Check securityClosure.
+     *
+     * @param pAccount the account being closed.
+     * @param pPartner the partner
+     * @return valid true/false
+     */
+    private static boolean checkSecurityClosure(final MoneyWiseTransAsset pAccount,
+                                                final MoneyWiseTransAsset pPartner) {
+        /* Must not be recursive */
+<span class="pc bpc" id="L792" title="1 of 2 branches missed.">        if (MetisDataDifference.isEqual(pAccount, pPartner)) {</span>
+<span class="nc" id="L793">            return false;</span>
+        }
+
+        /* partner must be valued */
+<span class="fc" id="L797">        return pPartner.getAssetType().isValued();</span>
+    }
+
+    /**
+     * Check portfolioXfer.
+     *
+     * @param pAccount the account being transferred.
+     * @param pPartner the partner
+     * @return valid true/false
+     */
+    private static boolean checkPortfolioXfer(final MoneyWiseTransAsset pAccount,
+                                              final MoneyWiseTransAsset pPartner) {
+        /* Partner must be portfolio */
+<span class="nc bnc" id="L810" title="All 2 branches missed.">        if (!(pPartner instanceof MoneyWisePortfolio)) {</span>
+<span class="nc" id="L811">            return false;</span>
+        }
+
+        /* If account is portfolio */
+<span class="nc bnc" id="L815" title="All 2 branches missed.">        if (pAccount instanceof MoneyWisePortfolio) {</span>
+            /* Cannot be recursive */
+<span class="nc bnc" id="L817" title="All 2 branches missed.">            if (MetisDataDifference.isEqual(pAccount, pPartner)) {</span>
+<span class="nc" id="L818">                return false;</span>
+            }
+
+            /* Must be same currency */
+<span class="nc" id="L822">            return MetisDataDifference.isEqual(pAccount.getAssetCurrency(), pPartner.getAssetCurrency());</span>
+        }
+
+        /* If account is security holding */
+<span class="nc bnc" id="L826" title="All 2 branches missed.">        if (pAccount instanceof MoneyWiseSecurityHolding myHolding) {</span>
+            /* Must be different portfolios */
+<span class="nc bnc" id="L828" title="All 2 branches missed.">            return !MetisDataDifference.isEqual(myHolding.getPortfolio(), pPartner);</span>
+        }
+
+        /* Not allowed */
+<span class="nc" id="L832">        return false;</span>
+    }
+
+    /**
+     * Determine if an infoSet class is required.
+     *
+     * @param pTrans the transaction
+     * @param pClass the infoSet class
+     * @return the status
+     */
+    public MetisFieldRequired isClassRequired(final MoneyWiseTransaction pTrans,
+                                              final MoneyWiseTransInfoClass pClass) {
+<span class="nc" id="L844">        theInfoSet.storeInfoSet(pTrans.getInfoSet());</span>
+<span class="nc" id="L845">        return theInfoSet.isClassRequired(pClass);</span>
+    }
+
+    @Override
+    public void autoCorrect(final MoneyWiseTransaction pItem) throws OceanusException {
+<span class="nc" id="L850">        theDefaults.autoCorrect(pItem);</span>
+<span class="nc" id="L851">    }</span>
+
+    @Override
+    public MoneyWiseTransaction buildTransaction(final Object pKey) {
+<span class="nc" id="L855">        return theDefaults.buildTransaction(pKey);</span>
+    }
+
+    @Override
+    public void setRange(final OceanusDateRange pRange) {
+<span class="nc" id="L860">        theDefaults.setRange(pRange);</span>
+<span class="nc" id="L861">    }</span>
+
+    @Override
+    public OceanusDateRange getRange() {
+<span class="nc" id="L865">        return theDefaults.getRange();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

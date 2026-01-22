@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseDepositRateBuilder.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.moneywise.data.builder</a> &gt; <span class="el_source">MoneyWiseDepositRateBuilder.java</span></div><h1>MoneyWiseDepositRateBuilder.java</h1><pre class="source lang-java linenums">/*
+ * MoneyWise: Finance Application
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.moneywise.data.builder;
+
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRate;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDataSet;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDeposit;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDepositRate;
+import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
+
+/**
+ * DepositRate Builder.
+ */
+public class MoneyWiseDepositRateBuilder {
+    /**
+     * DataSet.
+     */
+    private final MoneyWiseDataSet theDataSet;
+
+    /**
+     * The Deposit.
+     */
+    private MoneyWiseDeposit theDeposit;
+
+    /**
+     * The Date.
+     */
+    private OceanusDate theEndDate;
+
+    /**
+     * The Rate.
+     */
+    private OceanusRate theRate;
+
+    /**
+     * The Bonus.
+     */
+    private OceanusRate theBonus;
+
+    /**
+     * Constructor.
+     *
+     * @param pDataSet the dataSet
+     */
+<span class="nc" id="L61">    MoneyWiseDepositRateBuilder(final MoneyWiseDataSet pDataSet) {</span>
+<span class="nc" id="L62">        theDataSet = pDataSet;</span>
+<span class="nc" id="L63">        theDataSet.getDepositRates().ensureMap();</span>
+<span class="nc" id="L64">    }</span>
+
+    /**
+     * Set Deposit.
+     *
+     * @param pDeposit the deposit.
+     * @return the builder
+     */
+    public MoneyWiseDepositRateBuilder deposit(final MoneyWiseDeposit pDeposit) {
+<span class="nc" id="L73">        theDeposit = pDeposit;</span>
+<span class="nc" id="L74">        return this;</span>
+    }
+
+    /**
+     * Set Deposit.
+     *
+     * @param pDeposit the deposit.
+     * @return the builder
+     */
+    public MoneyWiseDepositRateBuilder deposit(final String pDeposit) {
+<span class="nc" id="L84">        return deposit(theDataSet.getDeposits().findItemByName(pDeposit));</span>
+    }
+
+    /**
+     * Set the rate.
+     *
+     * @param pRate the rate.
+     * @return the builder
+     */
+    public MoneyWiseDepositRateBuilder rate(final OceanusRate pRate) {
+<span class="nc" id="L94">        theRate = pRate;</span>
+<span class="nc" id="L95">        return this;</span>
+    }
+
+    /**
+     * Set the rate.
+     *
+     * @param pRate the rate.
+     * @return the builder
+     */
+    public MoneyWiseDepositRateBuilder rate(final String pRate) {
+<span class="nc" id="L105">        return rate(new OceanusRate(pRate));</span>
+    }
+
+    /**
+     * Set the bonus.
+     *
+     * @param pBonus the bonus.
+     * @return the builder
+     */
+    public MoneyWiseDepositRateBuilder bonus(final OceanusRate pBonus) {
+<span class="nc" id="L115">        theBonus = pBonus;</span>
+<span class="nc" id="L116">        return this;</span>
+    }
+
+    /**
+     * Set the bonus.
+     *
+     * @param pBonus the bonus.
+     * @return the builder
+     */
+    public MoneyWiseDepositRateBuilder bonus(final String pBonus) {
+<span class="nc" id="L126">        return bonus(new OceanusRate(pBonus));</span>
+    }
+
+    /**
+     * Set the endDate.
+     *
+     * @param pEndDate the endDate of the rate.
+     * @return the builder
+     */
+    public MoneyWiseDepositRateBuilder endDate(final OceanusDate pEndDate) {
+<span class="nc" id="L136">        theEndDate = pEndDate;</span>
+<span class="nc" id="L137">        return this;</span>
+    }
+
+    /**
+     * Set the endDate.
+     *
+     * @param pEndDate the Date of the rate.
+     * @return the builder
+     */
+    public MoneyWiseDepositRateBuilder endDate(final String pEndDate) {
+<span class="nc" id="L147">        return endDate(new OceanusDate(pEndDate));</span>
+    }
+
+    /**
+     * Build the Rate.
+     *
+     * @return the new Rate
+     * @throws OceanusException on error
+     */
+    public MoneyWiseDepositRate build() throws OceanusException {
+        /* Create the rate */
+<span class="nc" id="L158">        final MoneyWiseDepositRate myRate = theDataSet.getDepositRates().addNewItem();</span>
+<span class="nc" id="L159">        myRate.setDeposit(theDeposit);</span>
+<span class="nc" id="L160">        myRate.setRate(theRate);</span>
+<span class="nc" id="L161">        myRate.setBonus(theBonus);</span>
+<span class="nc" id="L162">        myRate.setEndDate(theEndDate);</span>
+
+        /* Reset the values */
+<span class="nc" id="L165">        reset();</span>
+
+        /* Check for errors */
+<span class="nc" id="L168">        myRate.adjustMapForItem();</span>
+<span class="nc" id="L169">        myRate.validate();</span>
+<span class="nc bnc" id="L170" title="All 2 branches missed.">        if (myRate.hasErrors()) {</span>
+<span class="nc" id="L171">            myRate.removeItem();</span>
+<span class="nc" id="L172">            throw new MoneyWiseDataException(myRate, &quot;Failed validation&quot;);</span>
+        }
+
+        /* Return the rate */
+<span class="nc" id="L176">        return myRate;</span>
+    }
+
+    /**
+     * Reset the builder.
+     */
+    public void reset() {
+        /* Reset values */
+<span class="nc" id="L184">        theDeposit = null;</span>
+<span class="nc" id="L185">        theRate = null;</span>
+<span class="nc" id="L186">        theBonus = null;</span>
+<span class="nc" id="L187">        theEndDate = null;</span>
+<span class="nc" id="L188">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

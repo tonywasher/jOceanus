@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianMacType.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.api.mac</a> &gt; <span class="el_source">GordianMacType.java</span></div><h1>GordianMacType.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.gordianknot.api.mac;
+
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianBundleLoader.GordianBundleId;
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherResource;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymKeyType;
+
+/**
+ * Mac types. Available algorithms.
+ */
+<span class="fc" id="L27">public enum GordianMacType {</span>
+    /**
+     * HMAC.
+     */
+<span class="fc" id="L31">    HMAC,</span>
+
+    /**
+     * GMAC.
+     */
+<span class="fc" id="L36">    GMAC,</span>
+
+    /**
+     * CMAC.
+     */
+<span class="fc" id="L41">    CMAC,</span>
+
+    /**
+     * Poly1305.
+     */
+<span class="fc" id="L46">    POLY1305,</span>
+
+    /**
+     * Skein.
+     */
+<span class="fc" id="L51">    SKEIN,</span>
+
+    /**
+     * Blake2.
+     */
+<span class="fc" id="L56">    BLAKE2,</span>
+
+    /**
+     * Kalyna.
+     */
+<span class="fc" id="L61">    KALYNA,</span>
+
+    /**
+     * Kupyna.
+     */
+<span class="fc" id="L66">    KUPYNA,</span>
+
+    /**
+     * VMPC.
+     */
+<span class="fc" id="L71">    VMPC,</span>
+
+    /**
+     * ZUC.
+     */
+<span class="fc" id="L76">    ZUC,</span>
+
+    /**
+     * CBCMac.
+     */
+<span class="fc" id="L81">    CBCMAC,</span>
+
+    /**
+     * CFBMac.
+     */
+<span class="fc" id="L86">    CFBMAC,</span>
+
+    /**
+     * SipHash.
+     */
+<span class="fc" id="L91">    SIPHASH,</span>
+
+    /**
+     * KMAC.
+     */
+<span class="fc" id="L96">    KMAC,</span>
+
+    /**
+     * GOST.
+     */
+<span class="fc" id="L101">    GOST,</span>
+
+    /**
+     * Blake3.
+     */
+<span class="fc" id="L106">    BLAKE3;</span>
+
+    /**
+     * The String name.
+     */
+    private String theName;
+
+    @Override
+    public String toString() {
+        /* If we have not yet loaded the name */
+<span class="fc bfc" id="L116" title="All 2 branches covered.">        if (theName == null) {</span>
+            /* Load the name */
+<span class="fc" id="L118">            theName = bundleIdForMacType().getValue();</span>
+        }
+
+        /* return the name */
+<span class="fc" id="L122">        return theName;</span>
+    }
+
+    /**
+     * Needs re-initialisation after final.
+     *
+     * @return true/false
+     */
+    public boolean needsReInitialisation() {
+<span class="fc bfc" id="L131" title="All 2 branches covered.">        return this == GMAC;</span>
+    }
+
+    /**
+     * Is this MacType valid for largeData?
+     *
+     * @return true/false
+     */
+    public boolean supportsLargeData() {
+<span class="fc bfc" id="L140" title="All 2 branches covered.">        return this != ZUC;</span>
+    }
+
+    /**
+     * Is this MacType valid for keyLength?
+     *
+     * @param pKeyLen the keyLength
+     * @return true/false
+     */
+    public boolean validForKeyLength(final GordianLength pKeyLen) {
+<span class="nc bnc" id="L150" title="All 5 branches missed.">        switch (this) {</span>
+            case POLY1305:
+            case GOST:
+            case BLAKE3:
+<span class="nc bnc" id="L154" title="All 2 branches missed.">                return GordianLength.LEN_256 == pKeyLen;</span>
+            case ZUC:
+<span class="nc bnc" id="L156" title="All 4 branches missed.">                return GordianLength.LEN_128 == pKeyLen</span>
+                        || GordianLength.LEN_256 == pKeyLen;
+            case KALYNA:
+<span class="nc" id="L159">                return GordianSymKeyType.KALYNA.validForKeyLength(pKeyLen);</span>
+            case SIPHASH:
+<span class="nc bnc" id="L161" title="All 2 branches missed.">                return GordianLength.LEN_128 == pKeyLen;</span>
+            default:
+<span class="nc" id="L163">                return true;</span>
+        }
+    }
+
+    /**
+     * Obtain the resource bundleId for this macType.
+     *
+     * @return the resource bundleId
+     */
+    private GordianBundleId bundleIdForMacType() {
+        /* Create the map and return it */
+<span class="pc bpc" id="L174" title="1 of 17 branches missed.">        switch (this) {</span>
+            case HMAC:
+<span class="fc" id="L176">                return GordianMacResource.MAC_HMAC;</span>
+            case GMAC:
+<span class="fc" id="L178">                return GordianMacResource.MAC_GMAC;</span>
+            case CMAC:
+<span class="fc" id="L180">                return GordianMacResource.MAC_CMAC;</span>
+            case KMAC:
+<span class="fc" id="L182">                return GordianMacResource.MAC_KMAC;</span>
+            case POLY1305:
+<span class="fc" id="L184">                return GordianMacResource.MAC_POLY;</span>
+            case SKEIN:
+<span class="fc" id="L186">                return GordianMacResource.MAC_SKEIN;</span>
+            case KALYNA:
+<span class="fc" id="L188">                return GordianMacResource.MAC_KALYNA;</span>
+            case KUPYNA:
+<span class="fc" id="L190">                return GordianMacResource.MAC_KUPYNA;</span>
+            case BLAKE2:
+<span class="fc" id="L192">                return GordianMacResource.MAC_BLAKE2;</span>
+            case BLAKE3:
+<span class="fc" id="L194">                return GordianMacResource.MAC_BLAKE3;</span>
+            case VMPC:
+<span class="fc" id="L196">                return GordianMacResource.MAC_VMPC;</span>
+            case ZUC:
+<span class="fc" id="L198">                return GordianCipherResource.STREAMKEY_ZUC;</span>
+            case CBCMAC:
+<span class="fc" id="L200">                return GordianMacResource.MAC_CBC;</span>
+            case CFBMAC:
+<span class="fc" id="L202">                return GordianMacResource.MAC_CFB;</span>
+            case SIPHASH:
+<span class="fc" id="L204">                return GordianMacResource.MAC_SIPHASH;</span>
+            case GOST:
+<span class="fc" id="L206">                return GordianMacResource.MAC_GOST;</span>
+            default:
+<span class="nc" id="L208">                throw new IllegalArgumentException();</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

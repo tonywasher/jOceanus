@@ -1,0 +1,429 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseMaintenance.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.moneywise.ui.panel</a> &gt; <span class="el_source">MoneyWiseMaintenance.java</span></div><h1>MoneyWiseMaintenance.java</h1><pre class="source lang-java linenums">/*
+ * MoneyWise: Finance Application
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.moneywise.ui.panel;
+
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEvent;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventManager;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
+import io.github.tonywasher.joceanus.oceanus.profile.OceanusProfile;
+import io.github.tonywasher.joceanus.metis.preference.MetisPreferenceManager;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseAssetBase;
+import io.github.tonywasher.joceanus.moneywise.quicken.definitions.MoneyWiseQIFPreference.MoneyWiseQIFPreferences;
+import io.github.tonywasher.joceanus.moneywise.ui.MoneyWiseGoToId;
+import io.github.tonywasher.joceanus.moneywise.ui.MoneyWiseUIResource;
+import io.github.tonywasher.joceanus.moneywise.views.MoneyWiseView;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusStaticDataItem;
+import io.github.tonywasher.joceanus.prometheus.database.PrometheusDatabase.PrometheusDatabasePreferences;
+import io.github.tonywasher.joceanus.prometheus.preference.PrometheusBackup.PrometheusBackupPreferences;
+import io.github.tonywasher.joceanus.prometheus.preference.PrometheusPreferenceView;
+import io.github.tonywasher.joceanus.prometheus.ui.PrometheusGoToEvent;
+import io.github.tonywasher.joceanus.prometheus.views.PrometheusDataEvent;
+import io.github.tonywasher.joceanus.tethys.api.base.TethysUIComponent;
+import io.github.tonywasher.joceanus.tethys.api.pane.TethysUITabPaneManager;
+import io.github.tonywasher.joceanus.tethys.api.pane.TethysUITabPaneManager.TethysUITabItem;
+
+/**
+ * Maintenance Tab panel.
+ *
+ * @author Tony Washer
+ */
+public class MoneyWiseMaintenance
+        implements OceanusEventProvider&lt;PrometheusDataEvent&gt;, TethysUIComponent {
+    /**
+     * Preferences tab title.
+     */
+<span class="nc" id="L51">    private static final String TITLE_PREFERENCES = MoneyWiseUIResource.MAINTENANCE_SETTINGS.getValue();</span>
+
+    /**
+     * Account tab title.
+     */
+<span class="nc" id="L56">    private static final String TITLE_ACCOUNT = MoneyWiseUIResource.MAINTENANCE_ACCOUNT.getValue();</span>
+
+    /**
+     * Category tab title.
+     */
+<span class="nc" id="L61">    private static final String TITLE_CATEGORY = MoneyWiseUIResource.MAINTENANCE_CATEGORY.getValue();</span>
+
+    /**
+     * Static tab title.
+     */
+<span class="nc" id="L66">    private static final String TITLE_STATIC = MoneyWiseUIResource.MAINTENANCE_STATIC.getValue();</span>
+
+    /**
+     * The Event Manager.
+     */
+    private final OceanusEventManager&lt;PrometheusDataEvent&gt; theEventManager;
+
+    /**
+     * The Data View.
+     */
+    private final MoneyWiseView theView;
+
+    /**
+     * The Tabs.
+     */
+    private final TethysUITabPaneManager theTabs;
+
+    /**
+     * The Account Panel.
+     */
+    private final MoneyWiseAccountPanel theAccountTab;
+
+    /**
+     * The Category Panel.
+     */
+    private final MoneyWiseCategoryPanel theCategoryTab;
+
+    /**
+     * The Static Panel.
+     */
+    private final MoneyWiseStaticPanel theStatic;
+
+    /**
+     * The Preferences Panel.
+     */
+    private final PrometheusPreferenceView thePreferences;
+
+    /**
+     * Refreshing flag.
+     */
+    private boolean isRefreshing;
+
+    /**
+     * Constructor.
+     *
+     * @param pView the view
+     */
+<span class="nc" id="L113">    MoneyWiseMaintenance(final MoneyWiseView pView) {</span>
+        /* Store details */
+<span class="nc" id="L115">        theView = pView;</span>
+
+        /* Create the event manager */
+<span class="nc" id="L118">        theEventManager = new OceanusEventManager&lt;&gt;();</span>
+
+        /* Create the Tabbed Pane */
+<span class="nc" id="L121">        theTabs = theView.getGuiFactory().paneFactory().newTabPane();</span>
+
+        /* Create the account Tab and add it */
+<span class="nc" id="L124">        theAccountTab = new MoneyWiseAccountPanel(theView);</span>
+<span class="nc" id="L125">        theTabs.addTabItem(TITLE_ACCOUNT, theAccountTab);</span>
+
+        /* Create the category Tab and add it */
+<span class="nc" id="L128">        theCategoryTab = new MoneyWiseCategoryPanel(theView);</span>
+<span class="nc" id="L129">        theTabs.addTabItem(TITLE_CATEGORY, theCategoryTab);</span>
+
+        /* Create the Static Tab */
+<span class="nc" id="L132">        theStatic = new MoneyWiseStaticPanel(theView);</span>
+<span class="nc" id="L133">        theTabs.addTabItem(TITLE_STATIC, theStatic);</span>
+
+        /* Create the Preferences Tab */
+<span class="nc" id="L136">        final MetisPreferenceManager myPrefs = theView.getPreferenceManager();</span>
+<span class="nc" id="L137">        thePreferences = theView.getToolkit().newPreferenceView();</span>
+<span class="nc" id="L138">        theTabs.addTabItem(TITLE_PREFERENCES, thePreferences);</span>
+
+        /* Add interesting preferences */
+<span class="nc" id="L141">        myPrefs.getPreferenceSet(PrometheusDatabasePreferences.class);</span>
+<span class="nc" id="L142">        myPrefs.getPreferenceSet(PrometheusBackupPreferences.class);</span>
+<span class="nc" id="L143">        myPrefs.getPreferenceSet(MoneyWiseQIFPreferences.class);</span>
+
+        /* Create a listeners */
+<span class="nc" id="L146">        theTabs.getEventRegistrar().addEventListener(e -&gt; determineFocus());</span>
+<span class="nc" id="L147">        setChildListeners(theAccountTab.getEventRegistrar());</span>
+<span class="nc" id="L148">        setChildListeners(theCategoryTab.getEventRegistrar());</span>
+<span class="nc" id="L149">        setChildListeners(theStatic.getEventRegistrar());</span>
+<span class="nc" id="L150">        thePreferences.getEventRegistrar().addEventListener(e -&gt; setVisibility());</span>
+
+        /* Handle Refresh */
+<span class="nc" id="L153">        theView.getEventRegistrar().addEventListener(e -&gt; {</span>
+            /* Refresh the data locking visibility setting for the duration */
+<span class="nc" id="L155">            isRefreshing = true;</span>
+<span class="nc" id="L156">            refreshData();</span>
+<span class="nc" id="L157">            isRefreshing = false;</span>
+
+            /* Update visibility */
+<span class="nc" id="L160">            setVisibility();</span>
+<span class="nc" id="L161">        });</span>
+<span class="nc" id="L162">    }</span>
+
+    @Override
+    public TethysUIComponent getUnderlying() {
+<span class="nc" id="L166">        return theTabs;</span>
+    }
+
+    @Override
+    public OceanusEventRegistrar&lt;PrometheusDataEvent&gt; getEventRegistrar() {
+<span class="nc" id="L171">        return theEventManager.getEventRegistrar();</span>
+    }
+
+    /**
+     * setChildListeners.
+     *
+     * @param pRegistrar the registrar
+     */
+    private void setChildListeners(final OceanusEventRegistrar&lt;PrometheusDataEvent&gt; pRegistrar) {
+<span class="nc" id="L180">        pRegistrar.addEventListener(PrometheusDataEvent.ADJUSTVISIBILITY, e -&gt; {</span>
+<span class="nc bnc" id="L181" title="All 2 branches missed.">            if (!isRefreshing) {</span>
+<span class="nc" id="L182">                setVisibility();</span>
+            }
+<span class="nc" id="L184">        });</span>
+<span class="nc" id="L185">        pRegistrar.addEventListener(PrometheusDataEvent.GOTOWINDOW, this::handleGoToEvent);</span>
+<span class="nc" id="L186">    }</span>
+
+    /**
+     * Obtain the view.
+     *
+     * @return the view
+     */
+    protected MoneyWiseView getView() {
+<span class="nc" id="L194">        return theView;</span>
+    }
+
+    /**
+     * Refresh data.
+     */
+    private void refreshData() {
+        /* Obtain the active profile */
+<span class="nc" id="L202">        OceanusProfile myTask = theView.getActiveTask();</span>
+<span class="nc" id="L203">        myTask = myTask.startTask(&quot;MaintenanceTab&quot;);</span>
+
+        /* Protect against exceptions */
+        try {
+            /* Refresh sub-panels */
+<span class="nc" id="L208">            theStatic.refreshData();</span>
+<span class="nc" id="L209">            theCategoryTab.refreshData();</span>
+<span class="nc" id="L210">            theAccountTab.refreshData();</span>
+
+<span class="nc" id="L212">        } catch (OceanusException e) {</span>
+            /* Show the error */
+<span class="nc" id="L214">            theView.addError(e);</span>
+<span class="nc" id="L215">        }</span>
+
+        /* Complete the task */
+<span class="nc" id="L218">        myTask.end();</span>
+<span class="nc" id="L219">    }</span>
+
+    /**
+     * Has this set of tables got updates.
+     *
+     * @return true/false
+     */
+    public boolean hasUpdates() {
+        /* Determine whether we have updates */
+<span class="nc" id="L228">        boolean hasUpdates = theAccountTab.hasUpdates();</span>
+<span class="nc bnc" id="L229" title="All 2 branches missed.">        if (!hasUpdates) {</span>
+<span class="nc" id="L230">            hasUpdates = theCategoryTab.hasUpdates();</span>
+        }
+<span class="nc bnc" id="L232" title="All 2 branches missed.">        if (!hasUpdates) {</span>
+<span class="nc" id="L233">            hasUpdates = theStatic.hasUpdates();</span>
+        }
+<span class="nc bnc" id="L235" title="All 2 branches missed.">        if (!hasUpdates) {</span>
+<span class="nc" id="L236">            hasUpdates = thePreferences.hasUpdates();</span>
+        }
+
+        /* Return to caller */
+<span class="nc" id="L240">        return hasUpdates;</span>
+    }
+
+    /**
+     * Has this set of panels got the session focus?
+     *
+     * @return true/false
+     */
+    public boolean hasSession() {
+        /* Determine whether we have focus */
+<span class="nc" id="L250">        boolean hasUpdates = theAccountTab.hasSession();</span>
+<span class="nc bnc" id="L251" title="All 2 branches missed.">        if (!hasUpdates) {</span>
+<span class="nc" id="L252">            hasUpdates = theCategoryTab.hasSession();</span>
+        }
+<span class="nc bnc" id="L254" title="All 2 branches missed.">        if (!hasUpdates) {</span>
+<span class="nc" id="L255">            hasUpdates = theStatic.hasSession();</span>
+        }
+<span class="nc bnc" id="L257" title="All 2 branches missed.">        if (!hasUpdates) {</span>
+<span class="nc" id="L258">            hasUpdates = thePreferences.hasSession();</span>
+        }
+
+        /* Return to caller */
+<span class="nc" id="L262">        return hasUpdates;</span>
+    }
+
+    /**
+     * Select maintenance.
+     *
+     * @param pEvent the action request
+     */
+    public void selectMaintenance(final PrometheusGoToEvent&lt;MoneyWiseGoToId&gt; pEvent) {
+        /* Switch on the subId */
+<span class="nc bnc" id="L272" title="All 6 branches missed.">        switch (pEvent.getId()) {</span>
+            /* View the requested account */
+            case ACCOUNT:
+                /* Select the requested account */
+<span class="nc" id="L276">                final MoneyWiseAssetBase myAccount = pEvent.getDetails(MoneyWiseAssetBase.class);</span>
+<span class="nc" id="L277">                theAccountTab.selectAccount(myAccount);</span>
+
+                /* Goto the Account tab */
+<span class="nc" id="L280">                gotoNamedTab(TITLE_ACCOUNT);</span>
+<span class="nc" id="L281">                break;</span>
+
+            /* View the requested category */
+            case CATEGORY:
+                /* Select the requested category */
+<span class="nc" id="L286">                final Object myCategory = pEvent.getDetails();</span>
+<span class="nc" id="L287">                theCategoryTab.selectCategory(myCategory);</span>
+
+                /* Goto the Category tab */
+<span class="nc" id="L290">                gotoNamedTab(TITLE_CATEGORY);</span>
+<span class="nc" id="L291">                break;</span>
+
+            /* View the requested tag */
+            case TAG:
+                /* Select the requested tag */
+<span class="nc" id="L296">                final Object myTag = pEvent.getDetails();</span>
+<span class="nc" id="L297">                theCategoryTab.selectTag(myTag);</span>
+
+                /* Goto the Category tab */
+<span class="nc" id="L300">                gotoNamedTab(TITLE_CATEGORY);</span>
+<span class="nc" id="L301">                break;</span>
+
+            /* View the requested region */
+            case REGION:
+                /* Select the requested tag */
+<span class="nc" id="L306">                final Object myRegion = pEvent.getDetails();</span>
+<span class="nc" id="L307">                theCategoryTab.selectRegion(myRegion);</span>
+
+                /* Goto the Category tab */
+<span class="nc" id="L310">                gotoNamedTab(TITLE_CATEGORY);</span>
+<span class="nc" id="L311">                break;</span>
+
+            /* View the requested static */
+            case STATIC:
+                /* Select the requested tag */
+<span class="nc" id="L316">                final PrometheusStaticDataItem myData = pEvent.getDetails(PrometheusStaticDataItem.class);</span>
+<span class="nc" id="L317">                theStatic.selectStatic(myData);</span>
+
+                /* Goto the Static tab */
+<span class="nc" id="L320">                gotoNamedTab(TITLE_STATIC);</span>
+<span class="nc" id="L321">                break;</span>
+
+            /* Unsupported request */
+            default:
+                break;
+        }
+<span class="nc" id="L327">    }</span>
+
+    /**
+     * Goto the specific tab.
+     *
+     * @param pTabName the tab name
+     */
+    private void gotoNamedTab(final String pTabName) {
+        /* Look up item and select it */
+<span class="nc" id="L336">        final TethysUITabItem myItem = theTabs.findItemByName(pTabName);</span>
+<span class="nc bnc" id="L337" title="All 2 branches missed.">        if (myItem != null) {</span>
+<span class="nc" id="L338">            myItem.selectItem();</span>
+        }
+<span class="nc" id="L340">    }</span>
+
+    /**
+     * Set visibility.
+     */
+    protected void setVisibility() {
+        /* Determine whether we have any locked session */
+<span class="nc" id="L347">        final boolean hasSession = hasSession();</span>
+
+        /* Enable/Disable the Account tab */
+<span class="nc bnc" id="L350" title="All 4 branches missed.">        boolean doEnabled = !hasSession || theAccountTab.hasSession();</span>
+<span class="nc" id="L351">        theTabs.enableItemByName(TITLE_ACCOUNT, doEnabled);</span>
+
+        /* Enable/Disable the Category tab */
+<span class="nc bnc" id="L354" title="All 4 branches missed.">        doEnabled = !hasSession || theCategoryTab.hasSession();</span>
+<span class="nc" id="L355">        theTabs.enableItemByName(TITLE_CATEGORY, doEnabled);</span>
+
+        /* Enable/Disable the static tab */
+<span class="nc bnc" id="L358" title="All 4 branches missed.">        doEnabled = !hasSession || theStatic.hasSession();</span>
+<span class="nc" id="L359">        theTabs.enableItemByName(TITLE_STATIC, doEnabled);</span>
+
+        /* Enable/Disable the Properties tab */
+<span class="nc bnc" id="L362" title="All 4 branches missed.">        doEnabled = !hasSession || thePreferences.hasSession();</span>
+<span class="nc" id="L363">        theTabs.enableItemByName(TITLE_PREFERENCES, doEnabled);</span>
+
+        /* Update the top level tabs */
+<span class="nc" id="L366">        theEventManager.fireEvent(PrometheusDataEvent.ADJUSTVISIBILITY);</span>
+<span class="nc" id="L367">    }</span>
+
+    /**
+     * Determine Focus.
+     */
+    public void determineFocus() {
+        /* Access the selected component */
+<span class="nc" id="L374">        final TethysUITabItem myItem = theTabs.getSelectedTab();</span>
+<span class="nc" id="L375">        final Integer myId = myItem.getId();</span>
+
+        /* If the selected component is Account */
+<span class="nc bnc" id="L378" title="All 2 branches missed.">        if (myId.equals(theAccountTab.getId())) {</span>
+            /* Set the debug focus */
+<span class="nc" id="L380">            theAccountTab.determineFocus();</span>
+
+            /* If the selected component is Category */
+<span class="nc bnc" id="L383" title="All 2 branches missed.">        } else if (myId.equals(theCategoryTab.getId())) {</span>
+            /* Set the debug focus */
+<span class="nc" id="L385">            theCategoryTab.determineFocus();</span>
+
+            /* If the selected component is Static */
+<span class="nc bnc" id="L388" title="All 2 branches missed.">        } else if (myId.equals(theStatic.getId())) {</span>
+            /* Set the debug focus */
+<span class="nc" id="L390">            theStatic.determineFocus();</span>
+
+            /* If the selected component is Preferences */
+<span class="nc bnc" id="L393" title="All 2 branches missed.">        } else if (myId.equals(thePreferences.getId())) {</span>
+            /* Set the debug focus */
+<span class="nc" id="L395">            thePreferences.determineFocus();</span>
+        }
+<span class="nc" id="L397">    }</span>
+
+    /**
+     * handle GoTo Event.
+     *
+     * @param pEvent the event
+     */
+    @SuppressWarnings(&quot;unchecked&quot;)
+    private void handleGoToEvent(final OceanusEvent&lt;PrometheusDataEvent&gt; pEvent) {
+        /* Access details */
+<span class="nc" id="L407">        final PrometheusGoToEvent&lt;MoneyWiseGoToId&gt; myEvent = pEvent.getDetails(PrometheusGoToEvent.class);</span>
+
+        /* Access event and obtain details */
+<span class="nc bnc" id="L410" title="All 3 branches missed.">        switch (myEvent.getId()) {</span>
+            /* Pass through the event */
+            case STATEMENT:
+<span class="nc" id="L413">                theEventManager.cascadeEvent(pEvent);</span>
+<span class="nc" id="L414">                break;</span>
+
+            /* Access maintenance */
+            case ACCOUNT:
+            case CATEGORY:
+            case TAG:
+            case REGION:
+            case STATIC:
+<span class="nc" id="L422">                selectMaintenance(myEvent);</span>
+<span class="nc" id="L423">                break;</span>
+            default:
+                break;
+        }
+<span class="nc" id="L427">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

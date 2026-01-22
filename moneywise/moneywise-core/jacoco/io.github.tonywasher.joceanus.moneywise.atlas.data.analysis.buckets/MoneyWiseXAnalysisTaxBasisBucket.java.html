@@ -1,0 +1,958 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseXAnalysisTaxBasisBucket.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets</a> &gt; <span class="el_source">MoneyWiseXAnalysisTaxBasisBucket.java</span></div><h1>MoneyWiseXAnalysisTaxBasisBucket.java</h1><pre class="source lang-java linenums">/*
+ * MoneyWise: Finance Application
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets;
+
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimal;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
+import io.github.tonywasher.joceanus.metis.data.MetisDataFieldValue;
+import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
+import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataList;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldItem;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldItem.MetisFieldTableItem;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
+import io.github.tonywasher.joceanus.metis.list.MetisListIndexed;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.base.MoneyWiseXAnalysisEvent;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.base.MoneyWiseXAnalysisHistory;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisInterfaces.MoneyWiseXAnalysisBucketRegister;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisTaxBasisAccountBucket.MoneyWiseXAnalysisTaxBasisAccountBucketList;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.values.MoneyWiseXAnalysisTaxBasisAttr;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.values.MoneyWiseXAnalysisTaxBasisValues;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseAssetType;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransAsset;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransaction;
+import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseCurrency;
+import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
+import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTaxBasis;
+import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTaxBasis.MoneyWiseTaxBasisList;
+import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTaxClass;
+import io.github.tonywasher.joceanus.moneywise.tax.MoneyWiseChargeableGainSlice.MoneyWiseChargeableGainSliceList;
+import io.github.tonywasher.joceanus.moneywise.tax.MoneyWiseTaxSource;
+import io.github.tonywasher.joceanus.prometheus.views.PrometheusEditSet;
+
+import java.util.Comparator;
+import java.util.Currency;
+import java.util.Iterator;
+import java.util.List;
+
+/**
+ * The TaxBasis Bucket class.
+ */
+public class MoneyWiseXAnalysisTaxBasisBucket
+        implements MetisFieldTableItem, MoneyWiseXAnalysisBucketRegister {
+    /**
+     * Local Report fields.
+     */
+<span class="fc" id="L62">    private static final MetisFieldSet&lt;MoneyWiseXAnalysisTaxBasisBucket&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseXAnalysisTaxBasisBucket.class);</span>
+
+    /*
+     * Declare Fields.
+     */
+    static {
+<span class="fc" id="L68">        FIELD_DEFS.declareLocalField(MoneyWiseXAnalysisBucketResource.ANALYSIS_NAME, MoneyWiseXAnalysisTaxBasisBucket::getAnalysis);</span>
+<span class="fc" id="L69">        FIELD_DEFS.declareLocalField(MoneyWiseStaticDataType.TAXBASIS, MoneyWiseXAnalysisTaxBasisBucket::getTaxBasis);</span>
+<span class="fc" id="L70">        FIELD_DEFS.declareLocalField(MoneyWiseXAnalysisBucketResource.BUCKET_BASEVALUES, MoneyWiseXAnalysisTaxBasisBucket::getBaseValues);</span>
+<span class="fc" id="L71">        FIELD_DEFS.declareLocalField(MoneyWiseXAnalysisBucketResource.BUCKET_HISTORY, MoneyWiseXAnalysisTaxBasisBucket::getHistoryMap);</span>
+<span class="fc" id="L72">        FIELD_DEFS.declareLocalField(MoneyWiseXAnalysisBucketResource.TAXBASIS_ACCOUNTLIST, MoneyWiseXAnalysisTaxBasisBucket::getAccounts);</span>
+<span class="fc" id="L73">        FIELD_DEFS.declareLocalFieldsForEnum(MoneyWiseXAnalysisTaxBasisAttr.class, MoneyWiseXAnalysisTaxBasisBucket::getAttributeValue);</span>
+    }
+
+    /**
+     * Totals bucket name.
+     */
+<span class="fc" id="L79">    private static final MetisDataFieldId NAME_TOTALS = MoneyWiseXAnalysisBucketResource.ANALYSIS_TOTALS;</span>
+
+    /**
+     * The analysis.
+     */
+    private final MoneyWiseXAnalysis theAnalysis;
+
+    /**
+     * Tax Basis.
+     */
+    private final MoneyWiseTaxBasis theTaxBasis;
+
+    /**
+     * Values.
+     */
+    private final MoneyWiseXAnalysisTaxBasisValues theValues;
+
+    /**
+     * The base values.
+     */
+    private final MoneyWiseXAnalysisTaxBasisValues theBaseValues;
+
+    /**
+     * History Map.
+     */
+    private final MoneyWiseXAnalysisHistory&lt;MoneyWiseXAnalysisTaxBasisValues, MoneyWiseXAnalysisTaxBasisAttr&gt; theHistory;
+
+    /**
+     * Do we have accounts?
+     */
+    private final boolean hasAccounts;
+
+    /**
+     * Are we an expense bucket?
+     */
+    private final boolean isExpense;
+
+    /**
+     * AccountBucketList.
+     */
+    private final MoneyWiseXAnalysisTaxBasisAccountBucketList theAccounts;
+
+    /**
+     * Constructor.
+     *
+     * @param pAnalysis the analysis
+     * @param pTaxBasis the basis
+     */
+    protected MoneyWiseXAnalysisTaxBasisBucket(final MoneyWiseXAnalysis pAnalysis,
+<span class="fc" id="L128">                                               final MoneyWiseTaxBasis pTaxBasis) {</span>
+        /* Store the parameters */
+<span class="fc" id="L130">        theTaxBasis = pTaxBasis;</span>
+<span class="fc" id="L131">        theAnalysis = pAnalysis;</span>
+<span class="fc bfc" id="L132" title="All 2 branches covered.">        isExpense = theTaxBasis != null</span>
+<span class="fc bfc" id="L133" title="All 2 branches covered.">                &amp;&amp; theTaxBasis.getTaxClass().isExpense();</span>
+
+        /* Create the history map */
+<span class="fc" id="L136">        final MoneyWiseCurrency myDefault = theAnalysis.getCurrency();</span>
+<span class="pc bpc" id="L137" title="1 of 2 branches missed.">        final Currency myCurrency = myDefault == null</span>
+<span class="nc" id="L138">                ? MoneyWiseXAnalysisAccountBucket.DEFAULT_CURRENCY</span>
+<span class="fc" id="L139">                : myDefault.getCurrency();</span>
+<span class="fc" id="L140">        final MoneyWiseXAnalysisTaxBasisValues myValues = new MoneyWiseXAnalysisTaxBasisValues(myCurrency);</span>
+<span class="fc" id="L141">        theHistory = new MoneyWiseXAnalysisHistory&lt;&gt;(myValues);</span>
+
+        /* Create the account list */
+<span class="fc bfc" id="L144" title="All 4 branches covered.">        hasAccounts = theTaxBasis != null</span>
+                &amp;&amp; !(this instanceof MoneyWiseXAnalysisTaxBasisAccountBucket)
+<span class="fc bfc" id="L146" title="All 2 branches covered.">                &amp;&amp; theTaxBasis.getTaxClass().analyseAccounts();</span>
+<span class="fc bfc" id="L147" title="All 2 branches covered.">        theAccounts = hasAccounts</span>
+<span class="fc" id="L148">                ? new MoneyWiseXAnalysisTaxBasisAccountBucketList(theAnalysis, this)</span>
+<span class="fc" id="L149">                : null;</span>
+
+        /* Access the key value maps */
+<span class="fc" id="L152">        theValues = theHistory.getValues();</span>
+<span class="fc" id="L153">        theBaseValues = theHistory.getBaseValues();</span>
+<span class="fc" id="L154">    }</span>
+
+    /**
+     * Constructor.
+     *
+     * @param pAnalysis the analysis
+     * @param pBase     the underlying bucket
+     * @param pDate     the date for the bucket
+     */
+    protected MoneyWiseXAnalysisTaxBasisBucket(final MoneyWiseXAnalysis pAnalysis,
+                                               final MoneyWiseXAnalysisTaxBasisBucket pBase,
+<span class="nc" id="L165">                                               final OceanusDate pDate) {</span>
+        /* Copy details from base */
+<span class="nc" id="L167">        theTaxBasis = pBase.getTaxBasis();</span>
+<span class="nc" id="L168">        theAnalysis = pAnalysis;</span>
+<span class="nc" id="L169">        isExpense = pBase.isExpense();</span>
+
+        /* Access the relevant history */
+<span class="nc" id="L172">        theHistory = new MoneyWiseXAnalysisHistory&lt;&gt;(pBase.getHistoryMap(), pDate);</span>
+
+        /* Create the account list */
+<span class="nc" id="L175">        hasAccounts = pBase.hasAccounts();</span>
+<span class="nc bnc" id="L176" title="All 2 branches missed.">        theAccounts = hasAccounts</span>
+<span class="nc" id="L177">                ? new MoneyWiseXAnalysisTaxBasisAccountBucketList(theAnalysis, this, pBase.getAccounts(), pDate)</span>
+<span class="nc" id="L178">                : null;</span>
+
+        /* Access the key value maps */
+<span class="nc" id="L181">        theValues = theHistory.getValues();</span>
+<span class="nc" id="L182">        theBaseValues = theHistory.getBaseValues();</span>
+<span class="nc" id="L183">    }</span>
+
+    /**
+     * Constructor.
+     *
+     * @param pAnalysis the analysis
+     * @param pBase     the underlying bucket
+     * @param pRange    the range for the bucket
+     */
+    protected MoneyWiseXAnalysisTaxBasisBucket(final MoneyWiseXAnalysis pAnalysis,
+                                               final MoneyWiseXAnalysisTaxBasisBucket pBase,
+<span class="nc" id="L194">                                               final OceanusDateRange pRange) {</span>
+        /* Copy details from base */
+<span class="nc" id="L196">        theTaxBasis = pBase.getTaxBasis();</span>
+<span class="nc" id="L197">        theAnalysis = pAnalysis;</span>
+<span class="nc" id="L198">        isExpense = pBase.isExpense();</span>
+
+        /* Access the relevant history */
+<span class="nc" id="L201">        theHistory = new MoneyWiseXAnalysisHistory&lt;&gt;(pBase.getHistoryMap(), pRange);</span>
+
+        /* Create the account list */
+<span class="nc" id="L204">        hasAccounts = pBase.hasAccounts();</span>
+<span class="nc bnc" id="L205" title="All 2 branches missed.">        theAccounts = hasAccounts</span>
+<span class="nc" id="L206">                ? new MoneyWiseXAnalysisTaxBasisAccountBucketList(theAnalysis, this, pBase.getAccounts(), pRange)</span>
+<span class="nc" id="L207">                : null;</span>
+
+        /* Access the key value maps */
+<span class="nc" id="L210">        theValues = theHistory.getValues();</span>
+<span class="nc" id="L211">        theBaseValues = theHistory.getBaseValues();</span>
+<span class="nc" id="L212">    }</span>
+
+    @Override
+    public MetisFieldSet&lt;? extends MoneyWiseXAnalysisTaxBasisBucket&gt; getDataFieldSet() {
+<span class="nc" id="L216">        return FIELD_DEFS;</span>
+    }
+
+    @Override
+    public String formatObject(final OceanusDataFormatter pFormatter) {
+<span class="nc" id="L221">        return toString();</span>
+    }
+
+    @Override
+    public String toString() {
+<span class="nc" id="L226">        return getName() + &quot; &quot; + theValues;</span>
+    }
+
+    @Override
+    public Integer getIndexedId() {
+<span class="fc" id="L231">        return theTaxBasis.getIndexedId();</span>
+    }
+
+    @Override
+    public Long getBucketId() {
+<span class="fc" id="L236">        return MoneyWiseAssetType.createExternalId(MoneyWiseAssetType.TAXBASIS, getIndexedId());</span>
+    }
+
+    /**
+     * Obtain name.
+     *
+     * @return the name
+     */
+    public String getName() {
+<span class="pc bpc" id="L245" title="1 of 2 branches missed.">        return theTaxBasis == null</span>
+<span class="nc" id="L246">                ? NAME_TOTALS.getId()</span>
+<span class="fc" id="L247">                : theTaxBasis.getName();</span>
+    }
+
+    /**
+     * Obtain tax basis.
+     *
+     * @return the basis
+     */
+    public MoneyWiseTaxBasis getTaxBasis() {
+<span class="fc" id="L256">        return theTaxBasis;</span>
+    }
+
+    /**
+     * Do we have accounts.
+     *
+     * @return true/false
+     */
+    public boolean hasAccounts() {
+<span class="fc" id="L265">        return hasAccounts;</span>
+    }
+
+    /**
+     * Is this an expense bucket.
+     *
+     * @return true/false
+     */
+    public boolean isExpense() {
+<span class="nc" id="L274">        return isExpense;</span>
+    }
+
+    /**
+     * Obtain account list.
+     *
+     * @return the account list
+     */
+    private MoneyWiseXAnalysisTaxBasisAccountBucketList getAccounts() {
+<span class="fc" id="L283">        return theAccounts;</span>
+    }
+
+    /**
+     * Obtain account list iterator.
+     *
+     * @return the iterator
+     */
+    public Iterator&lt;MoneyWiseXAnalysisTaxBasisAccountBucket&gt; accountIterator() {
+<span class="nc bnc" id="L292" title="All 2 branches missed.">        return hasAccounts</span>
+<span class="nc" id="L293">                ? theAccounts.iterator()</span>
+<span class="nc" id="L294">                : null;</span>
+    }
+
+    /**
+     * find an account bucket.
+     *
+     * @param pAccount the account
+     * @return the bucket
+     */
+    public MoneyWiseXAnalysisTaxBasisAccountBucket findAccountBucket(final MoneyWiseTransAsset pAccount) {
+<span class="nc bnc" id="L304" title="All 2 branches missed.">        return hasAccounts</span>
+<span class="nc" id="L305">                ? theAccounts.findBucket(pAccount)</span>
+<span class="nc" id="L306">                : null;</span>
+    }
+
+    /**
+     * Is this bucket idle?
+     *
+     * @return true/false
+     */
+    public boolean isIdle() {
+<span class="fc" id="L315">        return theHistory.isIdle();</span>
+    }
+
+    /**
+     * Obtain the value map.
+     *
+     * @return the value map
+     */
+    public MoneyWiseXAnalysisTaxBasisValues getValues() {
+<span class="fc" id="L324">        return theValues;</span>
+    }
+
+    /**
+     * Obtain the value for a particular attribute.
+     *
+     * @param pAttr the attribute
+     * @return the value
+     */
+    public OceanusMoney getMoneyValue(final MoneyWiseXAnalysisTaxBasisAttr pAttr) {
+<span class="fc" id="L334">        return theValues.getMoneyValue(pAttr);</span>
+    }
+
+    /**
+     * Obtain the base value map.
+     *
+     * @return the base value map
+     */
+    public MoneyWiseXAnalysisTaxBasisValues getBaseValues() {
+<span class="nc" id="L343">        return theBaseValues;</span>
+    }
+
+    /**
+     * Obtain values for event.
+     *
+     * @param pEvent the event
+     * @return the values (or null)
+     */
+    public MoneyWiseXAnalysisTaxBasisValues getValuesForEvent(final MoneyWiseXAnalysisEvent pEvent) {
+        /* Obtain values for event */
+<span class="fc" id="L354">        return theHistory.getValuesForEvent(pEvent);</span>
+    }
+
+    /**
+     * Obtain previous values for event.
+     *
+     * @param pEvent the event
+     * @return the values (or null)
+     */
+    public MoneyWiseXAnalysisTaxBasisValues getPreviousValuesForEvent(final MoneyWiseXAnalysisEvent pEvent) {
+<span class="nc" id="L364">        return theHistory.getPreviousValuesForEvent(pEvent);</span>
+    }
+
+    /**
+     * Obtain delta for event.
+     *
+     * @param pEvent the event
+     * @param pAttr  the attribute
+     * @return the delta (or null)
+     */
+    public OceanusDecimal getDeltaForEvent(final MoneyWiseXAnalysisEvent pEvent,
+                                           final MoneyWiseXAnalysisTaxBasisAttr pAttr) {
+        /* Obtain delta for event */
+<span class="nc" id="L377">        return theHistory.getDeltaValue(pEvent, pAttr);</span>
+    }
+
+    /**
+     * Obtain the history map.
+     *
+     * @return the history map
+     */
+    private MoneyWiseXAnalysisHistory&lt;MoneyWiseXAnalysisTaxBasisValues, MoneyWiseXAnalysisTaxBasisAttr&gt; getHistoryMap() {
+<span class="nc" id="L386">        return theHistory;</span>
+    }
+
+    /**
+     * Obtain the analysis.
+     *
+     * @return the analysis
+     */
+    protected MoneyWiseXAnalysis getAnalysis() {
+<span class="nc" id="L395">        return theAnalysis;</span>
+    }
+
+    /**
+     * Obtain date range.
+     *
+     * @return the range
+     */
+    public OceanusDateRange getDateRange() {
+<span class="nc" id="L404">        return theAnalysis.getDateRange();</span>
+    }
+
+    /**
+     * Set Attribute.
+     *
+     * @param pAttr  the attribute
+     * @param pValue the value of the attribute
+     */
+    protected void setValue(final MoneyWiseXAnalysisTaxBasisAttr pAttr,
+                            final OceanusMoney pValue) {
+        /* Set the value into the list */
+<span class="fc" id="L416">        theValues.setValue(pAttr, pValue);</span>
+<span class="fc" id="L417">    }</span>
+
+    /**
+     * Get an attribute value.
+     *
+     * @param pAttr the attribute
+     * @return the value to set
+     */
+    private Object getAttributeValue(final MoneyWiseXAnalysisTaxBasisAttr pAttr) {
+        /* Access value of object */
+<span class="nc" id="L427">        final Object myValue = getValue(pAttr);</span>
+
+        /* Return the value */
+<span class="nc bnc" id="L430" title="All 2 branches missed.">        return myValue != null</span>
+<span class="nc" id="L431">                ? myValue</span>
+<span class="nc" id="L432">                : MetisDataFieldValue.SKIP;</span>
+    }
+
+    /**
+     * Obtain an attribute value.
+     *
+     * @param pAttr the attribute
+     * @return the value of the attribute or null
+     */
+    private Object getValue(final MoneyWiseXAnalysisTaxBasisAttr pAttr) {
+        /* Obtain the attribute */
+<span class="nc" id="L443">        return theValues.getValue(pAttr);</span>
+    }
+
+    /**
+     * Adjust Gross and Nett values by amount.
+     *
+     * @param pAmount the amount
+     */
+    public void adjustGrossAndNett(final OceanusMoney pAmount) {
+<span class="fc" id="L452">        adjustGrossAndNett(null, pAmount);</span>
+<span class="fc" id="L453">    }</span>
+
+    /**
+     * Adjust Gross value by amount.
+     *
+     * @param pAmount the amount
+     */
+    public void adjustGross(final OceanusMoney pAmount) {
+<span class="nc" id="L461">        adjustGross(null, pAmount);</span>
+<span class="nc" id="L462">    }</span>
+
+    /**
+     * Adjust Gross and Tax values by amount.
+     *
+     * @param pAmount the amount
+     */
+    public void adjustGrossAndTax(final OceanusMoney pAmount) {
+<span class="nc" id="L470">        adjustGrossAndTax(null, pAmount);</span>
+<span class="nc" id="L471">    }</span>
+
+    /**
+     * Adjust Gross and Nett values by amount.
+     *
+     * @param pAccount the relevant account
+     * @param pAmount  the amount
+     * @return the adjusted taxBasisAccountBucket (or null)
+     */
+    public MoneyWiseXAnalysisTaxBasisAccountBucket adjustGrossAndNett(final MoneyWiseTransAsset pAccount,
+                                                                      final OceanusMoney pAmount) {
+<span class="fc" id="L482">        return adjustValue(pAccount, pAmount, MoneyWiseXTaxBasisAdjust.STANDARD);</span>
+    }
+
+    /**
+     * Adjust Gross value by amount.
+     *
+     * @param pAccount the relevant account
+     * @param pAmount  the amount
+     * @return the adjusted taxBasisAccountBucket (or null)
+     */
+    public MoneyWiseXAnalysisTaxBasisAccountBucket adjustGross(final MoneyWiseTransAsset pAccount,
+                                                               final OceanusMoney pAmount) {
+<span class="nc" id="L494">        return adjustValue(pAccount, pAmount, MoneyWiseXTaxBasisAdjust.GROSS);</span>
+    }
+
+    /**
+     * Adjust Gross and Tax values by amount.
+     *
+     * @param pAccount the relevant account
+     * @param pAmount  the amount
+     * @return the adjusted taxBasisAccountBucket (or null)
+     */
+    public MoneyWiseXAnalysisTaxBasisAccountBucket adjustGrossAndTax(final MoneyWiseTransAsset pAccount,
+                                                                     final OceanusMoney pAmount) {
+<span class="fc" id="L506">        return adjustValue(pAccount, pAmount, MoneyWiseXTaxBasisAdjust.TAXCREDIT);</span>
+    }
+
+    /**
+     * Adjust value.
+     *
+     * @param pAccount the relevant account
+     * @param pValue   the value
+     * @param pAdjust  adjustment control
+     * @return the adjusted taxBasisAccountBucket (or null)
+     */
+    MoneyWiseXAnalysisTaxBasisAccountBucket adjustValue(final MoneyWiseTransAsset pAccount,
+                                                        final OceanusMoney pValue,
+                                                        final MoneyWiseXTaxBasisAdjust pAdjust) {
+        /* Access the existing value */
+<span class="fc" id="L521">        OceanusMoney myGross = theValues.getMoneyValue(MoneyWiseXAnalysisTaxBasisAttr.GROSS);</span>
+<span class="fc" id="L522">        myGross = new OceanusMoney(myGross);</span>
+
+        /* Subtract or add the value depending as to whether we are an expense bucket */
+<span class="fc bfc" id="L525" title="All 2 branches covered.">        if (isExpense) {</span>
+<span class="fc" id="L526">            myGross.subtractAmount(pValue);</span>
+        } else {
+<span class="fc" id="L528">            myGross.addAmount(pValue);</span>
+        }
+
+        /* Record the new value */
+<span class="fc" id="L532">        setValue(MoneyWiseXAnalysisTaxBasisAttr.GROSS, myGross);</span>
+
+        /* If we are adjusting Nett */
+<span class="fc bfc" id="L535" title="All 2 branches covered.">        if (pAdjust.adjustNett()) {</span>
+            /* Access the existing value */
+<span class="fc" id="L537">            OceanusMoney myNett = theValues.getMoneyValue(MoneyWiseXAnalysisTaxBasisAttr.NETT);</span>
+<span class="fc" id="L538">            myNett = new OceanusMoney(myNett);</span>
+
+            /* Subtract or add the value if we are an expense/income bucket */
+<span class="fc bfc" id="L541" title="All 2 branches covered.">            if (isExpense) {</span>
+<span class="fc" id="L542">                myNett.subtractAmount(pValue);</span>
+            } else {
+<span class="fc" id="L544">                myNett.addAmount(pValue);</span>
+            }
+
+            /* Record the new value */
+<span class="fc" id="L548">            setValue(MoneyWiseXAnalysisTaxBasisAttr.NETT, myNett);</span>
+        }
+
+        /* If we are adjusting TaxCredit */
+<span class="fc bfc" id="L552" title="All 2 branches covered.">        if (pAdjust.adjustTaxCredit()) {</span>
+            /* Access the existing value */
+<span class="fc" id="L554">            OceanusMoney myTax = theValues.getMoneyValue(MoneyWiseXAnalysisTaxBasisAttr.TAXCREDIT);</span>
+<span class="fc" id="L555">            myTax = new OceanusMoney(myTax);</span>
+
+            /* Subtract or add the value if we are an expense/income bucket */
+<span class="pc bpc" id="L558" title="1 of 2 branches missed.">            if (isExpense) {</span>
+<span class="nc" id="L559">                myTax.subtractAmount(pValue);</span>
+            } else {
+<span class="fc" id="L561">                myTax.addAmount(pValue);</span>
+            }
+
+            /* Record the new value */
+<span class="fc" id="L565">            setValue(MoneyWiseXAnalysisTaxBasisAttr.TAXCREDIT, myTax);</span>
+        }
+
+        /* If we have accounts and are passed an account, adjust value for account and return the bucket */
+<span class="fc bfc" id="L569" title="All 4 branches covered.">        return hasAccounts &amp;&amp; pAccount != null</span>
+<span class="fc" id="L570">                ? theAccounts.adjustValue(pAccount, pValue, pAdjust)</span>
+<span class="fc" id="L571">                : null;</span>
+    }
+
+    @Override
+    public void registerEvent(final MoneyWiseXAnalysisEvent pEvent) {
+        /* Register the transaction in the history */
+<span class="fc" id="L577">        theHistory.registerEvent(pEvent, theValues);</span>
+<span class="fc" id="L578">    }</span>
+
+    /**
+     * Add values.
+     *
+     * @param pBucket tax category bucket
+     */
+    protected void addValues(final MoneyWiseXAnalysisTaxBasisBucket pBucket) {
+        /* Add the values */
+<span class="fc" id="L587">        OceanusMoney myAmount = theValues.getMoneyValue(MoneyWiseXAnalysisTaxBasisAttr.GROSS);</span>
+<span class="fc" id="L588">        myAmount.addAmount(pBucket.getMoneyValue(MoneyWiseXAnalysisTaxBasisAttr.GROSS));</span>
+<span class="fc" id="L589">        myAmount = theValues.getMoneyValue(MoneyWiseXAnalysisTaxBasisAttr.NETT);</span>
+<span class="fc" id="L590">        myAmount.addAmount(pBucket.getMoneyValue(MoneyWiseXAnalysisTaxBasisAttr.NETT));</span>
+<span class="fc" id="L591">    }</span>
+
+    /**
+     * Adjust to base.
+     */
+    protected void adjustToBase() {
+        /* Adjust to base values */
+<span class="nc" id="L598">        theValues.adjustToBaseValues(theBaseValues);</span>
+<span class="nc" id="L599">        theBaseValues.resetBaseValues();</span>
+<span class="nc" id="L600">    }</span>
+
+    /**
+     * Value adjust Modes.
+     */
+<span class="fc" id="L605">    public enum MoneyWiseXTaxBasisAdjust {</span>
+        /**
+         * Adjust both Gross and Nett.
+         */
+<span class="fc" id="L609">        STANDARD,</span>
+
+        /**
+         * Adjust Gross only.
+         */
+<span class="fc" id="L614">        GROSS,</span>
+
+        /**
+         * Adjust Gross and Tax.
+         */
+<span class="fc" id="L619">        TAXCREDIT;</span>
+
+        /**
+         * should we adjust Nett?
+         *
+         * @return true/false
+         */
+        private boolean adjustNett() {
+<span class="fc bfc" id="L627" title="All 2 branches covered.">            return this == STANDARD;</span>
+        }
+
+        /**
+         * should we adjust TaxCredit?
+         *
+         * @return true/false
+         */
+        private boolean adjustTaxCredit() {
+<span class="fc bfc" id="L636" title="All 2 branches covered.">            return this == TAXCREDIT;</span>
+        }
+    }
+
+    /**
+     * TaxBasisBucketList class.
+     */
+    public static class MoneyWiseXAnalysisTaxBasisBucketList
+            implements MetisFieldItem, MoneyWiseTaxSource, MetisDataList&lt;MoneyWiseXAnalysisTaxBasisBucket&gt; {
+        /**
+         * Local Report fields.
+         */
+<span class="fc" id="L648">        private static final MetisFieldSet&lt;MoneyWiseXAnalysisTaxBasisBucketList&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseXAnalysisTaxBasisBucketList.class);</span>
+
+        /*
+         * Declare Fields.
+         */
+        static {
+<span class="fc" id="L654">            FIELD_DEFS.declareLocalField(MoneyWiseXAnalysisBucketResource.ANALYSIS_NAME, MoneyWiseXAnalysisTaxBasisBucketList::getAnalysis);</span>
+<span class="fc" id="L655">            FIELD_DEFS.declareLocalField(MoneyWiseXAnalysisBucketResource.ANALYSIS_CHARGES, MoneyWiseXAnalysisTaxBasisBucketList::getGainSlices);</span>
+<span class="fc" id="L656">            FIELD_DEFS.declareLocalField(MoneyWiseXAnalysisBucketResource.ANALYSIS_TOTALS, MoneyWiseXAnalysisTaxBasisBucketList::getTotals);</span>
+<span class="fc" id="L657">        }</span>
+
+        /**
+         * The analysis.
+         */
+        private final MoneyWiseXAnalysis theAnalysis;
+
+        /**
+         * The list.
+         */
+        private final MetisListIndexed&lt;MoneyWiseXAnalysisTaxBasisBucket&gt; theList;
+
+        /**
+         * The editSet.
+         */
+        private final PrometheusEditSet theEditSet;
+
+        /**
+         * The chargeableGains.
+         */
+        private final MoneyWiseChargeableGainSliceList theCharges;
+
+        /**
+         * The tax basis.
+         */
+        private final MoneyWiseXAnalysisTaxBasisBucket theTotals;
+
+        /**
+         * Construct a top-level List.
+         *
+         * @param pAnalysis the analysis
+         * @param pGains    the new Gains list
+         */
+        private MoneyWiseXAnalysisTaxBasisBucketList(final MoneyWiseXAnalysis pAnalysis,
+<span class="fc" id="L691">                                                     final MoneyWiseChargeableGainSliceList pGains) {</span>
+<span class="fc" id="L692">            theAnalysis = pAnalysis;</span>
+<span class="fc" id="L693">            theEditSet = theAnalysis.getEditSet();</span>
+<span class="fc" id="L694">            theCharges = pGains;</span>
+<span class="fc" id="L695">            theTotals = allocateTotalsBucket();</span>
+<span class="fc" id="L696">            theList = new MetisListIndexed&lt;&gt;();</span>
+<span class="fc" id="L697">            theList.setComparator(Comparator.comparing(MoneyWiseXAnalysisTaxBasisBucket::getTaxBasis));</span>
+<span class="fc" id="L698">        }</span>
+
+        /**
+         * Construct a top-level List.
+         *
+         * @param pAnalysis the analysis
+         */
+        protected MoneyWiseXAnalysisTaxBasisBucketList(final MoneyWiseXAnalysis pAnalysis) {
+<span class="fc" id="L706">            this(pAnalysis, new MoneyWiseChargeableGainSliceList());</span>
+<span class="fc" id="L707">        }</span>
+
+        /**
+         * Construct a dated List.
+         *
+         * @param pAnalysis the analysis
+         * @param pBase     the base list
+         * @param pDate     the Date
+         */
+        protected MoneyWiseXAnalysisTaxBasisBucketList(final MoneyWiseXAnalysis pAnalysis,
+                                                       final MoneyWiseXAnalysisTaxBasisBucketList pBase,
+                                                       final OceanusDate pDate) {
+            /* Initialise class */
+<span class="nc" id="L720">            this(pAnalysis, new MoneyWiseChargeableGainSliceList(pBase.getGainSlices(), pAnalysis.getDateRange()));</span>
+
+            /* Loop through the buckets */
+<span class="nc" id="L723">            final Iterator&lt;MoneyWiseXAnalysisTaxBasisBucket&gt; myIterator = pBase.iterator();</span>
+<span class="nc bnc" id="L724" title="All 2 branches missed.">            while (myIterator.hasNext()) {</span>
+<span class="nc" id="L725">                final MoneyWiseXAnalysisTaxBasisBucket myCurr = myIterator.next();</span>
+
+                /* Access the bucket for this date */
+<span class="nc" id="L728">                final MoneyWiseXAnalysisTaxBasisBucket myBucket = new MoneyWiseXAnalysisTaxBasisBucket(pAnalysis, myCurr, pDate);</span>
+
+                /* If the bucket is non-idle */
+<span class="nc bnc" id="L731" title="All 2 branches missed.">                if (!myBucket.isIdle()) {</span>
+                    /* Calculate the delta and add to the list */
+<span class="nc" id="L733">                    theList.add(myBucket);</span>
+                }
+<span class="nc" id="L735">            }</span>
+<span class="nc" id="L736">        }</span>
+
+        /**
+         * Construct a ranged List.
+         *
+         * @param pAnalysis the analysis
+         * @param pBase     the base list
+         * @param pRange    the Date Range
+         */
+        protected MoneyWiseXAnalysisTaxBasisBucketList(final MoneyWiseXAnalysis pAnalysis,
+                                                       final MoneyWiseXAnalysisTaxBasisBucketList pBase,
+                                                       final OceanusDateRange pRange) {
+            /* Initialise class */
+<span class="nc" id="L749">            this(pAnalysis, new MoneyWiseChargeableGainSliceList(pBase.getGainSlices(), pAnalysis.getDateRange()));</span>
+
+            /* Loop through the buckets */
+<span class="nc" id="L752">            final Iterator&lt;MoneyWiseXAnalysisTaxBasisBucket&gt; myIterator = pBase.iterator();</span>
+<span class="nc bnc" id="L753" title="All 2 branches missed.">            while (myIterator.hasNext()) {</span>
+<span class="nc" id="L754">                final MoneyWiseXAnalysisTaxBasisBucket myCurr = myIterator.next();</span>
+
+                /* Access the bucket for this range */
+<span class="nc" id="L757">                final MoneyWiseXAnalysisTaxBasisBucket myBucket = new MoneyWiseXAnalysisTaxBasisBucket(pAnalysis, myCurr, pRange);</span>
+
+                /* If the bucket is non-idle */
+<span class="nc bnc" id="L760" title="All 2 branches missed.">                if (!myBucket.isIdle()) {</span>
+                    /* Adjust to the base */
+<span class="nc" id="L762">                    myBucket.adjustToBase();</span>
+<span class="nc" id="L763">                    theList.add(myBucket);</span>
+                }
+<span class="nc" id="L765">            }</span>
+<span class="nc" id="L766">        }</span>
+
+        @Override
+        public MetisFieldSet&lt;MoneyWiseXAnalysisTaxBasisBucketList&gt; getDataFieldSet() {
+<span class="nc" id="L770">            return FIELD_DEFS;</span>
+        }
+
+        @Override
+        public List&lt;MoneyWiseXAnalysisTaxBasisBucket&gt; getUnderlyingList() {
+<span class="fc" id="L775">            return theList.getUnderlyingList();</span>
+        }
+
+        @Override
+        public String formatObject(final OceanusDataFormatter pFormatter) {
+<span class="nc" id="L780">            return getDataFieldSet().getName();</span>
+        }
+
+        /**
+         * Obtain the analysis.
+         *
+         * @return the analysis
+         */
+        protected MoneyWiseXAnalysis getAnalysis() {
+<span class="nc" id="L789">            return theAnalysis;</span>
+        }
+
+        /**
+         * Obtain item by id.
+         *
+         * @param pId the id to lookup
+         * @return the item (or null if not present)
+         */
+        public MoneyWiseXAnalysisTaxBasisBucket findItemById(final Integer pId) {
+            /* Return results */
+<span class="fc" id="L800">            return theList.getItemById(pId);</span>
+        }
+
+        @Override
+        public MoneyWiseChargeableGainSliceList getGainSlices() {
+<span class="nc" id="L805">            return theCharges;</span>
+        }
+
+        /**
+         * Obtain the Totals.
+         *
+         * @return the totals bucket
+         */
+        public MoneyWiseXAnalysisTaxBasisBucket getTotals() {
+<span class="fc" id="L814">            return theTotals;</span>
+        }
+
+        /**
+         * Allocate the Totals EventCategoryBucket.
+         *
+         * @return the bucket
+         */
+        private MoneyWiseXAnalysisTaxBasisBucket allocateTotalsBucket() {
+            /* Obtain the totals category */
+<span class="fc" id="L824">            return new MoneyWiseXAnalysisTaxBasisBucket(theAnalysis, null);</span>
+        }
+
+        /**
+         * Obtain the TaxBasisBucket for a given taxBasis.
+         *
+         * @param pClass the taxBasis
+         * @return the bucket
+         */
+        public MoneyWiseXAnalysisTaxBasisBucket getBucket(final MoneyWiseTaxClass pClass) {
+            /* Locate the bucket in the list */
+<span class="fc" id="L835">            final MoneyWiseTaxBasis myBasis = theEditSet.getDataList(MoneyWiseStaticDataType.TAXBASIS, MoneyWiseTaxBasisList.class).findItemByClass(pClass);</span>
+<span class="fc" id="L836">            MoneyWiseXAnalysisTaxBasisBucket myItem = findItemById(myBasis.getIndexedId());</span>
+
+            /* If the item does not yet exist */
+<span class="fc bfc" id="L839" title="All 2 branches covered.">            if (myItem == null) {</span>
+                /* Create the new bucket */
+<span class="fc" id="L841">                myItem = new MoneyWiseXAnalysisTaxBasisBucket(theAnalysis, myBasis);</span>
+
+                /* Add to the list */
+<span class="fc" id="L844">                theList.add(myItem);</span>
+            }
+
+            /* Return the bucket */
+<span class="fc" id="L848">            return myItem;</span>
+        }
+
+        /**
+         * Obtain the matching BasisBucket.
+         *
+         * @param pTaxBasis the taxBasis
+         * @return the matching bucket
+         */
+        public MoneyWiseXAnalysisTaxBasisBucket getMatchingBasis(final MoneyWiseXAnalysisTaxBasisBucket pTaxBasis) {
+            /* Access the matching taxBasis bucket */
+<span class="nc" id="L859">            MoneyWiseXAnalysisTaxBasisBucket myBasis = findItemById(pTaxBasis.getTaxBasis().getIndexedId());</span>
+<span class="nc bnc" id="L860" title="All 2 branches missed.">            if (myBasis == null) {</span>
+<span class="nc" id="L861">                myBasis = new MoneyWiseXAnalysisTaxBasisBucket(theAnalysis, pTaxBasis.getTaxBasis());</span>
+            }
+
+            /* If we are matching a TaxBasisAccount Bucket */
+<span class="nc bnc" id="L865" title="All 2 branches missed.">            if (pTaxBasis instanceof MoneyWiseXAnalysisTaxBasisAccountBucket myBucket) {</span>
+                /* Look up the asset bucket */
+<span class="nc" id="L867">                final MoneyWiseTransAsset myAsset = myBucket.getAccount();</span>
+<span class="nc" id="L868">                MoneyWiseXAnalysisTaxBasisAccountBucket myAccountBucket = myBasis.findAccountBucket(myAsset);</span>
+
+                /* If there is no such bucket in the analysis */
+<span class="nc bnc" id="L871" title="All 2 branches missed.">                if (myAccountBucket == null) {</span>
+                    /* Allocate an orphan bucket */
+<span class="nc" id="L873">                    myAccountBucket = new MoneyWiseXAnalysisTaxBasisAccountBucket(theAnalysis, myBasis, myAsset);</span>
+                }
+
+                /* Set bucket as the account bucket */
+<span class="nc" id="L877">                myBasis = myAccountBucket;</span>
+            }
+
+            /* Return the basis */
+<span class="nc" id="L881">            return myBasis;</span>
+        }
+
+        /**
+         * Obtain the default BasisBucket.
+         *
+         * @return the default bucket
+         */
+        public MoneyWiseXAnalysisTaxBasisBucket getDefaultBasis() {
+            /* Return the first basis in the list if it exists */
+<span class="nc bnc" id="L891" title="All 2 branches missed.">            return isEmpty()</span>
+<span class="nc" id="L892">                    ? null</span>
+<span class="nc" id="L893">                    : theList.getUnderlyingList().get(0);</span>
+        }
+
+        /**
+         * record ChargeableGain.
+         *
+         * @param pTrans the transaction
+         * @param pGain  the gain
+         * @param pSlice the slice
+         * @param pYears the years
+         */
+        public void recordChargeableGain(final MoneyWiseTransaction pTrans,
+                                         final OceanusMoney pGain,
+                                         final OceanusMoney pSlice,
+                                         final Integer pYears) {
+            /* record the chargeable gain */
+<span class="nc" id="L909">            theCharges.addTransaction(pTrans, pGain, pSlice, pYears);</span>
+<span class="nc" id="L910">        }</span>
+
+        /**
+         * produce Totals.
+         */
+        public void produceTotals() {
+            /* Loop through the buckets */
+<span class="fc" id="L917">            final Iterator&lt;MoneyWiseXAnalysisTaxBasisBucket&gt; myIterator = iterator();</span>
+<span class="fc bfc" id="L918" title="All 2 branches covered.">            while (myIterator.hasNext()) {</span>
+<span class="fc" id="L919">                final MoneyWiseXAnalysisTaxBasisBucket myBucket = myIterator.next();</span>
+
+                /* Remove idle items */
+<span class="fc bfc" id="L922" title="All 2 branches covered.">                if (myBucket.isIdle()) {</span>
+<span class="fc" id="L923">                    myIterator.remove();</span>
+<span class="fc" id="L924">                    continue;</span>
+                }
+
+                /* Sort the accounts */
+<span class="fc bfc" id="L928" title="All 2 branches covered.">                if (myBucket.hasAccounts()) {</span>
+<span class="fc" id="L929">                    myBucket.getAccounts().sortBuckets();</span>
+                }
+
+                /* Adjust the Total Profit buckets */
+<span class="fc" id="L933">                theTotals.addValues(myBucket);</span>
+<span class="fc" id="L934">            }</span>
+
+            /* Sort the bases */
+<span class="fc" id="L937">            theList.sortList();</span>
+<span class="fc" id="L938">        }</span>
+
+        @Override
+        public OceanusMoney getAmountForTaxBasis(final MoneyWiseTaxClass pBasis) {
+            /* Access the bucket */
+<span class="nc" id="L943">            final MoneyWiseXAnalysisTaxBasisBucket myItem = findItemById(pBasis.getClassId());</span>
+
+            /* If the bucket is not found */
+<span class="nc bnc" id="L946" title="All 2 branches missed.">            if (myItem == null) {</span>
+<span class="nc" id="L947">                final MoneyWiseCurrency myAssetCurrency = theAnalysis.getCurrency();</span>
+<span class="nc bnc" id="L948" title="All 2 branches missed.">                final Currency myCurrency = myAssetCurrency == null</span>
+<span class="nc" id="L949">                        ? OceanusMoney.getDefaultCurrency()</span>
+<span class="nc" id="L950">                        : myAssetCurrency.getCurrency();</span>
+<span class="nc" id="L951">                return new OceanusMoney(myCurrency);</span>
+            }
+
+<span class="nc" id="L954">            return myItem.getMoneyValue(MoneyWiseXAnalysisTaxBasisAttr.GROSS);</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

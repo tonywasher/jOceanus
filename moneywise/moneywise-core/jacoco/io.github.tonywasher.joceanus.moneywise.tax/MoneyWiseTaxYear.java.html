@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseTaxYear.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.moneywise.tax</a> &gt; <span class="el_source">MoneyWiseTaxYear.java</span></div><h1>MoneyWiseTaxYear.java</h1><pre class="source lang-java linenums">/*
+ * MoneyWise: Finance Application
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.moneywise.tax;
+
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldItem;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
+import io.github.tonywasher.joceanus.metis.preference.MetisPreferenceManager;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTax.MoneyWiseTaxCredit;
+
+/**
+ * The Tax Year.
+ */
+public abstract class MoneyWiseTaxYear
+        implements MetisFieldItem, MoneyWiseTaxCredit {
+    /**
+     * Local Report fields.
+     */
+<span class="fc" id="L34">    private static final MetisFieldSet&lt;MoneyWiseTaxYear&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseTaxYear.class);</span>
+
+    /*
+     * Declare Fields.
+     */
+    static {
+<span class="fc" id="L40">        FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXYEAR_END, MoneyWiseTaxYear::getYearEnd);</span>
+<span class="fc" id="L41">    }</span>
+
+    /**
+     * The Date.
+     */
+    private final OceanusDate theYear;
+
+    /**
+     * Constructor.
+     *
+     * @param pDate the tax year end
+     */
+<span class="fc" id="L53">    protected MoneyWiseTaxYear(final OceanusDate pDate) {</span>
+<span class="fc" id="L54">        theYear = pDate;</span>
+<span class="fc" id="L55">    }</span>
+
+    @Override
+    public OceanusDate getYearEnd() {
+<span class="fc" id="L59">        return theYear;</span>
+    }
+
+    /**
+     * Obtain the taxAnalysis for the year.
+     *
+     * @param pPreferences the preference manager
+     * @param pTaxSource   the tax source
+     * @return the tax analysis
+     */
+    public abstract MoneyWiseTaxAnalysis analyseTaxYear(MetisPreferenceManager pPreferences,
+                                                        MoneyWiseTaxSource pTaxSource);
+
+    @Override
+    public String formatObject(final OceanusDataFormatter pFormatter) {
+<span class="nc" id="L74">        return toString();</span>
+    }
+
+    @Override
+    public String toString() {
+<span class="nc" id="L79">        return Integer.toString(theYear.getYear());</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

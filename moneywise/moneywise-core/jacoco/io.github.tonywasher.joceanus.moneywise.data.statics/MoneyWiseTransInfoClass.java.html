@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseTransInfoClass.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.moneywise.data.statics</a> &gt; <span class="el_source">MoneyWiseTransInfoClass.java</span></div><h1>MoneyWiseTransInfoClass.java</h1><pre class="source lang-java linenums">/*
+ * MoneyWise: Finance Application
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.moneywise.data.statics;
+
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
+import io.github.tonywasher.joceanus.metis.data.MetisDataType;
+import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataInfoClass;
+
+/**
+ * Enumeration of TransactionInfo Classes..
+ */
+<span class="fc" id="L28">public enum MoneyWiseTransInfoClass</span>
+        implements PrometheusDataInfoClass, MetisDataFieldId {
+    /**
+     * Tax Credit.
+     */
+<span class="fc" id="L33">    TAXCREDIT(1, 0, MetisDataType.MONEY),</span>
+
+    /**
+     * Employer National Insurance.
+     */
+<span class="fc" id="L38">    EMPLOYERNATINS(2, 1, MetisDataType.MONEY),</span>
+
+    /**
+     * Employee National Insurance.
+     */
+<span class="fc" id="L43">    EMPLOYEENATINS(3, 2, MetisDataType.MONEY),</span>
+
+    /**
+     * Deemed Benefit.
+     */
+<span class="fc" id="L48">    DEEMEDBENEFIT(4, 3, MetisDataType.MONEY),</span>
+
+    /**
+     * QualifyingYears.
+     */
+<span class="fc" id="L53">    QUALIFYYEARS(5, 4, MetisDataType.INTEGER),</span>
+
+    /**
+     * Account Delta Units.
+     */
+<span class="fc" id="L58">    ACCOUNTDELTAUNITS(6, 5, MetisDataType.UNITS),</span>
+
+    /**
+     * Partner Delta Units.
+     */
+<span class="fc" id="L63">    PARTNERDELTAUNITS(7, 6, MetisDataType.UNITS),</span>
+
+    /**
+     * Dilution.
+     */
+<span class="fc" id="L68">    DILUTION(8, 7, MetisDataType.RATIO),</span>
+
+    /**
+     * Reference.
+     */
+<span class="fc" id="L73">    REFERENCE(9, 8, MetisDataType.STRING),</span>
+
+    /**
+     * Withheld.
+     */
+<span class="fc" id="L78">    WITHHELD(10, 9, MetisDataType.MONEY),</span>
+
+    /**
+     * Partner Amount.
+     */
+<span class="fc" id="L83">    PARTNERAMOUNT(11, 10, MetisDataType.MONEY),</span>
+
+    /**
+     * ThirdParty Amount.
+     */
+<span class="fc" id="L88">    RETURNEDCASH(12, 11, MetisDataType.MONEY),</span>
+
+    /**
+     * ReturnedCashAccount.
+     */
+<span class="fc" id="L93">    RETURNEDCASHACCOUNT(13, 12, MetisDataType.LINKPAIR),</span>
+
+    /**
+     * Comments.
+     */
+<span class="fc" id="L98">    COMMENTS(14, 13, MetisDataType.STRING),</span>
+
+    /**
+     * Price.
+     */
+<span class="fc" id="L103">    PRICE(15, 14, MetisDataType.PRICE),</span>
+
+    /**
+     * XchangeRate.
+     */
+<span class="fc" id="L108">    XCHANGERATE(16, 15, MetisDataType.RATIO),</span>
+
+    /**
+     * Commission.
+     */
+<span class="fc" id="L113">    COMMISSION(17, 16, MetisDataType.MONEY),</span>
+
+    /**
+     * TransactionTag.
+     */
+<span class="fc" id="L118">    TRANSTAG(18, 17, MetisDataType.LINKSET);</span>
+
+    /**
+     * The String name.
+     */
+    private String theName;
+
+    /**
+     * Class Id.
+     */
+    private final int theId;
+
+    /**
+     * Class Order.
+     */
+    private final int theOrder;
+
+    /**
+     * Data Type.
+     */
+    private final MetisDataType theDataType;
+
+    /**
+     * Constructor.
+     *
+     * @param uId       the id
+     * @param uOrder    the default order
+     * @param pDataType the data type
+     */
+    MoneyWiseTransInfoClass(final int uId,
+                            final int uOrder,
+<span class="fc" id="L149">                            final MetisDataType pDataType) {</span>
+<span class="fc" id="L150">        theId = uId;</span>
+<span class="fc" id="L151">        theOrder = uOrder;</span>
+<span class="fc" id="L152">        theDataType = pDataType;</span>
+<span class="fc" id="L153">    }</span>
+
+    @Override
+    public int getClassId() {
+<span class="fc" id="L157">        return theId;</span>
+    }
+
+    @Override
+    public int getOrder() {
+<span class="fc" id="L162">        return theOrder;</span>
+    }
+
+    @Override
+    public MetisDataType getDataType() {
+<span class="fc" id="L167">        return theDataType;</span>
+    }
+
+    @Override
+    public boolean isLink() {
+<span class="pc bpc" id="L172" title="1 of 2 branches missed.">        switch (theDataType) {</span>
+            case LINK:
+            case LINKPAIR:
+            case LINKSET:
+<span class="nc" id="L176">                return true;</span>
+            default:
+<span class="fc" id="L178">                return false;</span>
+        }
+    }
+
+    @Override
+    public boolean isLinkSet() {
+<span class="fc bfc" id="L184" title="All 2 branches covered.">        return theDataType == MetisDataType.LINKSET;</span>
+    }
+
+    @Override
+    public String toString() {
+        /* If we have not yet loaded the name */
+<span class="fc bfc" id="L190" title="All 2 branches covered.">        if (theName == null) {</span>
+            /* Load the name */
+<span class="fc" id="L192">            theName = MoneyWiseStaticResource.getKeyForTransInfo(this).getValue();</span>
+        }
+
+        /* return the name */
+<span class="fc" id="L196">        return theName;</span>
+    }
+
+    /**
+     * get value from id.
+     *
+     * @param id the id value
+     * @return the corresponding enum object
+     * @throws OceanusException on error
+     */
+    public static MoneyWiseTransInfoClass fromId(final int id) throws OceanusException {
+<span class="nc bnc" id="L207" title="All 2 branches missed.">        for (MoneyWiseTransInfoClass myClass : values()) {</span>
+<span class="nc bnc" id="L208" title="All 2 branches missed.">            if (myClass.getClassId() == id) {</span>
+<span class="nc" id="L209">                return myClass;</span>
+            }
+        }
+<span class="nc" id="L212">        throw new MoneyWiseDataException(&quot;Invalid ClassId for &quot; + MoneyWiseStaticDataType.TRANSINFOTYPE.toString() + &quot;:&quot; + id);</span>
+    }
+
+    /**
+     * Obtain maximum length for infoType.
+     *
+     * @return the maximum length
+     */
+    public int getMaximumLength() {
+<span class="nc bnc" id="L221" title="All 3 branches missed.">        switch (this) {</span>
+            case REFERENCE:
+<span class="nc" id="L223">                return MoneyWiseTransInfoType.DATA_LEN;</span>
+            case COMMENTS:
+<span class="nc" id="L225">                return MoneyWiseTransInfoType.COMMENT_LEN;</span>
+            default:
+<span class="nc" id="L227">                return 0;</span>
+        }
+    }
+
+    @Override
+    public String getId() {
+<span class="fc" id="L233">        return toString();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

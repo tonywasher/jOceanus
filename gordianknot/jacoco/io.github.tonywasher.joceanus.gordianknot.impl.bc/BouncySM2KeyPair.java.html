@@ -1,0 +1,362 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BouncySM2KeyPair.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.impl.bc</a> &gt; <span class="el_source">BouncySM2KeyPair.java</span></div><h1>BouncySM2KeyPair.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.gordianknot.impl.bc;
+
+import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestFactory;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestType;
+import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianEncryptorSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianSM2EncryptionSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianSM2EncryptionSpec.GordianSM2EncryptionType;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignParams;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignatureSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyEllipticKeyPair.BouncyECPrivateKey;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyEllipticKeyPair.BouncyECPublicKey;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPrivateKey;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPublicKey;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.agree.GordianCoreAgreementFactory;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.encrypt.GordianCoreEncryptor;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.sign.GordianCoreSignature;
+import org.bouncycastle.crypto.CryptoException;
+import org.bouncycastle.crypto.InvalidCipherTextException;
+import org.bouncycastle.crypto.agreement.SM2KeyExchange;
+import org.bouncycastle.crypto.engines.SM2Engine;
+import org.bouncycastle.crypto.engines.SM2Engine.Mode;
+import org.bouncycastle.crypto.params.ParametersWithRandom;
+import org.bouncycastle.crypto.params.SM2KeyExchangePrivateParameters;
+import org.bouncycastle.crypto.params.SM2KeyExchangePublicParameters;
+import org.bouncycastle.crypto.signers.SM2Signer;
+
+/**
+ * SM2 KeyPair classes.
+ */
+public final class BouncySM2KeyPair {
+    /**
+     * Private constructor.
+     */
+    private BouncySM2KeyPair() {
+    }
+
+    /**
+     * SM2 signature.
+     */
+    public static class BouncySM2Signature
+            extends GordianCoreSignature {
+        /**
+         * The Signer.
+         */
+        private final SM2Signer theSigner;
+
+        /**
+         * Constructor.
+         *
+         * @param pFactory the factory
+         * @param pSpec    the signatureSpec.
+         * @throws GordianException on error
+         */
+        BouncySM2Signature(final GordianBaseFactory pFactory,
+                           final GordianSignatureSpec pSpec) throws GordianException {
+            /* Initialise underlying class */
+<span class="fc" id="L79">            super(pFactory, pSpec);</span>
+
+            /* Create the signer */
+<span class="fc" id="L82">            final GordianDigestSpec mySpec = pSpec.getDigestSpec();</span>
+<span class="fc bfc" id="L83" title="All 2 branches covered.">            if (GordianDigestType.SM3.equals(mySpec.getDigestType())) {</span>
+<span class="fc" id="L84">                theSigner = new SM2Signer();</span>
+            } else {
+<span class="fc" id="L86">                final BouncyDigest myDigest = (BouncyDigest) pFactory.getDigestFactory().createDigest(mySpec);</span>
+<span class="fc" id="L87">                theSigner = new SM2Signer(myDigest.getDigest());</span>
+            }
+<span class="fc" id="L89">        }</span>
+
+        @Override
+        public void update(final byte[] pBytes,
+                           final int pOffset,
+                           final int pLength) {
+<span class="fc" id="L95">            theSigner.update(pBytes, pOffset, pLength);</span>
+<span class="fc" id="L96">        }</span>
+
+        @Override
+        public void update(final byte pByte) {
+<span class="nc" id="L100">            theSigner.update(pByte);</span>
+<span class="nc" id="L101">        }</span>
+
+        @Override
+        public void update(final byte[] pBytes) {
+<span class="fc" id="L105">            theSigner.update(pBytes, 0, pBytes.length);</span>
+<span class="fc" id="L106">        }</span>
+
+        @Override
+        public void reset() {
+<span class="nc" id="L110">            theSigner.reset();</span>
+<span class="nc" id="L111">        }</span>
+
+        @Override
+        protected BouncyKeyPair getKeyPair() {
+<span class="fc" id="L115">            return (BouncyKeyPair) super.getKeyPair();</span>
+        }
+
+        @Override
+        public void initForSigning(final GordianSignParams pParams) throws GordianException {
+            /* Initialise detail */
+<span class="fc" id="L121">            super.initForSigning(pParams);</span>
+<span class="fc" id="L122">            final BouncyKeyPair myPair = getKeyPair();</span>
+<span class="fc" id="L123">            BouncyKeyPair.checkKeyPair(myPair);</span>
+
+            /* Initialise and set the signer */
+<span class="fc" id="L126">            final BouncyECPrivateKey myPrivate = (BouncyECPrivateKey) myPair.getPrivateKey();</span>
+<span class="fc" id="L127">            final ParametersWithRandom myParms = new ParametersWithRandom(myPrivate.getPrivateKey(), getRandom());</span>
+<span class="fc" id="L128">            theSigner.init(true, myParms);</span>
+<span class="fc" id="L129">        }</span>
+
+        @Override
+        public void initForVerify(final GordianSignParams pParams) throws GordianException {
+            /* Initialise detail */
+<span class="fc" id="L134">            super.initForVerify(pParams);</span>
+<span class="fc" id="L135">            final BouncyKeyPair myPair = getKeyPair();</span>
+<span class="fc" id="L136">            BouncyKeyPair.checkKeyPair(myPair);</span>
+
+            /* Initialise and set the signer */
+<span class="fc" id="L139">            final BouncyECPublicKey myPublic = (BouncyECPublicKey) myPair.getPublicKey();</span>
+<span class="fc" id="L140">            theSigner.init(false, myPublic.getPublicKey());</span>
+<span class="fc" id="L141">        }</span>
+
+        @Override
+        public byte[] sign() throws GordianException {
+            /* Check that we are in signing mode */
+<span class="fc" id="L146">            checkMode(GordianSignatureMode.SIGN);</span>
+
+            /* Sign the message */
+            try {
+<span class="fc" id="L150">                return theSigner.generateSignature();</span>
+<span class="nc" id="L151">            } catch (CryptoException e) {</span>
+<span class="nc" id="L152">                throw new GordianCryptoException(BouncySignature.ERROR_SIGGEN, e);</span>
+            }
+        }
+
+        @Override
+        public boolean verify(final byte[] pSignature) throws GordianException {
+            /* Check that we are in verify mode */
+<span class="fc" id="L159">            checkMode(GordianSignatureMode.VERIFY);</span>
+
+            /* Verify the message */
+<span class="fc" id="L162">            return theSigner.verifySignature(pSignature);</span>
+        }
+    }
+
+    /**
+     * SM2 Agreement Engine.
+     */
+    public static class BouncySM2AgreementEngine
+            extends BouncyAgreementBase {
+        /**
+         * Key length.
+         */
+        private static final int KEYLEN = 64;
+
+        /**
+         * The agreement.
+         */
+        private final SM2KeyExchange theAgreement;
+
+        /**
+         * Constructor.
+         *
+         * @param pFactory the security factory
+         * @param pSpec    the agreementSpec
+         * @throws GordianException on error
+         */
+        BouncySM2AgreementEngine(final GordianCoreAgreementFactory pFactory,
+                                 final GordianAgreementSpec pSpec) throws GordianException {
+            /* Initialize underlying class */
+<span class="fc" id="L191">            super(pFactory, pSpec);</span>
+
+            /* Create the agreement */
+<span class="fc" id="L194">            theAgreement = new SM2KeyExchange();</span>
+<span class="fc" id="L195">        }</span>
+
+        @Override
+        public void processClientHello() throws GordianException {
+            /* Access keys */
+<span class="fc" id="L200">            final BouncyECPublicKey myClientPublic = (BouncyECPublicKey) getPublicKey(getClientKeyPair());</span>
+<span class="fc" id="L201">            final BouncyECPublicKey myClientEphPublic = (BouncyECPublicKey) getPublicKey(getClientEphemeral());</span>
+<span class="fc" id="L202">            final BouncyECPrivateKey myPrivate = (BouncyECPrivateKey) getPrivateKey(getServerKeyPair());</span>
+<span class="fc" id="L203">            final BouncyECPrivateKey myEphPrivate = (BouncyECPrivateKey) getPrivateKey(getServerEphemeral());</span>
+
+            /* Derive the secret */
+<span class="fc" id="L206">            final SM2KeyExchangePrivateParameters myPrivParams = new SM2KeyExchangePrivateParameters(false,</span>
+<span class="fc" id="L207">                    myPrivate.getPrivateKey(), myEphPrivate.getPrivateKey());</span>
+<span class="fc" id="L208">            theAgreement.init(myPrivParams);</span>
+<span class="fc" id="L209">            final SM2KeyExchangePublicParameters myPubParams = new SM2KeyExchangePublicParameters(myClientPublic.getPublicKey(),</span>
+<span class="fc" id="L210">                    myClientEphPublic.getPublicKey());</span>
+
+            /* If we are confirming */
+<span class="fc bfc" id="L213" title="All 2 branches covered.">            if (Boolean.TRUE.equals(getSpec().withConfirm())) {</span>
+                /* Create agreement and confirmation tags */
+<span class="fc" id="L215">                final byte[][] myResults = theAgreement.calculateKeyWithConfirmation(KEYLEN, null, myPubParams);</span>
+
+                /* Store the confirmationTags */
+<span class="fc" id="L218">                setServerConfirm(myResults[1]);</span>
+<span class="fc" id="L219">                setClientConfirm(myResults[2]);</span>
+
+                /* Store the secret */
+<span class="fc" id="L222">                storeSecret(myResults[0]);</span>
+
+                /* else standard agreement */
+<span class="fc" id="L225">            } else {</span>
+                /* Calculate and store the secret */
+<span class="fc" id="L227">                storeSecret(theAgreement.calculateKey(KEYLEN, myPubParams));</span>
+            }
+<span class="fc" id="L229">        }</span>
+
+        @Override
+        public void processServerHello() throws GordianException {
+            /* Access keys */
+<span class="fc" id="L234">            final BouncyECPublicKey myServerPublic = (BouncyECPublicKey) getPublicKey(getServerKeyPair());</span>
+<span class="fc" id="L235">            final BouncyECPublicKey myServerEphPublic = (BouncyECPublicKey) getPublicKey(getServerEphemeral());</span>
+<span class="fc" id="L236">            final BouncyECPrivateKey myPrivate = (BouncyECPrivateKey) getPrivateKey(getClientKeyPair());</span>
+<span class="fc" id="L237">            final BouncyECPrivateKey myEphPrivate = (BouncyECPrivateKey) getPrivateKey(getClientEphemeral());</span>
+
+            /* Derive the secret */
+<span class="fc" id="L240">            final SM2KeyExchangePrivateParameters myPrivParams = new SM2KeyExchangePrivateParameters(true,</span>
+<span class="fc" id="L241">                    myPrivate.getPrivateKey(), myEphPrivate.getPrivateKey());</span>
+<span class="fc" id="L242">            theAgreement.init(myPrivParams);</span>
+<span class="fc" id="L243">            final SM2KeyExchangePublicParameters myPubParams = new SM2KeyExchangePublicParameters(myServerPublic.getPublicKey(),</span>
+<span class="fc" id="L244">                    myServerEphPublic.getPublicKey());</span>
+
+            /* If we are confirming */
+<span class="fc bfc" id="L247" title="All 2 branches covered.">            if (Boolean.TRUE.equals(getSpec().withConfirm())) {</span>
+                /* Obtain confirmationTag in serverHello */
+<span class="fc" id="L249">                final byte[] myConfirm = getServerConfirm();</span>
+
+                /* Protect against exception */
+                try {
+                    /* Create agreement and confirmation tags */
+<span class="fc" id="L254">                    final byte[][] myResults = theAgreement.calculateKeyWithConfirmation(KEYLEN, myConfirm, myPubParams);</span>
+
+                    /* Store the confirmationTag */
+<span class="fc bfc" id="L257" title="All 2 branches covered.">                    if (setClientConfirm(myResults[1])) {</span>
+                        /* Store the secret */
+<span class="fc" id="L259">                        storeSecret(myResults[0]);</span>
+                    }
+
+                    /* Catch mismatch on confirmation tag */
+<span class="nc" id="L263">                } catch (IllegalStateException e) {</span>
+<span class="nc" id="L264">                    getBuilder().setError(&quot;Server Confirmation failed&quot;);</span>
+<span class="fc" id="L265">                }</span>
+
+                /* else standard agreement */
+<span class="fc" id="L268">            } else {</span>
+                /* Calculate and store the secret */
+<span class="fc" id="L270">                storeSecret(theAgreement.calculateKey(KEYLEN, myPubParams));</span>
+            }
+<span class="fc" id="L272">        }</span>
+    }
+
+    /**
+     * SM2 Encryptor.
+     */
+    public static class BouncySM2Encryptor
+            extends GordianCoreEncryptor {
+        /**
+         * The underlying encryptor.
+         */
+        private final SM2Engine theEncryptor;
+
+        /**
+         * Constructor.
+         *
+         * @param pFactory the factory
+         * @param pSpec    the encryptorSpec
+         * @throws GordianException on error
+         */
+        BouncySM2Encryptor(final GordianBaseFactory pFactory,
+                           final GordianEncryptorSpec pSpec) throws GordianException {
+            /* Initialise underlying cipher */
+<span class="fc" id="L295">            super(pFactory, pSpec);</span>
+<span class="fc" id="L296">            final GordianDigestFactory myFactory = pFactory.getDigestFactory();</span>
+<span class="fc" id="L297">            final GordianSM2EncryptionSpec mySpec = pSpec.getSM2EncryptionSpec();</span>
+<span class="fc" id="L298">            final BouncyDigest myDigest = (BouncyDigest) myFactory.createDigest(mySpec.getDigestSpec());</span>
+<span class="fc bfc" id="L299" title="All 2 branches covered.">            final Mode mySM2Mode = mySpec.getEncryptionType() == GordianSM2EncryptionType.C1C2C3</span>
+<span class="fc" id="L300">                    ? Mode.C1C2C3 : Mode.C1C3C2;</span>
+<span class="fc" id="L301">            theEncryptor = new SM2Engine(myDigest.getDigest(), mySM2Mode);</span>
+<span class="fc" id="L302">        }</span>
+
+        @Override
+        protected BouncyPublicKey&lt;?&gt; getPublicKey() {
+<span class="fc" id="L306">            return (BouncyPublicKey&lt;?&gt;) super.getPublicKey();</span>
+        }
+
+        @Override
+        protected BouncyPrivateKey&lt;?&gt; getPrivateKey() {
+<span class="fc" id="L311">            return (BouncyPrivateKey&lt;?&gt;) super.getPrivateKey();</span>
+        }
+
+        @Override
+        public void initForEncrypt(final GordianKeyPair pKeyPair) throws GordianException {
+            /* Initialise underlying cipher */
+<span class="fc" id="L317">            BouncyKeyPair.checkKeyPair(pKeyPair);</span>
+<span class="fc" id="L318">            super.initForEncrypt(pKeyPair);</span>
+
+            /* Initialise for encryption */
+<span class="fc" id="L321">            final ParametersWithRandom myParms = new ParametersWithRandom(getPublicKey().getPublicKey(), getRandom());</span>
+<span class="fc" id="L322">            theEncryptor.init(true, myParms);</span>
+<span class="fc" id="L323">        }</span>
+
+        @Override
+        public void initForDecrypt(final GordianKeyPair pKeyPair) throws GordianException {
+            /* Initialise underlying cipher */
+<span class="fc" id="L328">            BouncyKeyPair.checkKeyPair(pKeyPair);</span>
+<span class="fc" id="L329">            super.initForDecrypt(pKeyPair);</span>
+
+            /* Initialise for decryption */
+<span class="fc" id="L332">            theEncryptor.init(false, getPrivateKey().getPrivateKey());</span>
+<span class="fc" id="L333">        }</span>
+
+        @Override
+        public byte[] encrypt(final byte[] pBytes) throws GordianException {
+            try {
+                /* Check that we are in encryption mode */
+<span class="fc" id="L339">                checkMode(GordianEncryptMode.ENCRYPT);</span>
+
+                /* Encrypt the message */
+<span class="fc" id="L342">                return theEncryptor.processBlock(pBytes, 0, pBytes.length);</span>
+<span class="nc" id="L343">            } catch (InvalidCipherTextException e) {</span>
+<span class="nc" id="L344">                throw new GordianCryptoException(&quot;Failed to encrypt data&quot;, e);</span>
+            }
+        }
+
+        @Override
+        public byte[] decrypt(final byte[] pBytes) throws GordianException {
+            try {
+                /* Check that we are in decryption mode */
+<span class="fc" id="L352">                checkMode(GordianEncryptMode.DECRYPT);</span>
+
+                /* Decrypt the message */
+<span class="fc" id="L355">                return theEncryptor.processBlock(pBytes, 0, pBytes.length);</span>
+<span class="nc" id="L356">            } catch (InvalidCipherTextException e) {</span>
+<span class="nc" id="L357">                throw new GordianCryptoException(&quot;Failed to decrypt data&quot;, e);</span>
+            }
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

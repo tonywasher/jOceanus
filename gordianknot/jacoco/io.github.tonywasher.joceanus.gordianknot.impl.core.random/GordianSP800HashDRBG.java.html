@@ -1,0 +1,303 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianSP800HashDRBG.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.impl.core.random</a> &gt; <span class="el_source">GordianSP800HashDRBG.java</span></div><h1>GordianSP800HashDRBG.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.gordianknot.impl.core.random;
+
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigest;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianByteArrayInteger;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianDataConverter;
+import org.bouncycastle.crypto.prng.EntropySource;
+import org.bouncycastle.util.Arrays;
+
+/**
+ * Implementation of HashSP800DRBG based on the BouncyCastle Code.
+ * &lt;p&gt;
+ * This implementation is modified so that it accepts any GordianDigest.
+ */
+public final class GordianSP800HashDRBG
+        implements GordianDRBGenerator {
+    /**
+     * The Initial Seed Id.
+     */
+<span class="fc" id="L36">    private static final byte[] INIT_ID = {0};</span>
+
+    /**
+     * The ReSeed Id.
+     */
+<span class="fc" id="L41">    private static final byte[] RESEED_ID = {1};</span>
+
+    /**
+     * The Extra bytes Id.
+     */
+<span class="fc" id="L46">    private static final byte[] XTRA_ID = {2};</span>
+
+    /**
+     * The ReHash Id.
+     */
+<span class="fc" id="L51">    private static final byte[] REHASH_ID = {3};</span>
+
+    /**
+     * The Seed length for large digests.
+     */
+    public static final int LONG_SEED_LENGTH = 888;
+
+    /**
+     * The Seed length for large digests.
+     */
+    public static final int SHORT_SEED_LENGTH = 440;
+
+    /**
+     * The Message Digest.
+     */
+    private final GordianDigest theDigest;
+
+    /**
+     * The SeedLength.
+     */
+    private final int theSeedLength;
+
+    /**
+     * The Entropy Source.
+     */
+    private final EntropySource theEntropy;
+
+    /**
+     * The ReSeed Counter.
+     */
+    private final GordianByteArrayInteger theReseedCounter;
+
+    /**
+     * The Variable Hash.
+     */
+    private GordianByteArrayInteger theV;
+
+    /**
+     * The Constant Hash.
+     */
+    private GordianByteArrayInteger theC;
+
+    /**
+     * Construct a SP800-90A Hash DRBG.
+     *
+     * @param pDigest        source digest to use for DRB stream.
+     * @param pEntropy       source of entropy to use for seeding/reSeeding.
+     * @param pSecurityBytes personalisation string to distinguish this DRBG (may be null).
+     * @param pInitVector    nonce to further distinguish this DRBG (may be null).
+     */
+    public GordianSP800HashDRBG(final GordianDigest pDigest,
+                                final EntropySource pEntropy,
+                                final byte[] pSecurityBytes,
+<span class="fc" id="L104">                                final byte[] pInitVector) {</span>
+        /* Store digest and entropy source */
+<span class="fc" id="L106">        theDigest = pDigest;</span>
+<span class="fc" id="L107">        theEntropy = pEntropy;</span>
+
+        /* Calculate the seedLength */
+<span class="fc bfc" id="L110" title="All 2 branches covered.">        theSeedLength = pDigest.getDigestSize() &gt; GordianLength.LEN_256.getByteLength()</span>
+<span class="fc" id="L111">                ? LONG_SEED_LENGTH</span>
+<span class="fc" id="L112">                : SHORT_SEED_LENGTH;</span>
+
+        /* Create variable Hash */
+<span class="fc" id="L115">        final byte[] myEntropy = theEntropy.getEntropy();</span>
+<span class="fc" id="L116">        final byte[] mySeed = Arrays.concatenate(myEntropy, pInitVector, pSecurityBytes);</span>
+<span class="fc" id="L117">        theV = hashDerive(mySeed, theSeedLength);</span>
+
+        /* Create constant hash */
+<span class="fc" id="L120">        final byte[] myTempH = Arrays.concatenate(INIT_ID, theV.getBuffer());</span>
+<span class="fc" id="L121">        theC = hashDerive(myTempH, theSeedLength);</span>
+
+        /* Initialise reSeed counter */
+<span class="fc" id="L124">        theReseedCounter = new GordianByteArrayInteger(Long.BYTES);</span>
+<span class="fc" id="L125">        theReseedCounter.iterate();</span>
+<span class="fc" id="L126">    }</span>
+
+    @Override
+    public void reseed(final byte[] pXtraBytes) {
+        /* Create variable Hash */
+<span class="fc" id="L131">        final byte[] myEntropy = theEntropy.getEntropy();</span>
+<span class="fc" id="L132">        final byte[] mySeed = Arrays.concatenate(RESEED_ID, theV.getBuffer(), myEntropy, pXtraBytes);</span>
+<span class="fc" id="L133">        theV = hashDerive(mySeed, theSeedLength);</span>
+
+        /* Create constant hash */
+<span class="fc" id="L136">        final byte[] myTempH = Arrays.concatenate(INIT_ID, theV.getBuffer());</span>
+<span class="fc" id="L137">        theC = hashDerive(myTempH, theSeedLength);</span>
+
+        /* re-initialise reSeed counter */
+<span class="fc" id="L140">        theReseedCounter.reset();</span>
+<span class="fc" id="L141">        theReseedCounter.iterate();</span>
+<span class="fc" id="L142">    }</span>
+
+    @Override
+    public int generate(final byte[] pOutput,
+                        final byte[] pXtraBytes,
+                        final boolean isPredictionResistant) {
+        /* Check valid # of bits */
+<span class="fc" id="L149">        final int myNumBits = pOutput.length &lt;&lt; GordianCoreRandomFactory.BIT_SHIFT;</span>
+<span class="pc bpc" id="L150" title="1 of 2 branches missed.">        if (myNumBits &gt; GordianCoreRandomFactory.MAX_BITS_REQUEST) {</span>
+<span class="nc" id="L151">            throw new IllegalArgumentException(&quot;Number of bits per request limited to &quot;</span>
+                    + GordianCoreRandomFactory.MAX_BITS_REQUEST);
+        }
+
+        /* Check for reSeed required */
+<span class="pc bpc" id="L156" title="1 of 2 branches missed.">        if (theReseedCounter.compareLimit(GordianCoreRandomFactory.RESEED_MAX)) {</span>
+<span class="nc" id="L157">            return -1;</span>
+        }
+
+        /* If we are prediction resistant */
+<span class="fc bfc" id="L161" title="All 2 branches covered.">        if (isPredictionResistant) {</span>
+            /* ReSeed */
+<span class="fc" id="L163">            reseed(pXtraBytes);</span>
+
+            /* else if we have extra bytes */
+<span class="fc bfc" id="L166" title="All 2 branches covered.">        } else if (pXtraBytes != null) {</span>
+            /* Hash the new input and add to variable hash */
+<span class="fc" id="L168">            final byte[] newInput = Arrays.concatenate(XTRA_ID, theV.getBuffer(), pXtraBytes);</span>
+<span class="fc" id="L169">            theV.addTo(theDigest.finish(newInput));</span>
+        }
+
+        /* Generate the requested bits */
+<span class="fc" id="L173">        final byte[] myResult = hashgen(theV.getBuffer(), myNumBits);</span>
+
+        /* Adjust the variable hash */
+<span class="fc" id="L176">        final byte[] myTempH = Arrays.concatenate(REHASH_ID, theV.getBuffer());</span>
+
+        /* Add the hash and constant */
+<span class="fc" id="L179">        theV.addTo(theDigest.finish(myTempH));</span>
+<span class="fc" id="L180">        theV.addTo(theC.getBuffer());</span>
+
+        /* Add the reSeed counter */
+<span class="fc" id="L183">        theV.addTo(theReseedCounter.getBuffer());</span>
+
+        /* Iterate the reSeed counter */
+<span class="fc" id="L186">        theReseedCounter.iterate();</span>
+
+        /* Return the bytes */
+<span class="fc" id="L189">        System.arraycopy(myResult, 0, pOutput, 0, pOutput.length);</span>
+
+        /* Return the number of bits generated */
+<span class="fc" id="L192">        return myNumBits;</span>
+    }
+
+    /**
+     * Stretch a hash output to required # of bits.
+     *
+     * @param pInputBytes the input bytes to hash
+     * @param pNumBits    the number of output bits
+     * @return the stretched hash
+     */
+    private byte[] hashgen(final byte[] pInputBytes,
+                           final int pNumBits) {
+        /* Determine # of iterations */
+<span class="fc" id="L205">        final int mySize = theDigest.getDigestSize();</span>
+<span class="fc" id="L206">        final int myLen = pNumBits &gt;&gt; GordianCoreRandomFactory.BIT_SHIFT;</span>
+
+        /* Allocate counters */
+<span class="fc" id="L209">        final GordianByteArrayInteger myData = new GordianByteArrayInteger(pInputBytes);</span>
+<span class="fc" id="L210">        final byte[] myOutput = new byte[myLen];</span>
+
+        /* while we need to generate more bytes */
+<span class="fc" id="L213">        int myBuilt = 0;</span>
+<span class="fc bfc" id="L214" title="All 2 branches covered.">        while (myBuilt &lt; myLen) {</span>
+            /* Calculate the digest */
+<span class="fc" id="L216">            final byte[] myDigest = theDigest.finish(myData.getBuffer());</span>
+
+            /* Determine how many bytes of this hash should be used */
+<span class="fc" id="L219">            int myNeeded = myLen</span>
+                    - myBuilt;
+<span class="fc bfc" id="L221" title="All 2 branches covered.">            if (myNeeded &gt; mySize) {</span>
+<span class="fc" id="L222">                myNeeded = mySize;</span>
+            }
+
+            /* Copy bytes across */
+<span class="fc" id="L226">            System.arraycopy(myDigest, 0, myOutput, myBuilt, myNeeded);</span>
+<span class="fc" id="L227">            myBuilt += myNeeded;</span>
+
+            /* Iterate the data */
+<span class="fc" id="L230">            myData.iterate();</span>
+<span class="fc" id="L231">        }</span>
+
+        /* Return the result */
+<span class="fc" id="L234">        return myOutput;</span>
+    }
+
+    /**
+     * Hash derivation function (hash_df).
+     *
+     * @param pSeedMaterial the seed material
+     * @param pSeedLength   the length of seed required
+     * @return the new hash as a counter
+     */
+    private GordianByteArrayInteger hashDerive(final byte[] pSeedMaterial,
+                                               final int pSeedLength) {
+        /* Determine sizes */
+<span class="fc" id="L247">        final int mySize = theDigest.getDigestSize();</span>
+<span class="fc" id="L248">        final int myLen = pSeedLength &gt;&gt; GordianCoreRandomFactory.BIT_SHIFT;</span>
+<span class="fc" id="L249">        byte myCount = 1;</span>
+
+        /* Create output buffer */
+<span class="fc" id="L252">        final byte[] myOutput = new byte[myLen];</span>
+
+        /* Create seed array */
+<span class="fc" id="L255">        final byte[] mySeed = new byte[Integer.BYTES];</span>
+<span class="fc" id="L256">        int mySeedLength = pSeedLength;</span>
+<span class="fc bfc" id="L257" title="All 2 branches covered.">        for (int i = mySeed.length - 1; i &gt;= 0; i--) {</span>
+<span class="fc" id="L258">            mySeed[i] = (byte) mySeedLength;</span>
+<span class="fc" id="L259">            mySeedLength &gt;&gt;= GordianDataConverter.BYTE_SHIFT;</span>
+        }
+
+        /* while we need to generate more bytes */
+<span class="fc" id="L263">        int myBuilt = 0;</span>
+<span class="fc bfc" id="L264" title="All 2 branches covered.">        while (myBuilt &lt; myLen) {</span>
+            /* Update with the count */
+<span class="fc" id="L266">            theDigest.update(myCount);</span>
+
+            /* Update with the seed length */
+<span class="fc" id="L269">            theDigest.update(mySeed);</span>
+
+            /* Create digest with the seed material */
+<span class="fc" id="L272">            final byte[] myDigest = theDigest.finish(pSeedMaterial);</span>
+
+            /* Determine how many bytes of this hash should be used */
+<span class="fc" id="L275">            int myNeeded = myLen</span>
+                    - myBuilt;
+<span class="fc bfc" id="L277" title="All 2 branches covered.">            if (myNeeded &gt; mySize) {</span>
+<span class="fc" id="L278">                myNeeded = mySize;</span>
+            }
+
+            /* Copy bytes across */
+<span class="fc" id="L282">            System.arraycopy(myDigest, 0, myOutput, myBuilt, myNeeded);</span>
+<span class="fc" id="L283">            myBuilt += myNeeded;</span>
+
+            /* Iterate the counter */
+<span class="fc" id="L286">            myCount++;</span>
+<span class="fc" id="L287">        }</span>
+
+        /* Return byte array counter */
+<span class="fc" id="L290">        return new GordianByteArrayInteger(myOutput);</span>
+    }
+
+    @Override
+    public int getBlockSize() {
+<span class="fc" id="L295">        return theDigest.getDigestSize();</span>
+    }
+
+    @Override
+    public String getAlgorithm() {
+<span class="nc" id="L300">        return GordianCoreRandomFactory.SP800_PREFIX + theDigest.getDigestSpec().toString();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

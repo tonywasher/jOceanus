@@ -1,0 +1,474 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseAnalysisValuesResource.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.values</a> &gt; <span class="el_source">MoneyWiseAnalysisValuesResource.java</span></div><h1>MoneyWiseAnalysisValuesResource.java</h1><pre class="source lang-java linenums">/*
+ * MoneyWise: Finance Application
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.values;
+
+import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleId;
+import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleLoader;
+import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
+import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseStaticResource;
+
+import java.util.EnumMap;
+import java.util.Map;
+import java.util.ResourceBundle;
+
+/**
+ * Resource IDs for MoneyWise Analysis Fields.
+ */
+<span class="fc" id="L32">public enum MoneyWiseAnalysisValuesResource</span>
+        implements OceanusBundleId, MetisDataFieldId {
+    /**
+     * AccountAttr Valuation.
+     */
+<span class="fc" id="L37">    ACCOUNTATTR_VALUATION(&quot;AccountAttr.Valuation&quot;),</span>
+
+    /**
+     * AccountAttr DepositRate.
+     */
+<span class="fc" id="L42">    ACCOUNTATTR_DEPOSITRATE(MoneyWiseBasicResource.MONEYWISEDATA_FIELD_RATE),</span>
+
+    /**
+     * AccountAttr Delta.
+     */
+<span class="fc" id="L47">    ACCOUNTATTR_VALUEDELTA(&quot;AccountAttr.ValueDelta&quot;),</span>
+
+    /**
+     * AccountAttr Profit.
+     */
+<span class="fc" id="L52">    ACCOUNTATTR_PROFIT(&quot;AccountAttr.Profit&quot;),</span>
+
+    /**
+     * AccountAttr LocalValue.
+     */
+<span class="fc" id="L57">    ACCOUNTATTR_LOCALVALUE(&quot;AccountAttr.LocalValue&quot;),</span>
+
+    /**
+     * AccountAttr Foreign Valuation.
+     */
+<span class="fc" id="L62">    ACCOUNTATTR_FOREIGNVALUE(&quot;AccountAttr.ForeignValue&quot;),</span>
+
+    /**
+     * AccountAttr CurrencyFluctuation.
+     */
+<span class="fc" id="L67">    ACCOUNTATTR_CURRENCYFLUCT(&quot;AccountAttr.CurrencyFluct&quot;),</span>
+
+    /**
+     * AccountAttr ExchangeRate.
+     */
+<span class="fc" id="L72">    ACCOUNTATTR_EXCHANGERATE(MoneyWiseBasicResource.XCHGRATE_NAME),</span>
+
+    /**
+     * AccountAttr Maturity.
+     */
+<span class="fc" id="L77">    ACCOUNTATTR_MATURITY(&quot;AccountAttr.Maturity&quot;),</span>
+
+    /**
+     * AccountAttr Valuation.
+     */
+<span class="fc" id="L82">    ACCOUNTATTR_SPEND(&quot;AccountAttr.Spend&quot;),</span>
+
+    /**
+     * AccountAttr BadDebt.
+     */
+<span class="fc" id="L87">    ACCOUNTATTR_BADDEBTCAPITAL(MoneyWiseStaticResource.TRANSTYPE_BADDEBTCAPITAL),</span>
+
+    /**
+     * AccountAttr BadDebt.
+     */
+<span class="fc" id="L92">    ACCOUNTATTR_BADDEBTINTEREST(MoneyWiseStaticResource.TRANSTYPE_BADDEBTINTEREST),</span>
+
+    /**
+     * PayeeAttr Valuation.
+     */
+<span class="fc" id="L97">    PAYEEATTR_INCOME(&quot;PayeeAttr.Income&quot;),</span>
+
+    /**
+     * PayeeAttr Valuation.
+     */
+<span class="fc" id="L102">    PAYEEATTR_EXPENSE(&quot;PayeeAttr.Expense&quot;),</span>
+
+    /**
+     * SecurityAttr Units.
+     */
+<span class="fc" id="L107">    SECURITYATTR_UNITS(MoneyWiseBasicResource.MONEYWISEDATA_FIELD_UNITS),</span>
+
+    /**
+     * SecurityAttr ResidualCost.
+     */
+<span class="fc" id="L112">    SECURITYATTR_RESIDUALCOST(&quot;SecurityAttr.ResidualCost&quot;),</span>
+
+    /**
+     * SecurityAttr RealisedGains.
+     */
+<span class="fc" id="L117">    SECURITYATTR_REALISEDGAINS(&quot;SecurityAttr.RealisedGains&quot;),</span>
+
+    /**
+     * SecurityAttr GrowthAdjustment.
+     */
+<span class="fc" id="L122">    SECURITYATTR_GROWTHADJUST(&quot;SecurityAttr.GrowthAdjust&quot;),</span>
+
+    /**
+     * SecurityAttr ForeignValueDelta.
+     */
+<span class="fc" id="L127">    SECURITYATTR_FOREIGNVALUEDELTA(&quot;SecurityAttr.ForeignValueDelta&quot;),</span>
+
+    /**
+     * SecurityAttr Invested.
+     */
+<span class="fc" id="L132">    SECURITYATTR_INVESTED(&quot;SecurityAttr.Invested&quot;),</span>
+
+    /**
+     * SecurityAttr Foreign Invested.
+     */
+<span class="fc" id="L137">    SECURITYATTR_FOREIGNINVESTED(&quot;SecurityAttr.ForeignInvested&quot;),</span>
+
+    /**
+     * SecurityAttr Dividend.
+     */
+<span class="fc" id="L142">    SECURITYATTR_DIVIDEND(&quot;SecurityAttr.Dividend&quot;),</span>
+
+    /**
+     * SecurityAttr MarketGrowth.
+     */
+<span class="fc" id="L147">    SECURITYATTR_MARKETGROWTH(&quot;SecurityAttr.MarketGrowth&quot;),</span>
+
+    /**
+     * SecurityAttr ForeignMarketGrowth.
+     */
+<span class="fc" id="L152">    SECURITYATTR_FOREIGNMARKETGROWTH(&quot;SecurityAttr.ForeignMarketGrowth&quot;),</span>
+
+    /**
+     * SecurityAttr LocalMarketGrowth.
+     */
+<span class="fc" id="L157">    SECURITYATTR_LOCALMARKETGROWTH(&quot;SecurityAttr.LocalMarketGrowth&quot;),</span>
+
+    /**
+     * SecurityAttr MarketProfit.
+     */
+<span class="fc" id="L162">    SECURITYATTR_MARKETPROFIT(&quot;SecurityAttr.MarketProfit&quot;),</span>
+
+    /**
+     * SecurityAttr Profit.
+     */
+<span class="fc" id="L167">    SECURITYATTR_PROFIT(&quot;SecurityAttr.Profit&quot;),</span>
+
+    /**
+     * SecurityAttr Consideration.
+     */
+<span class="fc" id="L172">    SECURITYATTR_CONSIDER(&quot;SecurityAttr.Consider&quot;),</span>
+
+    /**
+     * SecurityAttr CashConsideration/ReturnedCash.
+     */
+<span class="fc" id="L177">    SECURITYATTR_RETURNEDCASH(&quot;SecurityAttr.ReturnedCash&quot;),</span>
+
+    /**
+     * SecurityAttr StockConsideration/XferredValue.
+     */
+<span class="fc" id="L182">    SECURITYATTR_XFERREDVALUE(&quot;SecurityAttr.XferredValue&quot;),</span>
+
+    /**
+     * SecurityAttr XferredCost.
+     */
+<span class="fc" id="L187">    SECURITYATTR_XFERREDCOST(&quot;SecurityAttr.XferredCost&quot;),</span>
+
+    /**
+     * SecurityAttr CostDilution.
+     */
+<span class="fc" id="L192">    SECURITYATTR_COSTDILUTION(&quot;SecurityAttr.CostDilution&quot;),</span>
+
+    /**
+     * SecurityAttr CashInvested.
+     */
+<span class="fc" id="L197">    SECURITYATTR_CASHINVESTED(&quot;SecurityAttr.CashInvested&quot;),</span>
+
+    /**
+     * SecurityAttr CapitalGain.
+     */
+<span class="fc" id="L202">    SECURITYATTR_CAPITALGAIN(&quot;SecurityAttr.CapitalGain&quot;),</span>
+
+    /**
+     * SecurityAttr AllowedCost.
+     */
+<span class="fc" id="L207">    SECURITYATTR_ALLOWEDCOST(&quot;SecurityAttr.AllowedCost&quot;),</span>
+
+    /**
+     * SecurityAttr Price.
+     */
+<span class="fc" id="L212">    SECURITYATTR_PRICE(MoneyWiseBasicResource.MONEYWISEDATA_FIELD_PRICE),</span>
+
+    /**
+     * SecurityAttr CashType.
+     */
+<span class="fc" id="L217">    SECURITYATTR_CASHTYPE(&quot;SecurityAttr.CashType&quot;),</span>
+
+    /**
+     * TaxAttr Gross.
+     */
+<span class="fc" id="L222">    TAXATTR_GROSS(&quot;TaxAttr.Gross&quot;),</span>
+
+    /**
+     * TaxAttr Nett.
+     */
+<span class="fc" id="L227">    TAXATTR_NETT(&quot;TaxAttr.Nett&quot;),</span>
+
+    /**
+     * TaxAttr Tax.
+     */
+<span class="fc" id="L232">    TAXATTR_TAX(&quot;TaxAttr.Tax&quot;);</span>
+
+    /**
+     * The AccountAttr Map.
+     */
+<span class="fc" id="L237">    private static final Map&lt;MoneyWiseAnalysisAccountAttr, OceanusBundleId&gt; ACCOUNT_MAP = buildAccountMap();</span>
+
+    /**
+     * The TransactionAttr Map.
+     */
+<span class="fc" id="L242">    private static final Map&lt;MoneyWiseAnalysisTransAttr, OceanusBundleId&gt; TRANSACTION_MAP = buildTransMap();</span>
+
+    /**
+     * The PayeeAttr Map.
+     */
+<span class="fc" id="L247">    private static final Map&lt;MoneyWiseAnalysisPayeeAttr, OceanusBundleId&gt; PAYEE_MAP = buildPayeeMap();</span>
+
+    /**
+     * The SecurityAttr Map.
+     */
+<span class="fc" id="L252">    private static final Map&lt;MoneyWiseAnalysisSecurityAttr, OceanusBundleId&gt; SECURITY_MAP = buildSecurityMap();</span>
+
+    /**
+     * The TaxAttr Map.
+     */
+<span class="fc" id="L257">    private static final Map&lt;MoneyWiseAnalysisTaxBasisAttr, OceanusBundleId&gt; TAX_MAP = buildTaxMap();</span>
+
+    /**
+     * The Resource Loader.
+     */
+<span class="fc" id="L262">    private static final OceanusBundleLoader LOADER = OceanusBundleLoader.getLoader(MoneyWiseAnalysisValuesResource.class.getCanonicalName(),</span>
+            ResourceBundle::getBundle);
+
+    /**
+     * The Id.
+     */
+    private final String theKeyName;
+
+    /**
+     * The Value.
+     */
+    private String theValue;
+
+    /**
+     * Constructor.
+     *
+     * @param pKeyName the key name
+     */
+<span class="fc" id="L280">    MoneyWiseAnalysisValuesResource(final String pKeyName) {</span>
+<span class="fc" id="L281">        theKeyName = pKeyName;</span>
+<span class="fc" id="L282">    }</span>
+
+    /**
+     * Constructor.
+     *
+     * @param pResource the underlying resource
+     */
+<span class="fc" id="L289">    MoneyWiseAnalysisValuesResource(final OceanusBundleId pResource) {</span>
+<span class="fc" id="L290">        theKeyName = null;</span>
+<span class="fc" id="L291">        theValue = pResource.getValue();</span>
+<span class="fc" id="L292">    }</span>
+
+    @Override
+    public String getKeyName() {
+<span class="fc" id="L296">        return theKeyName;</span>
+    }
+
+    @Override
+    public String getNameSpace() {
+<span class="fc" id="L301">        return &quot;MoneyWise.analysis&quot;;</span>
+    }
+
+    @Override
+    public String getValue() {
+        /* If we have not initialised the value */
+<span class="fc bfc" id="L307" title="All 2 branches covered.">        if (theValue == null) {</span>
+            /* Derive the value */
+<span class="fc" id="L309">            theValue = LOADER.getValue(this);</span>
+        }
+
+        /* return the value */
+<span class="fc" id="L313">        return theValue;</span>
+    }
+
+    @Override
+    public String getId() {
+<span class="nc" id="L318">        return getValue();</span>
+    }
+
+    /**
+     * Build account map.
+     *
+     * @return the map
+     */
+    private static Map&lt;MoneyWiseAnalysisAccountAttr, OceanusBundleId&gt; buildAccountMap() {
+        /* Create the map and return it */
+<span class="fc" id="L328">        final Map&lt;MoneyWiseAnalysisAccountAttr, OceanusBundleId&gt; myMap = new EnumMap&lt;&gt;(MoneyWiseAnalysisAccountAttr.class);</span>
+<span class="fc" id="L329">        myMap.put(MoneyWiseAnalysisAccountAttr.VALUATION, ACCOUNTATTR_VALUATION);</span>
+<span class="fc" id="L330">        myMap.put(MoneyWiseAnalysisAccountAttr.FOREIGNVALUE, ACCOUNTATTR_FOREIGNVALUE);</span>
+<span class="fc" id="L331">        myMap.put(MoneyWiseAnalysisAccountAttr.LOCALVALUE, ACCOUNTATTR_LOCALVALUE);</span>
+<span class="fc" id="L332">        myMap.put(MoneyWiseAnalysisAccountAttr.CURRENCYFLUCT, ACCOUNTATTR_CURRENCYFLUCT);</span>
+<span class="fc" id="L333">        myMap.put(MoneyWiseAnalysisAccountAttr.DEPOSITRATE, ACCOUNTATTR_DEPOSITRATE);</span>
+<span class="fc" id="L334">        myMap.put(MoneyWiseAnalysisAccountAttr.EXCHANGERATE, ACCOUNTATTR_EXCHANGERATE);</span>
+<span class="fc" id="L335">        myMap.put(MoneyWiseAnalysisAccountAttr.VALUEDELTA, ACCOUNTATTR_VALUEDELTA);</span>
+<span class="fc" id="L336">        myMap.put(MoneyWiseAnalysisAccountAttr.MATURITY, ACCOUNTATTR_MATURITY);</span>
+<span class="fc" id="L337">        myMap.put(MoneyWiseAnalysisAccountAttr.SPEND, ACCOUNTATTR_SPEND);</span>
+<span class="fc" id="L338">        myMap.put(MoneyWiseAnalysisAccountAttr.BADDEBTCAPITAL, ACCOUNTATTR_BADDEBTCAPITAL);</span>
+<span class="fc" id="L339">        myMap.put(MoneyWiseAnalysisAccountAttr.BADDEBTINTEREST, ACCOUNTATTR_BADDEBTINTEREST);</span>
+<span class="fc" id="L340">        return myMap;</span>
+    }
+
+    /**
+     * Obtain key for account attribute.
+     *
+     * @param pValue the Value
+     * @return the resource key
+     */
+    static OceanusBundleId getKeyForAccountAttr(final MoneyWiseAnalysisAccountAttr pValue) {
+<span class="fc" id="L350">        return OceanusBundleLoader.getKeyForEnum(ACCOUNT_MAP, pValue);</span>
+    }
+
+    /**
+     * Build transaction map.
+     *
+     * @return the map
+     */
+    private static Map&lt;MoneyWiseAnalysisTransAttr, OceanusBundleId&gt; buildTransMap() {
+        /* Create the map and return it */
+<span class="fc" id="L360">        final Map&lt;MoneyWiseAnalysisTransAttr, OceanusBundleId&gt; myMap = new EnumMap&lt;&gt;(MoneyWiseAnalysisTransAttr.class);</span>
+<span class="fc" id="L361">        myMap.put(MoneyWiseAnalysisTransAttr.INCOME, PAYEEATTR_INCOME);</span>
+<span class="fc" id="L362">        myMap.put(MoneyWiseAnalysisTransAttr.EXPENSE, PAYEEATTR_EXPENSE);</span>
+<span class="fc" id="L363">        myMap.put(MoneyWiseAnalysisTransAttr.PROFIT, ACCOUNTATTR_PROFIT);</span>
+<span class="fc" id="L364">        return myMap;</span>
+    }
+
+    /**
+     * Obtain key for transaction attribute.
+     *
+     * @param pValue the Value
+     * @return the resource key
+     */
+    protected static OceanusBundleId getKeyForTransactionAttr(final MoneyWiseAnalysisTransAttr pValue) {
+<span class="fc" id="L374">        return OceanusBundleLoader.getKeyForEnum(TRANSACTION_MAP, pValue);</span>
+    }
+
+    /**
+     * Build payee map.
+     *
+     * @return the map
+     */
+    private static Map&lt;MoneyWiseAnalysisPayeeAttr, OceanusBundleId&gt; buildPayeeMap() {
+        /* Create the map and return it */
+<span class="fc" id="L384">        final Map&lt;MoneyWiseAnalysisPayeeAttr, OceanusBundleId&gt; myMap = new EnumMap&lt;&gt;(MoneyWiseAnalysisPayeeAttr.class);</span>
+<span class="fc" id="L385">        myMap.put(MoneyWiseAnalysisPayeeAttr.INCOME, PAYEEATTR_INCOME);</span>
+<span class="fc" id="L386">        myMap.put(MoneyWiseAnalysisPayeeAttr.EXPENSE, PAYEEATTR_EXPENSE);</span>
+<span class="fc" id="L387">        myMap.put(MoneyWiseAnalysisPayeeAttr.PROFIT, ACCOUNTATTR_PROFIT);</span>
+<span class="fc" id="L388">        return myMap;</span>
+    }
+
+    /**
+     * Obtain key for Payee attribute.
+     *
+     * @param pValue the Value
+     * @return the resource key
+     */
+    static OceanusBundleId getKeyForPayeeAttr(final MoneyWiseAnalysisPayeeAttr pValue) {
+<span class="fc" id="L398">        return OceanusBundleLoader.getKeyForEnum(PAYEE_MAP, pValue);</span>
+    }
+
+    /**
+     * Build security map.
+     *
+     * @return the map
+     */
+    private static Map&lt;MoneyWiseAnalysisSecurityAttr, OceanusBundleId&gt; buildSecurityMap() {
+        /* Create the map and return it */
+<span class="fc" id="L408">        final Map&lt;MoneyWiseAnalysisSecurityAttr, OceanusBundleId&gt; myMap = new EnumMap&lt;&gt;(MoneyWiseAnalysisSecurityAttr.class);</span>
+<span class="fc" id="L409">        myMap.put(MoneyWiseAnalysisSecurityAttr.VALUATION, ACCOUNTATTR_VALUATION);</span>
+<span class="fc" id="L410">        myMap.put(MoneyWiseAnalysisSecurityAttr.FOREIGNVALUE, ACCOUNTATTR_FOREIGNVALUE);</span>
+<span class="fc" id="L411">        myMap.put(MoneyWiseAnalysisSecurityAttr.VALUEDELTA, ACCOUNTATTR_VALUEDELTA);</span>
+<span class="fc" id="L412">        myMap.put(MoneyWiseAnalysisSecurityAttr.FOREIGNVALUEDELTA, SECURITYATTR_FOREIGNVALUEDELTA);</span>
+<span class="fc" id="L413">        myMap.put(MoneyWiseAnalysisSecurityAttr.EXCHANGERATE, ACCOUNTATTR_EXCHANGERATE);</span>
+<span class="fc" id="L414">        myMap.put(MoneyWiseAnalysisSecurityAttr.UNITS, SECURITYATTR_UNITS);</span>
+<span class="fc" id="L415">        myMap.put(MoneyWiseAnalysisSecurityAttr.RESIDUALCOST, SECURITYATTR_RESIDUALCOST);</span>
+<span class="fc" id="L416">        myMap.put(MoneyWiseAnalysisSecurityAttr.REALISEDGAINS, SECURITYATTR_REALISEDGAINS);</span>
+<span class="fc" id="L417">        myMap.put(MoneyWiseAnalysisSecurityAttr.GROWTHADJUST, SECURITYATTR_GROWTHADJUST);</span>
+<span class="fc" id="L418">        myMap.put(MoneyWiseAnalysisSecurityAttr.INVESTED, SECURITYATTR_INVESTED);</span>
+<span class="fc" id="L419">        myMap.put(MoneyWiseAnalysisSecurityAttr.FOREIGNINVESTED, SECURITYATTR_FOREIGNINVESTED);</span>
+<span class="fc" id="L420">        myMap.put(MoneyWiseAnalysisSecurityAttr.DIVIDEND, SECURITYATTR_DIVIDEND);</span>
+<span class="fc" id="L421">        myMap.put(MoneyWiseAnalysisSecurityAttr.MARKETGROWTH, SECURITYATTR_MARKETGROWTH);</span>
+<span class="fc" id="L422">        myMap.put(MoneyWiseAnalysisSecurityAttr.FOREIGNMARKETGROWTH, SECURITYATTR_FOREIGNMARKETGROWTH);</span>
+<span class="fc" id="L423">        myMap.put(MoneyWiseAnalysisSecurityAttr.LOCALMARKETGROWTH, SECURITYATTR_LOCALMARKETGROWTH);</span>
+<span class="fc" id="L424">        myMap.put(MoneyWiseAnalysisSecurityAttr.CURRENCYFLUCT, ACCOUNTATTR_CURRENCYFLUCT);</span>
+<span class="fc" id="L425">        myMap.put(MoneyWiseAnalysisSecurityAttr.MARKETPROFIT, SECURITYATTR_MARKETPROFIT);</span>
+<span class="fc" id="L426">        myMap.put(MoneyWiseAnalysisSecurityAttr.PROFIT, SECURITYATTR_PROFIT);</span>
+<span class="fc" id="L427">        myMap.put(MoneyWiseAnalysisSecurityAttr.CONSIDERATION, SECURITYATTR_CONSIDER);</span>
+<span class="fc" id="L428">        myMap.put(MoneyWiseAnalysisSecurityAttr.RETURNEDCASH, SECURITYATTR_RETURNEDCASH);</span>
+<span class="fc" id="L429">        myMap.put(MoneyWiseAnalysisSecurityAttr.XFERREDVALUE, SECURITYATTR_XFERREDVALUE);</span>
+<span class="fc" id="L430">        myMap.put(MoneyWiseAnalysisSecurityAttr.XFERREDCOST, SECURITYATTR_XFERREDCOST);</span>
+<span class="fc" id="L431">        myMap.put(MoneyWiseAnalysisSecurityAttr.COSTDILUTION, SECURITYATTR_COSTDILUTION);</span>
+<span class="fc" id="L432">        myMap.put(MoneyWiseAnalysisSecurityAttr.CASHINVESTED, SECURITYATTR_CASHINVESTED);</span>
+<span class="fc" id="L433">        myMap.put(MoneyWiseAnalysisSecurityAttr.CAPITALGAIN, SECURITYATTR_CAPITALGAIN);</span>
+<span class="fc" id="L434">        myMap.put(MoneyWiseAnalysisSecurityAttr.ALLOWEDCOST, SECURITYATTR_ALLOWEDCOST);</span>
+<span class="fc" id="L435">        myMap.put(MoneyWiseAnalysisSecurityAttr.PRICE, SECURITYATTR_PRICE);</span>
+<span class="fc" id="L436">        myMap.put(MoneyWiseAnalysisSecurityAttr.CASHTYPE, SECURITYATTR_CASHTYPE);</span>
+<span class="fc" id="L437">        return myMap;</span>
+    }
+
+    /**
+     * Obtain key for security attribute.
+     *
+     * @param pValue the Value
+     * @return the resource key
+     */
+    static OceanusBundleId getKeyForSecurityAttr(final MoneyWiseAnalysisSecurityAttr pValue) {
+<span class="fc" id="L447">        return OceanusBundleLoader.getKeyForEnum(SECURITY_MAP, pValue);</span>
+    }
+
+    /**
+     * Build taxBasis map.
+     *
+     * @return the map
+     */
+    private static Map&lt;MoneyWiseAnalysisTaxBasisAttr, OceanusBundleId&gt; buildTaxMap() {
+        /* Create the map and return it */
+<span class="fc" id="L457">        final Map&lt;MoneyWiseAnalysisTaxBasisAttr, OceanusBundleId&gt; myMap = new EnumMap&lt;&gt;(MoneyWiseAnalysisTaxBasisAttr.class);</span>
+<span class="fc" id="L458">        myMap.put(MoneyWiseAnalysisTaxBasisAttr.GROSS, TAXATTR_GROSS);</span>
+<span class="fc" id="L459">        myMap.put(MoneyWiseAnalysisTaxBasisAttr.NETT, TAXATTR_NETT);</span>
+<span class="fc" id="L460">        myMap.put(MoneyWiseAnalysisTaxBasisAttr.TAXCREDIT, TAXATTR_TAX);</span>
+<span class="fc" id="L461">        return myMap;</span>
+    }
+
+    /**
+     * Obtain key for tax attribute.
+     *
+     * @param pValue the Value
+     * @return the resource key
+     */
+    static OceanusBundleId getKeyForTaxAttr(final MoneyWiseAnalysisTaxBasisAttr pValue) {
+<span class="fc" id="L471">        return OceanusBundleLoader.getKeyForEnum(TAX_MAP, pValue);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

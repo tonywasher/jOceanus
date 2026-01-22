@@ -1,0 +1,804 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseReportBalanceSheet.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.moneywise.lethe.reports</a> &gt; <span class="el_source">MoneyWiseReportBalanceSheet.java</span></div><h1>MoneyWiseReportBalanceSheet.java</h1><pre class="source lang-java linenums">/*
+ * MoneyWise: Finance Application
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.moneywise.lethe.reports;
+
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
+import io.github.tonywasher.joceanus.metis.data.MetisDataDifference;
+import io.github.tonywasher.joceanus.metis.report.MetisReportBase;
+import io.github.tonywasher.joceanus.metis.report.MetisReportHTMLBuilder;
+import io.github.tonywasher.joceanus.metis.report.MetisReportHTMLBuilder.MetisHTMLTable;
+import io.github.tonywasher.joceanus.metis.report.MetisReportManager;
+import io.github.tonywasher.joceanus.metis.report.MetisReportReferenceManager.DelayedTable;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseCashCategory;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDepositCategory;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseLoanCategory;
+import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseCashCategoryClass;
+import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseDepositCategoryClass;
+import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseLoanCategoryClass;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysis;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisCashBucket;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisCashBucket.MoneyWiseAnalysisCashBucketList;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisCashCategoryBucket;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisCashCategoryBucket.MoneyWiseAnalysisCashCategoryBucketList;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisDepositBucket;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisDepositBucket.MoneyWiseAnalysisDepositBucketList;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisDepositCategoryBucket;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisDepositCategoryBucket.MoneyWiseAnalysisDepositCategoryBucketList;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisLoanBucket;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisLoanBucket.MoneyWiseAnalysisLoanBucketList;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisLoanCategoryBucket;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisLoanCategoryBucket.MoneyWiseAnalysisLoanCategoryBucketList;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisPortfolioBucket;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisPortfolioBucket.MoneyWiseAnalysisPortfolioBucketList;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisPortfolioCashBucket;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisSecurityBucket;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisSecurityBucket.MoneyWiseAnalysisSecurityBucketList;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisAccountAttr;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisAccountValues;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisSecurityAttr;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisSecurityValues;
+import io.github.tonywasher.joceanus.moneywise.lethe.views.MoneyWiseAnalysisFilter;
+import io.github.tonywasher.joceanus.moneywise.lethe.views.MoneyWiseAnalysisFilter.MoneyWiseAnalysisCashFilter;
+import io.github.tonywasher.joceanus.moneywise.lethe.views.MoneyWiseAnalysisFilter.MoneyWiseAnalysisDepositFilter;
+import io.github.tonywasher.joceanus.moneywise.lethe.views.MoneyWiseAnalysisFilter.MoneyWiseAnalysisLoanFilter;
+import io.github.tonywasher.joceanus.moneywise.lethe.views.MoneyWiseAnalysisFilter.MoneyWiseAnalysisPortfolioCashFilter;
+import io.github.tonywasher.joceanus.moneywise.lethe.views.MoneyWiseAnalysisFilter.MoneyWiseAnalysisSecurityFilter;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
+import java.util.Iterator;
+
+/**
+ * BalanceSheet report builder.
+ */
+public class MoneyWiseReportBalanceSheet
+        extends MetisReportBase&lt;MoneyWiseAnalysis, MoneyWiseAnalysisFilter&lt;?, ?&gt;&gt; {
+    /**
+     * The Title text.
+     */
+<span class="nc" id="L77">    private static final String TEXT_TITLE = MoneyWiseReportResource.BALANCESHEET_TITLE.getValue();</span>
+
+    /**
+     * The Portfolio cash account name.
+     */
+<span class="nc" id="L82">    protected static final String TEXT_CASH = MoneyWiseBasicResource.CASH_NAME.getValue();</span>
+
+    /**
+     * HTML builder.
+     */
+    private final MetisReportHTMLBuilder theBuilder;
+
+    /**
+     * The Formatter.
+     */
+    private final OceanusDataFormatter theFormatter;
+
+    /**
+     * Data Analysis.
+     */
+    private MoneyWiseAnalysis theAnalysis;
+
+    /**
+     * Constructor.
+     *
+     * @param pManager the Report Manager
+     */
+<span class="nc" id="L104">    protected MoneyWiseReportBalanceSheet(final MetisReportManager&lt;MoneyWiseAnalysisFilter&lt;?, ?&gt;&gt; pManager) {</span>
+        /* Access underlying utilities */
+<span class="nc" id="L106">        theBuilder = pManager.getBuilder();</span>
+<span class="nc" id="L107">        theFormatter = theBuilder.getDataFormatter();</span>
+<span class="nc" id="L108">    }</span>
+
+    @Override
+    public Document createReport(final MoneyWiseAnalysis pAnalysis) {
+        /* Access the bucket lists */
+<span class="nc" id="L113">        theAnalysis = pAnalysis;</span>
+<span class="nc" id="L114">        final MoneyWiseAnalysisDepositCategoryBucketList myDeposits = theAnalysis.getDepositCategories();</span>
+<span class="nc" id="L115">        final MoneyWiseAnalysisCashCategoryBucketList myCash = theAnalysis.getCashCategories();</span>
+<span class="nc" id="L116">        final MoneyWiseAnalysisLoanCategoryBucketList myLoans = theAnalysis.getLoanCategories();</span>
+<span class="nc" id="L117">        final MoneyWiseAnalysisPortfolioBucketList myPortfolios = theAnalysis.getPortfolios();</span>
+<span class="nc" id="L118">        final OceanusDateRange myDateRange = theAnalysis.getDateRange();</span>
+
+        /* Create the totals */
+<span class="nc" id="L121">        final OceanusMoney myTotal = new OceanusMoney();</span>
+<span class="nc" id="L122">        final OceanusMoney myBase = new OceanusMoney();</span>
+<span class="nc" id="L123">        final OceanusMoney myDelta = new OceanusMoney();</span>
+
+        /* Start the report */
+<span class="nc" id="L126">        final Element myBody = theBuilder.startReport();</span>
+<span class="nc" id="L127">        theBuilder.makeTitle(myBody, TEXT_TITLE, theFormatter.formatObject(myDateRange));</span>
+
+        /* Initialise the table */
+<span class="nc" id="L130">        final MetisHTMLTable myTable = theBuilder.startTable(myBody);</span>
+<span class="nc" id="L131">        theBuilder.startTotalRow(myTable);</span>
+<span class="nc" id="L132">        theBuilder.makeTitleCell(myTable);</span>
+<span class="nc" id="L133">        theBuilder.makeTitleCell(myTable, theFormatter.formatObject(myDateRange.getEnd()));</span>
+<span class="nc" id="L134">        theBuilder.makeTitleCell(myTable, theFormatter.formatObject(myDateRange.getStart()));</span>
+<span class="nc" id="L135">        theBuilder.makeTitleCell(myTable, MoneyWiseReportBuilder.TEXT_PROFIT);</span>
+
+        /* If we have deposits */
+<span class="nc bnc" id="L138" title="All 2 branches missed.">        if (!myDeposits.isEmpty()) {</span>
+            /* Loop through the SubTotal Buckets */
+<span class="nc" id="L140">            final Iterator&lt;MoneyWiseAnalysisDepositCategoryBucket&gt; myIterator = myDeposits.iterator();</span>
+<span class="nc bnc" id="L141" title="All 2 branches missed.">            while (myIterator.hasNext()) {</span>
+<span class="nc" id="L142">                final MoneyWiseAnalysisDepositCategoryBucket myBucket = myIterator.next();</span>
+
+                /* Only process subTotal items */
+<span class="nc bnc" id="L145" title="All 2 branches missed.">                if (!myBucket.getAccountCategory().isCategoryClass(MoneyWiseDepositCategoryClass.PARENT)) {</span>
+<span class="nc" id="L146">                    continue;</span>
+                }
+
+                /* Access values */
+<span class="nc" id="L150">                final MoneyWiseAnalysisAccountValues myValues = myBucket.getValues();</span>
+<span class="nc" id="L151">                final MoneyWiseAnalysisAccountValues myBaseValues = myBucket.getBaseValues();</span>
+
+                /* Format the Category Total */
+<span class="nc" id="L154">                theBuilder.startRow(myTable);</span>
+<span class="nc" id="L155">                theBuilder.makeTableLinkCell(myTable, myBucket.getName());</span>
+<span class="nc" id="L156">                theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(MoneyWiseAnalysisAccountAttr.VALUATION));</span>
+<span class="nc" id="L157">                theBuilder.makeTotalCell(myTable, myBaseValues.getMoneyValue(MoneyWiseAnalysisAccountAttr.VALUATION));</span>
+<span class="nc" id="L158">                theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(MoneyWiseAnalysisAccountAttr.VALUEDELTA));</span>
+
+                /* Add the category report */
+<span class="nc" id="L161">                makeDepositCategoryReport(myTable, myBucket);</span>
+<span class="nc" id="L162">            }</span>
+
+            /* Access totals */
+<span class="nc" id="L165">            final MoneyWiseAnalysisDepositCategoryBucket myTotals = myDeposits.getTotals();</span>
+<span class="nc" id="L166">            final MoneyWiseAnalysisAccountValues myValues = myTotals.getValues();</span>
+<span class="nc" id="L167">            final MoneyWiseAnalysisAccountValues myBaseValues = myTotals.getBaseValues();</span>
+
+            /* Add to running totals */
+<span class="nc" id="L170">            myTotal.addAmount(myValues.getMoneyValue(MoneyWiseAnalysisAccountAttr.VALUATION));</span>
+<span class="nc" id="L171">            myBase.addAmount(myBaseValues.getMoneyValue(MoneyWiseAnalysisAccountAttr.VALUATION));</span>
+<span class="nc" id="L172">            myDelta.addAmount(myValues.getMoneyValue(MoneyWiseAnalysisAccountAttr.VALUEDELTA));</span>
+        }
+
+        /* If we have cash */
+<span class="nc bnc" id="L176" title="All 2 branches missed.">        if (!myCash.isEmpty()) {</span>
+            /* Loop through the SubTotal Buckets */
+<span class="nc" id="L178">            final Iterator&lt;MoneyWiseAnalysisCashCategoryBucket&gt; myIterator = myCash.iterator();</span>
+<span class="nc bnc" id="L179" title="All 2 branches missed.">            while (myIterator.hasNext()) {</span>
+<span class="nc" id="L180">                final MoneyWiseAnalysisCashCategoryBucket myBucket = myIterator.next();</span>
+
+                /* Only process subTotal items */
+<span class="nc bnc" id="L183" title="All 2 branches missed.">                if (!myBucket.getAccountCategory().isCategoryClass(MoneyWiseCashCategoryClass.PARENT)) {</span>
+<span class="nc" id="L184">                    continue;</span>
+                }
+
+                /* Access values */
+<span class="nc" id="L188">                final MoneyWiseAnalysisAccountValues myValues = myBucket.getValues();</span>
+<span class="nc" id="L189">                final MoneyWiseAnalysisAccountValues myBaseValues = myBucket.getBaseValues();</span>
+
+                /* Format the Category Total */
+<span class="nc" id="L192">                theBuilder.startRow(myTable);</span>
+<span class="nc" id="L193">                theBuilder.makeTableLinkCell(myTable, myBucket.getName());</span>
+<span class="nc" id="L194">                theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(MoneyWiseAnalysisAccountAttr.VALUATION));</span>
+<span class="nc" id="L195">                theBuilder.makeTotalCell(myTable, myBaseValues.getMoneyValue(MoneyWiseAnalysisAccountAttr.VALUATION));</span>
+<span class="nc" id="L196">                theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(MoneyWiseAnalysisAccountAttr.VALUEDELTA));</span>
+
+                /* Add the category report */
+<span class="nc" id="L199">                makeCashCategoryReport(myTable, myBucket);</span>
+<span class="nc" id="L200">            }</span>
+
+            /* Access totals */
+<span class="nc" id="L203">            final MoneyWiseAnalysisCashCategoryBucket myTotals = myCash.getTotals();</span>
+<span class="nc" id="L204">            final MoneyWiseAnalysisAccountValues myValues = myTotals.getValues();</span>
+<span class="nc" id="L205">            final MoneyWiseAnalysisAccountValues myBaseValues = myTotals.getBaseValues();</span>
+
+            /* Add to running totals */
+<span class="nc" id="L208">            myTotal.addAmount(myValues.getMoneyValue(MoneyWiseAnalysisAccountAttr.VALUATION));</span>
+<span class="nc" id="L209">            myBase.addAmount(myBaseValues.getMoneyValue(MoneyWiseAnalysisAccountAttr.VALUATION));</span>
+<span class="nc" id="L210">            myDelta.addAmount(myValues.getMoneyValue(MoneyWiseAnalysisAccountAttr.VALUEDELTA));</span>
+        }
+
+        /* If we have portfolios */
+<span class="nc bnc" id="L214" title="All 2 branches missed.">        if (!myPortfolios.isEmpty()) {</span>
+            /* Access totals */
+<span class="nc" id="L216">            final MoneyWiseAnalysisPortfolioBucket myTotals = myPortfolios.getTotals();</span>
+<span class="nc" id="L217">            final MoneyWiseAnalysisSecurityValues myValues = myTotals.getValues();</span>
+<span class="nc" id="L218">            final MoneyWiseAnalysisSecurityValues myBaseValues = myTotals.getBaseValues();</span>
+
+            /* Access interesting values */
+<span class="nc" id="L221">            final OceanusMoney myValuation = myValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.VALUATION);</span>
+<span class="nc" id="L222">            final OceanusMoney myBaseValuation = myBaseValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.VALUATION);</span>
+<span class="nc" id="L223">            final OceanusMoney myDeltaValuation = myValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.VALUEDELTA);</span>
+
+            /* Format the Portfolios Total */
+<span class="nc" id="L226">            theBuilder.startRow(myTable);</span>
+<span class="nc" id="L227">            theBuilder.makeTableLinkCell(myTable, MoneyWiseBasicDataType.PORTFOLIO.getListName());</span>
+<span class="nc" id="L228">            theBuilder.makeTotalCell(myTable, myValuation);</span>
+<span class="nc" id="L229">            theBuilder.makeTotalCell(myTable, myBaseValuation);</span>
+<span class="nc" id="L230">            theBuilder.makeTotalCell(myTable, myDeltaValuation);</span>
+
+            /* Make the portfolio report */
+<span class="nc" id="L233">            makePortfolioReport(myTable);</span>
+
+            /* Add to running totals */
+<span class="nc" id="L236">            myTotal.addAmount(myValuation);</span>
+<span class="nc" id="L237">            myBase.addAmount(myBaseValuation);</span>
+<span class="nc" id="L238">            myDelta.addAmount(myDeltaValuation);</span>
+        }
+
+        /* If we have loans */
+<span class="nc bnc" id="L242" title="All 2 branches missed.">        if (!myLoans.isEmpty()) {</span>
+            /* Loop through the SubTotal Buckets */
+<span class="nc" id="L244">            final Iterator&lt;MoneyWiseAnalysisLoanCategoryBucket&gt; myIterator = myLoans.iterator();</span>
+<span class="nc bnc" id="L245" title="All 2 branches missed.">            while (myIterator.hasNext()) {</span>
+<span class="nc" id="L246">                final MoneyWiseAnalysisLoanCategoryBucket myBucket = myIterator.next();</span>
+
+                /* Only process subTotal items */
+<span class="nc bnc" id="L249" title="All 2 branches missed.">                if (!myBucket.getAccountCategory().isCategoryClass(MoneyWiseLoanCategoryClass.PARENT)) {</span>
+<span class="nc" id="L250">                    continue;</span>
+                }
+
+                /* Access values */
+<span class="nc" id="L254">                final MoneyWiseAnalysisAccountValues myValues = myBucket.getValues();</span>
+<span class="nc" id="L255">                final MoneyWiseAnalysisAccountValues myBaseValues = myBucket.getBaseValues();</span>
+
+                /* Format the Category Total */
+<span class="nc" id="L258">                theBuilder.startRow(myTable);</span>
+<span class="nc" id="L259">                theBuilder.makeTableLinkCell(myTable, myBucket.getName());</span>
+<span class="nc" id="L260">                theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(MoneyWiseAnalysisAccountAttr.VALUATION));</span>
+<span class="nc" id="L261">                theBuilder.makeTotalCell(myTable, myBaseValues.getMoneyValue(MoneyWiseAnalysisAccountAttr.VALUATION));</span>
+<span class="nc" id="L262">                theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(MoneyWiseAnalysisAccountAttr.VALUEDELTA));</span>
+
+                /* Add the category report */
+<span class="nc" id="L265">                makeLoanCategoryReport(myTable, myBucket);</span>
+<span class="nc" id="L266">            }</span>
+
+            /* Access totals */
+<span class="nc" id="L269">            final MoneyWiseAnalysisLoanCategoryBucket myTotals = myLoans.getTotals();</span>
+<span class="nc" id="L270">            final MoneyWiseAnalysisAccountValues myValues = myTotals.getValues();</span>
+<span class="nc" id="L271">            final MoneyWiseAnalysisAccountValues myBaseValues = myTotals.getBaseValues();</span>
+
+            /* Add to running totals */
+<span class="nc" id="L274">            myTotal.addAmount(myValues.getMoneyValue(MoneyWiseAnalysisAccountAttr.VALUATION));</span>
+<span class="nc" id="L275">            myBase.addAmount(myBaseValues.getMoneyValue(MoneyWiseAnalysisAccountAttr.VALUATION));</span>
+<span class="nc" id="L276">            myDelta.addAmount(myValues.getMoneyValue(MoneyWiseAnalysisAccountAttr.VALUEDELTA));</span>
+        }
+
+        /* Format the total */
+<span class="nc" id="L280">        theBuilder.startTotalRow(myTable);</span>
+<span class="nc" id="L281">        theBuilder.makeTitleCell(myTable, MoneyWiseReportBuilder.TEXT_TOTAL);</span>
+<span class="nc" id="L282">        theBuilder.makeTotalCell(myTable, myTotal);</span>
+<span class="nc" id="L283">        theBuilder.makeTotalCell(myTable, myBase);</span>
+<span class="nc" id="L284">        theBuilder.makeTotalCell(myTable, myDelta);</span>
+
+        /* Return the document */
+<span class="nc" id="L287">        return theBuilder.getDocument();</span>
+    }
+
+    /**
+     * Build a category report.
+     *
+     * @param pParent   the table parent
+     * @param pCategory the category bucket
+     */
+    private void makeDepositCategoryReport(final MetisHTMLTable pParent,
+                                           final MoneyWiseAnalysisDepositCategoryBucket pCategory) {
+        /* Access the category */
+<span class="nc" id="L299">        final MoneyWiseAnalysisDepositCategoryBucketList myCategories = theAnalysis.getDepositCategories();</span>
+<span class="nc" id="L300">        final MoneyWiseDepositCategory myCategory = pCategory.getAccountCategory();</span>
+
+        /* Create an embedded table */
+<span class="nc" id="L303">        final MetisHTMLTable myTable = theBuilder.createEmbeddedTable(pParent);</span>
+
+        /* Loop through the Category Buckets */
+<span class="nc" id="L306">        final Iterator&lt;MoneyWiseAnalysisDepositCategoryBucket&gt; myIterator = myCategories.iterator();</span>
+<span class="nc bnc" id="L307" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L308">            final MoneyWiseAnalysisDepositCategoryBucket myBucket = myIterator.next();</span>
+
+            /* Skip record if incorrect category */
+<span class="nc" id="L311">            final MoneyWiseDepositCategory myCurr = myBucket.getAccountCategory();</span>
+<span class="nc bnc" id="L312" title="All 2 branches missed.">            if (!MetisDataDifference.isEqual(myCurr.getParentCategory(), myCategory)) {</span>
+<span class="nc" id="L313">                continue;</span>
+            }
+
+            /* Access bucket name */
+<span class="nc" id="L317">            final String myName = myBucket.getName();</span>
+
+            /* Access values */
+<span class="nc" id="L320">            final MoneyWiseAnalysisAccountValues myValues = myBucket.getValues();</span>
+<span class="nc" id="L321">            final MoneyWiseAnalysisAccountValues myBaseValues = myBucket.getBaseValues();</span>
+
+            /* Create the SubCategory row */
+<span class="nc" id="L324">            theBuilder.startRow(myTable);</span>
+<span class="nc" id="L325">            theBuilder.makeDelayLinkCell(myTable, myName, myCurr.getSubCategory());</span>
+<span class="nc" id="L326">            theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(MoneyWiseAnalysisAccountAttr.VALUATION));</span>
+<span class="nc" id="L327">            theBuilder.makeTotalCell(myTable, myBaseValues.getMoneyValue(MoneyWiseAnalysisAccountAttr.VALUATION));</span>
+<span class="nc" id="L328">            theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(MoneyWiseAnalysisAccountAttr.VALUEDELTA));</span>
+
+            /* Note the delayed subTable */
+<span class="nc" id="L331">            setDelayedTable(myName, myTable, myBucket);</span>
+<span class="nc" id="L332">        }</span>
+
+        /* Embed the table correctly */
+<span class="nc" id="L335">        theBuilder.embedTable(myTable, pCategory.getName());</span>
+<span class="nc" id="L336">    }</span>
+
+    /**
+     * Build a category report.
+     *
+     * @param pParent   the table parent
+     * @param pCategory the category bucket
+     */
+    private void makeCashCategoryReport(final MetisHTMLTable pParent,
+                                        final MoneyWiseAnalysisCashCategoryBucket pCategory) {
+        /* Access the category */
+<span class="nc" id="L347">        final MoneyWiseAnalysisCashCategoryBucketList myCategories = theAnalysis.getCashCategories();</span>
+<span class="nc" id="L348">        final MoneyWiseCashCategory myCategory = pCategory.getAccountCategory();</span>
+
+        /* Create an embedded table */
+<span class="nc" id="L351">        final MetisHTMLTable myTable = theBuilder.createEmbeddedTable(pParent);</span>
+
+        /* Loop through the Category Buckets */
+<span class="nc" id="L354">        final Iterator&lt;MoneyWiseAnalysisCashCategoryBucket&gt; myIterator = myCategories.iterator();</span>
+<span class="nc bnc" id="L355" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L356">            final MoneyWiseAnalysisCashCategoryBucket myBucket = myIterator.next();</span>
+
+            /* Skip record if incorrect category */
+<span class="nc" id="L359">            final MoneyWiseCashCategory myCurr = myBucket.getAccountCategory();</span>
+<span class="nc bnc" id="L360" title="All 2 branches missed.">            if (!MetisDataDifference.isEqual(myCurr.getParentCategory(), myCategory)) {</span>
+<span class="nc" id="L361">                continue;</span>
+            }
+
+            /* Access bucket name */
+<span class="nc" id="L365">            final String myName = myBucket.getName();</span>
+
+            /* Access values */
+<span class="nc" id="L368">            final MoneyWiseAnalysisAccountValues myValues = myBucket.getValues();</span>
+<span class="nc" id="L369">            final MoneyWiseAnalysisAccountValues myBaseValues = myBucket.getBaseValues();</span>
+
+            /* Create the SubCategory row */
+<span class="nc" id="L372">            theBuilder.startRow(myTable);</span>
+<span class="nc" id="L373">            theBuilder.makeDelayLinkCell(myTable, myName, myCurr.getSubCategory());</span>
+<span class="nc" id="L374">            theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(MoneyWiseAnalysisAccountAttr.VALUATION));</span>
+<span class="nc" id="L375">            theBuilder.makeTotalCell(myTable, myBaseValues.getMoneyValue(MoneyWiseAnalysisAccountAttr.VALUATION));</span>
+<span class="nc" id="L376">            theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(MoneyWiseAnalysisAccountAttr.VALUEDELTA));</span>
+
+            /* Note the delayed subTable */
+<span class="nc" id="L379">            setDelayedTable(myName, myTable, myBucket);</span>
+<span class="nc" id="L380">        }</span>
+
+        /* Embed the table correctly */
+<span class="nc" id="L383">        theBuilder.embedTable(myTable, pCategory.getName());</span>
+<span class="nc" id="L384">    }</span>
+
+    /**
+     * Build a category report.
+     *
+     * @param pParent   the table parent
+     * @param pCategory the category bucket
+     */
+    private void makeLoanCategoryReport(final MetisHTMLTable pParent,
+                                        final MoneyWiseAnalysisLoanCategoryBucket pCategory) {
+        /* Access the category */
+<span class="nc" id="L395">        final MoneyWiseAnalysisLoanCategoryBucketList myCategories = theAnalysis.getLoanCategories();</span>
+<span class="nc" id="L396">        final MoneyWiseLoanCategory myCategory = pCategory.getAccountCategory();</span>
+
+        /* Create an embedded table */
+<span class="nc" id="L399">        final MetisHTMLTable myTable = theBuilder.createEmbeddedTable(pParent);</span>
+
+        /* Loop through the Category Buckets */
+<span class="nc" id="L402">        final Iterator&lt;MoneyWiseAnalysisLoanCategoryBucket&gt; myIterator = myCategories.iterator();</span>
+<span class="nc bnc" id="L403" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L404">            final MoneyWiseAnalysisLoanCategoryBucket myBucket = myIterator.next();</span>
+
+            /* Skip record if incorrect category */
+<span class="nc" id="L407">            final MoneyWiseLoanCategory myCurr = myBucket.getAccountCategory();</span>
+<span class="nc bnc" id="L408" title="All 2 branches missed.">            if (!MetisDataDifference.isEqual(myCurr.getParentCategory(), myCategory)) {</span>
+<span class="nc" id="L409">                continue;</span>
+            }
+
+            /* Access bucket name */
+<span class="nc" id="L413">            final String myName = myBucket.getName();</span>
+
+            /* Access values */
+<span class="nc" id="L416">            final MoneyWiseAnalysisAccountValues myValues = myBucket.getValues();</span>
+<span class="nc" id="L417">            final MoneyWiseAnalysisAccountValues myBaseValues = myBucket.getBaseValues();</span>
+
+            /* Create the SubCategory row */
+<span class="nc" id="L420">            theBuilder.startRow(myTable);</span>
+<span class="nc" id="L421">            theBuilder.makeDelayLinkCell(myTable, myName, myCurr.getSubCategory());</span>
+<span class="nc" id="L422">            theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(MoneyWiseAnalysisAccountAttr.VALUATION));</span>
+<span class="nc" id="L423">            theBuilder.makeTotalCell(myTable, myBaseValues.getMoneyValue(MoneyWiseAnalysisAccountAttr.VALUATION));</span>
+<span class="nc" id="L424">            theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(MoneyWiseAnalysisAccountAttr.VALUEDELTA));</span>
+
+            /* Note the delayed subTable */
+<span class="nc" id="L427">            setDelayedTable(myName, myTable, myBucket);</span>
+<span class="nc" id="L428">        }</span>
+
+        /* Embed the table correctly */
+<span class="nc" id="L431">        theBuilder.embedTable(myTable, pCategory.getName());</span>
+<span class="nc" id="L432">    }</span>
+
+    /**
+     * Build a portfolio report.
+     *
+     * @param pParent the table parent
+     */
+    private void makePortfolioReport(final MetisHTMLTable pParent) {
+        /* Access the portfolios */
+<span class="nc" id="L441">        final MoneyWiseAnalysisPortfolioBucketList myPortfolios = theAnalysis.getPortfolios();</span>
+
+        /* Create an embedded table */
+<span class="nc" id="L444">        final MetisHTMLTable myTable = theBuilder.createEmbeddedTable(pParent);</span>
+
+        /* Loop through the Portfolio Buckets */
+<span class="nc" id="L447">        final Iterator&lt;MoneyWiseAnalysisPortfolioBucket&gt; myIterator = myPortfolios.iterator();</span>
+<span class="nc bnc" id="L448" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L449">            final MoneyWiseAnalysisPortfolioBucket myBucket = myIterator.next();</span>
+
+            /* Access bucket name */
+<span class="nc" id="L452">            final String myName = myBucket.getName();</span>
+
+            /* Access values */
+<span class="nc" id="L455">            final MoneyWiseAnalysisSecurityValues myValues = myBucket.getValues();</span>
+<span class="nc" id="L456">            final MoneyWiseAnalysisSecurityValues myBaseValues = myBucket.getBaseValues();</span>
+
+            /* Create the SubCategory row */
+<span class="nc" id="L459">            theBuilder.startRow(myTable);</span>
+<span class="nc" id="L460">            theBuilder.makeDelayLinkCell(myTable, myName);</span>
+<span class="nc" id="L461">            theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.VALUATION));</span>
+<span class="nc" id="L462">            theBuilder.makeTotalCell(myTable, myBaseValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.VALUATION));</span>
+<span class="nc" id="L463">            theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.VALUEDELTA));</span>
+
+            /* Note the delayed subTable */
+<span class="nc" id="L466">            setDelayedTable(myName, myTable, myBucket);</span>
+<span class="nc" id="L467">        }</span>
+
+        /* Embed the table correctly */
+<span class="nc" id="L470">        theBuilder.embedTable(myTable, MoneyWiseBasicDataType.PORTFOLIO.getListName());</span>
+<span class="nc" id="L471">    }</span>
+
+    @Override
+    public MetisHTMLTable createDelayedTable(final DelayedTable pTable) {
+        /* Access the source */
+<span class="nc" id="L476">        final Object mySource = pTable.getSource();</span>
+<span class="nc bnc" id="L477" title="All 2 branches missed.">        if (mySource instanceof MoneyWiseAnalysisDepositCategoryBucket mySourceBucket) {</span>
+<span class="nc" id="L478">            return createDelayedDeposit(pTable.getParent(), mySourceBucket);</span>
+<span class="nc bnc" id="L479" title="All 2 branches missed.">        } else if (mySource instanceof MoneyWiseAnalysisCashCategoryBucket mySourceBucket) {</span>
+<span class="nc" id="L480">            return createDelayedCash(pTable.getParent(), mySourceBucket);</span>
+<span class="nc bnc" id="L481" title="All 2 branches missed.">        } else if (mySource instanceof MoneyWiseAnalysisLoanCategoryBucket mySourceBucket) {</span>
+<span class="nc" id="L482">            return createDelayedLoan(pTable.getParent(), mySourceBucket);</span>
+<span class="nc bnc" id="L483" title="All 2 branches missed.">        } else if (mySource instanceof MoneyWiseAnalysisPortfolioBucket mySourceBucket) {</span>
+<span class="nc" id="L484">            return createDelayedPortfolio(pTable.getParent(), mySourceBucket);</span>
+        }
+
+        /* Return the null table */
+<span class="nc" id="L488">        return null;</span>
+    }
+
+    /**
+     * Create a delayed deposit category table.
+     *
+     * @param pParent the parent table
+     * @param pSource the source bucket
+     * @return the new document fragment
+     */
+    private MetisHTMLTable createDelayedDeposit(final MetisHTMLTable pParent,
+                                                final MoneyWiseAnalysisDepositCategoryBucket pSource) {
+        /* Access the category */
+<span class="nc" id="L501">        final MoneyWiseAnalysisDepositBucketList myDeposits = theAnalysis.getDeposits();</span>
+<span class="nc" id="L502">        final MoneyWiseDepositCategory myCategory = pSource.getAccountCategory();</span>
+<span class="nc" id="L503">        final boolean isForeign = pSource.hasForeignCurrency();</span>
+
+        /* Create an embedded table */
+<span class="nc" id="L506">        final MetisHTMLTable myTable = theBuilder.createEmbeddedTable(pParent);</span>
+
+        /* Loop through the Deposit Buckets */
+<span class="nc" id="L509">        final Iterator&lt;MoneyWiseAnalysisDepositBucket&gt; myIterator = myDeposits.iterator();</span>
+<span class="nc bnc" id="L510" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L511">            final MoneyWiseAnalysisDepositBucket myBucket = myIterator.next();</span>
+
+            /* Skip record if incorrect category */
+<span class="nc bnc" id="L514" title="All 2 branches missed.">            if (!MetisDataDifference.isEqual(myBucket.getCategory(), myCategory)) {</span>
+<span class="nc" id="L515">                continue;</span>
+            }
+
+            /* Access bucket name */
+<span class="nc" id="L519">            final String myName = myBucket.getName();</span>
+
+            /* Access values */
+<span class="nc" id="L522">            final MoneyWiseAnalysisAccountValues myValues = myBucket.getValues();</span>
+<span class="nc" id="L523">            final MoneyWiseAnalysisAccountValues myBaseValues = myBucket.getBaseValues();</span>
+
+            /* Create the detail row */
+<span class="nc" id="L526">            theBuilder.startRow(myTable);</span>
+<span class="nc" id="L527">            theBuilder.makeFilterLinkCell(myTable, myName);</span>
+
+            /* Handle foreign accounts */
+<span class="nc bnc" id="L530" title="All 2 branches missed.">            if (isForeign) {</span>
+<span class="nc bnc" id="L531" title="All 2 branches missed.">                if (myBucket.isForeignCurrency()) {</span>
+<span class="nc" id="L532">                    theBuilder.makeValueCell(myTable, myValues.getMoneyValue(MoneyWiseAnalysisAccountAttr.FOREIGNVALUE));</span>
+<span class="nc" id="L533">                    theBuilder.makeValueCell(myTable, myValues.getMoneyValue(MoneyWiseAnalysisAccountAttr.VALUATION));</span>
+<span class="nc" id="L534">                    theBuilder.makeValueCell(myTable, myBaseValues.getMoneyValue(MoneyWiseAnalysisAccountAttr.FOREIGNVALUE));</span>
+<span class="nc" id="L535">                    theBuilder.makeValueCell(myTable, myBaseValues.getMoneyValue(MoneyWiseAnalysisAccountAttr.VALUATION));</span>
+                } else {
+<span class="nc" id="L537">                    theBuilder.makeStretchedValueCell(myTable, myValues.getMoneyValue(MoneyWiseAnalysisAccountAttr.VALUATION));</span>
+<span class="nc" id="L538">                    theBuilder.makeStretchedValueCell(myTable, myBaseValues.getMoneyValue(MoneyWiseAnalysisAccountAttr.VALUATION));</span>
+                }
+            } else {
+<span class="nc" id="L541">                theBuilder.makeValueCell(myTable, myValues.getMoneyValue(MoneyWiseAnalysisAccountAttr.VALUATION));</span>
+<span class="nc" id="L542">                theBuilder.makeValueCell(myTable, myBaseValues.getMoneyValue(MoneyWiseAnalysisAccountAttr.VALUATION));</span>
+            }
+<span class="nc" id="L544">            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(MoneyWiseAnalysisAccountAttr.VALUEDELTA));</span>
+
+            /* Record the filter */
+<span class="nc" id="L547">            setFilterForId(myName, myBucket);</span>
+<span class="nc" id="L548">        }</span>
+
+        /* Return the table */
+<span class="nc" id="L551">        return myTable;</span>
+    }
+
+    /**
+     * Create a delayed cash category table.
+     *
+     * @param pParent the parent table
+     * @param pSource the source bucket
+     * @return the new document fragment
+     */
+    private MetisHTMLTable createDelayedCash(final MetisHTMLTable pParent,
+                                             final MoneyWiseAnalysisCashCategoryBucket pSource) {
+        /* Access the category */
+<span class="nc" id="L564">        final MoneyWiseAnalysisCashBucketList myCash = theAnalysis.getCash();</span>
+<span class="nc" id="L565">        final MoneyWiseCashCategory myCategory = pSource.getAccountCategory();</span>
+<span class="nc" id="L566">        final boolean isForeign = pSource.hasForeignCurrency();</span>
+
+        /* Create an embedded table */
+<span class="nc" id="L569">        final MetisHTMLTable myTable = theBuilder.createEmbeddedTable(pParent);</span>
+
+        /* Loop through the Cash Buckets */
+<span class="nc" id="L572">        final Iterator&lt;MoneyWiseAnalysisCashBucket&gt; myIterator = myCash.iterator();</span>
+<span class="nc bnc" id="L573" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L574">            final MoneyWiseAnalysisCashBucket myBucket = myIterator.next();</span>
+
+            /* Skip record if incorrect category */
+<span class="nc bnc" id="L577" title="All 2 branches missed.">            if (!MetisDataDifference.isEqual(myBucket.getCategory(), myCategory)) {</span>
+<span class="nc" id="L578">                continue;</span>
+            }
+
+            /* Access bucket name */
+<span class="nc" id="L582">            final String myName = myBucket.getName();</span>
+
+            /* Access values */
+<span class="nc" id="L585">            final MoneyWiseAnalysisAccountValues myValues = myBucket.getValues();</span>
+<span class="nc" id="L586">            final MoneyWiseAnalysisAccountValues myBaseValues = myBucket.getBaseValues();</span>
+
+            /* Create the detail row */
+<span class="nc" id="L589">            theBuilder.startRow(myTable);</span>
+<span class="nc" id="L590">            theBuilder.makeFilterLinkCell(myTable, myName);</span>
+
+            /* Handle foreign accounts */
+<span class="nc bnc" id="L593" title="All 2 branches missed.">            if (isForeign) {</span>
+<span class="nc bnc" id="L594" title="All 2 branches missed.">                if (myBucket.isForeignCurrency()) {</span>
+<span class="nc" id="L595">                    theBuilder.makeValueCell(myTable, myValues.getMoneyValue(MoneyWiseAnalysisAccountAttr.FOREIGNVALUE));</span>
+<span class="nc" id="L596">                    theBuilder.makeValueCell(myTable, myValues.getMoneyValue(MoneyWiseAnalysisAccountAttr.VALUATION));</span>
+<span class="nc" id="L597">                    theBuilder.makeValueCell(myTable, myBaseValues.getMoneyValue(MoneyWiseAnalysisAccountAttr.FOREIGNVALUE));</span>
+<span class="nc" id="L598">                    theBuilder.makeValueCell(myTable, myBaseValues.getMoneyValue(MoneyWiseAnalysisAccountAttr.VALUATION));</span>
+                } else {
+<span class="nc" id="L600">                    theBuilder.makeStretchedValueCell(myTable, myValues.getMoneyValue(MoneyWiseAnalysisAccountAttr.VALUATION));</span>
+<span class="nc" id="L601">                    theBuilder.makeStretchedValueCell(myTable, myBaseValues.getMoneyValue(MoneyWiseAnalysisAccountAttr.VALUATION));</span>
+                }
+            } else {
+<span class="nc" id="L604">                theBuilder.makeValueCell(myTable, myValues.getMoneyValue(MoneyWiseAnalysisAccountAttr.VALUATION));</span>
+<span class="nc" id="L605">                theBuilder.makeValueCell(myTable, myBaseValues.getMoneyValue(MoneyWiseAnalysisAccountAttr.VALUATION));</span>
+            }
+<span class="nc" id="L607">            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(MoneyWiseAnalysisAccountAttr.VALUEDELTA));</span>
+
+            /* Record the filter */
+<span class="nc" id="L610">            setFilterForId(myName, myBucket);</span>
+<span class="nc" id="L611">        }</span>
+
+        /* Return the table */
+<span class="nc" id="L614">        return myTable;</span>
+    }
+
+    /**
+     * Create a delayed loan category table.
+     *
+     * @param pParent the parent table
+     * @param pSource the source bucket
+     * @return the new document fragment
+     */
+    private MetisHTMLTable createDelayedLoan(final MetisHTMLTable pParent,
+                                             final MoneyWiseAnalysisLoanCategoryBucket pSource) {
+        /* Access the category */
+<span class="nc" id="L627">        final MoneyWiseAnalysisLoanBucketList myLoans = theAnalysis.getLoans();</span>
+<span class="nc" id="L628">        final MoneyWiseLoanCategory myCategory = pSource.getAccountCategory();</span>
+<span class="nc" id="L629">        final boolean isForeign = pSource.hasForeignCurrency();</span>
+
+        /* Create an embedded table */
+<span class="nc" id="L632">        final MetisHTMLTable myTable = theBuilder.createEmbeddedTable(pParent);</span>
+
+        /* Loop through the Loan Buckets */
+<span class="nc" id="L635">        final Iterator&lt;MoneyWiseAnalysisLoanBucket&gt; myIterator = myLoans.iterator();</span>
+<span class="nc bnc" id="L636" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L637">            final MoneyWiseAnalysisLoanBucket myBucket = myIterator.next();</span>
+
+            /* Skip record if incorrect category */
+<span class="nc bnc" id="L640" title="All 2 branches missed.">            if (!MetisDataDifference.isEqual(myBucket.getCategory(), myCategory)) {</span>
+<span class="nc" id="L641">                continue;</span>
+            }
+
+            /* Access bucket name */
+<span class="nc" id="L645">            final String myName = myBucket.getName();</span>
+
+            /* Access values */
+<span class="nc" id="L648">            final MoneyWiseAnalysisAccountValues myValues = myBucket.getValues();</span>
+<span class="nc" id="L649">            final MoneyWiseAnalysisAccountValues myBaseValues = myBucket.getBaseValues();</span>
+
+            /* Create the detail row */
+<span class="nc" id="L652">            theBuilder.startRow(myTable);</span>
+<span class="nc" id="L653">            theBuilder.makeFilterLinkCell(myTable, myName);</span>
+
+            /* Handle foreign accounts */
+<span class="nc bnc" id="L656" title="All 2 branches missed.">            if (isForeign) {</span>
+<span class="nc bnc" id="L657" title="All 2 branches missed.">                if (myBucket.isForeignCurrency()) {</span>
+<span class="nc" id="L658">                    theBuilder.makeValueCell(myTable, myValues.getMoneyValue(MoneyWiseAnalysisAccountAttr.FOREIGNVALUE));</span>
+<span class="nc" id="L659">                    theBuilder.makeValueCell(myTable, myValues.getMoneyValue(MoneyWiseAnalysisAccountAttr.VALUATION));</span>
+<span class="nc" id="L660">                    theBuilder.makeValueCell(myTable, myBaseValues.getMoneyValue(MoneyWiseAnalysisAccountAttr.FOREIGNVALUE));</span>
+<span class="nc" id="L661">                    theBuilder.makeValueCell(myTable, myBaseValues.getMoneyValue(MoneyWiseAnalysisAccountAttr.VALUATION));</span>
+                } else {
+<span class="nc" id="L663">                    theBuilder.makeStretchedValueCell(myTable, myValues.getMoneyValue(MoneyWiseAnalysisAccountAttr.VALUATION));</span>
+<span class="nc" id="L664">                    theBuilder.makeStretchedValueCell(myTable, myBaseValues.getMoneyValue(MoneyWiseAnalysisAccountAttr.VALUATION));</span>
+                }
+            } else {
+<span class="nc" id="L667">                theBuilder.makeValueCell(myTable, myValues.getMoneyValue(MoneyWiseAnalysisAccountAttr.VALUATION));</span>
+<span class="nc" id="L668">                theBuilder.makeValueCell(myTable, myBaseValues.getMoneyValue(MoneyWiseAnalysisAccountAttr.VALUATION));</span>
+            }
+<span class="nc" id="L670">            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(MoneyWiseAnalysisAccountAttr.VALUEDELTA));</span>
+
+            /* Record the filter */
+<span class="nc" id="L673">            setFilterForId(myName, myBucket);</span>
+<span class="nc" id="L674">        }</span>
+
+        /* Return the table */
+<span class="nc" id="L677">        return myTable;</span>
+    }
+
+    /**
+     * Create a delayed portfolio table.
+     *
+     * @param pParent the parent table
+     * @param pSource the source bucket
+     * @return the new document fragment
+     */
+    private MetisHTMLTable createDelayedPortfolio(final MetisHTMLTable pParent,
+                                                  final MoneyWiseAnalysisPortfolioBucket pSource) {
+        /* Access the securities */
+<span class="nc" id="L690">        final MoneyWiseAnalysisPortfolioCashBucket myCash = pSource.getPortfolioCash();</span>
+<span class="nc" id="L691">        final MoneyWiseAnalysisSecurityBucketList mySecurities = pSource.getSecurities();</span>
+<span class="nc" id="L692">        final boolean isForeign = pSource.hasForeignCurrency();</span>
+
+        /* Create an embedded table */
+<span class="nc" id="L695">        final MetisHTMLTable myTable = theBuilder.createEmbeddedTable(pParent);</span>
+
+        /* If the portfolio cash is not idle */
+<span class="nc bnc" id="L698" title="All 2 branches missed.">        if (!myCash.isIdle()) {</span>
+            /* Access values */
+<span class="nc" id="L700">            final MoneyWiseAnalysisAccountValues myValues = myCash.getValues();</span>
+<span class="nc" id="L701">            final MoneyWiseAnalysisAccountValues myBaseValues = myCash.getBaseValues();</span>
+
+            /* Access bucket name */
+<span class="nc" id="L704">            final String myName = pSource.getName();</span>
+
+            /* Create the detail row */
+<span class="nc" id="L707">            theBuilder.startRow(myTable);</span>
+<span class="nc" id="L708">            theBuilder.makeFilterLinkCell(myTable, myName, TEXT_CASH);</span>
+
+            /* Handle foreign accounts */
+<span class="nc bnc" id="L711" title="All 2 branches missed.">            if (isForeign) {</span>
+<span class="nc bnc" id="L712" title="All 2 branches missed.">                if (myCash.isForeignCurrency()) {</span>
+<span class="nc" id="L713">                    theBuilder.makeValueCell(myTable, myValues.getMoneyValue(MoneyWiseAnalysisAccountAttr.FOREIGNVALUE));</span>
+<span class="nc" id="L714">                    theBuilder.makeValueCell(myTable, myValues.getMoneyValue(MoneyWiseAnalysisAccountAttr.VALUATION));</span>
+<span class="nc" id="L715">                    theBuilder.makeValueCell(myTable, myBaseValues.getMoneyValue(MoneyWiseAnalysisAccountAttr.FOREIGNVALUE));</span>
+<span class="nc" id="L716">                    theBuilder.makeValueCell(myTable, myBaseValues.getMoneyValue(MoneyWiseAnalysisAccountAttr.VALUATION));</span>
+                } else {
+<span class="nc" id="L718">                    theBuilder.makeStretchedValueCell(myTable, myValues.getMoneyValue(MoneyWiseAnalysisAccountAttr.VALUATION));</span>
+<span class="nc" id="L719">                    theBuilder.makeStretchedValueCell(myTable, myBaseValues.getMoneyValue(MoneyWiseAnalysisAccountAttr.VALUATION));</span>
+                }
+            } else {
+<span class="nc" id="L722">                theBuilder.makeValueCell(myTable, myValues.getMoneyValue(MoneyWiseAnalysisAccountAttr.VALUATION));</span>
+<span class="nc" id="L723">                theBuilder.makeValueCell(myTable, myBaseValues.getMoneyValue(MoneyWiseAnalysisAccountAttr.VALUATION));</span>
+            }
+<span class="nc" id="L725">            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(MoneyWiseAnalysisAccountAttr.VALUEDELTA));</span>
+
+            /* Record the filter */
+<span class="nc" id="L728">            setFilterForId(myName, pSource);</span>
+        }
+
+        /* Loop through the Security Buckets */
+<span class="nc" id="L732">        final Iterator&lt;MoneyWiseAnalysisSecurityBucket&gt; myIterator = mySecurities.iterator();</span>
+<span class="nc bnc" id="L733" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L734">            final MoneyWiseAnalysisSecurityBucket myBucket = myIterator.next();</span>
+
+            /* Access bucket name */
+<span class="nc" id="L737">            final String myName = myBucket.getSecurityName();</span>
+<span class="nc" id="L738">            String myFullName = myBucket.getDecoratedName();</span>
+<span class="nc" id="L739">            myFullName = myFullName.replace(':', '-');</span>
+
+            /* Access values */
+<span class="nc" id="L742">            final MoneyWiseAnalysisSecurityValues myValues = myBucket.getValues();</span>
+<span class="nc" id="L743">            final MoneyWiseAnalysisSecurityValues myBaseValues = myBucket.getBaseValues();</span>
+
+            /* Create the detail row */
+<span class="nc" id="L746">            theBuilder.startRow(myTable);</span>
+<span class="nc" id="L747">            theBuilder.makeFilterLinkCell(myTable, myFullName, myName);</span>
+
+            /* Handle foreign accounts */
+<span class="nc bnc" id="L750" title="All 2 branches missed.">            if (isForeign) {</span>
+<span class="nc bnc" id="L751" title="All 2 branches missed.">                if (myBucket.isForeignCurrency()) {</span>
+<span class="nc" id="L752">                    theBuilder.makeValueCell(myTable, myValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.FOREIGNVALUE));</span>
+<span class="nc" id="L753">                    theBuilder.makeValueCell(myTable, myValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.VALUATION));</span>
+<span class="nc" id="L754">                    theBuilder.makeValueCell(myTable, myBaseValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.FOREIGNVALUE));</span>
+<span class="nc" id="L755">                    theBuilder.makeValueCell(myTable, myBaseValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.VALUATION));</span>
+                } else {
+<span class="nc" id="L757">                    theBuilder.makeStretchedValueCell(myTable, myValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.VALUATION));</span>
+<span class="nc" id="L758">                    theBuilder.makeStretchedValueCell(myTable, myBaseValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.VALUATION));</span>
+                }
+            } else {
+<span class="nc" id="L761">                theBuilder.makeValueCell(myTable, myValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.VALUATION));</span>
+<span class="nc" id="L762">                theBuilder.makeValueCell(myTable, myBaseValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.VALUATION));</span>
+            }
+<span class="nc" id="L764">            theBuilder.makeValueCell(myTable, myValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.VALUEDELTA));</span>
+
+            /* Record the filter */
+<span class="nc" id="L767">            setFilterForId(myFullName, myBucket);</span>
+<span class="nc" id="L768">        }</span>
+
+        /* Return the table */
+<span class="nc" id="L771">        return myTable;</span>
+    }
+
+    @Override
+    public MoneyWiseAnalysisFilter&lt;?, ?&gt; processFilter(final Object pSource) {
+        /* If this is a DepositBucket */
+<span class="nc bnc" id="L777" title="All 2 branches missed.">        if (pSource instanceof MoneyWiseAnalysisDepositBucket mySource) {</span>
+            /* Create the new filter */
+<span class="nc" id="L779">            return new MoneyWiseAnalysisDepositFilter(mySource);</span>
+        }
+        /* If this is a CashBucket */
+<span class="nc bnc" id="L782" title="All 2 branches missed.">        if (pSource instanceof MoneyWiseAnalysisCashBucket mySource) {</span>
+            /* Create the new filter */
+<span class="nc" id="L784">            return new MoneyWiseAnalysisCashFilter(mySource);</span>
+        }
+        /* If this is a LoanBucket */
+<span class="nc bnc" id="L787" title="All 2 branches missed.">        if (pSource instanceof MoneyWiseAnalysisLoanBucket mySource) {</span>
+            /* Create the new filter */
+<span class="nc" id="L789">            return new MoneyWiseAnalysisLoanFilter(mySource);</span>
+        }
+        /* If this is a SecurityBucket */
+<span class="nc bnc" id="L792" title="All 2 branches missed.">        if (pSource instanceof MoneyWiseAnalysisSecurityBucket mySource) {</span>
+            /* Create the new filter */
+<span class="nc" id="L794">            return new MoneyWiseAnalysisSecurityFilter(mySource);</span>
+        }
+        /* If this is a PortfolioBucket */
+<span class="nc bnc" id="L797" title="All 2 branches missed.">        if (pSource instanceof MoneyWiseAnalysisPortfolioBucket mySource) {</span>
+            /* Create the new filter */
+<span class="nc" id="L799">            return new MoneyWiseAnalysisPortfolioCashFilter(mySource);</span>
+        }
+<span class="nc" id="L801">        return null;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

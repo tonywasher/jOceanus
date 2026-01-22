@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseReader.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.moneywise.sheets</a> &gt; <span class="el_source">MoneyWiseReader.java</span></div><h1>MoneyWiseReader.java</h1><pre class="source lang-java linenums">/*
+ * MoneyWise: Finance Application
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.moneywise.sheets;
+
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
+import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
+import io.github.tonywasher.joceanus.prometheus.security.PrometheusSecurityPasswordManager;
+import io.github.tonywasher.joceanus.prometheus.sheets.PrometheusSheetDataItem;
+import io.github.tonywasher.joceanus.prometheus.sheets.PrometheusSheetReader;
+import io.github.tonywasher.joceanus.tethys.api.factory.TethysUIFactory;
+import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadStatusReport;
+
+/**
+ * SheetReader extension for MoneyWiseData.
+ *
+ * @author Tony Washer
+ */
+public class MoneyWiseReader
+        extends PrometheusSheetReader {
+    /**
+     * Constructor.
+     *
+     * @param pFactory     the gui factory
+     * @param pReport      the report
+     * @param pPasswordMgr the password manager
+     */
+    public MoneyWiseReader(final TethysUIFactory&lt;?&gt; pFactory,
+                           final TethysUIThreadStatusReport pReport,
+                           final PrometheusSecurityPasswordManager pPasswordMgr) {
+        /* Call super-constructor */
+<span class="fc" id="L45">        super(pFactory, pReport, pPasswordMgr);</span>
+<span class="fc" id="L46">    }</span>
+
+    /**
+     * Register sheets.
+     */
+    @Override
+    protected void registerSheets() {
+        /* Loop through the static types */
+<span class="fc bfc" id="L54" title="All 2 branches covered.">        for (MoneyWiseStaticDataType myType : MoneyWiseStaticDataType.values()) {</span>
+            /* Create the sheet */
+<span class="fc" id="L56">            addSheet(newSheet(myType));</span>
+        }
+
+        /* Loop through the basic types */
+<span class="fc bfc" id="L60" title="All 2 branches covered.">        for (MoneyWiseBasicDataType myType : MoneyWiseBasicDataType.values()) {</span>
+            /* Create the sheet */
+<span class="fc" id="L62">            addSheet(newSheet(myType));</span>
+        }
+<span class="fc" id="L64">    }</span>
+
+    /**
+     * Create new sheet of required type.
+     *
+     * @param pDataType the data type
+     * @return the new sheet
+     */
+    private PrometheusSheetDataItem&lt;?&gt; newSheet(final MoneyWiseStaticDataType pDataType) {
+        /* Switch on data Type */
+<span class="pc bpc" id="L74" title="1 of 12 branches missed.">        switch (pDataType) {</span>
+            case DEPOSITTYPE:
+<span class="fc" id="L76">                return new MoneyWiseSheetDepositCategoryType(this);</span>
+            case CASHTYPE:
+<span class="fc" id="L78">                return new MoneyWiseSheetCashCategoryType(this);</span>
+            case LOANTYPE:
+<span class="fc" id="L80">                return new MoneyWiseSheetLoanCategoryType(this);</span>
+            case PORTFOLIOTYPE:
+<span class="fc" id="L82">                return new MoneyWiseSheetPortfolioType(this);</span>
+            case PAYEETYPE:
+<span class="fc" id="L84">                return new MoneyWiseSheetPayeeType(this);</span>
+            case SECURITYTYPE:
+<span class="fc" id="L86">                return new MoneyWiseSheetSecurityType(this);</span>
+            case TRANSTYPE:
+<span class="fc" id="L88">                return new MoneyWiseSheetTransCategoryType(this);</span>
+            case ACCOUNTINFOTYPE:
+<span class="fc" id="L90">                return new MoneyWiseSheetAccountInfoType(this);</span>
+            case TRANSINFOTYPE:
+<span class="fc" id="L92">                return new MoneyWiseSheetTransInfoType(this);</span>
+            case CURRENCY:
+<span class="fc" id="L94">                return new MoneyWiseSheetCurrency(this);</span>
+            case TAXBASIS:
+<span class="fc" id="L96">                return new MoneyWiseSheetTaxBasis(this);</span>
+            default:
+<span class="nc" id="L98">                throw new IllegalArgumentException(pDataType.toString());</span>
+        }
+    }
+
+    /**
+     * Create new sheet of required type.
+     *
+     * @param pDataType the data type
+     * @return the new sheet
+     */
+    private PrometheusSheetDataItem&lt;?&gt; newSheet(final MoneyWiseBasicDataType pDataType) {
+        /* Switch on data Type */
+<span class="pc bpc" id="L110" title="1 of 24 branches missed.">        switch (pDataType) {</span>
+            case TRANSTAG:
+<span class="fc" id="L112">                return new MoneyWiseSheetTransTag(this);</span>
+            case REGION:
+<span class="fc" id="L114">                return new MoneyWiseSheetRegion(this);</span>
+            case DEPOSITCATEGORY:
+<span class="fc" id="L116">                return new MoneyWiseSheetDepositCategory(this);</span>
+            case CASHCATEGORY:
+<span class="fc" id="L118">                return new MoneyWiseSheetCashCategory(this);</span>
+            case LOANCATEGORY:
+<span class="fc" id="L120">                return new MoneyWiseSheetLoanCategory(this);</span>
+            case TRANSCATEGORY:
+<span class="fc" id="L122">                return new MoneyWiseSheetTransCategory(this);</span>
+            case EXCHANGERATE:
+<span class="fc" id="L124">                return new MoneyWiseSheetExchangeRate(this);</span>
+            case PAYEE:
+<span class="fc" id="L126">                return new MoneyWiseSheetPayee(this);</span>
+            case PAYEEINFO:
+<span class="fc" id="L128">                return new MoneyWiseSheetPayeeInfo(this);</span>
+            case SECURITY:
+<span class="fc" id="L130">                return new MoneyWiseSheetSecurity(this);</span>
+            case SECURITYPRICE:
+<span class="fc" id="L132">                return new MoneyWiseSheetSecurityPrice(this);</span>
+            case SECURITYINFO:
+<span class="fc" id="L134">                return new MoneyWiseSheetSecurityInfo(this);</span>
+            case DEPOSIT:
+<span class="fc" id="L136">                return new MoneyWiseSheetDeposit(this);</span>
+            case DEPOSITRATE:
+<span class="fc" id="L138">                return new MoneyWiseSheetDepositRate(this);</span>
+            case DEPOSITINFO:
+<span class="fc" id="L140">                return new MoneyWiseSheetDepositInfo(this);</span>
+            case CASH:
+<span class="fc" id="L142">                return new MoneyWiseSheetCash(this);</span>
+            case CASHINFO:
+<span class="fc" id="L144">                return new MoneyWiseSheetCashInfo(this);</span>
+            case LOAN:
+<span class="fc" id="L146">                return new MoneyWiseSheetLoan(this);</span>
+            case LOANINFO:
+<span class="fc" id="L148">                return new MoneyWiseSheetLoanInfo(this);</span>
+            case PORTFOLIO:
+<span class="fc" id="L150">                return new MoneyWiseSheetPortfolio(this);</span>
+            case PORTFOLIOINFO:
+<span class="fc" id="L152">                return new MoneyWiseSheetPortfolioInfo(this);</span>
+            case TRANSACTION:
+<span class="fc" id="L154">                return new MoneyWiseSheetTransaction(this);</span>
+            case TRANSACTIONINFO:
+<span class="fc" id="L156">                return new MoneyWiseSheetTransInfo(this);</span>
+            default:
+<span class="nc" id="L158">                throw new IllegalArgumentException(pDataType.toString());</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

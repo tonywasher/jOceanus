@@ -1,0 +1,1076 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianCoreKnuthObfuscater.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.impl.core.base</a> &gt; <span class="el_source">GordianCoreKnuthObfuscater.java</span></div><h1>GordianCoreKnuthObfuscater.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.gordianknot.impl.core.base;
+
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianIdSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherMode;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianPadding;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamCipherSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamKeySpec.GordianBlakeXofKey;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamKeySpec.GordianChaCha20Key;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamKeySpec.GordianElephantKey;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamKeySpec.GordianISAPKey;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamKeySpec.GordianRomulusKey;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamKeySpec.GordianSalsa20Key;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamKeySpec.GordianSkeinXofKey;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamKeySpec.GordianSparkleKey;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamKeySpec.GordianStreamSubKeyType;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamKeySpec.GordianVMPCKey;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamKeyType;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymKeyType;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestSubSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestSubSpec.GordianDigestState;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestType;
+import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianKnuthObfuscater;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacType;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianSipHashSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianPersonalisation.GordianPersonalId;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
+
+import java.math.BigInteger;
+import java.util.Objects;
+
+/**
+ * Knuth Obfuscater.
+ */
+public class GordianCoreKnuthObfuscater
+        implements GordianKnuthObfuscater {
+    /**
+     * Make sure that the top positive bit is set for the Knuth Prime.
+     */
+    private static final int VALUE_MASK = 0x40000000;
+
+    /**
+     * Knuth Prime.
+     */
+    private final int thePrime;
+
+    /**
+     * Knuth Inverse.
+     */
+    private final int theInverse;
+
+    /**
+     * Knuth Mask.
+     */
+    private final int theMask;
+
+    /**
+     * Constructor.
+     *
+     * @param pFactory the factory
+     * @throws GordianException on error
+     */
+<span class="fc" id="L87">    public GordianCoreKnuthObfuscater(final GordianBaseFactory pFactory) throws GordianException {</span>
+        /* Generate Knuth Prime/Inverse */
+<span class="fc" id="L89">        final GordianPersonalisation myPersonal = pFactory.getPersonalisation();</span>
+<span class="fc" id="L90">        final BigInteger[] myKnuth = generatePrime(myPersonal.getPersonalisedInteger(GordianPersonalId.KNUTHPRIME));</span>
+<span class="fc" id="L91">        thePrime = myKnuth[0].intValue();</span>
+<span class="fc" id="L92">        theInverse = myKnuth[1].intValue();</span>
+<span class="fc" id="L93">        theMask = myPersonal.getPersonalisedInteger(GordianPersonalId.KNUTHMASK);</span>
+<span class="fc" id="L94">    }</span>
+
+    /**
+     * Obtain a large integer prime based on the supplied value.
+     *
+     * @param pBase the base value
+     * @return the encoded value
+     */
+    private static BigInteger[] generatePrime(final int pBase) {
+        /* Ensure that the value is positive */
+<span class="fc bfc" id="L104" title="All 2 branches covered.">        int myVal = pBase &lt; 0</span>
+<span class="fc" id="L105">                ? -pBase</span>
+<span class="fc" id="L106">                : pBase;</span>
+
+        /* Ensure that the top positive bit is set */
+<span class="fc" id="L109">        myVal |= VALUE_MASK;</span>
+
+        /* Make sure that the value is prime */
+<span class="fc" id="L112">        BigInteger myValue = BigInteger.valueOf(myVal);</span>
+<span class="fc bfc" id="L113" title="All 2 branches covered.">        if (!myValue.isProbablePrime(Integer.SIZE)) {</span>
+<span class="fc" id="L114">            myValue = myValue.nextProbablePrime();</span>
+        }
+
+        /* Calculate the inverse */
+<span class="fc" id="L118">        final BigInteger myMax = BigInteger.valueOf(1).shiftLeft(Integer.SIZE);</span>
+<span class="fc" id="L119">        final BigInteger myInverse = myValue.modInverse(myMax);</span>
+
+        /* Return the pair of values */
+<span class="fc" id="L122">        return new BigInteger[]</span>
+                {myValue, myInverse};
+    }
+
+    /**
+     * Encode an integer value via Knuth Multiplication.
+     *
+     * @param pInput the input
+     * @return the encoded value
+     */
+    public int knuthEncodeInteger(final int pInput) {
+<span class="fc" id="L133">        return (int) ((pInput ^ theMask) * (long) thePrime);</span>
+    }
+
+    /**
+     * Encode an integer value via Knuth Multiplication.
+     *
+     * @param pInput      the input
+     * @param pAdjustment the adjustment
+     * @return the encoded value
+     */
+    public int knuthEncodeInteger(final int pInput,
+                                  final int pAdjustment) {
+<span class="fc" id="L145">        final int myId = pInput + pAdjustment;</span>
+<span class="fc" id="L146">        return knuthEncodeInteger(myId);</span>
+    }
+
+    /**
+     * Decode a Knuth Encoded integer value.
+     *
+     * @param pEncoded the encoded value
+     * @return the original input
+     */
+    public int knuthDecodeInteger(final int pEncoded) {
+<span class="fc" id="L156">        return theMask ^ (int) (pEncoded * (long) theInverse);</span>
+    }
+
+    /**
+     * Decode a Knuth Encoded integer value.
+     *
+     * @param pEncoded    the encoded value
+     * @param pAdjustment the adjustment
+     * @return the original input
+     */
+    public int knuthDecodeInteger(final int pEncoded,
+                                  final int pAdjustment) {
+<span class="fc" id="L168">        final int myId = knuthDecodeInteger(pEncoded);</span>
+<span class="fc" id="L169">        return myId - pAdjustment;</span>
+    }
+
+    /**
+     * Encode a long value via Knuth Multiplication.
+     *
+     * @param pInput the input
+     * @return the encoded value
+     */
+    public long knuthEncodeLong(final long pInput) {
+<span class="nc" id="L179">        final long myHigh = knuthEncodeInteger((int) (pInput &gt;&gt;&gt; Integer.SIZE));</span>
+<span class="nc" id="L180">        final int myLow = knuthEncodeInteger((int) pInput);</span>
+<span class="nc" id="L181">        return (myHigh &lt;&lt; Integer.SIZE) | Integer.toUnsignedLong(myLow);</span>
+    }
+
+    /**
+     * Encode a long value via Knuth Multiplication.
+     *
+     * @param pInput      the input
+     * @param pAdjustment the adjustment
+     * @return the encoded value
+     */
+    public long knuthEncodeLong(final long pInput,
+                                final int pAdjustment) {
+<span class="nc" id="L193">        final long myHigh = knuthEncodeInteger((int) (pInput &gt;&gt;&gt; Integer.SIZE), pAdjustment);</span>
+<span class="nc" id="L194">        final int myLow = knuthEncodeInteger((int) pInput, pAdjustment);</span>
+<span class="nc" id="L195">        return (myHigh &lt;&lt; Integer.SIZE) | Integer.toUnsignedLong(myLow);</span>
+    }
+
+    /**
+     * Decode a Knuth Encoded long value.
+     *
+     * @param pEncoded the encoded value
+     * @return the original input
+     */
+    public long knuthDecodeLong(final long pEncoded) {
+<span class="nc" id="L205">        final long myHigh = knuthDecodeInteger((int) (pEncoded &gt;&gt;&gt; Integer.SIZE));</span>
+<span class="nc" id="L206">        final int myLow = knuthDecodeInteger((int) pEncoded);</span>
+<span class="nc" id="L207">        return (myHigh &lt;&lt; Integer.SIZE) | Integer.toUnsignedLong(myLow);</span>
+    }
+
+    /**
+     * Decode a Knuth Encoded long value.
+     *
+     * @param pEncoded    the encoded value
+     * @param pAdjustment the adjustment
+     * @return the original input
+     */
+    public long knuthDecodeLong(final long pEncoded,
+                                final int pAdjustment) {
+<span class="nc" id="L219">        final long myHigh = knuthDecodeInteger((int) (pEncoded &gt;&gt;&gt; Integer.SIZE), pAdjustment);</span>
+<span class="nc" id="L220">        final int myLow = knuthDecodeInteger((int) pEncoded, pAdjustment);</span>
+<span class="nc" id="L221">        return (myHigh &lt;&lt; Integer.SIZE) | Integer.toUnsignedLong(myLow);</span>
+    }
+
+    @Override
+    public int deriveExternalIdFromType(final GordianIdSpec pType,
+                                        final int pAdjustment) throws GordianException {
+<span class="fc" id="L227">        return knuthEncodeInteger(deriveEncodedIdFromType(pType), pAdjustment);</span>
+    }
+
+    @Override
+    public int deriveExternalIdFromType(final GordianIdSpec pType) throws GordianException {
+<span class="fc" id="L232">        return knuthEncodeInteger(deriveEncodedIdFromType(pType));</span>
+    }
+
+    /**
+     * Obtain external Id from Type.
+     *
+     * @param &lt;T&gt;   the type class
+     * @param pType the type
+     * @return the externalId
+     * @throws GordianException on error
+     */
+    private static &lt;T extends GordianIdSpec&gt; int deriveEncodedIdFromType(final T pType) throws GordianException {
+<span class="fc bfc" id="L244" title="All 2 branches covered.">        if (pType instanceof GordianDigestSpec mySpec) {</span>
+<span class="fc" id="L245">            final int myId = deriveEncodedIdFromDigestSpec(mySpec);</span>
+<span class="fc" id="L246">            return GordianIdMarker.DIGEST.applyMarker(myId);</span>
+        }
+<span class="fc bfc" id="L248" title="All 2 branches covered.">        if (pType instanceof GordianSymCipherSpec mySpec) {</span>
+<span class="fc" id="L249">            final int myId = deriveEncodedIdFromSymCipherSpec(mySpec);</span>
+<span class="fc" id="L250">            return GordianIdMarker.SYMCIPHER.applyMarker(myId);</span>
+        }
+<span class="fc bfc" id="L252" title="All 2 branches covered.">        if (pType instanceof GordianStreamCipherSpec mySpec) {</span>
+<span class="fc" id="L253">            final int myId = deriveEncodedIdFromStreamCipherSpec(mySpec);</span>
+<span class="fc" id="L254">            return GordianIdMarker.STREAMCIPHER.applyMarker(myId);</span>
+        }
+<span class="fc bfc" id="L256" title="All 2 branches covered.">        if (pType instanceof GordianMacSpec mySpec) {</span>
+<span class="fc" id="L257">            final int myId = deriveEncodedIdFromMacSpec(mySpec);</span>
+<span class="fc" id="L258">            return GordianIdMarker.MACKEY.applyMarker(myId);</span>
+        }
+<span class="fc bfc" id="L260" title="All 2 branches covered.">        if (pType instanceof GordianSymKeySpec mySpec) {</span>
+<span class="fc" id="L261">            final int myId = deriveEncodedIdFromSymKeySpec(mySpec);</span>
+<span class="fc" id="L262">            return GordianIdMarker.SYMKEY.applyMarker(myId);</span>
+        }
+<span class="pc bpc" id="L264" title="1 of 2 branches missed.">        if (pType instanceof GordianStreamKeySpec mySpec) {</span>
+<span class="fc" id="L265">            final int myId = deriveEncodedIdFromStreamKeySpec(mySpec);</span>
+<span class="fc" id="L266">            return GordianIdMarker.STREAMKEY.applyMarker(myId);</span>
+        }
+<span class="nc" id="L268">        throw new GordianDataException(&quot;Invalid type: &quot; + pType.getClass().getCanonicalName());</span>
+    }
+
+    @Override
+    public GordianIdSpec deriveTypeFromExternalId(final int pId,
+                                                  final int pAdjustment) throws GordianException {
+<span class="fc" id="L274">        return deriveTypeFromEncodedId(knuthDecodeInteger(pId, pAdjustment));</span>
+    }
+
+    @Override
+    public GordianIdSpec deriveTypeFromExternalId(final int pId) throws GordianException {
+<span class="fc" id="L279">        return deriveTypeFromEncodedId(knuthDecodeInteger(pId));</span>
+    }
+
+    /**
+     * Obtain Type from external Id.
+     *
+     * @param pId the external id
+     * @return the Type
+     * @throws GordianException on error
+     */
+    private static GordianIdSpec deriveTypeFromEncodedId(final int pId) throws GordianException {
+<span class="fc" id="L290">        final GordianIdMarker myMarker = GordianIdMarker.determine(pId);</span>
+<span class="fc" id="L291">        final int myId = GordianIdMarker.removeMarker(pId);</span>
+<span class="pc bpc" id="L292" title="1 of 7 branches missed.">        switch (myMarker) {</span>
+            case DIGEST:
+<span class="fc" id="L294">                return deriveDigestSpecFromEncodedId(myId);</span>
+            case SYMCIPHER:
+<span class="fc" id="L296">                return deriveSymCipherSpecFromEncodedId(myId);</span>
+            case STREAMCIPHER:
+<span class="fc" id="L298">                return deriveStreamCipherSpecFromEncodedId(myId);</span>
+            case MACKEY:
+<span class="fc" id="L300">                return deriveMacSpecFromEncodedId(myId);</span>
+            case SYMKEY:
+<span class="fc" id="L302">                return deriveSymKeySpecFromEncodedId(myId);</span>
+            case STREAMKEY:
+<span class="fc" id="L304">                return deriveStreamKeySpecFromEncodedId(myId);</span>
+            default:
+<span class="nc" id="L306">                throw new GordianDataException(&quot;Unsupported encoding&quot;);</span>
+        }
+    }
+
+    /**
+     * Obtain encoded DigestSpecId.
+     *
+     * @param pDigestSpec the digestSpec
+     * @return the encoded id
+     */
+    private static int deriveEncodedIdFromDigestSpec(final GordianDigestSpec pDigestSpec) {
+        /* Build the encoded id */
+<span class="fc" id="L318">        int myCode = deriveEncodedIdFromDigestType(pDigestSpec.getDigestType());</span>
+<span class="fc" id="L319">        final GordianDigestState myState = pDigestSpec.getDigestState();</span>
+<span class="fc" id="L320">        myCode &lt;&lt;= determineShiftForDigestSubSpec();</span>
+<span class="fc bfc" id="L321" title="All 2 branches covered.">        if (myState != null) {</span>
+<span class="fc" id="L322">            myCode += deriveEncodedIdFromDigestState(myState);</span>
+        }
+<span class="fc" id="L324">        myCode &lt;&lt;= determineShiftForEnum(GordianLength.class);</span>
+<span class="fc" id="L325">        myCode += deriveEncodedIdFromLength(pDigestSpec.getDigestLength());</span>
+<span class="fc" id="L326">        myCode &lt;&lt;= 1;</span>
+<span class="fc bfc" id="L327" title="All 2 branches covered.">        myCode += Boolean.TRUE.equals(pDigestSpec.isXofMode()) ? 1 : 0;</span>
+
+        /* return the code */
+<span class="fc" id="L330">        return myCode;</span>
+    }
+
+    /**
+     * Obtain digestSpec from encodedId.
+     *
+     * @param pEncodedId the encoded id
+     * @return the digestSpec
+     * @throws GordianException on error
+     */
+    private static GordianDigestSpec deriveDigestSpecFromEncodedId(final int pEncodedId) throws GordianException {
+        /* Isolate id Components */
+<span class="fc bfc" id="L342" title="All 2 branches covered.">        final boolean isXof = (pEncodedId &amp; 1) == 1;</span>
+<span class="fc" id="L343">        int myCode = pEncodedId &gt;&gt; 1;</span>
+<span class="fc" id="L344">        final int myLenCode = myCode &amp; determineMaskForEnum(GordianLength.class);</span>
+<span class="fc" id="L345">        myCode = myCode &gt;&gt; determineShiftForEnum(GordianLength.class);</span>
+<span class="fc" id="L346">        final int mySubSpecCode = myCode &amp; determineMaskForDigestSubSpec();</span>
+<span class="fc" id="L347">        final int myId = myCode &gt;&gt; determineShiftForDigestSubSpec();</span>
+
+        /* Translate components */
+<span class="fc" id="L350">        final GordianDigestType myType = deriveDigestTypeFromEncodedId(myId);</span>
+<span class="fc" id="L351">        final GordianLength myLength = deriveLengthFromEncodedId(myLenCode);</span>
+<span class="fc" id="L352">        GordianDigestSubSpec mySubSpec = null;</span>
+<span class="fc bfc" id="L353" title="All 2 branches covered.">        if (mySubSpecCode != 0) {</span>
+<span class="fc" id="L354">            mySubSpec = deriveDigestStateFromEncodedId(mySubSpecCode);</span>
+        }
+
+        /* Create DigestSpec */
+<span class="fc" id="L358">        return new GordianDigestSpec(myType, mySubSpec, myLength, isXof);</span>
+    }
+
+    /**
+     * Obtain encoded SymKeySpecId.
+     *
+     * @param pSymKeySpec the symKeySpec
+     * @return the encoded id
+     */
+    private static int deriveEncodedIdFromSymKeySpec(final GordianSymKeySpec pSymKeySpec) {
+        /* Build the encoded id */
+<span class="fc" id="L369">        int myCode = deriveEncodedIdFromSymKeyType(pSymKeySpec.getSymKeyType());</span>
+<span class="fc" id="L370">        myCode &lt;&lt;= determineShiftForEnum(GordianLength.class);</span>
+<span class="fc" id="L371">        myCode += deriveEncodedIdFromLength(pSymKeySpec.getBlockLength());</span>
+<span class="fc" id="L372">        myCode &lt;&lt;= determineShiftForEnum(GordianLength.class);</span>
+<span class="fc" id="L373">        myCode += deriveEncodedIdFromLength(pSymKeySpec.getKeyLength());</span>
+
+        /* return the code */
+<span class="fc" id="L376">        return myCode;</span>
+    }
+
+    /**
+     * Obtain symKeySpec from encodedId.
+     *
+     * @param pEncodedId the encoded id
+     * @return the symKeySpec
+     * @throws GordianException on error
+     */
+    private static GordianSymKeySpec deriveSymKeySpecFromEncodedId(final int pEncodedId) throws GordianException {
+        /* Isolate id Components */
+<span class="fc" id="L388">        final int myKeyLenCode = pEncodedId &amp; determineMaskForEnum(GordianLength.class);</span>
+<span class="fc" id="L389">        final int myCode = pEncodedId &gt;&gt; determineShiftForEnum(GordianLength.class);</span>
+<span class="fc" id="L390">        final int myBlkLenCode = myCode &amp; determineMaskForEnum(GordianLength.class);</span>
+<span class="fc" id="L391">        final int myId = myCode &gt;&gt; determineShiftForEnum(GordianLength.class);</span>
+
+        /* Translate components */
+<span class="fc" id="L394">        final GordianSymKeyType myType = deriveSymKeyTypeFromEncodedId(myId);</span>
+<span class="fc" id="L395">        final GordianLength myBlkLength = deriveLengthFromEncodedId(myBlkLenCode);</span>
+<span class="fc" id="L396">        final GordianLength myKeyLength = deriveLengthFromEncodedId(myKeyLenCode);</span>
+
+        /* Create SymKeySpec */
+<span class="fc" id="L399">        return new GordianSymKeySpec(myType, myBlkLength, myKeyLength);</span>
+    }
+
+    /**
+     * Obtain encoded symCipherSpecId.
+     *
+     * @param pCipherSpec the symCipherSpec
+     * @return the external id
+     */
+    private static int deriveEncodedIdFromSymCipherSpec(final GordianSymCipherSpec pCipherSpec) {
+        /* Derive the encoded id */
+<span class="fc" id="L410">        int myCode = deriveEncodedIdFromSymKeySpec(pCipherSpec.getKeyType());</span>
+<span class="fc" id="L411">        myCode &lt;&lt;= determineShiftForEnum(GordianCipherMode.class);</span>
+<span class="fc" id="L412">        myCode += deriveEncodedIdFromCipherMode(pCipherSpec.getCipherMode());</span>
+<span class="fc" id="L413">        myCode &lt;&lt;= determineShiftForEnum(GordianPadding.class);</span>
+<span class="fc" id="L414">        myCode += deriveEncodedIdFromPadding(pCipherSpec.getPadding());</span>
+
+        /* Return the code */
+<span class="fc" id="L417">        return myCode;</span>
+    }
+
+    /**
+     * Obtain cipherSpec from encoded symCipherSpecId.
+     *
+     * @param pEncodedId the encoded id
+     * @return the symCipherSpec
+     * @throws GordianException on error
+     */
+    private static GordianSymCipherSpec deriveSymCipherSpecFromEncodedId(final int pEncodedId) throws GordianException {
+        /* Isolate id Components */
+<span class="fc" id="L429">        final int myPaddingCode = pEncodedId &amp; determineMaskForEnum(GordianPadding.class);</span>
+<span class="fc" id="L430">        final int myCode = pEncodedId &gt;&gt; determineShiftForEnum(GordianPadding.class);</span>
+<span class="fc" id="L431">        final int myModeCode = myCode &amp; determineMaskForEnum(GordianCipherMode.class);</span>
+<span class="fc" id="L432">        final int myId = myCode &gt;&gt; determineShiftForEnum(GordianCipherMode.class);</span>
+
+        /* Determine KeyType */
+<span class="fc" id="L435">        final GordianSymKeySpec mySpec = deriveSymKeySpecFromEncodedId(myId);</span>
+<span class="fc" id="L436">        final GordianCipherMode myMode = deriveCipherModeFromEncodedId(myModeCode);</span>
+<span class="fc" id="L437">        final GordianPadding myPadding = derivePaddingFromEncodedId(myPaddingCode);</span>
+
+        /* Create the cipherSpec */
+<span class="fc" id="L440">        return new GordianSymCipherSpec(mySpec, myMode, myPadding);</span>
+    }
+
+    /**
+     * Obtain encoded StreamKeySpecId.
+     *
+     * @param pStreamKeySpec the streamKeySpec
+     * @return the encoded id
+     */
+    private static int deriveEncodedIdFromStreamKeySpec(final GordianStreamKeySpec pStreamKeySpec) {
+        /* Build the encoded id */
+<span class="fc" id="L451">        int myCode = deriveEncodedIdFromStreamKeyType(pStreamKeySpec.getStreamKeyType());</span>
+<span class="fc" id="L452">        myCode &lt;&lt;= determineShiftForEnum(GordianLength.class);</span>
+<span class="fc" id="L453">        myCode += deriveEncodedIdFromLength(pStreamKeySpec.getKeyLength());</span>
+<span class="fc" id="L454">        myCode &lt;&lt;= determineShiftForStreamKeySubType();</span>
+<span class="fc" id="L455">        myCode += deriveEncodedIdFromStreamKeySubType(pStreamKeySpec);</span>
+
+        /* return the code */
+<span class="fc" id="L458">        return myCode;</span>
+    }
+
+    /**
+     * Obtain streamKeySpec from encodedId.
+     *
+     * @param pEncodedId the encoded id
+     * @return the streamKeySpec
+     * @throws GordianException on error
+     */
+    private static GordianStreamKeySpec deriveStreamKeySpecFromEncodedId(final int pEncodedId) throws GordianException {
+        /* Isolate id Components */
+<span class="fc" id="L470">        final int mySubKeyCode = pEncodedId &amp; determineMaskForStreamKeySubType();</span>
+<span class="fc" id="L471">        final int myCode = pEncodedId &gt;&gt; determineShiftForStreamKeySubType();</span>
+<span class="fc" id="L472">        final int myKeyLenCode = myCode &amp; determineMaskForEnum(GordianLength.class);</span>
+<span class="fc" id="L473">        final int myId = myCode &gt;&gt; determineShiftForEnum(GordianLength.class);</span>
+
+        /* Translate components */
+<span class="fc" id="L476">        final GordianStreamKeyType myType = deriveStreamKeyTypeFromEncodedId(myId);</span>
+<span class="fc" id="L477">        final GordianLength myKeyLength = deriveLengthFromEncodedId(myKeyLenCode);</span>
+<span class="fc" id="L478">        final GordianStreamSubKeyType mySubKeyType = deriveStreamSubKeyTypeFromEncodedId(myType, mySubKeyCode);</span>
+
+        /* Create StreamKeySpec */
+<span class="fc" id="L481">        return new GordianStreamKeySpec(myType, myKeyLength, mySubKeyType);</span>
+    }
+
+    /**
+     * Obtain encoded symCipherSpecId.
+     *
+     * @param pCipherSpec the symCipherSpec
+     * @return the external id
+     */
+    private static int deriveEncodedIdFromStreamCipherSpec(final GordianStreamCipherSpec pCipherSpec) {
+        /* Build the encoded id */
+<span class="fc" id="L492">        int myCode = deriveEncodedIdFromStreamKeySpec(pCipherSpec.getKeyType());</span>
+<span class="fc" id="L493">        myCode &lt;&lt;= 1;</span>
+<span class="fc bfc" id="L494" title="All 2 branches covered.">        myCode += (pCipherSpec.isAEADMode() ? 1 : 0);</span>
+
+        /* Return the encoded id */
+<span class="fc" id="L497">        return myCode;</span>
+    }
+
+    /**
+     * Obtain cipherSpec from encoded symCipherSpecId.
+     *
+     * @param pEncodedId the encoded id
+     * @return the symCipherSpec
+     * @throws GordianException on error
+     */
+    private static GordianStreamCipherSpec deriveStreamCipherSpecFromEncodedId(final int pEncodedId) throws GordianException {
+        /* Determine KeySpec */
+<span class="fc" id="L509">        final int myAAD = pEncodedId &amp; 1;</span>
+<span class="fc" id="L510">        final int myCode = pEncodedId &gt;&gt; 1;</span>
+<span class="fc" id="L511">        final GordianStreamKeySpec mySpec = deriveStreamKeySpecFromEncodedId(myCode);</span>
+
+        /* Create the cipherSpec */
+<span class="fc bfc" id="L514" title="All 2 branches covered.">        return GordianStreamCipherSpecBuilder.stream(mySpec, myAAD != 0);</span>
+    }
+
+    /**
+     * Obtain encoded StreamKeySpecId.
+     *
+     * @param pStreamKeySpec the streamKeySpec
+     * @return the encoded id
+     */
+    private static int deriveEncodedIdFromStreamKeySubType(final GordianStreamKeySpec pStreamKeySpec) {
+        /* Switch on keyType */
+<span class="fc bfc" id="L525" title="All 10 branches covered.">        switch (pStreamKeySpec.getStreamKeyType()) {</span>
+            case CHACHA20:
+<span class="fc" id="L527">                return deriveEncodedIdFromEnum((GordianChaCha20Key) pStreamKeySpec.getSubKeyType());</span>
+            case SALSA20:
+<span class="fc" id="L529">                return deriveEncodedIdFromEnum((GordianSalsa20Key) pStreamKeySpec.getSubKeyType());</span>
+            case VMPC:
+<span class="fc" id="L531">                return deriveEncodedIdFromEnum((GordianVMPCKey) pStreamKeySpec.getSubKeyType());</span>
+            case SKEINXOF:
+<span class="fc" id="L533">                return deriveEncodedIdFromEnum((GordianSkeinXofKey) pStreamKeySpec.getSubKeyType());</span>
+            case BLAKE2XOF:
+<span class="fc" id="L535">                return deriveEncodedIdFromEnum((GordianBlakeXofKey) pStreamKeySpec.getSubKeyType());</span>
+            case ELEPHANT:
+<span class="fc" id="L537">                return deriveEncodedIdFromEnum((GordianElephantKey) pStreamKeySpec.getSubKeyType());</span>
+            case ISAP:
+<span class="fc" id="L539">                return deriveEncodedIdFromEnum((GordianISAPKey) pStreamKeySpec.getSubKeyType());</span>
+            case ROMULUS:
+<span class="fc" id="L541">                return deriveEncodedIdFromEnum((GordianRomulusKey) pStreamKeySpec.getSubKeyType());</span>
+            case SPARKLE:
+<span class="fc" id="L543">                return deriveEncodedIdFromEnum((GordianSparkleKey) pStreamKeySpec.getSubKeyType());</span>
+            default:
+<span class="fc" id="L545">                return 0;</span>
+        }
+    }
+
+    /**
+     * Obtain subKeyType from encoded streamSubKeyType.
+     *
+     * @param pKeyType   the keyType
+     * @param pEncodedId the encodedId
+     * @return the subKeyType
+     * @throws GordianException on error
+     */
+    private static GordianStreamSubKeyType deriveStreamSubKeyTypeFromEncodedId(final GordianStreamKeyType pKeyType,
+                                                                               final int pEncodedId) throws GordianException {
+        /* Switch on keyType */
+<span class="fc bfc" id="L560" title="All 10 branches covered.">        switch (pKeyType) {</span>
+            case CHACHA20:
+<span class="fc" id="L562">                return deriveEnumFromEncodedId(pEncodedId, GordianChaCha20Key.class);</span>
+            case SALSA20:
+<span class="fc" id="L564">                return deriveEnumFromEncodedId(pEncodedId, GordianSalsa20Key.class);</span>
+            case VMPC:
+<span class="fc" id="L566">                return deriveEnumFromEncodedId(pEncodedId, GordianVMPCKey.class);</span>
+            case SKEINXOF:
+<span class="fc" id="L568">                return deriveEnumFromEncodedId(pEncodedId, GordianSkeinXofKey.class);</span>
+            case BLAKE2XOF:
+<span class="fc" id="L570">                return deriveEnumFromEncodedId(pEncodedId, GordianBlakeXofKey.class);</span>
+            case ELEPHANT:
+<span class="fc" id="L572">                return deriveEnumFromEncodedId(pEncodedId, GordianElephantKey.class);</span>
+            case ISAP:
+<span class="fc" id="L574">                return deriveEnumFromEncodedId(pEncodedId, GordianISAPKey.class);</span>
+            case ROMULUS:
+<span class="fc" id="L576">                return deriveEnumFromEncodedId(pEncodedId, GordianRomulusKey.class);</span>
+            case SPARKLE:
+<span class="fc" id="L578">                return deriveEnumFromEncodedId(pEncodedId, GordianSparkleKey.class);</span>
+            default:
+<span class="fc" id="L580">                return null;</span>
+        }
+    }
+
+    /**
+     * Obtain mask for DigestSubSpec.
+     *
+     * @return the mask
+     */
+    private static int determineMaskForDigestSubSpec() {
+<span class="fc" id="L590">        return ~(-1 &lt;&lt; determineShiftForDigestSubSpec());</span>
+    }
+
+    /**
+     * Obtain shift for StreamKeySubType.
+     *
+     * @return the bit shift
+     */
+    private static int determineShiftForDigestSubSpec() {
+<span class="fc" id="L599">        return determineShiftForEnum(GordianDigestState.class);</span>
+    }
+
+    /**
+     * Obtain mask for StreamKeySubType.
+     *
+     * @return the mask
+     */
+    private static int determineMaskForStreamKeySubType() {
+<span class="fc" id="L608">        return ~(-1 &lt;&lt; determineShiftForStreamKeySubType());</span>
+    }
+
+    /**
+     * Obtain shift for StreamKeySubType.
+     *
+     * @return the bit shift
+     */
+    private static int determineShiftForStreamKeySubType() {
+<span class="fc" id="L617">        int myShift = determineShiftForEnum(GordianVMPCKey.class);</span>
+<span class="fc" id="L618">        myShift = Math.max(myShift, determineShiftForEnum(GordianSalsa20Key.class));</span>
+<span class="fc" id="L619">        myShift = Math.max(myShift, determineShiftForEnum(GordianChaCha20Key.class));</span>
+<span class="fc" id="L620">        myShift = Math.max(myShift, determineShiftForEnum(GordianSkeinXofKey.class));</span>
+<span class="fc" id="L621">        myShift = Math.max(myShift, determineShiftForEnum(GordianBlakeXofKey.class));</span>
+<span class="fc" id="L622">        myShift = Math.max(myShift, determineShiftForEnum(GordianElephantKey.class));</span>
+<span class="fc" id="L623">        myShift = Math.max(myShift, determineShiftForEnum(GordianISAPKey.class));</span>
+<span class="fc" id="L624">        myShift = Math.max(myShift, determineShiftForEnum(GordianRomulusKey.class));</span>
+<span class="fc" id="L625">        return Math.max(myShift, determineShiftForEnum(GordianSparkleKey.class));</span>
+    }
+
+    /**
+     * Obtain encoded macSpecId.
+     *
+     * @param pMacSpec the macSpec
+     * @return the external id
+     */
+    private static int deriveEncodedIdFromMacSpec(final GordianMacSpec pMacSpec) {
+        /* Build the encoded macId */
+<span class="fc" id="L636">        final GordianMacType myMacType = pMacSpec.getMacType();</span>
+<span class="fc" id="L637">        int myCode = deriveEncodedIdFromMacType(myMacType);</span>
+<span class="fc" id="L638">        int myShift = determineShiftForEnum(GordianMacType.class);</span>
+<span class="fc" id="L639">        myCode += deriveEncodedIdFromLength(pMacSpec.getKeyLength()) &lt;&lt; myShift;</span>
+<span class="fc" id="L640">        myShift += determineShiftForEnum(GordianLength.class);</span>
+
+        /* Switch on MacType */
+<span class="fc bfc" id="L643" title="All 6 branches covered.">        switch (myMacType) {</span>
+            case HMAC:
+            case SKEIN:
+            case BLAKE2:
+            case BLAKE3:
+            case KUPYNA:
+            case KMAC:
+<span class="fc" id="L650">                myCode += deriveEncodedIdFromDigestSpec(Objects.requireNonNull(pMacSpec.getDigestSpec())) &lt;&lt; myShift;</span>
+<span class="fc" id="L651">                break;</span>
+            case GMAC:
+            case CMAC:
+            case KALYNA:
+            case CBCMAC:
+            case CFBMAC:
+<span class="fc" id="L657">                myCode += deriveEncodedIdFromSymKeySpec(Objects.requireNonNull(pMacSpec.getSymKeySpec())) &lt;&lt; myShift;</span>
+<span class="fc" id="L658">                break;</span>
+            case POLY1305:
+<span class="fc bfc" id="L660" title="All 2 branches covered.">                if (pMacSpec.getSymKeySpec() != null) {</span>
+<span class="fc" id="L661">                    myCode += deriveEncodedIdFromSymKeySpec(pMacSpec.getSymKeySpec()) &lt;&lt; myShift;</span>
+                }
+                break;
+            case ZUC:
+<span class="fc" id="L665">                myCode += deriveEncodedIdFromLength(pMacSpec.getMacLength()) &lt;&lt; myShift;</span>
+<span class="fc" id="L666">                break;</span>
+            case SIPHASH:
+<span class="fc" id="L668">                myCode += deriveEncodedIdFromSipHashSpec(pMacSpec.getSipHashSpec()) &lt;&lt; myShift;</span>
+<span class="fc" id="L669">                break;</span>
+            default:
+                break;
+        }
+
+        /* Return the code */
+<span class="fc" id="L675">        return myCode;</span>
+    }
+
+    /**
+     * Obtain macSpec from encoded macSpecId.
+     *
+     * @param pEncodedId the encoded id
+     * @return the macSpec
+     * @throws GordianException on error
+     */
+    private static GordianMacSpec deriveMacSpecFromEncodedId(final int pEncodedId) throws GordianException {
+        /* Isolate id Components */
+<span class="fc" id="L687">        final int myMacId = pEncodedId &amp; determineMaskForEnum(GordianMacType.class);</span>
+<span class="fc" id="L688">        final int myCode = pEncodedId &gt;&gt; determineShiftForEnum(GordianMacType.class);</span>
+<span class="fc" id="L689">        final int myKeyLenId = myCode &amp; determineMaskForEnum(GordianLength.class);</span>
+<span class="fc" id="L690">        final int myId = myCode &gt;&gt; determineShiftForEnum(GordianLength.class);</span>
+
+        /* Determine MacType and keyLength */
+<span class="fc" id="L693">        final GordianMacType myMacType = deriveMacTypeFromEncodedId(myMacId);</span>
+<span class="fc" id="L694">        final GordianLength myKeyLen = deriveLengthFromEncodedId(myKeyLenId);</span>
+
+        /* Switch on the MacType */
+<span class="fc bfc" id="L697" title="All 11 branches covered.">        switch (myMacType) {</span>
+            case HMAC:
+<span class="fc" id="L699">                return GordianMacSpecBuilder.hMac(deriveDigestSpecFromEncodedId(myId), myKeyLen);</span>
+            case GMAC:
+            case CMAC:
+            case KALYNA:
+            case CFBMAC:
+            case CBCMAC:
+<span class="fc" id="L705">                return new GordianMacSpec(myMacType, deriveSymKeySpecFromEncodedId(myId));</span>
+            case POLY1305:
+<span class="fc bfc" id="L707" title="All 2 branches covered.">                return myId == 0</span>
+<span class="fc" id="L708">                        ? GordianMacSpecBuilder.poly1305Mac()</span>
+<span class="fc" id="L709">                        : new GordianMacSpec(myMacType, deriveSymKeySpecFromEncodedId(myId));</span>
+            case SKEIN:
+<span class="fc" id="L711">                final GordianDigestSpec mySkeinSpec = deriveDigestSpecFromEncodedId(myId);</span>
+<span class="fc" id="L712">                return GordianMacSpecBuilder.skeinMac(myKeyLen, mySkeinSpec);</span>
+            case BLAKE2:
+<span class="fc" id="L714">                final GordianDigestSpec myBlake2Spec = deriveDigestSpecFromEncodedId(myId);</span>
+<span class="fc" id="L715">                return GordianMacSpecBuilder.blake2Mac(myKeyLen, myBlake2Spec);</span>
+            case BLAKE3:
+<span class="fc" id="L717">                final GordianDigestSpec myBlake3Spec = deriveDigestSpecFromEncodedId(myId);</span>
+<span class="fc" id="L718">                return GordianMacSpecBuilder.blake3Mac(myBlake3Spec.getDigestLength());</span>
+            case KMAC:
+<span class="fc" id="L720">                final GordianDigestSpec myKMACSpec = deriveDigestSpecFromEncodedId(myId);</span>
+<span class="fc" id="L721">                return GordianMacSpecBuilder.kMac(myKeyLen, myKMACSpec);</span>
+            case KUPYNA:
+<span class="fc" id="L723">                final GordianDigestSpec myKupynaSpec = deriveDigestSpecFromEncodedId(myId);</span>
+<span class="fc" id="L724">                return GordianMacSpecBuilder.kupynaMac(myKeyLen, myKupynaSpec.getDigestLength());</span>
+            case ZUC:
+<span class="fc" id="L726">                final GordianLength myLength = deriveLengthFromEncodedId(myId);</span>
+<span class="fc" id="L727">                return GordianMacSpecBuilder.zucMac(myKeyLen, myLength);</span>
+            case SIPHASH:
+<span class="fc" id="L729">                return new GordianMacSpec(GordianMacType.SIPHASH, deriveSipHashSpecFromEncodedId(myId));</span>
+            default:
+<span class="fc" id="L731">                return new GordianMacSpec(myMacType, myKeyLen);</span>
+        }
+    }
+
+    /**
+     * Obtain encoded SipHashId.
+     *
+     * @param pSpec the sipHashSpec
+     * @return the encoded id
+     */
+    private static int deriveEncodedIdFromSipHashSpec(final GordianSipHashSpec pSpec) {
+<span class="fc" id="L742">        return deriveEncodedIdFromEnum(pSpec);</span>
+    }
+
+    /**
+     * Obtain sipHashSpec from encoded Id.
+     *
+     * @param pEncodedId the encoded id
+     * @return the sipHashSpec
+     * @throws GordianException on error
+     */
+    private static GordianSipHashSpec deriveSipHashSpecFromEncodedId(final int pEncodedId) throws GordianException {
+<span class="fc" id="L753">        return deriveEnumFromEncodedId(pEncodedId, GordianSipHashSpec.class);</span>
+    }
+
+    /**
+     * Obtain encoded DigestId.
+     *
+     * @param pDigest the digestType
+     * @return the encoded id
+     */
+    private static int deriveEncodedIdFromDigestType(final GordianDigestType pDigest) {
+<span class="fc" id="L763">        return deriveEncodedIdFromEnum(pDigest);</span>
+    }
+
+    /**
+     * Obtain digestType from encoded Id.
+     *
+     * @param pEncodedId the encoded id
+     * @return the digestType
+     * @throws GordianException on error
+     */
+    private static GordianDigestType deriveDigestTypeFromEncodedId(final int pEncodedId) throws GordianException {
+<span class="fc" id="L774">        return deriveEnumFromEncodedId(pEncodedId, GordianDigestType.class);</span>
+    }
+
+    /**
+     * Obtain encoded symKeyId.
+     *
+     * @param pSymKey the symKeyType
+     * @return the encoded id
+     */
+    private static int deriveEncodedIdFromSymKeyType(final GordianSymKeyType pSymKey) {
+<span class="fc" id="L784">        return deriveEncodedIdFromEnum(pSymKey);</span>
+    }
+
+    /**
+     * Obtain symKeyType from encoded Id.
+     *
+     * @param pEncodedId the encoded id
+     * @return the symKeyType
+     * @throws GordianException on error
+     */
+    private static GordianSymKeyType deriveSymKeyTypeFromEncodedId(final int pEncodedId) throws GordianException {
+<span class="fc" id="L795">        return deriveEnumFromEncodedId(pEncodedId, GordianSymKeyType.class);</span>
+    }
+
+    /**
+     * Obtain encoded streamKeyId.
+     *
+     * @param pStreamKey the streamKeyType
+     * @return the encoded id
+     */
+    private static int deriveEncodedIdFromStreamKeyType(final GordianStreamKeyType pStreamKey) {
+<span class="fc" id="L805">        return deriveEncodedIdFromEnum(pStreamKey);</span>
+    }
+
+    /**
+     * Obtain streamKeyType from encoded Id.
+     *
+     * @param pEncodedId the encoded id
+     * @return the streamKeyType
+     * @throws GordianException on error
+     */
+    private static GordianStreamKeyType deriveStreamKeyTypeFromEncodedId(final int pEncodedId) throws GordianException {
+<span class="fc" id="L816">        return deriveEnumFromEncodedId(pEncodedId, GordianStreamKeyType.class);</span>
+    }
+
+    /**
+     * Obtain encoded MacId.
+     *
+     * @param pMac the macType
+     * @return the encoded id
+     */
+    private static int deriveEncodedIdFromMacType(final GordianMacType pMac) {
+<span class="fc" id="L826">        return deriveEncodedIdFromEnum(pMac);</span>
+    }
+
+    /**
+     * Obtain macType from encoded Id.
+     *
+     * @param pEncodedId the encoded id
+     * @return the macType
+     * @throws GordianException on error
+     */
+    private static GordianMacType deriveMacTypeFromEncodedId(final int pEncodedId) throws GordianException {
+<span class="fc" id="L837">        return deriveEnumFromEncodedId(pEncodedId, GordianMacType.class);</span>
+    }
+
+    /**
+     * Obtain encoded Length.
+     *
+     * @param pLength the length
+     * @return the encoded id
+     */
+    private static int deriveEncodedIdFromLength(final GordianLength pLength) {
+<span class="fc" id="L847">        return deriveEncodedIdFromEnum(pLength);</span>
+    }
+
+    /**
+     * Obtain length from encoded Id.
+     *
+     * @param pEncodedId the encoded id
+     * @return the length
+     * @throws GordianException on error
+     */
+    private static GordianLength deriveLengthFromEncodedId(final int pEncodedId) throws GordianException {
+<span class="fc" id="L858">        return deriveEnumFromEncodedId(pEncodedId, GordianLength.class);</span>
+    }
+
+    /**
+     * Obtain encoded digestState.
+     *
+     * @param pState the state
+     * @return the encoded id
+     */
+    private static int deriveEncodedIdFromDigestState(final GordianDigestState pState) {
+<span class="fc" id="L868">        return deriveEncodedIdFromEnum(pState);</span>
+    }
+
+    /**
+     * Obtain digestState from encoded Id.
+     *
+     * @param pEncodedId the encoded id
+     * @return the state
+     * @throws GordianException on error
+     */
+    private static GordianDigestState deriveDigestStateFromEncodedId(final int pEncodedId) throws GordianException {
+<span class="fc" id="L879">        return deriveEnumFromEncodedId(pEncodedId, GordianDigestState.class);</span>
+    }
+
+    /**
+     * Obtain encoded CipherMode.
+     *
+     * @param pMode the cipherMode
+     * @return the encoded id
+     */
+    private static int deriveEncodedIdFromCipherMode(final GordianCipherMode pMode) {
+<span class="fc" id="L889">        return deriveEncodedIdFromEnum(pMode);</span>
+    }
+
+    /**
+     * Obtain cipherMode from encoded Id.
+     *
+     * @param pEncodedId the encoded id
+     * @return the cipherMode
+     * @throws GordianException on error
+     */
+    private static GordianCipherMode deriveCipherModeFromEncodedId(final int pEncodedId) throws GordianException {
+<span class="fc" id="L900">        return deriveEnumFromEncodedId(pEncodedId, GordianCipherMode.class);</span>
+    }
+
+    /**
+     * Obtain encoded Padding.
+     *
+     * @param pPadding the padding
+     * @return the encoded id
+     */
+    private static int deriveEncodedIdFromPadding(final GordianPadding pPadding) {
+<span class="fc" id="L910">        return deriveEncodedIdFromEnum(pPadding);</span>
+    }
+
+    /**
+     * Obtain padding from encoded Id.
+     *
+     * @param pEncodedId the encoded id
+     * @return the padding
+     * @throws GordianException on error
+     */
+    private static GordianPadding derivePaddingFromEncodedId(final int pEncodedId) throws GordianException {
+<span class="fc" id="L921">        return deriveEnumFromEncodedId(pEncodedId, GordianPadding.class);</span>
+    }
+
+    /**
+     * Obtain encodedId from enum.
+     *
+     * @param &lt;E&gt;   the Enum type
+     * @param pEnum the enum
+     * @return the encoded id
+     */
+    private static &lt;E extends Enum&lt;E&gt;&gt; int deriveEncodedIdFromEnum(final E pEnum) {
+<span class="fc" id="L932">        return pEnum.ordinal() + 1;</span>
+    }
+
+    /**
+     * Obtain enum from encoded id.
+     *
+     * @param &lt;E&gt;        the enum type
+     * @param pEncodedId the encoded id
+     * @param pClazz     the Enum class
+     * @return the padding
+     * @throws GordianException on error
+     */
+    private static &lt;E extends Enum&lt;E&gt;&gt; E deriveEnumFromEncodedId(final int pEncodedId,
+                                                                 final Class&lt;E&gt; pClazz) throws GordianException {
+<span class="fc" id="L946">        final int myId = pEncodedId - 1;</span>
+<span class="pc bpc" id="L947" title="1 of 2 branches missed.">        for (final E myEnum : pClazz.getEnumConstants()) {</span>
+<span class="fc bfc" id="L948" title="All 2 branches covered.">            if (myEnum.ordinal() == myId) {</span>
+<span class="fc" id="L949">                return myEnum;</span>
+            }
+        }
+<span class="nc" id="L952">        throw new GordianDataException(&quot;Invalid enumId: &quot; + pEncodedId + &quot; for class: &quot; + pClazz.getSimpleName());</span>
+    }
+
+    /**
+     * Obtain mask for enum.
+     *
+     * @param &lt;E&gt;    the Enum type
+     * @param pClazz the enum class
+     * @return the mask
+     */
+    private static &lt;E extends Enum&lt;E&gt;&gt; int determineMaskForEnum(final Class&lt;E&gt; pClazz) {
+<span class="fc" id="L963">        return ~(-1 &lt;&lt; determineShiftForEnum(pClazz));</span>
+    }
+
+    /**
+     * Obtain shift for enum.
+     *
+     * @param &lt;E&gt;    the Enum type
+     * @param pClazz the enum class
+     * @return the bit shift
+     */
+    private static &lt;E extends Enum&lt;E&gt;&gt; int determineShiftForEnum(final Class&lt;E&gt; pClazz) {
+<span class="fc" id="L974">        return Integer.SIZE - Integer.numberOfLeadingZeros(pClazz.getEnumConstants().length);</span>
+    }
+
+    /**
+     * GordianIdSpec markers.
+     */
+<span class="fc" id="L980">    private enum GordianIdMarker {</span>
+        /**
+         * SymKey.
+         */
+<span class="fc" id="L984">        SYMKEY(1),</span>
+
+        /**
+         * StreamKey.
+         */
+<span class="fc" id="L989">        STREAMKEY(2),</span>
+
+        /**
+         * MacKey.
+         */
+<span class="fc" id="L994">        MACKEY(3),</span>
+
+        /**
+         * Digest.
+         */
+<span class="fc" id="L999">        DIGEST(4),</span>
+
+        /**
+         * SymKeyCipher.
+         */
+<span class="fc" id="L1004">        SYMCIPHER(5),</span>
+
+        /**
+         * StreamCipher.
+         */
+<span class="fc" id="L1009">        STREAMCIPHER(6);</span>
+
+        /**
+         * The marker mask.
+         */
+        private static final int MASK = 0x70000000;
+
+        /**
+         * The marker shift.
+         */
+        private static final int SHIFT = 28;
+
+        /**
+         * The marker.
+         */
+        private final int theMarker;
+
+        /**
+         * Constructor.
+         *
+         * @param pMarker the marker
+         */
+<span class="fc" id="L1031">        GordianIdMarker(final int pMarker) {</span>
+<span class="fc" id="L1032">            theMarker = pMarker;</span>
+<span class="fc" id="L1033">        }</span>
+
+        /**
+         * Apply marker.
+         *
+         * @param pId the encoded id
+         * @return the marked and encoded id
+         */
+        int applyMarker(final int pId) {
+<span class="pc bpc" id="L1042" title="1 of 2 branches missed.">            if ((pId &amp; MASK) != 0) {</span>
+<span class="nc" id="L1043">                throw new IllegalArgumentException();</span>
+            }
+
+<span class="fc" id="L1046">            return pId | (theMarker &lt;&lt; SHIFT);</span>
+        }
+
+        /**
+         * Remove marker.
+         *
+         * @param pId the merked encoded id
+         * @return the marked and encoded id
+         */
+        static int removeMarker(final int pId) {
+<span class="fc" id="L1056">            return pId &amp; ~MASK;</span>
+        }
+
+        /**
+         * Determine marker.
+         *
+         * @param pId the merked encoded id
+         * @return the marker
+         */
+        static GordianIdMarker determine(final int pId) {
+<span class="fc" id="L1066">            final int myMark = (pId &amp; MASK) &gt;&gt; SHIFT;</span>
+<span class="pc bpc" id="L1067" title="1 of 2 branches missed.">            for (GordianIdMarker myMarker : values()) {</span>
+<span class="fc bfc" id="L1068" title="All 2 branches covered.">                if (myMarker.theMarker == myMark) {</span>
+<span class="fc" id="L1069">                    return myMarker;</span>
+                }
+            }
+<span class="nc" id="L1072">            throw new IllegalArgumentException();</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

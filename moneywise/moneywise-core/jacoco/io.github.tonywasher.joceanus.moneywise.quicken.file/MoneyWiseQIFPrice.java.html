@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseQIFPrice.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.moneywise.quicken.file</a> &gt; <span class="el_source">MoneyWiseQIFPrice.java</span></div><h1>MoneyWiseQIFPrice.java</h1><pre class="source lang-java linenums">/*
+ * MoneyWise: Finance Application
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.moneywise.quicken.file;
+
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurityPrice;
+import io.github.tonywasher.joceanus.moneywise.quicken.definitions.MoneyWiseQIFType;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+/**
+ * Class representing a QIF Price record.
+ */
+public class MoneyWiseQIFPrice
+        implements Comparable&lt;MoneyWiseQIFPrice&gt; {
+    /**
+     * Item type.
+     */
+    protected static final String QIF_ITEM = &quot;Prices&quot;;
+
+    /**
+     * Quicken Quote.
+     */
+    private static final String QIF_QUOTE = &quot;\&quot;&quot;;
+
+    /**
+     * Quicken Comma.
+     */
+    private static final String QIF_COMMA = &quot;,&quot;;
+
+    /**
+     * The file type.
+     */
+    private final MoneyWiseQIFType theFileType;
+
+    /**
+     * The security.
+     */
+    private final MoneyWiseQIFSecurity theSecurity;
+
+    /**
+     * The date.
+     */
+    private final OceanusDate theDate;
+
+    /**
+     * The price.
+     */
+    private final OceanusPrice thePrice;
+
+    /**
+     * The element list.
+     */
+    private final List&lt;MoneyWiseQIFPrice&gt; thePrices;
+
+    /**
+     * Constructor.
+     *
+     * @param pFile     the QIF File
+     * @param pSecurity the security
+     * @param pPrice    the price
+     */
+    protected MoneyWiseQIFPrice(final MoneyWiseQIFFile pFile,
+                                final MoneyWiseQIFSecurity pSecurity,
+<span class="nc" id="L83">                                final MoneyWiseSecurityPrice pPrice) {</span>
+        /* Store data */
+<span class="nc" id="L85">        theFileType = pFile.getFileType();</span>
+<span class="nc" id="L86">        theSecurity = pSecurity;</span>
+<span class="nc" id="L87">        theDate = pPrice.getDate();</span>
+<span class="nc" id="L88">        thePrice = pPrice.getPrice();</span>
+<span class="nc" id="L89">        thePrices = null;</span>
+<span class="nc" id="L90">    }</span>
+
+    /**
+     * Constructor.
+     *
+     * @param pFile      the QIF File
+     * @param pFormatter the Data Formatter
+     * @param pLine      the line
+     */
+    private MoneyWiseQIFPrice(final MoneyWiseQIFFile pFile,
+                              final OceanusDataFormatter pFormatter,
+<span class="nc" id="L101">                              final String pLine) {</span>
+        /* Split out the parts */
+<span class="nc" id="L103">        final String[] myParts = pLine.split(QIF_COMMA);</span>
+
+        /* Strip leading and trailing quotes */
+<span class="nc bnc" id="L106" title="All 2 branches missed.">        for (int i = 0; i &lt; myParts.length; i++) {</span>
+<span class="nc" id="L107">            final String myStr = myParts[i];</span>
+<span class="nc bnc" id="L108" title="All 2 branches missed.">            if (myStr.startsWith(QIF_QUOTE)</span>
+<span class="nc bnc" id="L109" title="All 2 branches missed.">                    &amp;&amp; myStr.endsWith(QIF_QUOTE)) {</span>
+<span class="nc" id="L110">                myParts[i] = myStr.substring(1, myStr.length() - 1);</span>
+            }
+        }
+
+        /* Store the data */
+<span class="nc" id="L115">        theFileType = pFile.getFileType();</span>
+<span class="nc" id="L116">        theSecurity = pFile.getSecurityBySymbol(myParts[0]);</span>
+<span class="nc" id="L117">        theDate = pFormatter.getDateFormatter().parseDateBase(myParts[2], MoneyWiseQIFWriter.QIF_BASEYEAR);</span>
+<span class="nc" id="L118">        thePrice = pFormatter.getDecimalParser().parsePriceValue(myParts[1]);</span>
+<span class="nc" id="L119">        thePrices = null;</span>
+<span class="nc" id="L120">    }</span>
+
+    /**
+     * Constructor.
+     *
+     * @param pFile      the QIF File
+     * @param pFormatter the Data Formatter
+     * @param pLines     the lines
+     */
+    protected MoneyWiseQIFPrice(final MoneyWiseQIFFile pFile,
+                                final OceanusDataFormatter pFormatter,
+<span class="nc" id="L131">                                final List&lt;String&gt; pLines) {</span>
+        /* Build the price list */
+<span class="nc" id="L133">        thePrices = new ArrayList&lt;&gt;();</span>
+
+        /* Loop through the lines */
+<span class="nc" id="L136">        MoneyWiseQIFSecurity mySecurity = null;</span>
+<span class="nc bnc" id="L137" title="All 2 branches missed.">        for (String myLine : pLines) {</span>
+            /* Create the price and add to the list */
+<span class="nc" id="L139">            final MoneyWiseQIFPrice myPrice = new MoneyWiseQIFPrice(pFile, pFormatter, myLine);</span>
+<span class="nc" id="L140">            mySecurity = myPrice.getSecurity();</span>
+<span class="nc" id="L141">            thePrices.add(myPrice);</span>
+<span class="nc" id="L142">        }</span>
+
+        /* Store the data */
+<span class="nc" id="L145">        theFileType = pFile.getFileType();</span>
+<span class="nc" id="L146">        theSecurity = mySecurity;</span>
+<span class="nc" id="L147">        theDate = null;</span>
+<span class="nc" id="L148">        thePrice = null;</span>
+<span class="nc" id="L149">    }</span>
+
+    /**
+     * Obtain the security.
+     *
+     * @return the security
+     */
+    public MoneyWiseQIFSecurity getSecurity() {
+<span class="nc" id="L157">        return theSecurity;</span>
+    }
+
+    /**
+     * Obtain the date.
+     *
+     * @return the date
+     */
+    public OceanusDate getDate() {
+<span class="nc" id="L166">        return theDate;</span>
+    }
+
+    /**
+     * Obtain the price.
+     *
+     * @return the security
+     */
+    public OceanusPrice getPrice() {
+<span class="nc" id="L175">        return thePrice;</span>
+    }
+
+    /**
+     * Obtain iterator for list.
+     *
+     * @return the iterator
+     */
+    public Iterator&lt;MoneyWiseQIFPrice&gt; priceIterator() {
+<span class="nc" id="L184">        return thePrices.iterator();</span>
+    }
+
+    /**
+     * Format record.
+     *
+     * @param pFormatter the formatter
+     * @param pBuilder   the string builder
+     */
+    protected void formatRecord(final OceanusDataFormatter pFormatter,
+                                final StringBuilder pBuilder) {
+        /* Format the security */
+<span class="nc" id="L196">        pBuilder.append(QIF_QUOTE);</span>
+<span class="nc" id="L197">        pBuilder.append(theSecurity.getSymbol());</span>
+<span class="nc" id="L198">        pBuilder.append(QIF_QUOTE);</span>
+<span class="nc" id="L199">        pBuilder.append(QIF_COMMA);</span>
+
+        /* Format the price */
+<span class="nc bnc" id="L202" title="All 2 branches missed.">        if (theFileType.escapePrices()) {</span>
+<span class="nc" id="L203">            pBuilder.append(QIF_QUOTE);</span>
+        }
+<span class="nc" id="L205">        pBuilder.append(thePrice.toString());</span>
+<span class="nc bnc" id="L206" title="All 2 branches missed.">        if (theFileType.escapePrices()) {</span>
+<span class="nc" id="L207">            pBuilder.append(QIF_QUOTE);</span>
+        }
+<span class="nc" id="L209">        pBuilder.append(QIF_COMMA);</span>
+
+        /* Format the date */
+<span class="nc" id="L212">        pBuilder.append(QIF_QUOTE);</span>
+<span class="nc" id="L213">        pBuilder.append(pFormatter.formatObject(theDate));</span>
+<span class="nc" id="L214">        pBuilder.append(QIF_QUOTE);</span>
+<span class="nc" id="L215">        pBuilder.append(MoneyWiseQIFRecord.QIF_EOL);</span>
+
+        /* Add the end of record indicator */
+<span class="nc" id="L218">        pBuilder.append(MoneyWiseQIFRecord.QIF_EOI);</span>
+<span class="nc" id="L219">        pBuilder.append(MoneyWiseQIFRecord.QIF_EOL);</span>
+<span class="nc" id="L220">    }</span>
+
+    @Override
+    public boolean equals(final Object pThat) {
+        /* Handle trivial cases */
+<span class="nc bnc" id="L225" title="All 2 branches missed.">        if (this == pThat) {</span>
+<span class="nc" id="L226">            return true;</span>
+        }
+<span class="nc bnc" id="L228" title="All 2 branches missed.">        if (pThat == null) {</span>
+<span class="nc" id="L229">            return false;</span>
+        }
+
+        /* Check class */
+<span class="nc bnc" id="L233" title="All 2 branches missed.">        if (!getClass().equals(pThat.getClass())) {</span>
+<span class="nc" id="L234">            return false;</span>
+        }
+
+        /* Cast correctly */
+<span class="nc" id="L238">        final MoneyWiseQIFPrice myLine = (MoneyWiseQIFPrice) pThat;</span>
+
+        /* Check security */
+<span class="nc bnc" id="L241" title="All 2 branches missed.">        if (!getSecurity().equals(myLine.getSecurity())) {</span>
+<span class="nc" id="L242">            return false;</span>
+        }
+
+        /* Check price */
+<span class="nc bnc" id="L246" title="All 2 branches missed.">        if (!getPrice().equals(myLine.getPrice())) {</span>
+<span class="nc" id="L247">            return false;</span>
+        }
+
+        /* Check date */
+<span class="nc" id="L251">        return theDate.equals(myLine.getDate());</span>
+    }
+
+    @Override
+    public int hashCode() {
+<span class="nc" id="L256">        int myResult = MoneyWiseQIFFile.HASH_BASE * theSecurity.hashCode();</span>
+<span class="nc" id="L257">        myResult += thePrice.hashCode();</span>
+<span class="nc" id="L258">        myResult *= MoneyWiseQIFFile.HASH_BASE;</span>
+<span class="nc" id="L259">        return myResult + theDate.hashCode();</span>
+    }
+
+    @Override
+    public int compareTo(final MoneyWiseQIFPrice pThat) {
+<span class="nc" id="L264">        return theDate.compareTo(pThat.getDate());</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

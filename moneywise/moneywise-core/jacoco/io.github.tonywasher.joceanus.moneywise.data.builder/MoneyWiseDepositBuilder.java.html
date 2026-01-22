@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseDepositBuilder.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.moneywise.data.builder</a> &gt; <span class="el_source">MoneyWiseDepositBuilder.java</span></div><h1>MoneyWiseDepositBuilder.java</h1><pre class="source lang-java linenums">/*
+ * MoneyWise: Finance Application
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.moneywise.data.builder;
+
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDataSet;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDeposit;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDepositCategory;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePayee;
+import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseCurrency;
+import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseCurrencyClass;
+import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
+
+/**
+ * Deposit Builder.
+ */
+public class MoneyWiseDepositBuilder {
+    /**
+     * DataSet.
+     */
+    private final MoneyWiseDataSet theDataSet;
+
+    /**
+     * The DepositName.
+     */
+    private String theName;
+
+    /**
+     * The Parent.
+     */
+    private MoneyWisePayee theParent;
+
+    /**
+     * The Deposit Category.
+     */
+    private MoneyWiseDepositCategory theCategory;
+
+    /**
+     * The Currency.
+     */
+    private MoneyWiseCurrency theCurrency;
+
+    /**
+     * The Opening Balance.
+     */
+    private OceanusMoney theOpeningBalance;
+
+    /**
+     * Constructor.
+     *
+     * @param pDataSet the dataSet
+     */
+<span class="fc" id="L68">    public MoneyWiseDepositBuilder(final MoneyWiseDataSet pDataSet) {</span>
+<span class="fc" id="L69">        theDataSet = pDataSet;</span>
+<span class="fc" id="L70">        theDataSet.getDeposits().ensureMap();</span>
+<span class="fc" id="L71">        reportingCurrency();</span>
+<span class="fc" id="L72">    }</span>
+
+    /**
+     * Set Name.
+     *
+     * @param pName the name of the loan.
+     * @return the builder
+     */
+    public MoneyWiseDepositBuilder name(final String pName) {
+<span class="fc" id="L81">        theName = pName;</span>
+<span class="fc" id="L82">        return this;</span>
+    }
+
+    /**
+     * Set Parent.
+     *
+     * @param pParent the parent.
+     * @return the builder
+     */
+    public MoneyWiseDepositBuilder parent(final MoneyWisePayee pParent) {
+<span class="fc" id="L92">        theParent = pParent;</span>
+<span class="fc" id="L93">        return this;</span>
+    }
+
+    /**
+     * Set Parent.
+     *
+     * @param pParent the parent.
+     * @return the builder
+     */
+    public MoneyWiseDepositBuilder parent(final String pParent) {
+<span class="fc" id="L103">        return parent(theDataSet.getPayees().findItemByName(pParent));</span>
+    }
+
+    /**
+     * Set the depositCategory.
+     *
+     * @param pCategory the category of the deposit.
+     * @return the builder
+     */
+    public MoneyWiseDepositBuilder category(final MoneyWiseDepositCategory pCategory) {
+<span class="fc" id="L113">        theCategory = pCategory;</span>
+<span class="fc" id="L114">        return this;</span>
+    }
+
+    /**
+     * Set the depositCategory.
+     *
+     * @param pCategory the category of the deposit.
+     * @return the builder
+     */
+    public MoneyWiseDepositBuilder category(final String pCategory) {
+<span class="fc" id="L124">        return category(theDataSet.getDepositCategories().findItemByName(pCategory));</span>
+    }
+
+    /**
+     * Set the currency.
+     *
+     * @param pCurrency the currency of the deposit.
+     * @return the builder
+     */
+    public MoneyWiseDepositBuilder currency(final MoneyWiseCurrency pCurrency) {
+<span class="fc" id="L134">        theCurrency = pCurrency;</span>
+<span class="fc" id="L135">        return this;</span>
+    }
+
+    /**
+     * Set the currency.
+     *
+     * @param pCurrency the currency of the cash.
+     * @return the builder
+     */
+    public MoneyWiseDepositBuilder currency(final MoneyWiseCurrencyClass pCurrency) {
+<span class="fc" id="L145">        return currency(theDataSet.getAccountCurrencies().findItemByClass(pCurrency));</span>
+    }
+
+    /**
+     * Set the default currency.
+     */
+    private void reportingCurrency() {
+<span class="fc" id="L152">        currency(lookupReportingCurrency());</span>
+<span class="fc" id="L153">    }</span>
+
+    /**
+     * Obtain the reporting currency.
+     *
+     * @return the currency
+     */
+    private MoneyWiseCurrency lookupReportingCurrency() {
+<span class="fc" id="L161">        return theDataSet.getReportingCurrency();</span>
+    }
+
+    /**
+     * Set the openingBalance.
+     *
+     * @param pOpening the opening Balance
+     * @return the builder
+     */
+    public MoneyWiseDepositBuilder openingBalance(final OceanusMoney pOpening) {
+<span class="fc" id="L171">        theOpeningBalance = pOpening;</span>
+<span class="fc" id="L172">        return this;</span>
+    }
+
+    /**
+     * Set the openingBalance.
+     *
+     * @param pOpening the opening Balance
+     * @return the builder
+     */
+    public MoneyWiseDepositBuilder openingBalance(final String pOpening) {
+<span class="fc" id="L182">        return openingBalance(new OceanusMoney(pOpening, theCurrency.getCurrency()));</span>
+    }
+
+    /**
+     * Build the deposit.
+     *
+     * @return the new Deposit
+     * @throws OceanusException on error
+     */
+    public MoneyWiseDeposit build() throws OceanusException {
+        /* Create the deposit */
+<span class="fc" id="L193">        final MoneyWiseDeposit myDeposit = theDataSet.getDeposits().addNewItem();</span>
+<span class="fc" id="L194">        myDeposit.setName(theName);</span>
+<span class="fc" id="L195">        myDeposit.setParent(theParent);</span>
+<span class="fc" id="L196">        myDeposit.setCategory(theCategory);</span>
+<span class="fc" id="L197">        myDeposit.setAssetCurrency(theCurrency);</span>
+<span class="fc" id="L198">        myDeposit.setOpeningBalance(theOpeningBalance);</span>
+<span class="fc" id="L199">        myDeposit.setClosed(Boolean.FALSE);</span>
+
+        /* Reset the values */
+<span class="fc" id="L202">        reset();</span>
+
+        /* Check for errors */
+<span class="fc" id="L205">        myDeposit.adjustMapForItem();</span>
+<span class="fc" id="L206">        myDeposit.validate();</span>
+<span class="pc bpc" id="L207" title="1 of 2 branches missed.">        if (myDeposit.hasErrors()) {</span>
+<span class="nc" id="L208">            myDeposit.removeItem();</span>
+<span class="nc" id="L209">            throw new MoneyWiseDataException(myDeposit, &quot;Failed validation&quot;);</span>
+        }
+
+        /* Return the deposit */
+<span class="fc" id="L213">        return myDeposit;</span>
+    }
+
+    /**
+     * Reset the builder.
+     */
+    public void reset() {
+        /* Reset values */
+<span class="fc" id="L221">        theName = null;</span>
+<span class="fc" id="L222">        theCategory = null;</span>
+<span class="fc" id="L223">        theParent = null;</span>
+<span class="fc" id="L224">        theOpeningBalance = null;</span>
+<span class="fc" id="L225">        reportingCurrency();</span>
+<span class="fc" id="L226">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

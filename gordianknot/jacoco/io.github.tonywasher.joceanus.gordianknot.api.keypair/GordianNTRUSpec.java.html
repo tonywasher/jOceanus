@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianNTRUSpec.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.api.keypair</a> &gt; <span class="el_source">GordianNTRUSpec.java</span></div><h1>GordianNTRUSpec.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.gordianknot.api.keypair;
+
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.bc.BCObjectIdentifiers;
+import org.bouncycastle.pqc.crypto.ntru.NTRUParameters;
+import org.bouncycastle.pqc.jcajce.spec.NTRUParameterSpec;
+
+/**
+ * NTRU KeySpec.
+ */
+<span class="fc" id="L27">public enum GordianNTRUSpec {</span>
+    /**
+     * HPS 509 2048.
+     */
+<span class="fc" id="L31">    HPS509,</span>
+
+    /**
+     * HPS 677 2048.
+     */
+<span class="fc" id="L36">    HPS677,</span>
+
+    /**
+     * HPS 821 4096.
+     */
+<span class="fc" id="L41">    HPS821,</span>
+
+    /**
+     * HPS 1229 4096.
+     */
+<span class="fc" id="L46">    HPS1229,</span>
+
+    /**
+     * HRSS 701.
+     */
+<span class="fc" id="L51">    HRSS701,</span>
+
+    /**
+     * HRSS 1373.
+     */
+<span class="fc" id="L56">    HRSS1373;</span>
+
+    /**
+     * Obtain NTRU Parameters.
+     *
+     * @return the parameters.
+     */
+    public NTRUParameters getParameters() {
+<span class="pc bpc" id="L64" title="5 of 7 branches missed.">        switch (this) {</span>
+            case HPS509:
+<span class="fc" id="L66">                return NTRUParameters.ntruhps2048509;</span>
+            case HPS677:
+<span class="nc" id="L68">                return NTRUParameters.ntruhps2048677;</span>
+            case HPS821:
+<span class="fc" id="L70">                return NTRUParameters.ntruhps4096821;</span>
+            case HPS1229:
+<span class="nc" id="L72">                return NTRUParameters.ntruhps40961229;</span>
+            case HRSS701:
+<span class="nc" id="L74">                return NTRUParameters.ntruhrss701;</span>
+            case HRSS1373:
+<span class="nc" id="L76">                return NTRUParameters.ntruhrss1373;</span>
+            default:
+<span class="nc" id="L78">                throw new IllegalArgumentException();</span>
+        }
+    }
+
+    /**
+     * Obtain NTRU ParameterSpec.
+     *
+     * @return the parameters.
+     */
+    public NTRUParameterSpec getParameterSpec() {
+<span class="pc bpc" id="L88" title="5 of 7 branches missed.">        switch (this) {</span>
+            case HPS509:
+<span class="fc" id="L90">                return NTRUParameterSpec.ntruhps2048509;</span>
+            case HPS677:
+<span class="nc" id="L92">                return NTRUParameterSpec.ntruhps2048677;</span>
+            case HPS821:
+<span class="fc" id="L94">                return NTRUParameterSpec.ntruhps4096821;</span>
+            case HPS1229:
+<span class="nc" id="L96">                return NTRUParameterSpec.ntruhps40961229;</span>
+            case HRSS701:
+<span class="nc" id="L98">                return NTRUParameterSpec.ntruhrss701;</span>
+            case HRSS1373:
+<span class="nc" id="L100">                return NTRUParameterSpec.ntruhrss1373;</span>
+            default:
+<span class="nc" id="L102">                throw new IllegalArgumentException();</span>
+        }
+    }
+
+    /**
+     * Obtain NTRU algorithm Identifier.
+     *
+     * @return the identifier.
+     */
+    public ASN1ObjectIdentifier getIdentifier() {
+<span class="pc bpc" id="L112" title="1 of 7 branches missed.">        switch (this) {</span>
+            case HPS509:
+<span class="fc" id="L114">                return BCObjectIdentifiers.ntruhps2048509;</span>
+            case HPS677:
+<span class="fc" id="L116">                return BCObjectIdentifiers.ntruhps2048677;</span>
+            case HPS821:
+<span class="fc" id="L118">                return BCObjectIdentifiers.ntruhps4096821;</span>
+            case HPS1229:
+<span class="fc" id="L120">                return BCObjectIdentifiers.ntruhps40961229;</span>
+            case HRSS701:
+<span class="fc" id="L122">                return BCObjectIdentifiers.ntruhrss701;</span>
+            case HRSS1373:
+<span class="fc" id="L124">                return BCObjectIdentifiers.ntruhrss1373;</span>
+            default:
+<span class="nc" id="L126">                throw new IllegalArgumentException();</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

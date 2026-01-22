@@ -1,0 +1,616 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ThemisAnalysisDataMap.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Themis Core Project Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.themis.lethe.analysis</a> &gt; <span class="el_source">ThemisAnalysisDataMap.java</span></div><h1>ThemisAnalysisDataMap.java</h1><pre class="source lang-java linenums">/*
+ * Themis: Java Project Framework
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.themis.lethe.analysis;
+
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogManager;
+import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogger;
+import io.github.tonywasher.joceanus.themis.exc.ThemisDataException;
+import io.github.tonywasher.joceanus.themis.lethe.analysis.ThemisAnalysisFile.ThemisAnalysisObject;
+import io.github.tonywasher.joceanus.themis.lethe.analysis.ThemisAnalysisGeneric.ThemisAnalysisGenericVar;
+import io.github.tonywasher.joceanus.themis.lethe.analysis.ThemisAnalysisImports.ThemisAnalysisImport;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
+/**
+ * The data map manager.
+ */
+public class ThemisAnalysisDataMap {
+    /**
+     * Marker interface for dataType.
+     */
+    interface ThemisAnalysisDataType {
+    }
+
+    /**
+     * Marker interface for intermediate.
+     */
+    interface ThemisAnalysisIntermediate extends ThemisAnalysisDataType {
+    }
+
+    /**
+     * The logger.
+     */
+<span class="nc" id="L53">    private static final OceanusLogger LOGGER = OceanusLogManager.getLogger(ThemisAnalysisDataMap.class);</span>
+
+    /**
+     * The base dataTypes.
+     */
+<span class="nc" id="L58">    private static final Map&lt;String, ThemisAnalysisDataType&gt; BASETYPES = createDataTypeMap();</span>
+
+    /**
+     * The hidden dataTypes.
+     */
+<span class="nc" id="L63">    private static final Map&lt;String, String&gt; HIDDENTYPES = createHiddenTypeMap();</span>
+
+    /**
+     * The local dataTypes.
+     */
+    private final Map&lt;String, ThemisAnalysisDataType&gt; theLocalTypes;
+
+    /**
+     * The map of all classes.
+     */
+    private final Map&lt;String, ThemisAnalysisObject&gt; theClassMap;
+
+    /**
+     * The map of all classes.
+     */
+    private final Map&lt;String, ThemisAnalysisObject&gt; theShortClassMap;
+
+    /**
+     * The map of local/anonymous classes.
+     */
+    private final Map&lt;String, Integer&gt; theLocalIdMap;
+
+    /**
+     * The file dataTypes.
+     */
+    private Map&lt;String, ThemisAnalysisDataType&gt; theFileTypes;
+
+    /**
+     * The list of file classes.
+     */
+    private List&lt;ThemisAnalysisObject&gt; theFileClasses;
+
+    /**
+     * The list of all references.
+     */
+    private List&lt;ThemisAnalysisReference&gt; theReferences;
+
+    /**
+     * The parent.
+     */
+    private ThemisAnalysisDataMap theParent;
+
+    /**
+     * Base constructor.
+     */
+<span class="nc" id="L108">    ThemisAnalysisDataMap() {</span>
+<span class="nc" id="L109">        theParent = null;</span>
+<span class="nc" id="L110">        theClassMap = new LinkedHashMap&lt;&gt;();</span>
+<span class="nc" id="L111">        theShortClassMap = new LinkedHashMap&lt;&gt;();</span>
+<span class="nc" id="L112">        theLocalTypes = new HashMap&lt;&gt;();</span>
+<span class="nc" id="L113">        theLocalIdMap = new HashMap&lt;&gt;();</span>
+<span class="nc" id="L114">    }</span>
+
+    /**
+     * Nested constructor.
+     *
+     * @param pParent the parent dataMap
+     */
+<span class="nc" id="L121">    ThemisAnalysisDataMap(final ThemisAnalysisDataMap pParent) {</span>
+<span class="nc" id="L122">        theParent = pParent;</span>
+<span class="nc" id="L123">        theClassMap = pParent.theClassMap;</span>
+<span class="nc" id="L124">        theShortClassMap = pParent.theShortClassMap;</span>
+<span class="nc" id="L125">        theLocalTypes = new HashMap&lt;&gt;();</span>
+<span class="nc" id="L126">        theFileTypes = pParent.theFileTypes;</span>
+<span class="nc" id="L127">        theFileClasses = pParent.theFileClasses;</span>
+<span class="nc" id="L128">        theReferences = pParent.theReferences;</span>
+<span class="nc" id="L129">        theLocalIdMap = new HashMap&lt;&gt;();</span>
+<span class="nc" id="L130">    }</span>
+
+    /**
+     * lookUp thedataType.
+     *
+     * @param pToken  the token.
+     * @param pMethod is this a method call/def?
+     * @return the dataType (or null)
+     */
+    ThemisAnalysisDataType lookUpDataType(final String pToken,
+                                          final boolean pMethod) {
+        /* Look up standard data type */
+<span class="nc" id="L142">        ThemisAnalysisDataType myDataType = lookUpTheDataType(pToken);</span>
+
+        /* If it is not found and this is not a method call */
+<span class="nc bnc" id="L145" title="All 4 branches missed.">        if (myDataType == null &amp;&amp; !pMethod) {</span>
+            /* Look for a root dataType */
+<span class="nc" id="L147">            final int myIndex = pToken.indexOf(ThemisAnalysisChar.PERIOD);</span>
+<span class="nc bnc" id="L148" title="All 2 branches missed.">            if (myIndex != -1) {</span>
+                /* Check for child of imported dataType */
+<span class="nc" id="L150">                final String myStart = pToken.substring(0, myIndex);</span>
+<span class="nc" id="L151">                final String myEnd = pToken.substring(myIndex + 1);</span>
+<span class="nc" id="L152">                final ThemisAnalysisDataType myParent = lookUpTheDataType(myStart);</span>
+
+                /* If we have found it */
+<span class="nc bnc" id="L155" title="All 2 branches missed.">                if (myParent != null) {</span>
+<span class="nc" id="L156">                    myDataType = new ThemisAnalysisDataTypeChild(myParent, myEnd);</span>
+<span class="nc" id="L157">                    theFileTypes.put(pToken, myDataType);</span>
+                }
+            }
+        }
+
+        /* Return the dataType */
+<span class="nc" id="L163">        return myDataType;</span>
+    }
+
+    /**
+     * lookUp dataType.
+     *
+     * @param pToken the token.
+     * @return the dataType (or null)
+     */
+    ThemisAnalysisDataType lookUpTheDataType(final String pToken) {
+        /* Look up in local types */
+<span class="nc" id="L174">        final ThemisAnalysisDataType myDataType = theLocalTypes.get(pToken);</span>
+<span class="nc bnc" id="L175" title="All 2 branches missed.">        if (myDataType != null) {</span>
+<span class="nc" id="L176">            return myDataType;</span>
+        }
+
+        /* Pass call on */
+<span class="nc bnc" id="L180" title="All 2 branches missed.">        return theParent == null</span>
+<span class="nc" id="L181">                ? BASETYPES.get(pToken)</span>
+<span class="nc" id="L182">                : theParent.lookUpTheDataType(pToken);</span>
+    }
+
+    /**
+     * Record Object.
+     *
+     * @param pObject the object.
+     * @throws OceanusException on error
+     */
+    void declareObject(final ThemisAnalysisObject pObject) throws OceanusException {
+        /* Access properties */
+<span class="nc" id="L193">        final ThemisAnalysisProperties myProps = pObject.getProperties();</span>
+<span class="nc" id="L194">        final String myShortName = pObject.getShortName();</span>
+
+        /* Only register class globally if it is non-private */
+<span class="nc bnc" id="L197" title="All 2 branches missed.">        if (!myProps.hasModifier(ThemisAnalysisModifier.PRIVATE)) {</span>
+            /* Check that the shortName is unique */
+<span class="nc bnc" id="L199" title="All 2 branches missed.">            if (theShortClassMap.get(myShortName) != null) {</span>
+<span class="nc" id="L200">                throw new ThemisDataException(&quot;Duplicate class shortName: &quot; + myShortName);</span>
+            }
+
+            /* Register the object */
+<span class="nc" id="L204">            theShortClassMap.put(myShortName, pObject);</span>
+<span class="nc" id="L205">            theClassMap.put(pObject.getFullName(), pObject);</span>
+        }
+
+        /* Store locally */
+<span class="nc" id="L209">        theFileTypes.put(myShortName, pObject);</span>
+<span class="nc" id="L210">        theFileClasses.add(pObject);</span>
+<span class="nc" id="L211">    }</span>
+
+    /**
+     * Set up file resources.
+     */
+    void setUpFileResources() {
+        /* Local types are file wide */
+<span class="nc" id="L218">        theFileTypes = theLocalTypes;</span>
+
+        /* Allocate the fileClasses */
+<span class="nc" id="L221">        theFileClasses = new ArrayList&lt;&gt;();</span>
+
+        /* Allocate the references list */
+<span class="nc" id="L224">        theReferences = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L225">    }</span>
+
+    /**
+     * Set parent.
+     *
+     * @param pParent the parent dataMap.
+     */
+    void setParent(final ThemisAnalysisDataMap pParent) {
+<span class="nc" id="L233">        theParent = pParent;</span>
+<span class="nc" id="L234">    }</span>
+
+    /**
+     * declare file.
+     *
+     * @param pFile the file
+     */
+    void declareFile(final ThemisAnalysisFile pFile) {
+<span class="nc" id="L242">        theLocalTypes.put(pFile.getName(), pFile);</span>
+<span class="nc" id="L243">    }</span>
+
+    /**
+     * declare import.
+     *
+     * @param pImport the import
+     */
+    void declareImport(final ThemisAnalysisImport pImport) {
+<span class="nc" id="L251">        theLocalTypes.put(pImport.getSimpleName(), pImport);</span>
+<span class="nc" id="L252">    }</span>
+
+    /**
+     * declare generic variable.
+     *
+     * @param pVar the generic variable
+     */
+    void declareGenericVar(final ThemisAnalysisGenericVar pVar) {
+<span class="nc" id="L260">        theLocalTypes.put(pVar.getName(), pVar);</span>
+<span class="nc" id="L261">    }</span>
+
+    /**
+     * declare unknown type.
+     *
+     * @param pName the name
+     * @return the new type
+     */
+    ThemisAnalysisDataType declareUnknown(final String pName) {
+<span class="nc" id="L270">        final ThemisAnalysisDataType myType = new ThemisAnalysisDataTypeUnknown(pName);</span>
+<span class="nc" id="L271">        theFileTypes.put(pName, myType);</span>
+<span class="nc" id="L272">        return myType;</span>
+    }
+
+    /**
+     * declare reference.
+     *
+     * @param pRef the reference
+     */
+    void declareReference(final ThemisAnalysisReference pRef) {
+<span class="nc" id="L281">        theReferences.add(pRef);</span>
+<span class="nc" id="L282">    }</span>
+
+    /**
+     * Consolidate the class map.
+     *
+     * @throws OceanusException on error
+     */
+    void consolidateMap() throws OceanusException {
+        /* Update intermediate references */
+<span class="nc" id="L291">        updateIntermediates();</span>
+
+        /* resolve the immediate ancestors */
+<span class="nc" id="L294">        resolveImmediateAncestors();</span>
+<span class="nc" id="L295">    }</span>
+
+    /**
+     * Update intermediate references from classMap.
+     */
+    private void updateIntermediates() {
+        /* Loop through the localDataTypes */
+<span class="nc bnc" id="L302" title="All 2 branches missed.">        for (Entry&lt;String, ThemisAnalysisDataType&gt; myEntry : theLocalTypes.entrySet()) {</span>
+            /* Access the value */
+<span class="nc" id="L304">            final ThemisAnalysisDataType myType = myEntry.getValue();</span>
+
+            /* If this is an intermediate */
+<span class="nc bnc" id="L307" title="All 2 branches missed.">            if (myType instanceof ThemisAnalysisIntermediate myIntermediate) {</span>
+                /* Look up actual value */
+<span class="nc" id="L309">                final ThemisAnalysisDataType myActual = lookUpActualDataType(myIntermediate);</span>
+<span class="nc bnc" id="L310" title="All 2 branches missed.">                if (myActual != null) {</span>
+<span class="nc" id="L311">                    myEntry.setValue(myActual);</span>
+                }
+            }
+<span class="nc" id="L314">        }</span>
+
+        /* Loop through the References */
+<span class="nc bnc" id="L317" title="All 2 branches missed.">        for (ThemisAnalysisReference myRef : theReferences) {</span>
+            /* Access the dataType */
+<span class="nc" id="L319">            final ThemisAnalysisDataType myType = myRef.getDataType();</span>
+
+            /* If this is an intermediate */
+<span class="nc bnc" id="L322" title="All 2 branches missed.">            if (myType instanceof ThemisAnalysisIntermediate myIntermediate) {</span>
+                /* Look up actual value */
+<span class="nc" id="L324">                final ThemisAnalysisDataType myActual = lookUpActualDataType(myIntermediate);</span>
+<span class="nc bnc" id="L325" title="All 2 branches missed.">                if (myActual != null) {</span>
+<span class="nc" id="L326">                    myRef.updateDataType(myActual);</span>
+                }
+            }
+<span class="nc" id="L329">        }</span>
+<span class="nc" id="L330">    }</span>
+
+    /**
+     * Look up actual dataType.
+     *
+     * @param pIntermediate the intermediate dataType.
+     * @return the actual dataType (or null)
+     */
+    ThemisAnalysisObject lookUpActualDataType(final ThemisAnalysisIntermediate pIntermediate) {
+        /* If this is an import */
+<span class="nc bnc" id="L340" title="All 2 branches missed.">        if (pIntermediate instanceof ThemisAnalysisImport myImport) {</span>
+            /* Replace it with actual object if known */
+<span class="nc" id="L342">            return theClassMap.get(myImport.getFullName());</span>
+        }
+
+        /* If this is a file */
+<span class="nc bnc" id="L346" title="All 2 branches missed.">        if (pIntermediate instanceof ThemisAnalysisFile myFile) {</span>
+            /* Replace it with actual object if known */
+<span class="nc" id="L348">            final String myFullName = myFile.getPackageName() + ThemisAnalysisChar.PERIOD + myFile.getName();</span>
+<span class="nc" id="L349">            return theClassMap.get(myFullName);</span>
+        }
+
+        /* No change */
+<span class="nc" id="L353">        return null;</span>
+    }
+
+    /**
+     * Resolve immediate ancestors.
+     *
+     * @throws OceanusException on error
+     */
+    private void resolveImmediateAncestors() throws OceanusException {
+        /* Loop through the fileClasses */
+<span class="nc bnc" id="L363" title="All 2 branches missed.">        for (ThemisAnalysisObject myClass : theFileClasses) {</span>
+            /* Loop through the ancestors of each class */
+<span class="nc bnc" id="L365" title="All 2 branches missed.">            for (ThemisAnalysisReference myRef : myClass.getAncestors()) {</span>
+                /* Resolve the ancestor */
+<span class="nc" id="L367">                resolveAncestor(myRef);</span>
+<span class="nc" id="L368">            }</span>
+<span class="nc" id="L369">        }</span>
+<span class="nc" id="L370">    }</span>
+
+    /**
+     * Resolve ancestors.
+     *
+     * @param pAncestor the ancestor
+     * @throws OceanusException on error
+     */
+    private void resolveAncestor(final ThemisAnalysisReference pAncestor) throws OceanusException {
+        /* Only worry about unknown ancestors */
+<span class="nc" id="L380">        final ThemisAnalysisDataType myDataType = pAncestor.getDataType();</span>
+<span class="nc bnc" id="L381" title="All 2 branches missed.">        if (!(myDataType instanceof ThemisAnalysisDataTypeUnknown)) {</span>
+<span class="nc" id="L382">            return;</span>
+        }
+
+        /* Look up the shortName */
+<span class="nc" id="L386">        final String myName = ((ThemisAnalysisDataTypeUnknown) myDataType).theName;</span>
+<span class="nc" id="L387">        final ThemisAnalysisObject myActual = theShortClassMap.get(myName);</span>
+<span class="nc bnc" id="L388" title="All 2 branches missed.">        if (myActual == null) {</span>
+<span class="nc" id="L389">            throw new ThemisDataException(&quot;Unknown ancestor: &quot; + myName);</span>
+        }
+
+        /* Update the reference */
+<span class="nc" id="L393">        pAncestor.updateDataType(myActual);</span>
+<span class="nc" id="L394">    }</span>
+
+    /**
+     * Resolve references.
+     */
+    void resolveReferences() {
+        /* Process implicit imports */
+<span class="nc" id="L401">        processImplicit();</span>
+
+        /* Loop through the References */
+<span class="nc bnc" id="L404" title="All 2 branches missed.">        for (ThemisAnalysisReference myRef : theReferences) {</span>
+            /* Access the dataType */
+<span class="nc" id="L406">            final ThemisAnalysisDataType myType = myRef.getDataType();</span>
+
+            /* If this is an unknown */
+<span class="nc bnc" id="L409" title="All 2 branches missed.">            if (myType instanceof ThemisAnalysisDataTypeUnknown) {</span>
+                /* Check for implicit import */
+<span class="nc" id="L411">                final ThemisAnalysisDataType myActual = theLocalTypes.get(myType.toString());</span>
+<span class="nc bnc" id="L412" title="All 2 branches missed.">                if (!(myActual instanceof ThemisAnalysisDataTypeUnknown)) {</span>
+<span class="nc" id="L413">                    myRef.updateDataType(myActual);</span>
+                }
+            }
+<span class="nc" id="L416">        }</span>
+<span class="nc" id="L417">    }</span>
+
+    /**
+     * Process implicit imports.
+     */
+    private void processImplicit() {
+        /* Loop through the fileClasses */
+<span class="nc bnc" id="L424" title="All 2 branches missed.">        for (ThemisAnalysisObject myClass : theFileClasses) {</span>
+            /* Process the ancestors */
+<span class="nc" id="L426">            processAncestors(myClass);</span>
+<span class="nc" id="L427">        }</span>
+<span class="nc" id="L428">    }</span>
+
+    /**
+     * Process implicit imports.
+     *
+     * @param pClass the class
+     */
+    private void processAncestors(final ThemisAnalysisObject pClass) {
+        /* Loop through the ancestors */
+<span class="nc bnc" id="L437" title="All 2 branches missed.">        for (ThemisAnalysisReference myRef : pClass.getAncestors()) {</span>
+            /* Process the ancestor */
+<span class="nc" id="L439">            final ThemisAnalysisDataType myDataType = myRef.getDataType();</span>
+<span class="nc bnc" id="L440" title="All 2 branches missed.">            if (myDataType instanceof ThemisAnalysisObject myObject) {</span>
+<span class="nc" id="L441">                processAncestor(myObject);</span>
+<span class="nc" id="L442">                processAncestors(myObject);</span>
+            }
+<span class="nc" id="L444">        }</span>
+<span class="nc" id="L445">    }</span>
+
+    /**
+     * Process ancestor.
+     *
+     * @param pAncestor the ancestor
+     */
+    private void processAncestor(final ThemisAnalysisObject pAncestor) {
+        /* Loop through the fileClasses */
+<span class="nc bnc" id="L454" title="All 2 branches missed.">        for (ThemisAnalysisObject myClass : theClassMap.values()) {</span>
+            /* If this is a direct child of the ancestor */
+<span class="nc" id="L456">            final String myName = pAncestor.getFullName() + ThemisAnalysisChar.PERIOD + myClass.getShortName();</span>
+<span class="nc bnc" id="L457" title="All 2 branches missed.">            if (myName.equals(myClass.getFullName())) {</span>
+                /* Add it to the local types */
+<span class="nc" id="L459">                theLocalTypes.put(myClass.getShortName(), myClass);</span>
+            }
+<span class="nc" id="L461">        }</span>
+<span class="nc" id="L462">    }</span>
+
+    /**
+     * Report unknown references.
+     */
+    void reportUnknown() {
+        /* Loop through the localDataTypes */
+<span class="nc bnc" id="L469" title="All 2 branches missed.">        for (Entry&lt;String, ThemisAnalysisDataType&gt; myEntry : theLocalTypes.entrySet()) {</span>
+            /* Access the value */
+<span class="nc" id="L471">            final ThemisAnalysisDataType myType = myEntry.getValue();</span>
+
+            /* If this is an unknown value */
+<span class="nc bnc" id="L474" title="All 2 branches missed.">            if (myType instanceof ThemisAnalysisDataTypeUnknown myUnknown) {</span>
+                /* Process the unknown reference */
+<span class="nc" id="L476">                processUnknown(myEntry, myUnknown);</span>
+            }
+<span class="nc" id="L478">        }</span>
+<span class="nc" id="L479">    }</span>
+
+    /**
+     * Process unknown reference.
+     *
+     * @param pEntry   the entry
+     * @param pUnknown the unknown reference
+     */
+    private void processUnknown(final Entry&lt;String, ThemisAnalysisDataType&gt; pEntry,
+                                final ThemisAnalysisDataTypeUnknown pUnknown) {
+        /* If this is a hidden child */
+<span class="nc" id="L490">        final String myName = pEntry.getKey();</span>
+<span class="nc bnc" id="L491" title="All 2 branches missed.">        if (HIDDENTYPES.containsKey(myName)) {</span>
+            /* Look up the parent */
+<span class="nc" id="L493">            final ThemisAnalysisDataType myParent = theLocalTypes.get(HIDDENTYPES.get(myName));</span>
+<span class="nc bnc" id="L494" title="All 2 branches missed.">            if (myParent instanceof ThemisAnalysisImport myImport) {</span>
+                /* Register a fake import and return */
+<span class="nc" id="L496">                final String myFullName = myImport.getFullName() + ThemisAnalysisChar.PERIOD + myName;</span>
+<span class="nc" id="L497">                final ThemisAnalysisImport myChild = new ThemisAnalysisImport(myFullName);</span>
+<span class="nc" id="L498">                pEntry.setValue(myChild);</span>
+<span class="nc" id="L499">                return;</span>
+            }
+        }
+
+        /* Report it if we have not rectified the problem */
+<span class="nc" id="L504">        LOGGER.info(&quot;Unknown: &quot; + pUnknown.toString());</span>
+<span class="nc" id="L505">    }</span>
+
+    /**
+     * Create the dataTypeMap.
+     *
+     * @return the new map
+     */
+    private static Map&lt;String, ThemisAnalysisDataType&gt; createDataTypeMap() {
+        /* create the map */
+<span class="nc" id="L514">        final Map&lt;String, ThemisAnalysisDataType&gt; myMap = new HashMap&lt;&gt;();</span>
+
+        /* Add the primitives */
+<span class="nc bnc" id="L517" title="All 2 branches missed.">        for (ThemisAnalysisPrimitive myPrimitive : ThemisAnalysisPrimitive.values()) {</span>
+<span class="nc" id="L518">            myMap.put(myPrimitive.toString(), myPrimitive);</span>
+<span class="nc bnc" id="L519" title="All 2 branches missed.">            if (myPrimitive.getBoxed() != null) {</span>
+<span class="nc" id="L520">                myMap.put(myPrimitive.getBoxed(), myPrimitive);</span>
+            }
+        }
+
+        /* Add the java.lang classes */
+<span class="nc bnc" id="L525" title="All 2 branches missed.">        for (ThemisAnalysisJavaLang myClass : ThemisAnalysisJavaLang.values()) {</span>
+<span class="nc" id="L526">            myMap.put(myClass.toString(), myClass);</span>
+        }
+
+        /* return the map */
+<span class="nc" id="L530">        return myMap;</span>
+    }
+
+    /**
+     * Create hidden dataType map.
+     *
+     * @return the map
+     */
+    private static Map&lt;String, String&gt; createHiddenTypeMap() {
+<span class="nc" id="L539">        final Map&lt;String, String&gt; myMap = new HashMap&lt;&gt;();</span>
+<span class="nc" id="L540">        myMap.put(&quot;StateChangeNotification&quot;, &quot;Preloader&quot;);</span>
+<span class="nc" id="L541">        myMap.put(&quot;SortKey&quot;, &quot;RowSorter&quot;);</span>
+<span class="nc" id="L542">        myMap.put(&quot;Entry&quot;, &quot;RowFilter&quot;);</span>
+<span class="nc" id="L543">        return myMap;</span>
+    }
+
+    /**
+     * Obtain local id.
+     *
+     * @param pName the name
+     * @return the localId
+     */
+    public int getLocalId(final String pName) {
+<span class="nc" id="L553">        final int myId = 1 + theLocalIdMap.computeIfAbsent(pName, s -&gt; 0);</span>
+<span class="nc" id="L554">        theLocalIdMap.put(pName, myId);</span>
+<span class="nc" id="L555">        return myId;</span>
+    }
+
+    /**
+     * DataType Unknown.
+     */
+    public static class ThemisAnalysisDataTypeUnknown
+            implements ThemisAnalysisDataType {
+        /**
+         * The Name.
+         */
+        private final String theName;
+
+        /**
+         * Constructor.
+         *
+         * @param pName the name
+         */
+<span class="nc" id="L573">        ThemisAnalysisDataTypeUnknown(final String pName) {</span>
+<span class="nc" id="L574">            theName = pName;</span>
+<span class="nc" id="L575">        }</span>
+
+        @Override
+        public String toString() {
+<span class="nc" id="L579">            return theName;</span>
+        }
+    }
+
+    /**
+     * DataType Child.
+     */
+    public static class ThemisAnalysisDataTypeChild
+            implements ThemisAnalysisDataType {
+        /**
+         * The Name.
+         */
+        private final ThemisAnalysisDataType theParent;
+
+        /**
+         * The Child.
+         */
+        private final String theChild;
+
+        /**
+         * Constructor.
+         *
+         * @param pParent the parent
+         * @param pChild  the child
+         */
+        ThemisAnalysisDataTypeChild(final ThemisAnalysisDataType pParent,
+<span class="nc" id="L605">                                    final String pChild) {</span>
+<span class="nc" id="L606">            theParent = pParent;</span>
+<span class="nc" id="L607">            theChild = pChild;</span>
+<span class="nc" id="L608">        }</span>
+
+        @Override
+        public String toString() {
+<span class="nc" id="L612">            return theParent.toString() + ThemisAnalysisChar.PERIOD + theChild;</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

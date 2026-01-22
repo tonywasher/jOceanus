@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianBlake2XEngine.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.impl.ext.engines</a> &gt; <span class="el_source">GordianBlake2XEngine.java</span></div><h1>GordianBlake2XEngine.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.gordianknot.impl.ext.engines;
+
+import io.github.tonywasher.joceanus.gordianknot.impl.ext.digests.GordianBlake2Base;
+import io.github.tonywasher.joceanus.gordianknot.impl.ext.digests.GordianBlake2Xof;
+import io.github.tonywasher.joceanus.gordianknot.impl.ext.params.GordianBlake2Parameters.GordianBlake2ParametersBuilder;
+import org.bouncycastle.crypto.CipherParameters;
+import org.bouncycastle.crypto.DataLengthException;
+import org.bouncycastle.crypto.OutputLengthException;
+import org.bouncycastle.crypto.StreamCipher;
+import org.bouncycastle.crypto.params.KeyParameter;
+import org.bouncycastle.crypto.params.ParametersWithIV;
+import org.bouncycastle.util.Memoable;
+
+/**
+ * Blake2X used as a stream Cipher.
+ */
+public class GordianBlake2XEngine
+        implements StreamCipher, Memoable {
+    /**
+     * index of next byte in keyStream.
+     */
+    private int theIndex;
+
+    /**
+     * Advanced stream.
+     */
+    private final byte[] theKeyStream;
+
+    /**
+     * Underlying digest.
+     */
+    private final GordianBlake2Xof theBlake2X;
+
+    /**
+     * Reset state.
+     */
+    private GordianBlake2Xof theResetState;
+
+    /**
+     * Constructor.
+     *
+     * @param pDigest the underlying digest
+     */
+<span class="fc" id="L60">    public GordianBlake2XEngine(final GordianBlake2Base pDigest) {</span>
+<span class="fc" id="L61">        theBlake2X = new GordianBlake2Xof(pDigest);</span>
+<span class="fc" id="L62">        theKeyStream = new byte[pDigest.getDigestSize()];</span>
+<span class="fc" id="L63">    }</span>
+
+    /**
+     * Constructor.
+     *
+     * @param pSource the source engine
+     */
+<span class="nc" id="L70">    private GordianBlake2XEngine(final GordianBlake2XEngine pSource) {</span>
+<span class="nc" id="L71">        theBlake2X = new GordianBlake2Xof(pSource.theBlake2X);</span>
+<span class="nc" id="L72">        theKeyStream = new byte[theBlake2X.getByteLength() &gt;&gt; 1];</span>
+<span class="nc" id="L73">        reset(pSource);</span>
+<span class="nc" id="L74">    }</span>
+
+    /**
+     * initialise a Blake2X cipher.
+     *
+     * @param forEncryption whether or not we are for encryption.
+     * @param params        the parameters required to set up the cipher.
+     * @throws IllegalArgumentException if the params argument is inappropriate.
+     */
+    public void init(final boolean forEncryption,
+                     final CipherParameters params) {
+        /*
+         * Blake2X encryption and decryption is completely symmetrical, so the 'forEncryption' is
+         * irrelevant. (Like 90% of stream ciphers)
+         */
+
+        /* Determine parameters */
+<span class="fc" id="L91">        CipherParameters myParams = params;</span>
+<span class="fc" id="L92">        byte[] newKey = null;</span>
+<span class="fc" id="L93">        byte[] newIV = null;</span>
+<span class="pc bpc" id="L94" title="1 of 2 branches missed.">        if ((myParams instanceof ParametersWithIV)) {</span>
+<span class="fc" id="L95">            final ParametersWithIV ivParams = (ParametersWithIV) myParams;</span>
+<span class="fc" id="L96">            newIV = ivParams.getIV();</span>
+<span class="fc" id="L97">            myParams = ivParams.getParameters();</span>
+        }
+<span class="pc bpc" id="L99" title="1 of 2 branches missed.">        if (myParams instanceof KeyParameter) {</span>
+<span class="fc" id="L100">            final KeyParameter keyParam = (KeyParameter) myParams;</span>
+<span class="fc" id="L101">            newKey = keyParam.getKey();</span>
+        }
+<span class="pc bpc" id="L103" title="2 of 4 branches missed.">        if (newKey == null || newIV == null) {</span>
+<span class="nc" id="L104">            throw new IllegalArgumentException(&quot;A key and IV must be provided&quot;);</span>
+        }
+
+        /* Initialise engine and mark as initialised */
+<span class="fc" id="L108">        final GordianBlake2ParametersBuilder myBuilder = new GordianBlake2ParametersBuilder()</span>
+<span class="fc" id="L109">                .setKey(newKey)</span>
+<span class="fc" id="L110">                .setSalt(newIV)</span>
+<span class="fc" id="L111">                .setMaxOutputLen(-1);</span>
+<span class="fc" id="L112">        theBlake2X.init(myBuilder.build());</span>
+
+        /* Save reset state */
+<span class="fc" id="L115">        theResetState = theBlake2X.copy();</span>
+
+        /* Initialise the stream block */
+<span class="fc" id="L118">        theIndex = 0;</span>
+<span class="fc" id="L119">        makeStreamBlock();</span>
+<span class="fc" id="L120">    }</span>
+
+    @Override
+    public String getAlgorithmName() {
+<span class="nc" id="L124">        return theBlake2X.getAlgorithmName();</span>
+    }
+
+    @Override
+    public int processBytes(final byte[] in,
+                            final int inOff,
+                            final int len,
+                            final byte[] out,
+                            final int outOff) {
+        /* Check for errors */
+<span class="pc bpc" id="L134" title="1 of 2 branches missed.">        if (theResetState == null) {</span>
+<span class="nc" id="L135">            throw new IllegalStateException(getAlgorithmName() + &quot; not initialised&quot;);</span>
+        }
+<span class="pc bpc" id="L137" title="1 of 2 branches missed.">        if ((inOff + len) &gt; in.length) {</span>
+<span class="nc" id="L138">            throw new DataLengthException(&quot;input buffer too short&quot;);</span>
+        }
+<span class="pc bpc" id="L140" title="1 of 2 branches missed.">        if ((outOff + len) &gt; out.length) {</span>
+<span class="nc" id="L141">            throw new OutputLengthException(&quot;output buffer too short&quot;);</span>
+        }
+
+        /* Loop through the input bytes */
+<span class="fc bfc" id="L145" title="All 2 branches covered.">        for (int i = 0; i &lt; len; i++) {</span>
+<span class="fc" id="L146">            out[i + outOff] = returnByte(in[i + inOff]);</span>
+        }
+<span class="fc" id="L148">        return len;</span>
+    }
+
+    @Override
+    public void reset() {
+<span class="pc bpc" id="L153" title="1 of 2 branches missed.">        if (theResetState != null) {</span>
+<span class="fc" id="L154">            theBlake2X.reset(theResetState);</span>
+<span class="fc" id="L155">            theIndex = 0;</span>
+<span class="fc" id="L156">            makeStreamBlock();</span>
+        }
+<span class="fc" id="L158">    }</span>
+
+    @Override
+    public byte returnByte(final byte in) {
+<span class="fc" id="L162">        final byte out = (byte) (theKeyStream[theIndex] ^ in);</span>
+<span class="fc" id="L163">        theIndex = (theIndex + 1) % theKeyStream.length;</span>
+
+<span class="fc bfc" id="L165" title="All 2 branches covered.">        if (theIndex == 0) {</span>
+<span class="fc" id="L166">            makeStreamBlock();</span>
+        }
+<span class="fc" id="L168">        return out;</span>
+    }
+
+    /**
+     * Generate keystream.
+     */
+    private void makeStreamBlock() {
+        /* Generate next output block */
+<span class="fc" id="L176">        theBlake2X.doOutput(theKeyStream, 0, theKeyStream.length);</span>
+<span class="fc" id="L177">    }</span>
+
+    @Override
+    public GordianBlake2XEngine copy() {
+<span class="nc" id="L181">        return new GordianBlake2XEngine(this);</span>
+    }
+
+    @Override
+    public void reset(final Memoable pState) {
+<span class="nc" id="L186">        final GordianBlake2XEngine e = (GordianBlake2XEngine) pState;</span>
+<span class="nc bnc" id="L187" title="All 2 branches missed.">        if (theKeyStream.length != e.theKeyStream.length) {</span>
+<span class="nc" id="L188">            throw new IllegalArgumentException();</span>
+        }
+<span class="nc" id="L190">        theBlake2X.reset(e.theBlake2X);</span>
+<span class="nc" id="L191">        System.arraycopy(e.theKeyStream, 0, theKeyStream, 0, theKeyStream.length);</span>
+<span class="nc" id="L192">        theIndex = e.theIndex;</span>
+<span class="nc" id="L193">        theResetState = e.theResetState;</span>
+<span class="nc" id="L194">    }</span>
+}
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseAccountInfoClass.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.moneywise.data.statics</a> &gt; <span class="el_source">MoneyWiseAccountInfoClass.java</span></div><h1>MoneyWiseAccountInfoClass.java</h1><pre class="source lang-java linenums">/*
+ * MoneyWise: Finance Application
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.moneywise.data.statics;
+
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
+import io.github.tonywasher.joceanus.metis.data.MetisDataType;
+import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataInfoClass;
+
+/**
+ * Enumeration of Account Info Classes.
+ */
+<span class="fc" id="L28">public enum MoneyWiseAccountInfoClass</span>
+        implements PrometheusDataInfoClass, MetisDataFieldId {
+    /**
+     * Maturity Date.
+     */
+<span class="fc" id="L33">    MATURITY(1, 0, MetisDataType.DATE),</span>
+
+    /**
+     * Opening Balance.
+     */
+<span class="fc" id="L38">    OPENINGBALANCE(2, 1, MetisDataType.MONEY),</span>
+
+    /**
+     * AutoExpense Category.
+     */
+<span class="fc" id="L43">    AUTOEXPENSE(3, 2, MetisDataType.LINK),</span>
+
+    /**
+     * AutoExpense Payee.
+     */
+<span class="fc" id="L48">    AUTOPAYEE(4, 3, MetisDataType.LINK),</span>
+
+    /**
+     * WebSite.
+     */
+<span class="fc" id="L53">    WEBSITE(5, 4, MetisDataType.CHARARRAY),</span>
+
+    /**
+     * Customer #.
+     */
+<span class="fc" id="L58">    CUSTOMERNO(6, 5, MetisDataType.CHARARRAY),</span>
+
+    /**
+     * User Id.
+     */
+<span class="fc" id="L63">    USERID(7, 6, MetisDataType.CHARARRAY),</span>
+
+    /**
+     * Password.
+     */
+<span class="fc" id="L68">    PASSWORD(8, 7, MetisDataType.CHARARRAY),</span>
+
+    /**
+     * SortCode.
+     */
+<span class="fc" id="L73">    SORTCODE(9, 8, MetisDataType.CHARARRAY),</span>
+
+    /**
+     * Account.
+     */
+<span class="fc" id="L78">    ACCOUNT(10, 9, MetisDataType.CHARARRAY),</span>
+
+    /**
+     * Reference.
+     */
+<span class="fc" id="L83">    REFERENCE(11, 10, MetisDataType.CHARARRAY),</span>
+
+    /**
+     * Notes.
+     */
+<span class="fc" id="L88">    NOTES(12, 11, MetisDataType.CHARARRAY),</span>
+
+    /**
+     * Symbol.
+     */
+<span class="fc" id="L93">    SYMBOL(13, 12, MetisDataType.STRING),</span>
+
+    /**
+     * Region.
+     */
+<span class="fc" id="L98">    REGION(14, 13, MetisDataType.LINK),</span>
+
+    /**
+     * UnderlyingStock.
+     */
+<span class="fc" id="L103">    UNDERLYINGSTOCK(15, 14, MetisDataType.LINK),</span>
+
+    /**
+     * OptionPrice.
+     */
+<span class="fc" id="L108">    OPTIONPRICE(16, 15, MetisDataType.PRICE);</span>
+
+    /**
+     * The String name.
+     */
+    private String theName;
+
+    /**
+     * Class Id.
+     */
+    private final int theId;
+
+    /**
+     * Class Order.
+     */
+    private final int theOrder;
+
+    /**
+     * Data Type.
+     */
+    private final MetisDataType theDataType;
+
+    /**
+     * Constructor.
+     *
+     * @param uId       the Id
+     * @param uOrder    the default order.
+     * @param pDataType the data type
+     */
+    MoneyWiseAccountInfoClass(final int uId,
+                              final int uOrder,
+<span class="fc" id="L139">                              final MetisDataType pDataType) {</span>
+<span class="fc" id="L140">        theId = uId;</span>
+<span class="fc" id="L141">        theOrder = uOrder;</span>
+<span class="fc" id="L142">        theDataType = pDataType;</span>
+<span class="fc" id="L143">    }</span>
+
+    @Override
+    public int getClassId() {
+<span class="fc" id="L147">        return theId;</span>
+    }
+
+    @Override
+    public int getOrder() {
+<span class="fc" id="L152">        return theOrder;</span>
+    }
+
+    @Override
+    public MetisDataType getDataType() {
+<span class="fc" id="L157">        return theDataType;</span>
+    }
+
+    @Override
+    public boolean isLink() {
+<span class="fc bfc" id="L162" title="All 2 branches covered.">        return theDataType == MetisDataType.LINK;</span>
+    }
+
+    @Override
+    public boolean isLinkSet() {
+<span class="fc" id="L167">        return false;</span>
+    }
+
+    @Override
+    public String toString() {
+        /* If we have not yet loaded the name */
+<span class="fc bfc" id="L173" title="All 2 branches covered.">        if (theName == null) {</span>
+            /* Load the name */
+<span class="fc" id="L175">            theName = MoneyWiseStaticResource.getKeyForAccountInfo(this).getValue();</span>
+        }
+
+        /* return the name */
+<span class="fc" id="L179">        return theName;</span>
+    }
+
+    /**
+     * get value from id.
+     *
+     * @param id the id value
+     * @return the corresponding enum object
+     * @throws OceanusException on error
+     */
+    public static MoneyWiseAccountInfoClass fromId(final int id) throws OceanusException {
+<span class="nc bnc" id="L190" title="All 2 branches missed.">        for (MoneyWiseAccountInfoClass myClass : values()) {</span>
+<span class="nc bnc" id="L191" title="All 2 branches missed.">            if (myClass.getClassId() == id) {</span>
+<span class="nc" id="L192">                return myClass;</span>
+            }
+        }
+<span class="nc" id="L195">        throw new MoneyWiseDataException(&quot;Invalid ClassId for &quot; + MoneyWiseStaticDataType.ACCOUNTINFOTYPE.toString() + &quot;:&quot; + id);</span>
+    }
+
+    /**
+     * Obtain maximum length for infoType.
+     *
+     * @return the maximum length
+     */
+    public int getMaximumLength() {
+<span class="pc bpc" id="L204" title="4 of 5 branches missed.">        switch (this) {</span>
+            case WEBSITE:
+<span class="nc" id="L206">                return MoneyWiseAccountInfoType.WEBSITE_LEN;</span>
+            case CUSTOMERNO:
+            case USERID:
+            case PASSWORD:
+            case SORTCODE:
+            case ACCOUNT:
+            case REFERENCE:
+<span class="nc" id="L213">                return MoneyWiseAccountInfoType.DATA_LEN;</span>
+            case NOTES:
+<span class="nc" id="L215">                return MoneyWiseAccountInfoType.NOTES_LEN;</span>
+            case SYMBOL:
+<span class="fc" id="L217">                return MoneyWiseSecurityType.SYMBOL_LEN;</span>
+            default:
+<span class="nc" id="L219">                return 0;</span>
+        }
+    }
+
+    @Override
+    public String getId() {
+<span class="fc" id="L225">        return toString();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

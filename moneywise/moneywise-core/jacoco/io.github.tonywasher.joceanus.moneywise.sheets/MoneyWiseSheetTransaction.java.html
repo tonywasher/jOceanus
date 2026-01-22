@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseSheetTransaction.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.moneywise.sheets</a> &gt; <span class="el_source">MoneyWiseSheetTransaction.java</span></div><h1>MoneyWiseSheetTransaction.java</h1><pre class="source lang-java linenums">/*
+ * MoneyWise: Finance Application
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.moneywise.sheets;
+
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDataSet;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransaction;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValues;
+import io.github.tonywasher.joceanus.prometheus.sheets.PrometheusSheetEncrypted;
+
+/**
+ * SheetDataItem extension for Transaction.
+ *
+ * @author Tony Washer
+ */
+public final class MoneyWiseSheetTransaction
+        extends PrometheusSheetEncrypted&lt;MoneyWiseTransaction&gt; {
+    /**
+     * NamedArea for Transactions.
+     */
+<span class="fc" id="L37">    private static final String AREA_TRANS = MoneyWiseTransaction.LIST_NAME;</span>
+
+    /**
+     * Date column.
+     */
+    private static final int COL_DATE = COL_KEYSETID + 1;
+
+    /**
+     * Pair column.
+     */
+    private static final int COL_DIRECTION = COL_DATE + 1;
+
+    /**
+     * Account column.
+     */
+    private static final int COL_ACCOUNT = COL_DIRECTION + 1;
+
+    /**
+     * Partner column.
+     */
+    private static final int COL_PARTNER = COL_ACCOUNT + 1;
+
+    /**
+     * Amount column.
+     */
+    private static final int COL_AMOUNT = COL_PARTNER + 1;
+
+    /**
+     * Category column.
+     */
+    private static final int COL_CATEGORY = COL_AMOUNT + 1;
+
+    /**
+     * Reconciled column.
+     */
+    private static final int COL_RECONCILED = COL_CATEGORY + 1;
+
+    /**
+     * Constructor for loading a spreadsheet.
+     *
+     * @param pReader the spreadsheet reader
+     */
+    MoneyWiseSheetTransaction(final MoneyWiseReader pReader) {
+        /* Call super constructor */
+<span class="fc" id="L81">        super(pReader, AREA_TRANS);</span>
+
+        /* Access the Lists */
+<span class="fc" id="L84">        final MoneyWiseDataSet myData = (MoneyWiseDataSet) pReader.getData();</span>
+<span class="fc" id="L85">        setDataList(myData.getTransactions());</span>
+<span class="fc" id="L86">    }</span>
+
+    /**
+     * Constructor for creating a spreadsheet.
+     *
+     * @param pWriter the spreadsheet writer
+     */
+    MoneyWiseSheetTransaction(final MoneyWiseWriter pWriter) {
+        /* Call super constructor */
+<span class="fc" id="L95">        super(pWriter, AREA_TRANS);</span>
+
+        /* Access the Transactions list */
+<span class="fc" id="L98">        final MoneyWiseDataSet myData = (MoneyWiseDataSet) pWriter.getData();</span>
+<span class="fc" id="L99">        setDataList(myData.getTransactions());</span>
+<span class="fc" id="L100">    }</span>
+
+    @Override
+    protected PrometheusDataValues loadSecureValues() throws OceanusException {
+        /* Build data values */
+<span class="fc" id="L105">        final PrometheusDataValues myValues = getRowValues(MoneyWiseTransaction.OBJECT_NAME);</span>
+<span class="fc" id="L106">        myValues.addValue(MoneyWiseBasicResource.MONEYWISEDATA_FIELD_DATE, loadDate(COL_DATE));</span>
+<span class="fc" id="L107">        myValues.addValue(MoneyWiseBasicResource.TRANSACTION_DIRECTION, loadBoolean(COL_DIRECTION));</span>
+<span class="fc" id="L108">        myValues.addValue(MoneyWiseBasicDataType.TRANSCATEGORY, loadInteger(COL_CATEGORY));</span>
+<span class="fc" id="L109">        myValues.addValue(MoneyWiseBasicResource.TRANSACTION_ACCOUNT, loadLong(COL_ACCOUNT));</span>
+<span class="fc" id="L110">        myValues.addValue(MoneyWiseBasicResource.TRANSACTION_PARTNER, loadLong(COL_PARTNER));</span>
+<span class="fc" id="L111">        myValues.addValue(MoneyWiseBasicResource.TRANSACTION_AMOUNT, loadBytes(COL_AMOUNT));</span>
+<span class="fc" id="L112">        myValues.addValue(MoneyWiseBasicResource.TRANSACTION_RECONCILED, loadBoolean(COL_RECONCILED));</span>
+
+        /* Return the values */
+<span class="fc" id="L115">        return myValues;</span>
+    }
+
+    @Override
+    protected void insertSecureItem(final MoneyWiseTransaction pItem) throws OceanusException {
+        /* Set the fields */
+<span class="fc" id="L121">        super.insertSecureItem(pItem);</span>
+<span class="fc" id="L122">        writeDate(COL_DATE, pItem.getDate());</span>
+<span class="fc" id="L123">        writeBoolean(COL_DIRECTION, pItem.getDirection().isFrom());</span>
+<span class="fc" id="L124">        writeLong(COL_ACCOUNT, pItem.getAccountId());</span>
+<span class="fc" id="L125">        writeLong(COL_PARTNER, pItem.getPartnerId());</span>
+<span class="fc" id="L126">        writeInteger(COL_CATEGORY, pItem.getCategoryId());</span>
+<span class="fc" id="L127">        writeBoolean(COL_RECONCILED, pItem.isReconciled());</span>
+<span class="fc" id="L128">        writeBytes(COL_AMOUNT, pItem.getAmountBytes());</span>
+<span class="fc" id="L129">    }</span>
+
+    @Override
+    protected int getLastColumn() {
+        /* Return the last column */
+<span class="fc" id="L134">        return COL_RECONCILED;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

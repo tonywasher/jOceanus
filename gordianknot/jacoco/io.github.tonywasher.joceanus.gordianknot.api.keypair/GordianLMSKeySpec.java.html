@@ -1,0 +1,712 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianLMSKeySpec.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.api.keypair</a> &gt; <span class="el_source">GordianLMSKeySpec.java</span></div><h1>GordianLMSKeySpec.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.gordianknot.api.keypair;
+
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
+import org.bouncycastle.pqc.crypto.lms.LMOtsParameters;
+import org.bouncycastle.pqc.crypto.lms.LMSParameters;
+import org.bouncycastle.pqc.crypto.lms.LMSigParameters;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+
+/**
+ * LMS KeyTypes.
+ */
+public class GordianLMSKeySpec {
+    /**
+     * The Separator.
+     */
+    private static final String SEP = &quot;-&quot;;
+
+    /**
+     * Invalid length error.
+     */
+    private static final String INVALID_LENGTH = &quot;Invalid Length: &quot;;
+
+    /**
+     * The hash.
+     */
+    private final GordianLMSHash theHash;
+
+    /**
+     * The width.
+     */
+    private final GordianLMSWidth theWidth;
+
+    /**
+     * The height.
+     */
+    private final GordianLMSHeight theHeight;
+
+    /**
+     * The length.
+     */
+    private final GordianLength theLength;
+
+    /**
+     * The Parameters.
+     */
+    private final LMSParameters theParams;
+
+    /**
+     * The Validity.
+     */
+    private final boolean isValid;
+
+    /**
+     * The String name.
+     */
+    private String theName;
+
+    /**
+     * Constructor.
+     *
+     * @param pHashType the hashType
+     * @param pHeight   the height
+     * @param pWidth    the width
+     * @param pLength   the length
+     */
+    public GordianLMSKeySpec(final GordianLMSHash pHashType,
+                             final GordianLMSHeight pHeight,
+                             final GordianLMSWidth pWidth,
+<span class="fc" id="L88">                             final GordianLength pLength) {</span>
+        /* Store parameters */
+<span class="fc" id="L90">        theHash = pHashType;</span>
+<span class="fc" id="L91">        theWidth = pWidth;</span>
+<span class="fc" id="L92">        theHeight = pHeight;</span>
+<span class="fc" id="L93">        theLength = pLength;</span>
+
+        /* Check validity */
+<span class="fc" id="L96">        isValid = checkValidity();</span>
+
+        /* Calculate parameters */
+<span class="pc bpc" id="L99" title="1 of 2 branches missed.">        final LMSigParameters mySig = isValid ? theHeight.getSigParameter(theHash, theLength) : null;</span>
+<span class="pc bpc" id="L100" title="1 of 2 branches missed.">        final LMOtsParameters myOts = isValid ? theWidth.getOtsParameter(theHash, theLength) : null;</span>
+<span class="pc bpc" id="L101" title="1 of 2 branches missed.">        theParams = isValid ? new LMSParameters(mySig, myOts) : null;</span>
+<span class="fc" id="L102">    }</span>
+
+    /**
+     * Obtain the hash.
+     *
+     * @return the hash
+     */
+    public GordianLMSHash getHash() {
+<span class="nc" id="L110">        return theHash;</span>
+    }
+
+    /**
+     * Obtain the width.
+     *
+     * @return the width
+     */
+    public GordianLMSHeight getHeight() {
+<span class="nc" id="L119">        return theHeight;</span>
+    }
+
+    /**
+     * Obtain the width.
+     *
+     * @return the width
+     */
+    public GordianLMSWidth getWidth() {
+<span class="nc" id="L128">        return theWidth;</span>
+    }
+
+    /**
+     * Obtain the legth.
+     *
+     * @return the width
+     */
+    public GordianLength getLength() {
+<span class="nc" id="L137">        return theLength;</span>
+    }
+
+    /**
+     * Obtain the parameters.
+     *
+     * @return the parameters
+     */
+    public LMSParameters getParameters() {
+<span class="fc" id="L146">        return theParams;</span>
+    }
+
+    /**
+     * Is the keySpec high (height &amp;ge; 15)?
+     *
+     * @return true/false.
+     */
+    public boolean isHigh() {
+<span class="pc bpc" id="L155" title="2 of 4 branches missed.">        return isValid &amp;&amp; theHeight.isHigh();</span>
+    }
+
+    /**
+     * Is the keySpec valid?
+     *
+     * @return true/false.
+     */
+    public boolean isValid() {
+<span class="nc" id="L164">        return isValid;</span>
+    }
+
+    /**
+     * Check spec validity.
+     *
+     * @return valid true/false
+     */
+    private boolean checkValidity() {
+<span class="pc bpc" id="L173" title="4 of 8 branches missed.">        if (theWidth == null || theHeight == null || theHash == null || theLength == null) {</span>
+<span class="nc" id="L174">            return false;</span>
+        }
+<span class="pc bpc" id="L176" title="1 of 2 branches missed.">        switch (theLength) {</span>
+            case LEN_192:
+            case LEN_256:
+<span class="fc" id="L179">                return true;</span>
+            default:
+<span class="nc" id="L181">                return false;</span>
+        }
+    }
+
+    @Override
+    public String toString() {
+        /* If we have not yet loaded the name */
+<span class="pc bpc" id="L188" title="1 of 2 branches missed.">        if (theName == null) {</span>
+            /* If the keySpec is valid */
+<span class="pc bpc" id="L190" title="1 of 2 branches missed.">            if (isValid) {</span>
+                /* Load the name */
+<span class="fc" id="L192">                theName = theHash.toString() + SEP + theWidth.toString() + SEP + theHeight.toString() + SEP + theLength.toString();</span>
+            } else {
+                /* Report invalid spec */
+<span class="nc" id="L195">                theName = &quot;InvalidLMSKeySpec: &quot; + theHash + SEP + theWidth + SEP + theHeight + SEP + theLength;</span>
+            }
+        }
+
+        /* return the name */
+<span class="fc" id="L200">        return theName;</span>
+    }
+
+    @Override
+    public boolean equals(final Object pThat) {
+        /* Handle the trivial cases */
+<span class="pc bpc" id="L206" title="1 of 2 branches missed.">        if (this == pThat) {</span>
+<span class="nc" id="L207">            return true;</span>
+        }
+<span class="pc bpc" id="L209" title="1 of 2 branches missed.">        if (pThat == null) {</span>
+<span class="nc" id="L210">            return false;</span>
+        }
+
+        /* Check fields */
+<span class="pc bpc" id="L214" title="4 of 8 branches missed.">        return pThat instanceof GordianLMSKeySpec myThat</span>
+                &amp;&amp; theHash == myThat.theHash
+                &amp;&amp; theLength == myThat.theLength
+                &amp;&amp; theWidth == myThat.theWidth
+<span class="pc bpc" id="L218" title="1 of 2 branches missed.">                &amp;&amp; theHeight == myThat.theHeight;</span>
+    }
+
+    @Override
+    public int hashCode() {
+<span class="fc" id="L223">        return Objects.hash(theHash, theHeight, theWidth, theLength);</span>
+    }
+
+    /**
+     * Obtain a list of all possible specs.
+     *
+     * @return the list
+     */
+    public static List&lt;GordianLMSKeySpec&gt; listPossibleKeySpecs() {
+        /* Create the list */
+<span class="fc" id="L233">        final List&lt;GordianLMSKeySpec&gt; mySpecs = new ArrayList&lt;&gt;();</span>
+
+        /* Add the specs */
+<span class="fc bfc" id="L236" title="All 2 branches covered.">        for (final GordianLMSHeight myHeight : GordianLMSHeight.values()) {</span>
+<span class="fc bfc" id="L237" title="All 2 branches covered.">            for (final GordianLMSWidth myWidth : GordianLMSWidth.values()) {</span>
+<span class="fc" id="L238">                mySpecs.add(new GordianLMSKeySpec(GordianLMSHash.SHA256, myHeight, myWidth, GordianLength.LEN_256));</span>
+<span class="fc" id="L239">                mySpecs.add(new GordianLMSKeySpec(GordianLMSHash.SHA256, myHeight, myWidth, GordianLength.LEN_192));</span>
+<span class="fc" id="L240">                mySpecs.add(new GordianLMSKeySpec(GordianLMSHash.SHAKE256, myHeight, myWidth, GordianLength.LEN_256));</span>
+<span class="fc" id="L241">                mySpecs.add(new GordianLMSKeySpec(GordianLMSHash.SHAKE256, myHeight, myWidth, GordianLength.LEN_192));</span>
+            }
+        }
+
+        /* Return the list */
+<span class="fc" id="L246">        return mySpecs;</span>
+    }
+
+    /**
+     * Match keySpec against LMSParameters.
+     *
+     * @param pSigParams the sigParameters
+     * @param pOtsParams the otsParameters
+     * @return the matching keySpec
+     */
+    public static GordianLMSKeySpec determineKeySpec(final LMSigParameters pSigParams,
+                                                     final LMOtsParameters pOtsParams) {
+<span class="fc" id="L258">        final List&lt;GordianLMSKeySpec&gt; mySpecs = listPossibleKeySpecs();</span>
+<span class="pc bpc" id="L259" title="1 of 2 branches missed.">        for (GordianLMSKeySpec mySpec : mySpecs) {</span>
+<span class="pc bpc" id="L260" title="1 of 2 branches missed.">            if (pSigParams.equals(mySpec.getParameters().getLMSigParam())</span>
+<span class="pc bpc" id="L261" title="1 of 2 branches missed.">                    &amp;&amp; pOtsParams.equals(mySpec.getParameters().getLMOTSParam())) {</span>
+<span class="fc" id="L262">                return mySpec;</span>
+            }
+<span class="nc" id="L264">        }</span>
+<span class="nc" id="L265">        throw new IllegalArgumentException(&quot;Unsupported LMSSpec&quot;);</span>
+    }
+
+    /**
+     * HSS keySpec.
+     */
+    public static class GordianHSSKeySpec {
+        /**
+         * Max depth for HSS key.
+         */
+        public static final int MAX_DEPTH = 8;
+
+        /**
+         * The top level keySpec.
+         */
+        private final GordianLMSKeySpec theKeySpec;
+
+        /**
+         * The tree depth.
+         */
+        private final int theDepth;
+
+        /**
+         * The Validity.
+         */
+        private final boolean isValid;
+
+        /**
+         * The String name.
+         */
+        private String theName;
+
+        /**
+         * Constructor.
+         *
+         * @param pKeySpec the keySpecs
+         * @param pDepth   the tree depth
+         */
+        GordianHSSKeySpec(final GordianLMSKeySpec pKeySpec,
+<span class="fc" id="L304">                          final int pDepth) {</span>
+            /* Create the list of keySpecs */
+<span class="fc" id="L306">            theKeySpec = pKeySpec;</span>
+<span class="fc" id="L307">            theDepth = pDepth;</span>
+<span class="fc" id="L308">            isValid = checkValidity();</span>
+<span class="fc" id="L309">        }</span>
+
+        /**
+         * Obtain the parameters.
+         *
+         * @return the parameters.
+         */
+        public GordianLMSKeySpec getKeySpec() {
+            /* If we are valid */
+<span class="pc bpc" id="L318" title="1 of 2 branches missed.">            return isValid</span>
+<span class="fc" id="L319">                    ? theKeySpec</span>
+<span class="nc" id="L320">                    : null;</span>
+        }
+
+        /**
+         * Obtain the treeDepth.
+         *
+         * @return the treeDepth.
+         */
+        public int getTreeDepth() {
+            /* If we are valid */
+<span class="pc bpc" id="L330" title="1 of 2 branches missed.">            return isValid</span>
+<span class="fc" id="L331">                    ? theDepth</span>
+<span class="nc" id="L332">                    : -1;</span>
+        }
+
+        /**
+         * Is the keySpec valid?
+         *
+         * @return true/false.
+         */
+        public boolean isValid() {
+<span class="fc" id="L341">            return isValid;</span>
+        }
+
+        /**
+         * Check spec validity.
+         *
+         * @return valid true/false
+         */
+        private boolean checkValidity() {
+            /* Depth must be at least 1 and  no more that MAX */
+<span class="pc bpc" id="L351" title="2 of 4 branches missed.">            if (theDepth &lt; 1 || theDepth &gt; MAX_DEPTH) {</span>
+<span class="nc" id="L352">                return false;</span>
+            }
+
+            /* Check keySpec */
+<span class="pc bpc" id="L356" title="2 of 4 branches missed.">            return theKeySpec != null &amp;&amp; theKeySpec.isValid;</span>
+        }
+
+        @Override
+        public String toString() {
+            /* If we have not yet loaded the name */
+<span class="pc bpc" id="L362" title="1 of 2 branches missed.">            if (theName == null) {</span>
+                /* If the keySpec is valid */
+<span class="pc bpc" id="L364" title="1 of 2 branches missed.">                if (isValid) {</span>
+                    /* Load the name */
+<span class="fc" id="L366">                    theName = &quot;HSS-&quot; + theDepth + &quot;-&quot; + theKeySpec;</span>
+
+                } else {
+                    /* Report invalid spec */
+<span class="nc" id="L370">                    theName = &quot;InvalidHSSKeySpec: &quot; + theDepth + &quot;:&quot; + theKeySpec;</span>
+                }
+            }
+
+            /* return the name */
+<span class="fc" id="L375">            return theName;</span>
+        }
+
+        @Override
+        public boolean equals(final Object pThat) {
+            /* Handle the trivial cases */
+<span class="pc bpc" id="L381" title="1 of 2 branches missed.">            if (this == pThat) {</span>
+<span class="nc" id="L382">                return true;</span>
+            }
+<span class="pc bpc" id="L384" title="1 of 2 branches missed.">            if (pThat == null) {</span>
+<span class="nc" id="L385">                return false;</span>
+            }
+
+            /* Make sure that the object is hssSpec */
+<span class="pc bpc" id="L389" title="1 of 2 branches missed.">            if (pThat.getClass() != this.getClass()) {</span>
+<span class="nc" id="L390">                return false;</span>
+            }
+
+            /* Access the target hssSpec */
+<span class="fc" id="L394">            final GordianHSSKeySpec myThat = (GordianHSSKeySpec) pThat;</span>
+
+            /* Check depth and keySpec are identical */
+<span class="pc bpc" id="L397" title="1 of 2 branches missed.">            return theDepth == myThat.theDepth</span>
+<span class="pc bpc" id="L398" title="1 of 2 branches missed.">                    &amp;&amp; Objects.equals(theKeySpec, myThat.theKeySpec);</span>
+        }
+
+        @Override
+        public int hashCode() {
+<span class="fc" id="L403">            return theKeySpec.hashCode() + theDepth;</span>
+        }
+    }
+
+    /**
+     * LMS hash.
+     */
+<span class="fc" id="L410">    public enum GordianLMSHash {</span>
+        /**
+         * Sha256.
+         */
+<span class="fc" id="L414">        SHA256,</span>
+
+        /**
+         * Shake256.
+         */
+<span class="fc" id="L419">        SHAKE256;</span>
+    }
+
+    /**
+     * LMS height.
+     */
+<span class="fc" id="L425">    public enum GordianLMSHeight {</span>
+        /**
+         * H5.
+         */
+<span class="fc" id="L429">        H5,</span>
+
+        /**
+         * H10.
+         */
+<span class="fc" id="L434">        H10,</span>
+
+        /**
+         * H15.
+         */
+<span class="fc" id="L439">        H15,</span>
+
+        /**
+         * H20.
+         */
+<span class="fc" id="L444">        H20,</span>
+
+        /**
+         * H25.
+         */
+<span class="fc" id="L449">        H25;</span>
+
+        /**
+         * Obtain the sigParameter.
+         *
+         * @param pHash   the hash
+         * @param pLength the length
+         * @return the parameter
+         */
+        private LMSigParameters getSigParameter(final GordianLMSHash pHash,
+                                                final GordianLength pLength) {
+<span class="pc bpc" id="L460" title="1 of 6 branches missed.">            switch (this) {</span>
+                case H5:
+<span class="fc" id="L462">                    return getH5Parameter(pHash, pLength);</span>
+                case H10:
+<span class="fc" id="L464">                    return getH10Parameter(pHash, pLength);</span>
+                case H15:
+<span class="fc" id="L466">                    return getH15Parameter(pHash, pLength);</span>
+                case H20:
+<span class="fc" id="L468">                    return getH20Parameter(pHash, pLength);</span>
+                case H25:
+<span class="fc" id="L470">                    return getH25Parameter(pHash, pLength);</span>
+                default:
+<span class="nc" id="L472">                    throw new IllegalStateException();</span>
+            }
+        }
+
+        /**
+         * Obtain the H5 sigParameter.
+         *
+         * @param pHash   the hash
+         * @param pLength the length
+         * @return the parameter
+         */
+        private LMSigParameters getH5Parameter(final GordianLMSHash pHash,
+                                               final GordianLength pLength) {
+<span class="pc bpc" id="L485" title="1 of 3 branches missed.">            switch (pLength) {</span>
+                case LEN_192:
+<span class="fc bfc" id="L487" title="All 2 branches covered.">                    return pHash == GordianLMSHash.SHA256 ? LMSigParameters.lms_sha256_n24_h5 : LMSigParameters.lms_shake256_n24_h5;</span>
+                case LEN_256:
+<span class="fc bfc" id="L489" title="All 2 branches covered.">                    return pHash == GordianLMSHash.SHA256 ? LMSigParameters.lms_sha256_n32_h5 : LMSigParameters.lms_shake256_n32_h5;</span>
+                default:
+<span class="nc" id="L491">                    throw new IllegalArgumentException(INVALID_LENGTH + pLength);</span>
+            }
+        }
+
+        /**
+         * Obtain the H10 sigParameter.
+         *
+         * @param pHash   the hash
+         * @param pLength the length
+         * @return the parameter
+         */
+        private LMSigParameters getH10Parameter(final GordianLMSHash pHash,
+                                                final GordianLength pLength) {
+<span class="pc bpc" id="L504" title="1 of 3 branches missed.">            switch (pLength) {</span>
+                case LEN_192:
+<span class="fc bfc" id="L506" title="All 2 branches covered.">                    return pHash == GordianLMSHash.SHA256 ? LMSigParameters.lms_sha256_n24_h10 : LMSigParameters.lms_shake256_n24_h10;</span>
+                case LEN_256:
+<span class="fc bfc" id="L508" title="All 2 branches covered.">                    return pHash == GordianLMSHash.SHA256 ? LMSigParameters.lms_sha256_n32_h10 : LMSigParameters.lms_shake256_n32_h10;</span>
+                default:
+<span class="nc" id="L510">                    throw new IllegalArgumentException(INVALID_LENGTH + pLength);</span>
+            }
+        }
+
+        /**
+         * Obtain the H15 sigParameter.
+         *
+         * @param pHash   the hash
+         * @param pLength the length
+         * @return the parameter
+         */
+        private LMSigParameters getH15Parameter(final GordianLMSHash pHash,
+                                                final GordianLength pLength) {
+<span class="pc bpc" id="L523" title="1 of 3 branches missed.">            switch (pLength) {</span>
+                case LEN_192:
+<span class="fc bfc" id="L525" title="All 2 branches covered.">                    return pHash == GordianLMSHash.SHA256 ? LMSigParameters.lms_sha256_n24_h15 : LMSigParameters.lms_shake256_n24_h15;</span>
+                case LEN_256:
+<span class="fc bfc" id="L527" title="All 2 branches covered.">                    return pHash == GordianLMSHash.SHA256 ? LMSigParameters.lms_sha256_n32_h15 : LMSigParameters.lms_shake256_n32_h15;</span>
+                default:
+<span class="nc" id="L529">                    throw new IllegalArgumentException(INVALID_LENGTH + pLength);</span>
+            }
+        }
+
+        /**
+         * Obtain the H20 sigParameter.
+         *
+         * @param pHash   the hash
+         * @param pLength the length
+         * @return the parameter
+         */
+        private LMSigParameters getH20Parameter(final GordianLMSHash pHash,
+                                                final GordianLength pLength) {
+<span class="pc bpc" id="L542" title="1 of 3 branches missed.">            switch (pLength) {</span>
+                case LEN_192:
+<span class="fc bfc" id="L544" title="All 2 branches covered.">                    return pHash == GordianLMSHash.SHA256 ? LMSigParameters.lms_sha256_n24_h20 : LMSigParameters.lms_shake256_n24_h20;</span>
+                case LEN_256:
+<span class="fc bfc" id="L546" title="All 2 branches covered.">                    return pHash == GordianLMSHash.SHA256 ? LMSigParameters.lms_sha256_n32_h20 : LMSigParameters.lms_shake256_n32_h20;</span>
+                default:
+<span class="nc" id="L548">                    throw new IllegalArgumentException(INVALID_LENGTH + pLength);</span>
+            }
+        }
+
+        /**
+         * Obtain the H25 sigParameter.
+         *
+         * @param pHash   the hash
+         * @param pLength the length
+         * @return the parameter
+         */
+        private LMSigParameters getH25Parameter(final GordianLMSHash pHash,
+                                                final GordianLength pLength) {
+<span class="pc bpc" id="L561" title="1 of 3 branches missed.">            switch (pLength) {</span>
+                case LEN_192:
+<span class="fc bfc" id="L563" title="All 2 branches covered.">                    return pHash == GordianLMSHash.SHA256 ? LMSigParameters.lms_sha256_n24_h25 : LMSigParameters.lms_shake256_n24_h25;</span>
+                case LEN_256:
+<span class="fc bfc" id="L565" title="All 2 branches covered.">                    return pHash == GordianLMSHash.SHA256 ? LMSigParameters.lms_sha256_n32_h25 : LMSigParameters.lms_shake256_n32_h25;</span>
+                default:
+<span class="nc" id="L567">                    throw new IllegalArgumentException(INVALID_LENGTH + pLength);</span>
+            }
+        }
+
+        /**
+         * Is the parameter high (height &amp;ge; 15)?
+         *
+         * @return true/false.
+         */
+        public boolean isHigh() {
+<span class="pc bpc" id="L577" title="1 of 2 branches missed.">            switch (this) {</span>
+                case H15:
+                case H20:
+                case H25:
+<span class="nc" id="L581">                    return true;</span>
+                default:
+<span class="fc" id="L583">                    return false;</span>
+            }
+        }
+    }
+
+    /**
+     * LMS Width.
+     */
+<span class="fc" id="L591">    public enum GordianLMSWidth {</span>
+        /**
+         * W1.
+         */
+<span class="fc" id="L595">        W1,</span>
+
+        /**
+         * W2.
+         */
+<span class="fc" id="L600">        W2,</span>
+
+        /**
+         * W4.
+         */
+<span class="fc" id="L605">        W4,</span>
+
+        /**
+         * W8.
+         */
+<span class="fc" id="L610">        W8;</span>
+
+        /**
+         * Obtain the otsParameter.
+         *
+         * @param pHash   the hash
+         * @param pLength the length
+         * @return the parameter
+         */
+        private LMOtsParameters getOtsParameter(final GordianLMSHash pHash,
+                                                final GordianLength pLength) {
+<span class="pc bpc" id="L621" title="1 of 5 branches missed.">            switch (this) {</span>
+                case W1:
+<span class="fc" id="L623">                    return getW1Parameter(pHash, pLength);</span>
+                case W2:
+<span class="fc" id="L625">                    return getW2Parameter(pHash, pLength);</span>
+                case W4:
+<span class="fc" id="L627">                    return getW4Parameter(pHash, pLength);</span>
+                case W8:
+<span class="fc" id="L629">                    return getW8Parameter(pHash, pLength);</span>
+                default:
+<span class="nc" id="L631">                    throw new IllegalStateException();</span>
+            }
+        }
+
+        /**
+         * Obtain the W1 otsParameter.
+         *
+         * @param pHash   the hash
+         * @param pLength the length
+         * @return the parameter
+         */
+        private LMOtsParameters getW1Parameter(final GordianLMSHash pHash,
+                                               final GordianLength pLength) {
+<span class="pc bpc" id="L644" title="1 of 3 branches missed.">            switch (pLength) {</span>
+                case LEN_192:
+<span class="fc bfc" id="L646" title="All 2 branches covered.">                    return pHash == GordianLMSHash.SHA256 ? LMOtsParameters.sha256_n24_w1 : LMOtsParameters.shake256_n24_w1;</span>
+                case LEN_256:
+<span class="fc bfc" id="L648" title="All 2 branches covered.">                    return pHash == GordianLMSHash.SHA256 ? LMOtsParameters.sha256_n32_w1 : LMOtsParameters.shake256_n32_w1;</span>
+                default:
+<span class="nc" id="L650">                    throw new IllegalArgumentException(INVALID_LENGTH + pLength);</span>
+            }
+        }
+
+        /**
+         * Obtain the W2 otsParameter.
+         *
+         * @param pHash   the hash
+         * @param pLength the length
+         * @return the parameter
+         */
+        private LMOtsParameters getW2Parameter(final GordianLMSHash pHash,
+                                               final GordianLength pLength) {
+<span class="pc bpc" id="L663" title="1 of 3 branches missed.">            switch (pLength) {</span>
+                case LEN_192:
+<span class="fc bfc" id="L665" title="All 2 branches covered.">                    return pHash == GordianLMSHash.SHA256 ? LMOtsParameters.sha256_n24_w2 : LMOtsParameters.shake256_n24_w2;</span>
+                case LEN_256:
+<span class="fc bfc" id="L667" title="All 2 branches covered.">                    return pHash == GordianLMSHash.SHA256 ? LMOtsParameters.sha256_n32_w2 : LMOtsParameters.shake256_n32_w2;</span>
+                default:
+<span class="nc" id="L669">                    throw new IllegalArgumentException(INVALID_LENGTH + pLength);</span>
+            }
+        }
+
+        /**
+         * Obtain the W4 otsParameter.
+         *
+         * @param pHash   the hash
+         * @param pLength the length
+         * @return the parameter
+         */
+        private LMOtsParameters getW4Parameter(final GordianLMSHash pHash,
+                                               final GordianLength pLength) {
+<span class="pc bpc" id="L682" title="1 of 3 branches missed.">            switch (pLength) {</span>
+                case LEN_192:
+<span class="fc bfc" id="L684" title="All 2 branches covered.">                    return pHash == GordianLMSHash.SHA256 ? LMOtsParameters.sha256_n24_w4 : LMOtsParameters.shake256_n24_w4;</span>
+                case LEN_256:
+<span class="fc bfc" id="L686" title="All 2 branches covered.">                    return pHash == GordianLMSHash.SHA256 ? LMOtsParameters.sha256_n32_w4 : LMOtsParameters.shake256_n32_w4;</span>
+                default:
+<span class="nc" id="L688">                    throw new IllegalArgumentException(INVALID_LENGTH + pLength);</span>
+            }
+        }
+
+        /**
+         * Obtain the W8 otsParameter.
+         *
+         * @param pHash   the hash
+         * @param pLength the length
+         * @return the parameter
+         */
+        private LMOtsParameters getW8Parameter(final GordianLMSHash pHash,
+                                               final GordianLength pLength) {
+<span class="pc bpc" id="L701" title="1 of 3 branches missed.">            switch (pLength) {</span>
+                case LEN_192:
+<span class="fc bfc" id="L703" title="All 2 branches covered.">                    return pHash == GordianLMSHash.SHA256 ? LMOtsParameters.sha256_n24_w8 : LMOtsParameters.shake256_n24_w8;</span>
+                case LEN_256:
+<span class="fc bfc" id="L705" title="All 2 branches covered.">                    return pHash == GordianLMSHash.SHA256 ? LMOtsParameters.sha256_n32_w8 : LMOtsParameters.shake256_n32_w8;</span>
+                default:
+<span class="nc" id="L707">                    throw new IllegalArgumentException(INVALID_LENGTH + pLength);</span>
+            }
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianCertUtils.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.impl.core.cert</a> &gt; <span class="el_source">GordianCertUtils.java</span></div><h1>GordianCertUtils.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+package io.github.tonywasher.joceanus.gordianknot.impl.core.cert;
+
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
+import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairUsage;
+import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairUse;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigest;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestFactory;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactory;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianIOException;
+import org.bouncycastle.asn1.ASN1BitString;
+import org.bouncycastle.asn1.x509.BasicConstraints;
+import org.bouncycastle.asn1.x509.Extension;
+import org.bouncycastle.asn1.x509.Extensions;
+import org.bouncycastle.asn1.x509.ExtensionsGenerator;
+import org.bouncycastle.asn1.x509.KeyUsage;
+import org.bouncycastle.asn1.x509.TBSCertificate;
+
+import java.io.IOException;
+import java.math.BigInteger;
+
+/**
+ * Certificate utilities.
+ */
+public final class GordianCertUtils {
+    /**
+     * Private constructor.
+     */
+    private GordianCertUtils() {
+    }
+
+    /**
+     * Create New Serial#.
+     *
+     * @return the new serial#
+     */
+    static BigInteger newSerialNo() {
+<span class="fc" id="L57">        final long myNow = System.currentTimeMillis();</span>
+<span class="fc" id="L58">        return BigInteger.valueOf(myNow);</span>
+    }
+
+    /**
+     * Determine usage.
+     *
+     * @param pExtensions the extensions.
+     * @return the usage
+     */
+    public static GordianKeyPairUsage determineUsage(final Extensions pExtensions) {
+        /* Access details */
+<span class="fc" id="L69">        final KeyUsage myUsage = KeyUsage.fromExtensions(pExtensions);</span>
+<span class="fc" id="L70">        final BasicConstraints myConstraint = BasicConstraints.fromExtensions(pExtensions);</span>
+<span class="fc" id="L71">        final GordianKeyPairUsage myResult = new GordianKeyPairUsage();</span>
+
+        /* Check for CERTIFICATE */
+<span class="fc bfc" id="L74" title="All 4 branches covered.">        final boolean isCA = myConstraint != null &amp;&amp; myConstraint.isCA();</span>
+<span class="pc bpc" id="L75" title="1 of 4 branches missed.">        if (isCA &amp;&amp; checkUsage(myUsage, KeyUsage.keyCertSign)) {</span>
+<span class="fc" id="L76">            myResult.addUse(GordianKeyPairUse.CERTIFICATE);</span>
+        }
+
+        /* Check for signer. */
+<span class="fc bfc" id="L80" title="All 2 branches covered.">        if (checkUsage(myUsage, KeyUsage.digitalSignature)) {</span>
+<span class="fc" id="L81">            myResult.addUse(GordianKeyPairUse.SIGNATURE);</span>
+        }
+
+        /* Check for nonRepudiation. */
+<span class="pc bpc" id="L85" title="1 of 2 branches missed.">        if (checkUsage(myUsage, KeyUsage.nonRepudiation)) {</span>
+<span class="nc" id="L86">            myResult.addUse(GordianKeyPairUse.NONREPUDIATION);</span>
+        }
+
+        /* Check for keyAgreement. */
+<span class="fc bfc" id="L90" title="All 2 branches covered.">        if (checkUsage(myUsage, KeyUsage.keyAgreement)) {</span>
+<span class="fc" id="L91">            myResult.addUse(GordianKeyPairUse.AGREEMENT);</span>
+        }
+
+        /* Check for keyEncryption. */
+<span class="fc bfc" id="L95" title="All 2 branches covered.">        if (checkUsage(myUsage, KeyUsage.keyEncipherment)) {</span>
+<span class="fc" id="L96">            myResult.addUse(GordianKeyPairUse.KEYENCRYPT);</span>
+        }
+
+        /* Check for dataEncryption. */
+<span class="fc bfc" id="L100" title="All 2 branches covered.">        if (checkUsage(myUsage, KeyUsage.dataEncipherment)) {</span>
+<span class="fc" id="L101">            myResult.addUse(GordianKeyPairUse.DATAENCRYPT);</span>
+        }
+
+        /* Check for encipherOnly. */
+<span class="pc bpc" id="L105" title="1 of 2 branches missed.">        if (checkUsage(myUsage, KeyUsage.encipherOnly)) {</span>
+<span class="nc" id="L106">            myResult.addUse(GordianKeyPairUse.ENCRYPTONLY);</span>
+        }
+
+        /* Check for decipherOnly. */
+<span class="pc bpc" id="L110" title="1 of 2 branches missed.">        if (checkUsage(myUsage, KeyUsage.decipherOnly)) {</span>
+<span class="nc" id="L111">            myResult.addUse(GordianKeyPairUse.DECRYPTONLY);</span>
+        }
+
+        /* Return the result */
+<span class="fc" id="L115">        return myResult;</span>
+    }
+
+    /**
+     * Determine subjectId.
+     *
+     * @param pCertificate the certificate.
+     * @return the id
+     */
+    static byte[] determineSubjectId(final TBSCertificate pCertificate) {
+        /* Access details */
+<span class="fc" id="L126">        final Extensions myExtensions = pCertificate.getExtensions();</span>
+<span class="fc" id="L127">        final Extension mySubjectId = myExtensions.getExtension(Extension.subjectKeyIdentifier);</span>
+<span class="pc bpc" id="L128" title="1 of 2 branches missed.">        if (mySubjectId != null) {</span>
+<span class="fc" id="L129">            return mySubjectId.getExtnValue().getOctets();</span>
+        }
+<span class="nc" id="L131">        final ASN1BitString myId = pCertificate.getSubjectUniqueId();</span>
+<span class="nc bnc" id="L132" title="All 2 branches missed.">        return myId == null ? null : myId.getOctets();</span>
+    }
+
+    /**
+     * Determine issuerId.
+     *
+     * @param pCertificate the certificate.
+     * @return the id
+     */
+    static byte[] determineIssuerId(final TBSCertificate pCertificate) {
+        /* Access details */
+<span class="fc" id="L143">        final Extensions myExtensions = pCertificate.getExtensions();</span>
+<span class="fc" id="L144">        final Extension myIssuerId = myExtensions.getExtension(Extension.authorityKeyIdentifier);</span>
+<span class="fc bfc" id="L145" title="All 2 branches covered.">        if (myIssuerId != null) {</span>
+<span class="fc" id="L146">            return myIssuerId.getExtnValue().getOctets();</span>
+        }
+<span class="fc" id="L148">        final ASN1BitString myId = pCertificate.getIssuerUniqueId();</span>
+<span class="pc bpc" id="L149" title="1 of 2 branches missed.">        return myId == null ? null : myId.getOctets();</span>
+    }
+
+    /**
+     * Check for usage.
+     *
+     * @param pUsage    the usage control
+     * @param pRequired the required usage
+     * @return true/false
+     */
+    private static boolean checkUsage(final KeyUsage pUsage,
+                                      final int pRequired) {
+<span class="pc bpc" id="L161" title="1 of 4 branches missed.">        return pUsage == null || pUsage.hasUsages(pRequired);</span>
+    }
+
+    /**
+     * Create extensions for tbsCertificate.
+     *
+     * @param pCAStatus  the CA status
+     * @param pUsage     the keyPair usage
+     * @param pSubjectId the subjectId
+     * @param pIssuerId  the issuerId (or null)
+     * @return the extensions
+     * @throws GordianException on error
+     */
+    static Extensions createExtensions(final GordianCAStatus pCAStatus,
+                                       final GordianKeyPairUsage pUsage,
+                                       final byte[] pSubjectId,
+                                       final byte[] pIssuerId) throws GordianException {
+        /* Protect against exceptions */
+        try {
+            /* Create extensions for the certificate */
+<span class="fc" id="L181">            final ExtensionsGenerator myGenerator = new ExtensionsGenerator();</span>
+<span class="fc" id="L182">            myGenerator.addExtension(Extension.keyUsage, true, pUsage.getKeyUsage());</span>
+<span class="fc" id="L183">            myGenerator.addExtension(Extension.subjectKeyIdentifier, true, pSubjectId);</span>
+<span class="fc bfc" id="L184" title="All 2 branches covered.">            if (pIssuerId != null) {</span>
+<span class="fc" id="L185">                myGenerator.addExtension(Extension.authorityKeyIdentifier, true, pIssuerId);</span>
+            }
+<span class="fc" id="L187">            pCAStatus.createExtensions(myGenerator);</span>
+<span class="fc" id="L188">            return myGenerator.generate();</span>
+
+<span class="nc" id="L190">        } catch (IOException e) {</span>
+<span class="nc" id="L191">            throw new GordianIOException(&quot;Failed to create extensions&quot;, e);</span>
+        }
+    }
+
+    /**
+     * Create extensions.
+     *
+     * @param pUsage the usage
+     * @return the extensions
+     * @throws GordianException on error
+     */
+    static Extensions createExtensions(final GordianKeyPairUsage pUsage) throws GordianException {
+        /* Protect against exceptions */
+        try {
+<span class="fc" id="L205">            final ExtensionsGenerator myGenerator = new ExtensionsGenerator();</span>
+<span class="fc" id="L206">            myGenerator.addExtension(Extension.keyUsage, true, pUsage.getKeyUsage());</span>
+<span class="fc" id="L207">            return myGenerator.generate();</span>
+<span class="nc" id="L208">        } catch (IOException e) {</span>
+<span class="nc" id="L209">            throw new GordianIOException(&quot;Failed to create extensions&quot;, e);</span>
+        }
+    }
+
+    /**
+     * Create the keyId.
+     *
+     * @param pFactory          the factory
+     * @param pEncodedPublicKey the publicKey
+     * @return the keyId
+     * @throws GordianException on error
+     */
+    static byte[] createKeyId(final GordianFactory pFactory,
+                              final byte[] pEncodedPublicKey) throws GordianException {
+        /* Build the hash */
+<span class="fc" id="L224">        final GordianDigestSpec mySpec = GordianDigestSpecBuilder.sha3(GordianLength.LEN_256);</span>
+<span class="fc" id="L225">        final GordianDigestFactory myDigests = pFactory.getDigestFactory();</span>
+<span class="fc" id="L226">        final GordianDigest myDigest = myDigests.createDigest(mySpec);</span>
+<span class="fc" id="L227">        myDigest.update(pEncodedPublicKey);</span>
+
+        /* Create the keyId */
+<span class="fc" id="L230">        return myDigest.finish();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

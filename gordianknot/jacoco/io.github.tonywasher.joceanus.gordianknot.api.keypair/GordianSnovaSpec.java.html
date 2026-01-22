@@ -1,0 +1,548 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianSnovaSpec.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.api.keypair</a> &gt; <span class="el_source">GordianSnovaSpec.java</span></div><h1>GordianSnovaSpec.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.gordianknot.api.keypair;
+
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.bc.BCObjectIdentifiers;
+import org.bouncycastle.pqc.crypto.snova.SnovaParameters;
+import org.bouncycastle.pqc.jcajce.spec.SnovaParameterSpec;
+
+/**
+ * Mayo KeySpec.
+ */
+<span class="fc" id="L27">public enum GordianSnovaSpec {</span>
+    /**
+     * Snova24A SSK.
+     */
+<span class="fc" id="L31">    SNOVA24A_SSK,</span>
+
+    /**
+     * Snova24A ESK.
+     */
+<span class="fc" id="L36">    SNOVA24A_ESK,</span>
+
+    /**
+     * Snova24A SHAKE SSK.
+     */
+<span class="fc" id="L41">    SNOVA24A_SHAKE_SSK,</span>
+
+    /**
+     * Snova24A SHAKE ESK.
+     */
+<span class="fc" id="L46">    SNOVA24A_SHAKE_ESK,</span>
+
+    /**
+     * Snova24B SSK.
+     */
+<span class="fc" id="L51">    SNOVA24B_SSK,</span>
+
+    /**
+     * SNova24B ESK.
+     */
+<span class="fc" id="L56">    SNOVA24B_ESK,</span>
+
+    /**
+     * SNova24B SHAKESSK.
+     */
+<span class="fc" id="L61">    SNOVA24B_SHAKE_SSK,</span>
+
+    /**
+     * SNova24B SHAKE ESK.
+     */
+<span class="fc" id="L66">    SNOVA24B_SHAKE_ESK,</span>
+
+    /**
+     * SNova25 SSK.
+     */
+<span class="fc" id="L71">    SNOVA25_SSK,</span>
+
+    /**
+     * SNova25 ESK.
+     */
+<span class="fc" id="L76">    SNOVA25_ESK,</span>
+
+    /**
+     * SNova25 SHAKE SSK.
+     */
+<span class="fc" id="L81">    SNOVA25_SHAKE_SSK,</span>
+
+    /**
+     * SNova25 SHAKE ESK.
+     */
+<span class="fc" id="L86">    SNOVA25_SHAKE_ESK,</span>
+
+    /**
+     * SNova29.
+     */
+<span class="fc" id="L91">    SNOVA29_SSK,</span>
+
+    /**
+     * SNova29.
+     */
+<span class="fc" id="L96">    SNOVA29_ESK,</span>
+
+    /**
+     * SNova29 SHAKE SSK.
+     */
+<span class="fc" id="L101">    SNOVA29_SHAKE_SSK,</span>
+
+    /**
+     * SNova29 SHAKE ESK.
+     */
+<span class="fc" id="L106">    SNOVA29_SHAKE_ESK,</span>
+
+    /**
+     * SNova37A SSK.
+     */
+<span class="fc" id="L111">    SNOVA37A_SSK,</span>
+
+    /**
+     * SNova37A ESK.
+     */
+<span class="fc" id="L116">    SNOVA37A_ESK,</span>
+
+    /**
+     * SNova37A SHAKE SSK.
+     */
+<span class="fc" id="L121">    SNOVA37A_SHAKE_SSK,</span>
+
+    /**
+     * SNova37A SHAKE ESK.
+     */
+<span class="fc" id="L126">    SNOVA37A_SHAKE_ESK,</span>
+
+    /**
+     * SNova37B SSK.
+     */
+<span class="fc" id="L131">    SNOVA37B_SSK,</span>
+
+    /**
+     * SNova37B ESK.
+     */
+<span class="fc" id="L136">    SNOVA37B_ESK,</span>
+
+    /**
+     * SNova37B SHAKE SSK.
+     */
+<span class="fc" id="L141">    SNOVA37B_SHAKE_SSK,</span>
+
+    /**
+     * SNova37B SHAKE ESK.
+     */
+<span class="fc" id="L146">    SNOVA37B_SHAKE_ESK,</span>
+
+    /**
+     * SNova49 SSK.
+     */
+<span class="fc" id="L151">    SNOVA49_SSK,</span>
+
+    /**
+     * SNova49 ESK.
+     */
+<span class="fc" id="L156">    SNOVA49_ESK,</span>
+
+    /**
+     * SNova49 SHAKE SSK.
+     */
+<span class="fc" id="L161">    SNOVA49_SHAKE_SSK,</span>
+
+    /**
+     * SNova49 SHAKE ESK.
+     */
+<span class="fc" id="L166">    SNOVA49_SHAKE_ESK,</span>
+
+    /**
+     * SNova56 SSK.
+     */
+<span class="fc" id="L171">    SNOVA56_SSK,</span>
+
+    /**
+     * SNova56 ESK.
+     */
+<span class="fc" id="L176">    SNOVA56_ESK,</span>
+
+    /**
+     * SNova56 SHAKE SSK.
+     */
+<span class="fc" id="L181">    SNOVA56_SHAKE_SSK,</span>
+
+    /**
+     * SNova56 SHAKE ESK.
+     */
+<span class="fc" id="L186">    SNOVA56_SHAKE_ESK,</span>
+
+    /**
+     * SNova60 SSK.
+     */
+<span class="fc" id="L191">    SNOVA60_SSK,</span>
+
+    /**
+     * SNova60 ESK.
+     */
+<span class="fc" id="L196">    SNOVA60_ESK,</span>
+
+    /**
+     * SNova60 SHAKE SSK.
+     */
+<span class="fc" id="L201">    SNOVA60_SHAKE_SSK,</span>
+
+    /**
+     * SNova60 SHAKE ESK.
+     */
+<span class="fc" id="L206">    SNOVA60_SHAKE_ESK,</span>
+
+    /**
+     * SNova66 SSK.
+     */
+<span class="fc" id="L211">    SNOVA66_SSK,</span>
+
+    /**
+     * SNova66 ESK.
+     */
+<span class="fc" id="L216">    SNOVA66_ESK,</span>
+
+    /**
+     * SNova66 SSK.
+     */
+<span class="fc" id="L221">    SNOVA66_SHAKE_SSK,</span>
+
+    /**
+     * SNova66 SHAKE ESK.
+     */
+<span class="fc" id="L226">    SNOVA66_SHAKE_ESK,</span>
+
+    /**
+     * SNova75 SSK.
+     */
+<span class="fc" id="L231">    SNOVA75_SSK,</span>
+
+    /**
+     * SNova75 ESK.
+     */
+<span class="fc" id="L236">    SNOVA75_ESK,</span>
+
+    /**
+     * SNova75 SHAKE SSK.
+     */
+<span class="fc" id="L241">    SNOVA75_SHAKE_SSK,</span>
+
+    /**
+     * SNova75 SHAKE ESK.
+     */
+<span class="fc" id="L246">    SNOVA75_SHAKE_ESK;</span>
+
+    /**
+     * Obtain Mayo Parameters.
+     *
+     * @return the parameters.
+     */
+    public SnovaParameters getParameters() {
+<span class="pc bpc" id="L254" title="44 of 45 branches missed.">        switch (this) {</span>
+            case SNOVA24A_SSK:
+<span class="fc" id="L256">                return SnovaParameters.SNOVA_24_5_4_SSK;</span>
+            case SNOVA24A_ESK:
+<span class="nc" id="L258">                return SnovaParameters.SNOVA_24_5_4_ESK;</span>
+            case SNOVA24A_SHAKE_SSK:
+<span class="nc" id="L260">                return SnovaParameters.SNOVA_24_5_4_SHAKE_SSK;</span>
+            case SNOVA24A_SHAKE_ESK:
+<span class="nc" id="L262">                return SnovaParameters.SNOVA_24_5_4_SHAKE_ESK;</span>
+            case SNOVA24B_SSK:
+<span class="nc" id="L264">                return SnovaParameters.SNOVA_24_5_5_SSK;</span>
+            case SNOVA24B_ESK:
+<span class="nc" id="L266">                return SnovaParameters.SNOVA_24_5_5_ESK;</span>
+            case SNOVA24B_SHAKE_SSK:
+<span class="nc" id="L268">                return SnovaParameters.SNOVA_24_5_5_SHAKE_SSK;</span>
+            case SNOVA24B_SHAKE_ESK:
+<span class="nc" id="L270">                return SnovaParameters.SNOVA_24_5_5_SHAKE_ESK;</span>
+            case SNOVA25_SSK:
+<span class="nc" id="L272">                return SnovaParameters.SNOVA_25_8_3_SSK;</span>
+            case SNOVA25_ESK:
+<span class="nc" id="L274">                return SnovaParameters.SNOVA_25_8_3_ESK;</span>
+            case SNOVA25_SHAKE_SSK:
+<span class="nc" id="L276">                return SnovaParameters.SNOVA_25_8_3_SHAKE_SSK;</span>
+            case SNOVA25_SHAKE_ESK:
+<span class="nc" id="L278">                return SnovaParameters.SNOVA_25_8_3_SHAKE_ESK;</span>
+            case SNOVA29_SSK:
+<span class="nc" id="L280">                return SnovaParameters.SNOVA_29_6_5_SSK;</span>
+            case SNOVA29_ESK:
+<span class="nc" id="L282">                return SnovaParameters.SNOVA_29_6_5_ESK;</span>
+            case SNOVA29_SHAKE_SSK:
+<span class="nc" id="L284">                return SnovaParameters.SNOVA_29_6_5_SHAKE_SSK;</span>
+            case SNOVA29_SHAKE_ESK:
+<span class="nc" id="L286">                return SnovaParameters.SNOVA_29_6_5_SHAKE_ESK;</span>
+            case SNOVA37A_SSK:
+<span class="nc" id="L288">                return SnovaParameters.SNOVA_37_8_4_SSK;</span>
+            case SNOVA37A_ESK:
+<span class="nc" id="L290">                return SnovaParameters.SNOVA_37_8_4_ESK;</span>
+            case SNOVA37A_SHAKE_SSK:
+<span class="nc" id="L292">                return SnovaParameters.SNOVA_37_8_4_SHAKE_SSK;</span>
+            case SNOVA37A_SHAKE_ESK:
+<span class="nc" id="L294">                return SnovaParameters.SNOVA_37_8_4_SHAKE_ESK;</span>
+            case SNOVA37B_SSK:
+<span class="nc" id="L296">                return SnovaParameters.SNOVA_37_17_2_SSK;</span>
+            case SNOVA37B_ESK:
+<span class="nc" id="L298">                return SnovaParameters.SNOVA_37_17_2_ESK;</span>
+            case SNOVA37B_SHAKE_SSK:
+<span class="nc" id="L300">                return SnovaParameters.SNOVA_37_17_2_SHAKE_SSK;</span>
+            case SNOVA37B_SHAKE_ESK:
+<span class="nc" id="L302">                return SnovaParameters.SNOVA_37_17_2_SHAKE_ESK;</span>
+            case SNOVA49_SSK:
+<span class="nc" id="L304">                return SnovaParameters.SNOVA_49_11_3_SSK;</span>
+            case SNOVA49_ESK:
+<span class="nc" id="L306">                return SnovaParameters.SNOVA_49_11_3_ESK;</span>
+            case SNOVA49_SHAKE_SSK:
+<span class="nc" id="L308">                return SnovaParameters.SNOVA_49_11_3_SHAKE_SSK;</span>
+            case SNOVA49_SHAKE_ESK:
+<span class="nc" id="L310">                return SnovaParameters.SNOVA_49_11_3_SHAKE_ESK;</span>
+            case SNOVA56_SSK:
+<span class="nc" id="L312">                return SnovaParameters.SNOVA_56_25_2_SSK;</span>
+            case SNOVA56_ESK:
+<span class="nc" id="L314">                return SnovaParameters.SNOVA_56_25_2_ESK;</span>
+            case SNOVA56_SHAKE_SSK:
+<span class="nc" id="L316">                return SnovaParameters.SNOVA_56_25_2_SHAKE_SSK;</span>
+            case SNOVA56_SHAKE_ESK:
+<span class="nc" id="L318">                return SnovaParameters.SNOVA_56_25_2_SHAKE_ESK;</span>
+            case SNOVA60_SSK:
+<span class="nc" id="L320">                return SnovaParameters.SNOVA_60_10_4_SSK;</span>
+            case SNOVA60_ESK:
+<span class="nc" id="L322">                return SnovaParameters.SNOVA_60_10_4_ESK;</span>
+            case SNOVA60_SHAKE_SSK:
+<span class="nc" id="L324">                return SnovaParameters.SNOVA_60_10_4_SHAKE_SSK;</span>
+            case SNOVA60_SHAKE_ESK:
+<span class="nc" id="L326">                return SnovaParameters.SNOVA_60_10_4_SHAKE_ESK;</span>
+            case SNOVA66_SSK:
+<span class="nc" id="L328">                return SnovaParameters.SNOVA_66_15_3_SSK;</span>
+            case SNOVA66_ESK:
+<span class="nc" id="L330">                return SnovaParameters.SNOVA_66_15_3_ESK;</span>
+            case SNOVA66_SHAKE_SSK:
+<span class="nc" id="L332">                return SnovaParameters.SNOVA_66_15_3_SHAKE_SSK;</span>
+            case SNOVA66_SHAKE_ESK:
+<span class="nc" id="L334">                return SnovaParameters.SNOVA_66_15_3_SHAKE_ESK;</span>
+            case SNOVA75_SSK:
+<span class="nc" id="L336">                return SnovaParameters.SNOVA_75_33_2_SSK;</span>
+            case SNOVA75_ESK:
+<span class="nc" id="L338">                return SnovaParameters.SNOVA_75_33_2_ESK;</span>
+            case SNOVA75_SHAKE_SSK:
+<span class="nc" id="L340">                return SnovaParameters.SNOVA_75_33_2_SHAKE_SSK;</span>
+            case SNOVA75_SHAKE_ESK:
+<span class="nc" id="L342">                return SnovaParameters.SNOVA_75_33_2_SHAKE_ESK;</span>
+            default:
+<span class="nc" id="L344">                throw new IllegalArgumentException();</span>
+        }
+    }
+
+    /**
+     * Obtain Mayo ParameterSpec.
+     *
+     * @return the parameters.
+     */
+    public SnovaParameterSpec getParameterSpec() {
+<span class="pc bpc" id="L354" title="44 of 45 branches missed.">        switch (this) {</span>
+            case SNOVA24A_SSK:
+<span class="fc" id="L356">                return SnovaParameterSpec.SNOVA_24_5_4_SSK;</span>
+            case SNOVA24A_ESK:
+<span class="nc" id="L358">                return SnovaParameterSpec.SNOVA_24_5_4_ESK;</span>
+            case SNOVA24A_SHAKE_SSK:
+<span class="nc" id="L360">                return SnovaParameterSpec.SNOVA_24_5_4_SHAKE_SSK;</span>
+            case SNOVA24A_SHAKE_ESK:
+<span class="nc" id="L362">                return SnovaParameterSpec.SNOVA_24_5_4_SHAKE_ESK;</span>
+            case SNOVA24B_SSK:
+<span class="nc" id="L364">                return SnovaParameterSpec.SNOVA_24_5_5_SSK;</span>
+            case SNOVA24B_ESK:
+<span class="nc" id="L366">                return SnovaParameterSpec.SNOVA_24_5_5_ESK;</span>
+            case SNOVA24B_SHAKE_SSK:
+<span class="nc" id="L368">                return SnovaParameterSpec.SNOVA_24_5_5_SHAKE_SSK;</span>
+            case SNOVA24B_SHAKE_ESK:
+<span class="nc" id="L370">                return SnovaParameterSpec.SNOVA_24_5_5_SHAKE_ESK;</span>
+            case SNOVA25_SSK:
+<span class="nc" id="L372">                return SnovaParameterSpec.SNOVA_25_8_3_SSK;</span>
+            case SNOVA25_ESK:
+<span class="nc" id="L374">                return SnovaParameterSpec.SNOVA_25_8_3_ESK;</span>
+            case SNOVA25_SHAKE_SSK:
+<span class="nc" id="L376">                return SnovaParameterSpec.SNOVA_25_8_3_SHAKE_SSK;</span>
+            case SNOVA25_SHAKE_ESK:
+<span class="nc" id="L378">                return SnovaParameterSpec.SNOVA_25_8_3_SHAKE_ESK;</span>
+            case SNOVA29_SSK:
+<span class="nc" id="L380">                return SnovaParameterSpec.SNOVA_29_6_5_SSK;</span>
+            case SNOVA29_ESK:
+<span class="nc" id="L382">                return SnovaParameterSpec.SNOVA_29_6_5_ESK;</span>
+            case SNOVA29_SHAKE_SSK:
+<span class="nc" id="L384">                return SnovaParameterSpec.SNOVA_29_6_5_SHAKE_SSK;</span>
+            case SNOVA29_SHAKE_ESK:
+<span class="nc" id="L386">                return SnovaParameterSpec.SNOVA_29_6_5_SHAKE_ESK;</span>
+            case SNOVA37A_SSK:
+<span class="nc" id="L388">                return SnovaParameterSpec.SNOVA_37_8_4_SSK;</span>
+            case SNOVA37A_ESK:
+<span class="nc" id="L390">                return SnovaParameterSpec.SNOVA_37_8_4_ESK;</span>
+            case SNOVA37A_SHAKE_SSK:
+<span class="nc" id="L392">                return SnovaParameterSpec.SNOVA_37_8_4_SHAKE_SSK;</span>
+            case SNOVA37A_SHAKE_ESK:
+<span class="nc" id="L394">                return SnovaParameterSpec.SNOVA_37_8_4_SHAKE_ESK;</span>
+            case SNOVA37B_SSK:
+<span class="nc" id="L396">                return SnovaParameterSpec.SNOVA_37_17_2_SSK;</span>
+            case SNOVA37B_ESK:
+<span class="nc" id="L398">                return SnovaParameterSpec.SNOVA_37_17_2_ESK;</span>
+            case SNOVA37B_SHAKE_SSK:
+<span class="nc" id="L400">                return SnovaParameterSpec.SNOVA_37_17_2_SHAKE_SSK;</span>
+            case SNOVA37B_SHAKE_ESK:
+<span class="nc" id="L402">                return SnovaParameterSpec.SNOVA_37_17_2_SHAKE_ESK;</span>
+            case SNOVA49_SSK:
+<span class="nc" id="L404">                return SnovaParameterSpec.SNOVA_49_11_3_SSK;</span>
+            case SNOVA49_ESK:
+<span class="nc" id="L406">                return SnovaParameterSpec.SNOVA_49_11_3_ESK;</span>
+            case SNOVA49_SHAKE_SSK:
+<span class="nc" id="L408">                return SnovaParameterSpec.SNOVA_49_11_3_SHAKE_SSK;</span>
+            case SNOVA49_SHAKE_ESK:
+<span class="nc" id="L410">                return SnovaParameterSpec.SNOVA_49_11_3_SHAKE_ESK;</span>
+            case SNOVA56_SSK:
+<span class="nc" id="L412">                return SnovaParameterSpec.SNOVA_56_25_2_SSK;</span>
+            case SNOVA56_ESK:
+<span class="nc" id="L414">                return SnovaParameterSpec.SNOVA_56_25_2_ESK;</span>
+            case SNOVA56_SHAKE_SSK:
+<span class="nc" id="L416">                return SnovaParameterSpec.SNOVA_56_25_2_SHAKE_SSK;</span>
+            case SNOVA56_SHAKE_ESK:
+<span class="nc" id="L418">                return SnovaParameterSpec.SNOVA_56_25_2_SHAKE_ESK;</span>
+            case SNOVA60_SSK:
+<span class="nc" id="L420">                return SnovaParameterSpec.SNOVA_60_10_4_SSK;</span>
+            case SNOVA60_ESK:
+<span class="nc" id="L422">                return SnovaParameterSpec.SNOVA_60_10_4_ESK;</span>
+            case SNOVA60_SHAKE_SSK:
+<span class="nc" id="L424">                return SnovaParameterSpec.SNOVA_60_10_4_SHAKE_SSK;</span>
+            case SNOVA60_SHAKE_ESK:
+<span class="nc" id="L426">                return SnovaParameterSpec.SNOVA_60_10_4_SHAKE_ESK;</span>
+            case SNOVA66_SSK:
+<span class="nc" id="L428">                return SnovaParameterSpec.SNOVA_66_15_3_SSK;</span>
+            case SNOVA66_ESK:
+<span class="nc" id="L430">                return SnovaParameterSpec.SNOVA_66_15_3_ESK;</span>
+            case SNOVA66_SHAKE_SSK:
+<span class="nc" id="L432">                return SnovaParameterSpec.SNOVA_66_15_3_SHAKE_SSK;</span>
+            case SNOVA66_SHAKE_ESK:
+<span class="nc" id="L434">                return SnovaParameterSpec.SNOVA_66_15_3_SHAKE_ESK;</span>
+            case SNOVA75_SSK:
+<span class="nc" id="L436">                return SnovaParameterSpec.SNOVA_75_33_2_SSK;</span>
+            case SNOVA75_ESK:
+<span class="nc" id="L438">                return SnovaParameterSpec.SNOVA_75_33_2_ESK;</span>
+            case SNOVA75_SHAKE_SSK:
+<span class="nc" id="L440">                return SnovaParameterSpec.SNOVA_75_33_2_SHAKE_SSK;</span>
+            case SNOVA75_SHAKE_ESK:
+<span class="nc" id="L442">                return SnovaParameterSpec.SNOVA_75_33_2_SHAKE_ESK;</span>
+            default:
+<span class="nc" id="L444">                throw new IllegalArgumentException();</span>
+        }
+    }
+
+    /**
+     * Obtain MAYO algorithm Identifier.
+     *
+     * @return the identifier.
+     */
+    public ASN1ObjectIdentifier getIdentifier() {
+<span class="pc bpc" id="L454" title="1 of 45 branches missed.">        switch (this) {</span>
+            case SNOVA24A_SSK:
+<span class="fc" id="L456">                return BCObjectIdentifiers.snova_24_5_4_ssk;</span>
+            case SNOVA24A_ESK:
+<span class="fc" id="L458">                return BCObjectIdentifiers.snova_24_5_4_esk;</span>
+            case SNOVA24A_SHAKE_SSK:
+<span class="fc" id="L460">                return BCObjectIdentifiers.snova_24_5_4_shake_ssk;</span>
+            case SNOVA24A_SHAKE_ESK:
+<span class="fc" id="L462">                return BCObjectIdentifiers.snova_24_5_4_shake_esk;</span>
+            case SNOVA24B_SSK:
+<span class="fc" id="L464">                return BCObjectIdentifiers.snova_24_5_5_ssk;</span>
+            case SNOVA24B_ESK:
+<span class="fc" id="L466">                return BCObjectIdentifiers.snova_24_5_5_esk;</span>
+            case SNOVA24B_SHAKE_SSK:
+<span class="fc" id="L468">                return BCObjectIdentifiers.snova_24_5_5_shake_ssk;</span>
+            case SNOVA24B_SHAKE_ESK:
+<span class="fc" id="L470">                return BCObjectIdentifiers.snova_24_5_5_shake_esk;</span>
+            case SNOVA25_SSK:
+<span class="fc" id="L472">                return BCObjectIdentifiers.snova_25_8_3_ssk;</span>
+            case SNOVA25_ESK:
+<span class="fc" id="L474">                return BCObjectIdentifiers.snova_25_8_3_esk;</span>
+            case SNOVA25_SHAKE_SSK:
+<span class="fc" id="L476">                return BCObjectIdentifiers.snova_25_8_3_shake_ssk;</span>
+            case SNOVA25_SHAKE_ESK:
+<span class="fc" id="L478">                return BCObjectIdentifiers.snova_25_8_3_shake_esk;</span>
+            case SNOVA29_SSK:
+<span class="fc" id="L480">                return BCObjectIdentifiers.snova_29_6_5_ssk;</span>
+            case SNOVA29_ESK:
+<span class="fc" id="L482">                return BCObjectIdentifiers.snova_29_6_5_esk;</span>
+            case SNOVA29_SHAKE_SSK:
+<span class="fc" id="L484">                return BCObjectIdentifiers.snova_29_6_5_shake_ssk;</span>
+            case SNOVA29_SHAKE_ESK:
+<span class="fc" id="L486">                return BCObjectIdentifiers.snova_29_6_5_shake_esk;</span>
+            case SNOVA37A_SSK:
+<span class="fc" id="L488">                return BCObjectIdentifiers.snova_37_8_4_ssk;</span>
+            case SNOVA37A_ESK:
+<span class="fc" id="L490">                return BCObjectIdentifiers.snova_37_8_4_esk;</span>
+            case SNOVA37A_SHAKE_SSK:
+<span class="fc" id="L492">                return BCObjectIdentifiers.snova_37_8_4_shake_ssk;</span>
+            case SNOVA37A_SHAKE_ESK:
+<span class="fc" id="L494">                return BCObjectIdentifiers.snova_37_8_4_shake_esk;</span>
+            case SNOVA37B_SSK:
+<span class="fc" id="L496">                return BCObjectIdentifiers.snova_37_17_2_ssk;</span>
+            case SNOVA37B_ESK:
+<span class="fc" id="L498">                return BCObjectIdentifiers.snova_37_17_2_esk;</span>
+            case SNOVA37B_SHAKE_SSK:
+<span class="fc" id="L500">                return BCObjectIdentifiers.snova_37_17_2_shake_ssk;</span>
+            case SNOVA37B_SHAKE_ESK:
+<span class="fc" id="L502">                return BCObjectIdentifiers.snova_37_17_2_shake_esk;</span>
+            case SNOVA49_SSK:
+<span class="fc" id="L504">                return BCObjectIdentifiers.snova_49_11_3_ssk;</span>
+            case SNOVA49_ESK:
+<span class="fc" id="L506">                return BCObjectIdentifiers.snova_49_11_3_esk;</span>
+            case SNOVA49_SHAKE_SSK:
+<span class="fc" id="L508">                return BCObjectIdentifiers.snova_49_11_3_shake_ssk;</span>
+            case SNOVA49_SHAKE_ESK:
+<span class="fc" id="L510">                return BCObjectIdentifiers.snova_49_11_3_shake_esk;</span>
+            case SNOVA56_SSK:
+<span class="fc" id="L512">                return BCObjectIdentifiers.snova_56_25_2_ssk;</span>
+            case SNOVA56_ESK:
+<span class="fc" id="L514">                return BCObjectIdentifiers.snova_56_25_2_esk;</span>
+            case SNOVA56_SHAKE_SSK:
+<span class="fc" id="L516">                return BCObjectIdentifiers.snova_56_25_2_shake_ssk;</span>
+            case SNOVA56_SHAKE_ESK:
+<span class="fc" id="L518">                return BCObjectIdentifiers.snova_56_25_2_shake_esk;</span>
+            case SNOVA60_SSK:
+<span class="fc" id="L520">                return BCObjectIdentifiers.snova_60_10_4_ssk;</span>
+            case SNOVA60_ESK:
+<span class="fc" id="L522">                return BCObjectIdentifiers.snova_60_10_4_esk;</span>
+            case SNOVA60_SHAKE_SSK:
+<span class="fc" id="L524">                return BCObjectIdentifiers.snova_60_10_4_shake_ssk;</span>
+            case SNOVA60_SHAKE_ESK:
+<span class="fc" id="L526">                return BCObjectIdentifiers.snova_60_10_4_shake_esk;</span>
+            case SNOVA66_SSK:
+<span class="fc" id="L528">                return BCObjectIdentifiers.snova_66_15_3_ssk;</span>
+            case SNOVA66_ESK:
+<span class="fc" id="L530">                return BCObjectIdentifiers.snova_66_15_3_esk;</span>
+            case SNOVA66_SHAKE_SSK:
+<span class="fc" id="L532">                return BCObjectIdentifiers.snova_66_15_3_shake_ssk;</span>
+            case SNOVA66_SHAKE_ESK:
+<span class="fc" id="L534">                return BCObjectIdentifiers.snova_66_15_3_shake_esk;</span>
+            case SNOVA75_SSK:
+<span class="fc" id="L536">                return BCObjectIdentifiers.snova_75_33_2_ssk;</span>
+            case SNOVA75_ESK:
+<span class="fc" id="L538">                return BCObjectIdentifiers.snova_75_33_2_esk;</span>
+            case SNOVA75_SHAKE_SSK:
+<span class="fc" id="L540">                return BCObjectIdentifiers.snova_75_33_2_shake_ssk;</span>
+            case SNOVA75_SHAKE_ESK:
+<span class="fc" id="L542">                return BCObjectIdentifiers.snova_75_33_2_shake_esk;</span>
+            default:
+<span class="nc" id="L544">                throw new IllegalArgumentException();</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

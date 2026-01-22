@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ThemisAnalysisTry.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Themis Core Project Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.themis.lethe.analysis</a> &gt; <span class="el_source">ThemisAnalysisTry.java</span></div><h1>ThemisAnalysisTry.java</h1><pre class="source lang-java linenums">/*
+ * Themis: Java Project Framework
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.themis.lethe.analysis;
+
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.themis.lethe.analysis.ThemisAnalysisContainer.ThemisAnalysisAdoptable;
+import io.github.tonywasher.joceanus.themis.lethe.analysis.ThemisAnalysisIf.ThemisIteratorChain;
+import io.github.tonywasher.joceanus.themis.lethe.analysis.ThemisAnalysisStatement.ThemisAnalysisStatementHolder;
+
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Deque;
+import java.util.Iterator;
+import java.util.List;
+
+/**
+ * Try construct.
+ */
+public class ThemisAnalysisTry
+        implements ThemisAnalysisContainer, ThemisAnalysisAdoptable, ThemisAnalysisStatementHolder {
+    /**
+     * The contents.
+     */
+    private final Deque&lt;ThemisAnalysisElement&gt; theContents;
+
+    /**
+     * The catch clause(s).
+     */
+    private final ThemisAnalysisCatch theCatch;
+
+    /**
+     * The finally clause.
+     */
+    private final ThemisAnalysisFinally theFinally;
+
+    /**
+     * The headers.
+     */
+    private final ThemisAnalysisStack theHeaders;
+
+    /**
+     * The fields.
+     */
+    private final List&lt;ThemisAnalysisField&gt; theFields;
+
+    /**
+     * The number of lines.
+     */
+    private final int theNumLines;
+
+    /**
+     * The dataMap.
+     */
+    private final ThemisAnalysisDataMap theDataMap;
+
+    /**
+     * The parent.
+     */
+    private ThemisAnalysisContainer theParent;
+
+    /**
+     * Constructor.
+     *
+     * @param pParser the parser
+     * @param pLine   the initial try line
+     * @throws OceanusException on error
+     */
+    ThemisAnalysisTry(final ThemisAnalysisParser pParser,
+<span class="nc" id="L84">                      final ThemisAnalysisLine pLine) throws OceanusException {</span>
+        /* Access details from parser */
+<span class="nc" id="L86">        theParent = pParser.getParent();</span>
+<span class="nc" id="L87">        theDataMap = new ThemisAnalysisDataMap(theParent.getDataMap());</span>
+
+        /* Create the arrays */
+<span class="nc" id="L90">        final Deque&lt;ThemisAnalysisElement&gt; myHeaders = ThemisAnalysisBuilder.parseHeaders(pParser, pLine);</span>
+<span class="nc" id="L91">        final Deque&lt;ThemisAnalysisElement&gt; myLines = ThemisAnalysisBuilder.processBody(pParser);</span>
+<span class="nc" id="L92">        theNumLines = myHeaders.size() + 1;</span>
+
+        /* Look for catch clauses */
+<span class="nc" id="L95">        theCatch = (ThemisAnalysisCatch) pParser.processExtra(this, ThemisAnalysisKeyWord.CATCH);</span>
+
+        /* Look for finally clauses */
+<span class="nc" id="L98">        theFinally = (ThemisAnalysisFinally) pParser.processExtra(this, ThemisAnalysisKeyWord.FINALLY);</span>
+
+        /* Create a parser */
+<span class="nc" id="L101">        theContents = new ArrayDeque&lt;&gt;();</span>
+<span class="nc" id="L102">        final ThemisAnalysisParser myParser = new ThemisAnalysisParser(myLines, theContents, this);</span>
+<span class="nc" id="L103">        myParser.processLines();</span>
+
+        /* Parse the headers */
+<span class="nc" id="L106">        theFields = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L107">        theHeaders = new ThemisAnalysisStack(myHeaders);</span>
+<span class="nc" id="L108">    }</span>
+
+    @Override
+    public Deque&lt;ThemisAnalysisElement&gt; getContents() {
+<span class="nc" id="L112">        return theContents;</span>
+    }
+
+    @Override
+    public void postProcessExtras() throws OceanusException {
+        /* Process the catch clause if required */
+<span class="nc bnc" id="L118" title="All 2 branches missed.">        if (theCatch != null) {</span>
+<span class="nc" id="L119">            theCatch.postProcessLines();</span>
+        }
+
+        /* Process the finally clause if required */
+<span class="nc bnc" id="L123" title="All 2 branches missed.">        if (theFinally != null) {</span>
+<span class="nc" id="L124">            theFinally.postProcessLines();</span>
+        }
+
+        /* If the headers are non empty */
+<span class="nc bnc" id="L128" title="All 2 branches missed.">        if (!theHeaders.isEmpty()) {</span>
+            /* Strip out parentheses and create scanner */
+<span class="nc" id="L130">            final ThemisAnalysisStack myResources = theHeaders.extractParentheses();</span>
+<span class="nc" id="L131">            final ThemisAnalysisScanner myScanner = new ThemisAnalysisScanner(myResources);</span>
+
+            /* Create field for each resource */
+<span class="nc bnc" id="L134" title="All 2 branches missed.">            while (myResources.hasLines()) {</span>
+<span class="nc" id="L135">                final Deque&lt;ThemisAnalysisElement&gt; myResource = myScanner.scanForSeparator(ThemisAnalysisChar.SEMICOLON);</span>
+<span class="nc" id="L136">                theFields.add(new ThemisAnalysisField(getDataMap(), new ThemisAnalysisStack(myResource)));</span>
+<span class="nc" id="L137">            }</span>
+        }
+<span class="nc" id="L139">    }</span>
+
+    @Override
+    public ThemisAnalysisContainer getParent() {
+<span class="nc" id="L143">        return theParent;</span>
+    }
+
+    @Override
+    public void setParent(final ThemisAnalysisContainer pParent) {
+<span class="nc" id="L148">        theParent = pParent;</span>
+<span class="nc" id="L149">        theDataMap.setParent(pParent.getDataMap());</span>
+<span class="nc bnc" id="L150" title="All 2 branches missed.">        if (theCatch != null) {</span>
+<span class="nc" id="L151">            theCatch.setParent(pParent);</span>
+        }
+<span class="nc bnc" id="L153" title="All 2 branches missed.">        if (theFinally != null) {</span>
+<span class="nc" id="L154">            theFinally.setParent(pParent);</span>
+        }
+<span class="nc" id="L156">    }</span>
+
+    @Override
+    public ThemisAnalysisDataMap getDataMap() {
+<span class="nc" id="L160">        return theDataMap;</span>
+    }
+
+    /**
+     * Obtain the additional catch clause (if any).
+     *
+     * @return the catch clause
+     */
+    public ThemisAnalysisCatch getCatch() {
+<span class="nc" id="L169">        return theCatch;</span>
+    }
+
+    /**
+     * Obtain the additional finally clause (if any).
+     *
+     * @return the finally clause
+     */
+    public ThemisAnalysisFinally getFinally() {
+<span class="nc" id="L178">        return theFinally;</span>
+    }
+
+    @Override
+    public int getNumLines() {
+<span class="nc" id="L183">        return theNumLines;</span>
+    }
+
+    @Override
+    public Iterator&lt;ThemisAnalysisStatement&gt; statementIterator() {
+<span class="nc" id="L188">        return ThemisAnalysisField.statementIteratorForFields(theFields);</span>
+    }
+
+    @Override
+    public Iterator&lt;ThemisAnalysisContainer&gt; containerIterator() {
+<span class="nc bnc" id="L193" title="All 2 branches missed.">        final Iterator&lt;ThemisAnalysisContainer&gt; myCatch = theCatch == null</span>
+<span class="nc" id="L194">                ? Collections.emptyIterator()</span>
+<span class="nc" id="L195">                : Collections.singleton((ThemisAnalysisContainer) theCatch).iterator();</span>
+<span class="nc bnc" id="L196" title="All 2 branches missed.">        final Iterator&lt;ThemisAnalysisContainer&gt; myFinally = theFinally == null</span>
+<span class="nc" id="L197">                ? Collections.emptyIterator()</span>
+<span class="nc" id="L198">                : Collections.singleton((ThemisAnalysisContainer) theFinally).iterator();</span>
+<span class="nc" id="L199">        return new ThemisIteratorChain&lt;&gt;(myCatch, myFinally);</span>
+    }
+
+    @Override
+    public String toString() {
+        /* Start parameters */
+<span class="nc" id="L205">        final StringBuilder myBuilder = new StringBuilder();</span>
+
+        /* Build parameters */
+<span class="nc" id="L208">        boolean bFirst = true;</span>
+<span class="nc bnc" id="L209" title="All 2 branches missed.">        for (ThemisAnalysisField myField : theFields) {</span>
+            /* Handle separators */
+<span class="nc bnc" id="L211" title="All 2 branches missed.">            if (!bFirst) {</span>
+<span class="nc" id="L212">                myBuilder.append(ThemisAnalysisChar.LF);</span>
+            } else {
+<span class="nc" id="L214">                bFirst = false;</span>
+            }
+
+            /* Add parameter */
+<span class="nc" id="L218">            myBuilder.append(myField);</span>
+<span class="nc" id="L219">        }</span>
+
+        /* Return the string */
+<span class="nc" id="L222">        return myBuilder.toString();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

@@ -1,0 +1,780 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseArchiveAccount.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.moneywise.archive</a> &gt; <span class="el_source">MoneyWiseArchiveAccount.java</span></div><h1>MoneyWiseArchiveAccount.java</h1><pre class="source lang-java linenums">/*
+ * MoneyWise: Finance Application
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.moneywise.archive;
+
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.profile.OceanusProfile;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseCash;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseCash.MoneyWiseCashList;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseCashInfo.MoneyWiseCashInfoList;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseCategoryBase;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDataSet;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDeposit;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDeposit.MoneyWiseDepositList;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDepositInfo.MoneyWiseDepositInfoList;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseLoan;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseLoan.MoneyWiseLoanList;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseLoanInfo.MoneyWiseLoanInfoList;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePayee;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePayee.MoneyWisePayeeList;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePayeeInfo.MoneyWisePayeeInfoList;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePortfolio;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePortfolio.MoneyWisePortfolioList;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePortfolioInfo.MoneyWisePortfolioInfoList;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurity;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurity.MoneyWiseSecurityList;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurityInfo.MoneyWiseSecurityInfoList;
+import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseAccountInfoClass;
+import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseCurrency;
+import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWisePayeeClass;
+import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
+import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseIOException;
+import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseLogicException;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataResource;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValues;
+import io.github.tonywasher.joceanus.prometheus.service.sheet.PrometheusSheetCell;
+import io.github.tonywasher.joceanus.prometheus.service.sheet.PrometheusSheetRow;
+import io.github.tonywasher.joceanus.prometheus.service.sheet.PrometheusSheetView;
+import io.github.tonywasher.joceanus.prometheus.service.sheet.PrometheusSheetWorkBook;
+import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadCancelException;
+import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadStatusReport;
+
+/**
+ * ArchiveLoader extension for Accounts.
+ *
+ * @author Tony Washer
+ */
+public final class MoneyWiseArchiveAccount {
+    /**
+     * Sheet Area name.
+     */
+    private static final String SHEET_AREA = &quot;AccountInfo&quot;;
+
+    /**
+     * Report processor.
+     */
+    private final TethysUIThreadStatusReport theReport;
+
+    /**
+     * Workbook.
+     */
+    private final PrometheusSheetWorkBook theWorkBook;
+
+    /**
+     * DataSet.
+     */
+    private final MoneyWiseDataSet theData;
+
+    /**
+     * Cache.
+     */
+    private final MoneyWiseArchiveCache theCache;
+
+    /**
+     * Constructor.
+     *
+     * @param pReport   the report
+     * @param pWorkBook the workbook
+     * @param pData     the data set to load into
+     * @param pCache    the cache
+     */
+    MoneyWiseArchiveAccount(final TethysUIThreadStatusReport pReport,
+                            final PrometheusSheetWorkBook pWorkBook,
+                            final MoneyWiseDataSet pData,
+<span class="nc" id="L101">                            final MoneyWiseArchiveCache pCache) {</span>
+<span class="nc" id="L102">        theReport = pReport;</span>
+<span class="nc" id="L103">        theWorkBook = pWorkBook;</span>
+<span class="nc" id="L104">        theData = pData;</span>
+<span class="nc" id="L105">        theCache = pCache;</span>
+<span class="nc" id="L106">    }</span>
+
+    /**
+     * Load the AccountCategories from an archive.
+     *
+     * @param pStage the stage
+     * @throws OceanusException on error
+     */
+    void loadArchive(final OceanusProfile pStage) throws OceanusException {
+        /* Protect against exceptions */
+        try {
+            /* Find the range of cells */
+<span class="nc" id="L118">            pStage.startTask(&quot;Accounts&quot;);</span>
+<span class="nc" id="L119">            final PrometheusSheetView myView = theWorkBook.getRangeView(SHEET_AREA);</span>
+
+            /* Declare the new stage */
+<span class="nc" id="L122">            theReport.setNewStage(SHEET_AREA);</span>
+
+            /* Count the number of accounts */
+<span class="nc" id="L125">            final int myTotal = myView.getRowCount();</span>
+
+            /* Declare the number of steps (*2) */
+<span class="nc" id="L128">            theReport.setNumSteps(myTotal &lt;&lt; 1);</span>
+
+            /* Loop through the rows of the table */
+<span class="nc bnc" id="L131" title="All 2 branches missed.">            for (int i = 0; i &lt; myTotal; i++) {</span>
+                /* Access the row by reference */
+<span class="nc" id="L133">                final PrometheusSheetRow myRow = myView.getRowByIndex(i);</span>
+
+                /* Process payee account */
+<span class="nc" id="L136">                processPayee(myView, myRow);</span>
+
+                /* Report the progress */
+<span class="nc" id="L139">                theReport.setNextStep();</span>
+            }
+
+            /* Resolve Payee lists */
+<span class="nc" id="L143">            resolvePayeeLists();</span>
+
+            /* Loop through the rows of the table */
+<span class="nc bnc" id="L146" title="All 2 branches missed.">            for (int i = 0; i &lt; myTotal; i++) {</span>
+                /* Access the row by reference */
+<span class="nc" id="L148">                final PrometheusSheetRow myRow = myView.getRowByIndex(i);</span>
+
+                /* Process account */
+<span class="nc" id="L151">                processAccount(myView, myRow);</span>
+
+                /* Report the progress */
+<span class="nc" id="L154">                theReport.setNextStep();</span>
+            }
+
+            /* Resolve Account lists */
+<span class="nc" id="L158">            resolveAccountLists();</span>
+
+            /* Handle exceptions */
+<span class="nc" id="L161">        } catch (TethysUIThreadCancelException e) {</span>
+<span class="nc" id="L162">            throw e;</span>
+<span class="nc" id="L163">        } catch (OceanusException e) {</span>
+<span class="nc" id="L164">            throw new MoneyWiseIOException(&quot;Failed to Load &quot; + SHEET_AREA, e);</span>
+<span class="nc" id="L165">        }</span>
+<span class="nc" id="L166">    }</span>
+
+    /**
+     * Process account row.
+     *
+     * @param pView the spreadsheet view
+     * @param pRow  the spreadsheet row
+     * @throws OceanusException on error
+     */
+    private void processPayee(final PrometheusSheetView pView,
+                              final PrometheusSheetRow pRow) throws OceanusException {
+        /* Skip name and type column */
+<span class="nc" id="L178">        int iAdjust = -1;</span>
+<span class="nc" id="L179">        ++iAdjust;</span>
+<span class="nc" id="L180">        ++iAdjust;</span>
+
+        /* Access account class */
+<span class="nc" id="L183">        final String myClass = pView.getRowCellByIndex(pRow, ++iAdjust).getString();</span>
+
+        /* If this is a Payee */
+<span class="nc bnc" id="L186" title="All 2 branches missed.">        if (myClass.equals(MoneyWiseBasicDataType.PAYEE.toString())) {</span>
+            /* Process as a payee */
+<span class="nc" id="L188">            processStdPayee(pView, pRow);</span>
+
+            /* If this is a cash */
+<span class="nc bnc" id="L191" title="All 2 branches missed.">        } else if (myClass.equals(MoneyWiseBasicDataType.CASH.toString())) {</span>
+            /* Process as a cash payee */
+<span class="nc" id="L193">            processCashPayee(pView, pRow);</span>
+        }
+<span class="nc" id="L195">    }</span>
+
+    /**
+     * Process account row.
+     *
+     * @param pView the spreadsheet view
+     * @param pRow  the spreadsheet row
+     * @throws OceanusException on error
+     */
+    private void processAccount(final PrometheusSheetView pView,
+                                final PrometheusSheetRow pRow) throws OceanusException {
+        /* Skip name and type column */
+<span class="nc" id="L207">        int iAdjust = -1;</span>
+<span class="nc" id="L208">        ++iAdjust;</span>
+<span class="nc" id="L209">        ++iAdjust;</span>
+
+        /* Access account class */
+<span class="nc" id="L212">        final String myClass = pView.getRowCellByIndex(pRow, ++iAdjust).getString();</span>
+
+        /* If this is a deposit */
+<span class="nc bnc" id="L215" title="All 2 branches missed.">        if (myClass.equals(MoneyWiseBasicDataType.DEPOSIT.toString())) {</span>
+            /* Process as a deposit */
+<span class="nc" id="L217">            processDeposit(pView, pRow);</span>
+
+            /* If this is a cash */
+<span class="nc bnc" id="L220" title="All 2 branches missed.">        } else if (myClass.equals(MoneyWiseBasicDataType.CASH.toString())) {</span>
+            /* Process as a cash */
+<span class="nc" id="L222">            processCash(pView, pRow);</span>
+
+            /* If this is a loan */
+<span class="nc bnc" id="L225" title="All 2 branches missed.">        } else if (myClass.equals(MoneyWiseBasicDataType.LOAN.toString())) {</span>
+            /* Process as a loan */
+<span class="nc" id="L227">            processLoan(pView, pRow);</span>
+
+            /* If this is a security */
+<span class="nc bnc" id="L230" title="All 2 branches missed.">        } else if (myClass.equals(MoneyWiseBasicDataType.SECURITY.toString())) {</span>
+            /* Process as a security */
+<span class="nc" id="L232">            processSecurity(pView, pRow);</span>
+
+            /* If this is a portfolio */
+<span class="nc bnc" id="L235" title="All 2 branches missed.">        } else if (myClass.equals(MoneyWiseBasicDataType.PORTFOLIO.toString())) {</span>
+            /* Process as a portfolio */
+<span class="nc" id="L237">            processPortfolio(pView, pRow);</span>
+
+            /* else reject if not payee */
+<span class="nc bnc" id="L240" title="All 2 branches missed.">        } else if (!myClass.equals(MoneyWiseBasicDataType.PAYEE.toString())) {</span>
+<span class="nc" id="L241">            throw new MoneyWiseLogicException(&quot;Unexpected Account Class &quot; + myClass);</span>
+        }
+<span class="nc" id="L243">    }</span>
+
+    /**
+     * Resolve payee account lists.
+     *
+     * @throws OceanusException on error
+     */
+    private void resolvePayeeLists() throws OceanusException {
+        /* PostProcess the Payees */
+<span class="nc" id="L252">        final MoneyWisePayeeList myPayeeList = theData.getPayees();</span>
+<span class="nc" id="L253">        final MoneyWisePayeeInfoList myPayeeInfoList = theData.getPayeeInfo();</span>
+<span class="nc" id="L254">        myPayeeList.postProcessOnLoad();</span>
+<span class="nc" id="L255">        myPayeeInfoList.postProcessOnLoad();</span>
+<span class="nc" id="L256">    }</span>
+
+    /**
+     * Resolve non-payee account lists.
+     *
+     * @throws OceanusException on error
+     */
+    private void resolveAccountLists() throws OceanusException {
+        /* PostProcess the securities */
+<span class="nc" id="L265">        final MoneyWiseSecurityList mySecurityList = theData.getSecurities();</span>
+<span class="nc" id="L266">        final MoneyWiseSecurityInfoList mySecInfoList = theData.getSecurityInfo();</span>
+<span class="nc" id="L267">        mySecurityList.postProcessOnLoad();</span>
+<span class="nc" id="L268">        mySecInfoList.postProcessOnLoad();</span>
+
+        /* PostProcess the deposits */
+<span class="nc" id="L271">        final MoneyWiseDepositList myDepositList = theData.getDeposits();</span>
+<span class="nc" id="L272">        final MoneyWiseDepositInfoList myDepInfoList = theData.getDepositInfo();</span>
+<span class="nc" id="L273">        myDepositList.postProcessOnLoad();</span>
+<span class="nc" id="L274">        myDepInfoList.postProcessOnLoad();</span>
+
+        /* PostProcess the cash */
+<span class="nc" id="L277">        final MoneyWiseCashList myCashList = theData.getCash();</span>
+<span class="nc" id="L278">        final MoneyWiseCashInfoList myCashInfoList = theData.getCashInfo();</span>
+<span class="nc" id="L279">        myCashList.postProcessOnLoad();</span>
+<span class="nc" id="L280">        myCashInfoList.postProcessOnLoad();</span>
+
+        /* PostProcess the loans */
+<span class="nc" id="L283">        final MoneyWiseLoanList myLoanList = theData.getLoans();</span>
+<span class="nc" id="L284">        final MoneyWiseLoanInfoList myLoanInfoList = theData.getLoanInfo();</span>
+<span class="nc" id="L285">        myLoanList.postProcessOnLoad();</span>
+<span class="nc" id="L286">        myLoanInfoList.postProcessOnLoad();</span>
+
+        /* PostProcess the portfolios */
+<span class="nc" id="L289">        final MoneyWisePortfolioList myPortfolioList = theData.getPortfolios();</span>
+<span class="nc" id="L290">        final MoneyWisePortfolioInfoList myPortInfoList = theData.getPortfolioInfo();</span>
+<span class="nc" id="L291">        myPortfolioList.postProcessOnLoad();</span>
+<span class="nc" id="L292">        myPortInfoList.postProcessOnLoad();</span>
+
+        /* Resolve Security Holdings */
+<span class="nc" id="L295">        theCache.resolveSecurityHoldings(theData);</span>
+<span class="nc" id="L296">    }</span>
+
+    /**
+     * Process payee row from archive.
+     *
+     * @param pView the spreadsheet view
+     * @param pRow  the spreadsheet row
+     * @throws OceanusException on error
+     */
+    private void processStdPayee(final PrometheusSheetView pView,
+                                 final PrometheusSheetRow pRow) throws OceanusException {
+        /* Access name and type */
+<span class="nc" id="L308">        int iAdjust = -1;</span>
+<span class="nc" id="L309">        final String myName = pView.getRowCellByIndex(pRow, ++iAdjust).getString();</span>
+<span class="nc" id="L310">        final String myType = pView.getRowCellByIndex(pRow, ++iAdjust).getString();</span>
+
+        /* Skip class */
+<span class="nc" id="L313">        ++iAdjust;</span>
+
+        /* Handle closed which may be missing */
+<span class="nc" id="L316">        final PrometheusSheetCell myCell = pView.getRowCellByIndex(pRow, ++iAdjust);</span>
+<span class="nc" id="L317">        Boolean isClosed = Boolean.FALSE;</span>
+<span class="nc bnc" id="L318" title="All 2 branches missed.">        if (myCell != null) {</span>
+<span class="nc" id="L319">            isClosed = myCell.getBoolean();</span>
+        }
+
+        /* Build data values */
+<span class="nc" id="L323">        final PrometheusDataValues myValues = new PrometheusDataValues(MoneyWisePayee.OBJECT_NAME);</span>
+<span class="nc" id="L324">        myValues.addValue(PrometheusDataResource.DATAITEM_FIELD_NAME, myName);</span>
+<span class="nc" id="L325">        myValues.addValue(MoneyWiseBasicResource.CATEGORY_NAME, myType);</span>
+<span class="nc" id="L326">        myValues.addValue(MoneyWiseBasicResource.ASSET_CLOSED, isClosed);</span>
+
+        /* Add the value into the list */
+<span class="nc" id="L329">        final MoneyWisePayeeList myList = theData.getPayees();</span>
+<span class="nc" id="L330">        final MoneyWisePayee myPayee = myList.addValuesItem(myValues);</span>
+
+        /* Declare the payee */
+<span class="nc" id="L333">        theCache.declareAsset(myPayee);</span>
+<span class="nc" id="L334">    }</span>
+
+    /**
+     * Process cashPayee row from archive.
+     *
+     * @param pView the spreadsheet view
+     * @param pRow  the spreadsheet row
+     * @throws OceanusException on error
+     */
+    private void processCashPayee(final PrometheusSheetView pView,
+                                  final PrometheusSheetRow pRow) throws OceanusException {
+        /* Access name */
+<span class="nc" id="L346">        int iAdjust = -1;</span>
+<span class="nc" id="L347">        final String myName = pView.getRowCellByIndex(pRow, ++iAdjust).getString();</span>
+
+        /* Skip type, class */
+<span class="nc" id="L350">        ++iAdjust;</span>
+<span class="nc" id="L351">        ++iAdjust;</span>
+
+        /* Handle closed which may be missing */
+<span class="nc" id="L354">        PrometheusSheetCell myCell = pView.getRowCellByIndex(pRow, ++iAdjust);</span>
+<span class="nc" id="L355">        Boolean isClosed = Boolean.FALSE;</span>
+<span class="nc bnc" id="L356" title="All 2 branches missed.">        if (myCell != null) {</span>
+<span class="nc" id="L357">            isClosed = myCell.getBoolean();</span>
+        }
+
+        /*
+         * Skip parent, alias, portfolio, maturity, openingBalance, symbol, region and currency
+         * columns
+         */
+<span class="nc" id="L364">        ++iAdjust;</span>
+<span class="nc" id="L365">        ++iAdjust;</span>
+<span class="nc" id="L366">        ++iAdjust;</span>
+<span class="nc" id="L367">        ++iAdjust;</span>
+<span class="nc" id="L368">        ++iAdjust;</span>
+<span class="nc" id="L369">        ++iAdjust;</span>
+<span class="nc" id="L370">        ++iAdjust;</span>
+<span class="nc" id="L371">        ++iAdjust;</span>
+
+        /* Handle autoExpense which may be missing */
+<span class="nc" id="L374">        myCell = pView.getRowCellByIndex(pRow, ++iAdjust);</span>
+<span class="nc bnc" id="L375" title="All 2 branches missed.">        if (myCell != null) {</span>
+<span class="nc" id="L376">            final String myAutoPayee = myName + &quot;Expense&quot;;</span>
+
+            /* Build values */
+<span class="nc" id="L379">            final PrometheusDataValues myValues = new PrometheusDataValues(MoneyWisePayee.OBJECT_NAME);</span>
+<span class="nc" id="L380">            myValues.addValue(PrometheusDataResource.DATAITEM_FIELD_NAME, myAutoPayee);</span>
+<span class="nc" id="L381">            myValues.addValue(MoneyWiseBasicResource.CATEGORY_NAME, MoneyWisePayeeClass.PAYEE.toString());</span>
+<span class="nc" id="L382">            myValues.addValue(MoneyWiseBasicResource.ASSET_CLOSED, isClosed);</span>
+
+            /* Add the value into the list */
+<span class="nc" id="L385">            final MoneyWisePayeeList myPayeeList = theData.getPayees();</span>
+<span class="nc" id="L386">            myPayeeList.addValuesItem(myValues);</span>
+        }
+<span class="nc" id="L388">    }</span>
+
+    /**
+     * Process cash row from archive.
+     *
+     * @param pView the spreadsheet view
+     * @param pRow  the spreadsheet row
+     * @throws OceanusException on error
+     */
+    private void processCash(final PrometheusSheetView pView,
+                             final PrometheusSheetRow pRow) throws OceanusException {
+        /* Access name and type */
+<span class="nc" id="L400">        int iAdjust = -1;</span>
+<span class="nc" id="L401">        final String myName = pView.getRowCellByIndex(pRow, ++iAdjust).getString();</span>
+<span class="nc" id="L402">        final String myType = pView.getRowCellByIndex(pRow, ++iAdjust).getString();</span>
+
+        /* Skip class */
+<span class="nc" id="L405">        ++iAdjust;</span>
+
+        /* Handle closed which may be missing */
+<span class="nc" id="L408">        PrometheusSheetCell myCell = pView.getRowCellByIndex(pRow, ++iAdjust);</span>
+<span class="nc" id="L409">        Boolean isClosed = Boolean.FALSE;</span>
+<span class="nc bnc" id="L410" title="All 2 branches missed.">        if (myCell != null) {</span>
+<span class="nc" id="L411">            isClosed = myCell.getBoolean();</span>
+        }
+
+        /* Skip parent, alias, portfolio, and maturity columns */
+<span class="nc" id="L415">        ++iAdjust;</span>
+<span class="nc" id="L416">        ++iAdjust;</span>
+<span class="nc" id="L417">        ++iAdjust;</span>
+<span class="nc" id="L418">        ++iAdjust;</span>
+
+        /* Handle opening balance which may be missing */
+<span class="nc" id="L421">        myCell = pView.getRowCellByIndex(pRow, ++iAdjust);</span>
+<span class="nc" id="L422">        String myBalance = null;</span>
+<span class="nc bnc" id="L423" title="All 2 branches missed.">        if (myCell != null) {</span>
+<span class="nc" id="L424">            myBalance = myCell.getString();</span>
+        }
+
+        /* Skip symbol and region columns */
+<span class="nc" id="L428">        ++iAdjust;</span>
+<span class="nc" id="L429">        ++iAdjust;</span>
+
+        /* Handle currency which may be missing */
+<span class="nc" id="L432">        myCell = pView.getRowCellByIndex(pRow, ++iAdjust);</span>
+<span class="nc" id="L433">        MoneyWiseCurrency myCurrency = theData.getReportingCurrency();</span>
+<span class="nc bnc" id="L434" title="All 2 branches missed.">        if (myCell != null) {</span>
+<span class="nc" id="L435">            final String myCurrName = myCell.getString();</span>
+<span class="nc" id="L436">            myCurrency = theData.getAccountCurrencies().findItemByName(myCurrName);</span>
+        }
+
+        /* Handle autoExpense which may be missing */
+<span class="nc" id="L440">        myCell = pView.getRowCellByIndex(pRow, ++iAdjust);</span>
+<span class="nc" id="L441">        String myAutoExpense = null;</span>
+<span class="nc" id="L442">        String myAutoPayee = null;</span>
+<span class="nc bnc" id="L443" title="All 2 branches missed.">        if (myCell != null) {</span>
+<span class="nc" id="L444">            myAutoExpense = myCell.getString();</span>
+<span class="nc" id="L445">            myAutoPayee = myName + &quot;Expense&quot;;</span>
+        }
+
+        /* Build data values */
+<span class="nc" id="L449">        final PrometheusDataValues myValues = new PrometheusDataValues(MoneyWiseCash.OBJECT_NAME);</span>
+<span class="nc" id="L450">        myValues.addValue(PrometheusDataResource.DATAITEM_FIELD_NAME, myName);</span>
+<span class="nc" id="L451">        myValues.addValue(MoneyWiseBasicResource.CATEGORY_NAME, myType);</span>
+<span class="nc" id="L452">        myValues.addValue(MoneyWiseStaticDataType.CURRENCY, myCurrency);</span>
+<span class="nc" id="L453">        myValues.addValue(MoneyWiseBasicResource.ASSET_CLOSED, isClosed);</span>
+
+        /* Add the value into the list */
+<span class="nc" id="L456">        final MoneyWiseCashList myList = theData.getCash();</span>
+<span class="nc" id="L457">        final MoneyWiseCash myCash = myList.addValuesItem(myValues);</span>
+
+        /* Add information relating to the cash */
+<span class="nc" id="L460">        final MoneyWiseCashInfoList myInfoList = theData.getCashInfo();</span>
+<span class="nc" id="L461">        myInfoList.addInfoItem(null, myCash, MoneyWiseAccountInfoClass.AUTOEXPENSE, myAutoExpense);</span>
+<span class="nc" id="L462">        myInfoList.addInfoItem(null, myCash, MoneyWiseAccountInfoClass.AUTOPAYEE, myAutoPayee);</span>
+<span class="nc" id="L463">        myInfoList.addInfoItem(null, myCash, MoneyWiseAccountInfoClass.OPENINGBALANCE, myBalance);</span>
+
+        /* Declare the cash */
+<span class="nc" id="L466">        theCache.declareAsset(myCash);</span>
+<span class="nc" id="L467">    }</span>
+
+    /**
+     * Process deposit row from archive.
+     *
+     * @param pView the spreadsheet view
+     * @param pRow  the spreadsheet row
+     * @throws OceanusException on error
+     */
+    private void processDeposit(final PrometheusSheetView pView,
+                                final PrometheusSheetRow pRow) throws OceanusException {
+        /* Access name and type */
+<span class="nc" id="L479">        int iAdjust = -1;</span>
+<span class="nc" id="L480">        final String myName = pView.getRowCellByIndex(pRow, ++iAdjust).getString();</span>
+<span class="nc" id="L481">        final String myType = pView.getRowCellByIndex(pRow, ++iAdjust).getString();</span>
+
+        /* Skip class */
+<span class="nc" id="L484">        ++iAdjust;</span>
+
+        /* Handle closed which may be missing */
+<span class="nc" id="L487">        PrometheusSheetCell myCell = pView.getRowCellByIndex(pRow, ++iAdjust);</span>
+<span class="nc" id="L488">        Boolean isClosed = Boolean.FALSE;</span>
+<span class="nc bnc" id="L489" title="All 2 branches missed.">        if (myCell != null) {</span>
+<span class="nc" id="L490">            isClosed = myCell.getBoolean();</span>
+        }
+
+        /* Access Parent account */
+<span class="nc" id="L494">        final String myParent = pView.getRowCellByIndex(pRow, ++iAdjust).getString();</span>
+
+        /* Skip alias and portfolio columns */
+<span class="nc" id="L497">        ++iAdjust;</span>
+<span class="nc" id="L498">        ++iAdjust;</span>
+
+        /* Handle maturity which may be missing */
+<span class="nc" id="L501">        myCell = pView.getRowCellByIndex(pRow, ++iAdjust);</span>
+<span class="nc" id="L502">        OceanusDate myMaturity = null;</span>
+<span class="nc bnc" id="L503" title="All 2 branches missed.">        if (myCell != null) {</span>
+<span class="nc" id="L504">            myMaturity = myCell.getDate();</span>
+        }
+
+        /* Handle opening balance which may be missing */
+<span class="nc" id="L508">        myCell = pView.getRowCellByIndex(pRow, ++iAdjust);</span>
+<span class="nc" id="L509">        String myBalance = null;</span>
+<span class="nc bnc" id="L510" title="All 2 branches missed.">        if (myCell != null) {</span>
+<span class="nc" id="L511">            myBalance = myCell.getString();</span>
+        }
+
+        /* Skip symbol and region columns */
+<span class="nc" id="L515">        ++iAdjust;</span>
+<span class="nc" id="L516">        ++iAdjust;</span>
+
+        /* Handle currency which may be missing */
+<span class="nc" id="L519">        myCell = pView.getRowCellByIndex(pRow, ++iAdjust);</span>
+<span class="nc" id="L520">        MoneyWiseCurrency myCurrency = theData.getReportingCurrency();</span>
+<span class="nc bnc" id="L521" title="All 2 branches missed.">        if (myCell != null) {</span>
+<span class="nc" id="L522">            final String myCurrName = myCell.getString();</span>
+<span class="nc" id="L523">            myCurrency = theData.getAccountCurrencies().findItemByName(myCurrName);</span>
+        }
+
+        /* Build data values */
+<span class="nc" id="L527">        final PrometheusDataValues myValues = new PrometheusDataValues(MoneyWiseDeposit.OBJECT_NAME);</span>
+<span class="nc" id="L528">        myValues.addValue(PrometheusDataResource.DATAITEM_FIELD_NAME, myName);</span>
+<span class="nc" id="L529">        myValues.addValue(MoneyWiseBasicResource.CATEGORY_NAME, myType);</span>
+<span class="nc" id="L530">        myValues.addValue(MoneyWiseStaticDataType.CURRENCY, myCurrency);</span>
+<span class="nc" id="L531">        myValues.addValue(MoneyWiseBasicResource.ASSET_PARENT, myParent);</span>
+<span class="nc" id="L532">        myValues.addValue(MoneyWiseBasicResource.ASSET_CLOSED, isClosed);</span>
+
+        /* Add the value into the list */
+<span class="nc" id="L535">        final MoneyWiseDepositList myList = theData.getDeposits();</span>
+<span class="nc" id="L536">        final MoneyWiseDeposit myDeposit = myList.addValuesItem(myValues);</span>
+
+        /* Add information relating to the deposit */
+<span class="nc" id="L539">        final MoneyWiseDepositInfoList myInfoList = theData.getDepositInfo();</span>
+<span class="nc" id="L540">        myInfoList.addInfoItem(null, myDeposit, MoneyWiseAccountInfoClass.MATURITY, myMaturity);</span>
+<span class="nc" id="L541">        myInfoList.addInfoItem(null, myDeposit, MoneyWiseAccountInfoClass.OPENINGBALANCE, myBalance);</span>
+
+        /* Declare the deposit */
+<span class="nc" id="L544">        theCache.declareAsset(myDeposit);</span>
+<span class="nc" id="L545">    }</span>
+
+    /**
+     * Process loan row from archive.
+     *
+     * @param pView the spreadsheet view
+     * @param pRow  the spreadsheet row
+     * @throws OceanusException on error
+     */
+    private void processLoan(final PrometheusSheetView pView,
+                             final PrometheusSheetRow pRow) throws OceanusException {
+        /* Access name and type */
+<span class="nc" id="L557">        int iAdjust = -1;</span>
+<span class="nc" id="L558">        final String myName = pView.getRowCellByIndex(pRow, ++iAdjust).getString();</span>
+<span class="nc" id="L559">        final String myType = pView.getRowCellByIndex(pRow, ++iAdjust).getString();</span>
+
+        /* Skip class */
+<span class="nc" id="L562">        ++iAdjust;</span>
+
+        /* Handle closed which may be missing */
+<span class="nc" id="L565">        PrometheusSheetCell myCell = pView.getRowCellByIndex(pRow, ++iAdjust);</span>
+<span class="nc" id="L566">        Boolean isClosed = Boolean.FALSE;</span>
+<span class="nc bnc" id="L567" title="All 2 branches missed.">        if (myCell != null) {</span>
+<span class="nc" id="L568">            isClosed = myCell.getBoolean();</span>
+        }
+
+        /* Access Parent account */
+<span class="nc" id="L572">        final String myParent = pView.getRowCellByIndex(pRow, ++iAdjust).getString();</span>
+
+        /* Skip alias, portfolio, maturity, openingBalance, symbol and region columns */
+<span class="nc" id="L575">        ++iAdjust;</span>
+<span class="nc" id="L576">        ++iAdjust;</span>
+<span class="nc" id="L577">        ++iAdjust;</span>
+<span class="nc" id="L578">        ++iAdjust;</span>
+<span class="nc" id="L579">        ++iAdjust;</span>
+<span class="nc" id="L580">        ++iAdjust;</span>
+
+        /* Handle currency which may be missing */
+<span class="nc" id="L583">        myCell = pView.getRowCellByIndex(pRow, ++iAdjust);</span>
+<span class="nc" id="L584">        MoneyWiseCurrency myCurrency = theData.getReportingCurrency();</span>
+<span class="nc bnc" id="L585" title="All 2 branches missed.">        if (myCell != null) {</span>
+<span class="nc" id="L586">            final String myCurrName = myCell.getString();</span>
+<span class="nc" id="L587">            myCurrency = theData.getAccountCurrencies().findItemByName(myCurrName);</span>
+        }
+
+        /* Build data values */
+<span class="nc" id="L591">        final PrometheusDataValues myValues = new PrometheusDataValues(MoneyWiseLoan.OBJECT_NAME);</span>
+<span class="nc" id="L592">        myValues.addValue(PrometheusDataResource.DATAITEM_FIELD_NAME, myName);</span>
+<span class="nc" id="L593">        myValues.addValue(MoneyWiseBasicResource.CATEGORY_NAME, myType);</span>
+<span class="nc" id="L594">        myValues.addValue(MoneyWiseStaticDataType.CURRENCY, myCurrency);</span>
+<span class="nc" id="L595">        myValues.addValue(MoneyWiseBasicResource.ASSET_PARENT, myParent);</span>
+<span class="nc" id="L596">        myValues.addValue(MoneyWiseBasicResource.ASSET_CLOSED, isClosed);</span>
+
+        /* Add the value into the list */
+<span class="nc" id="L599">        final MoneyWiseLoanList myList = theData.getLoans();</span>
+<span class="nc" id="L600">        final MoneyWiseLoan myLoan = myList.addValuesItem(myValues);</span>
+
+        /* Declare the loan */
+<span class="nc" id="L603">        theCache.declareAsset(myLoan);</span>
+<span class="nc" id="L604">    }</span>
+
+    /**
+     * Process portfolio row from archive.
+     *
+     * @param pView the spreadsheet view
+     * @param pRow  the spreadsheet row
+     * @throws OceanusException on error
+     */
+    private void processPortfolio(final PrometheusSheetView pView,
+                                  final PrometheusSheetRow pRow) throws OceanusException {
+        /* Access name */
+<span class="nc" id="L616">        int iAdjust = -1;</span>
+<span class="nc" id="L617">        final String myName = pView.getRowCellByIndex(pRow, ++iAdjust).getString();</span>
+
+        /* Access portfolio type */
+<span class="nc" id="L620">        final String myType = pView.getRowCellByIndex(pRow, ++iAdjust).getString();</span>
+
+        /* Look for separator in category */
+<span class="nc" id="L623">        final int iIndex = myType.indexOf(MoneyWiseCategoryBase.STR_SEP);</span>
+<span class="nc bnc" id="L624" title="All 2 branches missed.">        if (iIndex == -1) {</span>
+<span class="nc" id="L625">            throw new MoneyWiseLogicException(&quot;Unexpected Portfolio Class &quot; + myType);</span>
+        }
+
+        /* Access subCategory as portfolio type */
+<span class="nc" id="L629">        final String myPortType = myType.substring(iIndex + 1);</span>
+
+        /* Skip class */
+<span class="nc" id="L632">        ++iAdjust;</span>
+
+        /* Handle closed which may be missing */
+<span class="nc" id="L635">        PrometheusSheetCell myCell = pView.getRowCellByIndex(pRow, ++iAdjust);</span>
+<span class="nc" id="L636">        Boolean isClosed = Boolean.FALSE;</span>
+<span class="nc bnc" id="L637" title="All 2 branches missed.">        if (myCell != null) {</span>
+<span class="nc" id="L638">            isClosed = myCell.getBoolean();</span>
+        }
+
+        /* Access Parent account */
+<span class="nc" id="L642">        final String myParent = pView.getRowCellByIndex(pRow, ++iAdjust).getString();</span>
+
+        /* Skip alias, portfolio, maturity, openingBalance, symbol and region columns */
+<span class="nc" id="L645">        ++iAdjust;</span>
+<span class="nc" id="L646">        ++iAdjust;</span>
+<span class="nc" id="L647">        ++iAdjust;</span>
+<span class="nc" id="L648">        ++iAdjust;</span>
+<span class="nc" id="L649">        ++iAdjust;</span>
+<span class="nc" id="L650">        ++iAdjust;</span>
+
+        /* Handle currency which may be missing */
+<span class="nc" id="L653">        myCell = pView.getRowCellByIndex(pRow, ++iAdjust);</span>
+<span class="nc" id="L654">        MoneyWiseCurrency myCurrency = theData.getReportingCurrency();</span>
+<span class="nc bnc" id="L655" title="All 2 branches missed.">        if (myCell != null) {</span>
+<span class="nc" id="L656">            final String myCurrName = myCell.getString();</span>
+<span class="nc" id="L657">            myCurrency = theData.getAccountCurrencies().findItemByName(myCurrName);</span>
+        }
+
+        /* Build data values */
+<span class="nc" id="L661">        final PrometheusDataValues myValues = new PrometheusDataValues(MoneyWisePortfolio.OBJECT_NAME);</span>
+<span class="nc" id="L662">        myValues.addValue(PrometheusDataResource.DATAITEM_FIELD_NAME, myName);</span>
+<span class="nc" id="L663">        myValues.addValue(MoneyWiseBasicResource.CATEGORY_NAME, myPortType);</span>
+<span class="nc" id="L664">        myValues.addValue(MoneyWiseBasicResource.ASSET_PARENT, myParent);</span>
+<span class="nc" id="L665">        myValues.addValue(MoneyWiseStaticDataType.CURRENCY, myCurrency);</span>
+<span class="nc" id="L666">        myValues.addValue(MoneyWiseBasicResource.ASSET_CLOSED, isClosed);</span>
+
+        /* Add the value into the list */
+<span class="nc" id="L669">        final MoneyWisePortfolioList myList = theData.getPortfolios();</span>
+<span class="nc" id="L670">        final MoneyWisePortfolio myPortfolio = myList.addValuesItem(myValues);</span>
+
+        /* Declare the portfolio */
+<span class="nc" id="L673">        theCache.declareAsset(myPortfolio);</span>
+<span class="nc" id="L674">    }</span>
+
+    /**
+     * Process security row from archive.
+     *
+     * @param pView the spreadsheet view
+     * @param pRow  the spreadsheet row
+     * @throws OceanusException on error
+     */
+    private void processSecurity(final PrometheusSheetView pView,
+                                 final PrometheusSheetRow pRow) throws OceanusException {
+        /* Access name and type */
+<span class="nc" id="L686">        int iAdjust = -1;</span>
+<span class="nc" id="L687">        final String myName = pView.getRowCellByIndex(pRow, ++iAdjust).getString();</span>
+<span class="nc" id="L688">        final String myType = pView.getRowCellByIndex(pRow, ++iAdjust).getString();</span>
+
+        /* Look for separator in category */
+<span class="nc" id="L691">        final int iIndex = myType.indexOf(MoneyWiseCategoryBase.STR_SEP);</span>
+<span class="nc bnc" id="L692" title="All 2 branches missed.">        if (iIndex == -1) {</span>
+<span class="nc" id="L693">            throw new MoneyWiseLogicException(&quot;Unexpected Security Class &quot; + myType);</span>
+        }
+
+        /* Access subCategory as security type */
+<span class="nc" id="L697">        final String mySecType = myType.substring(iIndex + 1);</span>
+
+        /* Skip class */
+<span class="nc" id="L700">        ++iAdjust;</span>
+
+        /* Handle closed which may be missing */
+<span class="nc" id="L703">        PrometheusSheetCell myCell = pView.getRowCellByIndex(pRow, ++iAdjust);</span>
+<span class="nc" id="L704">        Boolean isClosed = Boolean.FALSE;</span>
+<span class="nc bnc" id="L705" title="All 2 branches missed.">        if (myCell != null) {</span>
+<span class="nc" id="L706">            isClosed = myCell.getBoolean();</span>
+        }
+
+        /* Access the list */
+<span class="nc" id="L710">        final MoneyWiseSecurityList myList = theData.getSecurities();</span>
+
+        /* Access Parent account */
+<span class="nc" id="L713">        final String myParent = pView.getRowCellByIndex(pRow, ++iAdjust).getString();</span>
+
+        /* Access the alias account */
+<span class="nc" id="L716">        myCell = pView.getRowCellByIndex(pRow, ++iAdjust);</span>
+<span class="nc" id="L717">        String myAlias = null;</span>
+<span class="nc bnc" id="L718" title="All 2 branches missed.">        if (myCell != null) {</span>
+<span class="nc" id="L719">            myAlias = myCell.getString();</span>
+        }
+
+        /* Access Portfolio */
+<span class="nc" id="L723">        final String myPortfolio = pView.getRowCellByIndex(pRow, ++iAdjust).getString();</span>
+
+        /* If we have an alias */
+<span class="nc bnc" id="L726" title="All 2 branches missed.">        if (myAlias != null) {</span>
+            /* Declare the security alias */
+<span class="nc" id="L728">            theCache.declareAliasHolding(myName, myAlias, myPortfolio);</span>
+
+            /* return */
+<span class="nc" id="L731">            return;</span>
+        }
+
+        /* Skip maturity and opening columns */
+<span class="nc" id="L735">        ++iAdjust;</span>
+<span class="nc" id="L736">        ++iAdjust;</span>
+
+        /* Access Symbol which may be missing */
+<span class="nc" id="L739">        myCell = pView.getRowCellByIndex(pRow, ++iAdjust);</span>
+<span class="nc" id="L740">        String mySymbol = null;</span>
+<span class="nc bnc" id="L741" title="All 2 branches missed.">        if (myCell != null) {</span>
+<span class="nc" id="L742">            mySymbol = myCell.getString();</span>
+        }
+
+        /* Handle region which may be missing */
+<span class="nc" id="L746">        myCell = pView.getRowCellByIndex(pRow, ++iAdjust);</span>
+<span class="nc" id="L747">        String myRegion = null;</span>
+<span class="nc bnc" id="L748" title="All 2 branches missed.">        if (myCell != null) {</span>
+<span class="nc" id="L749">            myRegion = myCell.getString();</span>
+        }
+
+        /* Handle currency which may be missing */
+<span class="nc" id="L753">        myCell = pView.getRowCellByIndex(pRow, ++iAdjust);</span>
+<span class="nc" id="L754">        MoneyWiseCurrency myCurrency = theData.getReportingCurrency();</span>
+<span class="nc bnc" id="L755" title="All 2 branches missed.">        if (myCell != null) {</span>
+<span class="nc" id="L756">            final String myCurrName = myCell.getString();</span>
+<span class="nc" id="L757">            myCurrency = theData.getAccountCurrencies().findItemByName(myCurrName);</span>
+        }
+
+        /* Build data values */
+<span class="nc" id="L761">        final PrometheusDataValues myValues = new PrometheusDataValues(MoneyWiseSecurity.OBJECT_NAME);</span>
+<span class="nc" id="L762">        myValues.addValue(PrometheusDataResource.DATAITEM_FIELD_NAME, myName);</span>
+<span class="nc" id="L763">        myValues.addValue(MoneyWiseBasicResource.CATEGORY_NAME, mySecType);</span>
+<span class="nc" id="L764">        myValues.addValue(MoneyWiseStaticDataType.CURRENCY, myCurrency);</span>
+<span class="nc" id="L765">        myValues.addValue(MoneyWiseBasicResource.ASSET_PARENT, myParent);</span>
+<span class="nc" id="L766">        myValues.addValue(MoneyWiseBasicResource.ASSET_CLOSED, isClosed);</span>
+
+        /* Add the value into the list */
+<span class="nc" id="L769">        final MoneyWiseSecurity mySecurity = myList.addValuesItem(myValues);</span>
+
+        /* Add information relating to the security */
+<span class="nc" id="L772">        final MoneyWiseSecurityInfoList myInfoList = theData.getSecurityInfo();</span>
+<span class="nc" id="L773">        myInfoList.addInfoItem(null, mySecurity, MoneyWiseAccountInfoClass.SYMBOL, mySymbol);</span>
+<span class="nc" id="L774">        myInfoList.addInfoItem(null, mySecurity, MoneyWiseAccountInfoClass.REGION, myRegion);</span>
+
+        /* Declare the security holding */
+<span class="nc" id="L777">        theCache.declareSecurityHolding(mySecurity, myPortfolio);</span>
+<span class="nc" id="L778">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

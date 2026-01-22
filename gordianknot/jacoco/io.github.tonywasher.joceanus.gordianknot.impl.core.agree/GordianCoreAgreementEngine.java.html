@@ -1,0 +1,336 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianCoreAgreementEngine.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.impl.core.agree</a> &gt; <span class="el_source">GordianCoreAgreementEngine.java</span></div><h1>GordianCoreAgreementEngine.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.gordianknot.impl.core.agree;
+
+import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementKDF;
+import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.agree.GordianCoreAgreementDerivation.GordianCoreNullKeyDerivation;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianCoreKeyPair;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianPrivateKey;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianPublicKey;
+import org.bouncycastle.crypto.DerivationFunction;
+import org.bouncycastle.crypto.agreement.kdf.ConcatenationKDFGenerator;
+import org.bouncycastle.crypto.digests.SHA256Digest;
+import org.bouncycastle.crypto.digests.SHA512Digest;
+import org.bouncycastle.crypto.generators.KDF2BytesGenerator;
+import org.bouncycastle.util.Arrays;
+
+import java.security.SecureRandom;
+
+/**
+ * Implementation engine for Agreements.
+ */
+public abstract class GordianCoreAgreementEngine {
+    /**
+     * The supplier.
+     */
+    private final GordianCoreAgreementSupplier theSupplier;
+
+    /**
+     * The builder.
+     */
+    private final GordianCoreAgreementBuilder theBuilder;
+
+    /**
+     * The state.
+     */
+    private final GordianCoreAgreementState theState;
+
+    /**
+     * The client.
+     */
+    private final GordianCoreAgreementParticipant theClient;
+
+    /**
+     * The server.
+     */
+    private final GordianCoreAgreementParticipant theServer;
+
+    /**
+     * The keyDerivation function.
+     */
+    private GordianCoreAgreementDerivation theKDF;
+
+    /**
+     * Constructor.
+     *
+     * @param pSupplier the supplier
+     * @param pSpec     the agreementSpec
+     * @throws GordianException on error
+     */
+    protected GordianCoreAgreementEngine(final GordianCoreAgreementSupplier pSupplier,
+<span class="fc" id="L79">                                         final GordianAgreementSpec pSpec) throws GordianException {</span>
+<span class="fc" id="L80">        theSupplier = pSupplier;</span>
+<span class="fc" id="L81">        theBuilder = new GordianCoreAgreementBuilder(pSupplier, pSpec);</span>
+<span class="fc" id="L82">        theState = theBuilder.getState();</span>
+<span class="fc" id="L83">        theClient = theState.getClient();</span>
+<span class="fc" id="L84">        theServer = theState.getServer();</span>
+<span class="fc" id="L85">    }</span>
+
+    /**
+     * Obtain the supplier.
+     *
+     * @return the supplier
+     */
+    GordianCoreAgreementSupplier getSupplier() {
+<span class="fc" id="L93">        return theSupplier;</span>
+    }
+
+    /**
+     * Obtain the builder.
+     *
+     * @return the builder
+     */
+    public GordianCoreAgreementBuilder getBuilder() {
+<span class="fc" id="L102">        return theBuilder;</span>
+    }
+
+    /**
+     * Obtain the spec.
+     *
+     * @return the spec
+     */
+    public GordianAgreementSpec getSpec() {
+<span class="fc" id="L111">        return theState.getSpec();</span>
+    }
+
+    /**
+     * Obtain the random.
+     *
+     * @return the random
+     */
+    public SecureRandom getRandom() {
+<span class="fc" id="L120">        return theBuilder.getRandom();</span>
+    }
+
+    /**
+     * Obtain client keyPair.
+     *
+     * @return the client keyPair
+     */
+    public GordianKeyPair getClientKeyPair() {
+<span class="fc" id="L129">        return theClient.getKeyPair();</span>
+    }
+
+    /**
+     * Obtain server keyPair.
+     *
+     * @return the server keyPair
+     */
+    public GordianKeyPair getServerKeyPair() {
+<span class="fc" id="L138">        return theServer.getKeyPair();</span>
+    }
+
+    /**
+     * Obtain client ephemeral keyPair.
+     *
+     * @return the ephemeral keyPair
+     */
+    public GordianKeyPair getClientEphemeral() {
+<span class="fc" id="L147">        return theClient.getEphemeralKeyPair();</span>
+    }
+
+    /**
+     * Set client ephemeral keyPair as Encapsulated.
+     *
+     * @param pEphemeral the ephemeral keyPair
+     * @throws GordianException on error
+     */
+    public void setClientEphemeralAsEncapsulated(final GordianKeyPair pEphemeral) throws GordianException {
+<span class="fc" id="L157">        theBuilder.setClientEphemeralAsEncapsulated(pEphemeral);</span>
+<span class="fc" id="L158">    }</span>
+
+    /**
+     * Obtain server ephemeral keyPair.
+     *
+     * @return the ephemeral keyPair
+     */
+    public GordianKeyPair getServerEphemeral() {
+<span class="fc" id="L166">        return theServer.getEphemeralKeyPair();</span>
+    }
+
+    /**
+     * Obtain encapsulation.
+     *
+     * @return the encapsulation
+     */
+    public byte[] getEncapsulated() {
+<span class="fc" id="L175">        return theState.getEncapsulated();</span>
+    }
+
+    /**
+     * Set encapsulation.
+     *
+     * @param pEncapsulated the encapsulated
+     */
+    public void setEncapsulated(final byte[] pEncapsulated) {
+<span class="fc" id="L184">        theState.setEncapsulated(pEncapsulated);</span>
+<span class="fc" id="L185">    }</span>
+
+    /**
+     * Set the client confirm.
+     *
+     * @param pConfirm the clientConfirm
+     * @return noError true/false
+     */
+    public boolean setClientConfirm(final byte[] pConfirm) {
+<span class="fc" id="L194">        return theBuilder.setClientConfirm(pConfirm);</span>
+    }
+
+    /**
+     * Obtain server Confirm.
+     *
+     * @return the serverConfirm
+     */
+    public byte[] getServerConfirm() {
+<span class="fc" id="L203">        return theServer.getConfirm();</span>
+    }
+
+    /**
+     * Set the server confirm.
+     *
+     * @param pConfirm the serverConfirm
+     */
+    public void setServerConfirm(final byte[] pConfirm) {
+<span class="fc" id="L212">        theBuilder.setServerConfirm(pConfirm);</span>
+<span class="fc" id="L213">    }</span>
+
+    /**
+     * Obtain public key from pair.
+     *
+     * @param pKeyPair the keyPair
+     * @return the public key
+     * @throws GordianException on error
+     */
+    protected GordianPublicKey getPublicKey(final GordianKeyPair pKeyPair) throws GordianException {
+        /* Access public key */
+<span class="fc" id="L224">        return ((GordianCoreKeyPair) pKeyPair).getPublicKey();</span>
+    }
+
+    /**
+     * Obtain private key from pair.
+     *
+     * @param pKeyPair the keyPair
+     * @return the private key
+     * @throws GordianException on error
+     */
+    protected GordianPrivateKey getPrivateKey(final GordianKeyPair pKeyPair) throws GordianException {
+        /* Validate the keyPair */
+<span class="pc bpc" id="L236" title="1 of 2 branches missed.">        if (pKeyPair.isPublicOnly()) {</span>
+<span class="nc" id="L237">            throw new GordianDataException(&quot;missing privateKey&quot;);</span>
+        }
+
+        /* Access private key */
+<span class="fc" id="L241">        return ((GordianCoreKeyPair) pKeyPair).getPrivateKey();</span>
+    }
+
+    /**
+     * Build the clientHello.
+     *
+     * @throws GordianException on error
+     */
+    public void buildClientHello() throws GordianException {
+        /* NoOp */
+<span class="fc" id="L251">    }</span>
+
+    /**
+     * Process the clientHello.
+     *
+     * @throws GordianException on error
+     */
+    public abstract void processClientHello() throws GordianException;
+
+    /**
+     * Process the serverHello.
+     *
+     * @throws GordianException on error
+     */
+    public void processServerHello() throws GordianException {
+        /* NoOp */
+<span class="nc" id="L267">    }</span>
+
+    /**
+     * Process the clientConfirm.
+     *
+     * @throws GordianException on error
+     */
+    public void processClientConfirm() throws GordianException {
+        /* NoOp */
+<span class="fc" id="L276">    }</span>
+
+    /**
+     * Store the secret.
+     *
+     * @param pSecret the secret
+     * @throws GordianException on error
+     */
+    public void storeSecret(final byte[] pSecret) throws GordianException {
+        /* Protect against failure */
+        try {
+            /* If we have a kdf */
+<span class="fc bfc" id="L288" title="All 2 branches covered.">            if (theKDF != null) {</span>
+                /* Create the secret */
+<span class="fc" id="L290">                theKDF.deriveBytes(pSecret);</span>
+
+                /* Just process the secret */
+            } else {
+<span class="fc" id="L294">                theBuilder.storeSecret(pSecret);</span>
+            }
+
+            /* Clear the secret */
+        } finally {
+<span class="fc" id="L299">            Arrays.fill(pSecret, (byte) 0);</span>
+        }
+<span class="fc" id="L301">    }</span>
+
+    /**
+     * Enable additional derivation of secret.
+     */
+    protected void enableDerivation() {
+        /* Only enable derivation if it is not none */
+<span class="fc" id="L308">        final GordianAgreementSpec mySpec = theState.getSpec();</span>
+<span class="fc bfc" id="L309" title="All 2 branches covered.">        if (!GordianAgreementKDF.NONE.equals(mySpec.getKDFType())) {</span>
+<span class="fc" id="L310">            theKDF = new GordianCoreAgreementDerivation(theBuilder);</span>
+        }
+<span class="fc" id="L312">    }</span>
+
+    /**
+     * Obtain the required derivation function.
+     *
+     * @return the derivation function
+     */
+    public DerivationFunction newDerivationFunction() {
+<span class="fc" id="L320">        final GordianAgreementSpec mySpec = theState.getSpec();</span>
+<span class="pc bpc" id="L321" title="2 of 5 branches missed.">        switch (mySpec.getKDFType()) {</span>
+            case SHA256KDF:
+<span class="fc" id="L323">                return new KDF2BytesGenerator(new SHA256Digest());</span>
+            case SHA512KDF:
+<span class="fc" id="L325">                return new KDF2BytesGenerator(new SHA512Digest());</span>
+            case SHA256CKDF:
+<span class="nc" id="L327">                return new ConcatenationKDFGenerator(new SHA256Digest());</span>
+            case SHA512CKDF:
+<span class="nc" id="L329">                return new ConcatenationKDFGenerator(new SHA512Digest());</span>
+            case NONE:
+            default:
+<span class="fc" id="L332">                return new GordianCoreNullKeyDerivation();</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

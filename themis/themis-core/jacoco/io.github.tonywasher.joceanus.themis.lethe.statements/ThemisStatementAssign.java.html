@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ThemisStatementAssign.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Themis Core Project Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.themis.lethe.statements</a> &gt; <span class="el_source">ThemisStatementAssign.java</span></div><h1>ThemisStatementAssign.java</h1><pre class="source lang-java linenums">/*
+ * Themis: Java Project Framework
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.themis.lethe.statements;
+
+import io.github.tonywasher.joceanus.themis.lethe.analysis.ThemisAnalysisChar;
+
+/**
+ * Assignment operation.
+ */
+public class ThemisStatementAssign
+        implements ThemisStatementElement {
+    /**
+     * The Assignment Modifier interface.
+     */
+    public interface ThemisStatementAssignModifier {
+    }
+
+    /**
+     * The assigned entity.
+     */
+    private final ThemisStatementEntity theAssignee;
+
+    /**
+     * The assignment modifier.
+     */
+    private final ThemisStatementAssignModifier theModifier;
+
+    /**
+     * The expression.
+     */
+    private final ThemisStatementElement theExpression;
+
+    /**
+     * The format.
+     */
+    private String theFormat;
+
+    /**
+     * Constructor.
+     *
+     * @param pAssignee   the assignee
+     * @param pModifier   the modifier,
+     * @param pExpression the expression
+     */
+    ThemisStatementAssign(final ThemisStatementEntity pAssignee,
+                          final ThemisStatementAssignModifier pModifier,
+<span class="nc" id="L61">                          final ThemisStatementElement pExpression) {</span>
+<span class="nc" id="L62">        theAssignee = pAssignee;</span>
+<span class="nc" id="L63">        theModifier = pModifier;</span>
+<span class="nc" id="L64">        theExpression = pExpression;</span>
+<span class="nc" id="L65">    }</span>
+
+    @Override
+    public String toString() {
+        /* If we have not yet built the format */
+<span class="nc bnc" id="L70" title="All 2 branches missed.">        if (theFormat == null) {</span>
+            /* Build the format */
+<span class="nc" id="L72">            final StringBuilder myBuilder = new StringBuilder();</span>
+<span class="nc" id="L73">            myBuilder.append(theAssignee);</span>
+<span class="nc" id="L74">            myBuilder.append(ThemisAnalysisChar.BLANK);</span>
+<span class="nc bnc" id="L75" title="All 2 branches missed.">            if (theModifier != null) {</span>
+<span class="nc" id="L76">                myBuilder.append(theModifier);</span>
+            }
+<span class="nc" id="L78">            myBuilder.append(ThemisAnalysisChar.EQUAL);</span>
+<span class="nc" id="L79">            myBuilder.append(ThemisAnalysisChar.BLANK);</span>
+<span class="nc" id="L80">            myBuilder.append(theExpression);</span>
+<span class="nc" id="L81">            theFormat = myBuilder.toString();</span>
+        }
+
+        /* Return the format */
+<span class="nc" id="L85">        return theFormat;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

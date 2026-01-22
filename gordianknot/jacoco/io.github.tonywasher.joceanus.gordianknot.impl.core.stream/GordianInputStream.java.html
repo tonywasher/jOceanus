@@ -1,0 +1,389 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianInputStream.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.impl.core.stream</a> &gt; <span class="el_source">GordianInputStream.java</span></div><h1>GordianInputStream.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.gordianknot.impl.core.stream;
+
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianDataConverter;
+import org.bouncycastle.util.Arrays;
+
+import java.io.IOException;
+import java.io.InputStream;
+
+/**
+ * Input stream base implementation.
+ */
+abstract class GordianInputStream
+        extends InputStream {
+    /**
+     * Closed stream failure.
+     */
+    static final String ERROR_CLOSED = &quot;Stream is closed&quot;;
+
+    /**
+     * Buffer size for transfers.
+     */
+    static final int BUFSIZE = 1024;
+
+    /**
+     * Byte mask.
+     */
+    static final int BYTE_MASK = GordianDataConverter.BYTE_MASK;
+
+    /**
+     * The underlying input stream.
+     */
+    private final InputStream theStream;
+
+    /**
+     * The holding buffer for data that has been processed but not read.
+     */
+    private GordianProcessedBuffer theProcessed;
+
+    /**
+     * The buffer used for reading from input stream.
+     */
+<span class="fc" id="L59">    private final byte[] theBuffer = new byte[BUFSIZE];</span>
+
+    /**
+     * The single byte buffer.
+     */
+<span class="fc" id="L64">    private final byte[] theByteBuffer = new byte[1];</span>
+
+    /**
+     * has this stream been closed.
+     */
+    private boolean isClosed;
+
+    /**
+     * Constructor.
+     *
+     * @param pInput the underlying input stream
+     */
+<span class="fc" id="L76">    GordianInputStream(final InputStream pInput) {</span>
+<span class="fc" id="L77">        theStream = pInput;</span>
+<span class="fc" id="L78">    }</span>
+
+    /**
+     * Set the processed buffer.
+     *
+     * @param pProcessed the processed buffer
+     */
+    void setProcessedBuffer(final GordianProcessedBuffer pProcessed) {
+<span class="fc" id="L86">        theProcessed = pProcessed;</span>
+<span class="fc" id="L87">    }</span>
+
+    @Override
+    public void close() throws IOException {
+        /* Null operation if we are already closed */
+<span class="fc bfc" id="L92" title="All 2 branches covered.">        if (!isClosed) {</span>
+            /* Close the input stream */
+<span class="fc" id="L94">            theStream.close();</span>
+<span class="fc" id="L95">            isClosed = true;</span>
+
+            /* Clear the buffers */
+<span class="fc" id="L98">            Arrays.fill(theBuffer, (byte) 0);</span>
+<span class="fc" id="L99">            theProcessed.setBuffer(null, 0);</span>
+        }
+<span class="fc" id="L101">    }</span>
+
+    @Override
+    public long skip(final long pNumToSkip) throws IOException {
+        /* If we are already closed throw IO Exception */
+<span class="nc bnc" id="L106" title="All 2 branches missed.">        if (isClosed) {</span>
+<span class="nc" id="L107">            throw new IOException(ERROR_CLOSED);</span>
+        }
+
+        /* Loop while skipping bytes */
+<span class="nc" id="L111">        long myNumToSkip = pNumToSkip;</span>
+<span class="nc" id="L112">        long myTotalSkipped = 0;</span>
+<span class="nc bnc" id="L113" title="All 2 branches missed.">        while (myNumToSkip &gt; 0) {</span>
+            /* Skip processed bytes */
+<span class="nc" id="L115">            final long myNumSkipped = theProcessed.skipBytes(myNumToSkip);</span>
+
+            /* Adjust counts */
+<span class="nc" id="L118">            myNumToSkip -= myNumSkipped;</span>
+<span class="nc" id="L119">            myTotalSkipped += myNumSkipped;</span>
+
+            /* If we need further bytes, bring more data in and handle EOF */
+<span class="nc bnc" id="L122" title="All 2 branches missed.">            if (myNumToSkip &gt; 0</span>
+<span class="nc bnc" id="L123" title="All 2 branches missed.">                    &amp;&amp; processMoreData() == -1) {</span>
+<span class="nc" id="L124">                return -1;</span>
+            }
+<span class="nc" id="L126">        }</span>
+
+        /* Return the number of bytes skipped */
+<span class="nc" id="L129">        return myTotalSkipped;</span>
+    }
+
+    @Override
+    public int available() throws IOException {
+        /* If we are already closed throw IO Exception */
+<span class="nc bnc" id="L135" title="All 2 branches missed.">        if (isClosed) {</span>
+<span class="nc" id="L136">            throw new IOException(ERROR_CLOSED);</span>
+        }
+
+        /* Determine the number of bytes available */
+<span class="nc" id="L140">        return theProcessed.availableInBuffer()</span>
+<span class="nc" id="L141">                + theStream.available();</span>
+    }
+
+    @Override
+    public boolean markSupported() {
+        /* return not supported */
+<span class="nc" id="L147">        return false;</span>
+    }
+
+    @Override
+    public synchronized void mark(final int pReadLimit) {
+<span class="nc" id="L152">        throw new UnsupportedOperationException();</span>
+    }
+
+    @Override
+    public synchronized void reset() throws IOException {
+        /* If we are already closed then throw IO Exception */
+<span class="nc bnc" id="L158" title="All 2 branches missed.">        if (isClosed) {</span>
+<span class="nc" id="L159">            throw new IOException(ERROR_CLOSED);</span>
+        }
+
+        /* Not supported */
+<span class="nc" id="L163">        throw new IOException(&quot;Mark is not supported&quot;);</span>
+    }
+
+    @Override
+    public int read(final byte[] pOutBytes) throws IOException {
+        /* Read the next bytes from the stream */
+<span class="nc" id="L169">        return read(pOutBytes, 0, pOutBytes.length);</span>
+    }
+
+    @Override
+    public int read() throws IOException {
+        int iNumBytesRead;
+
+        /* Loop until we get a byte or EOF from the stream */
+        do {
+<span class="fc" id="L178">            iNumBytesRead = read(theByteBuffer, 0, 1);</span>
+<span class="pc bpc" id="L179" title="1 of 2 branches missed.">        } while (iNumBytesRead == 0);</span>
+
+        /* Convert the byte that has been read into an integer */
+<span class="pc bpc" id="L182" title="1 of 2 branches missed.">        if (iNumBytesRead &gt; 0) {</span>
+<span class="fc" id="L183">            iNumBytesRead = theByteBuffer[0] &amp; BYTE_MASK;</span>
+        }
+
+        /* Return to the caller */
+<span class="fc" id="L187">        return iNumBytesRead;</span>
+    }
+
+    @Override
+    public int read(final byte[] pBuffer,
+                    final int pOffset,
+                    final int pLength) throws IOException {
+        /* If we are already closed throw IO Exception */
+<span class="pc bpc" id="L195" title="1 of 2 branches missed.">        if (isClosed) {</span>
+<span class="nc" id="L196">            throw new IOException(ERROR_CLOSED);</span>
+        }
+
+        /* If there is no data in the processed buffer, bring more data in and handle EOF */
+<span class="fc bfc" id="L200" title="All 2 branches covered.">        if (theProcessed.availableInBuffer() == 0</span>
+<span class="fc bfc" id="L201" title="All 2 branches covered.">                &amp;&amp; processMoreData() == -1) {</span>
+<span class="fc" id="L202">            return -1;</span>
+        }
+
+        /* Read from the processed buffer and Return the amount of data read */
+<span class="fc" id="L206">        return theProcessed.readBytes(pBuffer, pOffset, pLength);</span>
+    }
+
+    /**
+     * Process more data from the input stream.
+     *
+     * @return number of bytes read or -1 if EOF
+     * @throws IOException on error
+     */
+    private int processMoreData() throws IOException {
+        /* Protect against exceptions */
+        try {
+            /* If we have already exhausted the source return now */
+<span class="fc bfc" id="L219" title="All 2 branches covered.">            if (theProcessed.hasEOFbeenSeen()) {</span>
+<span class="fc" id="L220">                return -1;</span>
+            }
+
+            /* Read more data from the input stream looping until bytes are available */
+            int iNumRead;
+            do {
+                /* Read more data from the input stream */
+<span class="fc" id="L227">                iNumRead = theStream.read(theBuffer, 0, BUFSIZE);</span>
+
+                /* Process any data read */
+<span class="pc bpc" id="L230" title="1 of 2 branches missed.">                if (iNumRead != 0) {</span>
+                    /* Process the bytes into the buffer */
+<span class="fc" id="L232">                    iNumRead = theProcessed.processBytes(theBuffer, iNumRead);</span>
+                }
+<span class="fc bfc" id="L234" title="All 2 branches covered.">            } while (iNumRead == 0);</span>
+
+            /* Return number of bytes available */
+<span class="fc" id="L237">            return iNumRead;</span>
+
+            /* Catch exceptions */
+<span class="nc" id="L240">        } catch (GordianException e) {</span>
+<span class="nc" id="L241">            throw new IOException(e);</span>
+        }
+    }
+
+    /**
+     * Buffer to hold the processed data prior to returning it to the caller.
+     */
+<span class="fc" id="L248">    protected abstract static class GordianProcessedBuffer {</span>
+        /**
+         * The buffer itself.
+         */
+        private byte[] theStore;
+
+        /**
+         * The length of data in the buffer.
+         */
+        private int theDataLen;
+
+        /**
+         * The read offset of data in the buffer.
+         */
+        private int theReadOffset;
+
+        /**
+         * have we seen EOF.
+         */
+        private boolean hasEOFbeenSeen;
+
+        /**
+         * Determine the amount of data in the buffer.
+         *
+         * @return the number of data bytes in the buffer
+         */
+        int availableInBuffer() {
+<span class="fc" id="L275">            return theDataLen</span>
+                    - theReadOffset;
+        }
+
+        /**
+         * Has EOF been seen.
+         *
+         * @return true/false
+         */
+        boolean hasEOFbeenSeen() {
+<span class="fc" id="L285">            return hasEOFbeenSeen;</span>
+        }
+
+        /**
+         * Set EOF seen marker.
+         */
+        void setEOFSeen() {
+<span class="fc" id="L292">            hasEOFbeenSeen = true;</span>
+<span class="fc" id="L293">        }</span>
+
+        /**
+         * Set the new buffer.
+         *
+         * @param pBuffer     the buffer
+         * @param pDataLength the dataLength
+         */
+        void setBuffer(final byte[] pBuffer,
+                       final int pDataLength) {
+            /* Set new data */
+<span class="fc" id="L304">            theStore = pBuffer;</span>
+<span class="fc" id="L305">            theDataLen = pDataLength;</span>
+<span class="fc" id="L306">            theReadOffset = 0;</span>
+<span class="fc" id="L307">        }</span>
+
+        /**
+         * Skip bytes.
+         *
+         * @param pBytesToSkip the number of bytes to skip
+         * @return the number of bytes skipped
+         */
+        long skipBytes(final long pBytesToSkip) {
+            /* Determine number of bytes that we can skip */
+<span class="nc" id="L317">            final int myAvailable = availableInBuffer();</span>
+
+            /* If we must skip all bytes */
+<span class="nc bnc" id="L320" title="All 2 branches missed.">            if (pBytesToSkip &gt;= myAvailable) {</span>
+                /* Reset the values */
+<span class="nc" id="L322">                theDataLen = 0;</span>
+<span class="nc" id="L323">                theReadOffset = 0;</span>
+<span class="nc" id="L324">                return myAvailable;</span>
+
+                /* else we only need to skip some bytes */
+            } else {
+<span class="nc" id="L328">                theReadOffset += pBytesToSkip;</span>
+<span class="nc" id="L329">                return pBytesToSkip;</span>
+            }
+        }
+
+        /**
+         * Read a number of bytes out from the buffer.
+         *
+         * @param pBuffer the buffer to read bytes into
+         * @param pOffset the offset at which to start reading bytes
+         * @param pLength the maximum length of data to read
+         * @return the actual length of data read or -1 if EOF
+         */
+        int readBytes(final byte[] pBuffer,
+                      final int pOffset,
+                      final int pLength) {
+            /* Determine how much data we have available */
+<span class="fc" id="L345">            int iNumRead = theDataLen</span>
+                    - theReadOffset;
+
+            /* Determine how much data we can transfer */
+<span class="fc bfc" id="L349" title="All 2 branches covered.">            iNumRead = iNumRead &lt;= pLength</span>
+<span class="fc" id="L350">                    ? iNumRead</span>
+<span class="fc" id="L351">                    : pLength;</span>
+
+            /* If we have data to copy */
+<span class="fc bfc" id="L354" title="All 2 branches covered.">            if (iNumRead &gt; 0) {</span>
+                /* Transfer the bytes */
+<span class="fc" id="L356">                System.arraycopy(theStore, theReadOffset, pBuffer, pOffset, iNumRead);</span>
+
+                /* Adjust ReadOffset */
+<span class="fc" id="L359">                theReadOffset += iNumRead;</span>
+
+                /* If we have finished with the data in the buffer */
+<span class="fc bfc" id="L362" title="All 2 branches covered.">                if (theReadOffset &gt;= theDataLen) {</span>
+                    /* Reset the values */
+<span class="fc" id="L364">                    theDataLen = 0;</span>
+<span class="fc" id="L365">                    theReadOffset = 0;</span>
+                }
+
+                /* else if we have no data check for EOF and report it if required */
+<span class="pc bpc" id="L369" title="1 of 2 branches missed.">            } else if (hasEOFbeenSeen) {</span>
+<span class="nc" id="L370">                iNumRead = -1;</span>
+            }
+
+            /* Return the number of bytes transferred */
+<span class="fc" id="L374">            return iNumRead;</span>
+        }
+
+        /**
+         * Process bytes into the buffer.
+         *
+         * @param pBuffer the buffer from which to store bytes
+         * @param pLength the number of bytes read into the buffer (must not be zero)
+         * @return the number of bytes now available in the buffer
+         * @throws GordianException on error
+         */
+        protected abstract int processBytes(byte[] pBuffer,
+                                            int pLength) throws GordianException;
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

@@ -1,0 +1,580 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianKeyPairSpec.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.api.keypair</a> &gt; <span class="el_source">GordianKeyPairSpec.java</span></div><h1>GordianKeyPairSpec.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.gordianknot.api.keypair;
+
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianLMSKeySpec.GordianHSSKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianXMSSKeySpec.GordianXMSSDigestType;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Objects;
+
+/**
+ * Asymmetric KeyPair Specification.
+ */
+public class GordianKeyPairSpec {
+    /**
+     * The Separator.
+     */
+    private static final String SEP = &quot;-&quot;;
+
+    /**
+     * The keyPairType.
+     */
+    private final GordianKeyPairType theKeyPairType;
+
+    /**
+     * The SubKeyType.
+     */
+    private final Object theSubKeyType;
+
+    /**
+     * The Validity.
+     */
+    private final boolean isValid;
+
+    /**
+     * The String name.
+     */
+    private String theName;
+
+    /**
+     * Constructor.
+     *
+     * @param pKeyType    the keyType
+     * @param pSubKeyType the subKeyType
+     */
+    public GordianKeyPairSpec(final GordianKeyPairType pKeyType,
+<span class="fc" id="L63">                              final Object pSubKeyType) {</span>
+<span class="fc" id="L64">        theKeyPairType = pKeyType;</span>
+<span class="fc" id="L65">        theSubKeyType = pSubKeyType;</span>
+<span class="fc" id="L66">        isValid = checkValidity();</span>
+<span class="fc" id="L67">    }</span>
+
+    /**
+     * Obtain the keyPairType.
+     *
+     * @return the keyPairType.
+     */
+    public GordianKeyPairType getKeyPairType() {
+<span class="fc" id="L75">        return theKeyPairType;</span>
+    }
+
+    /**
+     * Obtain the subKeyType.
+     *
+     * @return the keyType.
+     */
+    public Object getSubKeyType() {
+<span class="fc" id="L84">        return theSubKeyType;</span>
+    }
+
+    /**
+     * Is the keySpec valid?
+     *
+     * @return true/false.
+     */
+    public boolean isValid() {
+<span class="fc" id="L93">        return isValid;</span>
+    }
+
+    /**
+     * Obtain the RSAmodulus.
+     *
+     * @return the modulus.
+     */
+    public GordianRSAModulus getRSAModulus() {
+<span class="pc bpc" id="L102" title="1 of 2 branches missed.">        if (theSubKeyType instanceof GordianRSAModulus myMod) {</span>
+<span class="fc" id="L103">            return myMod;</span>
+        }
+<span class="nc" id="L105">        throw new IllegalArgumentException();</span>
+    }
+
+    /**
+     * Obtain the DSA keyType.
+     *
+     * @return the keyType.
+     */
+    public GordianDSAKeyType getDSAKeyType() {
+<span class="pc bpc" id="L114" title="1 of 2 branches missed.">        if (theSubKeyType instanceof GordianDSAKeyType myType) {</span>
+<span class="fc" id="L115">            return myType;</span>
+        }
+<span class="nc" id="L117">        throw new IllegalArgumentException();</span>
+    }
+
+    /**
+     * Obtain the DH Group.
+     *
+     * @return the dhGroup.
+     */
+    public GordianDHGroup getDHGroup() {
+<span class="pc bpc" id="L126" title="1 of 2 branches missed.">        if (theSubKeyType instanceof GordianDHGroup myGroup) {</span>
+<span class="fc" id="L127">            return myGroup;</span>
+        }
+<span class="nc" id="L129">        throw new IllegalArgumentException();</span>
+    }
+
+    /**
+     * Obtain the elliptic curve.
+     *
+     * @return the curve.
+     */
+    public GordianElliptic getElliptic() {
+<span class="pc bpc" id="L138" title="1 of 2 branches missed.">        if (theSubKeyType instanceof GordianElliptic myElliptic) {</span>
+<span class="fc" id="L139">            return myElliptic;</span>
+        }
+<span class="nc" id="L141">        throw new IllegalArgumentException();</span>
+    }
+
+    /**
+     * Obtain the elliptic curve.
+     *
+     * @return the curve.
+     */
+    public GordianEdwardsElliptic getEdwardsElliptic() {
+<span class="pc bpc" id="L150" title="1 of 2 branches missed.">        if (theSubKeyType instanceof GordianEdwardsElliptic myElliptic) {</span>
+<span class="fc" id="L151">            return myElliptic;</span>
+        }
+<span class="nc" id="L153">        throw new IllegalArgumentException();</span>
+    }
+
+    /**
+     * Obtain the lms keySpec.
+     *
+     * @return the keySpec.
+     */
+    public GordianLMSKeySpec getLMSKeySpec() {
+<span class="nc bnc" id="L162" title="All 2 branches missed.">        if (theSubKeyType instanceof GordianLMSKeySpec mySpec) {</span>
+<span class="nc" id="L163">            return mySpec;</span>
+        }
+<span class="nc" id="L165">        throw new IllegalArgumentException();</span>
+    }
+
+    /**
+     * Obtain the hss keySpec.
+     *
+     * @return the keySpec.
+     */
+    public GordianHSSKeySpec getHSSKeySpec() {
+<span class="pc bpc" id="L174" title="1 of 2 branches missed.">        if (theSubKeyType instanceof GordianHSSKeySpec mySpec) {</span>
+<span class="fc" id="L175">            return mySpec;</span>
+        }
+<span class="nc" id="L177">        throw new IllegalArgumentException();</span>
+    }
+
+    /**
+     * Obtain the XMSS keySpec.
+     *
+     * @return the keySpec.
+     */
+    public GordianXMSSKeySpec getXMSSKeySpec() {
+<span class="pc bpc" id="L186" title="1 of 2 branches missed.">        if (theSubKeyType instanceof GordianXMSSKeySpec mySpec) {</span>
+<span class="fc" id="L187">            return mySpec;</span>
+        }
+<span class="nc" id="L189">        throw new IllegalArgumentException();</span>
+    }
+
+    /**
+     * Obtain the XMSS digestType.
+     *
+     * @return the digestType.
+     */
+    public GordianXMSSDigestType getXMSSDigestType() {
+<span class="fc" id="L198">        return getXMSSKeySpec().getDigestType();</span>
+    }
+
+    /**
+     * Obtain the SLHDSA keySpec.
+     *
+     * @return the keySpec.
+     */
+    public GordianSLHDSASpec getSLHDSAKeySpec() {
+<span class="pc bpc" id="L207" title="1 of 2 branches missed.">        if (theSubKeyType instanceof GordianSLHDSASpec mySpec) {</span>
+<span class="fc" id="L208">            return mySpec;</span>
+        }
+<span class="nc" id="L210">        throw new IllegalArgumentException();</span>
+    }
+
+    /**
+     * Obtain the CMCE keySpec.
+     *
+     * @return the keySpec.
+     */
+    public GordianCMCESpec getCMCEKeySpec() {
+<span class="pc bpc" id="L219" title="1 of 2 branches missed.">        if (theSubKeyType instanceof GordianCMCESpec mySpec) {</span>
+<span class="fc" id="L220">            return mySpec;</span>
+        }
+<span class="nc" id="L222">        throw new IllegalArgumentException();</span>
+    }
+
+    /**
+     * Obtain the FRODO keySpec.
+     *
+     * @return the keySpec.
+     */
+    public GordianFRODOSpec getFRODOKeySpec() {
+<span class="pc bpc" id="L231" title="1 of 2 branches missed.">        if (theSubKeyType instanceof GordianFRODOSpec mySpec) {</span>
+<span class="fc" id="L232">            return mySpec;</span>
+        }
+<span class="nc" id="L234">        throw new IllegalArgumentException();</span>
+    }
+
+    /**
+     * Obtain the Saber keySpec.
+     *
+     * @return the keySpec.
+     */
+    public GordianSABERSpec getSABERKeySpec() {
+<span class="pc bpc" id="L243" title="1 of 2 branches missed.">        if (theSubKeyType instanceof GordianSABERSpec mySpec) {</span>
+<span class="fc" id="L244">            return mySpec;</span>
+        }
+<span class="nc" id="L246">        throw new IllegalArgumentException();</span>
+    }
+
+    /**
+     * Obtain the MLKEM keySpec.
+     *
+     * @return the keySpec.
+     */
+    public GordianMLKEMSpec getMLKEMKeySpec() {
+<span class="pc bpc" id="L255" title="1 of 2 branches missed.">        if (theSubKeyType instanceof GordianMLKEMSpec mySpec) {</span>
+<span class="fc" id="L256">            return mySpec;</span>
+        }
+<span class="nc" id="L258">        throw new IllegalArgumentException();</span>
+    }
+
+    /**
+     * Obtain the MLDSA keySpec.
+     *
+     * @return the keySpec.
+     */
+    public GordianMLDSASpec getMLDSAKeySpec() {
+<span class="pc bpc" id="L267" title="1 of 2 branches missed.">        if (theSubKeyType instanceof GordianMLDSASpec mySpec) {</span>
+<span class="fc" id="L268">            return mySpec;</span>
+        }
+<span class="nc" id="L270">        throw new IllegalArgumentException();</span>
+    }
+
+    /**
+     * Obtain the HQC keySpec.
+     *
+     * @return the keySpec.
+     */
+    public GordianHQCSpec getHQCKeySpec() {
+<span class="pc bpc" id="L279" title="1 of 2 branches missed.">        if (theSubKeyType instanceof GordianHQCSpec mySpec) {</span>
+<span class="fc" id="L280">            return mySpec;</span>
+        }
+<span class="nc" id="L282">        throw new IllegalArgumentException();</span>
+    }
+
+    /**
+     * Obtain the Bike keySpec.
+     *
+     * @return the keySpec.
+     */
+    public GordianBIKESpec getBIKEKeySpec() {
+<span class="pc bpc" id="L291" title="1 of 2 branches missed.">        if (theSubKeyType instanceof GordianBIKESpec mySpec) {</span>
+<span class="fc" id="L292">            return mySpec;</span>
+        }
+<span class="nc" id="L294">        throw new IllegalArgumentException();</span>
+    }
+
+    /**
+     * Obtain the NTRU keySpec.
+     *
+     * @return the keySpec.
+     */
+    public GordianNTRUSpec getNTRUKeySpec() {
+<span class="pc bpc" id="L303" title="1 of 2 branches missed.">        if (theSubKeyType instanceof GordianNTRUSpec mySpec) {</span>
+<span class="fc" id="L304">            return mySpec;</span>
+        }
+<span class="nc" id="L306">        throw new IllegalArgumentException();</span>
+    }
+
+    /**
+     * Obtain the NTRUPRIME keySpec.
+     *
+     * @return the keySpec.
+     */
+    public GordianNTRUPrimeSpec getNTRUPrimeKeySpec() {
+<span class="pc bpc" id="L315" title="1 of 2 branches missed.">        if (theSubKeyType instanceof GordianNTRUPrimeSpec mySpec) {</span>
+<span class="fc" id="L316">            return mySpec;</span>
+        }
+<span class="nc" id="L318">        throw new IllegalArgumentException();</span>
+    }
+
+    /**
+     * Obtain the Falcon keySpec.
+     *
+     * @return the keySpec.
+     */
+    public GordianFalconSpec getFalconKeySpec() {
+<span class="pc bpc" id="L327" title="1 of 2 branches missed.">        if (theSubKeyType instanceof GordianFalconSpec mySpec) {</span>
+<span class="fc" id="L328">            return mySpec;</span>
+        }
+<span class="nc" id="L330">        throw new IllegalArgumentException();</span>
+    }
+
+    /**
+     * Obtain the Mayo keySpec.
+     *
+     * @return the keySpec.
+     */
+    public GordianMayoSpec getMayoKeySpec() {
+<span class="pc bpc" id="L339" title="1 of 2 branches missed.">        if (theSubKeyType instanceof GordianMayoSpec mySpec) {</span>
+<span class="fc" id="L340">            return mySpec;</span>
+        }
+<span class="nc" id="L342">        throw new IllegalArgumentException();</span>
+    }
+
+    /**
+     * Obtain the Snova keySpec.
+     *
+     * @return the keySpec.
+     */
+    public GordianSnovaSpec getSnovaKeySpec() {
+<span class="pc bpc" id="L351" title="1 of 2 branches missed.">        if (theSubKeyType instanceof GordianSnovaSpec mySpec) {</span>
+<span class="fc" id="L352">            return mySpec;</span>
+        }
+<span class="nc" id="L354">        throw new IllegalArgumentException();</span>
+    }
+
+    /**
+     * Obtain the Picnic keySpec.
+     *
+     * @return the keySpec.
+     */
+    public GordianPicnicSpec getPicnicKeySpec() {
+<span class="pc bpc" id="L363" title="1 of 2 branches missed.">        if (theSubKeyType instanceof GordianPicnicSpec mySpec) {</span>
+<span class="fc" id="L364">            return mySpec;</span>
+        }
+<span class="nc" id="L366">        throw new IllegalArgumentException();</span>
+    }
+
+    /**
+     * Obtain the composite keySpec iterator.
+     *
+     * @return the keySpec iterator.
+     */
+    @SuppressWarnings(&quot;unchecked&quot;)
+    public Iterator&lt;GordianKeyPairSpec&gt; keySpecIterator() {
+<span class="pc bpc" id="L376" title="1 of 2 branches missed.">        if (theSubKeyType instanceof List) {</span>
+<span class="fc" id="L377">            return ((List&lt;GordianKeyPairSpec&gt;) theSubKeyType).iterator();</span>
+        }
+<span class="nc" id="L379">        throw new IllegalArgumentException();</span>
+    }
+
+    @Override
+    public String toString() {
+        /* If we have not yet loaded the name */
+<span class="fc bfc" id="L385" title="All 2 branches covered.">        if (theName == null) {</span>
+            /* If the keySpec is valid */
+<span class="pc bpc" id="L387" title="1 of 2 branches missed.">            if (isValid) {</span>
+                /* Derive the name */
+<span class="fc" id="L389">                deriveName();</span>
+            } else {
+                /* Report invalid spec */
+<span class="nc" id="L392">                theName = &quot;InvalidKeyPairSpec: &quot; + theKeyPairType + &quot;:&quot; + theSubKeyType;</span>
+            }
+        }
+
+        /* return the name */
+<span class="fc" id="L397">        return theName;</span>
+    }
+
+    /**
+     * Derive name.
+     */
+    private void deriveName() {
+        /* Load the name */
+<span class="fc" id="L405">        theName = theKeyPairType.toString();</span>
+<span class="fc bfc" id="L406" title="All 2 branches covered.">        if (theSubKeyType != null) {</span>
+<span class="fc bfc" id="L407" title="All 5 branches covered.">            switch (theKeyPairType) {</span>
+                case XMSS:
+<span class="fc" id="L409">                    theName = theSubKeyType.toString();</span>
+<span class="fc" id="L410">                    break;</span>
+                case EDDSA:
+<span class="fc" id="L412">                    theName = &quot;Ed&quot; + ((GordianEdwardsElliptic) theSubKeyType).getSuffix();</span>
+<span class="fc" id="L413">                    break;</span>
+                case XDH:
+<span class="fc" id="L415">                    theName = &quot;X&quot; + ((GordianEdwardsElliptic) theSubKeyType).getSuffix();</span>
+<span class="fc" id="L416">                    break;</span>
+                case COMPOSITE:
+<span class="fc" id="L418">                    final Iterator&lt;GordianKeyPairSpec&gt; myIterator = keySpecIterator();</span>
+<span class="fc" id="L419">                    final StringBuilder myBuilder = new StringBuilder(theName);</span>
+<span class="fc bfc" id="L420" title="All 2 branches covered.">                    while (myIterator.hasNext()) {</span>
+<span class="fc" id="L421">                        myBuilder.append(SEP).append(myIterator.next().toString());</span>
+                    }
+<span class="fc" id="L423">                    theName = myBuilder.toString();</span>
+<span class="fc" id="L424">                    break;</span>
+                default:
+<span class="fc" id="L426">                    theName += SEP + theSubKeyType;</span>
+                    break;
+            }
+        }
+<span class="fc" id="L430">    }</span>
+
+    @Override
+    public boolean equals(final Object pThat) {
+        /* Handle the trivial cases */
+<span class="fc bfc" id="L435" title="All 2 branches covered.">        if (this == pThat) {</span>
+<span class="fc" id="L436">            return true;</span>
+        }
+<span class="pc bpc" id="L438" title="1 of 2 branches missed.">        if (pThat == null) {</span>
+<span class="nc" id="L439">            return false;</span>
+        }
+
+        /* Check KeyPairType and subKeyType */
+<span class="fc" id="L443">        return pThat instanceof GordianKeyPairSpec myThat</span>
+<span class="pc bpc" id="L444" title="1 of 2 branches missed.">                &amp;&amp; theKeyPairType == myThat.getKeyPairType()</span>
+<span class="pc bpc" id="L445" title="2 of 4 branches missed.">                &amp;&amp; Objects.equals(theSubKeyType, myThat.theSubKeyType);</span>
+    }
+
+    @Override
+    public int hashCode() {
+<span class="fc" id="L450">        return Objects.hash(theKeyPairType, theSubKeyType);</span>
+    }
+
+    /**
+     * Check spec validity.
+     *
+     * @return valid true/false
+     */
+    private boolean checkValidity() {
+        /* Handle null keyPairType */
+<span class="pc bpc" id="L460" title="1 of 2 branches missed.">        if (theKeyPairType == null) {</span>
+<span class="nc" id="L461">            return false;</span>
+        }
+
+        /* Switch on keyPairType */
+<span class="pc bpc" id="L465" title="1 of 27 branches missed.">        switch (theKeyPairType) {</span>
+            case RSA:
+<span class="fc" id="L467">                return theSubKeyType instanceof GordianRSAModulus;</span>
+            case DSA:
+<span class="fc" id="L469">                return theSubKeyType instanceof GordianDSAKeyType;</span>
+            case DH:
+            case ELGAMAL:
+<span class="fc" id="L472">                return theSubKeyType instanceof GordianDHGroup;</span>
+            case EC:
+<span class="fc" id="L474">                return theSubKeyType instanceof GordianDSAElliptic;</span>
+            case SM2:
+<span class="fc" id="L476">                return theSubKeyType instanceof GordianSM2Elliptic;</span>
+            case GOST2012:
+<span class="fc" id="L478">                return theSubKeyType instanceof GordianGOSTElliptic;</span>
+            case DSTU4145:
+<span class="fc" id="L480">                return theSubKeyType instanceof GordianDSTU4145Elliptic;</span>
+            case XMSS:
+<span class="pc bpc" id="L482" title="2 of 4 branches missed.">                return theSubKeyType instanceof GordianXMSSKeySpec s &amp;&amp; s.isValid();</span>
+            case SLHDSA:
+<span class="fc" id="L484">                return theSubKeyType instanceof GordianSLHDSASpec;</span>
+            case CMCE:
+<span class="fc" id="L486">                return theSubKeyType instanceof GordianCMCESpec;</span>
+            case FRODO:
+<span class="fc" id="L488">                return theSubKeyType instanceof GordianFRODOSpec;</span>
+            case SABER:
+<span class="fc" id="L490">                return theSubKeyType instanceof GordianSABERSpec;</span>
+            case MLKEM:
+<span class="fc" id="L492">                return theSubKeyType instanceof GordianMLKEMSpec;</span>
+            case MLDSA:
+<span class="fc" id="L494">                return theSubKeyType instanceof GordianMLDSASpec;</span>
+            case HQC:
+<span class="fc" id="L496">                return theSubKeyType instanceof GordianHQCSpec;</span>
+            case BIKE:
+<span class="fc" id="L498">                return theSubKeyType instanceof GordianBIKESpec;</span>
+            case NTRU:
+<span class="fc" id="L500">                return theSubKeyType instanceof GordianNTRUSpec;</span>
+            case NTRUPRIME:
+<span class="fc" id="L502">                return theSubKeyType instanceof GordianNTRUPrimeSpec;</span>
+            case FALCON:
+<span class="fc" id="L504">                return theSubKeyType instanceof GordianFalconSpec;</span>
+            case MAYO:
+<span class="fc" id="L506">                return theSubKeyType instanceof GordianMayoSpec;</span>
+            case SNOVA:
+<span class="fc" id="L508">                return theSubKeyType instanceof GordianSnovaSpec;</span>
+            case PICNIC:
+<span class="fc" id="L510">                return theSubKeyType instanceof GordianPicnicSpec;</span>
+            case NEWHOPE:
+<span class="pc bpc" id="L512" title="1 of 2 branches missed.">                return theSubKeyType == null;</span>
+            case LMS:
+<span class="pc bpc" id="L514" title="3 of 4 branches missed.">                return (theSubKeyType instanceof GordianLMSKeySpec ls &amp;&amp; ls.isValid())</span>
+<span class="pc bpc" id="L515" title="2 of 4 branches missed.">                        || (theSubKeyType instanceof GordianHSSKeySpec hs &amp;&amp; hs.isValid());</span>
+            case EDDSA:
+            case XDH:
+<span class="fc" id="L518">                return theSubKeyType instanceof GordianEdwardsElliptic;</span>
+            case COMPOSITE:
+<span class="pc bpc" id="L520" title="1 of 4 branches missed.">                return theSubKeyType instanceof List &amp;&amp; checkComposite();</span>
+            default:
+<span class="nc" id="L522">                return false;</span>
+        }
+    }
+
+    /**
+     * Check composite spec validity.
+     *
+     * @return valid true/false
+     */
+    private boolean checkComposite() {
+<span class="fc" id="L532">        Boolean stateAware = null;</span>
+<span class="fc" id="L533">        final List&lt;GordianKeyPairType&gt; myExisting = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L534">        final Iterator&lt;GordianKeyPairSpec&gt; myIterator = keySpecIterator();</span>
+<span class="fc bfc" id="L535" title="All 2 branches covered.">        while (myIterator.hasNext()) {</span>
+            /* Check that we have not got a null */
+<span class="fc" id="L537">            final GordianKeyPairSpec mySpec = myIterator.next();</span>
+<span class="pc bpc" id="L538" title="1 of 2 branches missed.">            if (mySpec == null) {</span>
+<span class="nc" id="L539">                return false;</span>
+            }
+
+            /* Check that we have not got a duplicate or COMPOSITE */
+<span class="fc" id="L543">            final GordianKeyPairType myType = mySpec.getKeyPairType();</span>
+<span class="pc bpc" id="L544" title="2 of 4 branches missed.">            if (myExisting.contains(myType) || myType == GordianKeyPairType.COMPOSITE) {</span>
+<span class="nc" id="L545">                return false;</span>
+            }
+
+            /* Check that stateAwareness is identical */
+<span class="fc bfc" id="L549" title="All 2 branches covered.">            if (stateAware == null) {</span>
+<span class="fc" id="L550">                stateAware = mySpec.isStateAware();</span>
+<span class="pc bpc" id="L551" title="1 of 2 branches missed.">            } else if (mySpec.isStateAware() != stateAware) {</span>
+<span class="nc" id="L552">                return false;</span>
+            }
+
+            /* Add to list */
+<span class="fc" id="L556">            myExisting.add(myType);</span>
+<span class="fc" id="L557">        }</span>
+
+        /* Make sure there are at least two */
+<span class="fc bfc" id="L560" title="All 2 branches covered.">        return myExisting.size() &gt; 1;</span>
+    }
+
+    /**
+     * is the use subType for signatures?
+     *
+     * @return true/false
+     */
+    public boolean isStateAware() {
+<span class="fc bfc" id="L569" title="All 3 branches covered.">        switch (theKeyPairType) {</span>
+            case XMSS:
+            case LMS:
+<span class="fc" id="L572">                return true;</span>
+            case COMPOSITE:
+<span class="fc" id="L574">                return keySpecIterator().next().isStateAware();</span>
+            default:
+<span class="fc" id="L576">                return false;</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

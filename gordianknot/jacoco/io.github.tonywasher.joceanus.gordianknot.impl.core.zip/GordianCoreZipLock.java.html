@@ -1,0 +1,408 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianCoreZipLock.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.impl.core.zip</a> &gt; <span class="el_source">GordianCoreZipLock.java</span></div><h1>GordianCoreZipLock.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.gordianknot.impl.core.zip;
+
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactory;
+import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactory.GordianFactoryLock;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
+import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySet;
+import io.github.tonywasher.joceanus.gordianknot.api.lock.GordianKeyPairLock;
+import io.github.tonywasher.joceanus.gordianknot.api.lock.GordianKeySetLock;
+import io.github.tonywasher.joceanus.gordianknot.api.lock.GordianLock;
+import io.github.tonywasher.joceanus.gordianknot.api.zip.GordianZipLock;
+import io.github.tonywasher.joceanus.gordianknot.api.zip.GordianZipLockType;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianLogicException;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.lock.GordianCoreLockFactory;
+import org.bouncycastle.asn1.ASN1Encodable;
+import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
+
+import java.util.Arrays;
+import java.util.Objects;
+
+/**
+ * Lock implementation.
+ */
+public class GordianCoreZipLock
+        implements GordianZipLock {
+    /**
+     * UnLock notification.
+     */
+    interface GordianUnlockNotify {
+        /**
+         * Notify successful unlock.
+         *
+         * @throws GordianException on error
+         */
+        void notifyUnlock() throws GordianException;
+    }
+
+    /**
+     * The lock factory.
+     */
+    private final GordianCoreLockFactory theLockFactory;
+
+    /**
+     * The Lock.
+     */
+    private final GordianZipLockASN1 theZipLock;
+
+    /**
+     * The lockBytes.
+     */
+    private final byte[] theLockBytes;
+
+    /**
+     * The Unlock notification.
+     */
+    private final GordianUnlockNotify theNotify;
+
+    /**
+     * The keySet.
+     */
+    private GordianKeySet theKeySet;
+
+    /**
+     * is the lock available to create a zipFile?
+     */
+    private boolean isFresh;
+
+    /**
+     * Constructor.
+     *
+     * @param pFactory the factory
+     * @param pZipLock the zipLock message.
+     * @throws GordianException on error
+     */
+    public GordianCoreZipLock(final GordianFactory pFactory,
+                              final byte[] pZipLock) throws GordianException {
+<span class="nc" id="L94">        this(pFactory, null, pZipLock);</span>
+<span class="nc" id="L95">    }</span>
+
+    /**
+     * Constructor.
+     *
+     * @param pFactory the factory
+     * @param pNotify  the unlock notification (if any)
+     * @param pZipLock the zipLock message.
+     * @throws GordianException on error
+     */
+    GordianCoreZipLock(final GordianFactory pFactory,
+                       final GordianUnlockNotify pNotify,
+<span class="fc" id="L107">                       final byte[] pZipLock) throws GordianException {</span>
+        /* Store parameters */
+<span class="fc" id="L109">        theLockFactory = (GordianCoreLockFactory) pFactory.getLockFactory();</span>
+<span class="fc" id="L110">        theNotify = pNotify;</span>
+<span class="fc" id="L111">        theZipLock = GordianZipLockASN1.getInstance(pZipLock);</span>
+<span class="fc" id="L112">        theLockBytes = theZipLock.getEncodedBytes();</span>
+<span class="fc" id="L113">    }</span>
+
+    /**
+     * Constructor.
+     *
+     * @param pFactory the factory
+     * @param pZipLock the zipLock message.
+     * @throws GordianException on error
+     */
+    public GordianCoreZipLock(final GordianFactory pFactory,
+                              final ASN1Encodable pZipLock) throws GordianException {
+<span class="fc" id="L124">        this(pFactory, null, pZipLock);</span>
+<span class="fc" id="L125">    }</span>
+
+    /**
+     * Constructor.
+     *
+     * @param pFactory the factory
+     * @param pNotify  the unlock notification (if any)
+     * @param pZipLock the zipLock message.
+     * @throws GordianException on error
+     */
+    GordianCoreZipLock(final GordianFactory pFactory,
+                       final GordianUnlockNotify pNotify,
+<span class="fc" id="L137">                       final ASN1Encodable pZipLock) throws GordianException {</span>
+        /* Store parameters */
+<span class="fc" id="L139">        theLockFactory = (GordianCoreLockFactory) pFactory.getLockFactory();</span>
+<span class="fc" id="L140">        theNotify = pNotify;</span>
+<span class="fc" id="L141">        theZipLock = GordianZipLockASN1.getInstance(pZipLock);</span>
+<span class="fc" id="L142">        theLockBytes = theZipLock.getEncodedBytes();</span>
+<span class="fc" id="L143">    }</span>
+
+    /**
+     * Constructor.
+     *
+     * @param pFactory the factory
+     * @param pLock    the keySetLock
+     * @throws GordianException on error
+     */
+    GordianCoreZipLock(final GordianFactory pFactory,
+<span class="fc" id="L153">                       final GordianKeySetLock pLock) throws GordianException {</span>
+        /* Store parameters */
+<span class="fc" id="L155">        theLockFactory = (GordianCoreLockFactory) pFactory.getLockFactory();</span>
+<span class="fc" id="L156">        theNotify = null;</span>
+<span class="fc" id="L157">        theZipLock = new GordianZipLockASN1(pLock);</span>
+<span class="fc" id="L158">        theLockBytes = theZipLock.getEncodedBytes();</span>
+<span class="fc" id="L159">        theKeySet = pLock.getKeySet();</span>
+
+        /* Available for locking */
+<span class="fc" id="L162">        isFresh = true;</span>
+<span class="fc" id="L163">    }</span>
+
+    /**
+     * Constructor.
+     *
+     * @param pFactory the factory
+     * @param pLock    the factoryLock
+     * @throws GordianException on error
+     */
+    GordianCoreZipLock(final GordianFactory pFactory,
+<span class="fc" id="L173">                       final GordianFactoryLock pLock) throws GordianException {</span>
+        /* Store parameters */
+<span class="fc" id="L175">        theLockFactory = (GordianCoreLockFactory) pFactory.getLockFactory();</span>
+<span class="fc" id="L176">        theNotify = null;</span>
+<span class="fc" id="L177">        theZipLock = new GordianZipLockASN1(pLock);</span>
+<span class="fc" id="L178">        theLockBytes = theZipLock.getEncodedBytes();</span>
+<span class="fc" id="L179">        theKeySet = pLock.getFactory().getEmbeddedKeySet();</span>
+
+        /* Available for locking */
+<span class="fc" id="L182">        isFresh = true;</span>
+<span class="fc" id="L183">    }</span>
+
+    /**
+     * Constructor.
+     *
+     * @param pFactory the factory
+     * @param pLock    the keyPairLock
+     * @throws GordianException on error
+     */
+    GordianCoreZipLock(final GordianFactory pFactory,
+<span class="fc" id="L193">                       final GordianKeyPairLock pLock) throws GordianException {</span>
+        /* Store parameters */
+<span class="fc" id="L195">        theLockFactory = (GordianCoreLockFactory) pFactory.getLockFactory();</span>
+<span class="fc" id="L196">        theNotify = null;</span>
+<span class="fc" id="L197">        theZipLock = new GordianZipLockASN1(pLock);</span>
+<span class="fc" id="L198">        theLockBytes = theZipLock.getEncodedBytes();</span>
+<span class="fc" id="L199">        theKeySet = pLock.getKeySet();</span>
+
+        /* Available for locking */
+<span class="fc" id="L202">        isFresh = true;</span>
+<span class="fc" id="L203">    }</span>
+
+    @Override
+    public boolean isLocked() {
+<span class="fc bfc" id="L207" title="All 2 branches covered.">        return theKeySet == null;</span>
+    }
+
+    @Override
+    public boolean isFresh() {
+<span class="fc" id="L212">        return isFresh;</span>
+    }
+
+    @Override
+    public GordianZipLockType getLockType() {
+<span class="fc" id="L217">        return theZipLock.getLockType();</span>
+    }
+
+    @Override
+    public byte[] getLockBytes() throws GordianException {
+<span class="nc" id="L222">        return theZipLock.getPasswordLockASN1().getEncodedBytes();</span>
+    }
+
+    /**
+     * Obtain LockASN1.
+     *
+     * @return the lockASN1
+     */
+    public GordianZipLockASN1 getZipLockASN1() {
+<span class="nc" id="L231">        return theZipLock;</span>
+    }
+
+    @Override
+    public void unlock(final GordianLock&lt;?&gt; pLock) throws GordianException {
+        /* Check that this is the correct lock */
+<span class="nc bnc" id="L237" title="All 2 branches missed.">        if (!Arrays.equals(pLock.getLockBytes(), getLockBytes())) {</span>
+<span class="nc" id="L238">            throw new GordianDataException(&quot;Lock doesn't match&quot;);</span>
+        }
+
+        /* Store the relevant keySet */
+<span class="nc bnc" id="L242" title="All 2 branches missed.">        if (pLock instanceof GordianKeySetLock myLock) {</span>
+<span class="nc" id="L243">            theKeySet = myLock.getKeySet();</span>
+<span class="nc bnc" id="L244" title="All 2 branches missed.">        } else if (pLock instanceof GordianFactoryLock myLock) {</span>
+<span class="nc" id="L245">            theKeySet = myLock.getFactory().getEmbeddedKeySet();</span>
+<span class="nc bnc" id="L246" title="All 2 branches missed.">        } else if (pLock instanceof GordianKeyPairLock myLock) {</span>
+<span class="nc" id="L247">            theKeySet = myLock.getKeySet();</span>
+        } else {
+<span class="nc" id="L249">            throw new GordianDataException(&quot;Unsupported lockType&quot;);</span>
+        }
+
+        /* notify if required */
+<span class="nc bnc" id="L253" title="All 2 branches missed.">        if (theNotify != null) {</span>
+<span class="nc" id="L254">            theNotify.notifyUnlock();</span>
+        }
+<span class="nc" id="L256">    }</span>
+
+    @Override
+    public void unlock(final char[] pPassword) throws GordianException {
+        /* Split out factoryLock */
+<span class="fc bfc" id="L261" title="All 2 branches covered.">        if (getLockType().equals(GordianZipLockType.FACTORY_PASSWORD)) {</span>
+<span class="fc" id="L262">            unlockFactory(pPassword);</span>
+<span class="fc" id="L263">            return;</span>
+        }
+
+        /* Check that the state is correct */
+<span class="fc" id="L267">        checkState(GordianZipLockType.KEYSET_PASSWORD);</span>
+
+        /* derive the keySet */
+<span class="fc" id="L270">        final GordianKeySetLock myLock = theLockFactory.resolveKeySetLock(theZipLock.getPasswordLockASN1(), pPassword);</span>
+<span class="fc" id="L271">        theKeySet = myLock.getKeySet();</span>
+
+        /* notify if required */
+<span class="fc bfc" id="L274" title="All 2 branches covered.">        if (theNotify != null) {</span>
+<span class="fc" id="L275">            theNotify.notifyUnlock();</span>
+        }
+<span class="fc" id="L277">    }</span>
+
+    /**
+     * unlock a factory lock.
+     *
+     * @param pPassword the password
+     * @throws GordianException on error
+     */
+    private void unlockFactory(final char[] pPassword) throws GordianException {
+        /* Check that the state is correct */
+<span class="fc" id="L287">        checkState(GordianZipLockType.FACTORY_PASSWORD);</span>
+
+        /* derive the keySet */
+<span class="fc" id="L290">        final GordianFactoryLock myLock = theLockFactory.resolveFactoryLock(theZipLock.getPasswordLockASN1(), pPassword);</span>
+<span class="fc" id="L291">        theKeySet = myLock.getFactory().getEmbeddedKeySet();</span>
+
+        /* notify if required */
+<span class="pc bpc" id="L294" title="1 of 2 branches missed.">        if (theNotify != null) {</span>
+<span class="fc" id="L295">            theNotify.notifyUnlock();</span>
+        }
+<span class="fc" id="L297">    }</span>
+
+    @Override
+    public void unlock(final GordianKeyPair pKeyPair,
+                       final char[] pPassword) throws GordianException {
+        /* Check that the state is correct */
+<span class="fc" id="L303">        checkState(GordianZipLockType.KEYPAIR_PASSWORD);</span>
+
+        /* derive the keySet */
+<span class="fc" id="L306">        final GordianKeyPairLock myLock = theLockFactory.resolveKeyPairLock(theZipLock.getKeyPairLockASN1(), pKeyPair, pPassword);</span>
+<span class="fc" id="L307">        theKeySet = myLock.getKeySet();</span>
+
+        /* notify if required */
+<span class="pc bpc" id="L310" title="1 of 2 branches missed.">        if (theNotify != null) {</span>
+<span class="fc" id="L311">            theNotify.notifyUnlock();</span>
+        }
+<span class="fc" id="L313">    }</span>
+
+    /**
+     * unlock with keySet.
+     *
+     * @param pKeySet the keySet
+     * @throws GordianException on error
+     */
+    public void unlock(final GordianKeySet pKeySet) throws GordianException {
+        /* store the keySet */
+<span class="nc" id="L323">        theKeySet = pKeySet;</span>
+
+        /* notify if required */
+<span class="nc bnc" id="L326" title="All 2 branches missed.">        if (theNotify != null) {</span>
+<span class="nc" id="L327">            theNotify.notifyUnlock();</span>
+        }
+<span class="nc" id="L329">    }</span>
+
+    /**
+     * Obtain the keySetHash.
+     *
+     * @return the keySetHash
+     */
+    public GordianKeySet getKeySet() {
+<span class="fc" id="L337">        return theKeySet;</span>
+    }
+
+    /**
+     * Obtain the encoded bytes.
+     *
+     * @return the encoded bytes
+     */
+    public byte[] getEncodedBytes() {
+<span class="fc" id="L346">        return theLockBytes;</span>
+    }
+
+    /**
+     * Obtain the algorithmId.
+     *
+     * @return the algorithmId
+     */
+    public AlgorithmIdentifier getAlgorithmId() {
+<span class="fc" id="L355">        return theZipLock.getAlgorithmId();</span>
+    }
+
+    /**
+     * Mark as used.
+     */
+    public void markAsUsed() {
+<span class="fc" id="L362">        isFresh = false;</span>
+<span class="fc" id="L363">    }</span>
+
+    /**
+     * Check the status.
+     *
+     * @param pLockType the expected lockType
+     * @throws GordianException on error
+     */
+    public void checkState(final GordianZipLockType pLockType) throws GordianException {
+        /* Must be locked */
+<span class="pc bpc" id="L373" title="1 of 2 branches missed.">        if (!isLocked()) {</span>
+<span class="nc" id="L374">            throw new GordianLogicException(&quot;Already unlocked&quot;);</span>
+        }
+
+        /* Check state */
+<span class="pc bpc" id="L378" title="1 of 2 branches missed.">        if (!getLockType().equals(pLockType)) {</span>
+<span class="nc" id="L379">            throw new GordianLogicException(&quot;Incorrect lockType&quot;);</span>
+        }
+<span class="fc" id="L381">    }</span>
+
+    @Override
+    public boolean equals(final Object pThat) {
+        /* Handle trivial cases */
+<span class="nc bnc" id="L386" title="All 2 branches missed.">        if (this == pThat) {</span>
+<span class="nc" id="L387">            return true;</span>
+        }
+<span class="nc bnc" id="L389" title="All 2 branches missed.">        if (pThat == null) {</span>
+<span class="nc" id="L390">            return false;</span>
+        }
+
+        /* Make sure that the classes are the same */
+<span class="nc bnc" id="L394" title="All 2 branches missed.">        if (!(pThat instanceof GordianCoreZipLock)) {</span>
+<span class="nc" id="L395">            return false;</span>
+        }
+<span class="nc" id="L397">        final GordianCoreZipLock myThat = (GordianCoreZipLock) pThat;</span>
+
+        /* Check that the fields are equal */
+<span class="nc" id="L400">        return Objects.equals(theZipLock, myThat.theZipLock);</span>
+    }
+
+    @Override
+    public int hashCode() {
+<span class="nc" id="L405">        return Objects.hash(theZipLock);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

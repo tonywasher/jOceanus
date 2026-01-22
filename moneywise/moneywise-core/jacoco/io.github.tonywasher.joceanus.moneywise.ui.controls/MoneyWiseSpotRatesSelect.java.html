@@ -1,0 +1,438 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseSpotRatesSelect.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.moneywise.ui.controls</a> &gt; <span class="el_source">MoneyWiseSpotRatesSelect.java</span></div><h1>MoneyWiseSpotRatesSelect.java</h1><pre class="source lang-java linenums">/*
+ * MoneyWise: Finance Application
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.moneywise.ui.controls;
+
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventManager;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
+import io.github.tonywasher.joceanus.metis.data.MetisDataDifference;
+import io.github.tonywasher.joceanus.metis.ui.MetisIcon;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDataSet;
+import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseCurrency;
+import io.github.tonywasher.joceanus.moneywise.ui.MoneyWiseUIResource;
+import io.github.tonywasher.joceanus.moneywise.views.MoneyWiseView;
+import io.github.tonywasher.joceanus.prometheus.views.PrometheusDataEvent;
+import io.github.tonywasher.joceanus.tethys.api.base.TethysUIArrowIconId;
+import io.github.tonywasher.joceanus.tethys.api.base.TethysUIComponent;
+import io.github.tonywasher.joceanus.tethys.api.base.TethysUIEvent;
+import io.github.tonywasher.joceanus.tethys.api.button.TethysUIButton;
+import io.github.tonywasher.joceanus.tethys.api.button.TethysUIButtonFactory;
+import io.github.tonywasher.joceanus.tethys.api.button.TethysUIDateButtonManager;
+import io.github.tonywasher.joceanus.tethys.api.control.TethysUIControlFactory;
+import io.github.tonywasher.joceanus.tethys.api.control.TethysUILabel;
+import io.github.tonywasher.joceanus.tethys.api.factory.TethysUIFactory;
+import io.github.tonywasher.joceanus.tethys.api.pane.TethysUIBoxPaneManager;
+
+/**
+ * SpotRates selection panel.
+ */
+public class MoneyWiseSpotRatesSelect
+        implements OceanusEventProvider&lt;PrometheusDataEvent&gt;, TethysUIComponent {
+    /**
+     * Text for Currency Prompt.
+     */
+<span class="nc" id="L50">    private static final String NLS_CURRENCY = MoneyWiseUIResource.SPOTRATE_PROMPT_CURR.getValue();</span>
+
+    /**
+     * Text for Date Label.
+     */
+<span class="nc" id="L55">    private static final String NLS_DATE = MoneyWiseUIResource.SPOTEVENT_DATE.getValue();</span>
+
+    /**
+     * Text for Title.
+     */
+<span class="nc" id="L60">    private static final String NLS_TITLE = MoneyWiseUIResource.SPOTRATE_TITLE.getValue();</span>
+
+    /**
+     * Text for Next toolTip.
+     */
+<span class="nc" id="L65">    private static final String NLS_NEXTTIP = MoneyWiseUIResource.SPOTRATE_NEXT.getValue();</span>
+
+    /**
+     * Text for Previous toolTip.
+     */
+<span class="nc" id="L70">    private static final String NLS_PREVTIP = MoneyWiseUIResource.SPOTRATE_PREV.getValue();</span>
+
+    /**
+     * The Event Manager.
+     */
+    private final OceanusEventManager&lt;PrometheusDataEvent&gt; theEventManager;
+
+    /**
+     * The panel.
+     */
+    private final TethysUIBoxPaneManager thePanel;
+
+    /**
+     * The data view.
+     */
+    private final MoneyWiseView theView;
+
+    /**
+     * The currency label.
+     */
+    private final TethysUILabel theCurrLabel;
+
+    /**
+     * The date button.
+     */
+    private final TethysUIDateButtonManager theDateButton;
+
+    /**
+     * The next button.
+     */
+    private final TethysUIButton theNext;
+
+    /**
+     * The previous button.
+     */
+    private final TethysUIButton thePrev;
+
+    /**
+     * The download button.
+     */
+    private final TethysUIButton theDownloadButton;
+
+    /**
+     * The current state.
+     */
+    private MoneyWiseSpotRatesState theState;
+
+    /**
+     * The saved state.
+     */
+    private MoneyWiseSpotRatesState theSavePoint;
+
+    /**
+     * Constructor.
+     *
+     * @param pFactory the GUI factory
+     * @param pView    the data view
+     */
+    public MoneyWiseSpotRatesSelect(final TethysUIFactory&lt;?&gt; pFactory,
+<span class="nc" id="L129">                                    final MoneyWiseView pView) {</span>
+        /* Store table and view details */
+<span class="nc" id="L131">        theView = pView;</span>
+
+        /* Create Event Manager */
+<span class="nc" id="L134">        theEventManager = new OceanusEventManager&lt;&gt;();</span>
+
+        /* Create Labels */
+<span class="nc" id="L137">        final TethysUIControlFactory myControls = pFactory.controlFactory();</span>
+<span class="nc" id="L138">        final TethysUILabel myCurr = myControls.newLabel(NLS_CURRENCY);</span>
+<span class="nc" id="L139">        final TethysUILabel myDate = myControls.newLabel(NLS_DATE);</span>
+
+        /* Create the DateButton */
+<span class="nc" id="L142">        final TethysUIButtonFactory&lt;?&gt; myButtons = pFactory.buttonFactory();</span>
+<span class="nc" id="L143">        theDateButton = myButtons.newDateButton();</span>
+
+        /* Create the Download Button */
+<span class="nc" id="L146">        theDownloadButton = myButtons.newButton();</span>
+<span class="nc" id="L147">        MetisIcon.configureDownloadIconButton(theDownloadButton);</span>
+
+        /* Create the Currency indication */
+<span class="nc" id="L150">        theCurrLabel = myControls.newLabel();</span>
+
+        /* Create the Buttons */
+<span class="nc" id="L153">        theNext = myButtons.newButton();</span>
+<span class="nc" id="L154">        theNext.setIcon(TethysUIArrowIconId.RIGHT);</span>
+<span class="nc" id="L155">        theNext.setToolTip(NLS_NEXTTIP);</span>
+<span class="nc" id="L156">        thePrev = myButtons.newButton();</span>
+<span class="nc" id="L157">        thePrev.setIcon(TethysUIArrowIconId.LEFT);</span>
+<span class="nc" id="L158">        thePrev.setToolTip(NLS_PREVTIP);</span>
+
+        /* Create initial state */
+<span class="nc" id="L161">        theState = new MoneyWiseSpotRatesState();</span>
+
+        /* Create the panel */
+<span class="nc" id="L164">        thePanel = pFactory.paneFactory().newHBoxPane();</span>
+<span class="nc" id="L165">        thePanel.setBorderTitle(NLS_TITLE);</span>
+
+        /* Define the layout */
+<span class="nc" id="L168">        thePanel.addNode(myCurr);</span>
+<span class="nc" id="L169">        thePanel.addNode(theCurrLabel);</span>
+<span class="nc" id="L170">        thePanel.addSpacer();</span>
+<span class="nc" id="L171">        thePanel.addNode(myDate);</span>
+<span class="nc" id="L172">        thePanel.addNode(thePrev);</span>
+<span class="nc" id="L173">        thePanel.addNode(theDateButton);</span>
+<span class="nc" id="L174">        thePanel.addNode(theNext);</span>
+<span class="nc" id="L175">        thePanel.addSpacer();</span>
+<span class="nc" id="L176">        thePanel.addNode(theDownloadButton);</span>
+
+        /* Initialise the data from the view */
+<span class="nc" id="L179">        refreshData();</span>
+
+        /* Apply the current state */
+<span class="nc" id="L182">        theState.applyState();</span>
+
+        /* Add the listeners */
+<span class="nc" id="L185">        theDateButton.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -&gt; handleNewDate());</span>
+<span class="nc" id="L186">        theDownloadButton.getEventRegistrar().addEventListener(TethysUIEvent.PRESSED, e -&gt; theEventManager.fireEvent(PrometheusDataEvent.DOWNLOAD));</span>
+<span class="nc" id="L187">        theNext.getEventRegistrar().addEventListener(e -&gt; {</span>
+<span class="nc" id="L188">            theState.setNext();</span>
+<span class="nc" id="L189">            theEventManager.fireEvent(PrometheusDataEvent.SELECTIONCHANGED);</span>
+<span class="nc" id="L190">        });</span>
+<span class="nc" id="L191">        thePrev.getEventRegistrar().addEventListener(e -&gt; {</span>
+<span class="nc" id="L192">            theState.setPrev();</span>
+<span class="nc" id="L193">            theEventManager.fireEvent(PrometheusDataEvent.SELECTIONCHANGED);</span>
+<span class="nc" id="L194">        });</span>
+<span class="nc" id="L195">    }</span>
+
+    @Override
+    public TethysUIComponent getUnderlying() {
+<span class="nc" id="L199">        return thePanel;</span>
+    }
+
+    @Override
+    public OceanusEventRegistrar&lt;PrometheusDataEvent&gt; getEventRegistrar() {
+<span class="nc" id="L204">        return theEventManager.getEventRegistrar();</span>
+    }
+
+    /**
+     * Get the selected date.
+     *
+     * @return the date
+     */
+    public OceanusDate getDate() {
+<span class="nc" id="L213">        return theState.getDate();</span>
+    }
+
+    /**
+     * Refresh data.
+     */
+    public final void refreshData() {
+        /* Access the data */
+<span class="nc" id="L221">        final OceanusDateRange myRange = theView.getRange();</span>
+
+        /* Set the range for the Date Button */
+<span class="nc" id="L224">        setRange(myRange);</span>
+
+        /* Set the currency name */
+<span class="nc" id="L227">        final MoneyWiseDataSet myData = theView.getData();</span>
+<span class="nc" id="L228">        final MoneyWiseCurrency myDefault = myData.getReportingCurrency();</span>
+<span class="nc bnc" id="L229" title="All 2 branches missed.">        theCurrLabel.setText(myDefault != null</span>
+<span class="nc" id="L230">                ? myDefault.getDesc() + &quot; (&quot; + myDefault.getName() + &quot;)&quot;</span>
+<span class="nc" id="L231">                : null);</span>
+<span class="nc" id="L232">    }</span>
+
+    /**
+     * Set the range for the date box.
+     *
+     * @param pRange the Range to set
+     */
+    private void setRange(final OceanusDateRange pRange) {
+<span class="nc bnc" id="L240" title="All 2 branches missed.">        final OceanusDate myStart = (pRange == null)</span>
+<span class="nc" id="L241">                ? null</span>
+<span class="nc" id="L242">                : pRange.getStart();</span>
+<span class="nc bnc" id="L243" title="All 2 branches missed.">        final OceanusDate myEnd = (pRange == null)</span>
+<span class="nc" id="L244">                ? null</span>
+<span class="nc" id="L245">                : pRange.getEnd();</span>
+
+        /* Set up range */
+<span class="nc" id="L248">        theDateButton.setEarliestDate(myStart);</span>
+<span class="nc" id="L249">        theDateButton.setLatestDate(myEnd);</span>
+<span class="nc" id="L250">    }</span>
+
+    @Override
+    public void setEnabled(final boolean bEnabled) {
+<span class="nc bnc" id="L254" title="All 4 branches missed.">        theNext.setEnabled(bEnabled &amp;&amp; (theState.getNextDate() != null));</span>
+<span class="nc bnc" id="L255" title="All 4 branches missed.">        thePrev.setEnabled(bEnabled &amp;&amp; (theState.getPrevDate() != null));</span>
+<span class="nc" id="L256">        theDateButton.setEnabled(bEnabled);</span>
+<span class="nc" id="L257">        theDownloadButton.setEnabled(bEnabled);</span>
+<span class="nc" id="L258">    }</span>
+
+    @Override
+    public void setVisible(final boolean pVisible) {
+<span class="nc" id="L262">        thePanel.setVisible(pVisible);</span>
+<span class="nc" id="L263">    }</span>
+
+    /**
+     * Create SavePoint.
+     */
+    public void createSavePoint() {
+        /* Create the savePoint */
+<span class="nc" id="L270">        theSavePoint = new MoneyWiseSpotRatesState(theState);</span>
+<span class="nc" id="L271">    }</span>
+
+    /**
+     * Restore SavePoint.
+     */
+    public void restoreSavePoint() {
+        /* Restore the savePoint */
+<span class="nc" id="L278">        theState = new MoneyWiseSpotRatesState(theSavePoint);</span>
+
+        /* Apply the state */
+<span class="nc" id="L281">        theState.applyState();</span>
+<span class="nc" id="L282">    }</span>
+
+    /**
+     * Set Adjacent dates.
+     *
+     * @param pPrev the previous Date
+     * @param pNext the next Date
+     */
+    public void setAdjacent(final OceanusDate pPrev,
+                            final OceanusDate pNext) {
+        /* Record the dates */
+<span class="nc" id="L293">        theState.setAdjacent(pPrev, pNext);</span>
+<span class="nc" id="L294">    }</span>
+
+    /**
+     * Handle new Date.
+     */
+    private void handleNewDate() {
+        /* Select the new date */
+<span class="nc bnc" id="L301" title="All 2 branches missed.">        if (theState.setDate(theDateButton)) {</span>
+<span class="nc" id="L302">            theEventManager.fireEvent(PrometheusDataEvent.SELECTIONCHANGED);</span>
+        }
+<span class="nc" id="L304">    }</span>
+
+    /**
+     * SavePoint values.
+     */
+    private final class MoneyWiseSpotRatesState {
+        /**
+         * Selected date.
+         */
+        private OceanusDate theDate;
+
+        /**
+         * Next date.
+         */
+        private OceanusDate theNextDate;
+
+        /**
+         * Previous date.
+         */
+        private OceanusDate thePrevDate;
+
+        /**
+         * Constructor.
+         */
+<span class="nc" id="L328">        private MoneyWiseSpotRatesState() {</span>
+<span class="nc" id="L329">            theDate = new OceanusDate();</span>
+<span class="nc" id="L330">        }</span>
+
+        /**
+         * Constructor.
+         *
+         * @param pState state to copy from
+         */
+<span class="nc" id="L337">        private MoneyWiseSpotRatesState(final MoneyWiseSpotRatesState pState) {</span>
+<span class="nc" id="L338">            theDate = new OceanusDate(pState.getDate());</span>
+<span class="nc bnc" id="L339" title="All 2 branches missed.">            if (pState.getNextDate() != null) {</span>
+<span class="nc" id="L340">                theNextDate = new OceanusDate(pState.getNextDate());</span>
+            }
+<span class="nc bnc" id="L342" title="All 2 branches missed.">            if (pState.getPrevDate() != null) {</span>
+<span class="nc" id="L343">                thePrevDate = new OceanusDate(pState.getPrevDate());</span>
+            }
+<span class="nc" id="L345">        }</span>
+
+        /**
+         * Get the selected date.
+         *
+         * @return the date
+         */
+        private OceanusDate getDate() {
+<span class="nc" id="L353">            return theDate;</span>
+        }
+
+        /**
+         * Get the next date.
+         *
+         * @return the date
+         */
+        private OceanusDate getNextDate() {
+<span class="nc" id="L362">            return theNextDate;</span>
+        }
+
+        /**
+         * Get the previous date.
+         *
+         * @return the date
+         */
+        private OceanusDate getPrevDate() {
+<span class="nc" id="L371">            return thePrevDate;</span>
+        }
+
+        /**
+         * Set new Date.
+         *
+         * @param pButton the Button with the new date
+         * @return true/false did a change occur
+         */
+        private boolean setDate(final TethysUIDateButtonManager pButton) {
+            /* Adjust the date and build the new range */
+<span class="nc" id="L382">            final OceanusDate myDate = new OceanusDate(pButton.getSelectedDate());</span>
+<span class="nc bnc" id="L383" title="All 2 branches missed.">            if (!MetisDataDifference.isEqual(myDate, theDate)) {</span>
+<span class="nc" id="L384">                theDate = myDate;</span>
+<span class="nc" id="L385">                return true;</span>
+            }
+<span class="nc" id="L387">            return false;</span>
+        }
+
+        /**
+         * Set Next Date.
+         */
+        private void setNext() {
+            /* Copy date */
+<span class="nc" id="L395">            theDate = new OceanusDate(theNextDate);</span>
+<span class="nc" id="L396">            applyState();</span>
+<span class="nc" id="L397">        }</span>
+
+        /**
+         * Set Previous Date.
+         */
+        private void setPrev() {
+            /* Copy date */
+<span class="nc" id="L404">            theDate = new OceanusDate(thePrevDate);</span>
+<span class="nc" id="L405">            applyState();</span>
+<span class="nc" id="L406">        }</span>
+
+        /**
+         * Set Adjacent dates.
+         *
+         * @param pPrev the previous Date
+         * @param pNext the next Date
+         */
+        private void setAdjacent(final OceanusDate pPrev,
+                                 final OceanusDate pNext) {
+            /* Record the dates */
+<span class="nc" id="L417">            thePrevDate = pPrev;</span>
+<span class="nc" id="L418">            theNextDate = pNext;</span>
+
+            /* Adjust values */
+<span class="nc" id="L421">            setEnabled(true);</span>
+<span class="nc" id="L422">        }</span>
+
+        /**
+         * Apply the State.
+         */
+        private void applyState() {
+            /* Adjust the lock-down */
+<span class="nc" id="L429">            setEnabled(true);</span>
+<span class="nc" id="L430">            theDateButton.setSelectedDate(theDate);</span>
+
+            /* Determine whether we are todays date */
+<span class="nc" id="L433">            final boolean isToday = MetisDataDifference.isEqual(theDate, new OceanusDate());</span>
+<span class="nc" id="L434">            theDownloadButton.setVisible(isToday);</span>
+<span class="nc" id="L435">        }</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

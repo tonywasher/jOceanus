@@ -1,0 +1,364 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianCubeHashDigest.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.impl.ext.digests</a> &gt; <span class="el_source">GordianCubeHashDigest.java</span></div><h1>GordianCubeHashDigest.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.gordianknot.impl.ext.digests;
+
+import org.bouncycastle.crypto.ExtendedDigest;
+import org.bouncycastle.util.Memoable;
+
+import java.util.Arrays;
+
+/**
+ * CubeHash Digest.
+ */
+@SuppressWarnings(&quot;checkstyle:MagicNumber&quot;)
+public class GordianCubeHashDigest
+        implements ExtendedDigest, Memoable {
+    /**
+     * The State length.
+     */
+    private static final int STATELEN = 32;
+
+    /**
+     * The Swap length.
+     */
+    private static final int SWAPLEN = STATELEN / 2;
+
+    /**
+     * The state.
+     */
+<span class="fc" id="L43">    private final int[] theState = new int[STATELEN];</span>
+
+    /**
+     * The swap buffer.
+     */
+<span class="fc" id="L48">    private final int[] theSwap = new int[SWAPLEN];</span>
+
+    /**
+     * The initial state.
+     */
+    private final int[] theInitState;
+
+    /**
+     * The block length.
+     */
+    private final int theBlockLen;
+
+    /**
+     * The hash length.
+     */
+    private final int theHashLen;
+
+    /**
+     * The number of final rounds.
+     */
+    private final int theNumRounds;
+
+    /**
+     * The number of final rounds.
+     */
+    private final int theNumFinalRounds;
+
+    /**
+     * The input buffer.
+     */
+    private final byte[] theInputBuffer;
+
+    /**
+     * The current byte index into input buffer.
+     */
+    private int theByteIndex;
+
+    /**
+     * Constructor.
+     *
+     * @param pHashLen the hash lengyh
+     */
+    public GordianCubeHashDigest(final int pHashLen) {
+<span class="fc" id="L91">        this(pHashLen, 32, 16, 16, 32);</span>
+<span class="fc" id="L92">    }</span>
+
+    /**
+     * Constructor.
+     *
+     * @param pSource the source digest
+     */
+<span class="fc" id="L99">    private GordianCubeHashDigest(final GordianCubeHashDigest pSource) {</span>
+        /* Store configuration */
+<span class="fc" id="L101">        theHashLen = pSource.theHashLen;</span>
+<span class="fc" id="L102">        theBlockLen = pSource.theBlockLen;</span>
+<span class="fc" id="L103">        theNumRounds = pSource.theNumRounds;</span>
+<span class="fc" id="L104">        theNumFinalRounds = pSource.theNumFinalRounds;</span>
+
+        /* Create the input buffer */
+<span class="fc" id="L107">        theInputBuffer = new byte[theBlockLen];</span>
+
+        /* Copy the state */
+<span class="fc" id="L110">        System.arraycopy(pSource.theState, 0, theState, 0, theState.length);</span>
+<span class="fc" id="L111">        System.arraycopy(pSource.theInputBuffer, 0, theInputBuffer, 0, theBlockLen);</span>
+<span class="fc" id="L112">        theByteIndex = pSource.theByteIndex;</span>
+<span class="fc" id="L113">        theInitState = Arrays.copyOf(pSource.theInitState, theState.length);</span>
+<span class="fc" id="L114">    }</span>
+
+    /**
+     * Constructor.
+     *
+     * @param pHashLen     the hashLen in bits
+     * @param pBlockLen    the blockLen in bytes
+     * @param pNumRounds   the number of rounds per block
+     * @param pInitRounds  the number of initial rounds
+     * @param pFinalRounds the number of final rounds;
+     */
+    private GordianCubeHashDigest(final int pHashLen,
+                                  final int pBlockLen,
+                                  final int pNumRounds,
+                                  final int pInitRounds,
+<span class="fc" id="L129">                                  final int pFinalRounds) {</span>
+        /* Store configuration */
+<span class="fc" id="L131">        theHashLen = pHashLen / Byte.SIZE;</span>
+<span class="fc" id="L132">        theBlockLen = pBlockLen;</span>
+<span class="fc" id="L133">        theNumRounds = pNumRounds;</span>
+<span class="fc" id="L134">        theNumFinalRounds = pFinalRounds;</span>
+
+        /* Create the input buffer */
+<span class="fc" id="L137">        theInputBuffer = new byte[pBlockLen];</span>
+
+        /* Initialise the state */
+<span class="fc" id="L140">        theState[0] = theHashLen;</span>
+<span class="fc" id="L141">        theState[1] = pBlockLen;</span>
+<span class="fc" id="L142">        theState[2] = pNumRounds;</span>
+<span class="fc" id="L143">        performRounds(pInitRounds);</span>
+
+        /* Save the initial state */
+<span class="fc" id="L146">        theInitState = Arrays.copyOf(theState, theState.length);</span>
+<span class="fc" id="L147">    }</span>
+
+    @Override
+    public String getAlgorithmName() {
+<span class="fc" id="L151">        return &quot;CubeHash-&quot; + theHashLen * Byte.SIZE;</span>
+    }
+
+    @Override
+    public int getDigestSize() {
+<span class="fc" id="L156">        return theHashLen;</span>
+    }
+
+    @Override
+    public int getByteLength() {
+<span class="fc" id="L161">        return theHashLen;</span>
+    }
+
+    @Override
+    public void update(final byte pByte) {
+<span class="fc" id="L166">        theInputBuffer[theByteIndex++] = pByte;</span>
+<span class="fc bfc" id="L167" title="All 2 branches covered.">        if (theByteIndex == theBlockLen) {</span>
+<span class="fc" id="L168">            processBlock();</span>
+<span class="fc" id="L169">            theByteIndex = 0;</span>
+        }
+<span class="fc" id="L171">    }</span>
+
+    @Override
+    public void update(final byte[] pData, final int pOffset, final int pLength) {
+<span class="fc bfc" id="L175" title="All 2 branches covered.">        for (int i = 0; i &lt; pLength; i++) {</span>
+<span class="fc" id="L176">            update(pData[pOffset + i]);</span>
+        }
+<span class="fc" id="L178">    }</span>
+
+    @Override
+    public int doFinal(final byte[] pHash, final int pOffset) {
+<span class="fc" id="L182">        finaliseHash();</span>
+<span class="fc" id="L183">        outputHash(pHash, pOffset);</span>
+<span class="fc" id="L184">        return getDigestSize();</span>
+    }
+
+    @Override
+    public void reset() {
+<span class="fc" id="L189">        System.arraycopy(theInitState, 0, theState, 0, theState.length);</span>
+<span class="fc" id="L190">        theByteIndex = 0;</span>
+<span class="fc" id="L191">    }</span>
+
+    @Override
+    public GordianCubeHashDigest copy() {
+<span class="fc" id="L195">        return new GordianCubeHashDigest(this);</span>
+    }
+
+    @Override
+    public void reset(final Memoable pState) {
+<span class="fc" id="L200">        final GordianCubeHashDigest d = (GordianCubeHashDigest) pState;</span>
+
+        /* Copy the state */
+<span class="fc" id="L203">        System.arraycopy(d.theState, 0, theState, 0, theState.length);</span>
+<span class="fc" id="L204">        System.arraycopy(d.theInputBuffer, 0, theInputBuffer, 0, theBlockLen);</span>
+<span class="fc" id="L205">        theByteIndex = d.theByteIndex;</span>
+<span class="fc" id="L206">    }</span>
+
+    /**
+     * Decode a 32-bit value from a buffer (little-endian).
+     *
+     * @param buf the input buffer
+     * @param off the input offset
+     * @return the decoded value
+     */
+    private static int decode32le(final byte[] buf,
+                                  final int off) {
+<span class="fc" id="L217">        return (buf[off] &amp; 0xFF)</span>
+                | ((buf[off + 1] &amp; 0xFF) &lt;&lt; 8)
+                | ((buf[off + 2] &amp; 0xFF) &lt;&lt; 16)
+                | ((buf[off + 3] &amp; 0xFF) &lt;&lt; 24);
+    }
+
+    /**
+     * Encode a 32-bit value into a buffer (little-endian).
+     *
+     * @param val the value to encode
+     * @param buf the output buffer
+     * @param off the output offset
+     */
+    private static void encode32le(final int val,
+                                   final byte[] buf,
+                                   final int off) {
+<span class="fc" id="L233">        buf[off] = (byte) val;</span>
+<span class="fc" id="L234">        buf[off + 1] = (byte) (val &gt;&gt; 8);</span>
+<span class="fc" id="L235">        buf[off + 2] = (byte) (val &gt;&gt; 16);</span>
+<span class="fc" id="L236">        buf[off + 3] = (byte) (val &gt;&gt; 24);</span>
+<span class="fc" id="L237">    }</span>
+
+    /**
+     * Process a block.
+     */
+    private void processBlock() {
+        /* Loop through the bytes in the block */
+<span class="fc bfc" id="L244" title="All 2 branches covered.">        for (int i = 0, j = 0; j &lt; theBlockLen; i++, j += Integer.BYTES) {</span>
+<span class="fc" id="L245">            theState[i] ^= decode32le(theInputBuffer, j);</span>
+        }
+
+        /* Perform the required rounds */
+<span class="fc" id="L249">        performRounds(theNumRounds);</span>
+<span class="fc" id="L250">    }</span>
+
+    /**
+     * Finalise the hash.
+     */
+    private void finaliseHash() {
+        /* Set the marker */
+<span class="fc" id="L257">        theInputBuffer[theByteIndex++] = (byte) 0x80;</span>
+
+        /* Fill remainder of buffer with zeroes */
+<span class="fc bfc" id="L260" title="All 2 branches covered.">        while (theByteIndex &lt; theBlockLen) {</span>
+<span class="fc" id="L261">            theInputBuffer[theByteIndex++] = 0;</span>
+        }
+
+        /* Process the block */
+<span class="fc" id="L265">        processBlock();</span>
+
+        /* Adjust the final State word */
+<span class="fc" id="L268">        theState[STATELEN - 1] ^= 1;</span>
+
+        /* Perform the required rounds */
+<span class="fc" id="L271">        performRounds(theNumFinalRounds);</span>
+<span class="fc" id="L272">    }</span>
+
+    /**
+     * Output the hash.
+     *
+     * @param pOutput the output buffer
+     * @param pOffSet the offset with the output buffer to write to
+     */
+    private void outputHash(final byte[] pOutput,
+                            final int pOffSet) {
+        /* Loop through the bytes in the block */
+<span class="fc bfc" id="L283" title="All 2 branches covered.">        for (int i = 0, j = 0; j &lt; theHashLen; i++, j += Integer.BYTES) {</span>
+<span class="fc" id="L284">            encode32le(theState[i], pOutput, j + pOffSet);</span>
+        }
+
+        /* Reset back to initial state */
+<span class="fc" id="L288">        reset();</span>
+<span class="fc" id="L289">    }</span>
+
+    /**
+     * Perform the required number of rounds.
+     *
+     * @param pNumRounds the number of rounds
+     */
+    private void performRounds(final int pNumRounds) {
+        /* Loop to perform the round */
+<span class="fc bfc" id="L298" title="All 2 branches covered.">        for (int i = 0; i &lt; pNumRounds; i++) {</span>
+<span class="fc" id="L299">            performRound();</span>
+        }
+<span class="fc" id="L301">    }</span>
+
+    /**
+     * Perform the round.
+     */
+    private void performRound() {
+        /* 1. Add x[0jklm] into x[1jklm] modulo 2^32, for each (j,k,l,m) */
+<span class="fc bfc" id="L308" title="All 2 branches covered.">        for (int i = 0; i &lt; SWAPLEN; i++) {</span>
+<span class="fc" id="L309">            theState[i + SWAPLEN] += theState[i];</span>
+        }
+
+        /* 2. Rotate x[0jklm] upwards by 7 bits, for each (j,k,l,m) */
+<span class="fc bfc" id="L313" title="All 2 branches covered.">        for (int i = 0; i &lt; SWAPLEN; i++) {</span>
+<span class="fc" id="L314">            theSwap[i] = theState[i] &lt;&lt; 7 | theState[i] &gt;&gt;&gt; 25;</span>
+        }
+
+        /* 3. Swap x[00klm] with x[01klm], for each (k,l,m) */
+<span class="fc bfc" id="L318" title="All 2 branches covered.">        for (int i = 0; i &lt; SWAPLEN; i++) {</span>
+<span class="fc" id="L319">            theState[i] = theSwap[i ^ 8];</span>
+        }
+
+        /* 4. Xor x[1jklm] into x[0jklm], for each (j,k,l,m) */
+<span class="fc bfc" id="L323" title="All 2 branches covered.">        for (int i = 0; i &lt; SWAPLEN; i++) {</span>
+<span class="fc" id="L324">            theState[i] ^= theState[i + SWAPLEN];</span>
+        }
+
+        /* 5. Swap x[1jk0m] with x[1jk1m], for each (j,k,m) */
+<span class="fc bfc" id="L328" title="All 2 branches covered.">        for (int i = 0; i &lt; SWAPLEN; i++) {</span>
+<span class="fc" id="L329">            theSwap[i] = theState[i + SWAPLEN];</span>
+        }
+<span class="fc bfc" id="L331" title="All 2 branches covered.">        for (int i = 0; i &lt; SWAPLEN; i++) {</span>
+<span class="fc" id="L332">            theState[i + SWAPLEN] = theSwap[i ^ 2];</span>
+        }
+
+        /* 6. Add x[0jklm] into x[1jklm] modulo 2^32, for each (j,k,l,m) */
+<span class="fc bfc" id="L336" title="All 2 branches covered.">        for (int i = 0; i &lt; SWAPLEN; i++) {</span>
+<span class="fc" id="L337">            theState[i + SWAPLEN] += theState[i];</span>
+        }
+
+        /* 7. Rotate x[0jklm] upwards by 11 bits, for each (j,k,l,m) */
+<span class="fc bfc" id="L341" title="All 2 branches covered.">        for (int i = 0; i &lt; SWAPLEN; i++) {</span>
+<span class="fc" id="L342">            theSwap[i] = theState[i] &lt;&lt; 11 | theState[i] &gt;&gt;&gt; 21;</span>
+        }
+
+        /* 8. Swap x[0j0lm] with x[0j1lm], for each (j,l,m) */
+<span class="fc bfc" id="L346" title="All 2 branches covered.">        for (int i = 0; i &lt; SWAPLEN; i++) {</span>
+<span class="fc" id="L347">            theState[i] = theSwap[i ^ 4];</span>
+        }
+
+        /* 9. Xor x[1jklm] into x[0jklm], for each (j,k,l,m) */
+<span class="fc bfc" id="L351" title="All 2 branches covered.">        for (int i = 0; i &lt; SWAPLEN; i++) {</span>
+<span class="fc" id="L352">            theState[i] ^= theState[i + SWAPLEN];</span>
+        }
+
+        /* 10. Swap x[1jkl0] with x[1jkl1], for each (j,k,l) */
+<span class="fc bfc" id="L356" title="All 2 branches covered.">        for (int i = 0; i &lt; SWAPLEN; i++) {</span>
+<span class="fc" id="L357">            theSwap[i] = theState[i + SWAPLEN];</span>
+        }
+<span class="fc bfc" id="L359" title="All 2 branches covered.">        for (int i = 0; i &lt; SWAPLEN; i++) {</span>
+<span class="fc" id="L360">            theState[i + SWAPLEN] = theSwap[i ^ 1];</span>
+        }
+<span class="fc" id="L362">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

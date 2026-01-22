@@ -1,0 +1,374 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseXPayeeAnalysisSelect.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.moneywise.atlas.ui.controls</a> &gt; <span class="el_source">MoneyWiseXPayeeAnalysisSelect.java</span></div><h1>MoneyWiseXPayeeAnalysisSelect.java</h1><pre class="source lang-java linenums">/*
+ * MoneyWise: Finance Application
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.moneywise.atlas.ui.controls;
+
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventManager;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
+import io.github.tonywasher.joceanus.metis.data.MetisDataDifference;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysis;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisPayeeBucket;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisPayeeBucket.MoneyWiseXAnalysisPayeeBucketList;
+import io.github.tonywasher.joceanus.moneywise.atlas.views.MoneyWiseXAnalysisFilter;
+import io.github.tonywasher.joceanus.moneywise.atlas.views.MoneyWiseXAnalysisFilter.MoneyWiseXAnalysisPayeeFilter;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
+import io.github.tonywasher.joceanus.prometheus.views.PrometheusDataEvent;
+import io.github.tonywasher.joceanus.tethys.api.base.TethysUIComponent;
+import io.github.tonywasher.joceanus.tethys.api.base.TethysUIConstant;
+import io.github.tonywasher.joceanus.tethys.api.base.TethysUIEvent;
+import io.github.tonywasher.joceanus.tethys.api.button.TethysUIScrollButtonManager;
+import io.github.tonywasher.joceanus.tethys.api.control.TethysUILabel;
+import io.github.tonywasher.joceanus.tethys.api.factory.TethysUIFactory;
+import io.github.tonywasher.joceanus.tethys.api.menu.TethysUIScrollItem;
+import io.github.tonywasher.joceanus.tethys.api.menu.TethysUIScrollMenu;
+import io.github.tonywasher.joceanus.tethys.api.pane.TethysUIBoxPaneManager;
+
+import java.util.Iterator;
+
+/**
+ * Payee Analysis Selection.
+ */
+public class MoneyWiseXPayeeAnalysisSelect
+        implements MoneyWiseXAnalysisFilterSelection, OceanusEventProvider&lt;PrometheusDataEvent&gt; {
+    /**
+     * Text for Payee Label.
+     */
+<span class="nc" id="L51">    private static final String NLS_PAYEE = MoneyWiseBasicDataType.PAYEE.getItemName();</span>
+
+    /**
+     * The Event Manager.
+     */
+    private final OceanusEventManager&lt;PrometheusDataEvent&gt; theEventManager;
+
+    /**
+     * The panel.
+     */
+    private final TethysUIBoxPaneManager thePanel;
+
+    /**
+     * The select button.
+     */
+    private final TethysUIScrollButtonManager&lt;MoneyWiseXAnalysisPayeeBucket&gt; theButton;
+
+    /**
+     * Payee menu.
+     */
+    private final TethysUIScrollMenu&lt;MoneyWiseXAnalysisPayeeBucket&gt; thePayeeMenu;
+
+    /**
+     * The active payee bucket list.
+     */
+    private MoneyWiseXAnalysisPayeeBucketList thePayees;
+
+    /**
+     * The state.
+     */
+    private MoneyWisePayeeState theState;
+
+    /**
+     * The savePoint.
+     */
+    private MoneyWisePayeeState theSavePoint;
+
+    /**
+     * Constructor.
+     *
+     * @param pFactory the GUI factory
+     */
+<span class="nc" id="L93">    protected MoneyWiseXPayeeAnalysisSelect(final TethysUIFactory&lt;?&gt; pFactory) {</span>
+        /* Create the button */
+<span class="nc" id="L95">        theButton = pFactory.buttonFactory().newScrollButton(MoneyWiseXAnalysisPayeeBucket.class);</span>
+
+        /* Create Event Manager */
+<span class="nc" id="L98">        theEventManager = new OceanusEventManager&lt;&gt;();</span>
+
+        /* Create the label */
+<span class="nc" id="L101">        final TethysUILabel myLabel = pFactory.controlFactory().newLabel(NLS_PAYEE + TethysUIConstant.STR_COLON);</span>
+
+        /* Define the layout */
+<span class="nc" id="L104">        thePanel = pFactory.paneFactory().newHBoxPane();</span>
+<span class="nc" id="L105">        thePanel.addSpacer();</span>
+<span class="nc" id="L106">        thePanel.addNode(myLabel);</span>
+<span class="nc" id="L107">        thePanel.addNode(theButton);</span>
+
+        /* Create initial state */
+<span class="nc" id="L110">        theState = new MoneyWisePayeeState();</span>
+<span class="nc" id="L111">        theState.applyState();</span>
+
+        /* Access the menus */
+<span class="nc" id="L114">        thePayeeMenu = theButton.getMenu();</span>
+
+        /* Create the listeners */
+<span class="nc" id="L117">        final OceanusEventRegistrar&lt;TethysUIEvent&gt; myRegistrar = theButton.getEventRegistrar();</span>
+<span class="nc" id="L118">        myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -&gt; handleNewPayee());</span>
+<span class="nc" id="L119">        theButton.setMenuConfigurator(e -&gt; buildPayeeMenu());</span>
+<span class="nc" id="L120">    }</span>
+
+    @Override
+    public TethysUIComponent getUnderlying() {
+<span class="nc" id="L124">        return thePanel;</span>
+    }
+
+    @Override
+    public OceanusEventRegistrar&lt;PrometheusDataEvent&gt; getEventRegistrar() {
+<span class="nc" id="L129">        return theEventManager.getEventRegistrar();</span>
+    }
+
+    @Override
+    public MoneyWiseXAnalysisPayeeFilter getFilter() {
+<span class="nc" id="L134">        return theState.getFilter();</span>
+    }
+
+    @Override
+    public boolean isAvailable() {
+<span class="nc bnc" id="L139" title="All 2 branches missed.">        return thePayees != null</span>
+<span class="nc bnc" id="L140" title="All 2 branches missed.">                &amp;&amp; !thePayees.isEmpty();</span>
+    }
+
+    /**
+     * Create SavePoint.
+     */
+    public void createSavePoint() {
+        /* Create the savePoint */
+<span class="nc" id="L148">        theSavePoint = new MoneyWisePayeeState(theState);</span>
+<span class="nc" id="L149">    }</span>
+
+    /**
+     * Restore SavePoint.
+     */
+    public void restoreSavePoint() {
+        /* Restore the savePoint */
+<span class="nc" id="L156">        theState = new MoneyWisePayeeState(theSavePoint);</span>
+
+        /* Apply the state */
+<span class="nc" id="L159">        theState.applyState();</span>
+<span class="nc" id="L160">    }</span>
+
+    @Override
+    public void setEnabled(final boolean bEnabled) {
+        /* Pass call on to button */
+<span class="nc bnc" id="L165" title="All 4 branches missed.">        theButton.setEnabled(bEnabled &amp;&amp; isAvailable());</span>
+<span class="nc" id="L166">    }</span>
+
+    @Override
+    public void setVisible(final boolean pVisible) {
+<span class="nc" id="L170">        thePanel.setVisible(pVisible);</span>
+<span class="nc" id="L171">    }</span>
+
+    /**
+     * Set analysis.
+     *
+     * @param pAnalysis the analysis.
+     */
+    public void setAnalysis(final MoneyWiseXAnalysis pAnalysis) {
+        /* Access buckets */
+<span class="nc" id="L180">        thePayees = pAnalysis.getPayees();</span>
+
+        /* Obtain the current payee */
+<span class="nc" id="L183">        MoneyWiseXAnalysisPayeeBucket myPayee = theState.getPayee();</span>
+
+        /* Switch to versions from the analysis */
+<span class="nc bnc" id="L186" title="All 2 branches missed.">        myPayee = myPayee != null</span>
+<span class="nc" id="L187">                ? thePayees.getMatchingPayee(myPayee.getPayee())</span>
+<span class="nc" id="L188">                : thePayees.getDefaultPayee();</span>
+
+        /* Set the payee */
+<span class="nc" id="L191">        theState.setThePayee(myPayee);</span>
+<span class="nc" id="L192">        theState.setDateRange(pAnalysis.getDateRange());</span>
+<span class="nc" id="L193">        theState.applyState();</span>
+<span class="nc" id="L194">    }</span>
+
+    @Override
+    public void setFilter(final MoneyWiseXAnalysisFilter&lt;?, ?&gt; pFilter) {
+        /* If this is the correct filter type */
+<span class="nc bnc" id="L199" title="All 2 branches missed.">        if (pFilter instanceof MoneyWiseXAnalysisPayeeFilter myFilter) {</span>
+            /* Obtain the filter bucket */
+<span class="nc" id="L201">            MoneyWiseXAnalysisPayeeBucket myPayee = myFilter.getBucket();</span>
+
+            /* Obtain equivalent bucket */
+<span class="nc" id="L204">            myPayee = thePayees.getMatchingPayee(myPayee.getPayee());</span>
+
+            /* Set the payee */
+<span class="nc" id="L207">            theState.setThePayee(myPayee);</span>
+<span class="nc" id="L208">            theState.setDateRange(myFilter.getDateRange());</span>
+<span class="nc" id="L209">            theState.applyState();</span>
+        }
+<span class="nc" id="L211">    }</span>
+
+    /**
+     * Handle new Payee.
+     */
+    private void handleNewPayee() {
+        /* Select the new Payee */
+<span class="nc bnc" id="L218" title="All 2 branches missed.">        if (theState.setPayee(theButton.getValue())) {</span>
+<span class="nc" id="L219">            theState.applyState();</span>
+<span class="nc" id="L220">            theEventManager.fireEvent(PrometheusDataEvent.SELECTIONCHANGED);</span>
+        }
+<span class="nc" id="L222">    }</span>
+
+    /**
+     * Build Payee menu.
+     */
+    private void buildPayeeMenu() {
+        /* Reset the popUp menu */
+<span class="nc" id="L229">        thePayeeMenu.removeAllItems();</span>
+
+        /* Record active item */
+<span class="nc" id="L232">        TethysUIScrollItem&lt;MoneyWiseXAnalysisPayeeBucket&gt; myActive = null;</span>
+<span class="nc" id="L233">        final MoneyWiseXAnalysisPayeeBucket myCurr = theState.getPayee();</span>
+
+        /* Loop through the available payee values */
+<span class="nc" id="L236">        final Iterator&lt;MoneyWiseXAnalysisPayeeBucket&gt; myIterator = thePayees.iterator();</span>
+<span class="nc bnc" id="L237" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L238">            final MoneyWiseXAnalysisPayeeBucket myBucket = myIterator.next();</span>
+
+            /* Create a new MenuItem and add it to the popUp */
+<span class="nc" id="L241">            final TethysUIScrollItem&lt;MoneyWiseXAnalysisPayeeBucket&gt; myItem = thePayeeMenu.addItem(myBucket);</span>
+
+            /* If this is the active bucket */
+<span class="nc bnc" id="L244" title="All 2 branches missed.">            if (myBucket.equals(myCurr)) {</span>
+                /* Record it */
+<span class="nc" id="L246">                myActive = myItem;</span>
+            }
+<span class="nc" id="L248">        }</span>
+
+        /* Ensure active item is visible */
+<span class="nc bnc" id="L251" title="All 2 branches missed.">        if (myActive != null) {</span>
+<span class="nc" id="L252">            myActive.scrollToItem();</span>
+        }
+<span class="nc" id="L254">    }</span>
+
+    /**
+     * SavePoint values.
+     */
+    private final class MoneyWisePayeeState {
+        /**
+         * The active PayeeBucket.
+         */
+        private MoneyWiseXAnalysisPayeeBucket thePayee;
+
+        /**
+         * The dateRange.
+         */
+        private OceanusDateRange theDateRange;
+
+        /**
+         * The active filter.
+         */
+        private MoneyWiseXAnalysisPayeeFilter theFilter;
+
+        /**
+         * Constructor.
+         */
+<span class="nc" id="L278">        private MoneyWisePayeeState() {</span>
+<span class="nc" id="L279">        }</span>
+
+        /**
+         * Constructor.
+         *
+         * @param pState state to copy from
+         */
+<span class="nc" id="L286">        private MoneyWisePayeeState(final MoneyWisePayeeState pState) {</span>
+            /* Initialise state */
+<span class="nc" id="L288">            thePayee = pState.getPayee();</span>
+<span class="nc" id="L289">            theDateRange = pState.getDateRange();</span>
+<span class="nc" id="L290">            theFilter = pState.getFilter();</span>
+<span class="nc" id="L291">        }</span>
+
+        /**
+         * Obtain the Payee Bucket.
+         *
+         * @return the Payee
+         */
+        private MoneyWiseXAnalysisPayeeBucket getPayee() {
+<span class="nc" id="L299">            return thePayee;</span>
+        }
+
+        /**
+         * Obtain the dateRange.
+         *
+         * @return the dateRange
+         */
+        private OceanusDateRange getDateRange() {
+<span class="nc" id="L308">            return theDateRange;</span>
+        }
+
+        /**
+         * Obtain the Filter.
+         *
+         * @return the Filter
+         */
+        private MoneyWiseXAnalysisPayeeFilter getFilter() {
+<span class="nc" id="L317">            return theFilter;</span>
+        }
+
+        /**
+         * Set new Payee.
+         *
+         * @param pPayee the Payee
+         * @return true/false did a change occur
+         */
+        private boolean setPayee(final MoneyWiseXAnalysisPayeeBucket pPayee) {
+            /* Adjust the selected payee */
+<span class="nc bnc" id="L328" title="All 2 branches missed.">            if (!MetisDataDifference.isEqual(pPayee, thePayee)) {</span>
+<span class="nc" id="L329">                setThePayee(pPayee);</span>
+<span class="nc" id="L330">                return true;</span>
+            }
+<span class="nc" id="L332">            return false;</span>
+        }
+
+        /**
+         * Set the Payee.
+         *
+         * @param pPayee the Payee
+         */
+        private void setThePayee(final MoneyWiseXAnalysisPayeeBucket pPayee) {
+            /* Store the payee */
+<span class="nc" id="L342">            thePayee = pPayee;</span>
+<span class="nc bnc" id="L343" title="All 2 branches missed.">            if (thePayee != null) {</span>
+<span class="nc" id="L344">                theFilter = new MoneyWiseXAnalysisPayeeFilter(thePayee);</span>
+<span class="nc" id="L345">                theFilter.setDateRange(theDateRange);</span>
+            } else {
+<span class="nc" id="L347">                theFilter = null;</span>
+            }
+<span class="nc" id="L349">        }</span>
+
+        /**
+         * Set the dateRange.
+         *
+         * @param pRange the dateRange
+         */
+        private void setDateRange(final OceanusDateRange pRange) {
+            /* Store the dateRange */
+<span class="nc" id="L358">            theDateRange = pRange;</span>
+<span class="nc bnc" id="L359" title="All 2 branches missed.">            if (theFilter != null) {</span>
+<span class="nc" id="L360">                theFilter.setDateRange(theDateRange);</span>
+            }
+<span class="nc" id="L362">        }</span>
+
+        /**
+         * Apply the State.
+         */
+        private void applyState() {
+            /* Adjust the lock-down */
+<span class="nc" id="L369">            setEnabled(true);</span>
+<span class="nc" id="L370">            theButton.setValue(thePayee);</span>
+<span class="nc" id="L371">        }</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

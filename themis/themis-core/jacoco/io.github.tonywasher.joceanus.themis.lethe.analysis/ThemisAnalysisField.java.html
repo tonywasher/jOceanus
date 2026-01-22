@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ThemisAnalysisField.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Themis Core Project Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.themis.lethe.analysis</a> &gt; <span class="el_source">ThemisAnalysisField.java</span></div><h1>ThemisAnalysisField.java</h1><pre class="source lang-java linenums">/*
+ * Themis: Java Project Framework
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.themis.lethe.analysis;
+
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.themis.lethe.analysis.ThemisAnalysisIf.ThemisIteratorChain;
+import io.github.tonywasher.joceanus.themis.lethe.analysis.ThemisAnalysisStatement.ThemisAnalysisStatementHolder;
+
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
+
+/**
+ * Field Representation.
+ */
+public class ThemisAnalysisField
+        implements ThemisAnalysisProcessed, ThemisAnalysisStatementHolder {
+    /**
+     * The name of the class.
+     */
+    private final String theName;
+
+    /**
+     * The dataType of the field.
+     */
+    private final ThemisAnalysisReference theDataType;
+
+    /**
+     * The properties.
+     */
+    private final ThemisAnalysisProperties theProperties;
+
+    /**
+     * The initial value.
+     */
+    private final ThemisAnalysisStatement theInitial;
+
+    /**
+     * The number of lines.
+     */
+    private final int theNumLines;
+
+    /**
+     * Constructor.
+     *
+     * @param pParser   the parser
+     * @param pName     the method name
+     * @param pDataType the dataType
+     * @param pLine     the initial field line
+     * @throws OceanusException on error
+     */
+    ThemisAnalysisField(final ThemisAnalysisParser pParser,
+                        final String pName,
+                        final ThemisAnalysisReference pDataType,
+<span class="nc" id="L70">                        final ThemisAnalysisLine pLine) throws OceanusException {</span>
+        /* Store parameters */
+<span class="nc" id="L72">        theName = pName;</span>
+<span class="nc" id="L73">        theDataType = pDataType;</span>
+<span class="nc" id="L74">        theProperties = pLine.getProperties();</span>
+
+        /* If we have no initial value */
+<span class="nc bnc" id="L77" title="All 2 branches missed.">        if (pLine.startsWithChar(ThemisAnalysisChar.SEMICOLON)) {</span>
+            /* Set default values */
+<span class="nc" id="L79">            theNumLines = 1;</span>
+<span class="nc" id="L80">            theInitial = null;</span>
+
+            /* else we have an initializer */
+        } else {
+            /* Strip the equals sign */
+<span class="nc" id="L85">            pLine.stripStartChar(ThemisAnalysisChar.EQUAL);</span>
+
+            /* Declare as statement */
+<span class="nc" id="L88">            theInitial = new ThemisAnalysisStatement(pParser, pLine);</span>
+<span class="nc" id="L89">            theNumLines = theInitial.getNumLines();</span>
+        }
+<span class="nc" id="L91">    }</span>
+
+    /**
+     * Constructor.
+     *
+     * @param pParser   the parser
+     * @param pName     the method name
+     * @param pDataType the dataType
+     * @param pEmbedded the embedded block
+     * @throws OceanusException on error
+     */
+    ThemisAnalysisField(final ThemisAnalysisParser pParser,
+                        final String pName,
+                        final ThemisAnalysisReference pDataType,
+<span class="nc" id="L105">                        final ThemisAnalysisEmbedded pEmbedded) throws OceanusException {</span>
+        /* Store parameters */
+<span class="nc" id="L107">        theName = pName;</span>
+<span class="nc" id="L108">        theDataType = pDataType;</span>
+
+        /* Access header line */
+<span class="nc" id="L111">        final ThemisAnalysisLine myLine = pEmbedded.getHeader();</span>
+<span class="nc" id="L112">        theProperties = myLine.getProperties();</span>
+
+        /* Strip the equals sign */
+<span class="nc" id="L115">        myLine.stripStartChar(ThemisAnalysisChar.EQUAL);</span>
+
+        /* Declare as statement */
+<span class="nc" id="L118">        theInitial = new ThemisAnalysisStatement(pEmbedded);</span>
+<span class="nc" id="L119">        theNumLines = theInitial.getNumLines();</span>
+<span class="nc" id="L120">    }</span>
+
+    /**
+     * Constructor.
+     *
+     * @param pDataMap the dataMap
+     * @param pStack   the field stack
+     * @throws OceanusException on error
+     */
+    ThemisAnalysisField(final ThemisAnalysisDataMap pDataMap,
+<span class="nc" id="L130">                        final ThemisAnalysisStack pStack) throws OceanusException {</span>
+        /* Determine initial parameters */
+<span class="nc" id="L132">        final ThemisAnalysisLine myLine = (ThemisAnalysisLine) pStack.popNextLine();</span>
+<span class="nc" id="L133">        ThemisAnalysisProperties myProps = ThemisAnalysisProperties.NULL;</span>
+
+        /* Access the next token */
+<span class="nc" id="L136">        final String nextToken = myLine.peekNextToken();</span>
+
+        /* If this is a final modifier */
+<span class="nc bnc" id="L139" title="All 2 branches missed.">        if (ThemisAnalysisModifier.FINAL.getModifier().equals(nextToken)) {</span>
+            /* Record modifier and strip it */
+<span class="nc" id="L141">            myProps = myProps.setModifier(ThemisAnalysisModifier.FINAL);</span>
+<span class="nc" id="L142">            myLine.stripStartSequence(nextToken);</span>
+        }
+
+        /* Process remaining data */
+<span class="nc" id="L146">        theDataType = ThemisAnalysisParser.parseDataType(pDataMap, myLine);</span>
+<span class="nc" id="L147">        theName = myLine.stripNextToken();</span>
+<span class="nc" id="L148">        myLine.stripStartChar(ThemisAnalysisChar.EQUAL);</span>
+<span class="nc" id="L149">        pStack.pushLine(myLine);</span>
+<span class="nc" id="L150">        theProperties = myProps;</span>
+
+        /* Declare as statement */
+<span class="nc" id="L153">        theInitial = new ThemisAnalysisStatement(null, pStack);</span>
+<span class="nc" id="L154">        theNumLines = theInitial.getNumLines();</span>
+<span class="nc" id="L155">    }</span>
+
+    /**
+     * Constructor.
+     *
+     * @param pPrevious the previous field
+     * @param pStack    the field stack
+     * @throws OceanusException on error
+     */
+    ThemisAnalysisField(final ThemisAnalysisField pPrevious,
+<span class="nc" id="L165">                        final ThemisAnalysisStack pStack) throws OceanusException {</span>
+        /* Determine initial parameters */
+<span class="nc" id="L167">        final ThemisAnalysisLine myLine = (ThemisAnalysisLine) pStack.popNextLine();</span>
+<span class="nc" id="L168">        theDataType = pPrevious.theDataType;</span>
+<span class="nc" id="L169">        theName = myLine.stripNextToken();</span>
+<span class="nc" id="L170">        myLine.stripStartChar(ThemisAnalysisChar.EQUAL);</span>
+<span class="nc" id="L171">        pStack.pushLine(myLine);</span>
+<span class="nc" id="L172">        theProperties = ThemisAnalysisProperties.NULL;</span>
+
+        /* Declare as statement */
+<span class="nc" id="L175">        theInitial = new ThemisAnalysisStatement(null, pStack);</span>
+<span class="nc" id="L176">        theNumLines = theInitial.getNumLines();</span>
+<span class="nc" id="L177">    }</span>
+
+    /**
+     * Obtain the name.
+     *
+     * @return the name
+     */
+    public String getName() {
+<span class="nc" id="L185">        return theName;</span>
+    }
+
+    @Override
+    public Iterator&lt;ThemisAnalysisStatement&gt; statementIterator() {
+<span class="nc bnc" id="L190" title="All 2 branches missed.">        return theInitial == null</span>
+<span class="nc" id="L191">                ? Collections.emptyIterator()</span>
+<span class="nc" id="L192">                : Collections.singleton(theInitial).iterator();</span>
+    }
+
+    @Override
+    public int getNumLines() {
+<span class="nc" id="L197">        return theNumLines;</span>
+    }
+
+    @Override
+    public String toString() {
+<span class="nc" id="L202">        return theDataType.toString() + &quot; &quot; + getName();</span>
+    }
+
+    /**
+     * Obtain statement iterator for list of fields.
+     *
+     * @param pList the field list
+     * @return the statement iterator
+     */
+    public static Iterator&lt;ThemisAnalysisStatement&gt; statementIteratorForFields(final List&lt;ThemisAnalysisField&gt; pList) {
+<span class="nc" id="L212">        final ListIterator&lt;ThemisAnalysisField&gt; myIterator = pList.listIterator(pList.size());</span>
+<span class="nc" id="L213">        Iterator&lt;ThemisAnalysisStatement&gt; myCurr = Collections.emptyIterator();</span>
+<span class="nc bnc" id="L214" title="All 2 branches missed.">        while (myIterator.hasPrevious()) {</span>
+<span class="nc" id="L215">            final ThemisAnalysisField myField = myIterator.previous();</span>
+<span class="nc" id="L216">            myCurr = new ThemisIteratorChain&lt;&gt;(myField.statementIterator(), myCurr);</span>
+<span class="nc" id="L217">        }</span>
+<span class="nc" id="L218">        return myCurr;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

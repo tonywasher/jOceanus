@@ -1,0 +1,701 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ThemisAnalysisLine.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Themis Core Project Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.themis.lethe.analysis</a> &gt; <span class="el_source">ThemisAnalysisLine.java</span></div><h1>ThemisAnalysisLine.java</h1><pre class="source lang-java linenums">/*
+ * Themis: Java Project Framework
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.themis.lethe.analysis;
+
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.themis.exc.ThemisDataException;
+import io.github.tonywasher.joceanus.themis.lethe.analysis.ThemisAnalysisGeneric.ThemisAnalysisGenericBase;
+
+import java.nio.CharBuffer;
+import java.util.Deque;
+
+/**
+ * Line buffer.
+ */
+public class ThemisAnalysisLine
+        implements ThemisAnalysisElement {
+    /**
+     * The token terminators.
+     */
+<span class="nc" id="L34">    private static final char[] TERMINATORS = {</span>
+            ThemisAnalysisChar.PARENTHESIS_OPEN,
+            ThemisAnalysisChar.PARENTHESIS_CLOSE,
+            ThemisAnalysisChar.GENERIC_OPEN,
+            ThemisAnalysisChar.COMMA,
+            ThemisAnalysisChar.SEMICOLON,
+            ThemisAnalysisChar.COLON,
+            ThemisAnalysisChar.ARRAY_OPEN
+    };
+
+    /**
+     * The line buffer.
+     */
+    private final CharBuffer theBuffer;
+
+    /**
+     * The properties.
+     */
+    private ThemisAnalysisProperties theProperties;
+
+    /**
+     * Constructor.
+     *
+     * @param pBuffer the buffer
+     * @param pOffset the offset to copy from
+     * @param pLen    the length
+     */
+    ThemisAnalysisLine(final char[] pBuffer,
+                       final int pOffset,
+<span class="nc" id="L63">                       final int pLen) {</span>
+        /* create the buffer */
+<span class="nc" id="L65">        final char[] myBuffer = new char[pLen];</span>
+<span class="nc" id="L66">        System.arraycopy(pBuffer, pOffset, myBuffer, 0, pLen);</span>
+<span class="nc" id="L67">        theBuffer = CharBuffer.wrap(myBuffer);</span>
+
+        /* Strip any leading/trailing whiteSpace */
+<span class="nc" id="L70">        stripLeadingWhiteSpace();</span>
+<span class="nc" id="L71">        stripTrailingWhiteSpace();</span>
+
+        /* Set null properties */
+<span class="nc" id="L74">        theProperties = ThemisAnalysisProperties.NULL;</span>
+<span class="nc" id="L75">    }</span>
+
+    /**
+     * Constructor.
+     *
+     * @param pBuffer the buffer
+     */
+<span class="nc" id="L82">    ThemisAnalysisLine(final CharBuffer pBuffer) {</span>
+        /* Store values */
+<span class="nc" id="L84">        theBuffer = pBuffer;</span>
+
+        /* Set null properties */
+<span class="nc" id="L87">        theProperties = ThemisAnalysisProperties.NULL;</span>
+<span class="nc" id="L88">    }</span>
+
+    /**
+     * Constructor.
+     *
+     * @param pLine the line
+     */
+<span class="nc" id="L95">    ThemisAnalysisLine(final ThemisAnalysisLine pLine) {</span>
+        /* Store values */
+<span class="nc" id="L97">        final CharBuffer myBuffer = pLine.theBuffer;</span>
+<span class="nc" id="L98">        theBuffer = myBuffer.subSequence(0, myBuffer.length());</span>
+
+        /* Set null properties */
+<span class="nc" id="L101">        theProperties = ThemisAnalysisProperties.NULL;</span>
+<span class="nc" id="L102">    }</span>
+
+    /**
+     * Constructor.
+     *
+     * @param pLines the lines
+     */
+<span class="nc" id="L109">    ThemisAnalysisLine(final Deque&lt;ThemisAnalysisElement&gt; pLines) {</span>
+        /* Create a stringBuilder */
+<span class="nc" id="L111">        final StringBuilder myBuilder = new StringBuilder();</span>
+
+        /* Loop through the lines */
+<span class="nc bnc" id="L114" title="All 2 branches missed.">        for (ThemisAnalysisElement myLine : pLines) {</span>
+<span class="nc" id="L115">            myBuilder.append(((ThemisAnalysisLine) myLine).theBuffer);</span>
+<span class="nc" id="L116">            myBuilder.append(ThemisAnalysisChar.BLANK);</span>
+<span class="nc" id="L117">        }</span>
+
+        /* Create the buffer */
+<span class="nc" id="L120">        theBuffer = CharBuffer.wrap(myBuilder.toString());</span>
+<span class="nc" id="L121">        stripLeadingWhiteSpace();</span>
+<span class="nc" id="L122">        stripTrailingWhiteSpace();</span>
+
+        /* Set null properties */
+<span class="nc" id="L125">        theProperties = ThemisAnalysisProperties.NULL;</span>
+<span class="nc" id="L126">    }</span>
+
+    /**
+     * Obtain the length.
+     *
+     * @return the length
+     */
+    public int getLength() {
+<span class="nc" id="L134">        return theBuffer.remaining();</span>
+    }
+
+    /**
+     * Set the new length.
+     *
+     * @param pLen the length
+     */
+    private void setLength(final int pLen) {
+<span class="nc" id="L143">        theBuffer.limit(theBuffer.position() + pLen);</span>
+<span class="nc" id="L144">    }</span>
+
+    /**
+     * Adjust the position.
+     *
+     * @param pAdjust the adjustment
+     */
+    private void adjustPosition(final int pAdjust) {
+<span class="nc" id="L152">        theBuffer.position(theBuffer.position() + pAdjust);</span>
+<span class="nc" id="L153">    }</span>
+
+    /**
+     * Obtain the character at the given position.
+     *
+     * @param pIndex the position of the character
+     * @return the character
+     */
+    char charAt(final int pIndex) {
+<span class="nc" id="L162">        return theBuffer.charAt(pIndex);</span>
+    }
+
+    /**
+     * Obtain the properties.
+     *
+     * @return the properties
+     */
+    public ThemisAnalysisProperties getProperties() {
+<span class="nc" id="L171">        return theProperties;</span>
+    }
+
+    /**
+     * Strip trailing comments.
+     *
+     * @throws OceanusException on error
+     */
+    void stripTrailingComments() throws OceanusException {
+        /* Loop through the characters */
+<span class="nc" id="L181">        final int myLength = getLength();</span>
+<span class="nc" id="L182">        int mySkipped = 0;</span>
+<span class="nc bnc" id="L183" title="All 2 branches missed.">        for (int i = 0; i &lt; myLength - mySkipped - 1; i++) {</span>
+            /* Access position and current character */
+<span class="nc" id="L185">            final int myPos = i + mySkipped;</span>
+<span class="nc" id="L186">            final char myChar = theBuffer.charAt(myPos);</span>
+
+            /* If this is a single/double quote */
+<span class="nc bnc" id="L189" title="All 4 branches missed.">            if (myChar == ThemisAnalysisChar.SINGLEQUOTE</span>
+                    || myChar == ThemisAnalysisChar.DOUBLEQUOTE) {
+<span class="nc" id="L191">                final int myEnd = findEndOfQuotedSequence(myPos);</span>
+<span class="nc" id="L192">                mySkipped += myEnd - myPos;</span>
+
+                /* If we have a line comment */
+<span class="nc bnc" id="L195" title="All 2 branches missed.">            } else if (myChar == ThemisAnalysisChar.COMMENT</span>
+<span class="nc bnc" id="L196" title="All 2 branches missed.">                    &amp;&amp; theBuffer.charAt(myPos + 1) == ThemisAnalysisChar.COMMENT) {</span>
+                /* Reset the length */
+<span class="nc" id="L198">                setLength(myPos);</span>
+<span class="nc" id="L199">                stripTrailingWhiteSpace();</span>
+<span class="nc" id="L200">                break;</span>
+            }
+        }
+<span class="nc" id="L203">    }</span>
+
+    /**
+     * Trim leading whiteSpace.
+     */
+    void stripLeadingWhiteSpace() {
+        /* Loop through the characters */
+<span class="nc" id="L210">        int myWhiteSpace = 0;</span>
+<span class="nc" id="L211">        final int myLength = getLength();</span>
+<span class="nc bnc" id="L212" title="All 2 branches missed.">        for (int i = 0; i &lt; myLength; i++) {</span>
+            /* Break loop if not whiteSpace */
+<span class="nc bnc" id="L214" title="All 2 branches missed.">            if (!Character.isWhitespace(theBuffer.charAt(i))) {</span>
+<span class="nc" id="L215">                break;</span>
+            }
+
+            /* Increment count */
+<span class="nc" id="L219">            myWhiteSpace++;</span>
+        }
+
+        /* Adjust position */
+<span class="nc" id="L223">        adjustPosition(myWhiteSpace);</span>
+<span class="nc" id="L224">    }</span>
+
+    /**
+     * Trim trailing whiteSpace.
+     */
+    private void stripTrailingWhiteSpace() {
+        /* Loop through the characters */
+<span class="nc" id="L231">        int myWhiteSpace = 0;</span>
+<span class="nc" id="L232">        final int myLength = getLength();</span>
+<span class="nc bnc" id="L233" title="All 2 branches missed.">        for (int i = myLength - 1; i &gt;= 0; i--) {</span>
+            /* Break loop if not whiteSpace */
+<span class="nc bnc" id="L235" title="All 2 branches missed.">            if (!Character.isWhitespace(theBuffer.charAt(i))) {</span>
+<span class="nc" id="L236">                break;</span>
+            }
+
+            /* Increment count */
+<span class="nc" id="L240">            myWhiteSpace++;</span>
+        }
+
+        /* Adjust length */
+<span class="nc" id="L244">        setLength(myLength - myWhiteSpace);</span>
+<span class="nc" id="L245">    }</span>
+
+    /**
+     * Mark the line.
+     */
+    void mark() {
+<span class="nc" id="L251">        theBuffer.mark();</span>
+<span class="nc" id="L252">    }</span>
+
+    /**
+     * Reset the line.
+     */
+    void reset() {
+<span class="nc" id="L258">        theBuffer.reset();</span>
+<span class="nc" id="L259">    }</span>
+
+    /**
+     * Strip Modifiers.
+     *
+     * @throws OceanusException on error
+     */
+    void stripModifiers() throws OceanusException {
+        /* Loop while we find a modifier */
+<span class="nc" id="L268">        boolean bContinue = true;</span>
+<span class="nc bnc" id="L269" title="All 2 branches missed.">        while (bContinue) {</span>
+            /* If we have a generic variable list */
+<span class="nc bnc" id="L271" title="All 2 branches missed.">            if (ThemisAnalysisGeneric.isGeneric(this)) {</span>
+                /* Declare them to the properties */
+<span class="nc" id="L273">                theProperties = theProperties.setGenericVariables(new ThemisAnalysisGenericBase(this));</span>
+            }
+
+            /* Access the next token */
+<span class="nc" id="L277">            final String nextToken = peekNextToken();</span>
+<span class="nc" id="L278">            bContinue = false;</span>
+
+            /* If this is a modifier */
+<span class="nc" id="L281">            final ThemisAnalysisModifier myModifier = ThemisAnalysisModifier.findModifier(nextToken);</span>
+<span class="nc bnc" id="L282" title="All 2 branches missed.">            if (myModifier != null) {</span>
+                /* Set modifier */
+<span class="nc" id="L284">                theProperties = theProperties.setModifier(myModifier);</span>
+<span class="nc" id="L285">                stripStartSequence(nextToken);</span>
+<span class="nc" id="L286">                bContinue = true;</span>
+            }
+<span class="nc" id="L288">        }</span>
+<span class="nc" id="L289">    }</span>
+
+    /**
+     * Does line start with identifier?
+     *
+     * @param pIdentifier the identifier
+     * @return true/false
+     * @throws OceanusException on error
+     */
+    boolean isStartedBy(final String pIdentifier) throws OceanusException {
+        /* If the line is too short, just return */
+<span class="nc" id="L300">        final int myIdLen = pIdentifier.length();</span>
+<span class="nc" id="L301">        final int myLength = getLength();</span>
+<span class="nc bnc" id="L302" title="All 2 branches missed.">        if (myIdLen &gt; myLength) {</span>
+<span class="nc" id="L303">            return false;</span>
+        }
+
+        /* Loop through the identifier */
+<span class="nc bnc" id="L307" title="All 2 branches missed.">        for (int i = 0; i &lt; myIdLen; i++) {</span>
+<span class="nc bnc" id="L308" title="All 2 branches missed.">            if (theBuffer.charAt(i) != pIdentifier.charAt(i)) {</span>
+<span class="nc" id="L309">                return false;</span>
+            }
+        }
+
+        /* Catch any solo modifiers */
+<span class="nc bnc" id="L314" title="All 2 branches missed.">        if (myIdLen == myLength) {</span>
+<span class="nc" id="L315">            throw new ThemisDataException(&quot;Modifier found without object&quot;);</span>
+        }
+
+        /* The next character must be whitespace */
+<span class="nc bnc" id="L319" title="All 2 branches missed.">        if (Character.isWhitespace(theBuffer.charAt(myIdLen))) {</span>
+<span class="nc" id="L320">            adjustPosition(myIdLen + 1);</span>
+<span class="nc" id="L321">            stripLeadingWhiteSpace();</span>
+<span class="nc" id="L322">            return true;</span>
+        }
+
+        /* False alarm */
+<span class="nc" id="L326">        return false;</span>
+    }
+
+    /**
+     * Strip NextToken.
+     *
+     * @return the next token
+     */
+    String stripNextToken() {
+        /* Access the next token */
+<span class="nc" id="L336">        final String myToken = peekNextToken();</span>
+<span class="nc" id="L337">        stripStartSequence(myToken);</span>
+<span class="nc" id="L338">        return myToken;</span>
+    }
+
+    /**
+     * Peek NextToken.
+     *
+     * @return the next token
+     */
+    String peekNextToken() {
+        /* Loop through the buffer */
+<span class="nc" id="L348">        final int myLength = getLength();</span>
+<span class="nc bnc" id="L349" title="All 2 branches missed.">        for (int i = 0; i &lt; myLength; i++) {</span>
+            /* if we have hit whiteSpace or a terminator */
+<span class="nc" id="L351">            final char myChar = theBuffer.charAt(i);</span>
+<span class="nc bnc" id="L352" title="All 2 branches missed.">            if (isTerminator(myChar)) {</span>
+                /* Strip out the characters */
+<span class="nc" id="L354">                final CharBuffer myToken = theBuffer.subSequence(0, i);</span>
+<span class="nc" id="L355">                return myToken.toString();</span>
+            }
+        }
+
+        /* Whole buffer is the token */
+<span class="nc" id="L360">        return toString();</span>
+    }
+
+    /**
+     * Strip NextToken.
+     *
+     * @return the next token
+     */
+    String stripLastToken() {
+        /* Access the next token */
+<span class="nc" id="L370">        final String myToken = peekLastToken();</span>
+<span class="nc" id="L371">        stripEndSequence(myToken);</span>
+<span class="nc" id="L372">        return myToken;</span>
+    }
+
+    /**
+     * Peek lastToken.
+     *
+     * @return the last token
+     */
+    String peekLastToken() {
+        /* Loop through the buffer */
+<span class="nc" id="L382">        final int myLength = getLength();</span>
+<span class="nc bnc" id="L383" title="All 2 branches missed.">        for (int i = myLength - 1; i &gt;= 0; i--) {</span>
+            /* if we have hit whiteSpace or a terminator */
+<span class="nc" id="L385">            final char myChar = theBuffer.charAt(i);</span>
+<span class="nc bnc" id="L386" title="All 2 branches missed.">            if (isTerminator(myChar)) {</span>
+                /* Strip out the characters */
+<span class="nc" id="L388">                final CharBuffer myToken = theBuffer.subSequence(i + 1, myLength);</span>
+<span class="nc" id="L389">                return myToken.toString();</span>
+            }
+        }
+
+        /* Whole buffer is the token */
+<span class="nc" id="L394">        return toString();</span>
+    }
+
+    /**
+     * Is the character a token terminator?
+     *
+     * @param pChar the character
+     * @return true/false
+     */
+    private static boolean isTerminator(final char pChar) {
+        /* WhiteSpace is a terminator */
+<span class="nc bnc" id="L405" title="All 2 branches missed.">        if (Character.isWhitespace(pChar)) {</span>
+<span class="nc" id="L406">            return true;</span>
+        }
+
+        /* Check whether char is any of the terminators */
+<span class="nc" id="L410">        return isInList(pChar, TERMINATORS);</span>
+    }
+
+    /**
+     * Is the character in the list?
+     *
+     * @param pChar the character
+     * @param pList the list of characters
+     * @return true/false
+     */
+    private static boolean isInList(final char pChar,
+                                    final char[] pList) {
+        /* Loop through the list */
+<span class="nc bnc" id="L423" title="All 2 branches missed.">        for (char myChar : pList) {</span>
+            /* if we have matched */
+<span class="nc bnc" id="L425" title="All 2 branches missed.">            if (pChar == myChar) {</span>
+<span class="nc" id="L426">                return true;</span>
+            }
+        }
+
+        /* Not a terminator */
+<span class="nc" id="L431">        return false;</span>
+    }
+
+    /**
+     * Strip data up to position.
+     *
+     * @param pPosition the position to strip to (inclusive)
+     * @return the stripped line
+     */
+    ThemisAnalysisLine stripUpToPosition(final int pPosition) {
+        /* Obtain the new buffer */
+<span class="nc" id="L442">        final CharBuffer myChars = theBuffer.subSequence(0, pPosition + 1);</span>
+<span class="nc" id="L443">        adjustPosition(pPosition + 1);</span>
+<span class="nc" id="L444">        stripLeadingWhiteSpace();</span>
+<span class="nc" id="L445">        return new ThemisAnalysisLine(myChars);</span>
+    }
+
+    /**
+     * Does line start with the sequence?
+     *
+     * @param pSequence the sequence
+     * @return true/false
+     */
+    boolean startsWithSequence(final CharSequence pSequence) {
+        /* If the line is too short, just return */
+<span class="nc" id="L456">        final int mySeqLen = pSequence.length();</span>
+<span class="nc" id="L457">        final int myLength = getLength();</span>
+<span class="nc bnc" id="L458" title="All 2 branches missed.">        if (mySeqLen &gt; myLength) {</span>
+<span class="nc" id="L459">            return false;</span>
+        }
+
+        /* Loop through the sequence */
+<span class="nc bnc" id="L463" title="All 2 branches missed.">        for (int i = 0; i &lt; mySeqLen; i++) {</span>
+<span class="nc bnc" id="L464" title="All 2 branches missed.">            if (theBuffer.charAt(i) != pSequence.charAt(i)) {</span>
+<span class="nc" id="L465">                return false;</span>
+            }
+        }
+
+        /* True */
+<span class="nc" id="L470">        return true;</span>
+    }
+
+    /**
+     * Does line start with the character?
+     *
+     * @param pChar the character
+     * @return true/false
+     */
+    boolean startsWithChar(final char pChar) {
+        /* If the line is too short, just return false */
+<span class="nc" id="L481">        final int myLength = getLength();</span>
+<span class="nc bnc" id="L482" title="All 2 branches missed.">        if (myLength == 0) {</span>
+<span class="nc" id="L483">            return false;</span>
+        }
+
+        /* Test the character */
+<span class="nc bnc" id="L487" title="All 2 branches missed.">        return theBuffer.charAt(0) == pChar;</span>
+    }
+
+    /**
+     * Strip the starting sequence.
+     *
+     * @param pSequence the sequence
+     */
+    void stripStartSequence(final CharSequence pSequence) {
+        /* If the line starts with the sequence */
+<span class="nc bnc" id="L497" title="All 2 branches missed.">        if (startsWithSequence(pSequence)) {</span>
+            /* adjust the length */
+<span class="nc" id="L499">            adjustPosition(pSequence.length());</span>
+<span class="nc" id="L500">            stripLeadingWhiteSpace();</span>
+        }
+<span class="nc" id="L502">    }</span>
+
+    /**
+     * Strip the starting character.
+     *
+     * @param pChar the character
+     */
+    void stripStartChar(final char pChar) {
+        /* If the line starts with the character */
+<span class="nc bnc" id="L511" title="All 2 branches missed.">        if (startsWithChar(pChar)) {</span>
+            /* adjust the length */
+<span class="nc" id="L513">            adjustPosition(1);</span>
+<span class="nc" id="L514">            stripLeadingWhiteSpace();</span>
+        }
+<span class="nc" id="L516">    }</span>
+
+    /**
+     * Does line end with the sequence?
+     *
+     * @param pSequence the sequence
+     * @return true/false
+     */
+    boolean endsWithSequence(final CharSequence pSequence) {
+        /* If the line is too short, just return */
+<span class="nc" id="L526">        final int mySeqLen = pSequence.length();</span>
+<span class="nc" id="L527">        final int myLength = getLength();</span>
+<span class="nc bnc" id="L528" title="All 2 branches missed.">        if (mySeqLen &gt; myLength) {</span>
+<span class="nc" id="L529">            return false;</span>
+        }
+
+        /* Loop through the buffer */
+<span class="nc" id="L533">        final int myBase = myLength - mySeqLen;</span>
+<span class="nc bnc" id="L534" title="All 2 branches missed.">        for (int i = 0; i &lt; mySeqLen; i++) {</span>
+            /* Loop through the sequence */
+<span class="nc bnc" id="L536" title="All 2 branches missed.">            if (theBuffer.charAt(i + myBase) != pSequence.charAt(i)) {</span>
+                /* Not found */
+<span class="nc" id="L538">                return false;</span>
+            }
+        }
+
+        /* found */
+<span class="nc" id="L543">        return true;</span>
+    }
+
+    /**
+     * Does line end with the character?
+     *
+     * @param pChar the character
+     * @return true/false
+     */
+    boolean endsWithChar(final char pChar) {
+        /* If the line is too short, just return false */
+<span class="nc" id="L554">        final int myLength = getLength();</span>
+<span class="nc bnc" id="L555" title="All 2 branches missed.">        if (myLength == 0) {</span>
+<span class="nc" id="L556">            return false;</span>
+        }
+
+        /* Test the character */
+<span class="nc bnc" id="L560" title="All 2 branches missed.">        return theBuffer.charAt(myLength - 1) == pChar;</span>
+    }
+
+    /**
+     * Strip the starting sequence.
+     *
+     * @param pSequence the sequence
+     */
+    void stripEndSequence(final CharSequence pSequence) {
+        /* If the line ends with the sequence */
+<span class="nc bnc" id="L570" title="All 2 branches missed.">        if (endsWithSequence(pSequence)) {</span>
+            /* adjust the length */
+<span class="nc" id="L572">            setLength(getLength() - pSequence.length());</span>
+<span class="nc" id="L573">            stripTrailingWhiteSpace();</span>
+        }
+<span class="nc" id="L575">    }</span>
+
+    /**
+     * Strip the ending character.
+     *
+     * @param pChar the character
+     */
+    void stripEndChar(final char pChar) {
+        /* If the line ends with the sequence */
+<span class="nc bnc" id="L584" title="All 2 branches missed.">        if (endsWithChar(pChar)) {</span>
+            /* adjust the length */
+<span class="nc" id="L586">            setLength(getLength() - 1);</span>
+<span class="nc" id="L587">            stripTrailingWhiteSpace();</span>
+        }
+<span class="nc" id="L589">    }</span>
+
+    /**
+     * Find end of nested sequence, allowing for escaped quotes.
+     * &lt;p&gt;
+     * To enable distinction between finding the end of the sequence from still being nested, the nestLevel
+     * is negative. Hence a result that is negative indicates that the sequence is continuing.
+     * &lt;/p&gt;
+     *
+     * @param pStart the start position
+     * @param pLevel the current nestLevel (negative value)
+     * @param pTerm  the end nest character
+     * @param pNest  the start nest character
+     * @return the position of the end of the nest if (non-negative), or nestLevel (negative) if not terminated.
+     * @throws OceanusException on error
+     */
+    int findEndOfNestedSequence(final int pStart,
+                                final int pLevel,
+                                final char pTerm,
+                                final char pNest) throws OceanusException {
+        /* Access details of quote */
+<span class="nc" id="L610">        final int myLength = getLength();</span>
+
+        /* Loop through the line */
+<span class="nc" id="L613">        boolean maybeComment = false;</span>
+<span class="nc" id="L614">        int myNested = pLevel;</span>
+<span class="nc" id="L615">        int mySkipped = 0;</span>
+<span class="nc bnc" id="L616" title="All 2 branches missed.">        for (int i = pStart; i &lt; myLength - mySkipped; i++) {</span>
+            /* Access position and current character */
+<span class="nc" id="L618">            final int myPos = i + mySkipped;</span>
+<span class="nc" id="L619">            final char myChar = theBuffer.charAt(myPos);</span>
+
+            /* If this is the comment character */
+<span class="nc bnc" id="L622" title="All 2 branches missed.">            if (myChar == ThemisAnalysisChar.COMMENT) {</span>
+                /* Flip flag */
+<span class="nc bnc" id="L624" title="All 2 branches missed.">                maybeComment = !maybeComment;</span>
+
+                /* If we have double comment, break loop */
+<span class="nc bnc" id="L627" title="All 2 branches missed.">                if (!maybeComment) {</span>
+<span class="nc" id="L628">                    break;</span>
+                }
+            } else {
+<span class="nc" id="L631">                maybeComment = false;</span>
+            }
+
+            /* If this is a single/double quote */
+<span class="nc bnc" id="L635" title="All 4 branches missed.">            if (myChar == ThemisAnalysisChar.SINGLEQUOTE</span>
+                    || myChar == ThemisAnalysisChar.DOUBLEQUOTE) {
+                /* Find the end of the sequence and skip the quotes */
+<span class="nc" id="L638">                final int myEnd = findEndOfQuotedSequence(myPos);</span>
+<span class="nc" id="L639">                mySkipped += myEnd - myPos;</span>
+
+                /* If we should be increasing the nest level */
+<span class="nc bnc" id="L642" title="All 2 branches missed.">            } else if (myChar == pNest) {</span>
+<span class="nc" id="L643">                myNested--;</span>
+
+                /* If we should be decreasing the nest level */
+<span class="nc bnc" id="L646" title="All 2 branches missed.">            } else if (myChar == pTerm) {</span>
+<span class="nc" id="L647">                myNested++;</span>
+
+                /* Return current position if we have finished */
+<span class="nc bnc" id="L650" title="All 2 branches missed.">                if (myNested == 0) {</span>
+<span class="nc" id="L651">                    return myPos;</span>
+                }
+            }
+        }
+
+        /* Return the new nest level */
+<span class="nc" id="L657">        return myNested;</span>
+    }
+
+    /**
+     * Find end of single/double quoted sequence, allowing for escaped quote.
+     * &lt;p&gt;
+     * Note that a quoted sequence cannot span lines.
+     * &lt;/p&gt;
+     *
+     * @param pStart the start position of the quote
+     * @return the end position of the sequence.
+     * @throws OceanusException on error
+     */
+    int findEndOfQuotedSequence(final int pStart) throws OceanusException {
+        /* Access details of single/double quote */
+<span class="nc" id="L672">        final int myLength = getLength();</span>
+<span class="nc" id="L673">        final char myQuote = theBuffer.charAt(pStart);</span>
+
+        /* Loop through the characters */
+<span class="nc" id="L676">        int mySkipped = 0;</span>
+<span class="nc bnc" id="L677" title="All 2 branches missed.">        for (int i = pStart + 1; i &lt; myLength - mySkipped; i++) {</span>
+            /* Access position and current character */
+<span class="nc" id="L679">            final int myPos = i + mySkipped;</span>
+<span class="nc" id="L680">            final char myChar = theBuffer.charAt(myPos);</span>
+
+            /* Skip escaped character */
+<span class="nc bnc" id="L683" title="All 2 branches missed.">            if (myChar == ThemisAnalysisChar.ESCAPE) {</span>
+<span class="nc" id="L684">                mySkipped++;</span>
+
+                /* Return current position if we have finished */
+<span class="nc bnc" id="L687" title="All 2 branches missed.">            } else if (myChar == myQuote) {</span>
+<span class="nc" id="L688">                return myPos;</span>
+            }
+        }
+
+        /* We should always be terminated */
+<span class="nc" id="L693">        throw new ThemisDataException(&quot;Unable to find end of quote in line&quot;);</span>
+    }
+
+    @Override
+    public String toString() {
+<span class="nc" id="L698">        return theBuffer.toString();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

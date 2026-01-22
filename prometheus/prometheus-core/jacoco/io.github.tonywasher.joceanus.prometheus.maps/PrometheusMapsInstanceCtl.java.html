@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PrometheusMapsInstanceCtl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Prometheus Core Application Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.prometheus.maps</a> &gt; <span class="el_source">PrometheusMapsInstanceCtl.java</span></div><h1>PrometheusMapsInstanceCtl.java</h1><pre class="source lang-java linenums">/*
+ * Prometheus: Application Framework
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.prometheus.maps;
+
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
+import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
+import io.github.tonywasher.joceanus.metis.data.MetisDataResource;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldItem;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
+import io.github.tonywasher.joceanus.metis.list.MetisListKey;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Function;
+
+/**
+ * DataTouchMap for data/EditSet.
+ */
+public class PrometheusMapsInstanceCtl
+        implements MetisFieldItem {
+    /**
+     * Report fields.
+     */
+<span class="nc" id="L39">    private static final MetisFieldSet&lt;PrometheusMapsInstanceCtl&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(PrometheusMapsInstanceCtl.class);</span>
+
+    /*
+     * Declare Fields.
+     */
+    static {
+<span class="nc" id="L45">        FIELD_DEFS.declareLocalField(MetisDataResource.DATA_VERSION, PrometheusMapsInstanceCtl::getVersion);</span>
+<span class="nc" id="L46">        FIELD_DEFS.declareLocalField(PrometheusMapsResource.MAPS_INSTANCEMAP, PrometheusMapsInstanceCtl::getInstanceMap);</span>
+<span class="nc" id="L47">    }</span>
+
+    /**
+     * The history.
+     */
+    private final Map&lt;Integer, PrometheusMapsDataSetInstance&gt; theHistory;
+
+    /**
+     * The current version.
+     */
+    private Integer theVersion;
+
+    /**
+     * The current dataSetInstanceMap.
+     */
+    private PrometheusMapsDataSetInstance theInstanceMap;
+
+    /**
+     * Constructor.
+     */
+<span class="nc" id="L67">    PrometheusMapsInstanceCtl() {</span>
+<span class="nc" id="L68">        theHistory = new HashMap&lt;&gt;();</span>
+<span class="nc" id="L69">        theVersion = 0;</span>
+<span class="nc" id="L70">        setVersion(0);</span>
+<span class="nc" id="L71">    }</span>
+
+    @Override
+    public MetisFieldSetDef getDataFieldSet() {
+<span class="nc" id="L75">        return FIELD_DEFS;</span>
+    }
+
+    @Override
+    public String formatObject(final OceanusDataFormatter pFormatter) {
+<span class="nc" id="L80">        return PrometheusMapsInstanceCtl.class.getSimpleName();</span>
+    }
+
+    /**
+     * Obtain the version.
+     *
+     * @return the version
+     */
+    private Integer getVersion() {
+<span class="nc" id="L89">        return theVersion;</span>
+    }
+
+    /**
+     * Obtain the instance map.
+     *
+     * @return the map
+     */
+    private PrometheusMapsDataSetInstance getInstanceMap() {
+<span class="nc" id="L98">        return theInstanceMap;</span>
+    }
+
+    /**
+     * Set version.
+     *
+     * @param pVersion the version
+     */
+    void setVersion(final Integer pVersion) {
+        /* If we are rolling back */
+<span class="nc bnc" id="L108" title="All 2 branches missed.">        if (pVersion &lt; theVersion) {</span>
+            /* Delete any redundant versions */
+<span class="nc bnc" id="L110" title="All 2 branches missed.">            theHistory.entrySet().removeIf(myEntry -&gt; myEntry.getKey() &gt; pVersion);</span>
+        }
+
+        /* Obtain the map */
+<span class="nc bnc" id="L114" title="All 2 branches missed.">        theInstanceMap = theInstanceMap == null</span>
+<span class="nc" id="L115">                ? new PrometheusMapsDataSetInstance()</span>
+<span class="nc" id="L116">                : theHistory.computeIfAbsent(pVersion, i -&gt; new PrometheusMapsDataSetInstance(theInstanceMap));</span>
+<span class="nc" id="L117">        theVersion = pVersion;</span>
+<span class="nc" id="L118">    }</span>
+
+    /**
+     * Declare fieldId map.
+     *
+     * @param pListKey the listKey
+     * @param pFieldId the fieldId
+     */
+    void declareFieldIdMap(final MetisListKey pListKey,
+                           final MetisDataFieldId pFieldId) {
+<span class="nc" id="L128">        theInstanceMap.declareFieldIdMap(pListKey, pFieldId);</span>
+<span class="nc" id="L129">    }</span>
+
+    /**
+     * Declare fieldId map.
+     *
+     * @param pListKey the listKey
+     * @param pFieldId the fieldId
+     * @param pFilter  the filter
+     */
+    void declareFieldIdMap(final MetisListKey pListKey,
+                           final MetisDataFieldId pFieldId,
+                           final Function&lt;PrometheusDataItem, Boolean&gt; pFilter) {
+<span class="nc" id="L141">        theInstanceMap.declareFieldIdMap(pListKey, pFieldId, pFilter);</span>
+<span class="nc" id="L142">    }</span>
+
+    /**
+     * Declare shared fieldId map.
+     *
+     * @param pListKey   the listKey
+     * @param pFieldId   the fieldId
+     * @param pSharedKey the shared listKey
+     */
+    void declareFieldIdMap(final MetisListKey pListKey,
+                           final MetisDataFieldId pFieldId,
+                           final MetisListKey pSharedKey) {
+<span class="nc" id="L154">        theInstanceMap.declareFieldIdMap(pListKey, pFieldId, pSharedKey);</span>
+<span class="nc" id="L155">    }</span>
+
+    /**
+     * Declare dateId map.
+     *
+     * @param pListKey   the listKey
+     * @param pOwnerId   the ownerId
+     * @param pDateId    the dateId
+     * @param pAllowNull do we allow null value?
+     */
+    void declareDateIdMap(final MetisListKey pListKey,
+                          final MetisDataFieldId pOwnerId,
+                          final MetisDataFieldId pDateId,
+                          final boolean pAllowNull) {
+<span class="nc" id="L169">        theInstanceMap.declareDateIdMap(pListKey, pOwnerId, pDateId, pAllowNull);</span>
+<span class="nc" id="L170">    }</span>
+
+    /**
+     * add item to map.
+     *
+     * @param pItem the item
+     */
+    void addItemToMaps(final PrometheusDataItem pItem) {
+<span class="nc" id="L178">        theInstanceMap.addItemToMaps(pItem);</span>
+<span class="nc" id="L179">    }</span>
+
+    /**
+     * Is the key duplicate?
+     *
+     * @param pFieldId the fieldId
+     * @param pItem    the item
+     * @return true/false
+     */
+    boolean isKeyDuplicate(final MetisDataFieldId pFieldId,
+                           final PrometheusDataItem pItem) {
+<span class="nc" id="L190">        return theInstanceMap.isKeyDuplicate(pFieldId, pItem);</span>
+    }
+
+    /**
+     * Is the key available?
+     *
+     * @param pListKey the listKey
+     * @param pFieldId the fieldId
+     * @param pKey     the key
+     * @return true/false
+     */
+    boolean isKeyAvailable(final MetisListKey pListKey,
+                           final MetisDataFieldId pFieldId,
+                           final Object pKey) {
+<span class="nc" id="L204">        return theInstanceMap.isKeyAvailable(pListKey, pFieldId, pKey);</span>
+    }
+
+    /**
+     * Obtain the item for the key.
+     *
+     * @param pListKey the listKey
+     * @param pFieldId the fieldId
+     * @param pKey     the key
+     * @return the item
+     */
+    PrometheusDataItem getItemForKey(final MetisListKey pListKey,
+                                     final MetisDataFieldId pFieldId,
+                                     final Object pKey) {
+<span class="nc" id="L218">        return theInstanceMap.getItemForKey(pListKey, pFieldId, pKey);</span>
+    }
+
+    /**
+     * Reset the maps.
+     */
+    void resetMaps() {
+<span class="nc" id="L225">        theInstanceMap.resetMaps();</span>
+<span class="nc" id="L226">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

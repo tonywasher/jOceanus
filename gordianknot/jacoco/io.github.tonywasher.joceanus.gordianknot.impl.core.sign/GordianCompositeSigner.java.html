@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianCompositeSigner.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.impl.core.sign</a> &gt; <span class="el_source">GordianCompositeSigner.java</span></div><h1>GordianCompositeSigner.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.gordianknot.impl.core.sign;
+
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactory;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignParams;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignature;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignatureFactory;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignatureSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianIOException;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianLogicException;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianCompositeKeyPair;
+import org.bouncycastle.asn1.ASN1EncodableVector;
+import org.bouncycastle.asn1.ASN1OctetString;
+import org.bouncycastle.asn1.ASN1Sequence;
+import org.bouncycastle.asn1.DEROctetString;
+import org.bouncycastle.asn1.DERSequence;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.List;
+
+/**
+ * KeyPairSet signer.
+ */
+public class GordianCompositeSigner
+        implements GordianSignature {
+    /**
+     * The factory.
+     */
+    private final GordianSignatureFactory theFactory;
+
+    /**
+     * The SignatureSpec.
+     */
+    private final GordianSignatureSpec theSpec;
+
+    /**
+     * The signers.
+     */
+    private final List&lt;GordianSignature&gt; theSigners;
+
+    /**
+     * Constructor.
+     *
+     * @param pFactory       the factory
+     * @param pSignatureSpec the signatureSpec
+     * @throws GordianException on error
+     */
+    public GordianCompositeSigner(final GordianFactory pFactory,
+<span class="fc" id="L69">                                  final GordianSignatureSpec pSignatureSpec) throws GordianException {</span>
+        /* Store parameters */
+<span class="fc" id="L71">        theFactory = pFactory.getAsyncFactory().getSignatureFactory();</span>
+<span class="fc" id="L72">        theSpec = pSignatureSpec;</span>
+<span class="fc" id="L73">        theSigners = new ArrayList&lt;&gt;();</span>
+
+        /* Create the signers */
+<span class="fc" id="L76">        final Iterator&lt;GordianSignatureSpec&gt; myIterator = theSpec.signatureSpecIterator();</span>
+<span class="fc bfc" id="L77" title="All 2 branches covered.">        while (myIterator.hasNext()) {</span>
+<span class="fc" id="L78">            final GordianSignatureSpec mySpec = myIterator.next();</span>
+<span class="fc" id="L79">            theSigners.add(theFactory.createSigner(mySpec));</span>
+<span class="fc" id="L80">        }</span>
+<span class="fc" id="L81">    }</span>
+
+    @Override
+    public GordianSignatureSpec getSignatureSpec() {
+<span class="nc" id="L85">        return theSpec;</span>
+    }
+
+    @Override
+    public void initForSigning(final GordianSignParams pParams) throws GordianException {
+        /* Check the keyPairSet */
+<span class="fc" id="L91">        final GordianCompositeKeyPair myCompositePair = (GordianCompositeKeyPair) pParams.getKeyPair();</span>
+<span class="fc" id="L92">        checkKeySpec(myCompositePair);</span>
+
+        /* Initialise the signers */
+<span class="fc" id="L95">        final Iterator&lt;GordianKeyPair&gt; myIterator = myCompositePair.iterator();</span>
+<span class="fc bfc" id="L96" title="All 2 branches covered.">        for (GordianSignature mySigner : theSigners) {</span>
+<span class="fc" id="L97">            final GordianKeyPair myPair = myIterator.next();</span>
+<span class="fc" id="L98">            mySigner.initForSigning(GordianSignParams.keyPair(myPair));</span>
+<span class="fc" id="L99">        }</span>
+<span class="fc" id="L100">    }</span>
+
+    @Override
+    public void initForVerify(final GordianSignParams pParams) throws GordianException {
+        /* Check the keyPairSet */
+<span class="fc" id="L105">        final GordianCompositeKeyPair myCompositePair = (GordianCompositeKeyPair) pParams.getKeyPair();</span>
+<span class="fc" id="L106">        checkKeySpec(myCompositePair);</span>
+
+        /* Initialise the signers */
+<span class="fc" id="L109">        final Iterator&lt;GordianKeyPair&gt; myIterator = myCompositePair.iterator();</span>
+<span class="fc bfc" id="L110" title="All 2 branches covered.">        for (GordianSignature mySigner : theSigners) {</span>
+<span class="fc" id="L111">            final GordianKeyPair myPair = myIterator.next();</span>
+<span class="fc" id="L112">            mySigner.initForVerify(GordianSignParams.keyPair(myPair));</span>
+<span class="fc" id="L113">        }</span>
+<span class="fc" id="L114">    }</span>
+
+    /**
+     * check the keyPair.
+     *
+     * @param pKeyPair the keyPair
+     * @throws GordianException on error
+     */
+    private void checkKeySpec(final GordianKeyPair pKeyPair) throws GordianException {
+<span class="pc bpc" id="L123" title="1 of 2 branches missed.">        if (!theFactory.validSignatureSpecForKeyPairSpec(pKeyPair.getKeyPairSpec(), theSpec)) {</span>
+<span class="nc" id="L124">            throw new GordianLogicException(&quot;Invalid keyPair for signer&quot;);</span>
+        }
+<span class="fc" id="L126">    }</span>
+
+    @Override
+    public void update(final byte[] pBytes,
+                       final int pOffset,
+                       final int pLength) {
+        /* Loop through the signers */
+<span class="fc bfc" id="L133" title="All 2 branches covered.">        for (GordianSignature mySigner : theSigners) {</span>
+<span class="fc" id="L134">            mySigner.update(pBytes, pOffset, pLength);</span>
+<span class="fc" id="L135">        }</span>
+<span class="fc" id="L136">    }</span>
+
+    @Override
+    public void update(final byte pByte) {
+        /* Loop through the signers */
+<span class="nc bnc" id="L141" title="All 2 branches missed.">        for (GordianSignature mySigner : theSigners) {</span>
+<span class="nc" id="L142">            mySigner.update(pByte);</span>
+<span class="nc" id="L143">        }</span>
+<span class="nc" id="L144">    }</span>
+
+    @Override
+    public void reset() {
+        /* Loop through the signers */
+<span class="nc bnc" id="L149" title="All 2 branches missed.">        for (GordianSignature mySigner : theSigners) {</span>
+<span class="nc" id="L150">            mySigner.reset();</span>
+<span class="nc" id="L151">        }</span>
+<span class="nc" id="L152">    }</span>
+
+    @Override
+    public final byte[] sign() throws GordianException {
+        /* Protect against exceptions */
+        try {
+            /* Create the signature */
+<span class="fc" id="L159">            final ASN1EncodableVector ks = new ASN1EncodableVector();</span>
+
+            /* Loop through the signers */
+<span class="fc" id="L162">            byte[] mySign = null;</span>
+<span class="fc bfc" id="L163" title="All 2 branches covered.">            for (GordianSignature mySigner : theSigners) {</span>
+                /* If we have a previous signature */
+<span class="fc bfc" id="L165" title="All 2 branches covered.">                if (mySign != null) {</span>
+                    /* Process previous signature */
+<span class="fc" id="L167">                    mySigner.update(mySign);</span>
+                }
+
+                /* Sign using this signature */
+<span class="fc" id="L171">                mySign = mySigner.sign();</span>
+
+                /* Add the signature */
+<span class="fc" id="L174">                ks.add(new DEROctetString(mySign));</span>
+<span class="fc" id="L175">            }</span>
+
+            /* Return the signature */
+<span class="fc" id="L178">            return new DERSequence(ks).getEncoded();</span>
+
+<span class="nc" id="L180">        } catch (IOException e) {</span>
+<span class="nc" id="L181">            throw new GordianIOException(&quot;Failed to encode signature&quot;, e);</span>
+        }
+    }
+
+    @Override
+    public boolean verify(final byte[] pSignature) throws GordianException {
+        /* Protect against exceptions */
+        try {
+            /* Parse the signature */
+<span class="fc" id="L190">            final ASN1Sequence mySequence = ASN1Sequence.getInstance(pSignature);</span>
+
+            /* Loop through the signers */
+<span class="fc" id="L193">            byte[] mySign = null;</span>
+<span class="fc" id="L194">            int numFailed = 0;</span>
+<span class="fc" id="L195">            final Enumeration&lt;?&gt; en = mySequence.getObjects();</span>
+<span class="fc bfc" id="L196" title="All 2 branches covered.">            for (GordianSignature mySigner : theSigners) {</span>
+                /* If we have a previous signature */
+<span class="fc bfc" id="L198" title="All 2 branches covered.">                if (mySign != null) {</span>
+                    /* Process previous signature */
+<span class="fc" id="L200">                    mySigner.update(mySign);</span>
+                }
+
+                /* Access next signature */
+<span class="fc" id="L204">                mySign = ASN1OctetString.getInstance(en.nextElement()).getOctets();</span>
+
+                /* Verify using this signature */
+<span class="pc bpc" id="L207" title="1 of 2 branches missed.">                numFailed += mySigner.verify(mySign) ? 0 : 1;</span>
+<span class="fc" id="L208">            }</span>
+
+            /* Return validity */
+<span class="pc bpc" id="L211" title="1 of 2 branches missed.">            return numFailed == 0;</span>
+
+<span class="nc" id="L213">        } catch (IllegalArgumentException e) {</span>
+<span class="nc" id="L214">            throw new GordianIOException(&quot;Invalid encoded signature&quot;, e);</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

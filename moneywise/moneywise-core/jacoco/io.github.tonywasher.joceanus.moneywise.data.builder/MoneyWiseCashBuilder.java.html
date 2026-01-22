@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseCashBuilder.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.moneywise.data.builder</a> &gt; <span class="el_source">MoneyWiseCashBuilder.java</span></div><h1>MoneyWiseCashBuilder.java</h1><pre class="source lang-java linenums">/*
+ * MoneyWise: Finance Application
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.moneywise.data.builder;
+
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseCash;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseCashCategory;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDataSet;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePayee;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransCategory;
+import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseCurrency;
+import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseCurrencyClass;
+import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
+
+/**
+ * Cash Builder.
+ */
+public class MoneyWiseCashBuilder {
+    /**
+     * DataSet.
+     */
+    private final MoneyWiseDataSet theDataSet;
+
+    /**
+     * The Cash Name.
+     */
+    private String theName;
+
+    /**
+     * The Cash Category.
+     */
+    private MoneyWiseCashCategory theCategory;
+
+    /**
+     * The Currency.
+     */
+    private MoneyWiseCurrency theCurrency;
+
+    /**
+     * The Opening Balance.
+     */
+    private OceanusMoney theOpeningBalance;
+
+    /**
+     * The AutoPayee.
+     */
+    private MoneyWisePayee theAutoPayee;
+
+    /**
+     * The AutoExpense.
+     */
+    private MoneyWiseTransCategory theAutoExpense;
+
+    /**
+     * Constructor.
+     *
+     * @param pDataSet the dataSet
+     */
+<span class="fc" id="L74">    public MoneyWiseCashBuilder(final MoneyWiseDataSet pDataSet) {</span>
+<span class="fc" id="L75">        theDataSet = pDataSet;</span>
+<span class="fc" id="L76">        theDataSet.getCash().ensureMap();</span>
+<span class="fc" id="L77">        reportingCurrency();</span>
+<span class="fc" id="L78">    }</span>
+
+    /**
+     * Set Name.
+     *
+     * @param pName the name of the loan.
+     * @return the builder
+     */
+    public MoneyWiseCashBuilder name(final String pName) {
+<span class="fc" id="L87">        theName = pName;</span>
+<span class="fc" id="L88">        return this;</span>
+    }
+
+    /**
+     * Set the cashCategory.
+     *
+     * @param pCategory the category of the cash.
+     * @return the builder
+     */
+    public MoneyWiseCashBuilder category(final MoneyWiseCashCategory pCategory) {
+<span class="fc" id="L98">        theCategory = pCategory;</span>
+<span class="fc" id="L99">        return this;</span>
+    }
+
+    /**
+     * Set the cashCategory.
+     *
+     * @param pCategory the category of the cash.
+     * @return the builder
+     */
+    public MoneyWiseCashBuilder category(final String pCategory) {
+<span class="fc" id="L109">        return category(theDataSet.getCashCategories().findItemByName(pCategory));</span>
+    }
+
+    /**
+     * Set the autoExpense.
+     *
+     * @param pCategory the category.
+     * @param pPayee    the payee
+     * @return the builder
+     */
+    public MoneyWiseCashBuilder autoExpense(final MoneyWiseTransCategory pCategory,
+                                            final MoneyWisePayee pPayee) {
+<span class="fc" id="L121">        theAutoExpense = pCategory;</span>
+<span class="fc" id="L122">        theAutoPayee = pPayee;</span>
+<span class="fc" id="L123">        return this;</span>
+    }
+
+    /**
+     * Set the autoExpense.
+     *
+     * @param pCategory the category.
+     * @param pPayee    the payee
+     * @return the builder
+     */
+    public MoneyWiseCashBuilder autoExpense(final String pCategory,
+                                            final String pPayee) {
+<span class="fc" id="L135">        final MoneyWiseTransCategory myCat = theDataSet.getTransCategories().findItemByName(pCategory);</span>
+<span class="fc" id="L136">        final MoneyWisePayee myPayee = theDataSet.getPayees().findItemByName(pPayee);</span>
+<span class="fc" id="L137">        return autoExpense(myCat, myPayee);</span>
+    }
+
+    /**
+     * Set the currency.
+     *
+     * @param pCurrency the currency of the cash.
+     * @return the builder
+     */
+    public MoneyWiseCashBuilder currency(final MoneyWiseCurrency pCurrency) {
+<span class="fc" id="L147">        theCurrency = pCurrency;</span>
+<span class="fc" id="L148">        return this;</span>
+    }
+
+    /**
+     * Set the currency.
+     *
+     * @param pCurrency the currency of the cash.
+     * @return the builder
+     */
+    public MoneyWiseCashBuilder currency(final MoneyWiseCurrencyClass pCurrency) {
+<span class="fc" id="L158">        return currency(theDataSet.getAccountCurrencies().findItemByClass(pCurrency));</span>
+    }
+
+    /**
+     * Set the reporting currency.
+     */
+    private void reportingCurrency() {
+<span class="fc" id="L165">        currency(lookupReportingCurrency());</span>
+<span class="fc" id="L166">    }</span>
+
+    /**
+     * Obtain the reporting currency.
+     *
+     * @return the currency
+     */
+    private MoneyWiseCurrency lookupReportingCurrency() {
+<span class="fc" id="L174">        return theDataSet.getReportingCurrency();</span>
+    }
+
+    /**
+     * Set the openingBalance.
+     *
+     * @param pOpening the opening Balance
+     * @return the builder
+     */
+    public MoneyWiseCashBuilder openingBalance(final OceanusMoney pOpening) {
+<span class="fc" id="L184">        theOpeningBalance = pOpening;</span>
+<span class="fc" id="L185">        return this;</span>
+    }
+
+    /**
+     * Set the openingBalance.
+     *
+     * @param pOpening the opening Balance
+     * @return the builder
+     */
+    public MoneyWiseCashBuilder openingBalance(final String pOpening) {
+<span class="fc" id="L195">        return openingBalance(new OceanusMoney(pOpening, theCurrency.getCurrency()));</span>
+    }
+
+    /**
+     * Build the cash.
+     *
+     * @return the new cash
+     * @throws OceanusException on error
+     */
+    public MoneyWiseCash build() throws OceanusException {
+        /* Create the cash */
+<span class="fc" id="L206">        final MoneyWiseCash myCash = theDataSet.getCash().addNewItem();</span>
+<span class="fc" id="L207">        myCash.setName(theName);</span>
+<span class="fc" id="L208">        myCash.setCategory(theCategory);</span>
+<span class="fc" id="L209">        myCash.setAssetCurrency(theCurrency);</span>
+<span class="fc" id="L210">        myCash.setOpeningBalance(theOpeningBalance);</span>
+<span class="fc" id="L211">        myCash.setAutoExpense(theAutoExpense);</span>
+<span class="fc" id="L212">        myCash.setAutoPayee(theAutoPayee);</span>
+<span class="fc" id="L213">        myCash.setClosed(Boolean.FALSE);</span>
+
+        /* Reset the values */
+<span class="fc" id="L216">        reset();</span>
+
+        /* Check for errors */
+<span class="fc" id="L219">        myCash.adjustMapForItem();</span>
+<span class="fc" id="L220">        myCash.validate();</span>
+<span class="pc bpc" id="L221" title="1 of 2 branches missed.">        if (myCash.hasErrors()) {</span>
+<span class="nc" id="L222">            myCash.removeItem();</span>
+<span class="nc" id="L223">            throw new MoneyWiseDataException(myCash, &quot;Failed validation&quot;);</span>
+        }
+
+        /* Return the cash */
+<span class="fc" id="L227">        return myCash;</span>
+    }
+
+    /**
+     * Reset the builder.
+     */
+    public void reset() {
+        /* Reset values */
+<span class="fc" id="L235">        theName = null;</span>
+<span class="fc" id="L236">        theCategory = null;</span>
+<span class="fc" id="L237">        theOpeningBalance = null;</span>
+<span class="fc" id="L238">        theAutoExpense = null;</span>
+<span class="fc" id="L239">        theAutoPayee = null;</span>
+<span class="fc" id="L240">        reportingCurrency();</span>
+<span class="fc" id="L241">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

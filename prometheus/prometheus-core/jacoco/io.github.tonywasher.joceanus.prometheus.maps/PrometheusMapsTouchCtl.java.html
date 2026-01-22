@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PrometheusMapsTouchCtl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Prometheus Core Application Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.prometheus.maps</a> &gt; <span class="el_source">PrometheusMapsTouchCtl.java</span></div><h1>PrometheusMapsTouchCtl.java</h1><pre class="source lang-java linenums">/*
+ * Prometheus: Application Framework
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.prometheus.maps;
+
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
+import io.github.tonywasher.joceanus.metis.data.MetisDataResource;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldItem;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
+
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * DataTouchMap for data/EditSet.
+ */
+public class PrometheusMapsTouchCtl
+        implements MetisFieldItem {
+    /**
+     * Report fields.
+     */
+<span class="nc" id="L36">    private static final MetisFieldSet&lt;PrometheusMapsTouchCtl&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(PrometheusMapsTouchCtl.class);</span>
+
+    /*
+     * Declare Fields.
+     */
+    static {
+<span class="nc" id="L42">        FIELD_DEFS.declareLocalField(MetisDataResource.DATA_VERSION, PrometheusMapsTouchCtl::getVersion);</span>
+<span class="nc" id="L43">        FIELD_DEFS.declareLocalField(PrometheusMapsResource.MAPS_TOUCHMAP, PrometheusMapsTouchCtl::getTouchMap);</span>
+<span class="nc" id="L44">    }</span>
+
+    /**
+     * The history.
+     */
+    private final Map&lt;Integer, PrometheusMapsDataSetTouch&gt; theHistory;
+
+    /**
+     * The current version.
+     */
+    private Integer theVersion;
+
+    /**
+     * The current dataSetTouchMap.
+     */
+    private PrometheusMapsDataSetTouch theTouchMap;
+
+    /**
+     * Constructor.
+     */
+<span class="nc" id="L64">    PrometheusMapsTouchCtl() {</span>
+<span class="nc" id="L65">        theHistory = new HashMap&lt;&gt;();</span>
+<span class="nc" id="L66">        theVersion = 0;</span>
+<span class="nc" id="L67">        setVersion(0);</span>
+<span class="nc" id="L68">    }</span>
+
+    @Override
+    public MetisFieldSetDef getDataFieldSet() {
+<span class="nc" id="L72">        return FIELD_DEFS;</span>
+    }
+
+    @Override
+    public String formatObject(final OceanusDataFormatter pFormatter) {
+<span class="nc" id="L77">        return PrometheusMapsTouchCtl.class.getSimpleName();</span>
+    }
+
+    /**
+     * Obtain the version.
+     *
+     * @return the version
+     */
+    private Integer getVersion() {
+<span class="nc" id="L86">        return theVersion;</span>
+    }
+
+    /**
+     * Obtain the touch map.
+     *
+     * @return the map
+     */
+    private PrometheusMapsDataSetTouch getTouchMap() {
+<span class="nc" id="L95">        return theTouchMap;</span>
+    }
+
+    /**
+     * Set version.
+     *
+     * @param pVersion the version
+     */
+    void setVersion(final Integer pVersion) {
+        /* If we are rolling back */
+<span class="nc bnc" id="L105" title="All 2 branches missed.">        if (pVersion &lt; theVersion) {</span>
+            /* Delete any redundant versions */
+<span class="nc bnc" id="L107" title="All 2 branches missed.">            theHistory.entrySet().removeIf(myEntry -&gt; myEntry.getKey() &gt; pVersion);</span>
+        }
+
+        /* Obtain the map */
+<span class="nc" id="L111">        theTouchMap = theHistory.computeIfAbsent(pVersion, i -&gt; new PrometheusMapsDataSetTouch());</span>
+<span class="nc" id="L112">        theVersion = pVersion;</span>
+<span class="nc" id="L113">    }</span>
+
+    /**
+     * Record touch.
+     *
+     * @param pTouchedItem  the item that is touched
+     * @param pTouchingItem the item that touches
+     */
+    void recordTouch(final PrometheusDataItem pTouchedItem,
+                     final PrometheusDataItem pTouchingItem) {
+        /* Access correct map and record the touch */
+<span class="nc" id="L124">        theTouchMap.recordTouch(pTouchedItem, pTouchingItem);</span>
+<span class="nc" id="L125">    }</span>
+
+    /**
+     * Is the item touched?
+     *
+     * @param pItem the item
+     * @return true/false
+     */
+    boolean isTouched(final PrometheusDataItem pItem) {
+<span class="nc" id="L134">        return theTouchMap.isTouched(pItem);</span>
+    }
+
+    /**
+     * Reset the map.
+     */
+    void resetMap() {
+<span class="nc" id="L141">        theTouchMap.resetMap();</span>
+<span class="nc" id="L142">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

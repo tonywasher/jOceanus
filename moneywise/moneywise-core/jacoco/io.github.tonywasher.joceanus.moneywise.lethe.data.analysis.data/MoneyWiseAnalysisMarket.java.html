@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseAnalysisMarket.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data</a> &gt; <span class="el_source">MoneyWiseAnalysisMarket.java</span></div><h1>MoneyWiseAnalysisMarket.java</h1><pre class="source lang-java linenums">/*
+ * MoneyWise: Finance Application
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data;
+
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseCurrency;
+import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWisePayeeClass;
+import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTransCategoryClass;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisPayeeBucket.MoneyWiseAnalysisPayeeBucketList;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisTaxBasisBucket.MoneyWiseAnalysisTaxBasisBucketList;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisTransCategoryBucket.MoneyWiseAnalysisTransCategoryBucketList;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisAccountAttr;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisAccountValues;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisSecurityAttr;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisSecurityValues;
+
+import java.util.Currency;
+
+/**
+ * Market analysis.
+ */
+public class MoneyWiseAnalysisMarket {
+    /**
+     * Analysis.
+     */
+    private final MoneyWiseAnalysis theAnalysis;
+
+    /**
+     * Market Payee Income.
+     */
+    private final OceanusMoney theMarketIncome;
+
+    /**
+     * Market Payee Expense.
+     */
+    private final OceanusMoney theMarketExpense;
+
+    /**
+     * MarketGrowth Income.
+     */
+    private final OceanusMoney theGrowthIncome;
+
+    /**
+     * MarketGrowth Expense.
+     */
+    private final OceanusMoney theGrowthExpense;
+
+    /**
+     * CurrencyFluctuation Income.
+     */
+    private final OceanusMoney theFluctIncome;
+
+    /**
+     * CurrencyFluctuation Expense.
+     */
+    private final OceanusMoney theFluctExpense;
+
+    /**
+     * Constructor.
+     *
+     * @param pAnalysis the analysis.
+     */
+<span class="fc" id="L77">    protected MoneyWiseAnalysisMarket(final MoneyWiseAnalysis pAnalysis) {</span>
+        /* Store parameters */
+<span class="fc" id="L79">        theAnalysis = pAnalysis;</span>
+
+        /* Determine the currency */
+<span class="fc" id="L82">        final MoneyWiseCurrency myCurr = pAnalysis.getCurrency();</span>
+<span class="pc bpc" id="L83" title="1 of 2 branches missed.">        final Currency myCurrency = myCurr == null</span>
+<span class="fc" id="L84">                ? MoneyWiseAnalysisAccountBucket.DEFAULT_CURRENCY</span>
+<span class="pc" id="L85">                : myCurr.getCurrency();</span>
+
+        /* Create buckets */
+<span class="fc" id="L88">        theMarketIncome = new OceanusMoney(myCurrency);</span>
+<span class="fc" id="L89">        theMarketExpense = new OceanusMoney(myCurrency);</span>
+<span class="fc" id="L90">        theGrowthIncome = new OceanusMoney(myCurrency);</span>
+<span class="fc" id="L91">        theGrowthExpense = new OceanusMoney(myCurrency);</span>
+<span class="fc" id="L92">        theFluctIncome = new OceanusMoney(myCurrency);</span>
+<span class="fc" id="L93">        theFluctExpense = new OceanusMoney(myCurrency);</span>
+<span class="fc" id="L94">    }</span>
+
+    /**
+     * Process account bucket.
+     *
+     * @param pBucket the account bucket.
+     */
+    protected void processAccount(final MoneyWiseAnalysisAccountBucket&lt;?&gt; pBucket) {
+        /* Access market and gains */
+<span class="nc" id="L103">        final MoneyWiseAnalysisAccountValues myValues = pBucket.getValues();</span>
+<span class="nc" id="L104">        final OceanusMoney myFluct = myValues.getMoneyValue(MoneyWiseAnalysisAccountAttr.CURRENCYFLUCT);</span>
+
+        /* If there are fluctuations */
+<span class="nc bnc" id="L107" title="All 2 branches missed.">        if (myFluct != null) {</span>
+<span class="nc" id="L108">            final MoneyWiseAnalysisAccountValues myBaseValues = pBucket.getBaseValues();</span>
+<span class="nc" id="L109">            final OceanusMoney myBaseFluct = myBaseValues.getMoneyValue(MoneyWiseAnalysisAccountAttr.CURRENCYFLUCT);</span>
+<span class="nc" id="L110">            final OceanusMoney myPeriodFluct = new OceanusMoney(myFluct);</span>
+<span class="nc" id="L111">            myPeriodFluct.subtractAmount(myBaseFluct);</span>
+
+            /* Add to CurrencyFluctuation income/expense */
+<span class="nc bnc" id="L114" title="All 2 branches missed.">            if (myPeriodFluct.isPositive()) {</span>
+<span class="nc" id="L115">                theFluctIncome.addAmount(myPeriodFluct);</span>
+<span class="nc" id="L116">                theMarketIncome.addAmount(myPeriodFluct);</span>
+            } else {
+<span class="nc" id="L118">                theFluctExpense.subtractAmount(myPeriodFluct);</span>
+<span class="nc" id="L119">                theMarketExpense.subtractAmount(myPeriodFluct);</span>
+            }
+        }
+<span class="nc" id="L122">    }</span>
+
+    /**
+     * Process security bucket.
+     *
+     * @param pBucket the security bucket.
+     */
+    protected void processSecurity(final MoneyWiseAnalysisSecurityBucket pBucket) {
+        /* Access market and gains */
+<span class="nc" id="L131">        final MoneyWiseAnalysisSecurityValues myValues = pBucket.getValues();</span>
+<span class="nc" id="L132">        final OceanusMoney myMarket = myValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.MARKETGROWTH);</span>
+<span class="nc" id="L133">        final OceanusMoney myGains = myValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.REALISEDGAINS);</span>
+<span class="nc" id="L134">        final OceanusMoney myFluct = myValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.CURRENCYFLUCT);</span>
+
+        /* If there are gains in the period */
+<span class="nc bnc" id="L137" title="All 2 branches missed.">        if (myGains.isNonZero()) {</span>
+            /* Subtract them from the market movement */
+<span class="nc" id="L139">            myMarket.subtractAmount(myGains);</span>
+
+            /* These gains have been allocated separately */
+<span class="nc bnc" id="L142" title="All 2 branches missed.">            if (myGains.isPositive()) {</span>
+                /* Adjust market account */
+<span class="nc" id="L144">                theMarketIncome.addAmount(myGains);</span>
+            } else {
+                /* Adjust market account */
+<span class="nc" id="L147">                theMarketExpense.subtractAmount(myGains);</span>
+            }
+        }
+
+        /* If there is growth in the period */
+<span class="nc bnc" id="L152" title="All 2 branches missed.">        if (myMarket.isNonZero()) {</span>
+            /* Add to MarketGrowth income/expense */
+<span class="nc bnc" id="L154" title="All 2 branches missed.">            if (myMarket.isPositive()) {</span>
+<span class="nc" id="L155">                theGrowthIncome.addAmount(myMarket);</span>
+<span class="nc" id="L156">                theMarketIncome.addAmount(myMarket);</span>
+            } else {
+<span class="nc" id="L158">                theGrowthExpense.subtractAmount(myMarket);</span>
+<span class="nc" id="L159">                theMarketExpense.subtractAmount(myMarket);</span>
+            }
+        }
+
+        /* If there are fluctuations in the period */
+<span class="nc bnc" id="L164" title="All 4 branches missed.">        if (myFluct != null &amp;&amp; myFluct.isNonZero()) {</span>
+            /* Add to CurrencyFluctuation income/expense */
+<span class="nc bnc" id="L166" title="All 2 branches missed.">            if (myFluct.isPositive()) {</span>
+<span class="nc" id="L167">                theFluctIncome.addAmount(myFluct);</span>
+<span class="nc" id="L168">                theMarketIncome.addAmount(myFluct);</span>
+            } else {
+<span class="nc" id="L170">                theFluctExpense.subtractAmount(myFluct);</span>
+<span class="nc" id="L171">                theMarketExpense.subtractAmount(myFluct);</span>
+            }
+        }
+<span class="nc" id="L174">    }</span>
+
+    /**
+     * Propagate totals.
+     */
+    protected void propagateTotals() {
+        /* Access lists */
+<span class="fc" id="L181">        final MoneyWiseAnalysisPayeeBucketList myPayees = theAnalysis.getPayees();</span>
+<span class="fc" id="L182">        final MoneyWiseAnalysisTaxBasisBucketList myTaxBasis = theAnalysis.getTaxBasis();</span>
+<span class="fc" id="L183">        final MoneyWiseAnalysisTransCategoryBucketList myCategories = theAnalysis.getTransCategories();</span>
+
+        /* If we have market income/expense */
+<span class="pc bpc" id="L186" title="1 of 2 branches missed.">        if (theMarketIncome.isNonZero()</span>
+<span class="pc bpc" id="L187" title="1 of 2 branches missed.">                || theMarketExpense.isNonZero()) {</span>
+            /* Access market payee */
+<span class="nc" id="L189">            final MoneyWiseAnalysisPayeeBucket myMarket = myPayees.getBucket(MoneyWisePayeeClass.MARKET);</span>
+
+            /* Adjust totals */
+<span class="nc" id="L192">            myMarket.addIncome(theMarketIncome);</span>
+<span class="nc" id="L193">            myMarket.addExpense(theMarketExpense);</span>
+        }
+
+        /* If we have marketGrowth */
+<span class="pc bpc" id="L197" title="1 of 2 branches missed.">        if (theGrowthIncome.isNonZero()</span>
+<span class="pc bpc" id="L198" title="1 of 2 branches missed.">                || theGrowthExpense.isNonZero()) {</span>
+            /* Access marketGrowth category */
+<span class="nc" id="L200">            final MoneyWiseAnalysisTransCategoryBucket myGrowth = myCategories.getBucket(MoneyWiseTransCategoryClass.MARKETGROWTH);</span>
+
+            /* Adjust totals */
+<span class="nc" id="L203">            myGrowth.addIncome(theGrowthIncome);</span>
+<span class="nc" id="L204">            myGrowth.addExpense(theGrowthExpense);</span>
+
+            /* Adjust tax basis */
+<span class="nc" id="L207">            myTaxBasis.adjustMarket(theGrowthIncome, theGrowthExpense);</span>
+        }
+
+        /* If we have currencyFluctuation */
+<span class="pc bpc" id="L211" title="1 of 2 branches missed.">        if (theFluctIncome.isNonZero()</span>
+<span class="pc bpc" id="L212" title="1 of 2 branches missed.">                || theFluctExpense.isNonZero()) {</span>
+            /* Access currecyFluctuation category */
+<span class="nc" id="L214">            final MoneyWiseAnalysisTransCategoryBucket myFluct = myCategories.getBucket(MoneyWiseTransCategoryClass.CURRENCYFLUCTUATION);</span>
+
+            /* Adjust totals */
+<span class="nc" id="L217">            myFluct.addIncome(theFluctIncome);</span>
+<span class="nc" id="L218">            myFluct.addExpense(theFluctExpense);</span>
+
+            /* Adjust tax basis */
+<span class="nc" id="L221">            myTaxBasis.adjustMarket(theFluctIncome, theFluctExpense);</span>
+        }
+<span class="fc" id="L223">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

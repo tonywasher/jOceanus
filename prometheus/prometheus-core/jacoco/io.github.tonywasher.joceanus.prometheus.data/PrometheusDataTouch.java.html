@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PrometheusDataTouch.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Prometheus Core Application Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.prometheus.data</a> &gt; <span class="el_source">PrometheusDataTouch.java</span></div><h1>PrometheusDataTouch.java</h1><pre class="source lang-java linenums">/*
+ * Prometheus: Application Framework
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.prometheus.data;
+
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
+import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataMap;
+import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataObjectFormat;
+import io.github.tonywasher.joceanus.metis.list.MetisListKey;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataTouch.PrometheusTouchCounter;
+
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
+/**
+ * Class to record reference to a DataItem via another data item.
+ */
+public class PrometheusDataTouch
+        implements MetisDataObjectFormat, MetisDataMap&lt;MetisListKey, PrometheusTouchCounter&gt; {
+    /**
+     * Map of touches.
+     */
+    private final Map&lt;MetisListKey, PrometheusTouchCounter&gt; theTouchMap;
+
+    /**
+     * Constructor.
+     */
+<span class="nc" id="L42">    public PrometheusDataTouch() {</span>
+        /* Create the map */
+<span class="nc" id="L44">        theTouchMap = new HashMap&lt;&gt;();</span>
+<span class="nc" id="L45">    }</span>
+
+    @Override
+    public Map&lt;MetisListKey, PrometheusTouchCounter&gt; getUnderlyingMap() {
+<span class="nc" id="L49">        return theTouchMap;</span>
+    }
+
+    @Override
+    public String formatObject(final OceanusDataFormatter pFormatter) {
+<span class="nc" id="L54">        return getClass().getSimpleName();</span>
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param pSource the source map
+     */
+    protected void copyMap(final PrometheusDataTouch pSource) {
+        /* Create the map */
+<span class="nc" id="L64">        theTouchMap.putAll(pSource.getUnderlyingMap());</span>
+<span class="nc" id="L65">    }</span>
+
+    /**
+     * Reset all touches.
+     */
+    public void resetTouches() {
+        /* Clear the map */
+<span class="nc" id="L72">        theTouchMap.clear();</span>
+<span class="nc" id="L73">    }</span>
+
+    /**
+     * Reset touches for a dataType.
+     *
+     * @param pItemType the ItemType
+     */
+    public void resetTouches(final MetisListKey pItemType) {
+<span class="nc" id="L81">        theTouchMap.remove(pItemType);</span>
+<span class="nc" id="L82">    }</span>
+
+    /**
+     * Touch an item.
+     *
+     * @param pItemType the item type
+     */
+    public void touchItem(final MetisListKey pItemType) {
+        /* Access the record for the item type */
+<span class="nc" id="L91">        final PrometheusTouchCounter myCounter = getCounter(pItemType);</span>
+
+        /* If this is a new dataType */
+<span class="nc bnc" id="L94" title="All 2 branches missed.">        if (myCounter == null) {</span>
+            /* Store a new counter */
+<span class="nc" id="L96">            theTouchMap.put(pItemType, new PrometheusTouchCounter(pItemType));</span>
+
+            /* else just record the touch */
+        } else {
+<span class="nc" id="L100">            myCounter.touch();</span>
+        }
+<span class="nc" id="L102">    }</span>
+
+    /**
+     * Is the item touched by the ItemType?
+     *
+     * @param pItemType the item type
+     * @return true/false
+     */
+    public boolean touchedBy(final MetisListKey pItemType) {
+        /* Access the record for the item type */
+<span class="nc" id="L112">        final PrometheusTouchCounter myCounter = getCounter(pItemType);</span>
+
+        /* If this is a new dataType */
+<span class="nc bnc" id="L115" title="All 2 branches missed.">        return myCounter != null;</span>
+    }
+
+    /**
+     * Is the item active.
+     *
+     * @return true/false
+     */
+    public boolean isActive() {
+<span class="nc bnc" id="L124" title="All 2 branches missed.">        return !isEmpty();</span>
+    }
+
+    /**
+     * Obtain item count.
+     *
+     * @param pItemType the item type
+     * @return the counter (or null)
+     */
+    public PrometheusTouchCounter getCounter(final MetisListKey pItemType) {
+<span class="nc" id="L134">        return theTouchMap.get(pItemType);</span>
+    }
+
+    /**
+     * Obtain iterator.
+     *
+     * @return the iterator
+     */
+    public Iterator&lt;PrometheusTouchCounter&gt; iterator() {
+<span class="nc" id="L143">        return theTouchMap.values().iterator();</span>
+    }
+
+    /**
+     * Simple counter.
+     */
+    public static final class PrometheusTouchCounter
+            implements MetisDataObjectFormat {
+        /**
+         * The item type.
+         */
+        private final MetisListKey theItemType;
+
+        /**
+         * The number of touches.
+         */
+        private int theTouches;
+
+        /**
+         * Constructor.
+         *
+         * @param pItemType the item type
+         */
+<span class="nc" id="L166">        private PrometheusTouchCounter(final MetisListKey pItemType) {</span>
+<span class="nc" id="L167">            theItemType = pItemType;</span>
+<span class="nc" id="L168">            theTouches = 1;</span>
+<span class="nc" id="L169">        }</span>
+
+        @Override
+        public String formatObject(final OceanusDataFormatter pFormatter) {
+<span class="nc" id="L173">            return Integer.toString(theTouches);</span>
+        }
+
+        /**
+         * Obtain the item type.
+         *
+         * @return the item type
+         */
+        public MetisListKey getItemType() {
+<span class="nc" id="L182">            return theItemType;</span>
+        }
+
+        /**
+         * Obtain the touch count.
+         *
+         * @return the touches
+         */
+        public int getTouches() {
+<span class="nc" id="L191">            return theTouches;</span>
+        }
+
+        /**
+         * Increment counter.
+         */
+        private void touch() {
+<span class="nc" id="L198">            theTouches++;</span>
+<span class="nc" id="L199">        }</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

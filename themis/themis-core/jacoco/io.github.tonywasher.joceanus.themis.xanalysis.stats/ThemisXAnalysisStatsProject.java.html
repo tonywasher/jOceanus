@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ThemisXAnalysisStatsProject.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Themis Core Project Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.themis.xanalysis.stats</a> &gt; <span class="el_source">ThemisXAnalysisStatsProject.java</span></div><h1>ThemisXAnalysisStatsProject.java</h1><pre class="source lang-java linenums">/*
+ * Themis: Java Project Framework
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.themis.xanalysis.stats;
+
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.themis.exc.ThemisIOException;
+import io.github.tonywasher.joceanus.themis.xanalysis.parser.ThemisXAnalysisParser;
+import io.github.tonywasher.joceanus.themis.xanalysis.parser.proj.ThemisXAnalysisModule;
+import io.github.tonywasher.joceanus.themis.xanalysis.parser.proj.ThemisXAnalysisProject;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Statistics Project.
+ */
+public class ThemisXAnalysisStatsProject {
+    /**
+     * The underlying project.
+     */
+    private final ThemisXAnalysisProject theProject;
+
+    /**
+     * The stats.
+     */
+    private final ThemisXAnalysisStats theStats;
+
+    /**
+     * The list of modules.
+     */
+    private final List&lt;ThemisXAnalysisStatsModule&gt; theModules;
+
+    /**
+     * The error.
+     */
+    private OceanusException theError;
+
+    /**
+     * Constructor.
+     *
+     * @param pParser the project parser
+     */
+<span class="fc" id="L57">    public ThemisXAnalysisStatsProject(final ThemisXAnalysisParser pParser) {</span>
+        /* Store the parameters */
+<span class="fc" id="L59">        theProject = pParser.getProject();</span>
+
+        /* Create the stats */
+<span class="fc" id="L62">        theStats = new ThemisXAnalysisStats();</span>
+
+        /* Create the Module list */
+<span class="fc" id="L65">        theModules = new ArrayList&lt;&gt;();</span>
+
+        /* Protect against exceptions */
+        try {
+            /* Initialise the modules */
+<span class="fc bfc" id="L70" title="All 2 branches covered.">            for (ThemisXAnalysisModule myModule : theProject.getModules()) {</span>
+<span class="fc" id="L71">                theModules.add(new ThemisXAnalysisStatsModule(myModule));</span>
+<span class="fc" id="L72">            }</span>
+
+            /* Handle exceptions */
+<span class="nc" id="L75">        } catch (OceanusException e) {</span>
+            /* Save Exception */
+<span class="nc" id="L77">            theError = new ThemisIOException(&quot;Failed to parse Stats project&quot;, e);</span>
+<span class="fc" id="L78">        }</span>
+<span class="fc" id="L79">    }</span>
+
+    /**
+     * Obtain the project.
+     *
+     * @return the project
+     */
+    public ThemisXAnalysisProject getUnderlying() {
+<span class="nc" id="L87">        return theProject;</span>
+    }
+
+    /**
+     * Obtain the stats.
+     *
+     * @return the stats
+     */
+    public ThemisXAnalysisStats getStats() {
+<span class="nc" id="L96">        return theStats;</span>
+    }
+
+    /**
+     * Obtain the modules.
+     *
+     * @return the modules
+     */
+    public List&lt;ThemisXAnalysisStatsModule&gt; getModules() {
+<span class="nc" id="L105">        return theModules;</span>
+    }
+
+    /**
+     * Obtain the error.
+     *
+     * @return the error
+     */
+    public OceanusException getError() {
+<span class="fc" id="L114">        return theError;</span>
+    }
+
+    @Override
+    public String toString() {
+<span class="nc" id="L119">        return theProject.toString();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

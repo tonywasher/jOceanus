@@ -1,0 +1,983 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseAnalysisPayeeBucket.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data</a> &gt; <span class="el_source">MoneyWiseAnalysisPayeeBucket.java</span></div><h1>MoneyWiseAnalysisPayeeBucket.java</h1><pre class="source lang-java linenums">/*
+ * MoneyWise: Finance Application
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data;
+
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimal;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
+import io.github.tonywasher.joceanus.metis.data.MetisDataFieldValue;
+import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
+import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataList;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldItem;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldItem.MetisFieldTableItem;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
+import io.github.tonywasher.joceanus.metis.list.MetisListIndexed;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseAssetBase;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePayee;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePayee.MoneyWisePayeeList;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransaction;
+import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseCurrency;
+import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWisePayeeClass;
+import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTransCategoryClass;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.base.MoneyWiseAnalysisHistory;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisPayeeAttr;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisPayeeValues;
+import io.github.tonywasher.joceanus.prometheus.views.PrometheusEditSet;
+
+import java.util.Currency;
+import java.util.Iterator;
+import java.util.List;
+
+/**
+ * The Payee Bucket class.
+ */
+public final class MoneyWiseAnalysisPayeeBucket
+        implements MetisFieldTableItem {
+    /**
+     * Local Report fields.
+     */
+<span class="fc" id="L56">    private static final MetisFieldSet&lt;MoneyWiseAnalysisPayeeBucket&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseAnalysisPayeeBucket.class);</span>
+
+    /*
+     * Declare Fields.
+     */
+    static {
+<span class="fc" id="L62">        FIELD_DEFS.declareLocalField(MoneyWiseAnalysisDataResource.ANALYSIS_NAME, MoneyWiseAnalysisPayeeBucket::getAnalysis);</span>
+<span class="fc" id="L63">        FIELD_DEFS.declareLocalField(MoneyWiseBasicDataType.PAYEE, MoneyWiseAnalysisPayeeBucket::getPayee);</span>
+<span class="fc" id="L64">        FIELD_DEFS.declareLocalField(MoneyWiseAnalysisDataResource.BUCKET_BASEVALUES, MoneyWiseAnalysisPayeeBucket::getBaseValues);</span>
+<span class="fc" id="L65">        FIELD_DEFS.declareLocalField(MoneyWiseAnalysisDataResource.BUCKET_HISTORY, MoneyWiseAnalysisPayeeBucket::getHistoryMap);</span>
+<span class="fc" id="L66">        FIELD_DEFS.declareLocalFieldsForEnum(MoneyWiseAnalysisPayeeAttr.class, MoneyWiseAnalysisPayeeBucket::getAttributeValue);</span>
+    }
+
+    /**
+     * Totals bucket name.
+     */
+<span class="fc" id="L72">    private static final MetisDataFieldId NAME_TOTALS = MoneyWiseAnalysisDataResource.ANALYSIS_TOTALS;</span>
+
+    /**
+     * The analysis.
+     */
+    private final MoneyWiseAnalysis theAnalysis;
+
+    /**
+     * The payee.
+     */
+    private final MoneyWisePayee thePayee;
+
+    /**
+     * Values.
+     */
+    private final MoneyWiseAnalysisPayeeValues theValues;
+
+    /**
+     * The base values.
+     */
+    private final MoneyWiseAnalysisPayeeValues theBaseValues;
+
+    /**
+     * History Map.
+     */
+    private final MoneyWiseAnalysisHistory&lt;MoneyWiseAnalysisPayeeValues, MoneyWiseAnalysisPayeeAttr&gt; theHistory;
+
+    /**
+     * Constructor.
+     *
+     * @param pAnalysis the analysis
+     * @param pPayee    the payee
+     */
+    private MoneyWiseAnalysisPayeeBucket(final MoneyWiseAnalysis pAnalysis,
+<span class="fc" id="L106">                                         final MoneyWisePayee pPayee) {</span>
+        /* Store the details */
+<span class="fc" id="L108">        thePayee = pPayee;</span>
+<span class="fc" id="L109">        theAnalysis = pAnalysis;</span>
+
+        /* Create the history map */
+<span class="fc" id="L112">        final MoneyWiseCurrency myDefault = theAnalysis.getCurrency();</span>
+<span class="pc bpc" id="L113" title="1 of 2 branches missed.">        final Currency myCurrency = myDefault == null</span>
+<span class="fc" id="L114">                ? MoneyWiseAnalysisAccountBucket.DEFAULT_CURRENCY</span>
+<span class="pc" id="L115">                : myDefault.getCurrency();</span>
+<span class="fc" id="L116">        final MoneyWiseAnalysisPayeeValues myValues = new MoneyWiseAnalysisPayeeValues(myCurrency);</span>
+<span class="fc" id="L117">        theHistory = new MoneyWiseAnalysisHistory&lt;&gt;(myValues);</span>
+
+        /* Access the key value maps */
+<span class="fc" id="L120">        theValues = theHistory.getValues();</span>
+<span class="fc" id="L121">        theBaseValues = theHistory.getBaseValues();</span>
+<span class="fc" id="L122">    }</span>
+
+    /**
+     * Constructor.
+     *
+     * @param pAnalysis the analysis
+     * @param pBase     the underlying bucket
+     * @param pDate     the date for the bucket
+     */
+    private MoneyWiseAnalysisPayeeBucket(final MoneyWiseAnalysis pAnalysis,
+                                         final MoneyWiseAnalysisPayeeBucket pBase,
+<span class="nc" id="L133">                                         final OceanusDate pDate) {</span>
+        /* Copy details from base */
+<span class="nc" id="L135">        thePayee = pBase.getPayee();</span>
+<span class="nc" id="L136">        theAnalysis = pAnalysis;</span>
+
+        /* Access the relevant history */
+<span class="nc" id="L139">        theHistory = new MoneyWiseAnalysisHistory&lt;&gt;(pBase.getHistoryMap(), pDate);</span>
+
+        /* Access the key value maps */
+<span class="nc" id="L142">        theValues = theHistory.getValues();</span>
+<span class="nc" id="L143">        theBaseValues = theHistory.getBaseValues();</span>
+<span class="nc" id="L144">    }</span>
+
+    /**
+     * Constructor.
+     *
+     * @param pAnalysis the analysis
+     * @param pBase     the underlying bucket
+     * @param pRange    the range for the bucket
+     */
+    private MoneyWiseAnalysisPayeeBucket(final MoneyWiseAnalysis pAnalysis,
+                                         final MoneyWiseAnalysisPayeeBucket pBase,
+<span class="nc" id="L155">                                         final OceanusDateRange pRange) {</span>
+        /* Copy details from base */
+<span class="nc" id="L157">        thePayee = pBase.getPayee();</span>
+<span class="nc" id="L158">        theAnalysis = pAnalysis;</span>
+
+        /* Access the relevant history */
+<span class="nc" id="L161">        theHistory = new MoneyWiseAnalysisHistory&lt;&gt;(pBase.getHistoryMap(), pRange);</span>
+
+        /* Access the key value maps */
+<span class="nc" id="L164">        theValues = theHistory.getValues();</span>
+<span class="nc" id="L165">        theBaseValues = theHistory.getBaseValues();</span>
+<span class="nc" id="L166">    }</span>
+
+    @Override
+    public MetisFieldSet&lt;MoneyWiseAnalysisPayeeBucket&gt; getDataFieldSet() {
+<span class="nc" id="L170">        return FIELD_DEFS;</span>
+    }
+
+    @Override
+    public String formatObject(final OceanusDataFormatter pFormatter) {
+<span class="nc" id="L175">        return toString();</span>
+    }
+
+    @Override
+    public String toString() {
+<span class="nc" id="L180">        return getName();</span>
+    }
+
+    /**
+     * Obtain the name.
+     *
+     * @return the name
+     */
+    public String getName() {
+<span class="nc bnc" id="L189" title="All 2 branches missed.">        return thePayee == null</span>
+<span class="nc" id="L190">                ? NAME_TOTALS.getId()</span>
+<span class="nc" id="L191">                : thePayee.getName();</span>
+    }
+
+    /**
+     * Obtain the payee.
+     *
+     * @return the payee account
+     */
+    public MoneyWisePayee getPayee() {
+<span class="nc" id="L200">        return thePayee;</span>
+    }
+
+    @Override
+    public Integer getIndexedId() {
+<span class="nc" id="L205">        return thePayee.getIndexedId();</span>
+    }
+
+    /**
+     * Is this bucket idle?
+     *
+     * @return true/false
+     */
+    public Boolean isIdle() {
+<span class="nc" id="L214">        return theHistory.isIdle();</span>
+    }
+
+    /**
+     * Obtain the analysis.
+     *
+     * @return the analysis
+     */
+    MoneyWiseAnalysis getAnalysis() {
+<span class="nc" id="L223">        return theAnalysis;</span>
+    }
+
+    /**
+     * Obtain date range.
+     *
+     * @return the range
+     */
+    public OceanusDateRange getDateRange() {
+<span class="nc" id="L232">        return theAnalysis.getDateRange();</span>
+    }
+
+    /**
+     * Obtain the value map.
+     *
+     * @return the value map
+     */
+    public MoneyWiseAnalysisPayeeValues getValues() {
+<span class="nc" id="L241">        return theValues;</span>
+    }
+
+    /**
+     * Obtain the base value map.
+     *
+     * @return the base value map
+     */
+    public MoneyWiseAnalysisPayeeValues getBaseValues() {
+<span class="nc" id="L250">        return theBaseValues;</span>
+    }
+
+    /**
+     * Obtain values for transaction.
+     *
+     * @param pTrans the transaction
+     * @return the values (or null)
+     */
+    public MoneyWiseAnalysisPayeeValues getValuesForTransaction(final MoneyWiseTransaction pTrans) {
+        /* Obtain values for transaction */
+<span class="nc" id="L261">        return theHistory.getValuesForTransaction(pTrans);</span>
+    }
+
+    /**
+     * Obtain previous values for transaction.
+     *
+     * @param pTrans the transaction
+     * @return the values (or null)
+     */
+    public MoneyWiseAnalysisPayeeValues getPreviousValuesForTransaction(final MoneyWiseTransaction pTrans) {
+<span class="nc" id="L271">        return theHistory.getPreviousValuesForTransaction(pTrans);</span>
+    }
+
+    /**
+     * Obtain delta for transaction.
+     *
+     * @param pTrans the transaction
+     * @param pAttr  the attribute
+     * @return the delta (or null)
+     */
+    public OceanusDecimal getDeltaForTransaction(final MoneyWiseTransaction pTrans,
+                                                 final MoneyWiseAnalysisPayeeAttr pAttr) {
+        /* Obtain delta for transaction */
+<span class="nc" id="L284">        return theHistory.getDeltaValue(pTrans, pAttr);</span>
+    }
+
+    /**
+     * Obtain the history map.
+     *
+     * @return the history map
+     */
+    private MoneyWiseAnalysisHistory&lt;MoneyWiseAnalysisPayeeValues, MoneyWiseAnalysisPayeeAttr&gt; getHistoryMap() {
+<span class="nc" id="L293">        return theHistory;</span>
+    }
+
+    /**
+     * Set Attribute.
+     *
+     * @param pAttr  the attribute
+     * @param pValue the value of the attribute
+     */
+    void setValue(final MoneyWiseAnalysisPayeeAttr pAttr,
+                  final Object pValue) {
+        /* Set the value */
+<span class="nc" id="L305">        theValues.setValue(pAttr, pValue);</span>
+<span class="nc" id="L306">    }</span>
+
+    /**
+     * Get an attribute value.
+     *
+     * @param pAttr the attribute
+     * @return the value to set
+     */
+    private Object getAttributeValue(final MoneyWiseAnalysisPayeeAttr pAttr) {
+        /* Access value of object */
+<span class="nc" id="L316">        final Object myValue = getValue(pAttr);</span>
+
+        /* Return the value */
+<span class="nc bnc" id="L319" title="All 2 branches missed.">        return myValue != null</span>
+<span class="nc" id="L320">                ? myValue</span>
+<span class="nc" id="L321">                : MetisDataFieldValue.SKIP;</span>
+    }
+
+    /**
+     * Obtain an attribute value.
+     *
+     * @param pAttr the attribute
+     * @return the value of the attribute or null
+     */
+    private Object getValue(final MoneyWiseAnalysisPayeeAttr pAttr) {
+        /* Obtain the value */
+<span class="nc" id="L332">        return theValues.getValue(pAttr);</span>
+    }
+
+    /**
+     * Adjust counter.
+     *
+     * @param pAttr  the attribute
+     * @param pDelta the delta
+     */
+    void adjustCounter(final MoneyWiseAnalysisPayeeAttr pAttr,
+                       final OceanusMoney pDelta) {
+<span class="nc" id="L343">        OceanusMoney myValue = theValues.getMoneyValue(pAttr);</span>
+<span class="nc" id="L344">        myValue = new OceanusMoney(myValue);</span>
+<span class="nc" id="L345">        myValue.addAmount(pDelta);</span>
+<span class="nc" id="L346">        setValue(pAttr, myValue);</span>
+<span class="nc" id="L347">    }</span>
+
+    /**
+     * Adjust account for debit.
+     *
+     * @param pTrans the transaction helper
+     */
+    public void adjustForDebit(final MoneyWiseAnalysisTransactionHelper pTrans) {
+        /* Access the class */
+<span class="nc" id="L356">        final MoneyWiseTransCategoryClass myClass = pTrans.getCategoryClass();</span>
+<span class="nc" id="L357">        final boolean isIncome = myClass.isIncome();</span>
+<span class="nc" id="L358">        OceanusMoney myIncome = null;</span>
+<span class="nc" id="L359">        OceanusMoney myExpense = null;</span>
+
+        /* Access amount */
+<span class="nc" id="L362">        final OceanusMoney myAmount = pTrans.getLocalAmount();</span>
+<span class="nc bnc" id="L363" title="All 2 branches missed.">        if (myAmount.isNonZero()) {</span>
+            /* If this is an income */
+<span class="nc bnc" id="L365" title="All 2 branches missed.">            if (isIncome) {</span>
+                /* Allocate the income */
+<span class="nc" id="L367">                myIncome = new OceanusMoney(myAmount);</span>
+
+                /* else this is a refunded expense */
+            } else {
+                /* Update the expense */
+<span class="nc" id="L372">                myExpense = new OceanusMoney(myAmount);</span>
+<span class="nc" id="L373">                myExpense.negate();</span>
+            }
+        }
+
+        /* If there is a non-zero TaxCredit */
+<span class="nc" id="L378">        final OceanusMoney myTaxCred = pTrans.getTaxCredit();</span>
+<span class="nc bnc" id="L379" title="All 2 branches missed.">        if (myTaxCred != null</span>
+<span class="nc bnc" id="L380" title="All 2 branches missed.">                &amp;&amp; myTaxCred.isNonZero()) {</span>
+            /* Adjust for Tax Credit */
+<span class="nc bnc" id="L382" title="All 2 branches missed.">            if (isIncome) {</span>
+<span class="nc bnc" id="L383" title="All 2 branches missed.">                if (myIncome == null) {</span>
+<span class="nc" id="L384">                    myIncome = new OceanusMoney(myTaxCred);</span>
+                } else {
+<span class="nc" id="L386">                    myIncome.addAmount(myTaxCred);</span>
+                }
+            } else {
+<span class="nc bnc" id="L389" title="All 2 branches missed.">                if (myExpense == null) {</span>
+<span class="nc" id="L390">                    myExpense = new OceanusMoney(myTaxCred);</span>
+<span class="nc" id="L391">                    myExpense.negate();</span>
+                } else {
+<span class="nc" id="L393">                    myExpense.subtractAmount(myTaxCred);</span>
+                }
+            }
+        }
+
+        /* If there is Employee National Insurance */
+<span class="nc" id="L399">        OceanusMoney myNatIns = pTrans.getEmployeeNatIns();</span>
+<span class="nc bnc" id="L400" title="All 2 branches missed.">        if (myNatIns != null</span>
+<span class="nc bnc" id="L401" title="All 2 branches missed.">                &amp;&amp; myNatIns.isNonZero()) {</span>
+            /* Adjust for National Insurance */
+<span class="nc bnc" id="L403" title="All 2 branches missed.">            if (isIncome) {</span>
+<span class="nc bnc" id="L404" title="All 2 branches missed.">                if (myIncome == null) {</span>
+<span class="nc" id="L405">                    myIncome = new OceanusMoney(myNatIns);</span>
+                } else {
+<span class="nc" id="L407">                    myIncome.addAmount(myNatIns);</span>
+                }
+            } else {
+<span class="nc bnc" id="L410" title="All 2 branches missed.">                if (myExpense == null) {</span>
+<span class="nc" id="L411">                    myExpense = new OceanusMoney(myNatIns);</span>
+<span class="nc" id="L412">                    myExpense.negate();</span>
+                } else {
+<span class="nc" id="L414">                    myExpense.subtractAmount(myNatIns);</span>
+                }
+            }
+        }
+
+        /* If there is Employer National Insurance */
+<span class="nc" id="L420">        myNatIns = pTrans.getEmployerNatIns();</span>
+<span class="nc bnc" id="L421" title="All 2 branches missed.">        if (myNatIns != null</span>
+<span class="nc bnc" id="L422" title="All 2 branches missed.">                &amp;&amp; myNatIns.isNonZero()) {</span>
+            /* Adjust for National Insurance */
+<span class="nc bnc" id="L424" title="All 2 branches missed.">            if (isIncome) {</span>
+<span class="nc bnc" id="L425" title="All 2 branches missed.">                if (myIncome == null) {</span>
+<span class="nc" id="L426">                    myIncome = new OceanusMoney(myNatIns);</span>
+                } else {
+<span class="nc" id="L428">                    myIncome.addAmount(myNatIns);</span>
+                }
+            } else {
+<span class="nc bnc" id="L431" title="All 2 branches missed.">                if (myExpense == null) {</span>
+<span class="nc" id="L432">                    myExpense = new OceanusMoney(myNatIns);</span>
+<span class="nc" id="L433">                    myExpense.negate();</span>
+                } else {
+<span class="nc" id="L435">                    myExpense.subtractAmount(myNatIns);</span>
+                }
+            }
+        }
+
+        /* If there is Withheld */
+<span class="nc" id="L441">        final OceanusMoney myWithheld = pTrans.getWithheld();</span>
+<span class="nc bnc" id="L442" title="All 2 branches missed.">        if (myWithheld != null</span>
+<span class="nc bnc" id="L443" title="All 2 branches missed.">                &amp;&amp; myWithheld.isNonZero()) {</span>
+            /* Adjust for Charity Donation */
+<span class="nc bnc" id="L445" title="All 2 branches missed.">            if (isIncome) {</span>
+<span class="nc bnc" id="L446" title="All 2 branches missed.">                if (myIncome == null) {</span>
+<span class="nc" id="L447">                    myIncome = new OceanusMoney(myWithheld);</span>
+                } else {
+<span class="nc" id="L449">                    myIncome.addAmount(myWithheld);</span>
+                }
+<span class="nc" id="L451">                myExpense = new OceanusMoney(myWithheld);</span>
+            } else {
+<span class="nc" id="L453">                myIncome = new OceanusMoney(myWithheld);</span>
+<span class="nc" id="L454">                myIncome.negate();</span>
+<span class="nc bnc" id="L455" title="All 2 branches missed.">                if (myExpense == null) {</span>
+<span class="nc" id="L456">                    myExpense = new OceanusMoney(myAmount);</span>
+<span class="nc" id="L457">                    myExpense.negate();</span>
+                } else {
+<span class="nc" id="L459">                    myExpense.subtractAmount(myWithheld);</span>
+                }
+            }
+        }
+
+        /* Set new values */
+<span class="nc bnc" id="L465" title="All 2 branches missed.">        if (myIncome != null) {</span>
+<span class="nc" id="L466">            adjustCounter(MoneyWiseAnalysisPayeeAttr.INCOME, myIncome);</span>
+        }
+<span class="nc bnc" id="L468" title="All 2 branches missed.">        if (myExpense != null) {</span>
+<span class="nc" id="L469">            adjustCounter(MoneyWiseAnalysisPayeeAttr.EXPENSE, myExpense);</span>
+        }
+
+        /* Register the transaction in the history */
+<span class="nc" id="L473">        registerTransaction(pTrans);</span>
+<span class="nc" id="L474">    }</span>
+
+    /**
+     * Adjust account for credit.
+     *
+     * @param pTrans the transaction helper
+     */
+    public void adjustForCredit(final MoneyWiseAnalysisTransactionHelper pTrans) {
+        /* Analyse the transaction */
+<span class="nc" id="L483">        final MoneyWiseTransCategoryClass myClass = pTrans.getCategoryClass();</span>
+<span class="nc bnc" id="L484" title="All 2 branches missed.">        final boolean isExpense = !myClass.isIncome();</span>
+<span class="nc" id="L485">        OceanusMoney myExpense = null;</span>
+<span class="nc" id="L486">        OceanusMoney myIncome = null;</span>
+
+        /* Access amount */
+<span class="nc" id="L489">        final OceanusMoney myAmount = pTrans.getLocalAmount();</span>
+<span class="nc bnc" id="L490" title="All 2 branches missed.">        if (myAmount.isNonZero()) {</span>
+            /* If this is an expense */
+<span class="nc bnc" id="L492" title="All 2 branches missed.">            if (isExpense) {</span>
+                /* Allocate the expense */
+<span class="nc" id="L494">                myExpense = new OceanusMoney(myAmount);</span>
+
+                /* else this is a refunded income */
+            } else {
+                /* Update the income */
+<span class="nc" id="L499">                myIncome = new OceanusMoney(myAmount);</span>
+<span class="nc" id="L500">                myIncome.negate();</span>
+            }
+        }
+
+        /* If there is a non-zero TaxCredit */
+<span class="nc" id="L505">        final OceanusMoney myTaxCred = pTrans.getTaxCredit();</span>
+<span class="nc bnc" id="L506" title="All 4 branches missed.">        if (myTaxCred != null &amp;&amp; myTaxCred.isNonZero()) {</span>
+            /* Adjust for Tax Credit */
+<span class="nc bnc" id="L508" title="All 2 branches missed.">            if (isExpense) {</span>
+<span class="nc bnc" id="L509" title="All 2 branches missed.">                if (myExpense == null) {</span>
+<span class="nc" id="L510">                    myExpense = new OceanusMoney(myTaxCred);</span>
+                } else {
+<span class="nc" id="L512">                    myExpense.addAmount(myTaxCred);</span>
+                }
+            } else {
+<span class="nc bnc" id="L515" title="All 2 branches missed.">                if (myIncome == null) {</span>
+<span class="nc" id="L516">                    myIncome = new OceanusMoney(myTaxCred);</span>
+<span class="nc" id="L517">                    myIncome.negate();</span>
+                } else {
+<span class="nc" id="L519">                    myIncome.subtractAmount(myTaxCred);</span>
+                }
+            }
+        }
+
+        /* If we have an expense */
+<span class="nc bnc" id="L525" title="All 2 branches missed.">        if (myExpense != null) {</span>
+            /* Record it */
+<span class="nc" id="L527">            adjustCounter(MoneyWiseAnalysisPayeeAttr.EXPENSE, myExpense);</span>
+        }
+<span class="nc bnc" id="L529" title="All 2 branches missed.">        if (myIncome != null) {</span>
+            /* Record it */
+<span class="nc" id="L531">            adjustCounter(MoneyWiseAnalysisPayeeAttr.INCOME, myIncome);</span>
+        }
+
+        /* Register the transaction in the history */
+<span class="nc" id="L535">        registerTransaction(pTrans);</span>
+<span class="nc" id="L536">    }</span>
+
+    /**
+     * Adjust account for tax credit.
+     *
+     * @param pTrans the transaction helper
+     */
+    public void adjustForTaxCredit(final MoneyWiseAnalysisTransactionHelper pTrans) {
+        /* Access amount */
+<span class="nc" id="L545">        final OceanusMoney myTaxCred = pTrans.getTaxCredit();</span>
+<span class="nc bnc" id="L546" title="All 2 branches missed.">        if (myTaxCred.isNonZero()) {</span>
+<span class="nc" id="L547">            final MoneyWiseTransCategoryClass myClass = pTrans.getCategoryClass();</span>
+<span class="nc bnc" id="L548" title="All 2 branches missed.">            if (myClass.isExpense()) {</span>
+                /* Update the expense */
+<span class="nc" id="L550">                adjustCounter(MoneyWiseAnalysisPayeeAttr.EXPENSE, myTaxCred);</span>
+            } else {
+                /* Update the income */
+<span class="nc" id="L553">                adjustCounter(MoneyWiseAnalysisPayeeAttr.INCOME, myTaxCred);</span>
+            }
+        }
+
+        /* Register the transaction in the history */
+<span class="nc" id="L558">        registerTransaction(pTrans);</span>
+<span class="nc" id="L559">    }</span>
+
+    /**
+     * Adjust account for tax payments.
+     *
+     * @param pTrans the transaction causing the payments
+     */
+    public void adjustForTaxPayments(final MoneyWiseAnalysisTransactionHelper pTrans) {
+        /* Determine transaction type */
+<span class="nc" id="L568">        final MoneyWiseTransCategoryClass myClass = pTrans.getCategoryClass();</span>
+<span class="nc" id="L569">        OceanusMoney myAmount = null;</span>
+
+        /* Adjust for Tax credit */
+<span class="nc" id="L572">        final OceanusMoney myTaxCred = pTrans.getTaxCredit();</span>
+<span class="nc bnc" id="L573" title="All 2 branches missed.">        if (myTaxCred != null</span>
+<span class="nc bnc" id="L574" title="All 2 branches missed.">                &amp;&amp; myTaxCred.isNonZero()) {</span>
+<span class="nc" id="L575">            myAmount = new OceanusMoney(myTaxCred);</span>
+        }
+
+        /* If we have payments */
+<span class="nc bnc" id="L579" title="All 2 branches missed.">        if (myAmount != null) {</span>
+            /* Adjust correct bucket */
+<span class="nc bnc" id="L581" title="All 2 branches missed.">            if (myClass.isExpense()) {</span>
+<span class="nc" id="L582">                adjustCounter(MoneyWiseAnalysisPayeeAttr.INCOME, myAmount);</span>
+            } else {
+<span class="nc" id="L584">                adjustCounter(MoneyWiseAnalysisPayeeAttr.EXPENSE, myAmount);</span>
+            }
+
+            /* Register the transaction in the history */
+<span class="nc" id="L588">            registerTransaction(pTrans);</span>
+        }
+<span class="nc" id="L590">    }</span>
+
+    /**
+     * Register the transaction.
+     *
+     * @param pTrans the transaction helper
+     */
+    public void registerTransaction(final MoneyWiseAnalysisTransactionHelper pTrans) {
+        /* Register the transaction in the history */
+<span class="nc" id="L599">        theHistory.registerTransaction(pTrans.getTransaction(), theValues);</span>
+<span class="nc" id="L600">    }</span>
+
+    /**
+     * Add income value.
+     *
+     * @param pValue the value to add
+     */
+    public void addIncome(final OceanusMoney pValue) {
+        /* Only adjust on non-zero */
+<span class="nc bnc" id="L609" title="All 2 branches missed.">        if (pValue.isNonZero()) {</span>
+<span class="nc" id="L610">            adjustCounter(MoneyWiseAnalysisPayeeAttr.INCOME, pValue);</span>
+        }
+<span class="nc" id="L612">    }</span>
+
+    /**
+     * Subtract income value.
+     *
+     * @param pValue the value to subtract
+     */
+    public void subtractIncome(final OceanusMoney pValue) {
+        /* Only adjust on non-zero */
+<span class="nc bnc" id="L621" title="All 2 branches missed.">        if (pValue.isNonZero()) {</span>
+<span class="nc" id="L622">            final OceanusMoney myIncome = new OceanusMoney(pValue);</span>
+<span class="nc" id="L623">            myIncome.negate();</span>
+<span class="nc" id="L624">            setValue(MoneyWiseAnalysisPayeeAttr.INCOME, myIncome);</span>
+        }
+<span class="nc" id="L626">    }</span>
+
+    /**
+     * Add expense value.
+     *
+     * @param pTrans the transaction causing the expense
+     * @param pValue the value to add
+     */
+    public void addExpense(final MoneyWiseAnalysisTransactionHelper pTrans,
+                           final OceanusMoney pValue) {
+        /* Add the expense */
+<span class="nc" id="L637">        addExpense(pValue);</span>
+
+        /* Register the transaction in the history */
+<span class="nc" id="L640">        registerTransaction(pTrans);</span>
+<span class="nc" id="L641">    }</span>
+
+    /**
+     * Add expense value.
+     *
+     * @param pValue the value to add
+     */
+    public void addExpense(final OceanusMoney pValue) {
+        /* Only adjust on non-zero */
+<span class="nc bnc" id="L650" title="All 2 branches missed.">        if (pValue.isNonZero()) {</span>
+<span class="nc" id="L651">            adjustCounter(MoneyWiseAnalysisPayeeAttr.EXPENSE, pValue);</span>
+        }
+<span class="nc" id="L653">    }</span>
+
+    /**
+     * Subtract expense value.
+     *
+     * @param pTrans the transaction causing the expense
+     * @param pValue the value to subtract
+     */
+    public void subtractExpense(final MoneyWiseAnalysisTransactionHelper pTrans,
+                                final OceanusMoney pValue) {
+        /* Subtract the expense */
+<span class="nc" id="L664">        subtractExpense(pValue);</span>
+
+        /* Register the transaction in the history */
+<span class="nc" id="L667">        registerTransaction(pTrans);</span>
+<span class="nc" id="L668">    }</span>
+
+    /**
+     * Subtract expense value.
+     *
+     * @param pValue the value to subtract
+     */
+    public void subtractExpense(final OceanusMoney pValue) {
+        /* Only adjust on non-zero */
+<span class="nc bnc" id="L677" title="All 2 branches missed.">        if (pValue.isNonZero()) {</span>
+<span class="nc" id="L678">            final OceanusMoney myExpense = new OceanusMoney(pValue);</span>
+<span class="nc" id="L679">            myExpense.negate();</span>
+<span class="nc" id="L680">            adjustCounter(MoneyWiseAnalysisPayeeAttr.EXPENSE, myExpense);</span>
+        }
+<span class="nc" id="L682">    }</span>
+
+    /**
+     * Add bucket to totals.
+     *
+     * @param pSource the bucket to add
+     */
+    void addValues(final MoneyWiseAnalysisPayeeBucket pSource) {
+        /* Access source values */
+<span class="nc" id="L691">        final MoneyWiseAnalysisPayeeValues mySource = pSource.getValues();</span>
+
+        /* Add income values */
+<span class="nc" id="L694">        OceanusMoney myValue = theValues.getMoneyValue(MoneyWiseAnalysisPayeeAttr.INCOME);</span>
+<span class="nc" id="L695">        OceanusMoney mySrcValue = mySource.getMoneyValue(MoneyWiseAnalysisPayeeAttr.INCOME);</span>
+<span class="nc" id="L696">        myValue.addAmount(mySrcValue);</span>
+
+        /* Add expense values */
+<span class="nc" id="L699">        myValue = theValues.getMoneyValue(MoneyWiseAnalysisPayeeAttr.EXPENSE);</span>
+<span class="nc" id="L700">        mySrcValue = mySource.getMoneyValue(MoneyWiseAnalysisPayeeAttr.EXPENSE);</span>
+<span class="nc" id="L701">        myValue.addAmount(mySrcValue);</span>
+<span class="nc" id="L702">    }</span>
+
+    /**
+     * Calculate delta.
+     */
+    void calculateDelta() {
+        /* Calculate delta for the values */
+<span class="fc" id="L709">        theValues.calculateDelta();</span>
+<span class="fc" id="L710">    }</span>
+
+    /**
+     * Adjust to base.
+     */
+    void adjustToBase() {
+        /* Adjust to base values */
+<span class="nc" id="L717">        theValues.adjustToBaseValues(theBaseValues);</span>
+<span class="nc" id="L718">        theBaseValues.resetBaseValues();</span>
+<span class="nc" id="L719">    }</span>
+
+    /**
+     * PayeeBucket list class.
+     */
+    public static final class MoneyWiseAnalysisPayeeBucketList
+            implements MetisFieldItem, MetisDataList&lt;MoneyWiseAnalysisPayeeBucket&gt; {
+        /**
+         * Local Report fields.
+         */
+<span class="fc" id="L729">        private static final MetisFieldSet&lt;MoneyWiseAnalysisPayeeBucketList&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseAnalysisPayeeBucketList.class);</span>
+
+        /*
+         * Declare Fields.
+         */
+        static {
+<span class="fc" id="L735">            FIELD_DEFS.declareLocalField(MoneyWiseAnalysisDataResource.ANALYSIS_NAME, MoneyWiseAnalysisPayeeBucketList::getAnalysis);</span>
+<span class="fc" id="L736">            FIELD_DEFS.declareLocalField(MoneyWiseAnalysisDataResource.ANALYSIS_TOTALS, MoneyWiseAnalysisPayeeBucketList::getTotals);</span>
+<span class="fc" id="L737">        }</span>
+
+        /**
+         * The analysis.
+         */
+        private final MoneyWiseAnalysis theAnalysis;
+
+        /**
+         * The list.
+         */
+        private final MetisListIndexed&lt;MoneyWiseAnalysisPayeeBucket&gt; theList;
+
+        /**
+         * The editSet.
+         */
+        private final PrometheusEditSet theEditSet;
+
+        /**
+         * The totals.
+         */
+        private final MoneyWiseAnalysisPayeeBucket theTotals;
+
+        /**
+         * Construct a top-level List.
+         *
+         * @param pAnalysis the analysis
+         */
+<span class="fc" id="L764">        MoneyWiseAnalysisPayeeBucketList(final MoneyWiseAnalysis pAnalysis) {</span>
+            /* Initialise class */
+<span class="fc" id="L766">            theAnalysis = pAnalysis;</span>
+<span class="fc" id="L767">            theEditSet = theAnalysis.getEditSet();</span>
+<span class="fc" id="L768">            theTotals = allocateTotalsBucket();</span>
+<span class="fc" id="L769">            theList = new MetisListIndexed&lt;&gt;();</span>
+<span class="pc" id="L770">            theList.setComparator((l, r) -&gt; l.getPayee().compareTo(r.getPayee()));</span>
+<span class="fc" id="L771">        }</span>
+
+        /**
+         * Construct a dated List.
+         *
+         * @param pAnalysis the analysis
+         * @param pBase     the base list
+         * @param pDate     the Date
+         */
+        MoneyWiseAnalysisPayeeBucketList(final MoneyWiseAnalysis pAnalysis,
+                                         final MoneyWiseAnalysisPayeeBucketList pBase,
+                                         final OceanusDate pDate) {
+            /* Initialise class */
+<span class="nc" id="L784">            this(pAnalysis);</span>
+
+            /* Loop through the buckets */
+<span class="nc" id="L787">            final Iterator&lt;MoneyWiseAnalysisPayeeBucket&gt; myIterator = pBase.iterator();</span>
+<span class="nc bnc" id="L788" title="All 2 branches missed.">            while (myIterator.hasNext()) {</span>
+<span class="nc" id="L789">                final MoneyWiseAnalysisPayeeBucket myCurr = myIterator.next();</span>
+
+                /* Access the bucket for this date */
+<span class="nc" id="L792">                final MoneyWiseAnalysisPayeeBucket myBucket = new MoneyWiseAnalysisPayeeBucket(pAnalysis, myCurr, pDate);</span>
+
+                /* If the bucket is non-idle */
+<span class="nc bnc" id="L795" title="All 2 branches missed.">                if (Boolean.FALSE.equals(myBucket.isIdle())) {</span>
+                    /* Add to the list */
+<span class="nc" id="L797">                    theList.add(myBucket);</span>
+                }
+<span class="nc" id="L799">            }</span>
+<span class="nc" id="L800">        }</span>
+
+        /**
+         * Construct a ranged List.
+         *
+         * @param pAnalysis the analysis
+         * @param pBase     the base list
+         * @param pRange    the Date Range
+         */
+        MoneyWiseAnalysisPayeeBucketList(final MoneyWiseAnalysis pAnalysis,
+                                         final MoneyWiseAnalysisPayeeBucketList pBase,
+                                         final OceanusDateRange pRange) {
+            /* Initialise class */
+<span class="nc" id="L813">            this(pAnalysis);</span>
+
+            /* Loop through the buckets */
+<span class="nc" id="L816">            final Iterator&lt;MoneyWiseAnalysisPayeeBucket&gt; myIterator = pBase.iterator();</span>
+<span class="nc bnc" id="L817" title="All 2 branches missed.">            while (myIterator.hasNext()) {</span>
+<span class="nc" id="L818">                final MoneyWiseAnalysisPayeeBucket myCurr = myIterator.next();</span>
+
+                /* Access the bucket for this range */
+<span class="nc" id="L821">                final MoneyWiseAnalysisPayeeBucket myBucket = new MoneyWiseAnalysisPayeeBucket(pAnalysis, myCurr, pRange);</span>
+
+                /* If the bucket is non-idle */
+<span class="nc bnc" id="L824" title="All 2 branches missed.">                if (Boolean.FALSE.equals(myBucket.isIdle())) {</span>
+                    /* Adjust to the base and add to the list */
+<span class="nc" id="L826">                    myBucket.adjustToBase();</span>
+<span class="nc" id="L827">                    theList.add(myBucket);</span>
+                }
+<span class="nc" id="L829">            }</span>
+<span class="nc" id="L830">        }</span>
+
+        @Override
+        public MetisFieldSet&lt;MoneyWiseAnalysisPayeeBucketList&gt; getDataFieldSet() {
+<span class="nc" id="L834">            return FIELD_DEFS;</span>
+        }
+
+        @Override
+        public List&lt;MoneyWiseAnalysisPayeeBucket&gt; getUnderlyingList() {
+<span class="fc" id="L839">            return theList.getUnderlyingList();</span>
+        }
+
+        @Override
+        public String formatObject(final OceanusDataFormatter pFormatter) {
+<span class="nc" id="L844">            return getDataFieldSet().getName();</span>
+        }
+
+        /**
+         * Obtain item by id.
+         *
+         * @param pId the id to lookup
+         * @return the item (or null if not present)
+         */
+        public MoneyWiseAnalysisPayeeBucket findItemById(final Integer pId) {
+            /* Return results */
+<span class="nc" id="L855">            return theList.getItemById(pId);</span>
+        }
+
+        /**
+         * Obtain the analysis.
+         *
+         * @return the analysis
+         */
+        MoneyWiseAnalysis getAnalysis() {
+<span class="nc" id="L864">            return theAnalysis;</span>
+        }
+
+        /**
+         * Obtain the Totals.
+         *
+         * @return the totals
+         */
+        public MoneyWiseAnalysisPayeeBucket getTotals() {
+<span class="nc" id="L873">            return theTotals;</span>
+        }
+
+        /**
+         * Allocate the Totals PayeeBucket.
+         *
+         * @return the bucket
+         */
+        private MoneyWiseAnalysisPayeeBucket allocateTotalsBucket() {
+            /* Obtain the totals payee */
+<span class="fc" id="L883">            return new MoneyWiseAnalysisPayeeBucket(theAnalysis, null);</span>
+        }
+
+        /**
+         * Obtain the PayeeBucket for a given payee.
+         *
+         * @param pPayee the payee
+         * @return the bucket
+         */
+        public MoneyWiseAnalysisPayeeBucket getBucket(final MoneyWiseAssetBase pPayee) {
+            /* Handle null payee */
+<span class="pc bpc" id="L894" title="1 of 2 branches missed.">            if (pPayee == null) {</span>
+<span class="fc" id="L895">                return null;</span>
+            }
+
+            /* Access as payee */
+<span class="nc" id="L899">            final MoneyWisePayee myPayee = (MoneyWisePayee) pPayee;</span>
+
+            /* Locate the bucket in the list */
+<span class="nc" id="L902">            MoneyWiseAnalysisPayeeBucket myItem = findItemById(myPayee.getIndexedId());</span>
+
+            /* If the item does not yet exist */
+<span class="nc bnc" id="L905" title="All 2 branches missed.">            if (myItem == null) {</span>
+                /* Create the new bucket */
+<span class="nc" id="L907">                myItem = new MoneyWiseAnalysisPayeeBucket(theAnalysis, myPayee);</span>
+
+                /* Add to the list */
+<span class="nc" id="L910">                theList.add(myItem);</span>
+            }
+
+            /* Return the bucket */
+<span class="nc" id="L914">            return myItem;</span>
+        }
+
+        /**
+         * Obtain the PayeeBucket for a given payee class.
+         *
+         * @param pClass the account category class
+         * @return the bucket
+         */
+        public MoneyWiseAnalysisPayeeBucket getBucket(final MoneyWisePayeeClass pClass) {
+            /* Determine required payee */
+<span class="fc" id="L925">            final MoneyWisePayee myPayee = theEditSet.getDataList(MoneyWiseBasicDataType.PAYEE, MoneyWisePayeeList.class).getSingularClass(pClass);</span>
+
+            /* Return the bucket */
+<span class="fc" id="L928">            return getBucket(myPayee);</span>
+        }
+
+        /**
+         * Obtain the matching PayeeBucket.
+         *
+         * @param pPayee the payee
+         * @return the matching bucket
+         */
+        public MoneyWiseAnalysisPayeeBucket getMatchingPayee(final MoneyWisePayee pPayee) {
+            /* Return the matching payee if it exists else an orphan bucket */
+<span class="nc" id="L939">            final MoneyWiseAnalysisPayeeBucket myPayee = findItemById(pPayee.getIndexedId());</span>
+<span class="nc bnc" id="L940" title="All 2 branches missed.">            return myPayee != null</span>
+<span class="nc" id="L941">                    ? myPayee</span>
+<span class="nc" id="L942">                    : new MoneyWiseAnalysisPayeeBucket(theAnalysis, pPayee);</span>
+        }
+
+        /**
+         * Obtain the default PayeeBucket.
+         *
+         * @return the default bucket
+         */
+        public MoneyWiseAnalysisPayeeBucket getDefaultPayee() {
+            /* Return the first payee in the list if it exists */
+<span class="nc bnc" id="L952" title="All 2 branches missed.">            return isEmpty()</span>
+<span class="nc" id="L953">                    ? null</span>
+<span class="nc" id="L954">                    : theList.getUnderlyingList().get(0);</span>
+        }
+
+        /**
+         * Produce totals for the Payees.
+         */
+        void produceTotals() {
+            /* Loop through the buckets */
+<span class="fc" id="L962">            final Iterator&lt;MoneyWiseAnalysisPayeeBucket&gt; myIterator = iterator();</span>
+<span class="pc bpc" id="L963" title="1 of 2 branches missed.">            while (myIterator.hasNext()) {</span>
+<span class="nc" id="L964">                final MoneyWiseAnalysisPayeeBucket myCurr = myIterator.next();</span>
+
+                /* Calculate the delta */
+<span class="nc" id="L967">                myCurr.calculateDelta();</span>
+
+                /* Add to totals bucket */
+<span class="nc" id="L970">                theTotals.addValues(myCurr);</span>
+<span class="nc" id="L971">            }</span>
+
+            /* Sort the payees */
+<span class="fc" id="L974">            theList.sortList();</span>
+
+            /* Calculate delta for the totals */
+<span class="pc bpc" id="L977" title="1 of 2 branches missed.">            if (theTotals != null) {</span>
+<span class="fc" id="L978">                theTotals.calculateDelta();</span>
+            }
+<span class="fc" id="L980">        }</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

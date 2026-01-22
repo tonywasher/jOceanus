@@ -1,0 +1,2417 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianSosemanukEngine.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.impl.ext.engines</a> &gt; <span class="el_source">GordianSosemanukEngine.java</span></div><h1>GordianSosemanukEngine.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.gordianknot.impl.ext.engines;
+
+import org.bouncycastle.crypto.CipherParameters;
+import org.bouncycastle.crypto.DataLengthException;
+import org.bouncycastle.crypto.OutputLengthException;
+import org.bouncycastle.crypto.StreamCipher;
+import org.bouncycastle.crypto.params.KeyParameter;
+import org.bouncycastle.crypto.params.ParametersWithIV;
+import org.bouncycastle.util.Memoable;
+
+/**
+ * StreamCipher implementation based on the SosemanukFast java implementation.
+ * &lt;p&gt;
+ * Copied from http://www.ecrypt.eu.org/stream/e2-sosemanuk.html.
+ */
+@SuppressWarnings(&quot;checkstyle:MagicNumber&quot;)
+public class GordianSosemanukEngine
+        implements StreamCipher, Memoable {
+    /**
+     * Advanced stream length.
+     */
+    private static final int STREAM_LEN = 80;
+
+    /**
+     * index of next byte in keyStream.
+     */
+    private int theIndex;
+
+    /**
+     * Advanced stream.
+     */
+<span class="fc" id="L48">    private final byte[] keyStream = new byte[STREAM_LEN];</span>
+
+    /**
+     * Reset state.
+     */
+    private GordianSosemanukEngine theResetState;
+
+    /**
+     * Constructor.
+     */
+<span class="fc" id="L58">    public GordianSosemanukEngine() {</span>
+<span class="fc" id="L59">    }</span>
+
+    /**
+     * Constructor.
+     *
+     * @param pSource the source engine
+     */
+<span class="fc" id="L66">    private GordianSosemanukEngine(final GordianSosemanukEngine pSource) {</span>
+<span class="fc" id="L67">        reset(pSource);</span>
+<span class="fc" id="L68">    }</span>
+
+    /**
+     * initialise a Susemanuk cipher.
+     *
+     * @param forEncryption whether or not we are for encryption.
+     * @param params        the parameters required to set up the cipher.
+     * @throws IllegalArgumentException if the params argument is inappropriate.
+     */
+    public void init(final boolean forEncryption,
+                     final CipherParameters params) {
+        /*
+         * Sosemanuk encryption and decryption is completely symmetrical, so the 'forEncryption' is
+         * irrelevant. (Like 90% of stream ciphers)
+         */
+
+        /* Determine parameters */
+<span class="fc" id="L85">        CipherParameters myParams = params;</span>
+<span class="fc" id="L86">        byte[] newKey = null;</span>
+<span class="fc" id="L87">        byte[] newIV = null;</span>
+<span class="pc bpc" id="L88" title="1 of 2 branches missed.">        if ((myParams instanceof ParametersWithIV)) {</span>
+<span class="fc" id="L89">            final ParametersWithIV ivParams = (ParametersWithIV) myParams;</span>
+<span class="fc" id="L90">            newIV = ivParams.getIV();</span>
+<span class="fc" id="L91">            myParams = ivParams.getParameters();</span>
+        }
+<span class="pc bpc" id="L93" title="1 of 2 branches missed.">        if (myParams instanceof KeyParameter) {</span>
+<span class="fc" id="L94">            final KeyParameter keyParam = (KeyParameter) myParams;</span>
+<span class="fc" id="L95">            newKey = keyParam.getKey();</span>
+        }
+
+        /* Initialise engine and mark as initialised */
+<span class="fc" id="L99">        theIndex = 0;</span>
+<span class="fc" id="L100">        setKey(newKey);</span>
+<span class="fc" id="L101">        setIV(newIV);</span>
+<span class="fc" id="L102">        makeStreamBlock(keyStream, 0);</span>
+
+        /* Save reset state */
+<span class="fc" id="L105">        theResetState = copy();</span>
+<span class="fc" id="L106">    }</span>
+
+    @Override
+    public String getAlgorithmName() {
+<span class="nc" id="L110">        return &quot;Sosemanuk&quot;;</span>
+    }
+
+    @Override
+    public int processBytes(final byte[] in,
+                            final int inOff,
+                            final int len,
+                            final byte[] out,
+                            final int outOff) {
+        /* Check for errors */
+<span class="pc bpc" id="L120" title="1 of 2 branches missed.">        if (theResetState == null) {</span>
+<span class="nc" id="L121">            throw new IllegalStateException(getAlgorithmName() + &quot; not initialised&quot;);</span>
+        }
+<span class="pc bpc" id="L123" title="1 of 2 branches missed.">        if ((inOff + len) &gt; in.length) {</span>
+<span class="nc" id="L124">            throw new DataLengthException(&quot;input buffer too short&quot;);</span>
+        }
+<span class="pc bpc" id="L126" title="1 of 2 branches missed.">        if ((outOff + len) &gt; out.length) {</span>
+<span class="nc" id="L127">            throw new OutputLengthException(&quot;output buffer too short&quot;);</span>
+        }
+
+        /* Loop through the input bytes */
+<span class="fc bfc" id="L131" title="All 2 branches covered.">        for (int i = 0; i &lt; len; i++) {</span>
+<span class="fc" id="L132">            out[i + outOff] = returnByte(in[i + inOff]);</span>
+        }
+<span class="fc" id="L134">        return len;</span>
+    }
+
+    @Override
+    public void reset() {
+<span class="pc bpc" id="L139" title="1 of 2 branches missed.">        if (theResetState != null) {</span>
+<span class="fc" id="L140">            reset(theResetState);</span>
+        }
+<span class="fc" id="L142">    }</span>
+
+    @Override
+    public byte returnByte(final byte in) {
+<span class="fc" id="L146">        final byte out = (byte) (keyStream[theIndex] ^ in);</span>
+<span class="fc" id="L147">        theIndex = (theIndex + 1) % STREAM_LEN;</span>
+
+<span class="fc bfc" id="L149" title="All 2 branches covered.">        if (theIndex == 0) {</span>
+<span class="fc" id="L150">            makeStreamBlock(keyStream, 0);</span>
+        }
+<span class="fc" id="L152">        return out;</span>
+    }
+
+
+    @Override
+    public GordianSosemanukEngine copy() {
+<span class="fc" id="L158">        return new GordianSosemanukEngine(this);</span>
+    }
+
+    @Override
+    public void reset(final Memoable pState) {
+<span class="fc" id="L163">        final GordianSosemanukEngine e = (GordianSosemanukEngine) pState;</span>
+<span class="fc" id="L164">        lfsr0 = e.lfsr0;</span>
+<span class="fc" id="L165">        lfsr1 = e.lfsr1;</span>
+<span class="fc" id="L166">        lfsr2 = e.lfsr2;</span>
+<span class="fc" id="L167">        lfsr3 = e.lfsr3;</span>
+<span class="fc" id="L168">        lfsr4 = e.lfsr4;</span>
+<span class="fc" id="L169">        lfsr5 = e.lfsr5;</span>
+<span class="fc" id="L170">        lfsr6 = e.lfsr6;</span>
+<span class="fc" id="L171">        lfsr7 = e.lfsr7;</span>
+<span class="fc" id="L172">        lfsr8 = e.lfsr8;</span>
+<span class="fc" id="L173">        lfsr9 = e.lfsr9;</span>
+<span class="fc" id="L174">        fsmR1 = e.fsmR1;</span>
+<span class="fc" id="L175">        fsmR2 = e.fsmR2;</span>
+<span class="fc" id="L176">        System.arraycopy(e.keyStream, 0, keyStream, 0, STREAM_LEN);</span>
+<span class="fc" id="L177">        theIndex = e.theIndex;</span>
+<span class="fc" id="L178">    }</span>
+
+    /**
+     * LFSR0 State.
+     */
+    private int lfsr0;
+
+    /**
+     * LFSR1 State.
+     */
+    private int lfsr1;
+
+    /**
+     * LFSR2 State.
+     */
+    private int lfsr2;
+
+    /**
+     * LFSR3 State.
+     */
+    private int lfsr3;
+
+    /**
+     * LFSR4 State.
+     */
+    private int lfsr4;
+
+    /**
+     * LFSR5 State.
+     */
+    private int lfsr5;
+
+    /**
+     * LFSR6 State.
+     */
+    private int lfsr6;
+
+    /**
+     * LFSR7 State.
+     */
+    private int lfsr7;
+
+    /**
+     * LFSR8 State.
+     */
+    private int lfsr8;
+
+    /**
+     * LFSR9 State.
+     */
+    private int lfsr9;
+
+    /**
+     * FSMR1 State.
+     */
+    private int fsmR1;
+
+    /**
+     * FSMR2 State.
+     */
+    private int fsmR2;
+
+    /*
+     * The code internals for the SERPENT-derived functions have been
+     * semi-automatically generated, using a mixture of C, C
+     * preprocessor, vi macros and Forth. The base circuits for
+     * the SERPENT S-boxes have been published by Dag Arne Osvik
+     * (&quot;Speeding up Serpent&quot;, at the 3rd AES Candidate Conference).
+     */
+
+    /**
+     * Decode a 32-bit value from a buffer (little-endian).
+     *
+     * @param buf the input buffer
+     * @param off the input offset
+     * @return the decoded value
+     */
+    private static int decode32le(final byte[] buf, final int off) {
+<span class="fc" id="L256">        return (buf[off] &amp; 0xFF)</span>
+                | ((buf[off + 1] &amp; 0xFF) &lt;&lt; 8)
+                | ((buf[off + 2] &amp; 0xFF) &lt;&lt; 16)
+                | ((buf[off + 3] &amp; 0xFF) &lt;&lt; 24);
+    }
+
+    /**
+     * Encode a 32-bit value into a buffer (little-endian).
+     *
+     * @param val the value to encode
+     * @param buf the output buffer
+     * @param off the output offset
+     */
+    private static void encode32le(final int val, final byte[] buf, final int off) {
+<span class="fc" id="L270">        buf[off] = (byte) val;</span>
+<span class="fc" id="L271">        buf[off + 1] = (byte) (val &gt;&gt; 8);</span>
+<span class="fc" id="L272">        buf[off + 2] = (byte) (val &gt;&gt; 16);</span>
+<span class="fc" id="L273">        buf[off + 3] = (byte) (val &gt;&gt; 24);</span>
+<span class="fc" id="L274">    }</span>
+
+    /**
+     * Left-rotate a 32-bit value by some bit.
+     *
+     * @param val the value to rotate
+     * @param n   the rotation count (between 1 and 31)
+     * @return rotated value
+     */
+    private static int rotateLeft(final int val, final int n) {
+<span class="fc" id="L284">        return (val &lt;&lt; n) | (val &gt;&gt;&gt; (32 - n));</span>
+    }
+
+    /**
+     * Subkeys for Serpent24: 100 32-bit words.
+     */
+<span class="fc" id="L290">    private final int[] serpent24SubKeys = new int[100];</span>
+
+    /**
+     * Set the private key. The key length must be between 1
+     * and 32 bytes.
+     *
+     * @param key the private key
+     */
+    @SuppressWarnings(&quot;checkstyle:MethodLength&quot;)
+    public void setKey(final byte[] key) {
+<span class="pc bpc" id="L300" title="2 of 4 branches missed.">        if (key.length &lt; 1 || key.length &gt; 32) {</span>
+<span class="nc" id="L301">            throw new IllegalArgumentException(&quot;bad key length: &quot; + key.length);</span>
+        }
+        final byte[] lkey;
+<span class="fc bfc" id="L304" title="All 2 branches covered.">        if (key.length == 32) {</span>
+<span class="fc" id="L305">            lkey = key;</span>
+        } else {
+<span class="fc" id="L307">            lkey = new byte[32];</span>
+<span class="fc" id="L308">            System.arraycopy(key, 0, lkey, 0, key.length);</span>
+<span class="fc" id="L309">            lkey[key.length] = 0x01;</span>
+<span class="fc bfc" id="L310" title="All 2 branches covered.">            for (int i = key.length + 1; i &lt; lkey.length; i++) {</span>
+<span class="fc" id="L311">                lkey[i] = 0x00;</span>
+            }
+        }
+
+<span class="fc" id="L315">        int i = 0;</span>
+
+<span class="fc" id="L317">        int w0 = decode32le(lkey, 0);</span>
+<span class="fc" id="L318">        int w1 = decode32le(lkey, 4);</span>
+<span class="fc" id="L319">        int w2 = decode32le(lkey, 8);</span>
+<span class="fc" id="L320">        int w3 = decode32le(lkey, 12);</span>
+<span class="fc" id="L321">        int w4 = decode32le(lkey, 16);</span>
+<span class="fc" id="L322">        int w5 = decode32le(lkey, 20);</span>
+<span class="fc" id="L323">        int w6 = decode32le(lkey, 24);</span>
+<span class="fc" id="L324">        int w7 = decode32le(lkey, 28);</span>
+<span class="fc" id="L325">        int tt = w0 ^ w3 ^ w5 ^ w7 ^ (0x9E3779B9 ^ (0));</span>
+<span class="fc" id="L326">        w0 = rotateLeft(tt, 11);</span>
+<span class="fc" id="L327">        tt = w1 ^ w4 ^ w6 ^ w0 ^ (0x9E3779B9 ^ (0 + 1));</span>
+<span class="fc" id="L328">        w1 = rotateLeft(tt, 11);</span>
+<span class="fc" id="L329">        tt = w2 ^ w5 ^ w7 ^ w1 ^ (0x9E3779B9 ^ (0 + 2));</span>
+<span class="fc" id="L330">        w2 = rotateLeft(tt, 11);</span>
+<span class="fc" id="L331">        tt = w3 ^ w6 ^ w0 ^ w2 ^ (0x9E3779B9 ^ (0 + 3));</span>
+<span class="fc" id="L332">        w3 = rotateLeft(tt, 11);</span>
+<span class="fc" id="L333">        int r0 = w0;</span>
+<span class="fc" id="L334">        int r1 = w1;</span>
+<span class="fc" id="L335">        int r2 = w2;</span>
+<span class="fc" id="L336">        int r3 = w3;</span>
+<span class="fc" id="L337">        int r4 = r0;</span>
+<span class="fc" id="L338">        r0 |= r3;</span>
+<span class="fc" id="L339">        r3 ^= r1;</span>
+<span class="fc" id="L340">        r1 &amp;= r4;</span>
+<span class="fc" id="L341">        r4 ^= r2;</span>
+<span class="fc" id="L342">        r2 ^= r3;</span>
+<span class="fc" id="L343">        r3 &amp;= r0;</span>
+<span class="fc" id="L344">        r4 |= r1;</span>
+<span class="fc" id="L345">        r3 ^= r4;</span>
+<span class="fc" id="L346">        r0 ^= r1;</span>
+<span class="fc" id="L347">        r4 &amp;= r0;</span>
+<span class="fc" id="L348">        r1 ^= r3;</span>
+<span class="fc" id="L349">        r4 ^= r2;</span>
+<span class="fc" id="L350">        r1 |= r0;</span>
+<span class="fc" id="L351">        r1 ^= r2;</span>
+<span class="fc" id="L352">        r0 ^= r3;</span>
+<span class="fc" id="L353">        r2 = r1;</span>
+<span class="fc" id="L354">        r1 |= r3;</span>
+<span class="fc" id="L355">        r1 ^= r0;</span>
+<span class="fc" id="L356">        serpent24SubKeys[i++] = r1;</span>
+<span class="fc" id="L357">        serpent24SubKeys[i++] = r2;</span>
+<span class="fc" id="L358">        serpent24SubKeys[i++] = r3;</span>
+<span class="fc" id="L359">        serpent24SubKeys[i++] = r4;</span>
+<span class="fc" id="L360">        tt = w4 ^ w7 ^ w1 ^ w3 ^ (0x9E3779B9 ^ (4));</span>
+<span class="fc" id="L361">        w4 = rotateLeft(tt, 11);</span>
+<span class="fc" id="L362">        tt = w5 ^ w0 ^ w2 ^ w4 ^ (0x9E3779B9 ^ (4 + 1));</span>
+<span class="fc" id="L363">        w5 = rotateLeft(tt, 11);</span>
+<span class="fc" id="L364">        tt = w6 ^ w1 ^ w3 ^ w5 ^ (0x9E3779B9 ^ (4 + 2));</span>
+<span class="fc" id="L365">        w6 = rotateLeft(tt, 11);</span>
+<span class="fc" id="L366">        tt = w7 ^ w2 ^ w4 ^ w6 ^ (0x9E3779B9 ^ (4 + 3));</span>
+<span class="fc" id="L367">        w7 = rotateLeft(tt, 11);</span>
+<span class="fc" id="L368">        r0 = w4;</span>
+<span class="fc" id="L369">        r1 = w5;</span>
+<span class="fc" id="L370">        r2 = w6;</span>
+<span class="fc" id="L371">        r3 = w7;</span>
+<span class="fc" id="L372">        r4 = r0;</span>
+<span class="fc" id="L373">        r0 &amp;= r2;</span>
+<span class="fc" id="L374">        r0 ^= r3;</span>
+<span class="fc" id="L375">        r2 ^= r1;</span>
+<span class="fc" id="L376">        r2 ^= r0;</span>
+<span class="fc" id="L377">        r3 |= r4;</span>
+<span class="fc" id="L378">        r3 ^= r1;</span>
+<span class="fc" id="L379">        r4 ^= r2;</span>
+<span class="fc" id="L380">        r1 = r3;</span>
+<span class="fc" id="L381">        r3 |= r4;</span>
+<span class="fc" id="L382">        r3 ^= r0;</span>
+<span class="fc" id="L383">        r0 &amp;= r1;</span>
+<span class="fc" id="L384">        r4 ^= r0;</span>
+<span class="fc" id="L385">        r1 ^= r3;</span>
+<span class="fc" id="L386">        r1 ^= r4;</span>
+<span class="fc" id="L387">        r4 = ~r4;</span>
+<span class="fc" id="L388">        serpent24SubKeys[i++] = r2;</span>
+<span class="fc" id="L389">        serpent24SubKeys[i++] = r3;</span>
+<span class="fc" id="L390">        serpent24SubKeys[i++] = r1;</span>
+<span class="fc" id="L391">        serpent24SubKeys[i++] = r4;</span>
+<span class="fc" id="L392">        tt = w0 ^ w3 ^ w5 ^ w7 ^ (0x9E3779B9 ^ (8));</span>
+<span class="fc" id="L393">        w0 = rotateLeft(tt, 11);</span>
+<span class="fc" id="L394">        tt = w1 ^ w4 ^ w6 ^ w0 ^ (0x9E3779B9 ^ (8 + 1));</span>
+<span class="fc" id="L395">        w1 = rotateLeft(tt, 11);</span>
+<span class="fc" id="L396">        tt = w2 ^ w5 ^ w7 ^ w1 ^ (0x9E3779B9 ^ (8 + 2));</span>
+<span class="fc" id="L397">        w2 = rotateLeft(tt, 11);</span>
+<span class="fc" id="L398">        tt = w3 ^ w6 ^ w0 ^ w2 ^ (0x9E3779B9 ^ (8 + 3));</span>
+<span class="fc" id="L399">        w3 = rotateLeft(tt, 11);</span>
+<span class="fc" id="L400">        r0 = w0;</span>
+<span class="fc" id="L401">        r1 = w1;</span>
+<span class="fc" id="L402">        r2 = w2;</span>
+<span class="fc" id="L403">        r3 = w3;</span>
+<span class="fc" id="L404">        r0 = ~r0;</span>
+<span class="fc" id="L405">        r2 = ~r2;</span>
+<span class="fc" id="L406">        r4 = r0;</span>
+<span class="fc" id="L407">        r0 &amp;= r1;</span>
+<span class="fc" id="L408">        r2 ^= r0;</span>
+<span class="fc" id="L409">        r0 |= r3;</span>
+<span class="fc" id="L410">        r3 ^= r2;</span>
+<span class="fc" id="L411">        r1 ^= r0;</span>
+<span class="fc" id="L412">        r0 ^= r4;</span>
+<span class="fc" id="L413">        r4 |= r1;</span>
+<span class="fc" id="L414">        r1 ^= r3;</span>
+<span class="fc" id="L415">        r2 |= r0;</span>
+<span class="fc" id="L416">        r2 &amp;= r4;</span>
+<span class="fc" id="L417">        r0 ^= r1;</span>
+<span class="fc" id="L418">        r1 &amp;= r2;</span>
+<span class="fc" id="L419">        r1 ^= r0;</span>
+<span class="fc" id="L420">        r0 &amp;= r2;</span>
+<span class="fc" id="L421">        r0 ^= r4;</span>
+<span class="fc" id="L422">        serpent24SubKeys[i++] = r2;</span>
+<span class="fc" id="L423">        serpent24SubKeys[i++] = r0;</span>
+<span class="fc" id="L424">        serpent24SubKeys[i++] = r3;</span>
+<span class="fc" id="L425">        serpent24SubKeys[i++] = r1;</span>
+<span class="fc" id="L426">        tt = w4 ^ w7 ^ w1 ^ w3 ^ (0x9E3779B9 ^ (12));</span>
+<span class="fc" id="L427">        w4 = rotateLeft(tt, 11);</span>
+<span class="fc" id="L428">        tt = w5 ^ w0 ^ w2 ^ w4 ^ (0x9E3779B9 ^ (12 + 1));</span>
+<span class="fc" id="L429">        w5 = rotateLeft(tt, 11);</span>
+<span class="fc" id="L430">        tt = w6 ^ w1 ^ w3 ^ w5 ^ (0x9E3779B9 ^ (12 + 2));</span>
+<span class="fc" id="L431">        w6 = rotateLeft(tt, 11);</span>
+<span class="fc" id="L432">        tt = w7 ^ w2 ^ w4 ^ w6 ^ (0x9E3779B9 ^ (12 + 3));</span>
+<span class="fc" id="L433">        w7 = rotateLeft(tt, 11);</span>
+<span class="fc" id="L434">        r0 = w4;</span>
+<span class="fc" id="L435">        r1 = w5;</span>
+<span class="fc" id="L436">        r2 = w6;</span>
+<span class="fc" id="L437">        r3 = w7;</span>
+<span class="fc" id="L438">        r3 ^= r0;</span>
+<span class="fc" id="L439">        r4 = r1;</span>
+<span class="fc" id="L440">        r1 &amp;= r3;</span>
+<span class="fc" id="L441">        r4 ^= r2;</span>
+<span class="fc" id="L442">        r1 ^= r0;</span>
+<span class="fc" id="L443">        r0 |= r3;</span>
+<span class="fc" id="L444">        r0 ^= r4;</span>
+<span class="fc" id="L445">        r4 ^= r3;</span>
+<span class="fc" id="L446">        r3 ^= r2;</span>
+<span class="fc" id="L447">        r2 |= r1;</span>
+<span class="fc" id="L448">        r2 ^= r4;</span>
+<span class="fc" id="L449">        r4 = ~r4;</span>
+<span class="fc" id="L450">        r4 |= r1;</span>
+<span class="fc" id="L451">        r1 ^= r3;</span>
+<span class="fc" id="L452">        r1 ^= r4;</span>
+<span class="fc" id="L453">        r3 |= r0;</span>
+<span class="fc" id="L454">        r1 ^= r3;</span>
+<span class="fc" id="L455">        r4 ^= r3;</span>
+<span class="fc" id="L456">        serpent24SubKeys[i++] = r1;</span>
+<span class="fc" id="L457">        serpent24SubKeys[i++] = r4;</span>
+<span class="fc" id="L458">        serpent24SubKeys[i++] = r2;</span>
+<span class="fc" id="L459">        serpent24SubKeys[i++] = r0;</span>
+<span class="fc" id="L460">        tt = w0 ^ w3 ^ w5 ^ w7 ^ (0x9E3779B9 ^ (16));</span>
+<span class="fc" id="L461">        w0 = rotateLeft(tt, 11);</span>
+<span class="fc" id="L462">        tt = w1 ^ w4 ^ w6 ^ w0 ^ (0x9E3779B9 ^ (16 + 1));</span>
+<span class="fc" id="L463">        w1 = rotateLeft(tt, 11);</span>
+<span class="fc" id="L464">        tt = w2 ^ w5 ^ w7 ^ w1 ^ (0x9E3779B9 ^ (16 + 2));</span>
+<span class="fc" id="L465">        w2 = rotateLeft(tt, 11);</span>
+<span class="fc" id="L466">        tt = w3 ^ w6 ^ w0 ^ w2 ^ (0x9E3779B9 ^ (16 + 3));</span>
+<span class="fc" id="L467">        w3 = rotateLeft(tt, 11);</span>
+<span class="fc" id="L468">        r0 = w0;</span>
+<span class="fc" id="L469">        r1 = w1;</span>
+<span class="fc" id="L470">        r2 = w2;</span>
+<span class="fc" id="L471">        r3 = w3;</span>
+<span class="fc" id="L472">        r4 = r1;</span>
+<span class="fc" id="L473">        r1 |= r2;</span>
+<span class="fc" id="L474">        r1 ^= r3;</span>
+<span class="fc" id="L475">        r4 ^= r2;</span>
+<span class="fc" id="L476">        r2 ^= r1;</span>
+<span class="fc" id="L477">        r3 |= r4;</span>
+<span class="fc" id="L478">        r3 &amp;= r0;</span>
+<span class="fc" id="L479">        r4 ^= r2;</span>
+<span class="fc" id="L480">        r3 ^= r1;</span>
+<span class="fc" id="L481">        r1 |= r4;</span>
+<span class="fc" id="L482">        r1 ^= r0;</span>
+<span class="fc" id="L483">        r0 |= r4;</span>
+<span class="fc" id="L484">        r0 ^= r2;</span>
+<span class="fc" id="L485">        r1 ^= r4;</span>
+<span class="fc" id="L486">        r2 ^= r1;</span>
+<span class="fc" id="L487">        r1 &amp;= r0;</span>
+<span class="fc" id="L488">        r1 ^= r4;</span>
+<span class="fc" id="L489">        r2 = ~r2;</span>
+<span class="fc" id="L490">        r2 |= r0;</span>
+<span class="fc" id="L491">        r4 ^= r2;</span>
+<span class="fc" id="L492">        serpent24SubKeys[i++] = r4;</span>
+<span class="fc" id="L493">        serpent24SubKeys[i++] = r3;</span>
+<span class="fc" id="L494">        serpent24SubKeys[i++] = r1;</span>
+<span class="fc" id="L495">        serpent24SubKeys[i++] = r0;</span>
+<span class="fc" id="L496">        tt = w4 ^ w7 ^ w1 ^ w3 ^ (0x9E3779B9 ^ (20));</span>
+<span class="fc" id="L497">        w4 = rotateLeft(tt, 11);</span>
+<span class="fc" id="L498">        tt = w5 ^ w0 ^ w2 ^ w4 ^ (0x9E3779B9 ^ (20 + 1));</span>
+<span class="fc" id="L499">        w5 = rotateLeft(tt, 11);</span>
+<span class="fc" id="L500">        tt = w6 ^ w1 ^ w3 ^ w5 ^ (0x9E3779B9 ^ (20 + 2));</span>
+<span class="fc" id="L501">        w6 = rotateLeft(tt, 11);</span>
+<span class="fc" id="L502">        tt = w7 ^ w2 ^ w4 ^ w6 ^ (0x9E3779B9 ^ (20 + 3));</span>
+<span class="fc" id="L503">        w7 = rotateLeft(tt, 11);</span>
+<span class="fc" id="L504">        r0 = w4;</span>
+<span class="fc" id="L505">        r1 = w5;</span>
+<span class="fc" id="L506">        r2 = w6;</span>
+<span class="fc" id="L507">        r3 = w7;</span>
+<span class="fc" id="L508">        r2 = ~r2;</span>
+<span class="fc" id="L509">        r4 = r3;</span>
+<span class="fc" id="L510">        r3 &amp;= r0;</span>
+<span class="fc" id="L511">        r0 ^= r4;</span>
+<span class="fc" id="L512">        r3 ^= r2;</span>
+<span class="fc" id="L513">        r2 |= r4;</span>
+<span class="fc" id="L514">        r1 ^= r3;</span>
+<span class="fc" id="L515">        r2 ^= r0;</span>
+<span class="fc" id="L516">        r0 |= r1;</span>
+<span class="fc" id="L517">        r2 ^= r1;</span>
+<span class="fc" id="L518">        r4 ^= r0;</span>
+<span class="fc" id="L519">        r0 |= r3;</span>
+<span class="fc" id="L520">        r0 ^= r2;</span>
+<span class="fc" id="L521">        r4 ^= r3;</span>
+<span class="fc" id="L522">        r4 ^= r0;</span>
+<span class="fc" id="L523">        r3 = ~r3;</span>
+<span class="fc" id="L524">        r2 &amp;= r4;</span>
+<span class="fc" id="L525">        r2 ^= r3;</span>
+<span class="fc" id="L526">        serpent24SubKeys[i++] = r0;</span>
+<span class="fc" id="L527">        serpent24SubKeys[i++] = r1;</span>
+<span class="fc" id="L528">        serpent24SubKeys[i++] = r4;</span>
+<span class="fc" id="L529">        serpent24SubKeys[i++] = r2;</span>
+<span class="fc" id="L530">        tt = w0 ^ w3 ^ w5 ^ w7 ^ (0x9E3779B9 ^ (24));</span>
+<span class="fc" id="L531">        w0 = rotateLeft(tt, 11);</span>
+<span class="fc" id="L532">        tt = w1 ^ w4 ^ w6 ^ w0 ^ (0x9E3779B9 ^ (24 + 1));</span>
+<span class="fc" id="L533">        w1 = rotateLeft(tt, 11);</span>
+<span class="fc" id="L534">        tt = w2 ^ w5 ^ w7 ^ w1 ^ (0x9E3779B9 ^ (24 + 2));</span>
+<span class="fc" id="L535">        w2 = rotateLeft(tt, 11);</span>
+<span class="fc" id="L536">        tt = w3 ^ w6 ^ w0 ^ w2 ^ (0x9E3779B9 ^ (24 + 3));</span>
+<span class="fc" id="L537">        w3 = rotateLeft(tt, 11);</span>
+<span class="fc" id="L538">        r0 = w0;</span>
+<span class="fc" id="L539">        r1 = w1;</span>
+<span class="fc" id="L540">        r2 = w2;</span>
+<span class="fc" id="L541">        r3 = w3;</span>
+<span class="fc" id="L542">        r0 ^= r1;</span>
+<span class="fc" id="L543">        r1 ^= r3;</span>
+<span class="fc" id="L544">        r3 = ~r3;</span>
+<span class="fc" id="L545">        r4 = r1;</span>
+<span class="fc" id="L546">        r1 &amp;= r0;</span>
+<span class="fc" id="L547">        r2 ^= r3;</span>
+<span class="fc" id="L548">        r1 ^= r2;</span>
+<span class="fc" id="L549">        r2 |= r4;</span>
+<span class="fc" id="L550">        r4 ^= r3;</span>
+<span class="fc" id="L551">        r3 &amp;= r1;</span>
+<span class="fc" id="L552">        r3 ^= r0;</span>
+<span class="fc" id="L553">        r4 ^= r1;</span>
+<span class="fc" id="L554">        r4 ^= r2;</span>
+<span class="fc" id="L555">        r2 ^= r0;</span>
+<span class="fc" id="L556">        r0 &amp;= r3;</span>
+<span class="fc" id="L557">        r2 = ~r2;</span>
+<span class="fc" id="L558">        r0 ^= r4;</span>
+<span class="fc" id="L559">        r4 |= r3;</span>
+<span class="fc" id="L560">        r2 ^= r4;</span>
+<span class="fc" id="L561">        serpent24SubKeys[i++] = r1;</span>
+<span class="fc" id="L562">        serpent24SubKeys[i++] = r3;</span>
+<span class="fc" id="L563">        serpent24SubKeys[i++] = r0;</span>
+<span class="fc" id="L564">        serpent24SubKeys[i++] = r2;</span>
+<span class="fc" id="L565">        tt = w4 ^ w7 ^ w1 ^ w3 ^ (0x9E3779B9 ^ (28));</span>
+<span class="fc" id="L566">        w4 = rotateLeft(tt, 11);</span>
+<span class="fc" id="L567">        tt = w5 ^ w0 ^ w2 ^ w4 ^ (0x9E3779B9 ^ (28 + 1));</span>
+<span class="fc" id="L568">        w5 = rotateLeft(tt, 11);</span>
+<span class="fc" id="L569">        tt = w6 ^ w1 ^ w3 ^ w5 ^ (0x9E3779B9 ^ (28 + 2));</span>
+<span class="fc" id="L570">        w6 = rotateLeft(tt, 11);</span>
+<span class="fc" id="L571">        tt = w7 ^ w2 ^ w4 ^ w6 ^ (0x9E3779B9 ^ (28 + 3));</span>
+<span class="fc" id="L572">        w7 = rotateLeft(tt, 11);</span>
+<span class="fc" id="L573">        r0 = w4;</span>
+<span class="fc" id="L574">        r1 = w5;</span>
+<span class="fc" id="L575">        r2 = w6;</span>
+<span class="fc" id="L576">        r3 = w7;</span>
+<span class="fc" id="L577">        r1 ^= r3;</span>
+<span class="fc" id="L578">        r3 = ~r3;</span>
+<span class="fc" id="L579">        r2 ^= r3;</span>
+<span class="fc" id="L580">        r3 ^= r0;</span>
+<span class="fc" id="L581">        r4 = r1;</span>
+<span class="fc" id="L582">        r1 &amp;= r3;</span>
+<span class="fc" id="L583">        r1 ^= r2;</span>
+<span class="fc" id="L584">        r4 ^= r3;</span>
+<span class="fc" id="L585">        r0 ^= r4;</span>
+<span class="fc" id="L586">        r2 &amp;= r4;</span>
+<span class="fc" id="L587">        r2 ^= r0;</span>
+<span class="fc" id="L588">        r0 &amp;= r1;</span>
+<span class="fc" id="L589">        r3 ^= r0;</span>
+<span class="fc" id="L590">        r4 |= r1;</span>
+<span class="fc" id="L591">        r4 ^= r0;</span>
+<span class="fc" id="L592">        r0 |= r3;</span>
+<span class="fc" id="L593">        r0 ^= r2;</span>
+<span class="fc" id="L594">        r2 &amp;= r3;</span>
+<span class="fc" id="L595">        r0 = ~r0;</span>
+<span class="fc" id="L596">        r4 ^= r2;</span>
+<span class="fc" id="L597">        serpent24SubKeys[i++] = r1;</span>
+<span class="fc" id="L598">        serpent24SubKeys[i++] = r4;</span>
+<span class="fc" id="L599">        serpent24SubKeys[i++] = r0;</span>
+<span class="fc" id="L600">        serpent24SubKeys[i++] = r3;</span>
+<span class="fc" id="L601">        tt = w0 ^ w3 ^ w5 ^ w7 ^ (0x9E3779B9 ^ (32));</span>
+<span class="fc" id="L602">        w0 = rotateLeft(tt, 11);</span>
+<span class="fc" id="L603">        tt = w1 ^ w4 ^ w6 ^ w0 ^ (0x9E3779B9 ^ (32 + 1));</span>
+<span class="fc" id="L604">        w1 = rotateLeft(tt, 11);</span>
+<span class="fc" id="L605">        tt = w2 ^ w5 ^ w7 ^ w1 ^ (0x9E3779B9 ^ (32 + 2));</span>
+<span class="fc" id="L606">        w2 = rotateLeft(tt, 11);</span>
+<span class="fc" id="L607">        tt = w3 ^ w6 ^ w0 ^ w2 ^ (0x9E3779B9 ^ (32 + 3));</span>
+<span class="fc" id="L608">        w3 = rotateLeft(tt, 11);</span>
+<span class="fc" id="L609">        r0 = w0;</span>
+<span class="fc" id="L610">        r1 = w1;</span>
+<span class="fc" id="L611">        r2 = w2;</span>
+<span class="fc" id="L612">        r3 = w3;</span>
+<span class="fc" id="L613">        r4 = r0;</span>
+<span class="fc" id="L614">        r0 |= r3;</span>
+<span class="fc" id="L615">        r3 ^= r1;</span>
+<span class="fc" id="L616">        r1 &amp;= r4;</span>
+<span class="fc" id="L617">        r4 ^= r2;</span>
+<span class="fc" id="L618">        r2 ^= r3;</span>
+<span class="fc" id="L619">        r3 &amp;= r0;</span>
+<span class="fc" id="L620">        r4 |= r1;</span>
+<span class="fc" id="L621">        r3 ^= r4;</span>
+<span class="fc" id="L622">        r0 ^= r1;</span>
+<span class="fc" id="L623">        r4 &amp;= r0;</span>
+<span class="fc" id="L624">        r1 ^= r3;</span>
+<span class="fc" id="L625">        r4 ^= r2;</span>
+<span class="fc" id="L626">        r1 |= r0;</span>
+<span class="fc" id="L627">        r1 ^= r2;</span>
+<span class="fc" id="L628">        r0 ^= r3;</span>
+<span class="fc" id="L629">        r2 = r1;</span>
+<span class="fc" id="L630">        r1 |= r3;</span>
+<span class="fc" id="L631">        r1 ^= r0;</span>
+<span class="fc" id="L632">        serpent24SubKeys[i++] = r1;</span>
+<span class="fc" id="L633">        serpent24SubKeys[i++] = r2;</span>
+<span class="fc" id="L634">        serpent24SubKeys[i++] = r3;</span>
+<span class="fc" id="L635">        serpent24SubKeys[i++] = r4;</span>
+<span class="fc" id="L636">        tt = w4 ^ w7 ^ w1 ^ w3 ^ (0x9E3779B9 ^ (36));</span>
+<span class="fc" id="L637">        w4 = rotateLeft(tt, 11);</span>
+<span class="fc" id="L638">        tt = w5 ^ w0 ^ w2 ^ w4 ^ (0x9E3779B9 ^ (36 + 1));</span>
+<span class="fc" id="L639">        w5 = rotateLeft(tt, 11);</span>
+<span class="fc" id="L640">        tt = w6 ^ w1 ^ w3 ^ w5 ^ (0x9E3779B9 ^ (36 + 2));</span>
+<span class="fc" id="L641">        w6 = rotateLeft(tt, 11);</span>
+<span class="fc" id="L642">        tt = w7 ^ w2 ^ w4 ^ w6 ^ (0x9E3779B9 ^ (36 + 3));</span>
+<span class="fc" id="L643">        w7 = rotateLeft(tt, 11);</span>
+<span class="fc" id="L644">        r0 = w4;</span>
+<span class="fc" id="L645">        r1 = w5;</span>
+<span class="fc" id="L646">        r2 = w6;</span>
+<span class="fc" id="L647">        r3 = w7;</span>
+<span class="fc" id="L648">        r4 = r0;</span>
+<span class="fc" id="L649">        r0 &amp;= r2;</span>
+<span class="fc" id="L650">        r0 ^= r3;</span>
+<span class="fc" id="L651">        r2 ^= r1;</span>
+<span class="fc" id="L652">        r2 ^= r0;</span>
+<span class="fc" id="L653">        r3 |= r4;</span>
+<span class="fc" id="L654">        r3 ^= r1;</span>
+<span class="fc" id="L655">        r4 ^= r2;</span>
+<span class="fc" id="L656">        r1 = r3;</span>
+<span class="fc" id="L657">        r3 |= r4;</span>
+<span class="fc" id="L658">        r3 ^= r0;</span>
+<span class="fc" id="L659">        r0 &amp;= r1;</span>
+<span class="fc" id="L660">        r4 ^= r0;</span>
+<span class="fc" id="L661">        r1 ^= r3;</span>
+<span class="fc" id="L662">        r1 ^= r4;</span>
+<span class="fc" id="L663">        r4 = ~r4;</span>
+<span class="fc" id="L664">        serpent24SubKeys[i++] = r2;</span>
+<span class="fc" id="L665">        serpent24SubKeys[i++] = r3;</span>
+<span class="fc" id="L666">        serpent24SubKeys[i++] = r1;</span>
+<span class="fc" id="L667">        serpent24SubKeys[i++] = r4;</span>
+<span class="fc" id="L668">        tt = w0 ^ w3 ^ w5 ^ w7 ^ (0x9E3779B9 ^ (40));</span>
+<span class="fc" id="L669">        w0 = rotateLeft(tt, 11);</span>
+<span class="fc" id="L670">        tt = w1 ^ w4 ^ w6 ^ w0 ^ (0x9E3779B9 ^ (40 + 1));</span>
+<span class="fc" id="L671">        w1 = rotateLeft(tt, 11);</span>
+<span class="fc" id="L672">        tt = w2 ^ w5 ^ w7 ^ w1 ^ (0x9E3779B9 ^ (40 + 2));</span>
+<span class="fc" id="L673">        w2 = rotateLeft(tt, 11);</span>
+<span class="fc" id="L674">        tt = w3 ^ w6 ^ w0 ^ w2 ^ (0x9E3779B9 ^ (40 + 3));</span>
+<span class="fc" id="L675">        w3 = rotateLeft(tt, 11);</span>
+<span class="fc" id="L676">        r0 = w0;</span>
+<span class="fc" id="L677">        r1 = w1;</span>
+<span class="fc" id="L678">        r2 = w2;</span>
+<span class="fc" id="L679">        r3 = w3;</span>
+<span class="fc" id="L680">        r0 = ~r0;</span>
+<span class="fc" id="L681">        r2 = ~r2;</span>
+<span class="fc" id="L682">        r4 = r0;</span>
+<span class="fc" id="L683">        r0 &amp;= r1;</span>
+<span class="fc" id="L684">        r2 ^= r0;</span>
+<span class="fc" id="L685">        r0 |= r3;</span>
+<span class="fc" id="L686">        r3 ^= r2;</span>
+<span class="fc" id="L687">        r1 ^= r0;</span>
+<span class="fc" id="L688">        r0 ^= r4;</span>
+<span class="fc" id="L689">        r4 |= r1;</span>
+<span class="fc" id="L690">        r1 ^= r3;</span>
+<span class="fc" id="L691">        r2 |= r0;</span>
+<span class="fc" id="L692">        r2 &amp;= r4;</span>
+<span class="fc" id="L693">        r0 ^= r1;</span>
+<span class="fc" id="L694">        r1 &amp;= r2;</span>
+<span class="fc" id="L695">        r1 ^= r0;</span>
+<span class="fc" id="L696">        r0 &amp;= r2;</span>
+<span class="fc" id="L697">        r0 ^= r4;</span>
+<span class="fc" id="L698">        serpent24SubKeys[i++] = r2;</span>
+<span class="fc" id="L699">        serpent24SubKeys[i++] = r0;</span>
+<span class="fc" id="L700">        serpent24SubKeys[i++] = r3;</span>
+<span class="fc" id="L701">        serpent24SubKeys[i++] = r1;</span>
+<span class="fc" id="L702">        tt = w4 ^ w7 ^ w1 ^ w3 ^ (0x9E3779B9 ^ (44));</span>
+<span class="fc" id="L703">        w4 = rotateLeft(tt, 11);</span>
+<span class="fc" id="L704">        tt = w5 ^ w0 ^ w2 ^ w4 ^ (0x9E3779B9 ^ (44 + 1));</span>
+<span class="fc" id="L705">        w5 = rotateLeft(tt, 11);</span>
+<span class="fc" id="L706">        tt = w6 ^ w1 ^ w3 ^ w5 ^ (0x9E3779B9 ^ (44 + 2));</span>
+<span class="fc" id="L707">        w6 = rotateLeft(tt, 11);</span>
+<span class="fc" id="L708">        tt = w7 ^ w2 ^ w4 ^ w6 ^ (0x9E3779B9 ^ (44 + 3));</span>
+<span class="fc" id="L709">        w7 = rotateLeft(tt, 11);</span>
+<span class="fc" id="L710">        r0 = w4;</span>
+<span class="fc" id="L711">        r1 = w5;</span>
+<span class="fc" id="L712">        r2 = w6;</span>
+<span class="fc" id="L713">        r3 = w7;</span>
+<span class="fc" id="L714">        r3 ^= r0;</span>
+<span class="fc" id="L715">        r4 = r1;</span>
+<span class="fc" id="L716">        r1 &amp;= r3;</span>
+<span class="fc" id="L717">        r4 ^= r2;</span>
+<span class="fc" id="L718">        r1 ^= r0;</span>
+<span class="fc" id="L719">        r0 |= r3;</span>
+<span class="fc" id="L720">        r0 ^= r4;</span>
+<span class="fc" id="L721">        r4 ^= r3;</span>
+<span class="fc" id="L722">        r3 ^= r2;</span>
+<span class="fc" id="L723">        r2 |= r1;</span>
+<span class="fc" id="L724">        r2 ^= r4;</span>
+<span class="fc" id="L725">        r4 = ~r4;</span>
+<span class="fc" id="L726">        r4 |= r1;</span>
+<span class="fc" id="L727">        r1 ^= r3;</span>
+<span class="fc" id="L728">        r1 ^= r4;</span>
+<span class="fc" id="L729">        r3 |= r0;</span>
+<span class="fc" id="L730">        r1 ^= r3;</span>
+<span class="fc" id="L731">        r4 ^= r3;</span>
+<span class="fc" id="L732">        serpent24SubKeys[i++] = r1;</span>
+<span class="fc" id="L733">        serpent24SubKeys[i++] = r4;</span>
+<span class="fc" id="L734">        serpent24SubKeys[i++] = r2;</span>
+<span class="fc" id="L735">        serpent24SubKeys[i++] = r0;</span>
+<span class="fc" id="L736">        tt = w0 ^ w3 ^ w5 ^ w7 ^ (0x9E3779B9 ^ (48));</span>
+<span class="fc" id="L737">        w0 = rotateLeft(tt, 11);</span>
+<span class="fc" id="L738">        tt = w1 ^ w4 ^ w6 ^ w0 ^ (0x9E3779B9 ^ (48 + 1));</span>
+<span class="fc" id="L739">        w1 = rotateLeft(tt, 11);</span>
+<span class="fc" id="L740">        tt = w2 ^ w5 ^ w7 ^ w1 ^ (0x9E3779B9 ^ (48 + 2));</span>
+<span class="fc" id="L741">        w2 = rotateLeft(tt, 11);</span>
+<span class="fc" id="L742">        tt = w3 ^ w6 ^ w0 ^ w2 ^ (0x9E3779B9 ^ (48 + 3));</span>
+<span class="fc" id="L743">        w3 = rotateLeft(tt, 11);</span>
+<span class="fc" id="L744">        r0 = w0;</span>
+<span class="fc" id="L745">        r1 = w1;</span>
+<span class="fc" id="L746">        r2 = w2;</span>
+<span class="fc" id="L747">        r3 = w3;</span>
+<span class="fc" id="L748">        r4 = r1;</span>
+<span class="fc" id="L749">        r1 |= r2;</span>
+<span class="fc" id="L750">        r1 ^= r3;</span>
+<span class="fc" id="L751">        r4 ^= r2;</span>
+<span class="fc" id="L752">        r2 ^= r1;</span>
+<span class="fc" id="L753">        r3 |= r4;</span>
+<span class="fc" id="L754">        r3 &amp;= r0;</span>
+<span class="fc" id="L755">        r4 ^= r2;</span>
+<span class="fc" id="L756">        r3 ^= r1;</span>
+<span class="fc" id="L757">        r1 |= r4;</span>
+<span class="fc" id="L758">        r1 ^= r0;</span>
+<span class="fc" id="L759">        r0 |= r4;</span>
+<span class="fc" id="L760">        r0 ^= r2;</span>
+<span class="fc" id="L761">        r1 ^= r4;</span>
+<span class="fc" id="L762">        r2 ^= r1;</span>
+<span class="fc" id="L763">        r1 &amp;= r0;</span>
+<span class="fc" id="L764">        r1 ^= r4;</span>
+<span class="fc" id="L765">        r2 = ~r2;</span>
+<span class="fc" id="L766">        r2 |= r0;</span>
+<span class="fc" id="L767">        r4 ^= r2;</span>
+<span class="fc" id="L768">        serpent24SubKeys[i++] = r4;</span>
+<span class="fc" id="L769">        serpent24SubKeys[i++] = r3;</span>
+<span class="fc" id="L770">        serpent24SubKeys[i++] = r1;</span>
+<span class="fc" id="L771">        serpent24SubKeys[i++] = r0;</span>
+<span class="fc" id="L772">        tt = w4 ^ w7 ^ w1 ^ w3 ^ (0x9E3779B9 ^ (52));</span>
+<span class="fc" id="L773">        w4 = rotateLeft(tt, 11);</span>
+<span class="fc" id="L774">        tt = w5 ^ w0 ^ w2 ^ w4 ^ (0x9E3779B9 ^ (52 + 1));</span>
+<span class="fc" id="L775">        w5 = rotateLeft(tt, 11);</span>
+<span class="fc" id="L776">        tt = w6 ^ w1 ^ w3 ^ w5 ^ (0x9E3779B9 ^ (52 + 2));</span>
+<span class="fc" id="L777">        w6 = rotateLeft(tt, 11);</span>
+<span class="fc" id="L778">        tt = w7 ^ w2 ^ w4 ^ w6 ^ (0x9E3779B9 ^ (52 + 3));</span>
+<span class="fc" id="L779">        w7 = rotateLeft(tt, 11);</span>
+<span class="fc" id="L780">        r0 = w4;</span>
+<span class="fc" id="L781">        r1 = w5;</span>
+<span class="fc" id="L782">        r2 = w6;</span>
+<span class="fc" id="L783">        r3 = w7;</span>
+<span class="fc" id="L784">        r2 = ~r2;</span>
+<span class="fc" id="L785">        r4 = r3;</span>
+<span class="fc" id="L786">        r3 &amp;= r0;</span>
+<span class="fc" id="L787">        r0 ^= r4;</span>
+<span class="fc" id="L788">        r3 ^= r2;</span>
+<span class="fc" id="L789">        r2 |= r4;</span>
+<span class="fc" id="L790">        r1 ^= r3;</span>
+<span class="fc" id="L791">        r2 ^= r0;</span>
+<span class="fc" id="L792">        r0 |= r1;</span>
+<span class="fc" id="L793">        r2 ^= r1;</span>
+<span class="fc" id="L794">        r4 ^= r0;</span>
+<span class="fc" id="L795">        r0 |= r3;</span>
+<span class="fc" id="L796">        r0 ^= r2;</span>
+<span class="fc" id="L797">        r4 ^= r3;</span>
+<span class="fc" id="L798">        r4 ^= r0;</span>
+<span class="fc" id="L799">        r3 = ~r3;</span>
+<span class="fc" id="L800">        r2 &amp;= r4;</span>
+<span class="fc" id="L801">        r2 ^= r3;</span>
+<span class="fc" id="L802">        serpent24SubKeys[i++] = r0;</span>
+<span class="fc" id="L803">        serpent24SubKeys[i++] = r1;</span>
+<span class="fc" id="L804">        serpent24SubKeys[i++] = r4;</span>
+<span class="fc" id="L805">        serpent24SubKeys[i++] = r2;</span>
+<span class="fc" id="L806">        tt = w0 ^ w3 ^ w5 ^ w7 ^ (0x9E3779B9 ^ (56));</span>
+<span class="fc" id="L807">        w0 = rotateLeft(tt, 11);</span>
+<span class="fc" id="L808">        tt = w1 ^ w4 ^ w6 ^ w0 ^ (0x9E3779B9 ^ (56 + 1));</span>
+<span class="fc" id="L809">        w1 = rotateLeft(tt, 11);</span>
+<span class="fc" id="L810">        tt = w2 ^ w5 ^ w7 ^ w1 ^ (0x9E3779B9 ^ (56 + 2));</span>
+<span class="fc" id="L811">        w2 = rotateLeft(tt, 11);</span>
+<span class="fc" id="L812">        tt = w3 ^ w6 ^ w0 ^ w2 ^ (0x9E3779B9 ^ (56 + 3));</span>
+<span class="fc" id="L813">        w3 = rotateLeft(tt, 11);</span>
+<span class="fc" id="L814">        r0 = w0;</span>
+<span class="fc" id="L815">        r1 = w1;</span>
+<span class="fc" id="L816">        r2 = w2;</span>
+<span class="fc" id="L817">        r3 = w3;</span>
+<span class="fc" id="L818">        r0 ^= r1;</span>
+<span class="fc" id="L819">        r1 ^= r3;</span>
+<span class="fc" id="L820">        r3 = ~r3;</span>
+<span class="fc" id="L821">        r4 = r1;</span>
+<span class="fc" id="L822">        r1 &amp;= r0;</span>
+<span class="fc" id="L823">        r2 ^= r3;</span>
+<span class="fc" id="L824">        r1 ^= r2;</span>
+<span class="fc" id="L825">        r2 |= r4;</span>
+<span class="fc" id="L826">        r4 ^= r3;</span>
+<span class="fc" id="L827">        r3 &amp;= r1;</span>
+<span class="fc" id="L828">        r3 ^= r0;</span>
+<span class="fc" id="L829">        r4 ^= r1;</span>
+<span class="fc" id="L830">        r4 ^= r2;</span>
+<span class="fc" id="L831">        r2 ^= r0;</span>
+<span class="fc" id="L832">        r0 &amp;= r3;</span>
+<span class="fc" id="L833">        r2 = ~r2;</span>
+<span class="fc" id="L834">        r0 ^= r4;</span>
+<span class="fc" id="L835">        r4 |= r3;</span>
+<span class="fc" id="L836">        r2 ^= r4;</span>
+<span class="fc" id="L837">        serpent24SubKeys[i++] = r1;</span>
+<span class="fc" id="L838">        serpent24SubKeys[i++] = r3;</span>
+<span class="fc" id="L839">        serpent24SubKeys[i++] = r0;</span>
+<span class="fc" id="L840">        serpent24SubKeys[i++] = r2;</span>
+<span class="fc" id="L841">        tt = w4 ^ w7 ^ w1 ^ w3 ^ (0x9E3779B9 ^ (60));</span>
+<span class="fc" id="L842">        w4 = rotateLeft(tt, 11);</span>
+<span class="fc" id="L843">        tt = w5 ^ w0 ^ w2 ^ w4 ^ (0x9E3779B9 ^ (60 + 1));</span>
+<span class="fc" id="L844">        w5 = rotateLeft(tt, 11);</span>
+<span class="fc" id="L845">        tt = w6 ^ w1 ^ w3 ^ w5 ^ (0x9E3779B9 ^ (60 + 2));</span>
+<span class="fc" id="L846">        w6 = rotateLeft(tt, 11);</span>
+<span class="fc" id="L847">        tt = w7 ^ w2 ^ w4 ^ w6 ^ (0x9E3779B9 ^ (60 + 3));</span>
+<span class="fc" id="L848">        w7 = rotateLeft(tt, 11);</span>
+<span class="fc" id="L849">        r0 = w4;</span>
+<span class="fc" id="L850">        r1 = w5;</span>
+<span class="fc" id="L851">        r2 = w6;</span>
+<span class="fc" id="L852">        r3 = w7;</span>
+<span class="fc" id="L853">        r1 ^= r3;</span>
+<span class="fc" id="L854">        r3 = ~r3;</span>
+<span class="fc" id="L855">        r2 ^= r3;</span>
+<span class="fc" id="L856">        r3 ^= r0;</span>
+<span class="fc" id="L857">        r4 = r1;</span>
+<span class="fc" id="L858">        r1 &amp;= r3;</span>
+<span class="fc" id="L859">        r1 ^= r2;</span>
+<span class="fc" id="L860">        r4 ^= r3;</span>
+<span class="fc" id="L861">        r0 ^= r4;</span>
+<span class="fc" id="L862">        r2 &amp;= r4;</span>
+<span class="fc" id="L863">        r2 ^= r0;</span>
+<span class="fc" id="L864">        r0 &amp;= r1;</span>
+<span class="fc" id="L865">        r3 ^= r0;</span>
+<span class="fc" id="L866">        r4 |= r1;</span>
+<span class="fc" id="L867">        r4 ^= r0;</span>
+<span class="fc" id="L868">        r0 |= r3;</span>
+<span class="fc" id="L869">        r0 ^= r2;</span>
+<span class="fc" id="L870">        r2 &amp;= r3;</span>
+<span class="fc" id="L871">        r0 = ~r0;</span>
+<span class="fc" id="L872">        r4 ^= r2;</span>
+<span class="fc" id="L873">        serpent24SubKeys[i++] = r1;</span>
+<span class="fc" id="L874">        serpent24SubKeys[i++] = r4;</span>
+<span class="fc" id="L875">        serpent24SubKeys[i++] = r0;</span>
+<span class="fc" id="L876">        serpent24SubKeys[i++] = r3;</span>
+<span class="fc" id="L877">        tt = w0 ^ w3 ^ w5 ^ w7 ^ (0x9E3779B9 ^ (64));</span>
+<span class="fc" id="L878">        w0 = rotateLeft(tt, 11);</span>
+<span class="fc" id="L879">        tt = w1 ^ w4 ^ w6 ^ w0 ^ (0x9E3779B9 ^ (64 + 1));</span>
+<span class="fc" id="L880">        w1 = rotateLeft(tt, 11);</span>
+<span class="fc" id="L881">        tt = w2 ^ w5 ^ w7 ^ w1 ^ (0x9E3779B9 ^ (64 + 2));</span>
+<span class="fc" id="L882">        w2 = rotateLeft(tt, 11);</span>
+<span class="fc" id="L883">        tt = w3 ^ w6 ^ w0 ^ w2 ^ (0x9E3779B9 ^ (64 + 3));</span>
+<span class="fc" id="L884">        w3 = rotateLeft(tt, 11);</span>
+<span class="fc" id="L885">        r0 = w0;</span>
+<span class="fc" id="L886">        r1 = w1;</span>
+<span class="fc" id="L887">        r2 = w2;</span>
+<span class="fc" id="L888">        r3 = w3;</span>
+<span class="fc" id="L889">        r4 = r0;</span>
+<span class="fc" id="L890">        r0 |= r3;</span>
+<span class="fc" id="L891">        r3 ^= r1;</span>
+<span class="fc" id="L892">        r1 &amp;= r4;</span>
+<span class="fc" id="L893">        r4 ^= r2;</span>
+<span class="fc" id="L894">        r2 ^= r3;</span>
+<span class="fc" id="L895">        r3 &amp;= r0;</span>
+<span class="fc" id="L896">        r4 |= r1;</span>
+<span class="fc" id="L897">        r3 ^= r4;</span>
+<span class="fc" id="L898">        r0 ^= r1;</span>
+<span class="fc" id="L899">        r4 &amp;= r0;</span>
+<span class="fc" id="L900">        r1 ^= r3;</span>
+<span class="fc" id="L901">        r4 ^= r2;</span>
+<span class="fc" id="L902">        r1 |= r0;</span>
+<span class="fc" id="L903">        r1 ^= r2;</span>
+<span class="fc" id="L904">        r0 ^= r3;</span>
+<span class="fc" id="L905">        r2 = r1;</span>
+<span class="fc" id="L906">        r1 |= r3;</span>
+<span class="fc" id="L907">        r1 ^= r0;</span>
+<span class="fc" id="L908">        serpent24SubKeys[i++] = r1;</span>
+<span class="fc" id="L909">        serpent24SubKeys[i++] = r2;</span>
+<span class="fc" id="L910">        serpent24SubKeys[i++] = r3;</span>
+<span class="fc" id="L911">        serpent24SubKeys[i++] = r4;</span>
+<span class="fc" id="L912">        tt = w4 ^ w7 ^ w1 ^ w3 ^ (0x9E3779B9 ^ (68));</span>
+<span class="fc" id="L913">        w4 = rotateLeft(tt, 11);</span>
+<span class="fc" id="L914">        tt = w5 ^ w0 ^ w2 ^ w4 ^ (0x9E3779B9 ^ (68 + 1));</span>
+<span class="fc" id="L915">        w5 = rotateLeft(tt, 11);</span>
+<span class="fc" id="L916">        tt = w6 ^ w1 ^ w3 ^ w5 ^ (0x9E3779B9 ^ (68 + 2));</span>
+<span class="fc" id="L917">        w6 = rotateLeft(tt, 11);</span>
+<span class="fc" id="L918">        tt = w7 ^ w2 ^ w4 ^ w6 ^ (0x9E3779B9 ^ (68 + 3));</span>
+<span class="fc" id="L919">        w7 = rotateLeft(tt, 11);</span>
+<span class="fc" id="L920">        r0 = w4;</span>
+<span class="fc" id="L921">        r1 = w5;</span>
+<span class="fc" id="L922">        r2 = w6;</span>
+<span class="fc" id="L923">        r3 = w7;</span>
+<span class="fc" id="L924">        r4 = r0;</span>
+<span class="fc" id="L925">        r0 &amp;= r2;</span>
+<span class="fc" id="L926">        r0 ^= r3;</span>
+<span class="fc" id="L927">        r2 ^= r1;</span>
+<span class="fc" id="L928">        r2 ^= r0;</span>
+<span class="fc" id="L929">        r3 |= r4;</span>
+<span class="fc" id="L930">        r3 ^= r1;</span>
+<span class="fc" id="L931">        r4 ^= r2;</span>
+<span class="fc" id="L932">        r1 = r3;</span>
+<span class="fc" id="L933">        r3 |= r4;</span>
+<span class="fc" id="L934">        r3 ^= r0;</span>
+<span class="fc" id="L935">        r0 &amp;= r1;</span>
+<span class="fc" id="L936">        r4 ^= r0;</span>
+<span class="fc" id="L937">        r1 ^= r3;</span>
+<span class="fc" id="L938">        r1 ^= r4;</span>
+<span class="fc" id="L939">        r4 = ~r4;</span>
+<span class="fc" id="L940">        serpent24SubKeys[i++] = r2;</span>
+<span class="fc" id="L941">        serpent24SubKeys[i++] = r3;</span>
+<span class="fc" id="L942">        serpent24SubKeys[i++] = r1;</span>
+<span class="fc" id="L943">        serpent24SubKeys[i++] = r4;</span>
+<span class="fc" id="L944">        tt = w0 ^ w3 ^ w5 ^ w7 ^ (0x9E3779B9 ^ (72));</span>
+<span class="fc" id="L945">        w0 = rotateLeft(tt, 11);</span>
+<span class="fc" id="L946">        tt = w1 ^ w4 ^ w6 ^ w0 ^ (0x9E3779B9 ^ (72 + 1));</span>
+<span class="fc" id="L947">        w1 = rotateLeft(tt, 11);</span>
+<span class="fc" id="L948">        tt = w2 ^ w5 ^ w7 ^ w1 ^ (0x9E3779B9 ^ (72 + 2));</span>
+<span class="fc" id="L949">        w2 = rotateLeft(tt, 11);</span>
+<span class="fc" id="L950">        tt = w3 ^ w6 ^ w0 ^ w2 ^ (0x9E3779B9 ^ (72 + 3));</span>
+<span class="fc" id="L951">        w3 = rotateLeft(tt, 11);</span>
+<span class="fc" id="L952">        r0 = w0;</span>
+<span class="fc" id="L953">        r1 = w1;</span>
+<span class="fc" id="L954">        r2 = w2;</span>
+<span class="fc" id="L955">        r3 = w3;</span>
+<span class="fc" id="L956">        r0 = ~r0;</span>
+<span class="fc" id="L957">        r2 = ~r2;</span>
+<span class="fc" id="L958">        r4 = r0;</span>
+<span class="fc" id="L959">        r0 &amp;= r1;</span>
+<span class="fc" id="L960">        r2 ^= r0;</span>
+<span class="fc" id="L961">        r0 |= r3;</span>
+<span class="fc" id="L962">        r3 ^= r2;</span>
+<span class="fc" id="L963">        r1 ^= r0;</span>
+<span class="fc" id="L964">        r0 ^= r4;</span>
+<span class="fc" id="L965">        r4 |= r1;</span>
+<span class="fc" id="L966">        r1 ^= r3;</span>
+<span class="fc" id="L967">        r2 |= r0;</span>
+<span class="fc" id="L968">        r2 &amp;= r4;</span>
+<span class="fc" id="L969">        r0 ^= r1;</span>
+<span class="fc" id="L970">        r1 &amp;= r2;</span>
+<span class="fc" id="L971">        r1 ^= r0;</span>
+<span class="fc" id="L972">        r0 &amp;= r2;</span>
+<span class="fc" id="L973">        r0 ^= r4;</span>
+<span class="fc" id="L974">        serpent24SubKeys[i++] = r2;</span>
+<span class="fc" id="L975">        serpent24SubKeys[i++] = r0;</span>
+<span class="fc" id="L976">        serpent24SubKeys[i++] = r3;</span>
+<span class="fc" id="L977">        serpent24SubKeys[i++] = r1;</span>
+<span class="fc" id="L978">        tt = w4 ^ w7 ^ w1 ^ w3 ^ (0x9E3779B9 ^ (76));</span>
+<span class="fc" id="L979">        w4 = rotateLeft(tt, 11);</span>
+<span class="fc" id="L980">        tt = w5 ^ w0 ^ w2 ^ w4 ^ (0x9E3779B9 ^ (76 + 1));</span>
+<span class="fc" id="L981">        w5 = rotateLeft(tt, 11);</span>
+<span class="fc" id="L982">        tt = w6 ^ w1 ^ w3 ^ w5 ^ (0x9E3779B9 ^ (76 + 2));</span>
+<span class="fc" id="L983">        w6 = rotateLeft(tt, 11);</span>
+<span class="fc" id="L984">        tt = w7 ^ w2 ^ w4 ^ w6 ^ (0x9E3779B9 ^ (76 + 3));</span>
+<span class="fc" id="L985">        w7 = rotateLeft(tt, 11);</span>
+<span class="fc" id="L986">        r0 = w4;</span>
+<span class="fc" id="L987">        r1 = w5;</span>
+<span class="fc" id="L988">        r2 = w6;</span>
+<span class="fc" id="L989">        r3 = w7;</span>
+<span class="fc" id="L990">        r3 ^= r0;</span>
+<span class="fc" id="L991">        r4 = r1;</span>
+<span class="fc" id="L992">        r1 &amp;= r3;</span>
+<span class="fc" id="L993">        r4 ^= r2;</span>
+<span class="fc" id="L994">        r1 ^= r0;</span>
+<span class="fc" id="L995">        r0 |= r3;</span>
+<span class="fc" id="L996">        r0 ^= r4;</span>
+<span class="fc" id="L997">        r4 ^= r3;</span>
+<span class="fc" id="L998">        r3 ^= r2;</span>
+<span class="fc" id="L999">        r2 |= r1;</span>
+<span class="fc" id="L1000">        r2 ^= r4;</span>
+<span class="fc" id="L1001">        r4 = ~r4;</span>
+<span class="fc" id="L1002">        r4 |= r1;</span>
+<span class="fc" id="L1003">        r1 ^= r3;</span>
+<span class="fc" id="L1004">        r1 ^= r4;</span>
+<span class="fc" id="L1005">        r3 |= r0;</span>
+<span class="fc" id="L1006">        r1 ^= r3;</span>
+<span class="fc" id="L1007">        r4 ^= r3;</span>
+<span class="fc" id="L1008">        serpent24SubKeys[i++] = r1;</span>
+<span class="fc" id="L1009">        serpent24SubKeys[i++] = r4;</span>
+<span class="fc" id="L1010">        serpent24SubKeys[i++] = r2;</span>
+<span class="fc" id="L1011">        serpent24SubKeys[i++] = r0;</span>
+<span class="fc" id="L1012">        tt = w0 ^ w3 ^ w5 ^ w7 ^ (0x9E3779B9 ^ (80));</span>
+<span class="fc" id="L1013">        w0 = rotateLeft(tt, 11);</span>
+<span class="fc" id="L1014">        tt = w1 ^ w4 ^ w6 ^ w0 ^ (0x9E3779B9 ^ (80 + 1));</span>
+<span class="fc" id="L1015">        w1 = rotateLeft(tt, 11);</span>
+<span class="fc" id="L1016">        tt = w2 ^ w5 ^ w7 ^ w1 ^ (0x9E3779B9 ^ (80 + 2));</span>
+<span class="fc" id="L1017">        w2 = rotateLeft(tt, 11);</span>
+<span class="fc" id="L1018">        tt = w3 ^ w6 ^ w0 ^ w2 ^ (0x9E3779B9 ^ (80 + 3));</span>
+<span class="fc" id="L1019">        w3 = rotateLeft(tt, 11);</span>
+<span class="fc" id="L1020">        r0 = w0;</span>
+<span class="fc" id="L1021">        r1 = w1;</span>
+<span class="fc" id="L1022">        r2 = w2;</span>
+<span class="fc" id="L1023">        r3 = w3;</span>
+<span class="fc" id="L1024">        r4 = r1;</span>
+<span class="fc" id="L1025">        r1 |= r2;</span>
+<span class="fc" id="L1026">        r1 ^= r3;</span>
+<span class="fc" id="L1027">        r4 ^= r2;</span>
+<span class="fc" id="L1028">        r2 ^= r1;</span>
+<span class="fc" id="L1029">        r3 |= r4;</span>
+<span class="fc" id="L1030">        r3 &amp;= r0;</span>
+<span class="fc" id="L1031">        r4 ^= r2;</span>
+<span class="fc" id="L1032">        r3 ^= r1;</span>
+<span class="fc" id="L1033">        r1 |= r4;</span>
+<span class="fc" id="L1034">        r1 ^= r0;</span>
+<span class="fc" id="L1035">        r0 |= r4;</span>
+<span class="fc" id="L1036">        r0 ^= r2;</span>
+<span class="fc" id="L1037">        r1 ^= r4;</span>
+<span class="fc" id="L1038">        r2 ^= r1;</span>
+<span class="fc" id="L1039">        r1 &amp;= r0;</span>
+<span class="fc" id="L1040">        r1 ^= r4;</span>
+<span class="fc" id="L1041">        r2 = ~r2;</span>
+<span class="fc" id="L1042">        r2 |= r0;</span>
+<span class="fc" id="L1043">        r4 ^= r2;</span>
+<span class="fc" id="L1044">        serpent24SubKeys[i++] = r4;</span>
+<span class="fc" id="L1045">        serpent24SubKeys[i++] = r3;</span>
+<span class="fc" id="L1046">        serpent24SubKeys[i++] = r1;</span>
+<span class="fc" id="L1047">        serpent24SubKeys[i++] = r0;</span>
+<span class="fc" id="L1048">        tt = w4 ^ w7 ^ w1 ^ w3 ^ (0x9E3779B9 ^ (84));</span>
+<span class="fc" id="L1049">        w4 = rotateLeft(tt, 11);</span>
+<span class="fc" id="L1050">        tt = w5 ^ w0 ^ w2 ^ w4 ^ (0x9E3779B9 ^ (84 + 1));</span>
+<span class="fc" id="L1051">        w5 = rotateLeft(tt, 11);</span>
+<span class="fc" id="L1052">        tt = w6 ^ w1 ^ w3 ^ w5 ^ (0x9E3779B9 ^ (84 + 2));</span>
+<span class="fc" id="L1053">        w6 = rotateLeft(tt, 11);</span>
+<span class="fc" id="L1054">        tt = w7 ^ w2 ^ w4 ^ w6 ^ (0x9E3779B9 ^ (84 + 3));</span>
+<span class="fc" id="L1055">        w7 = rotateLeft(tt, 11);</span>
+<span class="fc" id="L1056">        r0 = w4;</span>
+<span class="fc" id="L1057">        r1 = w5;</span>
+<span class="fc" id="L1058">        r2 = w6;</span>
+<span class="fc" id="L1059">        r3 = w7;</span>
+<span class="fc" id="L1060">        r2 = ~r2;</span>
+<span class="fc" id="L1061">        r4 = r3;</span>
+<span class="fc" id="L1062">        r3 &amp;= r0;</span>
+<span class="fc" id="L1063">        r0 ^= r4;</span>
+<span class="fc" id="L1064">        r3 ^= r2;</span>
+<span class="fc" id="L1065">        r2 |= r4;</span>
+<span class="fc" id="L1066">        r1 ^= r3;</span>
+<span class="fc" id="L1067">        r2 ^= r0;</span>
+<span class="fc" id="L1068">        r0 |= r1;</span>
+<span class="fc" id="L1069">        r2 ^= r1;</span>
+<span class="fc" id="L1070">        r4 ^= r0;</span>
+<span class="fc" id="L1071">        r0 |= r3;</span>
+<span class="fc" id="L1072">        r0 ^= r2;</span>
+<span class="fc" id="L1073">        r4 ^= r3;</span>
+<span class="fc" id="L1074">        r4 ^= r0;</span>
+<span class="fc" id="L1075">        r3 = ~r3;</span>
+<span class="fc" id="L1076">        r2 &amp;= r4;</span>
+<span class="fc" id="L1077">        r2 ^= r3;</span>
+<span class="fc" id="L1078">        serpent24SubKeys[i++] = r0;</span>
+<span class="fc" id="L1079">        serpent24SubKeys[i++] = r1;</span>
+<span class="fc" id="L1080">        serpent24SubKeys[i++] = r4;</span>
+<span class="fc" id="L1081">        serpent24SubKeys[i++] = r2;</span>
+<span class="fc" id="L1082">        tt = w0 ^ w3 ^ w5 ^ w7 ^ (0x9E3779B9 ^ (88));</span>
+<span class="fc" id="L1083">        w0 = rotateLeft(tt, 11);</span>
+<span class="fc" id="L1084">        tt = w1 ^ w4 ^ w6 ^ w0 ^ (0x9E3779B9 ^ (88 + 1));</span>
+<span class="fc" id="L1085">        w1 = rotateLeft(tt, 11);</span>
+<span class="fc" id="L1086">        tt = w2 ^ w5 ^ w7 ^ w1 ^ (0x9E3779B9 ^ (88 + 2));</span>
+<span class="fc" id="L1087">        w2 = rotateLeft(tt, 11);</span>
+<span class="fc" id="L1088">        tt = w3 ^ w6 ^ w0 ^ w2 ^ (0x9E3779B9 ^ (88 + 3));</span>
+<span class="fc" id="L1089">        w3 = rotateLeft(tt, 11);</span>
+<span class="fc" id="L1090">        r0 = w0;</span>
+<span class="fc" id="L1091">        r1 = w1;</span>
+<span class="fc" id="L1092">        r2 = w2;</span>
+<span class="fc" id="L1093">        r3 = w3;</span>
+<span class="fc" id="L1094">        r0 ^= r1;</span>
+<span class="fc" id="L1095">        r1 ^= r3;</span>
+<span class="fc" id="L1096">        r3 = ~r3;</span>
+<span class="fc" id="L1097">        r4 = r1;</span>
+<span class="fc" id="L1098">        r1 &amp;= r0;</span>
+<span class="fc" id="L1099">        r2 ^= r3;</span>
+<span class="fc" id="L1100">        r1 ^= r2;</span>
+<span class="fc" id="L1101">        r2 |= r4;</span>
+<span class="fc" id="L1102">        r4 ^= r3;</span>
+<span class="fc" id="L1103">        r3 &amp;= r1;</span>
+<span class="fc" id="L1104">        r3 ^= r0;</span>
+<span class="fc" id="L1105">        r4 ^= r1;</span>
+<span class="fc" id="L1106">        r4 ^= r2;</span>
+<span class="fc" id="L1107">        r2 ^= r0;</span>
+<span class="fc" id="L1108">        r0 &amp;= r3;</span>
+<span class="fc" id="L1109">        r2 = ~r2;</span>
+<span class="fc" id="L1110">        r0 ^= r4;</span>
+<span class="fc" id="L1111">        r4 |= r3;</span>
+<span class="fc" id="L1112">        r2 ^= r4;</span>
+<span class="fc" id="L1113">        serpent24SubKeys[i++] = r1;</span>
+<span class="fc" id="L1114">        serpent24SubKeys[i++] = r3;</span>
+<span class="fc" id="L1115">        serpent24SubKeys[i++] = r0;</span>
+<span class="fc" id="L1116">        serpent24SubKeys[i++] = r2;</span>
+<span class="fc" id="L1117">        tt = w4 ^ w7 ^ w1 ^ w3 ^ (0x9E3779B9 ^ (92));</span>
+<span class="fc" id="L1118">        w4 = rotateLeft(tt, 11);</span>
+<span class="fc" id="L1119">        tt = w5 ^ w0 ^ w2 ^ w4 ^ (0x9E3779B9 ^ (92 + 1));</span>
+<span class="fc" id="L1120">        w5 = rotateLeft(tt, 11);</span>
+<span class="fc" id="L1121">        tt = w6 ^ w1 ^ w3 ^ w5 ^ (0x9E3779B9 ^ (92 + 2));</span>
+<span class="fc" id="L1122">        w6 = rotateLeft(tt, 11);</span>
+<span class="fc" id="L1123">        tt = w7 ^ w2 ^ w4 ^ w6 ^ (0x9E3779B9 ^ (92 + 3));</span>
+<span class="fc" id="L1124">        w7 = rotateLeft(tt, 11);</span>
+<span class="fc" id="L1125">        r0 = w4;</span>
+<span class="fc" id="L1126">        r1 = w5;</span>
+<span class="fc" id="L1127">        r2 = w6;</span>
+<span class="fc" id="L1128">        r3 = w7;</span>
+<span class="fc" id="L1129">        r1 ^= r3;</span>
+<span class="fc" id="L1130">        r3 = ~r3;</span>
+<span class="fc" id="L1131">        r2 ^= r3;</span>
+<span class="fc" id="L1132">        r3 ^= r0;</span>
+<span class="fc" id="L1133">        r4 = r1;</span>
+<span class="fc" id="L1134">        r1 &amp;= r3;</span>
+<span class="fc" id="L1135">        r1 ^= r2;</span>
+<span class="fc" id="L1136">        r4 ^= r3;</span>
+<span class="fc" id="L1137">        r0 ^= r4;</span>
+<span class="fc" id="L1138">        r2 &amp;= r4;</span>
+<span class="fc" id="L1139">        r2 ^= r0;</span>
+<span class="fc" id="L1140">        r0 &amp;= r1;</span>
+<span class="fc" id="L1141">        r3 ^= r0;</span>
+<span class="fc" id="L1142">        r4 |= r1;</span>
+<span class="fc" id="L1143">        r4 ^= r0;</span>
+<span class="fc" id="L1144">        r0 |= r3;</span>
+<span class="fc" id="L1145">        r0 ^= r2;</span>
+<span class="fc" id="L1146">        r2 &amp;= r3;</span>
+<span class="fc" id="L1147">        r0 = ~r0;</span>
+<span class="fc" id="L1148">        r4 ^= r2;</span>
+<span class="fc" id="L1149">        serpent24SubKeys[i++] = r1;</span>
+<span class="fc" id="L1150">        serpent24SubKeys[i++] = r4;</span>
+<span class="fc" id="L1151">        serpent24SubKeys[i++] = r0;</span>
+<span class="fc" id="L1152">        serpent24SubKeys[i++] = r3;</span>
+<span class="fc" id="L1153">        tt = w0 ^ w3 ^ w5 ^ w7 ^ (0x9E3779B9 ^ (96));</span>
+<span class="fc" id="L1154">        w0 = rotateLeft(tt, 11);</span>
+<span class="fc" id="L1155">        tt = w1 ^ w4 ^ w6 ^ w0 ^ (0x9E3779B9 ^ (96 + 1));</span>
+<span class="fc" id="L1156">        w1 = rotateLeft(tt, 11);</span>
+<span class="fc" id="L1157">        tt = w2 ^ w5 ^ w7 ^ w1 ^ (0x9E3779B9 ^ (96 + 2));</span>
+<span class="fc" id="L1158">        w2 = rotateLeft(tt, 11);</span>
+<span class="fc" id="L1159">        tt = w3 ^ w6 ^ w0 ^ w2 ^ (0x9E3779B9 ^ (96 + 3));</span>
+<span class="fc" id="L1160">        w3 = rotateLeft(tt, 11);</span>
+<span class="fc" id="L1161">        r0 = w0;</span>
+<span class="fc" id="L1162">        r1 = w1;</span>
+<span class="fc" id="L1163">        r2 = w2;</span>
+<span class="fc" id="L1164">        r3 = w3;</span>
+<span class="fc" id="L1165">        r4 = r0;</span>
+<span class="fc" id="L1166">        r0 |= r3;</span>
+<span class="fc" id="L1167">        r3 ^= r1;</span>
+<span class="fc" id="L1168">        r1 &amp;= r4;</span>
+<span class="fc" id="L1169">        r4 ^= r2;</span>
+<span class="fc" id="L1170">        r2 ^= r3;</span>
+<span class="fc" id="L1171">        r3 &amp;= r0;</span>
+<span class="fc" id="L1172">        r4 |= r1;</span>
+<span class="fc" id="L1173">        r3 ^= r4;</span>
+<span class="fc" id="L1174">        r0 ^= r1;</span>
+<span class="fc" id="L1175">        r4 &amp;= r0;</span>
+<span class="fc" id="L1176">        r1 ^= r3;</span>
+<span class="fc" id="L1177">        r4 ^= r2;</span>
+<span class="fc" id="L1178">        r1 |= r0;</span>
+<span class="fc" id="L1179">        r1 ^= r2;</span>
+<span class="fc" id="L1180">        r0 ^= r3;</span>
+<span class="fc" id="L1181">        r2 = r1;</span>
+<span class="fc" id="L1182">        r1 |= r3;</span>
+<span class="fc" id="L1183">        r1 ^= r0;</span>
+<span class="fc" id="L1184">        serpent24SubKeys[i++] = r1;</span>
+<span class="fc" id="L1185">        serpent24SubKeys[i++] = r2;</span>
+<span class="fc" id="L1186">        serpent24SubKeys[i++] = r3;</span>
+<span class="fc" id="L1187">        serpent24SubKeys[i++] = r4;</span>
+<span class="fc" id="L1188">    }</span>
+
+    /**
+     * Set the IV. The IV length must lie between 0 and 16 (inclusive).
+     * &lt;code&gt;null&lt;/code&gt; is accepted, and yields the same result
+     * than an IV of length 0.
+     *
+     * @param iv the IV (or &lt;code&gt;null&lt;/code&gt;)
+     */
+    @SuppressWarnings(&quot;checkstyle:MethodLength&quot;)
+    public void setIV(final byte[] iv) {
+<span class="fc" id="L1199">        byte[] myIV = iv;</span>
+<span class="pc bpc" id="L1200" title="1 of 2 branches missed.">        if (myIV == null) {</span>
+<span class="nc" id="L1201">            myIV = new byte[0];</span>
+        }
+<span class="pc bpc" id="L1203" title="1 of 2 branches missed.">        if (myIV.length &gt; 16) {</span>
+<span class="nc" id="L1204">            throw new IllegalArgumentException(&quot;bad IV length: &quot; + myIV.length);</span>
+        }
+        final byte[] piv;
+<span class="pc bpc" id="L1207" title="1 of 2 branches missed.">        if (myIV.length == 16) {</span>
+<span class="fc" id="L1208">            piv = myIV;</span>
+        } else {
+<span class="nc" id="L1210">            piv = new byte[16];</span>
+<span class="nc" id="L1211">            System.arraycopy(myIV, 0, piv, 0, myIV.length);</span>
+<span class="nc bnc" id="L1212" title="All 2 branches missed.">            for (int i = myIV.length; i &lt; piv.length; i++) {</span>
+<span class="nc" id="L1213">                piv[i] = 0x00;</span>
+            }
+        }
+
+<span class="fc" id="L1217">        int r0 = decode32le(piv, 0);</span>
+<span class="fc" id="L1218">        int r1 = decode32le(piv, 4);</span>
+<span class="fc" id="L1219">        int r2 = decode32le(piv, 8);</span>
+<span class="fc" id="L1220">        int r3 = decode32le(piv, 12);</span>
+        int r4;
+
+<span class="fc" id="L1223">        r0 ^= serpent24SubKeys[0];</span>
+<span class="fc" id="L1224">        r1 ^= serpent24SubKeys[0 + 1];</span>
+<span class="fc" id="L1225">        r2 ^= serpent24SubKeys[0 + 2];</span>
+<span class="fc" id="L1226">        r3 ^= serpent24SubKeys[0 + 3];</span>
+<span class="fc" id="L1227">        r3 ^= r0;</span>
+<span class="fc" id="L1228">        r4 = r1;</span>
+<span class="fc" id="L1229">        r1 &amp;= r3;</span>
+<span class="fc" id="L1230">        r4 ^= r2;</span>
+<span class="fc" id="L1231">        r1 ^= r0;</span>
+<span class="fc" id="L1232">        r0 |= r3;</span>
+<span class="fc" id="L1233">        r0 ^= r4;</span>
+<span class="fc" id="L1234">        r4 ^= r3;</span>
+<span class="fc" id="L1235">        r3 ^= r2;</span>
+<span class="fc" id="L1236">        r2 |= r1;</span>
+<span class="fc" id="L1237">        r2 ^= r4;</span>
+<span class="fc" id="L1238">        r4 = ~r4;</span>
+<span class="fc" id="L1239">        r4 |= r1;</span>
+<span class="fc" id="L1240">        r1 ^= r3;</span>
+<span class="fc" id="L1241">        r1 ^= r4;</span>
+<span class="fc" id="L1242">        r3 |= r0;</span>
+<span class="fc" id="L1243">        r1 ^= r3;</span>
+<span class="fc" id="L1244">        r4 ^= r3;</span>
+<span class="fc" id="L1245">        r1 = rotateLeft(r1, 13);</span>
+<span class="fc" id="L1246">        r2 = rotateLeft(r2, 3);</span>
+<span class="fc" id="L1247">        r4 = r4 ^ r1 ^ r2;</span>
+<span class="fc" id="L1248">        r0 = r0 ^ r2 ^ (r1 &lt;&lt; 3);</span>
+<span class="fc" id="L1249">        r4 = rotateLeft(r4, 1);</span>
+<span class="fc" id="L1250">        r0 = rotateLeft(r0, 7);</span>
+<span class="fc" id="L1251">        r1 = r1 ^ r4 ^ r0;</span>
+<span class="fc" id="L1252">        r2 = r2 ^ r0 ^ (r4 &lt;&lt; 7);</span>
+<span class="fc" id="L1253">        r1 = rotateLeft(r1, 5);</span>
+<span class="fc" id="L1254">        r2 = rotateLeft(r2, 22);</span>
+<span class="fc" id="L1255">        r1 ^= serpent24SubKeys[4];</span>
+<span class="fc" id="L1256">        r4 ^= serpent24SubKeys[4 + 1];</span>
+<span class="fc" id="L1257">        r2 ^= serpent24SubKeys[4 + 2];</span>
+<span class="fc" id="L1258">        r0 ^= serpent24SubKeys[4 + 3];</span>
+<span class="fc" id="L1259">        r1 = ~r1;</span>
+<span class="fc" id="L1260">        r2 = ~r2;</span>
+<span class="fc" id="L1261">        r3 = r1;</span>
+<span class="fc" id="L1262">        r1 &amp;= r4;</span>
+<span class="fc" id="L1263">        r2 ^= r1;</span>
+<span class="fc" id="L1264">        r1 |= r0;</span>
+<span class="fc" id="L1265">        r0 ^= r2;</span>
+<span class="fc" id="L1266">        r4 ^= r1;</span>
+<span class="fc" id="L1267">        r1 ^= r3;</span>
+<span class="fc" id="L1268">        r3 |= r4;</span>
+<span class="fc" id="L1269">        r4 ^= r0;</span>
+<span class="fc" id="L1270">        r2 |= r1;</span>
+<span class="fc" id="L1271">        r2 &amp;= r3;</span>
+<span class="fc" id="L1272">        r1 ^= r4;</span>
+<span class="fc" id="L1273">        r4 &amp;= r2;</span>
+<span class="fc" id="L1274">        r4 ^= r1;</span>
+<span class="fc" id="L1275">        r1 &amp;= r2;</span>
+<span class="fc" id="L1276">        r1 ^= r3;</span>
+<span class="fc" id="L1277">        r2 = rotateLeft(r2, 13);</span>
+<span class="fc" id="L1278">        r0 = rotateLeft(r0, 3);</span>
+<span class="fc" id="L1279">        r1 = r1 ^ r2 ^ r0;</span>
+<span class="fc" id="L1280">        r4 = r4 ^ r0 ^ (r2 &lt;&lt; 3);</span>
+<span class="fc" id="L1281">        r1 = rotateLeft(r1, 1);</span>
+<span class="fc" id="L1282">        r4 = rotateLeft(r4, 7);</span>
+<span class="fc" id="L1283">        r2 = r2 ^ r1 ^ r4;</span>
+<span class="fc" id="L1284">        r0 = r0 ^ r4 ^ (r1 &lt;&lt; 7);</span>
+<span class="fc" id="L1285">        r2 = rotateLeft(r2, 5);</span>
+<span class="fc" id="L1286">        r0 = rotateLeft(r0, 22);</span>
+<span class="fc" id="L1287">        r2 ^= serpent24SubKeys[8];</span>
+<span class="fc" id="L1288">        r1 ^= serpent24SubKeys[8 + 1];</span>
+<span class="fc" id="L1289">        r0 ^= serpent24SubKeys[8 + 2];</span>
+<span class="fc" id="L1290">        r4 ^= serpent24SubKeys[8 + 3];</span>
+<span class="fc" id="L1291">        r3 = r2;</span>
+<span class="fc" id="L1292">        r2 &amp;= r0;</span>
+<span class="fc" id="L1293">        r2 ^= r4;</span>
+<span class="fc" id="L1294">        r0 ^= r1;</span>
+<span class="fc" id="L1295">        r0 ^= r2;</span>
+<span class="fc" id="L1296">        r4 |= r3;</span>
+<span class="fc" id="L1297">        r4 ^= r1;</span>
+<span class="fc" id="L1298">        r3 ^= r0;</span>
+<span class="fc" id="L1299">        r1 = r4;</span>
+<span class="fc" id="L1300">        r4 |= r3;</span>
+<span class="fc" id="L1301">        r4 ^= r2;</span>
+<span class="fc" id="L1302">        r2 &amp;= r1;</span>
+<span class="fc" id="L1303">        r3 ^= r2;</span>
+<span class="fc" id="L1304">        r1 ^= r4;</span>
+<span class="fc" id="L1305">        r1 ^= r3;</span>
+<span class="fc" id="L1306">        r3 = ~r3;</span>
+<span class="fc" id="L1307">        r0 = rotateLeft(r0, 13);</span>
+<span class="fc" id="L1308">        r1 = rotateLeft(r1, 3);</span>
+<span class="fc" id="L1309">        r4 = r4 ^ r0 ^ r1;</span>
+<span class="fc" id="L1310">        r3 = r3 ^ r1 ^ (r0 &lt;&lt; 3);</span>
+<span class="fc" id="L1311">        r4 = rotateLeft(r4, 1);</span>
+<span class="fc" id="L1312">        r3 = rotateLeft(r3, 7);</span>
+<span class="fc" id="L1313">        r0 = r0 ^ r4 ^ r3;</span>
+<span class="fc" id="L1314">        r1 = r1 ^ r3 ^ (r4 &lt;&lt; 7);</span>
+<span class="fc" id="L1315">        r0 = rotateLeft(r0, 5);</span>
+<span class="fc" id="L1316">        r1 = rotateLeft(r1, 22);</span>
+<span class="fc" id="L1317">        r0 ^= serpent24SubKeys[12];</span>
+<span class="fc" id="L1318">        r4 ^= serpent24SubKeys[12 + 1];</span>
+<span class="fc" id="L1319">        r1 ^= serpent24SubKeys[12 + 2];</span>
+<span class="fc" id="L1320">        r3 ^= serpent24SubKeys[12 + 3];</span>
+<span class="fc" id="L1321">        r2 = r0;</span>
+<span class="fc" id="L1322">        r0 |= r3;</span>
+<span class="fc" id="L1323">        r3 ^= r4;</span>
+<span class="fc" id="L1324">        r4 &amp;= r2;</span>
+<span class="fc" id="L1325">        r2 ^= r1;</span>
+<span class="fc" id="L1326">        r1 ^= r3;</span>
+<span class="fc" id="L1327">        r3 &amp;= r0;</span>
+<span class="fc" id="L1328">        r2 |= r4;</span>
+<span class="fc" id="L1329">        r3 ^= r2;</span>
+<span class="fc" id="L1330">        r0 ^= r4;</span>
+<span class="fc" id="L1331">        r2 &amp;= r0;</span>
+<span class="fc" id="L1332">        r4 ^= r3;</span>
+<span class="fc" id="L1333">        r2 ^= r1;</span>
+<span class="fc" id="L1334">        r4 |= r0;</span>
+<span class="fc" id="L1335">        r4 ^= r1;</span>
+<span class="fc" id="L1336">        r0 ^= r3;</span>
+<span class="fc" id="L1337">        r1 = r4;</span>
+<span class="fc" id="L1338">        r4 |= r3;</span>
+<span class="fc" id="L1339">        r4 ^= r0;</span>
+<span class="fc" id="L1340">        r4 = rotateLeft(r4, 13);</span>
+<span class="fc" id="L1341">        r3 = rotateLeft(r3, 3);</span>
+<span class="fc" id="L1342">        r1 = r1 ^ r4 ^ r3;</span>
+<span class="fc" id="L1343">        r2 = r2 ^ r3 ^ (r4 &lt;&lt; 3);</span>
+<span class="fc" id="L1344">        r1 = rotateLeft(r1, 1);</span>
+<span class="fc" id="L1345">        r2 = rotateLeft(r2, 7);</span>
+<span class="fc" id="L1346">        r4 = r4 ^ r1 ^ r2;</span>
+<span class="fc" id="L1347">        r3 = r3 ^ r2 ^ (r1 &lt;&lt; 7);</span>
+<span class="fc" id="L1348">        r4 = rotateLeft(r4, 5);</span>
+<span class="fc" id="L1349">        r3 = rotateLeft(r3, 22);</span>
+<span class="fc" id="L1350">        r4 ^= serpent24SubKeys[16];</span>
+<span class="fc" id="L1351">        r1 ^= serpent24SubKeys[16 + 1];</span>
+<span class="fc" id="L1352">        r3 ^= serpent24SubKeys[16 + 2];</span>
+<span class="fc" id="L1353">        r2 ^= serpent24SubKeys[16 + 3];</span>
+<span class="fc" id="L1354">        r1 ^= r2;</span>
+<span class="fc" id="L1355">        r2 = ~r2;</span>
+<span class="fc" id="L1356">        r3 ^= r2;</span>
+<span class="fc" id="L1357">        r2 ^= r4;</span>
+<span class="fc" id="L1358">        r0 = r1;</span>
+<span class="fc" id="L1359">        r1 &amp;= r2;</span>
+<span class="fc" id="L1360">        r1 ^= r3;</span>
+<span class="fc" id="L1361">        r0 ^= r2;</span>
+<span class="fc" id="L1362">        r4 ^= r0;</span>
+<span class="fc" id="L1363">        r3 &amp;= r0;</span>
+<span class="fc" id="L1364">        r3 ^= r4;</span>
+<span class="fc" id="L1365">        r4 &amp;= r1;</span>
+<span class="fc" id="L1366">        r2 ^= r4;</span>
+<span class="fc" id="L1367">        r0 |= r1;</span>
+<span class="fc" id="L1368">        r0 ^= r4;</span>
+<span class="fc" id="L1369">        r4 |= r2;</span>
+<span class="fc" id="L1370">        r4 ^= r3;</span>
+<span class="fc" id="L1371">        r3 &amp;= r2;</span>
+<span class="fc" id="L1372">        r4 = ~r4;</span>
+<span class="fc" id="L1373">        r0 ^= r3;</span>
+<span class="fc" id="L1374">        r1 = rotateLeft(r1, 13);</span>
+<span class="fc" id="L1375">        r4 = rotateLeft(r4, 3);</span>
+<span class="fc" id="L1376">        r0 = r0 ^ r1 ^ r4;</span>
+<span class="fc" id="L1377">        r2 = r2 ^ r4 ^ (r1 &lt;&lt; 3);</span>
+<span class="fc" id="L1378">        r0 = rotateLeft(r0, 1);</span>
+<span class="fc" id="L1379">        r2 = rotateLeft(r2, 7);</span>
+<span class="fc" id="L1380">        r1 = r1 ^ r0 ^ r2;</span>
+<span class="fc" id="L1381">        r4 = r4 ^ r2 ^ (r0 &lt;&lt; 7);</span>
+<span class="fc" id="L1382">        r1 = rotateLeft(r1, 5);</span>
+<span class="fc" id="L1383">        r4 = rotateLeft(r4, 22);</span>
+<span class="fc" id="L1384">        r1 ^= serpent24SubKeys[20];</span>
+<span class="fc" id="L1385">        r0 ^= serpent24SubKeys[20 + 1];</span>
+<span class="fc" id="L1386">        r4 ^= serpent24SubKeys[20 + 2];</span>
+<span class="fc" id="L1387">        r2 ^= serpent24SubKeys[20 + 3];</span>
+<span class="fc" id="L1388">        r1 ^= r0;</span>
+<span class="fc" id="L1389">        r0 ^= r2;</span>
+<span class="fc" id="L1390">        r2 = ~r2;</span>
+<span class="fc" id="L1391">        r3 = r0;</span>
+<span class="fc" id="L1392">        r0 &amp;= r1;</span>
+<span class="fc" id="L1393">        r4 ^= r2;</span>
+<span class="fc" id="L1394">        r0 ^= r4;</span>
+<span class="fc" id="L1395">        r4 |= r3;</span>
+<span class="fc" id="L1396">        r3 ^= r2;</span>
+<span class="fc" id="L1397">        r2 &amp;= r0;</span>
+<span class="fc" id="L1398">        r2 ^= r1;</span>
+<span class="fc" id="L1399">        r3 ^= r0;</span>
+<span class="fc" id="L1400">        r3 ^= r4;</span>
+<span class="fc" id="L1401">        r4 ^= r1;</span>
+<span class="fc" id="L1402">        r1 &amp;= r2;</span>
+<span class="fc" id="L1403">        r4 = ~r4;</span>
+<span class="fc" id="L1404">        r1 ^= r3;</span>
+<span class="fc" id="L1405">        r3 |= r2;</span>
+<span class="fc" id="L1406">        r4 ^= r3;</span>
+<span class="fc" id="L1407">        r0 = rotateLeft(r0, 13);</span>
+<span class="fc" id="L1408">        r1 = rotateLeft(r1, 3);</span>
+<span class="fc" id="L1409">        r2 = r2 ^ r0 ^ r1;</span>
+<span class="fc" id="L1410">        r4 = r4 ^ r1 ^ (r0 &lt;&lt; 3);</span>
+<span class="fc" id="L1411">        r2 = rotateLeft(r2, 1);</span>
+<span class="fc" id="L1412">        r4 = rotateLeft(r4, 7);</span>
+<span class="fc" id="L1413">        r0 = r0 ^ r2 ^ r4;</span>
+<span class="fc" id="L1414">        r1 = r1 ^ r4 ^ (r2 &lt;&lt; 7);</span>
+<span class="fc" id="L1415">        r0 = rotateLeft(r0, 5);</span>
+<span class="fc" id="L1416">        r1 = rotateLeft(r1, 22);</span>
+<span class="fc" id="L1417">        r0 ^= serpent24SubKeys[24];</span>
+<span class="fc" id="L1418">        r2 ^= serpent24SubKeys[24 + 1];</span>
+<span class="fc" id="L1419">        r1 ^= serpent24SubKeys[24 + 2];</span>
+<span class="fc" id="L1420">        r4 ^= serpent24SubKeys[24 + 3];</span>
+<span class="fc" id="L1421">        r1 = ~r1;</span>
+<span class="fc" id="L1422">        r3 = r4;</span>
+<span class="fc" id="L1423">        r4 &amp;= r0;</span>
+<span class="fc" id="L1424">        r0 ^= r3;</span>
+<span class="fc" id="L1425">        r4 ^= r1;</span>
+<span class="fc" id="L1426">        r1 |= r3;</span>
+<span class="fc" id="L1427">        r2 ^= r4;</span>
+<span class="fc" id="L1428">        r1 ^= r0;</span>
+<span class="fc" id="L1429">        r0 |= r2;</span>
+<span class="fc" id="L1430">        r1 ^= r2;</span>
+<span class="fc" id="L1431">        r3 ^= r0;</span>
+<span class="fc" id="L1432">        r0 |= r4;</span>
+<span class="fc" id="L1433">        r0 ^= r1;</span>
+<span class="fc" id="L1434">        r3 ^= r4;</span>
+<span class="fc" id="L1435">        r3 ^= r0;</span>
+<span class="fc" id="L1436">        r4 = ~r4;</span>
+<span class="fc" id="L1437">        r1 &amp;= r3;</span>
+<span class="fc" id="L1438">        r1 ^= r4;</span>
+<span class="fc" id="L1439">        r0 = rotateLeft(r0, 13);</span>
+<span class="fc" id="L1440">        r3 = rotateLeft(r3, 3);</span>
+<span class="fc" id="L1441">        r2 = r2 ^ r0 ^ r3;</span>
+<span class="fc" id="L1442">        r1 = r1 ^ r3 ^ (r0 &lt;&lt; 3);</span>
+<span class="fc" id="L1443">        r2 = rotateLeft(r2, 1);</span>
+<span class="fc" id="L1444">        r1 = rotateLeft(r1, 7);</span>
+<span class="fc" id="L1445">        r0 = r0 ^ r2 ^ r1;</span>
+<span class="fc" id="L1446">        r3 = r3 ^ r1 ^ (r2 &lt;&lt; 7);</span>
+<span class="fc" id="L1447">        r0 = rotateLeft(r0, 5);</span>
+<span class="fc" id="L1448">        r3 = rotateLeft(r3, 22);</span>
+<span class="fc" id="L1449">        r0 ^= serpent24SubKeys[28];</span>
+<span class="fc" id="L1450">        r2 ^= serpent24SubKeys[28 + 1];</span>
+<span class="fc" id="L1451">        r3 ^= serpent24SubKeys[28 + 2];</span>
+<span class="fc" id="L1452">        r1 ^= serpent24SubKeys[28 + 3];</span>
+<span class="fc" id="L1453">        r4 = r2;</span>
+<span class="fc" id="L1454">        r2 |= r3;</span>
+<span class="fc" id="L1455">        r2 ^= r1;</span>
+<span class="fc" id="L1456">        r4 ^= r3;</span>
+<span class="fc" id="L1457">        r3 ^= r2;</span>
+<span class="fc" id="L1458">        r1 |= r4;</span>
+<span class="fc" id="L1459">        r1 &amp;= r0;</span>
+<span class="fc" id="L1460">        r4 ^= r3;</span>
+<span class="fc" id="L1461">        r1 ^= r2;</span>
+<span class="fc" id="L1462">        r2 |= r4;</span>
+<span class="fc" id="L1463">        r2 ^= r0;</span>
+<span class="fc" id="L1464">        r0 |= r4;</span>
+<span class="fc" id="L1465">        r0 ^= r3;</span>
+<span class="fc" id="L1466">        r2 ^= r4;</span>
+<span class="fc" id="L1467">        r3 ^= r2;</span>
+<span class="fc" id="L1468">        r2 &amp;= r0;</span>
+<span class="fc" id="L1469">        r2 ^= r4;</span>
+<span class="fc" id="L1470">        r3 = ~r3;</span>
+<span class="fc" id="L1471">        r3 |= r0;</span>
+<span class="fc" id="L1472">        r4 ^= r3;</span>
+<span class="fc" id="L1473">        r4 = rotateLeft(r4, 13);</span>
+<span class="fc" id="L1474">        r2 = rotateLeft(r2, 3);</span>
+<span class="fc" id="L1475">        r1 = r1 ^ r4 ^ r2;</span>
+<span class="fc" id="L1476">        r0 = r0 ^ r2 ^ (r4 &lt;&lt; 3);</span>
+<span class="fc" id="L1477">        r1 = rotateLeft(r1, 1);</span>
+<span class="fc" id="L1478">        r0 = rotateLeft(r0, 7);</span>
+<span class="fc" id="L1479">        r4 = r4 ^ r1 ^ r0;</span>
+<span class="fc" id="L1480">        r2 = r2 ^ r0 ^ (r1 &lt;&lt; 7);</span>
+<span class="fc" id="L1481">        r4 = rotateLeft(r4, 5);</span>
+<span class="fc" id="L1482">        r2 = rotateLeft(r2, 22);</span>
+<span class="fc" id="L1483">        r4 ^= serpent24SubKeys[32];</span>
+<span class="fc" id="L1484">        r1 ^= serpent24SubKeys[32 + 1];</span>
+<span class="fc" id="L1485">        r2 ^= serpent24SubKeys[32 + 2];</span>
+<span class="fc" id="L1486">        r0 ^= serpent24SubKeys[32 + 3];</span>
+<span class="fc" id="L1487">        r0 ^= r4;</span>
+<span class="fc" id="L1488">        r3 = r1;</span>
+<span class="fc" id="L1489">        r1 &amp;= r0;</span>
+<span class="fc" id="L1490">        r3 ^= r2;</span>
+<span class="fc" id="L1491">        r1 ^= r4;</span>
+<span class="fc" id="L1492">        r4 |= r0;</span>
+<span class="fc" id="L1493">        r4 ^= r3;</span>
+<span class="fc" id="L1494">        r3 ^= r0;</span>
+<span class="fc" id="L1495">        r0 ^= r2;</span>
+<span class="fc" id="L1496">        r2 |= r1;</span>
+<span class="fc" id="L1497">        r2 ^= r3;</span>
+<span class="fc" id="L1498">        r3 = ~r3;</span>
+<span class="fc" id="L1499">        r3 |= r1;</span>
+<span class="fc" id="L1500">        r1 ^= r0;</span>
+<span class="fc" id="L1501">        r1 ^= r3;</span>
+<span class="fc" id="L1502">        r0 |= r4;</span>
+<span class="fc" id="L1503">        r1 ^= r0;</span>
+<span class="fc" id="L1504">        r3 ^= r0;</span>
+<span class="fc" id="L1505">        r1 = rotateLeft(r1, 13);</span>
+<span class="fc" id="L1506">        r2 = rotateLeft(r2, 3);</span>
+<span class="fc" id="L1507">        r3 = r3 ^ r1 ^ r2;</span>
+<span class="fc" id="L1508">        r4 = r4 ^ r2 ^ (r1 &lt;&lt; 3);</span>
+<span class="fc" id="L1509">        r3 = rotateLeft(r3, 1);</span>
+<span class="fc" id="L1510">        r4 = rotateLeft(r4, 7);</span>
+<span class="fc" id="L1511">        r1 = r1 ^ r3 ^ r4;</span>
+<span class="fc" id="L1512">        r2 = r2 ^ r4 ^ (r3 &lt;&lt; 7);</span>
+<span class="fc" id="L1513">        r1 = rotateLeft(r1, 5);</span>
+<span class="fc" id="L1514">        r2 = rotateLeft(r2, 22);</span>
+<span class="fc" id="L1515">        r1 ^= serpent24SubKeys[36];</span>
+<span class="fc" id="L1516">        r3 ^= serpent24SubKeys[36 + 1];</span>
+<span class="fc" id="L1517">        r2 ^= serpent24SubKeys[36 + 2];</span>
+<span class="fc" id="L1518">        r4 ^= serpent24SubKeys[36 + 3];</span>
+<span class="fc" id="L1519">        r1 = ~r1;</span>
+<span class="fc" id="L1520">        r2 = ~r2;</span>
+<span class="fc" id="L1521">        r0 = r1;</span>
+<span class="fc" id="L1522">        r1 &amp;= r3;</span>
+<span class="fc" id="L1523">        r2 ^= r1;</span>
+<span class="fc" id="L1524">        r1 |= r4;</span>
+<span class="fc" id="L1525">        r4 ^= r2;</span>
+<span class="fc" id="L1526">        r3 ^= r1;</span>
+<span class="fc" id="L1527">        r1 ^= r0;</span>
+<span class="fc" id="L1528">        r0 |= r3;</span>
+<span class="fc" id="L1529">        r3 ^= r4;</span>
+<span class="fc" id="L1530">        r2 |= r1;</span>
+<span class="fc" id="L1531">        r2 &amp;= r0;</span>
+<span class="fc" id="L1532">        r1 ^= r3;</span>
+<span class="fc" id="L1533">        r3 &amp;= r2;</span>
+<span class="fc" id="L1534">        r3 ^= r1;</span>
+<span class="fc" id="L1535">        r1 &amp;= r2;</span>
+<span class="fc" id="L1536">        r1 ^= r0;</span>
+<span class="fc" id="L1537">        r2 = rotateLeft(r2, 13);</span>
+<span class="fc" id="L1538">        r4 = rotateLeft(r4, 3);</span>
+<span class="fc" id="L1539">        r1 = r1 ^ r2 ^ r4;</span>
+<span class="fc" id="L1540">        r3 = r3 ^ r4 ^ (r2 &lt;&lt; 3);</span>
+<span class="fc" id="L1541">        r1 = rotateLeft(r1, 1);</span>
+<span class="fc" id="L1542">        r3 = rotateLeft(r3, 7);</span>
+<span class="fc" id="L1543">        r2 = r2 ^ r1 ^ r3;</span>
+<span class="fc" id="L1544">        r4 = r4 ^ r3 ^ (r1 &lt;&lt; 7);</span>
+<span class="fc" id="L1545">        r2 = rotateLeft(r2, 5);</span>
+<span class="fc" id="L1546">        r4 = rotateLeft(r4, 22);</span>
+<span class="fc" id="L1547">        r2 ^= serpent24SubKeys[40];</span>
+<span class="fc" id="L1548">        r1 ^= serpent24SubKeys[40 + 1];</span>
+<span class="fc" id="L1549">        r4 ^= serpent24SubKeys[40 + 2];</span>
+<span class="fc" id="L1550">        r3 ^= serpent24SubKeys[40 + 3];</span>
+<span class="fc" id="L1551">        r0 = r2;</span>
+<span class="fc" id="L1552">        r2 &amp;= r4;</span>
+<span class="fc" id="L1553">        r2 ^= r3;</span>
+<span class="fc" id="L1554">        r4 ^= r1;</span>
+<span class="fc" id="L1555">        r4 ^= r2;</span>
+<span class="fc" id="L1556">        r3 |= r0;</span>
+<span class="fc" id="L1557">        r3 ^= r1;</span>
+<span class="fc" id="L1558">        r0 ^= r4;</span>
+<span class="fc" id="L1559">        r1 = r3;</span>
+<span class="fc" id="L1560">        r3 |= r0;</span>
+<span class="fc" id="L1561">        r3 ^= r2;</span>
+<span class="fc" id="L1562">        r2 &amp;= r1;</span>
+<span class="fc" id="L1563">        r0 ^= r2;</span>
+<span class="fc" id="L1564">        r1 ^= r3;</span>
+<span class="fc" id="L1565">        r1 ^= r0;</span>
+<span class="fc" id="L1566">        r0 = ~r0;</span>
+<span class="fc" id="L1567">        r4 = rotateLeft(r4, 13);</span>
+<span class="fc" id="L1568">        r1 = rotateLeft(r1, 3);</span>
+<span class="fc" id="L1569">        r3 = r3 ^ r4 ^ r1;</span>
+<span class="fc" id="L1570">        r0 = r0 ^ r1 ^ (r4 &lt;&lt; 3);</span>
+<span class="fc" id="L1571">        r3 = rotateLeft(r3, 1);</span>
+<span class="fc" id="L1572">        r0 = rotateLeft(r0, 7);</span>
+<span class="fc" id="L1573">        r4 = r4 ^ r3 ^ r0;</span>
+<span class="fc" id="L1574">        r1 = r1 ^ r0 ^ (r3 &lt;&lt; 7);</span>
+<span class="fc" id="L1575">        r4 = rotateLeft(r4, 5);</span>
+<span class="fc" id="L1576">        r1 = rotateLeft(r1, 22);</span>
+<span class="fc" id="L1577">        r4 ^= serpent24SubKeys[44];</span>
+<span class="fc" id="L1578">        r3 ^= serpent24SubKeys[44 + 1];</span>
+<span class="fc" id="L1579">        r1 ^= serpent24SubKeys[44 + 2];</span>
+<span class="fc" id="L1580">        r0 ^= serpent24SubKeys[44 + 3];</span>
+<span class="fc" id="L1581">        r2 = r4;</span>
+<span class="fc" id="L1582">        r4 |= r0;</span>
+<span class="fc" id="L1583">        r0 ^= r3;</span>
+<span class="fc" id="L1584">        r3 &amp;= r2;</span>
+<span class="fc" id="L1585">        r2 ^= r1;</span>
+<span class="fc" id="L1586">        r1 ^= r0;</span>
+<span class="fc" id="L1587">        r0 &amp;= r4;</span>
+<span class="fc" id="L1588">        r2 |= r3;</span>
+<span class="fc" id="L1589">        r0 ^= r2;</span>
+<span class="fc" id="L1590">        r4 ^= r3;</span>
+<span class="fc" id="L1591">        r2 &amp;= r4;</span>
+<span class="fc" id="L1592">        r3 ^= r0;</span>
+<span class="fc" id="L1593">        r2 ^= r1;</span>
+<span class="fc" id="L1594">        r3 |= r4;</span>
+<span class="fc" id="L1595">        r3 ^= r1;</span>
+<span class="fc" id="L1596">        r4 ^= r0;</span>
+<span class="fc" id="L1597">        r1 = r3;</span>
+<span class="fc" id="L1598">        r3 |= r0;</span>
+<span class="fc" id="L1599">        r3 ^= r4;</span>
+<span class="fc" id="L1600">        r3 = rotateLeft(r3, 13);</span>
+<span class="fc" id="L1601">        r0 = rotateLeft(r0, 3);</span>
+<span class="fc" id="L1602">        r1 = r1 ^ r3 ^ r0;</span>
+<span class="fc" id="L1603">        r2 = r2 ^ r0 ^ (r3 &lt;&lt; 3);</span>
+<span class="fc" id="L1604">        r1 = rotateLeft(r1, 1);</span>
+<span class="fc" id="L1605">        r2 = rotateLeft(r2, 7);</span>
+<span class="fc" id="L1606">        r3 = r3 ^ r1 ^ r2;</span>
+<span class="fc" id="L1607">        r0 = r0 ^ r2 ^ (r1 &lt;&lt; 7);</span>
+<span class="fc" id="L1608">        r3 = rotateLeft(r3, 5);</span>
+<span class="fc" id="L1609">        r0 = rotateLeft(r0, 22);</span>
+<span class="fc" id="L1610">        lfsr9 = r3;</span>
+<span class="fc" id="L1611">        lfsr8 = r1;</span>
+<span class="fc" id="L1612">        lfsr7 = r0;</span>
+<span class="fc" id="L1613">        lfsr6 = r2;</span>
+<span class="fc" id="L1614">        r3 ^= serpent24SubKeys[48];</span>
+<span class="fc" id="L1615">        r1 ^= serpent24SubKeys[48 + 1];</span>
+<span class="fc" id="L1616">        r0 ^= serpent24SubKeys[48 + 2];</span>
+<span class="fc" id="L1617">        r2 ^= serpent24SubKeys[48 + 3];</span>
+<span class="fc" id="L1618">        r1 ^= r2;</span>
+<span class="fc" id="L1619">        r2 = ~r2;</span>
+<span class="fc" id="L1620">        r0 ^= r2;</span>
+<span class="fc" id="L1621">        r2 ^= r3;</span>
+<span class="fc" id="L1622">        r4 = r1;</span>
+<span class="fc" id="L1623">        r1 &amp;= r2;</span>
+<span class="fc" id="L1624">        r1 ^= r0;</span>
+<span class="fc" id="L1625">        r4 ^= r2;</span>
+<span class="fc" id="L1626">        r3 ^= r4;</span>
+<span class="fc" id="L1627">        r0 &amp;= r4;</span>
+<span class="fc" id="L1628">        r0 ^= r3;</span>
+<span class="fc" id="L1629">        r3 &amp;= r1;</span>
+<span class="fc" id="L1630">        r2 ^= r3;</span>
+<span class="fc" id="L1631">        r4 |= r1;</span>
+<span class="fc" id="L1632">        r4 ^= r3;</span>
+<span class="fc" id="L1633">        r3 |= r2;</span>
+<span class="fc" id="L1634">        r3 ^= r0;</span>
+<span class="fc" id="L1635">        r0 &amp;= r2;</span>
+<span class="fc" id="L1636">        r3 = ~r3;</span>
+<span class="fc" id="L1637">        r4 ^= r0;</span>
+<span class="fc" id="L1638">        r1 = rotateLeft(r1, 13);</span>
+<span class="fc" id="L1639">        r3 = rotateLeft(r3, 3);</span>
+<span class="fc" id="L1640">        r4 = r4 ^ r1 ^ r3;</span>
+<span class="fc" id="L1641">        r2 = r2 ^ r3 ^ (r1 &lt;&lt; 3);</span>
+<span class="fc" id="L1642">        r4 = rotateLeft(r4, 1);</span>
+<span class="fc" id="L1643">        r2 = rotateLeft(r2, 7);</span>
+<span class="fc" id="L1644">        r1 = r1 ^ r4 ^ r2;</span>
+<span class="fc" id="L1645">        r3 = r3 ^ r2 ^ (r4 &lt;&lt; 7);</span>
+<span class="fc" id="L1646">        r1 = rotateLeft(r1, 5);</span>
+<span class="fc" id="L1647">        r3 = rotateLeft(r3, 22);</span>
+<span class="fc" id="L1648">        r1 ^= serpent24SubKeys[52];</span>
+<span class="fc" id="L1649">        r4 ^= serpent24SubKeys[52 + 1];</span>
+<span class="fc" id="L1650">        r3 ^= serpent24SubKeys[52 + 2];</span>
+<span class="fc" id="L1651">        r2 ^= serpent24SubKeys[52 + 3];</span>
+<span class="fc" id="L1652">        r1 ^= r4;</span>
+<span class="fc" id="L1653">        r4 ^= r2;</span>
+<span class="fc" id="L1654">        r2 = ~r2;</span>
+<span class="fc" id="L1655">        r0 = r4;</span>
+<span class="fc" id="L1656">        r4 &amp;= r1;</span>
+<span class="fc" id="L1657">        r3 ^= r2;</span>
+<span class="fc" id="L1658">        r4 ^= r3;</span>
+<span class="fc" id="L1659">        r3 |= r0;</span>
+<span class="fc" id="L1660">        r0 ^= r2;</span>
+<span class="fc" id="L1661">        r2 &amp;= r4;</span>
+<span class="fc" id="L1662">        r2 ^= r1;</span>
+<span class="fc" id="L1663">        r0 ^= r4;</span>
+<span class="fc" id="L1664">        r0 ^= r3;</span>
+<span class="fc" id="L1665">        r3 ^= r1;</span>
+<span class="fc" id="L1666">        r1 &amp;= r2;</span>
+<span class="fc" id="L1667">        r3 = ~r3;</span>
+<span class="fc" id="L1668">        r1 ^= r0;</span>
+<span class="fc" id="L1669">        r0 |= r2;</span>
+<span class="fc" id="L1670">        r3 ^= r0;</span>
+<span class="fc" id="L1671">        r4 = rotateLeft(r4, 13);</span>
+<span class="fc" id="L1672">        r1 = rotateLeft(r1, 3);</span>
+<span class="fc" id="L1673">        r2 = r2 ^ r4 ^ r1;</span>
+<span class="fc" id="L1674">        r3 = r3 ^ r1 ^ (r4 &lt;&lt; 3);</span>
+<span class="fc" id="L1675">        r2 = rotateLeft(r2, 1);</span>
+<span class="fc" id="L1676">        r3 = rotateLeft(r3, 7);</span>
+<span class="fc" id="L1677">        r4 = r4 ^ r2 ^ r3;</span>
+<span class="fc" id="L1678">        r1 = r1 ^ r3 ^ (r2 &lt;&lt; 7);</span>
+<span class="fc" id="L1679">        r4 = rotateLeft(r4, 5);</span>
+<span class="fc" id="L1680">        r1 = rotateLeft(r1, 22);</span>
+<span class="fc" id="L1681">        r4 ^= serpent24SubKeys[56];</span>
+<span class="fc" id="L1682">        r2 ^= serpent24SubKeys[56 + 1];</span>
+<span class="fc" id="L1683">        r1 ^= serpent24SubKeys[56 + 2];</span>
+<span class="fc" id="L1684">        r3 ^= serpent24SubKeys[56 + 3];</span>
+<span class="fc" id="L1685">        r1 = ~r1;</span>
+<span class="fc" id="L1686">        r0 = r3;</span>
+<span class="fc" id="L1687">        r3 &amp;= r4;</span>
+<span class="fc" id="L1688">        r4 ^= r0;</span>
+<span class="fc" id="L1689">        r3 ^= r1;</span>
+<span class="fc" id="L1690">        r1 |= r0;</span>
+<span class="fc" id="L1691">        r2 ^= r3;</span>
+<span class="fc" id="L1692">        r1 ^= r4;</span>
+<span class="fc" id="L1693">        r4 |= r2;</span>
+<span class="fc" id="L1694">        r1 ^= r2;</span>
+<span class="fc" id="L1695">        r0 ^= r4;</span>
+<span class="fc" id="L1696">        r4 |= r3;</span>
+<span class="fc" id="L1697">        r4 ^= r1;</span>
+<span class="fc" id="L1698">        r0 ^= r3;</span>
+<span class="fc" id="L1699">        r0 ^= r4;</span>
+<span class="fc" id="L1700">        r3 = ~r3;</span>
+<span class="fc" id="L1701">        r1 &amp;= r0;</span>
+<span class="fc" id="L1702">        r1 ^= r3;</span>
+<span class="fc" id="L1703">        r4 = rotateLeft(r4, 13);</span>
+<span class="fc" id="L1704">        r0 = rotateLeft(r0, 3);</span>
+<span class="fc" id="L1705">        r2 = r2 ^ r4 ^ r0;</span>
+<span class="fc" id="L1706">        r1 = r1 ^ r0 ^ (r4 &lt;&lt; 3);</span>
+<span class="fc" id="L1707">        r2 = rotateLeft(r2, 1);</span>
+<span class="fc" id="L1708">        r1 = rotateLeft(r1, 7);</span>
+<span class="fc" id="L1709">        r4 = r4 ^ r2 ^ r1;</span>
+<span class="fc" id="L1710">        r0 = r0 ^ r1 ^ (r2 &lt;&lt; 7);</span>
+<span class="fc" id="L1711">        r4 = rotateLeft(r4, 5);</span>
+<span class="fc" id="L1712">        r0 = rotateLeft(r0, 22);</span>
+<span class="fc" id="L1713">        r4 ^= serpent24SubKeys[60];</span>
+<span class="fc" id="L1714">        r2 ^= serpent24SubKeys[60 + 1];</span>
+<span class="fc" id="L1715">        r0 ^= serpent24SubKeys[60 + 2];</span>
+<span class="fc" id="L1716">        r1 ^= serpent24SubKeys[60 + 3];</span>
+<span class="fc" id="L1717">        r3 = r2;</span>
+<span class="fc" id="L1718">        r2 |= r0;</span>
+<span class="fc" id="L1719">        r2 ^= r1;</span>
+<span class="fc" id="L1720">        r3 ^= r0;</span>
+<span class="fc" id="L1721">        r0 ^= r2;</span>
+<span class="fc" id="L1722">        r1 |= r3;</span>
+<span class="fc" id="L1723">        r1 &amp;= r4;</span>
+<span class="fc" id="L1724">        r3 ^= r0;</span>
+<span class="fc" id="L1725">        r1 ^= r2;</span>
+<span class="fc" id="L1726">        r2 |= r3;</span>
+<span class="fc" id="L1727">        r2 ^= r4;</span>
+<span class="fc" id="L1728">        r4 |= r3;</span>
+<span class="fc" id="L1729">        r4 ^= r0;</span>
+<span class="fc" id="L1730">        r2 ^= r3;</span>
+<span class="fc" id="L1731">        r0 ^= r2;</span>
+<span class="fc" id="L1732">        r2 &amp;= r4;</span>
+<span class="fc" id="L1733">        r2 ^= r3;</span>
+<span class="fc" id="L1734">        r0 = ~r0;</span>
+<span class="fc" id="L1735">        r0 |= r4;</span>
+<span class="fc" id="L1736">        r3 ^= r0;</span>
+<span class="fc" id="L1737">        r3 = rotateLeft(r3, 13);</span>
+<span class="fc" id="L1738">        r2 = rotateLeft(r2, 3);</span>
+<span class="fc" id="L1739">        r1 = r1 ^ r3 ^ r2;</span>
+<span class="fc" id="L1740">        r4 = r4 ^ r2 ^ (r3 &lt;&lt; 3);</span>
+<span class="fc" id="L1741">        r1 = rotateLeft(r1, 1);</span>
+<span class="fc" id="L1742">        r4 = rotateLeft(r4, 7);</span>
+<span class="fc" id="L1743">        r3 = r3 ^ r1 ^ r4;</span>
+<span class="fc" id="L1744">        r2 = r2 ^ r4 ^ (r1 &lt;&lt; 7);</span>
+<span class="fc" id="L1745">        r3 = rotateLeft(r3, 5);</span>
+<span class="fc" id="L1746">        r2 = rotateLeft(r2, 22);</span>
+<span class="fc" id="L1747">        r3 ^= serpent24SubKeys[64];</span>
+<span class="fc" id="L1748">        r1 ^= serpent24SubKeys[64 + 1];</span>
+<span class="fc" id="L1749">        r2 ^= serpent24SubKeys[64 + 2];</span>
+<span class="fc" id="L1750">        r4 ^= serpent24SubKeys[64 + 3];</span>
+<span class="fc" id="L1751">        r4 ^= r3;</span>
+<span class="fc" id="L1752">        r0 = r1;</span>
+<span class="fc" id="L1753">        r1 &amp;= r4;</span>
+<span class="fc" id="L1754">        r0 ^= r2;</span>
+<span class="fc" id="L1755">        r1 ^= r3;</span>
+<span class="fc" id="L1756">        r3 |= r4;</span>
+<span class="fc" id="L1757">        r3 ^= r0;</span>
+<span class="fc" id="L1758">        r0 ^= r4;</span>
+<span class="fc" id="L1759">        r4 ^= r2;</span>
+<span class="fc" id="L1760">        r2 |= r1;</span>
+<span class="fc" id="L1761">        r2 ^= r0;</span>
+<span class="fc" id="L1762">        r0 = ~r0;</span>
+<span class="fc" id="L1763">        r0 |= r1;</span>
+<span class="fc" id="L1764">        r1 ^= r4;</span>
+<span class="fc" id="L1765">        r1 ^= r0;</span>
+<span class="fc" id="L1766">        r4 |= r3;</span>
+<span class="fc" id="L1767">        r1 ^= r4;</span>
+<span class="fc" id="L1768">        r0 ^= r4;</span>
+<span class="fc" id="L1769">        r1 = rotateLeft(r1, 13);</span>
+<span class="fc" id="L1770">        r2 = rotateLeft(r2, 3);</span>
+<span class="fc" id="L1771">        r0 = r0 ^ r1 ^ r2;</span>
+<span class="fc" id="L1772">        r3 = r3 ^ r2 ^ (r1 &lt;&lt; 3);</span>
+<span class="fc" id="L1773">        r0 = rotateLeft(r0, 1);</span>
+<span class="fc" id="L1774">        r3 = rotateLeft(r3, 7);</span>
+<span class="fc" id="L1775">        r1 = r1 ^ r0 ^ r3;</span>
+<span class="fc" id="L1776">        r2 = r2 ^ r3 ^ (r0 &lt;&lt; 7);</span>
+<span class="fc" id="L1777">        r1 = rotateLeft(r1, 5);</span>
+<span class="fc" id="L1778">        r2 = rotateLeft(r2, 22);</span>
+<span class="fc" id="L1779">        r1 ^= serpent24SubKeys[68];</span>
+<span class="fc" id="L1780">        r0 ^= serpent24SubKeys[68 + 1];</span>
+<span class="fc" id="L1781">        r2 ^= serpent24SubKeys[68 + 2];</span>
+<span class="fc" id="L1782">        r3 ^= serpent24SubKeys[68 + 3];</span>
+<span class="fc" id="L1783">        r1 = ~r1;</span>
+<span class="fc" id="L1784">        r2 = ~r2;</span>
+<span class="fc" id="L1785">        r4 = r1;</span>
+<span class="fc" id="L1786">        r1 &amp;= r0;</span>
+<span class="fc" id="L1787">        r2 ^= r1;</span>
+<span class="fc" id="L1788">        r1 |= r3;</span>
+<span class="fc" id="L1789">        r3 ^= r2;</span>
+<span class="fc" id="L1790">        r0 ^= r1;</span>
+<span class="fc" id="L1791">        r1 ^= r4;</span>
+<span class="fc" id="L1792">        r4 |= r0;</span>
+<span class="fc" id="L1793">        r0 ^= r3;</span>
+<span class="fc" id="L1794">        r2 |= r1;</span>
+<span class="fc" id="L1795">        r2 &amp;= r4;</span>
+<span class="fc" id="L1796">        r1 ^= r0;</span>
+<span class="fc" id="L1797">        r0 &amp;= r2;</span>
+<span class="fc" id="L1798">        r0 ^= r1;</span>
+<span class="fc" id="L1799">        r1 &amp;= r2;</span>
+<span class="fc" id="L1800">        r1 ^= r4;</span>
+<span class="fc" id="L1801">        r2 = rotateLeft(r2, 13);</span>
+<span class="fc" id="L1802">        r3 = rotateLeft(r3, 3);</span>
+<span class="fc" id="L1803">        r1 = r1 ^ r2 ^ r3;</span>
+<span class="fc" id="L1804">        r0 = r0 ^ r3 ^ (r2 &lt;&lt; 3);</span>
+<span class="fc" id="L1805">        r1 = rotateLeft(r1, 1);</span>
+<span class="fc" id="L1806">        r0 = rotateLeft(r0, 7);</span>
+<span class="fc" id="L1807">        r2 = r2 ^ r1 ^ r0;</span>
+<span class="fc" id="L1808">        r3 = r3 ^ r0 ^ (r1 &lt;&lt; 7);</span>
+<span class="fc" id="L1809">        r2 = rotateLeft(r2, 5);</span>
+<span class="fc" id="L1810">        r3 = rotateLeft(r3, 22);</span>
+<span class="fc" id="L1811">        fsmR1 = r2;</span>
+<span class="fc" id="L1812">        lfsr4 = r1;</span>
+<span class="fc" id="L1813">        fsmR2 = r3;</span>
+<span class="fc" id="L1814">        lfsr5 = r0;</span>
+<span class="fc" id="L1815">        r2 ^= serpent24SubKeys[72];</span>
+<span class="fc" id="L1816">        r1 ^= serpent24SubKeys[72 + 1];</span>
+<span class="fc" id="L1817">        r3 ^= serpent24SubKeys[72 + 2];</span>
+<span class="fc" id="L1818">        r0 ^= serpent24SubKeys[72 + 3];</span>
+<span class="fc" id="L1819">        r4 = r2;</span>
+<span class="fc" id="L1820">        r2 &amp;= r3;</span>
+<span class="fc" id="L1821">        r2 ^= r0;</span>
+<span class="fc" id="L1822">        r3 ^= r1;</span>
+<span class="fc" id="L1823">        r3 ^= r2;</span>
+<span class="fc" id="L1824">        r0 |= r4;</span>
+<span class="fc" id="L1825">        r0 ^= r1;</span>
+<span class="fc" id="L1826">        r4 ^= r3;</span>
+<span class="fc" id="L1827">        r1 = r0;</span>
+<span class="fc" id="L1828">        r0 |= r4;</span>
+<span class="fc" id="L1829">        r0 ^= r2;</span>
+<span class="fc" id="L1830">        r2 &amp;= r1;</span>
+<span class="fc" id="L1831">        r4 ^= r2;</span>
+<span class="fc" id="L1832">        r1 ^= r0;</span>
+<span class="fc" id="L1833">        r1 ^= r4;</span>
+<span class="fc" id="L1834">        r4 = ~r4;</span>
+<span class="fc" id="L1835">        r3 = rotateLeft(r3, 13);</span>
+<span class="fc" id="L1836">        r1 = rotateLeft(r1, 3);</span>
+<span class="fc" id="L1837">        r0 = r0 ^ r3 ^ r1;</span>
+<span class="fc" id="L1838">        r4 = r4 ^ r1 ^ (r3 &lt;&lt; 3);</span>
+<span class="fc" id="L1839">        r0 = rotateLeft(r0, 1);</span>
+<span class="fc" id="L1840">        r4 = rotateLeft(r4, 7);</span>
+<span class="fc" id="L1841">        r3 = r3 ^ r0 ^ r4;</span>
+<span class="fc" id="L1842">        r1 = r1 ^ r4 ^ (r0 &lt;&lt; 7);</span>
+<span class="fc" id="L1843">        r3 = rotateLeft(r3, 5);</span>
+<span class="fc" id="L1844">        r1 = rotateLeft(r1, 22);</span>
+<span class="fc" id="L1845">        r3 ^= serpent24SubKeys[76];</span>
+<span class="fc" id="L1846">        r0 ^= serpent24SubKeys[76 + 1];</span>
+<span class="fc" id="L1847">        r1 ^= serpent24SubKeys[76 + 2];</span>
+<span class="fc" id="L1848">        r4 ^= serpent24SubKeys[76 + 3];</span>
+<span class="fc" id="L1849">        r2 = r3;</span>
+<span class="fc" id="L1850">        r3 |= r4;</span>
+<span class="fc" id="L1851">        r4 ^= r0;</span>
+<span class="fc" id="L1852">        r0 &amp;= r2;</span>
+<span class="fc" id="L1853">        r2 ^= r1;</span>
+<span class="fc" id="L1854">        r1 ^= r4;</span>
+<span class="fc" id="L1855">        r4 &amp;= r3;</span>
+<span class="fc" id="L1856">        r2 |= r0;</span>
+<span class="fc" id="L1857">        r4 ^= r2;</span>
+<span class="fc" id="L1858">        r3 ^= r0;</span>
+<span class="fc" id="L1859">        r2 &amp;= r3;</span>
+<span class="fc" id="L1860">        r0 ^= r4;</span>
+<span class="fc" id="L1861">        r2 ^= r1;</span>
+<span class="fc" id="L1862">        r0 |= r3;</span>
+<span class="fc" id="L1863">        r0 ^= r1;</span>
+<span class="fc" id="L1864">        r3 ^= r4;</span>
+<span class="fc" id="L1865">        r1 = r0;</span>
+<span class="fc" id="L1866">        r0 |= r4;</span>
+<span class="fc" id="L1867">        r0 ^= r3;</span>
+<span class="fc" id="L1868">        r0 = rotateLeft(r0, 13);</span>
+<span class="fc" id="L1869">        r4 = rotateLeft(r4, 3);</span>
+<span class="fc" id="L1870">        r1 = r1 ^ r0 ^ r4;</span>
+<span class="fc" id="L1871">        r2 = r2 ^ r4 ^ (r0 &lt;&lt; 3);</span>
+<span class="fc" id="L1872">        r1 = rotateLeft(r1, 1);</span>
+<span class="fc" id="L1873">        r2 = rotateLeft(r2, 7);</span>
+<span class="fc" id="L1874">        r0 = r0 ^ r1 ^ r2;</span>
+<span class="fc" id="L1875">        r4 = r4 ^ r2 ^ (r1 &lt;&lt; 7);</span>
+<span class="fc" id="L1876">        r0 = rotateLeft(r0, 5);</span>
+<span class="fc" id="L1877">        r4 = rotateLeft(r4, 22);</span>
+<span class="fc" id="L1878">        r0 ^= serpent24SubKeys[80];</span>
+<span class="fc" id="L1879">        r1 ^= serpent24SubKeys[80 + 1];</span>
+<span class="fc" id="L1880">        r4 ^= serpent24SubKeys[80 + 2];</span>
+<span class="fc" id="L1881">        r2 ^= serpent24SubKeys[80 + 3];</span>
+<span class="fc" id="L1882">        r1 ^= r2;</span>
+<span class="fc" id="L1883">        r2 = ~r2;</span>
+<span class="fc" id="L1884">        r4 ^= r2;</span>
+<span class="fc" id="L1885">        r2 ^= r0;</span>
+<span class="fc" id="L1886">        r3 = r1;</span>
+<span class="fc" id="L1887">        r1 &amp;= r2;</span>
+<span class="fc" id="L1888">        r1 ^= r4;</span>
+<span class="fc" id="L1889">        r3 ^= r2;</span>
+<span class="fc" id="L1890">        r0 ^= r3;</span>
+<span class="fc" id="L1891">        r4 &amp;= r3;</span>
+<span class="fc" id="L1892">        r4 ^= r0;</span>
+<span class="fc" id="L1893">        r0 &amp;= r1;</span>
+<span class="fc" id="L1894">        r2 ^= r0;</span>
+<span class="fc" id="L1895">        r3 |= r1;</span>
+<span class="fc" id="L1896">        r3 ^= r0;</span>
+<span class="fc" id="L1897">        r0 |= r2;</span>
+<span class="fc" id="L1898">        r0 ^= r4;</span>
+<span class="fc" id="L1899">        r4 &amp;= r2;</span>
+<span class="fc" id="L1900">        r0 = ~r0;</span>
+<span class="fc" id="L1901">        r3 ^= r4;</span>
+<span class="fc" id="L1902">        r1 = rotateLeft(r1, 13);</span>
+<span class="fc" id="L1903">        r0 = rotateLeft(r0, 3);</span>
+<span class="fc" id="L1904">        r3 = r3 ^ r1 ^ r0;</span>
+<span class="fc" id="L1905">        r2 = r2 ^ r0 ^ (r1 &lt;&lt; 3);</span>
+<span class="fc" id="L1906">        r3 = rotateLeft(r3, 1);</span>
+<span class="fc" id="L1907">        r2 = rotateLeft(r2, 7);</span>
+<span class="fc" id="L1908">        r1 = r1 ^ r3 ^ r2;</span>
+<span class="fc" id="L1909">        r0 = r0 ^ r2 ^ (r3 &lt;&lt; 7);</span>
+<span class="fc" id="L1910">        r1 = rotateLeft(r1, 5);</span>
+<span class="fc" id="L1911">        r0 = rotateLeft(r0, 22);</span>
+<span class="fc" id="L1912">        r1 ^= serpent24SubKeys[84];</span>
+<span class="fc" id="L1913">        r3 ^= serpent24SubKeys[84 + 1];</span>
+<span class="fc" id="L1914">        r0 ^= serpent24SubKeys[84 + 2];</span>
+<span class="fc" id="L1915">        r2 ^= serpent24SubKeys[84 + 3];</span>
+<span class="fc" id="L1916">        r1 ^= r3;</span>
+<span class="fc" id="L1917">        r3 ^= r2;</span>
+<span class="fc" id="L1918">        r2 = ~r2;</span>
+<span class="fc" id="L1919">        r4 = r3;</span>
+<span class="fc" id="L1920">        r3 &amp;= r1;</span>
+<span class="fc" id="L1921">        r0 ^= r2;</span>
+<span class="fc" id="L1922">        r3 ^= r0;</span>
+<span class="fc" id="L1923">        r0 |= r4;</span>
+<span class="fc" id="L1924">        r4 ^= r2;</span>
+<span class="fc" id="L1925">        r2 &amp;= r3;</span>
+<span class="fc" id="L1926">        r2 ^= r1;</span>
+<span class="fc" id="L1927">        r4 ^= r3;</span>
+<span class="fc" id="L1928">        r4 ^= r0;</span>
+<span class="fc" id="L1929">        r0 ^= r1;</span>
+<span class="fc" id="L1930">        r1 &amp;= r2;</span>
+<span class="fc" id="L1931">        r0 = ~r0;</span>
+<span class="fc" id="L1932">        r1 ^= r4;</span>
+<span class="fc" id="L1933">        r4 |= r2;</span>
+<span class="fc" id="L1934">        r0 ^= r4;</span>
+<span class="fc" id="L1935">        r3 = rotateLeft(r3, 13);</span>
+<span class="fc" id="L1936">        r1 = rotateLeft(r1, 3);</span>
+<span class="fc" id="L1937">        r2 = r2 ^ r3 ^ r1;</span>
+<span class="fc" id="L1938">        r0 = r0 ^ r1 ^ (r3 &lt;&lt; 3);</span>
+<span class="fc" id="L1939">        r2 = rotateLeft(r2, 1);</span>
+<span class="fc" id="L1940">        r0 = rotateLeft(r0, 7);</span>
+<span class="fc" id="L1941">        r3 = r3 ^ r2 ^ r0;</span>
+<span class="fc" id="L1942">        r1 = r1 ^ r0 ^ (r2 &lt;&lt; 7);</span>
+<span class="fc" id="L1943">        r3 = rotateLeft(r3, 5);</span>
+<span class="fc" id="L1944">        r1 = rotateLeft(r1, 22);</span>
+<span class="fc" id="L1945">        r3 ^= serpent24SubKeys[88];</span>
+<span class="fc" id="L1946">        r2 ^= serpent24SubKeys[88 + 1];</span>
+<span class="fc" id="L1947">        r1 ^= serpent24SubKeys[88 + 2];</span>
+<span class="fc" id="L1948">        r0 ^= serpent24SubKeys[88 + 3];</span>
+<span class="fc" id="L1949">        r1 = ~r1;</span>
+<span class="fc" id="L1950">        r4 = r0;</span>
+<span class="fc" id="L1951">        r0 &amp;= r3;</span>
+<span class="fc" id="L1952">        r3 ^= r4;</span>
+<span class="fc" id="L1953">        r0 ^= r1;</span>
+<span class="fc" id="L1954">        r1 |= r4;</span>
+<span class="fc" id="L1955">        r2 ^= r0;</span>
+<span class="fc" id="L1956">        r1 ^= r3;</span>
+<span class="fc" id="L1957">        r3 |= r2;</span>
+<span class="fc" id="L1958">        r1 ^= r2;</span>
+<span class="fc" id="L1959">        r4 ^= r3;</span>
+<span class="fc" id="L1960">        r3 |= r0;</span>
+<span class="fc" id="L1961">        r3 ^= r1;</span>
+<span class="fc" id="L1962">        r4 ^= r0;</span>
+<span class="fc" id="L1963">        r4 ^= r3;</span>
+<span class="fc" id="L1964">        r0 = ~r0;</span>
+<span class="fc" id="L1965">        r1 &amp;= r4;</span>
+<span class="fc" id="L1966">        r1 ^= r0;</span>
+<span class="fc" id="L1967">        r3 = rotateLeft(r3, 13);</span>
+<span class="fc" id="L1968">        r4 = rotateLeft(r4, 3);</span>
+<span class="fc" id="L1969">        r2 = r2 ^ r3 ^ r4;</span>
+<span class="fc" id="L1970">        r1 = r1 ^ r4 ^ (r3 &lt;&lt; 3);</span>
+<span class="fc" id="L1971">        r2 = rotateLeft(r2, 1);</span>
+<span class="fc" id="L1972">        r1 = rotateLeft(r1, 7);</span>
+<span class="fc" id="L1973">        r3 = r3 ^ r2 ^ r1;</span>
+<span class="fc" id="L1974">        r4 = r4 ^ r1 ^ (r2 &lt;&lt; 7);</span>
+<span class="fc" id="L1975">        r3 = rotateLeft(r3, 5);</span>
+<span class="fc" id="L1976">        r4 = rotateLeft(r4, 22);</span>
+<span class="fc" id="L1977">        r3 ^= serpent24SubKeys[92];</span>
+<span class="fc" id="L1978">        r2 ^= serpent24SubKeys[92 + 1];</span>
+<span class="fc" id="L1979">        r4 ^= serpent24SubKeys[92 + 2];</span>
+<span class="fc" id="L1980">        r1 ^= serpent24SubKeys[92 + 3];</span>
+<span class="fc" id="L1981">        r0 = r2;</span>
+<span class="fc" id="L1982">        r2 |= r4;</span>
+<span class="fc" id="L1983">        r2 ^= r1;</span>
+<span class="fc" id="L1984">        r0 ^= r4;</span>
+<span class="fc" id="L1985">        r4 ^= r2;</span>
+<span class="fc" id="L1986">        r1 |= r0;</span>
+<span class="fc" id="L1987">        r1 &amp;= r3;</span>
+<span class="fc" id="L1988">        r0 ^= r4;</span>
+<span class="fc" id="L1989">        r1 ^= r2;</span>
+<span class="fc" id="L1990">        r2 |= r0;</span>
+<span class="fc" id="L1991">        r2 ^= r3;</span>
+<span class="fc" id="L1992">        r3 |= r0;</span>
+<span class="fc" id="L1993">        r3 ^= r4;</span>
+<span class="fc" id="L1994">        r2 ^= r0;</span>
+<span class="fc" id="L1995">        r4 ^= r2;</span>
+<span class="fc" id="L1996">        r2 &amp;= r3;</span>
+<span class="fc" id="L1997">        r2 ^= r0;</span>
+<span class="fc" id="L1998">        r4 = ~r4;</span>
+<span class="fc" id="L1999">        r4 |= r3;</span>
+<span class="fc" id="L2000">        r0 ^= r4;</span>
+<span class="fc" id="L2001">        r0 = rotateLeft(r0, 13);</span>
+<span class="fc" id="L2002">        r2 = rotateLeft(r2, 3);</span>
+<span class="fc" id="L2003">        r1 = r1 ^ r0 ^ r2;</span>
+<span class="fc" id="L2004">        r3 = r3 ^ r2 ^ (r0 &lt;&lt; 3);</span>
+<span class="fc" id="L2005">        r1 = rotateLeft(r1, 1);</span>
+<span class="fc" id="L2006">        r3 = rotateLeft(r3, 7);</span>
+<span class="fc" id="L2007">        r0 = r0 ^ r1 ^ r3;</span>
+<span class="fc" id="L2008">        r2 = r2 ^ r3 ^ (r1 &lt;&lt; 7);</span>
+<span class="fc" id="L2009">        r0 = rotateLeft(r0, 5);</span>
+<span class="fc" id="L2010">        r2 = rotateLeft(r2, 22);</span>
+<span class="fc" id="L2011">        r0 ^= serpent24SubKeys[96];</span>
+<span class="fc" id="L2012">        r1 ^= serpent24SubKeys[96 + 1];</span>
+<span class="fc" id="L2013">        r2 ^= serpent24SubKeys[96 + 2];</span>
+<span class="fc" id="L2014">        r3 ^= serpent24SubKeys[96 + 3];</span>
+<span class="fc" id="L2015">        lfsr3 = r0;</span>
+<span class="fc" id="L2016">        lfsr2 = r1;</span>
+<span class="fc" id="L2017">        lfsr1 = r2;</span>
+<span class="fc" id="L2018">        lfsr0 = r3;</span>
+<span class="fc" id="L2019">    }</span>
+
+    /**
+     * mulAlpha[] is used to multiply a word by alpha; mulAlpha[x]
+     * is equal to x * alpha^4.
+     */
+<span class="fc" id="L2025">    private static final int[] MUL_ALPHA = new int[256];</span>
+
+    /**
+     * divAlpha[] is used to divide a word by alpha; divAlpha[x]
+     * is equal to x / alpha.
+     */
+<span class="fc" id="L2031">    private static final int[] DIV_ALPHA = new int[256];</span>
+
+    static {
+        /*
+         * We first build exponential and logarithm tables
+         * relatively to beta in F_{2^8}. We set log(0x00) = 0xFF
+         * conventionaly, but this is actually not used in our
+         * computations.
+         */
+<span class="fc" id="L2040">        final int[] expb = new int[256];</span>
+<span class="fc bfc" id="L2041" title="All 2 branches covered.">        for (int i = 0, x = 0x01; i &lt; 0xFF; i++) {</span>
+<span class="fc" id="L2042">            expb[i] = x;</span>
+<span class="fc" id="L2043">            x &lt;&lt;= 1;</span>
+<span class="fc bfc" id="L2044" title="All 2 branches covered.">            if (x &gt; 0xFF) {</span>
+<span class="fc" id="L2045">                x ^= 0x1A9;</span>
+            }
+        }
+<span class="fc" id="L2048">        expb[0xFF] = 0x00;</span>
+<span class="fc" id="L2049">        final int[] logb = new int[256];</span>
+<span class="fc bfc" id="L2050" title="All 2 branches covered.">        for (int i = 0; i &lt; 0x100; i++) {</span>
+<span class="fc" id="L2051">            logb[expb[i]] = i;</span>
+        }
+
+        /*
+         * We now compute mulAlpha[] and divAlpha[]. For all
+         * x != 0, we work with invertible numbers, which are
+         * as such powers of beta. Multiplication (in F_{2^8})
+         * is then implemented as integer addition modulo 255,
+         * over the exponents computed by the logb[] table.
+         *
+         * We have the following equations:
+         * alpha^4 = beta^23 * alpha^3 + beta^245 * alpha^2
+         *           + beta^48 * alpha + beta^239
+         * 1/alpha = beta^16 * alpha^3 + beta^39 * alpha^2
+         *           + beta^6 * alpha + beta^64
+         */
+<span class="fc" id="L2067">        MUL_ALPHA[0x00] = 0x00000000;</span>
+<span class="fc" id="L2068">        DIV_ALPHA[0x00] = 0x00000000;</span>
+<span class="fc bfc" id="L2069" title="All 2 branches covered.">        for (int x = 1; x &lt; 0x100; x++) {</span>
+<span class="fc" id="L2070">            final int ex = logb[x];</span>
+<span class="fc" id="L2071">            MUL_ALPHA[x] = (expb[(ex + 23) % 255] &lt;&lt; 24)</span>
+                    | (expb[(ex + 245) % 255] &lt;&lt; 16)
+                    | (expb[(ex + 48) % 255] &lt;&lt; 8)
+                    | expb[(ex + 239) % 255];
+<span class="fc" id="L2075">            DIV_ALPHA[x] = (expb[(ex + 16) % 255] &lt;&lt; 24)</span>
+                    | (expb[(ex + 39) % 255] &lt;&lt; 16)
+                    | (expb[(ex + 6) % 255] &lt;&lt; 8)
+                    | expb[(ex + 64) % 255];
+        }
+<span class="fc" id="L2080">    }</span>
+
+    /**
+     * Produce 80 bytes of output stream into the provided buffer.
+     *
+     * @param buf the output buffer
+     * @param off the output offset
+     */
+    @SuppressWarnings(&quot;checkstyle:MethodLength&quot;)
+    private void makeStreamBlock(final byte[] buf, final int off) {
+<span class="fc" id="L2090">        int s0 = lfsr0;</span>
+<span class="fc" id="L2091">        int s1 = lfsr1;</span>
+<span class="fc" id="L2092">        int s2 = lfsr2;</span>
+<span class="fc" id="L2093">        int s3 = lfsr3;</span>
+<span class="fc" id="L2094">        int s4 = lfsr4;</span>
+<span class="fc" id="L2095">        int s5 = lfsr5;</span>
+<span class="fc" id="L2096">        int s6 = lfsr6;</span>
+<span class="fc" id="L2097">        int s7 = lfsr7;</span>
+<span class="fc" id="L2098">        int s8 = lfsr8;</span>
+<span class="fc" id="L2099">        int s9 = lfsr9;</span>
+<span class="fc" id="L2100">        int r1 = fsmR1;</span>
+<span class="fc" id="L2101">        int r2 = fsmR2;</span>
+
+<span class="fc" id="L2103">        int tt = r1;</span>
+<span class="fc bfc" id="L2104" title="All 2 branches covered.">        r1 = r2 + (s1 ^ ((r1 &amp; 0x01) != 0 ? s8 : 0));</span>
+<span class="fc" id="L2105">        r2 = rotateLeft(tt * 0x54655307, 7);</span>
+<span class="fc" id="L2106">        int v0 = s0;</span>
+<span class="fc" id="L2107">        s0 = ((s0 &lt;&lt; 8) ^ MUL_ALPHA[s0 &gt;&gt;&gt; 24])</span>
+                ^ ((s3 &gt;&gt;&gt; 8) ^ DIV_ALPHA[s3 &amp; 0xFF]) ^ s9;
+<span class="fc" id="L2109">        int f0 = (s9 + r1) ^ r2;</span>
+
+<span class="fc" id="L2111">        tt = r1;</span>
+<span class="fc bfc" id="L2112" title="All 2 branches covered.">        r1 = r2 + (s2 ^ ((r1 &amp; 0x01) != 0 ? s9 : 0));</span>
+<span class="fc" id="L2113">        r2 = rotateLeft(tt * 0x54655307, 7);</span>
+<span class="fc" id="L2114">        int v1 = s1;</span>
+<span class="fc" id="L2115">        s1 = ((s1 &lt;&lt; 8) ^ MUL_ALPHA[s1 &gt;&gt;&gt; 24])</span>
+                ^ ((s4 &gt;&gt;&gt; 8) ^ DIV_ALPHA[s4 &amp; 0xFF]) ^ s0;
+<span class="fc" id="L2117">        int f1 = (s0 + r1) ^ r2;</span>
+
+<span class="fc" id="L2119">        tt = r1;</span>
+<span class="fc bfc" id="L2120" title="All 2 branches covered.">        r1 = r2 + (s3 ^ ((r1 &amp; 0x01) != 0 ? s0 : 0));</span>
+<span class="fc" id="L2121">        r2 = rotateLeft(tt * 0x54655307, 7);</span>
+<span class="fc" id="L2122">        int v2 = s2;</span>
+<span class="fc" id="L2123">        s2 = ((s2 &lt;&lt; 8) ^ MUL_ALPHA[s2 &gt;&gt;&gt; 24])</span>
+                ^ ((s5 &gt;&gt;&gt; 8) ^ DIV_ALPHA[s5 &amp; 0xFF]) ^ s1;
+<span class="fc" id="L2125">        int f2 = (s1 + r1) ^ r2;</span>
+
+<span class="fc" id="L2127">        tt = r1;</span>
+<span class="fc bfc" id="L2128" title="All 2 branches covered.">        r1 = r2 + (s4 ^ ((r1 &amp; 0x01) != 0 ? s1 : 0));</span>
+<span class="fc" id="L2129">        r2 = rotateLeft(tt * 0x54655307, 7);</span>
+<span class="fc" id="L2130">        int v3 = s3;</span>
+<span class="fc" id="L2131">        s3 = ((s3 &lt;&lt; 8) ^ MUL_ALPHA[s3 &gt;&gt;&gt; 24])</span>
+                ^ ((s6 &gt;&gt;&gt; 8) ^ DIV_ALPHA[s6 &amp; 0xFF]) ^ s2;
+<span class="fc" id="L2133">        int f3 = (s2 + r1) ^ r2;</span>
+
+        /*
+         * Apply the third S-box (number 2) on (f3, f2, f1, f0).
+         */
+<span class="fc" id="L2138">        int f4 = f0;</span>
+<span class="fc" id="L2139">        f0 &amp;= f2;</span>
+<span class="fc" id="L2140">        f0 ^= f3;</span>
+<span class="fc" id="L2141">        f2 ^= f1;</span>
+<span class="fc" id="L2142">        f2 ^= f0;</span>
+<span class="fc" id="L2143">        f3 |= f4;</span>
+<span class="fc" id="L2144">        f3 ^= f1;</span>
+<span class="fc" id="L2145">        f4 ^= f2;</span>
+<span class="fc" id="L2146">        f1 = f3;</span>
+<span class="fc" id="L2147">        f3 |= f4;</span>
+<span class="fc" id="L2148">        f3 ^= f0;</span>
+<span class="fc" id="L2149">        f0 &amp;= f1;</span>
+<span class="fc" id="L2150">        f4 ^= f0;</span>
+<span class="fc" id="L2151">        f1 ^= f3;</span>
+<span class="fc" id="L2152">        f1 ^= f4;</span>
+<span class="fc" id="L2153">        f4 = ~f4;</span>
+
+        /*
+         * S-box result is in (f2, f3, f1, f4).
+         */
+<span class="fc" id="L2158">        encode32le(f2 ^ v0, buf, off);</span>
+<span class="fc" id="L2159">        encode32le(f3 ^ v1, buf, off + 4);</span>
+<span class="fc" id="L2160">        encode32le(f1 ^ v2, buf, off + 8);</span>
+<span class="fc" id="L2161">        encode32le(f4 ^ v3, buf, off + 12);</span>
+
+<span class="fc" id="L2163">        tt = r1;</span>
+<span class="fc bfc" id="L2164" title="All 2 branches covered.">        r1 = r2 + (s5 ^ ((r1 &amp; 0x01) != 0 ? s2 : 0));</span>
+<span class="fc" id="L2165">        r2 = rotateLeft(tt * 0x54655307, 7);</span>
+<span class="fc" id="L2166">        v0 = s4;</span>
+<span class="fc" id="L2167">        s4 = ((s4 &lt;&lt; 8) ^ MUL_ALPHA[s4 &gt;&gt;&gt; 24])</span>
+                ^ ((s7 &gt;&gt;&gt; 8) ^ DIV_ALPHA[s7 &amp; 0xFF]) ^ s3;
+<span class="fc" id="L2169">        f0 = (s3 + r1) ^ r2;</span>
+
+<span class="fc" id="L2171">        tt = r1;</span>
+<span class="fc bfc" id="L2172" title="All 2 branches covered.">        r1 = r2 + (s6 ^ ((r1 &amp; 0x01) != 0 ? s3 : 0));</span>
+<span class="fc" id="L2173">        r2 = rotateLeft(tt * 0x54655307, 7);</span>
+<span class="fc" id="L2174">        v1 = s5;</span>
+<span class="fc" id="L2175">        s5 = ((s5 &lt;&lt; 8) ^ MUL_ALPHA[s5 &gt;&gt;&gt; 24])</span>
+                ^ ((s8 &gt;&gt;&gt; 8) ^ DIV_ALPHA[s8 &amp; 0xFF]) ^ s4;
+<span class="fc" id="L2177">        f1 = (s4 + r1) ^ r2;</span>
+
+<span class="fc" id="L2179">        tt = r1;</span>
+<span class="fc bfc" id="L2180" title="All 2 branches covered.">        r1 = r2 + (s7 ^ ((r1 &amp; 0x01) != 0 ? s4 : 0));</span>
+<span class="fc" id="L2181">        r2 = rotateLeft(tt * 0x54655307, 7);</span>
+<span class="fc" id="L2182">        v2 = s6;</span>
+<span class="fc" id="L2183">        s6 = ((s6 &lt;&lt; 8) ^ MUL_ALPHA[s6 &gt;&gt;&gt; 24])</span>
+                ^ ((s9 &gt;&gt;&gt; 8) ^ DIV_ALPHA[s9 &amp; 0xFF]) ^ s5;
+<span class="fc" id="L2185">        f2 = (s5 + r1) ^ r2;</span>
+
+<span class="fc" id="L2187">        tt = r1;</span>
+<span class="fc bfc" id="L2188" title="All 2 branches covered.">        r1 = r2 + (s8 ^ ((r1 &amp; 0x01) != 0 ? s5 : 0));</span>
+<span class="fc" id="L2189">        r2 = rotateLeft(tt * 0x54655307, 7);</span>
+<span class="fc" id="L2190">        v3 = s7;</span>
+<span class="fc" id="L2191">        s7 = ((s7 &lt;&lt; 8) ^ MUL_ALPHA[s7 &gt;&gt;&gt; 24])</span>
+                ^ ((s0 &gt;&gt;&gt; 8) ^ DIV_ALPHA[s0 &amp; 0xFF]) ^ s6;
+<span class="fc" id="L2193">        f3 = (s6 + r1) ^ r2;</span>
+
+        /*
+         * Apply the third S-box (number 2) on (f3, f2, f1, f0).
+         */
+<span class="fc" id="L2198">        f4 = f0;</span>
+<span class="fc" id="L2199">        f0 &amp;= f2;</span>
+<span class="fc" id="L2200">        f0 ^= f3;</span>
+<span class="fc" id="L2201">        f2 ^= f1;</span>
+<span class="fc" id="L2202">        f2 ^= f0;</span>
+<span class="fc" id="L2203">        f3 |= f4;</span>
+<span class="fc" id="L2204">        f3 ^= f1;</span>
+<span class="fc" id="L2205">        f4 ^= f2;</span>
+<span class="fc" id="L2206">        f1 = f3;</span>
+<span class="fc" id="L2207">        f3 |= f4;</span>
+<span class="fc" id="L2208">        f3 ^= f0;</span>
+<span class="fc" id="L2209">        f0 &amp;= f1;</span>
+<span class="fc" id="L2210">        f4 ^= f0;</span>
+<span class="fc" id="L2211">        f1 ^= f3;</span>
+<span class="fc" id="L2212">        f1 ^= f4;</span>
+<span class="fc" id="L2213">        f4 = ~f4;</span>
+
+        /*
+         * S-box result is in (f2, f3, f1, f4).
+         */
+<span class="fc" id="L2218">        encode32le(f2 ^ v0, buf, off + 16);</span>
+<span class="fc" id="L2219">        encode32le(f3 ^ v1, buf, off + 20);</span>
+<span class="fc" id="L2220">        encode32le(f1 ^ v2, buf, off + 24);</span>
+<span class="fc" id="L2221">        encode32le(f4 ^ v3, buf, off + 28);</span>
+
+<span class="fc" id="L2223">        tt = r1;</span>
+<span class="fc bfc" id="L2224" title="All 2 branches covered.">        r1 = r2 + (s9 ^ ((r1 &amp; 0x01) != 0 ? s6 : 0));</span>
+<span class="fc" id="L2225">        r2 = rotateLeft(tt * 0x54655307, 7);</span>
+<span class="fc" id="L2226">        v0 = s8;</span>
+<span class="fc" id="L2227">        s8 = ((s8 &lt;&lt; 8) ^ MUL_ALPHA[s8 &gt;&gt;&gt; 24])</span>
+                ^ ((s1 &gt;&gt;&gt; 8) ^ DIV_ALPHA[s1 &amp; 0xFF]) ^ s7;
+<span class="fc" id="L2229">        f0 = (s7 + r1) ^ r2;</span>
+
+<span class="fc" id="L2231">        tt = r1;</span>
+<span class="fc bfc" id="L2232" title="All 2 branches covered.">        r1 = r2 + (s0 ^ ((r1 &amp; 0x01) != 0 ? s7 : 0));</span>
+<span class="fc" id="L2233">        r2 = rotateLeft(tt * 0x54655307, 7);</span>
+<span class="fc" id="L2234">        v1 = s9;</span>
+<span class="fc" id="L2235">        s9 = ((s9 &lt;&lt; 8) ^ MUL_ALPHA[s9 &gt;&gt;&gt; 24])</span>
+                ^ ((s2 &gt;&gt;&gt; 8) ^ DIV_ALPHA[s2 &amp; 0xFF]) ^ s8;
+<span class="fc" id="L2237">        f1 = (s8 + r1) ^ r2;</span>
+
+<span class="fc" id="L2239">        tt = r1;</span>
+<span class="fc bfc" id="L2240" title="All 2 branches covered.">        r1 = r2 + (s1 ^ ((r1 &amp; 0x01) != 0 ? s8 : 0));</span>
+<span class="fc" id="L2241">        r2 = rotateLeft(tt * 0x54655307, 7);</span>
+<span class="fc" id="L2242">        v2 = s0;</span>
+<span class="fc" id="L2243">        s0 = ((s0 &lt;&lt; 8) ^ MUL_ALPHA[s0 &gt;&gt;&gt; 24])</span>
+                ^ ((s3 &gt;&gt;&gt; 8) ^ DIV_ALPHA[s3 &amp; 0xFF]) ^ s9;
+<span class="fc" id="L2245">        f2 = (s9 + r1) ^ r2;</span>
+
+<span class="fc" id="L2247">        tt = r1;</span>
+<span class="fc bfc" id="L2248" title="All 2 branches covered.">        r1 = r2 + (s2 ^ ((r1 &amp; 0x01) != 0 ? s9 : 0));</span>
+<span class="fc" id="L2249">        r2 = rotateLeft(tt * 0x54655307, 7);</span>
+<span class="fc" id="L2250">        v3 = s1;</span>
+<span class="fc" id="L2251">        s1 = ((s1 &lt;&lt; 8) ^ MUL_ALPHA[s1 &gt;&gt;&gt; 24])</span>
+                ^ ((s4 &gt;&gt;&gt; 8) ^ DIV_ALPHA[s4 &amp; 0xFF]) ^ s0;
+<span class="fc" id="L2253">        f3 = (s0 + r1) ^ r2;</span>
+
+        /*
+         * Apply the third S-box (number 2) on (f3, f2, f1, f0).
+         */
+<span class="fc" id="L2258">        f4 = f0;</span>
+<span class="fc" id="L2259">        f0 &amp;= f2;</span>
+<span class="fc" id="L2260">        f0 ^= f3;</span>
+<span class="fc" id="L2261">        f2 ^= f1;</span>
+<span class="fc" id="L2262">        f2 ^= f0;</span>
+<span class="fc" id="L2263">        f3 |= f4;</span>
+<span class="fc" id="L2264">        f3 ^= f1;</span>
+<span class="fc" id="L2265">        f4 ^= f2;</span>
+<span class="fc" id="L2266">        f1 = f3;</span>
+<span class="fc" id="L2267">        f3 |= f4;</span>
+<span class="fc" id="L2268">        f3 ^= f0;</span>
+<span class="fc" id="L2269">        f0 &amp;= f1;</span>
+<span class="fc" id="L2270">        f4 ^= f0;</span>
+<span class="fc" id="L2271">        f1 ^= f3;</span>
+<span class="fc" id="L2272">        f1 ^= f4;</span>
+<span class="fc" id="L2273">        f4 = ~f4;</span>
+
+        /*
+         * S-box result is in (f2, f3, f1, f4).
+         */
+<span class="fc" id="L2278">        encode32le(f2 ^ v0, buf, off + 32);</span>
+<span class="fc" id="L2279">        encode32le(f3 ^ v1, buf, off + 36);</span>
+<span class="fc" id="L2280">        encode32le(f1 ^ v2, buf, off + 40);</span>
+<span class="fc" id="L2281">        encode32le(f4 ^ v3, buf, off + 44);</span>
+
+<span class="fc" id="L2283">        tt = r1;</span>
+<span class="fc bfc" id="L2284" title="All 2 branches covered.">        r1 = r2 + (s3 ^ ((r1 &amp; 0x01) != 0 ? s0 : 0));</span>
+<span class="fc" id="L2285">        r2 = rotateLeft(tt * 0x54655307, 7);</span>
+<span class="fc" id="L2286">        v0 = s2;</span>
+<span class="fc" id="L2287">        s2 = ((s2 &lt;&lt; 8) ^ MUL_ALPHA[s2 &gt;&gt;&gt; 24])</span>
+                ^ ((s5 &gt;&gt;&gt; 8) ^ DIV_ALPHA[s5 &amp; 0xFF]) ^ s1;
+<span class="fc" id="L2289">        f0 = (s1 + r1) ^ r2;</span>
+
+<span class="fc" id="L2291">        tt = r1;</span>
+<span class="fc bfc" id="L2292" title="All 2 branches covered.">        r1 = r2 + (s4 ^ ((r1 &amp; 0x01) != 0 ? s1 : 0));</span>
+<span class="fc" id="L2293">        r2 = rotateLeft(tt * 0x54655307, 7);</span>
+<span class="fc" id="L2294">        v1 = s3;</span>
+<span class="fc" id="L2295">        s3 = ((s3 &lt;&lt; 8) ^ MUL_ALPHA[s3 &gt;&gt;&gt; 24])</span>
+                ^ ((s6 &gt;&gt;&gt; 8) ^ DIV_ALPHA[s6 &amp; 0xFF]) ^ s2;
+<span class="fc" id="L2297">        f1 = (s2 + r1) ^ r2;</span>
+
+<span class="fc" id="L2299">        tt = r1;</span>
+<span class="fc bfc" id="L2300" title="All 2 branches covered.">        r1 = r2 + (s5 ^ ((r1 &amp; 0x01) != 0 ? s2 : 0));</span>
+<span class="fc" id="L2301">        r2 = rotateLeft(tt * 0x54655307, 7);</span>
+<span class="fc" id="L2302">        v2 = s4;</span>
+<span class="fc" id="L2303">        s4 = ((s4 &lt;&lt; 8) ^ MUL_ALPHA[s4 &gt;&gt;&gt; 24])</span>
+                ^ ((s7 &gt;&gt;&gt; 8) ^ DIV_ALPHA[s7 &amp; 0xFF]) ^ s3;
+<span class="fc" id="L2305">        f2 = (s3 + r1) ^ r2;</span>
+
+<span class="fc" id="L2307">        tt = r1;</span>
+<span class="fc bfc" id="L2308" title="All 2 branches covered.">        r1 = r2 + (s6 ^ ((r1 &amp; 0x01) != 0 ? s3 : 0));</span>
+<span class="fc" id="L2309">        r2 = rotateLeft(tt * 0x54655307, 7);</span>
+<span class="fc" id="L2310">        v3 = s5;</span>
+<span class="fc" id="L2311">        s5 = ((s5 &lt;&lt; 8) ^ MUL_ALPHA[s5 &gt;&gt;&gt; 24])</span>
+                ^ ((s8 &gt;&gt;&gt; 8) ^ DIV_ALPHA[s8 &amp; 0xFF]) ^ s4;
+<span class="fc" id="L2313">        f3 = (s4 + r1) ^ r2;</span>
+
+        /*
+         * Apply the third S-box (number 2) on (f3, f2, f1, f0).
+         */
+<span class="fc" id="L2318">        f4 = f0;</span>
+<span class="fc" id="L2319">        f0 &amp;= f2;</span>
+<span class="fc" id="L2320">        f0 ^= f3;</span>
+<span class="fc" id="L2321">        f2 ^= f1;</span>
+<span class="fc" id="L2322">        f2 ^= f0;</span>
+<span class="fc" id="L2323">        f3 |= f4;</span>
+<span class="fc" id="L2324">        f3 ^= f1;</span>
+<span class="fc" id="L2325">        f4 ^= f2;</span>
+<span class="fc" id="L2326">        f1 = f3;</span>
+<span class="fc" id="L2327">        f3 |= f4;</span>
+<span class="fc" id="L2328">        f3 ^= f0;</span>
+<span class="fc" id="L2329">        f0 &amp;= f1;</span>
+<span class="fc" id="L2330">        f4 ^= f0;</span>
+<span class="fc" id="L2331">        f1 ^= f3;</span>
+<span class="fc" id="L2332">        f1 ^= f4;</span>
+<span class="fc" id="L2333">        f4 = ~f4;</span>
+
+        /*
+         * S-box result is in (f2, f3, f1, f4).
+         */
+<span class="fc" id="L2338">        encode32le(f2 ^ v0, buf, off + 48);</span>
+<span class="fc" id="L2339">        encode32le(f3 ^ v1, buf, off + 52);</span>
+<span class="fc" id="L2340">        encode32le(f1 ^ v2, buf, off + 56);</span>
+<span class="fc" id="L2341">        encode32le(f4 ^ v3, buf, off + 60);</span>
+
+<span class="fc" id="L2343">        tt = r1;</span>
+<span class="fc bfc" id="L2344" title="All 2 branches covered.">        r1 = r2 + (s7 ^ ((r1 &amp; 0x01) != 0 ? s4 : 0));</span>
+<span class="fc" id="L2345">        r2 = rotateLeft(tt * 0x54655307, 7);</span>
+<span class="fc" id="L2346">        v0 = s6;</span>
+<span class="fc" id="L2347">        s6 = ((s6 &lt;&lt; 8) ^ MUL_ALPHA[s6 &gt;&gt;&gt; 24])</span>
+                ^ ((s9 &gt;&gt;&gt; 8) ^ DIV_ALPHA[s9 &amp; 0xFF]) ^ s5;
+<span class="fc" id="L2349">        f0 = (s5 + r1) ^ r2;</span>
+
+<span class="fc" id="L2351">        tt = r1;</span>
+<span class="fc bfc" id="L2352" title="All 2 branches covered.">        r1 = r2 + (s8 ^ ((r1 &amp; 0x01) != 0 ? s5 : 0));</span>
+<span class="fc" id="L2353">        r2 = rotateLeft(tt * 0x54655307, 7);</span>
+<span class="fc" id="L2354">        v1 = s7;</span>
+<span class="fc" id="L2355">        s7 = ((s7 &lt;&lt; 8) ^ MUL_ALPHA[s7 &gt;&gt;&gt; 24])</span>
+                ^ ((s0 &gt;&gt;&gt; 8) ^ DIV_ALPHA[s0 &amp; 0xFF]) ^ s6;
+<span class="fc" id="L2357">        f1 = (s6 + r1) ^ r2;</span>
+
+<span class="fc" id="L2359">        tt = r1;</span>
+<span class="fc bfc" id="L2360" title="All 2 branches covered.">        r1 = r2 + (s9 ^ ((r1 &amp; 0x01) != 0 ? s6 : 0));</span>
+<span class="fc" id="L2361">        r2 = rotateLeft(tt * 0x54655307, 7);</span>
+<span class="fc" id="L2362">        v2 = s8;</span>
+<span class="fc" id="L2363">        s8 = ((s8 &lt;&lt; 8) ^ MUL_ALPHA[s8 &gt;&gt;&gt; 24])</span>
+                ^ ((s1 &gt;&gt;&gt; 8) ^ DIV_ALPHA[s1 &amp; 0xFF]) ^ s7;
+<span class="fc" id="L2365">        f2 = (s7 + r1) ^ r2;</span>
+
+<span class="fc" id="L2367">        tt = r1;</span>
+<span class="fc bfc" id="L2368" title="All 2 branches covered.">        r1 = r2 + (s0 ^ ((r1 &amp; 0x01) != 0 ? s7 : 0));</span>
+<span class="fc" id="L2369">        r2 = rotateLeft(tt * 0x54655307, 7);</span>
+<span class="fc" id="L2370">        v3 = s9;</span>
+<span class="fc" id="L2371">        s9 = ((s9 &lt;&lt; 8) ^ MUL_ALPHA[s9 &gt;&gt;&gt; 24])</span>
+                ^ ((s2 &gt;&gt;&gt; 8) ^ DIV_ALPHA[s2 &amp; 0xFF]) ^ s8;
+<span class="fc" id="L2373">        f3 = (s8 + r1) ^ r2;</span>
+
+        /*
+         * Apply the third S-box (number 2) on (f3, f2, f1, f0).
+         */
+<span class="fc" id="L2378">        f4 = f0;</span>
+<span class="fc" id="L2379">        f0 &amp;= f2;</span>
+<span class="fc" id="L2380">        f0 ^= f3;</span>
+<span class="fc" id="L2381">        f2 ^= f1;</span>
+<span class="fc" id="L2382">        f2 ^= f0;</span>
+<span class="fc" id="L2383">        f3 |= f4;</span>
+<span class="fc" id="L2384">        f3 ^= f1;</span>
+<span class="fc" id="L2385">        f4 ^= f2;</span>
+<span class="fc" id="L2386">        f1 = f3;</span>
+<span class="fc" id="L2387">        f3 |= f4;</span>
+<span class="fc" id="L2388">        f3 ^= f0;</span>
+<span class="fc" id="L2389">        f0 &amp;= f1;</span>
+<span class="fc" id="L2390">        f4 ^= f0;</span>
+<span class="fc" id="L2391">        f1 ^= f3;</span>
+<span class="fc" id="L2392">        f1 ^= f4;</span>
+<span class="fc" id="L2393">        f4 = ~f4;</span>
+
+        /*
+         * S-box result is in (f2, f3, f1, f4).
+         */
+<span class="fc" id="L2398">        encode32le(f2 ^ v0, buf, off + 64);</span>
+<span class="fc" id="L2399">        encode32le(f3 ^ v1, buf, off + 68);</span>
+<span class="fc" id="L2400">        encode32le(f1 ^ v2, buf, off + 72);</span>
+<span class="fc" id="L2401">        encode32le(f4 ^ v3, buf, off + 76);</span>
+
+<span class="fc" id="L2403">        lfsr0 = s0;</span>
+<span class="fc" id="L2404">        lfsr1 = s1;</span>
+<span class="fc" id="L2405">        lfsr2 = s2;</span>
+<span class="fc" id="L2406">        lfsr3 = s3;</span>
+<span class="fc" id="L2407">        lfsr4 = s4;</span>
+<span class="fc" id="L2408">        lfsr5 = s5;</span>
+<span class="fc" id="L2409">        lfsr6 = s6;</span>
+<span class="fc" id="L2410">        lfsr7 = s7;</span>
+<span class="fc" id="L2411">        lfsr8 = s8;</span>
+<span class="fc" id="L2412">        lfsr9 = s9;</span>
+<span class="fc" id="L2413">        fsmR1 = r1;</span>
+<span class="fc" id="L2414">        fsmR2 = r2;</span>
+<span class="fc" id="L2415">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

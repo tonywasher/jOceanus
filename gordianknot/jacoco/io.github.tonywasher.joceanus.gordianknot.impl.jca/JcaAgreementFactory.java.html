@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>JcaAgreementFactory.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.impl.jca</a> &gt; <span class="el_source">JcaAgreementFactory.java</span></div><h1>JcaAgreementFactory.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.gordianknot.impl.jca;
+
+import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementType;
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.agree.GordianCoreAgreementEngine;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.agree.GordianCoreAgreementFactory;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseData;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaAgreement.JcaAnonEngine;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaAgreement.JcaBasicEngine;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaAgreement.JcaMQVEngine;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaAgreement.JcaNewHopeEngine;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaAgreement.JcaPostQuantumEngine;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaAgreement.JcaUnifiedEngine;
+
+/**
+ * Jca Agreement Factory.
+ */
+public class JcaAgreementFactory
+        extends GordianCoreAgreementFactory {
+    /**
+     * DH algorithm.
+     */
+    private static final String DH_ALGO = &quot;DH&quot;;
+
+    /**
+     * ECCDH algorithm.
+     */
+    private static final String ECCDH_ALGO = &quot;ECCDH&quot;;
+
+    /**
+     * Constructor.
+     *
+     * @param pFactory the factory
+     */
+    JcaAgreementFactory(final GordianBaseFactory pFactory) {
+<span class="fc" id="L55">        super(pFactory);</span>
+<span class="fc" id="L56">    }</span>
+
+    @Override
+    public GordianCoreAgreementEngine createEngine(final GordianAgreementSpec pSpec) throws GordianException {
+<span class="fc bfc" id="L60" title="All 6 branches covered.">        switch (pSpec.getKeyPairSpec().getKeyPairType()) {</span>
+            case EC:
+            case GOST2012:
+            case DSTU4145:
+            case SM2:
+<span class="fc" id="L65">                return getECEngine(pSpec);</span>
+            case DH:
+<span class="fc" id="L67">                return getDHEngine(pSpec);</span>
+            case NEWHOPE:
+<span class="fc" id="L69">                return getNHEngine(pSpec);</span>
+            case CMCE:
+            case FRODO:
+            case SABER:
+            case MLKEM:
+            case HQC:
+            case BIKE:
+            case NTRU:
+            case NTRUPRIME:
+<span class="fc" id="L78">                return getPostQuantumEngine(pSpec);</span>
+            case XDH:
+<span class="fc" id="L80">                return getXDHEngine(pSpec);</span>
+            case COMPOSITE:
+            default:
+<span class="fc" id="L83">                return super.createEngine(pSpec);</span>
+        }
+    }
+
+    /**
+     * Create the PostQuantum Agreement.
+     *
+     * @param pAgreementSpec the agreementSpec
+     * @return the Agreement
+     * @throws GordianException on error
+     */
+    private GordianCoreAgreementEngine getPostQuantumEngine(final GordianAgreementSpec pAgreementSpec) throws GordianException {
+<span class="fc" id="L95">        return new JcaPostQuantumEngine(this, pAgreementSpec, JcaAgreement.getJavaKeyGenerator(pAgreementSpec.getKeyPairSpec()));</span>
+    }
+
+    /**
+     * Create the NewHope Agreement.
+     *
+     * @param pAgreementSpec the agreementSpec
+     * @return the Agreement
+     * @throws GordianException on error
+     */
+    private GordianCoreAgreementEngine getNHEngine(final GordianAgreementSpec pAgreementSpec) throws GordianException {
+<span class="fc" id="L106">        return new JcaNewHopeEngine(this, pAgreementSpec, JcaAgreement.getJavaKeyAgreement(&quot;NH&quot;, true));</span>
+    }
+
+    /**
+     * Create the DH Agreement.
+     *
+     * @param pAgreementSpec the agreementSpec
+     * @return the Agreement
+     * @throws GordianException on error
+     */
+    private GordianCoreAgreementEngine getDHEngine(final GordianAgreementSpec pAgreementSpec) throws GordianException {
+<span class="pc bpc" id="L117" title="1 of 5 branches missed.">        switch (pAgreementSpec.getAgreementType()) {</span>
+            case ANON:
+<span class="fc" id="L119">                return new JcaAnonEngine(this, pAgreementSpec,</span>
+<span class="fc" id="L120">                        JcaAgreement.getJavaKeyAgreement(JcaAgreement.getFullAgreementName(DH_ALGO, pAgreementSpec), false));</span>
+            case SIGNED:
+            case BASIC:
+<span class="fc" id="L123">                return new JcaBasicEngine(this, pAgreementSpec,</span>
+<span class="fc" id="L124">                        JcaAgreement.getJavaKeyAgreement(JcaAgreement.getFullAgreementName(DH_ALGO, pAgreementSpec), false));</span>
+            case UNIFIED:
+<span class="fc" id="L126">                return new JcaUnifiedEngine(this, pAgreementSpec,</span>
+<span class="fc" id="L127">                        JcaAgreement.getJavaKeyAgreement(JcaAgreement.getFullAgreementName(DH_ALGO + &quot;U&quot;, pAgreementSpec), false));</span>
+            case MQV:
+<span class="fc" id="L129">                return new JcaMQVEngine(this, pAgreementSpec,</span>
+<span class="fc" id="L130">                        JcaAgreement.getJavaKeyAgreement(JcaAgreement.getFullAgreementName(&quot;MQV&quot;, pAgreementSpec), false));</span>
+            default:
+<span class="nc" id="L132">                throw new GordianDataException(GordianBaseData.getInvalidText(pAgreementSpec));</span>
+        }
+    }
+
+    /**
+     * Create the EC Agreement.
+     *
+     * @param pAgreementSpec the agreementSpec
+     * @return the Agreement
+     * @throws GordianException on error
+     */
+    private GordianCoreAgreementEngine getECEngine(final GordianAgreementSpec pAgreementSpec) throws GordianException {
+<span class="pc bpc" id="L144" title="1 of 5 branches missed.">        switch (pAgreementSpec.getAgreementType()) {</span>
+            case ANON:
+<span class="fc" id="L146">                return new JcaAnonEngine(this, pAgreementSpec,</span>
+<span class="fc" id="L147">                        JcaAgreement.getJavaKeyAgreement(JcaAgreement.getFullAgreementName(ECCDH_ALGO, pAgreementSpec), false));</span>
+            case SIGNED:
+            case BASIC:
+<span class="fc" id="L150">                return new JcaBasicEngine(this, pAgreementSpec,</span>
+<span class="fc" id="L151">                        JcaAgreement.getJavaKeyAgreement(JcaAgreement.getFullAgreementName(ECCDH_ALGO, pAgreementSpec), false));</span>
+            case UNIFIED:
+<span class="fc" id="L153">                return new JcaUnifiedEngine(this, pAgreementSpec,</span>
+<span class="fc" id="L154">                        JcaAgreement.getJavaKeyAgreement(JcaAgreement.getFullAgreementName(ECCDH_ALGO + &quot;U&quot;, pAgreementSpec), false));</span>
+            case MQV:
+<span class="fc" id="L156">                return new JcaMQVEngine(this, pAgreementSpec,</span>
+<span class="fc" id="L157">                        JcaAgreement.getJavaKeyAgreement(JcaAgreement.getFullAgreementName(&quot;ECMQV&quot;, pAgreementSpec), false));</span>
+            default:
+<span class="nc" id="L159">                throw new GordianDataException(GordianBaseData.getInvalidText(pAgreementSpec));</span>
+        }
+    }
+
+    /**
+     * Create the XDH Agreement.
+     *
+     * @param pAgreementSpec the agreementSpec
+     * @return the Agreement
+     * @throws GordianException on error
+     */
+    private GordianCoreAgreementEngine getXDHEngine(final GordianAgreementSpec pAgreementSpec) throws GordianException {
+<span class="pc bpc" id="L171" title="1 of 4 branches missed.">        switch (pAgreementSpec.getAgreementType()) {</span>
+            case ANON:
+<span class="fc" id="L173">                return new JcaAnonEngine(this, pAgreementSpec, null);</span>
+            case SIGNED:
+            case BASIC:
+<span class="fc" id="L176">                return new JcaBasicEngine(this, pAgreementSpec, null);</span>
+            case UNIFIED:
+<span class="fc" id="L178">                return new JcaUnifiedEngine(this, pAgreementSpec, null);</span>
+            default:
+<span class="nc" id="L180">                throw new GordianDataException(GordianBaseData.getInvalidText(pAgreementSpec));</span>
+        }
+    }
+
+    @Override
+    protected boolean validAgreementSpec(final GordianAgreementSpec pSpec) {
+        /* validate the agreementSpec */
+<span class="fc bfc" id="L187" title="All 2 branches covered.">        if (!super.validAgreementSpec(pSpec)) {</span>
+<span class="fc" id="L188">            return false;</span>
+        }
+
+        /* Disallow SM2 */
+<span class="fc" id="L192">        final GordianAgreementType myType = pSpec.getAgreementType();</span>
+<span class="fc bfc" id="L193" title="All 2 branches covered.">        if (GordianAgreementType.SM2.equals(myType)) {</span>
+<span class="fc" id="L194">            return false;</span>
+        }
+
+        /* Switch on KeyType */
+<span class="fc bfc" id="L198" title="All 4 branches covered.">        switch (pSpec.getKeyPairSpec().getKeyPairType()) {</span>
+            case NEWHOPE:
+            case CMCE:
+            case FRODO:
+            case SABER:
+            case MLKEM:
+            case HQC:
+            case BIKE:
+            case NTRU:
+            case NTRUPRIME:
+            case COMPOSITE:
+<span class="fc" id="L209">                return true;</span>
+            case EC:
+            case GOST2012:
+            case DSTU4145:
+            case SM2:
+            case DH:
+<span class="fc bfc" id="L215" title="All 2 branches covered.">                return !GordianAgreementType.KEM.equals(myType);</span>
+            case XDH:
+<span class="pc bpc" id="L217" title="1 of 2 branches missed.">                return !GordianAgreementType.KEM.equals(myType)</span>
+<span class="pc bpc" id="L218" title="1 of 2 branches missed.">                        &amp;&amp; !GordianAgreementType.MQV.equals(myType);</span>
+            case RSA:
+            default:
+<span class="fc" id="L221">                return false;</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

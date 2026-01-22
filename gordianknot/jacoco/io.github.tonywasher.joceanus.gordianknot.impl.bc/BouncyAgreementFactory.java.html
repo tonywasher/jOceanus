@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BouncyAgreementFactory.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.impl.bc</a> &gt; <span class="el_source">BouncyAgreementFactory.java</span></div><h1>BouncyAgreementFactory.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.gordianknot.impl.bc;
+
+import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianNTRUPrimeSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianNTRUPrimeSpec.GordianNTRUPrimeType;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyBIKEKeyPair.BouncyBIKEAgreementEngine;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyCMCEKeyPair.BouncyCMCEAgreementEngine;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyDHKeyPair.BouncyDHAnonAgreementEngine;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyDHKeyPair.BouncyDHBasicAgreementEngine;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyDHKeyPair.BouncyDHMQVAgreementEngine;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyDHKeyPair.BouncyDHUnifiedAgreementEngine;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyEllipticKeyPair.BouncyECAnonAgreementEngine;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyEllipticKeyPair.BouncyECBasicAgreementEngine;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyEllipticKeyPair.BouncyECIESAgreementEngine;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyEllipticKeyPair.BouncyECMQVAgreementEngine;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyEllipticKeyPair.BouncyECUnifiedAgreementEngine;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyFrodoKeyPair.BouncyFrodoAgreementEngine;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyHQCKeyPair.BouncyHQCAgreementEngine;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyMLKEMKeyPair.BouncyMLKEMAgreementEngine;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyNTRUKeyPair.BouncyNTRUAgreementEngine;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyNTRULPrimeKeyPair.BouncyNTRULPrimeAgreementEngine;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyNewHopeKeyPair.BouncyNewHopeAgreementEngine;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyRSAKeyPair.BouncyRSAAgreementEngine;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncySABERKeyPair.BouncySABERAgreementEngine;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncySM2KeyPair.BouncySM2AgreementEngine;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncySNTRUPrimeKeyPair.BouncySNTRUPrimeAgreementEngine;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyXDHKeyPair.BouncyXDHAnonAgreementEngine;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyXDHKeyPair.BouncyXDHBasicAgreementEngine;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyXDHKeyPair.BouncyXDHUnifiedAgreementEngine;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.agree.GordianCoreAgreementEngine;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.agree.GordianCoreAgreementFactory;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseData;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
+
+/**
+ * Bouncy Agreement Factory.
+ */
+public class BouncyAgreementFactory
+        extends GordianCoreAgreementFactory {
+    /**
+     * Constructor.
+     *
+     * @param pFactory the factory
+     */
+    BouncyAgreementFactory(final GordianBaseFactory pFactory) {
+<span class="fc" id="L64">        super(pFactory);</span>
+<span class="fc" id="L65">    }</span>
+
+    @Override
+    public GordianCoreAgreementEngine createEngine(final GordianAgreementSpec pSpec) throws GordianException {
+<span class="fc bfc" id="L69" title="All 14 branches covered.">        switch (pSpec.getKeyPairSpec().getKeyPairType()) {</span>
+            case RSA:
+<span class="fc" id="L71">                return new BouncyRSAAgreementEngine(this, pSpec);</span>
+            case EC:
+            case GOST2012:
+            case DSTU4145:
+            case SM2:
+<span class="fc" id="L76">                return getBCECEngine(pSpec);</span>
+            case DH:
+<span class="fc" id="L78">                return getBCDHEngine(pSpec);</span>
+            case NEWHOPE:
+<span class="fc" id="L80">                return new BouncyNewHopeAgreementEngine(this, pSpec);</span>
+            case CMCE:
+<span class="fc" id="L82">                return new BouncyCMCEAgreementEngine(this, pSpec);</span>
+            case FRODO:
+<span class="fc" id="L84">                return new BouncyFrodoAgreementEngine(this, pSpec);</span>
+            case SABER:
+<span class="fc" id="L86">                return new BouncySABERAgreementEngine(this, pSpec);</span>
+            case MLKEM:
+<span class="fc" id="L88">                return new BouncyMLKEMAgreementEngine(this, pSpec);</span>
+            case HQC:
+<span class="fc" id="L90">                return new BouncyHQCAgreementEngine(this, pSpec);</span>
+            case BIKE:
+<span class="fc" id="L92">                return new BouncyBIKEAgreementEngine(this, pSpec);</span>
+            case NTRU:
+<span class="fc" id="L94">                return new BouncyNTRUAgreementEngine(this, pSpec);</span>
+            case NTRUPRIME:
+<span class="fc" id="L96">                final GordianNTRUPrimeSpec mySpec = pSpec.getKeyPairSpec().getNTRUPrimeKeySpec();</span>
+<span class="pc bpc" id="L97" title="1 of 2 branches missed.">                return mySpec.getType() == GordianNTRUPrimeType.NTRUL</span>
+<span class="fc" id="L98">                        ? new BouncyNTRULPrimeAgreementEngine(this, pSpec)</span>
+<span class="nc" id="L99">                        : new BouncySNTRUPrimeAgreementEngine(this, pSpec);</span>
+            case XDH:
+<span class="fc" id="L101">                return getBCXDHEngine(pSpec);</span>
+            case COMPOSITE:
+            default:
+<span class="fc" id="L104">                return super.createEngine(pSpec);</span>
+        }
+    }
+
+    /**
+     * Create the BouncyCastle EC Agreement.
+     *
+     * @param pSpec the agreementSpec
+     * @return the Agreement
+     * @throws GordianException on error
+     */
+    private GordianCoreAgreementEngine getBCECEngine(final GordianAgreementSpec pSpec) throws GordianException {
+<span class="pc bpc" id="L116" title="1 of 7 branches missed.">        switch (pSpec.getAgreementType()) {</span>
+            case KEM:
+<span class="fc" id="L118">                return new BouncyECIESAgreementEngine(this, pSpec);</span>
+            case ANON:
+<span class="fc" id="L120">                return new BouncyECAnonAgreementEngine(this, pSpec);</span>
+            case SIGNED:
+            case BASIC:
+<span class="fc" id="L123">                return new BouncyECBasicAgreementEngine(this, pSpec);</span>
+            case MQV:
+<span class="fc" id="L125">                return new BouncyECMQVAgreementEngine(this, pSpec);</span>
+            case UNIFIED:
+<span class="fc" id="L127">                return new BouncyECUnifiedAgreementEngine(this, pSpec);</span>
+            case SM2:
+<span class="fc" id="L129">                return new BouncySM2AgreementEngine(this, pSpec);</span>
+            default:
+<span class="nc" id="L131">                throw new GordianDataException(GordianBaseData.getInvalidText(pSpec));</span>
+        }
+    }
+
+    /**
+     * Create the BouncyCastle DH Agreement.
+     *
+     * @param pSpec the agreementSpec
+     * @return the Agreement
+     * @throws GordianException on error
+     */
+    private GordianCoreAgreementEngine getBCDHEngine(final GordianAgreementSpec pSpec) throws GordianException {
+<span class="pc bpc" id="L143" title="1 of 5 branches missed.">        switch (pSpec.getAgreementType()) {</span>
+            case ANON:
+<span class="fc" id="L145">                return new BouncyDHAnonAgreementEngine(this, pSpec);</span>
+            case SIGNED:
+            case BASIC:
+<span class="fc" id="L148">                return new BouncyDHBasicAgreementEngine(this, pSpec);</span>
+            case MQV:
+<span class="fc" id="L150">                return new BouncyDHMQVAgreementEngine(this, pSpec);</span>
+            case UNIFIED:
+<span class="fc" id="L152">                return new BouncyDHUnifiedAgreementEngine(this, pSpec);</span>
+            default:
+<span class="nc" id="L154">                throw new GordianDataException(GordianBaseData.getInvalidText(pSpec));</span>
+        }
+    }
+
+    /**
+     * Create the BouncyCastle XDH Agreement.
+     *
+     * @param pSpec the agreementSpec
+     * @return the Agreement
+     * @throws GordianException on error
+     */
+    private GordianCoreAgreementEngine getBCXDHEngine(final GordianAgreementSpec pSpec) throws GordianException {
+<span class="pc bpc" id="L166" title="1 of 4 branches missed.">        switch (pSpec.getAgreementType()) {</span>
+            case ANON:
+<span class="fc" id="L168">                return new BouncyXDHAnonAgreementEngine(this, pSpec);</span>
+            case SIGNED:
+            case BASIC:
+<span class="fc" id="L171">                return new BouncyXDHBasicAgreementEngine(this, pSpec);</span>
+            case UNIFIED:
+<span class="fc" id="L173">                return new BouncyXDHUnifiedAgreementEngine(this, pSpec);</span>
+            default:
+<span class="nc" id="L175">                throw new GordianDataException(GordianBaseData.getInvalidText(pSpec));</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

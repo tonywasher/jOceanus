@@ -1,0 +1,559 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseRegion.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.moneywise.data.basic</a> &gt; <span class="el_source">MoneyWiseRegion.java</span></div><h1>MoneyWiseRegion.java</h1><pre class="source lang-java linenums">/*
+ * MoneyWise: Finance Application
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.moneywise.data.basic;
+
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
+import io.github.tonywasher.joceanus.metis.data.MetisDataDifference;
+import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
+import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataNamedItem;
+import io.github.tonywasher.joceanus.metis.data.MetisDataResource;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDataValidator.MoneyWiseDataValidatorDefaults;
+import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataInstanceMap;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataResource;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValues;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusEncryptedDataItem;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusEncryptedFieldSet;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusEncryptedPair;
+import io.github.tonywasher.joceanus.prometheus.views.PrometheusEditSet;
+
+import java.util.Iterator;
+
+/**
+ * Region for a Unit Trust.
+ */
+public class MoneyWiseRegion
+        extends PrometheusEncryptedDataItem
+        implements MetisDataNamedItem {
+    /**
+     * Object name.
+     */
+<span class="fc" id="L48">    public static final String OBJECT_NAME = MoneyWiseBasicDataType.REGION.getItemName();</span>
+
+    /**
+     * List name.
+     */
+<span class="fc" id="L53">    public static final String LIST_NAME = MoneyWiseBasicDataType.REGION.getListName();</span>
+
+    /**
+     * Local Report fields.
+     */
+<span class="fc" id="L58">    private static final PrometheusEncryptedFieldSet&lt;MoneyWiseRegion&gt; FIELD_DEFS = PrometheusEncryptedFieldSet.newEncryptedFieldSet(MoneyWiseRegion.class);</span>
+
+    /*
+     * FieldIds.
+     */
+    static {
+<span class="fc" id="L64">        FIELD_DEFS.declareEncryptedStringField(PrometheusDataResource.DATAITEM_FIELD_NAME, NAMELEN);</span>
+<span class="fc" id="L65">        FIELD_DEFS.declareEncryptedStringField(PrometheusDataResource.DATAITEM_FIELD_DESC, DESCLEN);</span>
+<span class="fc" id="L66">    }</span>
+
+    /**
+     * Copy Constructor.
+     *
+     * @param pList   the list
+     * @param pRegion The region to copy
+     */
+    protected MoneyWiseRegion(final MoneyWiseRegionList pList,
+                              final MoneyWiseRegion pRegion) {
+        /* Set standard values */
+<span class="fc" id="L77">        super(pList, pRegion);</span>
+<span class="fc" id="L78">    }</span>
+
+    /**
+     * Values constructor.
+     *
+     * @param pList   the List to add to
+     * @param pValues the values constructor
+     * @throws OceanusException on error
+     */
+    private MoneyWiseRegion(final MoneyWiseRegionList pList,
+                            final PrometheusDataValues pValues) throws OceanusException {
+        /* Initialise the item */
+<span class="fc" id="L90">        super(pList, pValues);</span>
+
+        /* Protect against exceptions */
+        try {
+            /* Store the Name */
+<span class="fc" id="L95">            Object myValue = pValues.getValue(PrometheusDataResource.DATAITEM_FIELD_NAME);</span>
+<span class="fc bfc" id="L96" title="All 2 branches covered.">            if (myValue instanceof String s) {</span>
+<span class="fc" id="L97">                setValueName(s);</span>
+<span class="pc bpc" id="L98" title="1 of 2 branches missed.">            } else if (myValue instanceof byte[] ba) {</span>
+<span class="fc" id="L99">                setValueName(ba);</span>
+            }
+
+            /* Store the Description */
+<span class="fc" id="L103">            myValue = pValues.getValue(PrometheusDataResource.DATAITEM_FIELD_DESC);</span>
+<span class="pc bpc" id="L104" title="1 of 2 branches missed.">            if (myValue instanceof String s) {</span>
+<span class="nc" id="L105">                setValueDesc(s);</span>
+<span class="pc bpc" id="L106" title="1 of 2 branches missed.">            } else if (myValue instanceof byte[] ba) {</span>
+<span class="nc" id="L107">                setValueDesc(ba);</span>
+            }
+
+            /* Catch Exceptions */
+<span class="nc" id="L111">        } catch (OceanusException e) {</span>
+            /* Pass on exception */
+<span class="nc" id="L113">            throw new MoneyWiseDataException(this, ERROR_CREATEITEM, e);</span>
+<span class="fc" id="L114">        }</span>
+<span class="fc" id="L115">    }</span>
+
+    /**
+     * Edit Constructor.
+     *
+     * @param pList the list
+     */
+    public MoneyWiseRegion(final MoneyWiseRegionList pList) {
+<span class="fc" id="L123">        super(pList, 0);</span>
+<span class="fc" id="L124">        setNextDataKeySet();</span>
+<span class="fc" id="L125">    }</span>
+
+    @Override
+    public MetisFieldSetDef getDataFieldSet() {
+<span class="fc" id="L129">        return FIELD_DEFS;</span>
+    }
+
+    @Override
+    public String formatObject(final OceanusDataFormatter pFormatter) {
+<span class="nc" id="L134">        return toString();</span>
+    }
+
+    @Override
+    public String toString() {
+<span class="nc" id="L139">        return getName();</span>
+    }
+
+    @Override
+    public boolean includeXmlField(final MetisDataFieldId pField) {
+        /* Determine whether fields should be included */
+<span class="fc bfc" id="L145" title="All 2 branches covered.">        if (PrometheusDataResource.DATAITEM_FIELD_NAME.equals(pField)) {</span>
+<span class="fc" id="L146">            return true;</span>
+        }
+<span class="fc bfc" id="L148" title="All 2 branches covered.">        if (PrometheusDataResource.DATAITEM_FIELD_DESC.equals(pField)) {</span>
+<span class="pc bpc" id="L149" title="1 of 2 branches missed.">            return getDesc() != null;</span>
+        }
+
+        /* Pass call on */
+<span class="fc" id="L153">        return super.includeXmlField(pField);</span>
+    }
+
+    @Override
+    public String getName() {
+<span class="fc" id="L158">        return getValues().getValue(PrometheusDataResource.DATAITEM_FIELD_NAME, String.class);</span>
+    }
+
+    /**
+     * Obtain Encrypted name.
+     *
+     * @return the bytes
+     */
+    public byte[] getNameBytes() {
+<span class="fc" id="L167">        return getValues().getEncryptedBytes(PrometheusDataResource.DATAITEM_FIELD_NAME);</span>
+    }
+
+    /**
+     * Obtain Encrypted Name Field.
+     *
+     * @return the Field
+     */
+    private PrometheusEncryptedPair getNameField() {
+<span class="nc" id="L176">        return getValues().getEncryptedPair(PrometheusDataResource.DATAITEM_FIELD_NAME);</span>
+    }
+
+    /**
+     * Obtain Description.
+     *
+     * @return the description
+     */
+    public String getDesc() {
+<span class="fc" id="L185">        return getValues().getValue(PrometheusDataResource.DATAITEM_FIELD_DESC, String.class);</span>
+    }
+
+    /**
+     * Obtain Encrypted description.
+     *
+     * @return the bytes
+     */
+    public byte[] getDescBytes() {
+<span class="fc" id="L194">        return getValues().getEncryptedBytes(PrometheusDataResource.DATAITEM_FIELD_DESC);</span>
+    }
+
+    /**
+     * Obtain Encrypted Description Field.
+     *
+     * @return the Field
+     */
+    private PrometheusEncryptedPair getDescField() {
+<span class="nc" id="L203">        return getValues().getEncryptedPair(PrometheusDataResource.DATAITEM_FIELD_DESC);</span>
+    }
+
+    /**
+     * Set name value.
+     *
+     * @param pValue the value
+     * @throws OceanusException on error
+     */
+    private void setValueName(final String pValue) throws OceanusException {
+<span class="fc" id="L213">        setEncryptedValue(PrometheusDataResource.DATAITEM_FIELD_NAME, pValue);</span>
+<span class="fc" id="L214">    }</span>
+
+    /**
+     * Set name value.
+     *
+     * @param pBytes the value
+     * @throws OceanusException on error
+     */
+    private void setValueName(final byte[] pBytes) throws OceanusException {
+<span class="fc" id="L223">        setEncryptedValue(PrometheusDataResource.DATAITEM_FIELD_NAME, pBytes, String.class);</span>
+<span class="fc" id="L224">    }</span>
+
+    /**
+     * Set name value.
+     *
+     * @param pValue the value
+     */
+    private void setValueName(final PrometheusEncryptedPair pValue) {
+<span class="nc" id="L232">        getValues().setUncheckedValue(PrometheusDataResource.DATAITEM_FIELD_NAME, pValue);</span>
+<span class="nc" id="L233">    }</span>
+
+    /**
+     * Set description value.
+     *
+     * @param pValue the value
+     * @throws OceanusException on error
+     */
+    private void setValueDesc(final String pValue) throws OceanusException {
+<span class="nc" id="L242">        setEncryptedValue(PrometheusDataResource.DATAITEM_FIELD_DESC, pValue);</span>
+<span class="nc" id="L243">    }</span>
+
+    /**
+     * Set description value.
+     *
+     * @param pBytes the value
+     * @throws OceanusException on error
+     */
+    private void setValueDesc(final byte[] pBytes) throws OceanusException {
+<span class="nc" id="L252">        setEncryptedValue(PrometheusDataResource.DATAITEM_FIELD_DESC, pBytes, String.class);</span>
+<span class="nc" id="L253">    }</span>
+
+    /**
+     * Set description value.
+     *
+     * @param pValue the value
+     */
+    private void setValueDesc(final PrometheusEncryptedPair pValue) {
+<span class="nc" id="L261">        getValues().setUncheckedValue(PrometheusDataResource.DATAITEM_FIELD_DESC, pValue);</span>
+<span class="nc" id="L262">    }</span>
+
+    @Override
+    public MoneyWiseDataSet getDataSet() {
+<span class="fc" id="L266">        return (MoneyWiseDataSet) super.getDataSet();</span>
+    }
+
+    @Override
+    public MoneyWiseRegion getBase() {
+<span class="fc" id="L271">        return (MoneyWiseRegion) super.getBase();</span>
+    }
+
+    @Override
+    public MoneyWiseRegionList getList() {
+<span class="fc" id="L276">        return (MoneyWiseRegionList) super.getList();</span>
+    }
+
+    /**
+     * Set defaults.
+     *
+     * @throws OceanusException on error
+     */
+    public void setDefaults() throws OceanusException {
+<span class="nc" id="L285">        getList().getValidator().setDefaults(this);</span>
+<span class="nc" id="L286">    }</span>
+
+    @Override
+    public int compareValues(final PrometheusDataItem pThat) {
+        /* Check the names */
+<span class="fc" id="L291">        final MoneyWiseRegion myThat = (MoneyWiseRegion) pThat;</span>
+<span class="fc" id="L292">        return MetisDataDifference.compareObject(getName(), myThat.getName());</span>
+    }
+
+    /**
+     * Set a new tag name.
+     *
+     * @param pName the new name
+     * @throws OceanusException on error
+     */
+    public void setName(final String pName) throws OceanusException {
+<span class="fc" id="L302">        setValueName(pName);</span>
+<span class="fc" id="L303">    }</span>
+
+    /**
+     * Set a new description.
+     *
+     * @param pDesc the description
+     * @throws OceanusException on error
+     */
+    public void setDescription(final String pDesc) throws OceanusException {
+<span class="nc" id="L312">        setValueDesc(pDesc);</span>
+<span class="nc" id="L313">    }</span>
+
+    /**
+     * Update base tag from an edited tag.
+     *
+     * @param pTag the edited tag
+     * @return whether changes have been made
+     */
+    @Override
+    public boolean applyChanges(final PrometheusDataItem pTag) {
+        /* Can only update from a region */
+<span class="nc bnc" id="L324" title="All 2 branches missed.">        if (!(pTag instanceof MoneyWiseRegion)) {</span>
+<span class="nc" id="L325">            return false;</span>
+        }
+<span class="nc" id="L327">        final MoneyWiseRegion myRegion = (MoneyWiseRegion) pTag;</span>
+
+        /* Store the current detail into history */
+<span class="nc" id="L330">        pushHistory();</span>
+
+        /* Update the Name if required */
+<span class="nc bnc" id="L333" title="All 2 branches missed.">        if (!MetisDataDifference.isEqual(getName(), myRegion.getName())) {</span>
+<span class="nc" id="L334">            setValueName(myRegion.getNameField());</span>
+        }
+
+        /* Update the description if required */
+<span class="nc bnc" id="L338" title="All 2 branches missed.">        if (!MetisDataDifference.isEqual(getDesc(), myRegion.getDesc())) {</span>
+<span class="nc" id="L339">            setValueDesc(myRegion.getDescField());</span>
+        }
+
+        /* Check for changes */
+<span class="nc" id="L343">        return checkForHistory();</span>
+    }
+
+    @Override
+    public void adjustMapForItem() {
+<span class="fc" id="L348">        final MoneyWiseRegionList myList = getList();</span>
+<span class="fc" id="L349">        final MoneyWiseRegionDataMap myMap = myList.getDataMap();</span>
+<span class="fc" id="L350">        myMap.adjustForItem(this);</span>
+<span class="fc" id="L351">    }</span>
+
+    /**
+     * The Region List class.
+     */
+    public static class MoneyWiseRegionList
+            extends PrometheusEncryptedList&lt;MoneyWiseRegion&gt; {
+        /**
+         * Report fields.
+         */
+<span class="fc" id="L361">        private static final MetisFieldSet&lt;MoneyWiseRegionList&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseRegionList.class);</span>
+
+        /**
+         * Construct an empty CORE Tag list.
+         *
+         * @param pData the DataSet for the list
+         */
+        protected MoneyWiseRegionList(final MoneyWiseDataSet pData) {
+<span class="fc" id="L369">            super(MoneyWiseRegion.class, pData, MoneyWiseBasicDataType.REGION, PrometheusListStyle.CORE);</span>
+<span class="fc" id="L370">        }</span>
+
+        /**
+         * Constructor for a cloned List.
+         *
+         * @param pSource the source List
+         */
+        protected MoneyWiseRegionList(final MoneyWiseRegionList pSource) {
+<span class="fc" id="L378">            super(pSource);</span>
+<span class="fc" id="L379">        }</span>
+
+        @Override
+        public MetisFieldSet&lt;MoneyWiseRegionList&gt; getDataFieldSet() {
+<span class="nc" id="L383">            return FIELD_DEFS;</span>
+        }
+
+        @Override
+        public String listName() {
+<span class="fc" id="L388">            return LIST_NAME;</span>
+        }
+
+        @Override
+        public MetisFieldSetDef getItemFields() {
+<span class="fc" id="L393">            return MoneyWiseRegion.FIELD_DEFS;</span>
+        }
+
+        @Override
+        public MoneyWiseDataSet getDataSet() {
+<span class="fc" id="L398">            return (MoneyWiseDataSet) super.getDataSet();</span>
+        }
+
+        @Override
+        public MoneyWiseRegionDataMap getDataMap() {
+<span class="fc" id="L403">            return (MoneyWiseRegionDataMap) super.getDataMap();</span>
+        }
+
+        @Override
+        @SuppressWarnings(&quot;unchecked&quot;)
+        public MoneyWiseDataValidatorDefaults&lt;MoneyWiseRegion&gt; getValidator() {
+<span class="fc" id="L409">            return (MoneyWiseDataValidatorDefaults&lt;MoneyWiseRegion&gt;) super.getValidator();</span>
+        }
+
+        @Override
+        protected MoneyWiseRegionList getEmptyList(final PrometheusListStyle pStyle) {
+<span class="fc" id="L414">            final MoneyWiseRegionList myList = new MoneyWiseRegionList(this);</span>
+<span class="fc" id="L415">            myList.setStyle(pStyle);</span>
+<span class="fc" id="L416">            return myList;</span>
+        }
+
+        /**
+         * Derive Edit list.
+         *
+         * @param pEditSet the editSet
+         * @return the edit list
+         */
+        public MoneyWiseRegionList deriveEditList(final PrometheusEditSet pEditSet) {
+            /* Build an empty List */
+<span class="fc" id="L427">            final MoneyWiseRegionList myList = getEmptyList(PrometheusListStyle.EDIT);</span>
+<span class="fc" id="L428">            myList.ensureMap();</span>
+<span class="fc" id="L429">            pEditSet.setEditEntryList(MoneyWiseBasicDataType.REGION, myList);</span>
+<span class="fc" id="L430">            myList.getValidator().setEditSet(pEditSet);</span>
+
+            /* Loop through the regions */
+<span class="fc" id="L433">            final Iterator&lt;MoneyWiseRegion&gt; myIterator = iterator();</span>
+<span class="fc bfc" id="L434" title="All 2 branches covered.">            while (myIterator.hasNext()) {</span>
+<span class="fc" id="L435">                final MoneyWiseRegion myCurr = myIterator.next();</span>
+
+                /* Ignore deleted regions */
+<span class="pc bpc" id="L438" title="1 of 2 branches missed.">                if (myCurr.isDeleted()) {</span>
+<span class="nc" id="L439">                    continue;</span>
+                }
+
+                /* Build the new linked region and add it to the list */
+<span class="fc" id="L443">                final MoneyWiseRegion myRegion = new MoneyWiseRegion(myList, myCurr);</span>
+<span class="fc" id="L444">                myList.add(myRegion);</span>
+
+                /* Adjust the map */
+<span class="fc" id="L447">                myRegion.adjustMapForItem();</span>
+<span class="fc" id="L448">            }</span>
+
+            /* Return the list */
+<span class="fc" id="L451">            return myList;</span>
+        }
+
+        /**
+         * Add a new item to the core list.
+         *
+         * @param pRegion item
+         * @return the newly added item
+         */
+        @Override
+        public MoneyWiseRegion addCopyItem(final PrometheusDataItem pRegion) {
+            /* Can only clone a Region */
+<span class="pc bpc" id="L463" title="1 of 2 branches missed.">            if (!(pRegion instanceof MoneyWiseRegion)) {</span>
+<span class="nc" id="L464">                throw new UnsupportedOperationException();</span>
+            }
+
+<span class="fc" id="L467">            final MoneyWiseRegion myRegion = new MoneyWiseRegion(this, (MoneyWiseRegion) pRegion);</span>
+<span class="fc" id="L468">            add(myRegion);</span>
+<span class="fc" id="L469">            return myRegion;</span>
+        }
+
+        /**
+         * Add a new item to the edit list.
+         *
+         * @return the new item
+         */
+        @Override
+        public MoneyWiseRegion addNewItem() {
+<span class="fc" id="L479">            final MoneyWiseRegion myRegion = new MoneyWiseRegion(this);</span>
+<span class="fc" id="L480">            add(myRegion);</span>
+<span class="fc" id="L481">            return myRegion;</span>
+        }
+
+        @Override
+        public MoneyWiseRegion findItemByName(final String pName) {
+            /* look up the name in the map */
+<span class="nc" id="L487">            return getDataMap().findItemByName(pName);</span>
+        }
+
+        @Override
+        public MoneyWiseRegion addValuesItem(final PrometheusDataValues pValues) throws OceanusException {
+            /* Create the region */
+<span class="fc" id="L493">            final MoneyWiseRegion myRegion = new MoneyWiseRegion(this, pValues);</span>
+
+            /* Check that this regionId has not been previously added */
+<span class="pc bpc" id="L496" title="1 of 2 branches missed.">            if (!isIdUnique(myRegion.getIndexedId())) {</span>
+<span class="nc" id="L497">                myRegion.addError(ERROR_DUPLICATE, MetisDataResource.DATA_ID);</span>
+<span class="nc" id="L498">                throw new MoneyWiseDataException(myRegion, ERROR_VALIDATION);</span>
+            }
+
+            /* Add to the list */
+<span class="fc" id="L502">            add(myRegion);</span>
+
+            /* Return it */
+<span class="fc" id="L505">            return myRegion;</span>
+        }
+
+        @Override
+        protected MoneyWiseRegionDataMap allocateDataMap() {
+<span class="fc" id="L510">            return new MoneyWiseRegionDataMap();</span>
+        }
+    }
+
+    /**
+     * The dataMap class.
+     */
+<span class="fc" id="L517">    public static class MoneyWiseRegionDataMap</span>
+            extends PrometheusDataInstanceMap&lt;MoneyWiseRegion, String&gt; {
+        @Override
+        public void adjustForItem(final PrometheusDataItem pItem) {
+            /* Access item */
+<span class="fc" id="L522">            final MoneyWiseRegion myItem = (MoneyWiseRegion) pItem;</span>
+
+            /* Adjust name count */
+<span class="fc" id="L525">            adjustForItem(myItem, myItem.getName());</span>
+<span class="fc" id="L526">        }</span>
+
+        /**
+         * find item by name.
+         *
+         * @param pName the name to look up
+         * @return the matching item
+         */
+        public MoneyWiseRegion findItemByName(final String pName) {
+<span class="nc" id="L535">            return findItemByKey(pName);</span>
+        }
+
+        /**
+         * Check validity of name.
+         *
+         * @param pName the name to look up
+         * @return true/false
+         */
+        public boolean validNameCount(final String pName) {
+<span class="fc" id="L545">            return validKeyCount(pName);</span>
+        }
+
+        /**
+         * Check availability of name.
+         *
+         * @param pName the key to look up
+         * @return true/false
+         */
+        public boolean availableName(final String pName) {
+<span class="nc" id="L555">            return availableKey(pName);</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

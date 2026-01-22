@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ThemisAnalysisProject.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Themis Core Project Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.themis.lethe.analysis</a> &gt; <span class="el_source">ThemisAnalysisProject.java</span></div><h1>ThemisAnalysisProject.java</h1><pre class="source lang-java linenums">/*
+ * Themis: Java Project Framework
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.themis.lethe.analysis;
+
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.themis.exc.ThemisIOException;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Project.
+ */
+public class ThemisAnalysisProject
+        implements ThemisAnalysisElement {
+    /**
+     * Consolidation Pass error.
+     */
+    private static final String CONSOLIDATION_ERROR = &quot;Failed on consolidation Pass&quot;;
+
+    /**
+     * The project name.
+     */
+    private final String theName;
+
+    /**
+     * The location.
+     */
+    private final File theLocation;
+
+    /**
+     * The module list.
+     */
+    private final List&lt;ThemisAnalysisModule&gt; theModules;
+
+    /**
+     * The initial dataMap.
+     */
+    private final ThemisAnalysisDataMap theDataMap;
+
+    /**
+     * The error.
+     */
+    private OceanusException theError;
+
+    /**
+     * Constructor.
+     *
+     * @param pLocation the project location
+     */
+<span class="nc" id="L69">    public ThemisAnalysisProject(final File pLocation) {</span>
+        /* Store the name and location */
+<span class="nc" id="L71">        theLocation = pLocation;</span>
+
+        /* Create the list */
+<span class="nc" id="L74">        theModules = new ArrayList&lt;&gt;();</span>
+
+        /* Create the dataMap */
+<span class="nc" id="L77">        theDataMap = new ThemisAnalysisDataMap();</span>
+
+        /* Initiate search for modules */
+<span class="nc" id="L80">        final ThemisAnalysisMavenId myId = parseProjectFile(new File(theLocation, ThemisAnalysisMaven.POM));</span>
+<span class="nc bnc" id="L81" title="All 2 branches missed.">        theName = myId == null ? null : myId.getArtifactId();</span>
+
+        /* InitialPass */
+<span class="nc bnc" id="L84" title="All 2 branches missed.">        if (theError == null) {</span>
+<span class="nc" id="L85">            performInitialPass();</span>
+        }
+
+        /* ConsolidationPass */
+<span class="nc bnc" id="L89" title="All 2 branches missed.">        if (theError == null) {</span>
+<span class="nc" id="L90">            performConsolidationPass();</span>
+        }
+
+        /* FinalPass */
+<span class="nc bnc" id="L94" title="All 2 branches missed.">        if (theError == null) {</span>
+<span class="nc" id="L95">            performFinalPass();</span>
+        }
+<span class="nc" id="L97">    }</span>
+
+    /**
+     * Obtain the name.
+     *
+     * @return the name
+     */
+    public String getName() {
+<span class="nc" id="L105">        return theName;</span>
+    }
+
+    /**
+     * Obtain the location.
+     *
+     * @return the location
+     */
+    File getLocation() {
+<span class="nc" id="L114">        return theLocation;</span>
+    }
+
+    /**
+     * Obtain the error.
+     *
+     * @return the error
+     */
+    public OceanusException getError() {
+<span class="nc" id="L123">        return theError;</span>
+    }
+
+    /**
+     * Obtain the modules.
+     *
+     * @return the modules
+     */
+    public List&lt;ThemisAnalysisModule&gt; getModules() {
+<span class="nc" id="L132">        return theModules;</span>
+    }
+
+    /**
+     * Obtain the dataMap.
+     *
+     * @return the map
+     */
+    ThemisAnalysisDataMap getDataMap() {
+<span class="nc" id="L141">        return theDataMap;</span>
+    }
+
+    @Override
+    public String toString() {
+<span class="nc" id="L146">        return theName;</span>
+    }
+
+    /**
+     * Parse the maven top-level project file.
+     *
+     * @param pPom the project file
+     * @return the mavenId of the project
+     */
+    private ThemisAnalysisMavenId parseProjectFile(final File pPom) {
+        /* If the pom file does not exist, just return */
+<span class="nc bnc" id="L157" title="All 2 branches missed.">        if (!pPom.exists()) {</span>
+<span class="nc" id="L158">            return null;</span>
+        }
+
+        /* Protect against exceptions */
+        try {
+            /* Add module if source directory exists */
+<span class="nc" id="L164">            final File mySrc = new File(pPom.getParent(), ThemisAnalysisModule.PATH_XTRA);</span>
+<span class="nc bnc" id="L165" title="All 2 branches missed.">            if (mySrc.exists()</span>
+<span class="nc bnc" id="L166" title="All 2 branches missed.">                    &amp;&amp; mySrc.isDirectory()) {</span>
+                /* Add the module to the list */
+<span class="nc" id="L168">                theModules.add(new ThemisAnalysisModule(this, new File(pPom.getParent())));</span>
+            }
+
+            /* Handle exceptions */
+<span class="nc" id="L172">        } catch (OceanusException e) {</span>
+            /* Save Exception */
+<span class="nc" id="L174">            theError = new ThemisIOException(CONSOLIDATION_ERROR, e);</span>
+<span class="nc" id="L175">            return null;</span>
+<span class="nc" id="L176">        }</span>
+
+        /* Protect against exceptions */
+<span class="nc" id="L179">        try (InputStream myInStream = new FileInputStream(pPom)) {</span>
+            /* Parse the Project definition file */
+<span class="nc" id="L181">            final ThemisAnalysisMaven myPom = new ThemisAnalysisMaven(myInStream);</span>
+
+            /* Loop through the modules */
+<span class="nc bnc" id="L184" title="All 2 branches missed.">            for (final String myModuleName : myPom.getModules()) {</span>
+                /* Access module directory */
+<span class="nc" id="L186">                final File myModuleDir = new File(pPom.getParentFile(), myModuleName);</span>
+
+                /* Process the project file */
+<span class="nc" id="L189">                parseProjectFile(new File(myModuleDir, ThemisAnalysisMaven.POM));</span>
+
+                /* Break loop on error */
+<span class="nc bnc" id="L192" title="All 2 branches missed.">                if (theError != null) {</span>
+<span class="nc" id="L193">                    break;</span>
+                }
+<span class="nc" id="L195">            }</span>
+
+<span class="nc" id="L197">            return myPom.getMavenId();</span>
+
+            /* Catch exceptions */
+<span class="nc" id="L200">        } catch (IOException</span>
+                 | OceanusException e) {
+            /* Save Exception */
+<span class="nc" id="L203">            theError = new ThemisIOException(&quot;Failed to parse Project file&quot;, e);</span>
+<span class="nc" id="L204">            return null;</span>
+        }
+    }
+
+    /**
+     * initialPass.
+     */
+    private void performInitialPass() {
+        /* Protect against exceptions */
+        try {
+            /* Loop through the modules */
+<span class="nc bnc" id="L215" title="All 2 branches missed.">            for (ThemisAnalysisModule myModule : theModules) {</span>
+                /* Process the module */
+<span class="nc" id="L217">                myModule.performInitialPass();</span>
+<span class="nc" id="L218">            }</span>
+
+            /* Handle exceptions */
+<span class="nc" id="L221">        } catch (OceanusException e) {</span>
+            /* Save Exception */
+<span class="nc" id="L223">            theError = new ThemisIOException(CONSOLIDATION_ERROR, e);</span>
+<span class="nc" id="L224">        }</span>
+<span class="nc" id="L225">    }</span>
+
+    /**
+     * consolidationPass.
+     */
+    private void performConsolidationPass() {
+        /* Protect against exceptions */
+        try {
+            /* Loop through the modules */
+<span class="nc bnc" id="L234" title="All 2 branches missed.">            for (ThemisAnalysisModule myModule : theModules) {</span>
+                /* Process the module */
+<span class="nc" id="L236">                myModule.performConsolidationPass();</span>
+<span class="nc" id="L237">            }</span>
+
+            /* Handle exceptions */
+<span class="nc" id="L240">        } catch (OceanusException e) {</span>
+            /* Save Exception */
+<span class="nc" id="L242">            theError = new ThemisIOException(CONSOLIDATION_ERROR, e);</span>
+<span class="nc" id="L243">        }</span>
+<span class="nc" id="L244">    }</span>
+
+    /**
+     * finalPass.
+     */
+    private void performFinalPass() {
+        /* Protect against exceptions */
+        try {
+            /* Loop through the modules */
+<span class="nc bnc" id="L253" title="All 2 branches missed.">            for (ThemisAnalysisModule myModule : theModules) {</span>
+                /* Process the module */
+<span class="nc" id="L255">                myModule.performFinalPass();</span>
+<span class="nc" id="L256">            }</span>
+
+            /* Handle exceptions */
+<span class="nc" id="L259">        } catch (OceanusException e) {</span>
+            /* Save Exception */
+<span class="nc" id="L261">            theError = new ThemisIOException(&quot;Failed on final pass&quot;, e);</span>
+<span class="nc" id="L262">        }</span>
+<span class="nc" id="L263">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

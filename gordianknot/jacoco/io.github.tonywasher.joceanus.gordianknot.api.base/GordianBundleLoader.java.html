@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianBundleLoader.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.api.base</a> &gt; <span class="el_source">GordianBundleLoader.java</span></div><h1>GordianBundleLoader.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.gordianknot.api.base;
+
+import java.lang.ref.WeakReference;
+import java.util.Map;
+import java.util.ResourceBundle;
+
+/**
+ * Bundle Loader. (Cloned from OceanusBundleLoader)
+ */
+public final class GordianBundleLoader {
+    /**
+     * Interface for bundleIds.
+     */
+    public interface GordianBundleId {
+        /**
+         * Get Key Name.
+         *
+         * @return the key name.
+         */
+        String getKeyName();
+
+        /**
+         * Get NameSpace.
+         *
+         * @return the nameSpace.
+         */
+        String getNameSpace();
+
+        /**
+         * Get Value.
+         *
+         * @return the value.
+         */
+        String getValue();
+    }
+
+    /**
+     * String Builder.
+     */
+<span class="fc" id="L56">    private final StringBuilder theBuilder = new StringBuilder();</span>
+
+    /**
+     * BundleName.
+     */
+    private final String theBundleName;
+
+    /**
+     * ResourceBundle.
+     */
+    private WeakReference&lt;ResourceBundle&gt; theBundle;
+
+    /**
+     * Standard constructor.
+     *
+     * @param pBundleName the Bundle Name
+     */
+<span class="fc" id="L73">    private GordianBundleLoader(final String pBundleName) {</span>
+<span class="fc" id="L74">        theBundleName = pBundleName;</span>
+<span class="fc" id="L75">    }</span>
+
+    /**
+     * Obtain standard loader.
+     *
+     * @param pBundleName the Bundle Name
+     * @return the loader
+     */
+    public static GordianBundleLoader getLoader(final String pBundleName) {
+<span class="fc" id="L84">        return new GordianBundleLoader(pBundleName);</span>
+    }
+
+    /**
+     * Build name of resource for Key.
+     *
+     * @param &lt;K&gt;  the resource key data type
+     * @param pKey the resource Key
+     * @return the resourceName
+     */
+    public &lt;K extends Enum&lt;K&gt; &amp; GordianBundleId&gt; String getValue(final K pKey) {
+        /* Build the required name */
+<span class="fc" id="L96">        theBuilder.setLength(0);</span>
+<span class="fc" id="L97">        theBuilder.append(pKey.getNameSpace());</span>
+<span class="fc" id="L98">        theBuilder.append('.');</span>
+<span class="fc" id="L99">        theBuilder.append(pKey.getKeyName());</span>
+
+        /* Access the cached bundle */
+<span class="fc bfc" id="L102" title="All 2 branches covered.">        ResourceBundle myBundle = theBundle == null</span>
+<span class="fc" id="L103">                ? null</span>
+<span class="fc" id="L104">                : theBundle.get();</span>
+
+        /* If the bundle is not cached */
+<span class="fc bfc" id="L107" title="All 2 branches covered.">        if (myBundle == null) {</span>
+            /* Access and cache the bundle */
+<span class="fc" id="L109">            myBundle = ResourceBundle.getBundle(theBundleName);</span>
+<span class="fc" id="L110">            theBundle = new WeakReference&lt;&gt;(myBundle);</span>
+        }
+
+        /* Access the required resource */
+<span class="fc" id="L114">        return myBundle.getString(theBuilder.toString());</span>
+    }
+
+    /**
+     * Obtain key for enum.
+     *
+     * @param &lt;E&gt;    the enum type
+     * @param pMap   the map
+     * @param pValue the enum value
+     * @return the resource key
+     */
+    public static &lt;E extends Enum&lt;E&gt;&gt; GordianBundleId getKeyForEnum(final Map&lt;E, GordianBundleId&gt; pMap,
+                                                                    final E pValue) {
+<span class="nc" id="L127">        final GordianBundleId myId = pMap.get(pValue);</span>
+<span class="nc bnc" id="L128" title="All 2 branches missed.">        if (myId == null) {</span>
+<span class="nc" id="L129">            throw new IllegalArgumentException(getErrorNoResource(pValue));</span>
+        }
+<span class="nc" id="L131">        return myId;</span>
+    }
+
+    /**
+     * Error for missing resource.
+     *
+     * @param pId the missing id
+     * @return the error message
+     */
+    private static String getErrorNoResource(final Enum&lt;?&gt; pId) {
+<span class="nc" id="L141">        return &quot;Missing Resource: &quot;</span>
+<span class="nc" id="L142">                + pId.getClass().getName()</span>
+                + ':'
+<span class="nc" id="L144">                + pId.name();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

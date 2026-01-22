@@ -1,0 +1,1527 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseQIFLine.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.moneywise.quicken.file</a> &gt; <span class="el_source">MoneyWiseQIFLine.java</span></div><h1>MoneyWiseQIFLine.java</h1><pre class="source lang-java linenums">/*
+ * MoneyWise: Finance Application
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.moneywise.quicken.file;
+
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimal;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRate;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
+import io.github.tonywasher.joceanus.moneywise.quicken.definitions.MoneyWiseQLineType;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+/**
+ * A standard event line in the QIF file.
+ *
+ * @param &lt;T&gt; the line type
+ */
+<span class="nc" id="L38">public abstract class MoneyWiseQIFLine&lt;T extends MoneyWiseQLineType&gt; {</span>
+    /**
+     * Reconciled flag.
+     */
+    protected static final String QIF_RECONCILED = &quot;X&quot;;
+
+    /**
+     * Transfer begin char.
+     */
+    private static final String QIF_XFERSTART = &quot;[&quot;;
+
+    /**
+     * Transfer end char.
+     */
+    private static final String QIF_XFEREND = &quot;]&quot;;
+
+    /**
+     * Class indicator.
+     */
+    private static final String QIF_CLASS = &quot;/&quot;;
+
+    /**
+     * Class separator.
+     */
+    private static final String QIF_CLASSSEP = &quot;-&quot;;
+
+    /**
+     * Category separator.
+     */
+    private static final String QIF_CATSEP = &quot;!&quot;;
+
+    /**
+     * Obtain line type.
+     *
+     * @return the line type
+     */
+    public abstract T getLineType();
+
+    /**
+     * Format the data.
+     *
+     * @param pFormatter the data formatter
+     * @param pBuilder   the string builder
+     */
+    protected abstract void formatData(OceanusDataFormatter pFormatter,
+                                       StringBuilder pBuilder);
+
+    /**
+     * Format lines.
+     *
+     * @param pFormatter the data formatter
+     * @param pBuilder   the string builder
+     */
+    protected void formatLine(final OceanusDataFormatter pFormatter,
+                              final StringBuilder pBuilder) {
+        /* Add the lineType */
+<span class="nc" id="L94">        final T myType = getLineType();</span>
+<span class="nc" id="L95">        pBuilder.append(myType.getSymbol());</span>
+
+        /* Format the Data */
+<span class="nc" id="L98">        formatData(pFormatter, pBuilder);</span>
+<span class="nc" id="L99">    }</span>
+
+    @Override
+    public boolean equals(final Object pThat) {
+        /* Handle trivial cases */
+<span class="nc bnc" id="L104" title="All 2 branches missed.">        if (this == pThat) {</span>
+<span class="nc" id="L105">            return true;</span>
+        }
+<span class="nc bnc" id="L107" title="All 2 branches missed.">        if (pThat == null) {</span>
+<span class="nc" id="L108">            return false;</span>
+        }
+
+        /* Check class */
+<span class="nc bnc" id="L112" title="All 2 branches missed.">        if (!getClass().equals(pThat.getClass())) {</span>
+<span class="nc" id="L113">            return false;</span>
+        }
+
+        /* Cast correctly */
+<span class="nc" id="L117">        final MoneyWiseQIFLine&lt;?&gt; myLine = (MoneyWiseQIFLine&lt;?&gt;) pThat;</span>
+
+        /* Check value */
+<span class="nc" id="L120">        return getLineType().equals(myLine.getLineType());</span>
+    }
+
+    @Override
+    public int hashCode() {
+<span class="nc" id="L125">        return getLineType().hashCode();</span>
+    }
+
+    /**
+     * The String line.
+     *
+     * @param &lt;X&gt; the line type
+     */
+    protected abstract static class MoneyWiseQIFStringLine&lt;X extends MoneyWiseQLineType&gt;
+            extends MoneyWiseQIFLine&lt;X&gt; {
+        /**
+         * The value.
+         */
+        private final String theValue;
+
+        /**
+         * Constructor.
+         *
+         * @param pValue the Value
+         */
+<span class="nc" id="L145">        protected MoneyWiseQIFStringLine(final String pValue) {</span>
+            /* Store the value */
+<span class="nc" id="L147">            theValue = pValue;</span>
+<span class="nc" id="L148">        }</span>
+
+        @Override
+        public String toString() {
+<span class="nc" id="L152">            return getValue();</span>
+        }
+
+        /**
+         * Obtain Value.
+         *
+         * @return the value
+         */
+        protected String getValue() {
+<span class="nc" id="L161">            return theValue;</span>
+        }
+
+        @Override
+        protected void formatData(final OceanusDataFormatter pFormatter,
+                                  final StringBuilder pBuilder) {
+            /* Append the string data */
+<span class="nc" id="L168">            pBuilder.append(theValue);</span>
+<span class="nc" id="L169">        }</span>
+
+        @Override
+        public boolean equals(final Object pThat) {
+            /* Handle trivial cases */
+<span class="nc bnc" id="L174" title="All 2 branches missed.">            if (this == pThat) {</span>
+<span class="nc" id="L175">                return true;</span>
+            }
+<span class="nc bnc" id="L177" title="All 2 branches missed.">            if (pThat == null) {</span>
+<span class="nc" id="L178">                return false;</span>
+            }
+
+            /* Check class */
+<span class="nc bnc" id="L182" title="All 2 branches missed.">            if (!getClass().equals(pThat.getClass())) {</span>
+<span class="nc" id="L183">                return false;</span>
+            }
+
+            /* Cast correctly */
+<span class="nc" id="L187">            final MoneyWiseQIFStringLine&lt;?&gt; myLine = (MoneyWiseQIFStringLine&lt;?&gt;) pThat;</span>
+
+            /* Check line type */
+<span class="nc bnc" id="L190" title="All 2 branches missed.">            if (!getLineType().equals(myLine.getLineType())) {</span>
+<span class="nc" id="L191">                return false;</span>
+            }
+
+            /* Check value */
+<span class="nc" id="L195">            return theValue.equals(myLine.getValue());</span>
+        }
+
+        @Override
+        public int hashCode() {
+<span class="nc" id="L200">            final int myResult = MoneyWiseQIFFile.HASH_BASE * getLineType().hashCode();</span>
+<span class="nc" id="L201">            return myResult + theValue.hashCode();</span>
+        }
+    }
+
+    /**
+     * The Money line.
+     *
+     * @param &lt;X&gt; the line type
+     */
+    protected abstract static class MoneyWiseQIFMoneyLine&lt;X extends MoneyWiseQLineType&gt;
+            extends MoneyWiseQIFLine&lt;X&gt; {
+        /**
+         * The money.
+         */
+        private final OceanusMoney theMoney;
+
+        /**
+         * Constructor.
+         *
+         * @param pMoney the Money
+         */
+<span class="nc" id="L222">        protected MoneyWiseQIFMoneyLine(final OceanusMoney pMoney) {</span>
+            /* Store data */
+<span class="nc" id="L224">            theMoney = pMoney;</span>
+<span class="nc" id="L225">        }</span>
+
+        @Override
+        public String toString() {
+<span class="nc" id="L229">            return getMoney().toString();</span>
+        }
+
+        /**
+         * Obtain Money.
+         *
+         * @return the money
+         */
+        protected OceanusMoney getMoney() {
+<span class="nc" id="L238">            return theMoney;</span>
+        }
+
+        @Override
+        protected void formatData(final OceanusDataFormatter pFormatter,
+                                  final StringBuilder pBuilder) {
+            /* Convert to Decimal */
+<span class="nc" id="L245">            final OceanusDecimal myDecimal = new OceanusDecimal(theMoney);</span>
+
+            /* Append the string data */
+<span class="nc" id="L248">            pBuilder.append(pFormatter.formatObject(myDecimal));</span>
+<span class="nc" id="L249">        }</span>
+
+        @Override
+        public boolean equals(final Object pThat) {
+            /* Handle trivial cases */
+<span class="nc bnc" id="L254" title="All 2 branches missed.">            if (this == pThat) {</span>
+<span class="nc" id="L255">                return true;</span>
+            }
+<span class="nc bnc" id="L257" title="All 2 branches missed.">            if (pThat == null) {</span>
+<span class="nc" id="L258">                return false;</span>
+            }
+
+            /* Check class */
+<span class="nc bnc" id="L262" title="All 2 branches missed.">            if (!getClass().equals(pThat.getClass())) {</span>
+<span class="nc" id="L263">                return false;</span>
+            }
+
+            /* Cast correctly */
+<span class="nc" id="L267">            final MoneyWiseQIFMoneyLine&lt;?&gt; myLine = (MoneyWiseQIFMoneyLine&lt;?&gt;) pThat;</span>
+
+            /* Check line type */
+<span class="nc bnc" id="L270" title="All 2 branches missed.">            if (!getLineType().equals(myLine.getLineType())) {</span>
+<span class="nc" id="L271">                return false;</span>
+            }
+
+            /* Check value */
+<span class="nc" id="L275">            return theMoney.equals(myLine.getMoney());</span>
+        }
+
+        @Override
+        public int hashCode() {
+<span class="nc" id="L280">            final int myResult = MoneyWiseQIFFile.HASH_BASE * getLineType().hashCode();</span>
+<span class="nc" id="L281">            return myResult + theMoney.hashCode();</span>
+        }
+    }
+
+    /**
+     * The Date line.
+     *
+     * @param &lt;X&gt; the line type
+     */
+    protected abstract static class MoneyWiseQIFDateLine&lt;X extends MoneyWiseQLineType&gt;
+            extends MoneyWiseQIFLine&lt;X&gt; {
+        /**
+         * The date.
+         */
+        private final OceanusDate theDate;
+
+        /**
+         * Constructor.
+         *
+         * @param pDate the Date
+         */
+<span class="nc" id="L302">        protected MoneyWiseQIFDateLine(final OceanusDate pDate) {</span>
+            /* Store the date */
+<span class="nc" id="L304">            theDate = pDate;</span>
+<span class="nc" id="L305">        }</span>
+
+        @Override
+        public String toString() {
+<span class="nc" id="L309">            return getDate().toString();</span>
+        }
+
+        /**
+         * Obtain Date.
+         *
+         * @return the date
+         */
+        public OceanusDate getDate() {
+<span class="nc" id="L318">            return theDate;</span>
+        }
+
+        @Override
+        protected void formatData(final OceanusDataFormatter pFormatter,
+                                  final StringBuilder pBuilder) {
+            /* Append the string data */
+<span class="nc" id="L325">            pBuilder.append(pFormatter.formatObject(theDate));</span>
+<span class="nc" id="L326">        }</span>
+
+        @Override
+        public boolean equals(final Object pThat) {
+            /* Handle trivial cases */
+<span class="nc bnc" id="L331" title="All 2 branches missed.">            if (this == pThat) {</span>
+<span class="nc" id="L332">                return true;</span>
+            }
+<span class="nc bnc" id="L334" title="All 2 branches missed.">            if (pThat == null) {</span>
+<span class="nc" id="L335">                return false;</span>
+            }
+
+            /* Check class */
+<span class="nc bnc" id="L339" title="All 2 branches missed.">            if (!getClass().equals(pThat.getClass())) {</span>
+<span class="nc" id="L340">                return false;</span>
+            }
+
+            /* Cast correctly */
+<span class="nc" id="L344">            final MoneyWiseQIFDateLine&lt;?&gt; myLine = (MoneyWiseQIFDateLine&lt;?&gt;) pThat;</span>
+
+            /* Check line type */
+<span class="nc bnc" id="L347" title="All 2 branches missed.">            if (!getLineType().equals(myLine.getLineType())) {</span>
+<span class="nc" id="L348">                return false;</span>
+            }
+
+            /* Check value */
+<span class="nc" id="L352">            return theDate.equals(myLine.getDate());</span>
+        }
+
+        @Override
+        public int hashCode() {
+<span class="nc" id="L357">            final int myResult = MoneyWiseQIFFile.HASH_BASE * getLineType().hashCode();</span>
+<span class="nc" id="L358">            return myResult + theDate.hashCode();</span>
+        }
+    }
+
+    /**
+     * The Flag line.
+     *
+     * @param &lt;X&gt; the line type
+     */
+    protected abstract static class MoneyWiseQIFFlagLine&lt;X extends MoneyWiseQLineType&gt;
+            extends MoneyWiseQIFLine&lt;X&gt; {
+        /**
+         * The flag status.
+         */
+        private final Boolean isSet;
+
+        /**
+         * Constructor.
+         *
+         * @param pSet is the flag set?
+         */
+<span class="nc" id="L379">        protected MoneyWiseQIFFlagLine(final Boolean pSet) {</span>
+            /* Store data */
+<span class="nc" id="L381">            isSet = pSet;</span>
+<span class="nc" id="L382">        }</span>
+
+        @Override
+        public String toString() {
+<span class="nc" id="L386">            return isSet().toString();</span>
+        }
+
+        /**
+         * Obtain Cleared status.
+         *
+         * @return true/false
+         */
+        protected Boolean isSet() {
+<span class="nc" id="L395">            return isSet;</span>
+        }
+
+        @Override
+        public boolean equals(final Object pThat) {
+            /* Handle trivial cases */
+<span class="nc bnc" id="L401" title="All 2 branches missed.">            if (this == pThat) {</span>
+<span class="nc" id="L402">                return true;</span>
+            }
+<span class="nc bnc" id="L404" title="All 2 branches missed.">            if (pThat == null) {</span>
+<span class="nc" id="L405">                return false;</span>
+            }
+
+            /* Check class */
+<span class="nc bnc" id="L409" title="All 2 branches missed.">            if (!getClass().equals(pThat.getClass())) {</span>
+<span class="nc" id="L410">                return false;</span>
+            }
+
+            /* Cast correctly */
+<span class="nc" id="L414">            final MoneyWiseQIFFlagLine&lt;?&gt; myLine = (MoneyWiseQIFFlagLine&lt;?&gt;) pThat;</span>
+
+            /* Check line type */
+<span class="nc bnc" id="L417" title="All 2 branches missed.">            if (!getLineType().equals(myLine.getLineType())) {</span>
+<span class="nc" id="L418">                return false;</span>
+            }
+
+            /* Check value */
+<span class="nc" id="L422">            return isSet.equals(myLine.isSet());</span>
+        }
+
+        @Override
+        public int hashCode() {
+<span class="nc" id="L427">            final int myResult = MoneyWiseQIFFile.HASH_BASE * getLineType().hashCode();</span>
+<span class="nc" id="L428">            return myResult + isSet.hashCode();</span>
+        }
+    }
+
+    /**
+     * The Cleared line.
+     *
+     * @param &lt;X&gt; the line type
+     */
+    protected abstract static class MoneyWiseQIFClearedLine&lt;X extends MoneyWiseQLineType&gt;
+            extends MoneyWiseQIFFlagLine&lt;X&gt; {
+        /**
+         * Constructor.
+         *
+         * @param pSet is the flag set?
+         */
+        protected MoneyWiseQIFClearedLine(final Boolean pSet) {
+            /* Call super-constructor */
+<span class="nc" id="L446">            super(pSet);</span>
+<span class="nc" id="L447">        }</span>
+
+        /**
+         * Obtain Cleared status.
+         *
+         * @return true/false
+         */
+        public Boolean isCleared() {
+<span class="nc" id="L455">            return isSet();</span>
+        }
+
+        @Override
+        protected void formatData(final OceanusDataFormatter pFormatter,
+                                  final StringBuilder pBuilder) {
+            /* If we should set the flag */
+<span class="nc bnc" id="L462" title="All 2 branches missed.">            if (isSet()) {</span>
+                /* Add the flag */
+<span class="nc" id="L464">                pBuilder.append(QIF_RECONCILED);</span>
+            }
+<span class="nc" id="L466">        }</span>
+    }
+
+    /**
+     * The Price line.
+     *
+     * @param &lt;X&gt; the line type
+     */
+    protected abstract static class MoneyWiseQIFPriceLine&lt;X extends MoneyWiseQLineType&gt;
+            extends MoneyWiseQIFLine&lt;X&gt; {
+        /**
+         * The price.
+         */
+        private final OceanusPrice thePrice;
+
+        /**
+         * Constructor.
+         *
+         * @param pPrice the Price
+         */
+<span class="nc" id="L486">        protected MoneyWiseQIFPriceLine(final OceanusPrice pPrice) {</span>
+            /* Store data */
+<span class="nc" id="L488">            thePrice = pPrice;</span>
+<span class="nc" id="L489">        }</span>
+
+        @Override
+        public String toString() {
+<span class="nc" id="L493">            return getPrice().toString();</span>
+        }
+
+        /**
+         * Obtain price.
+         *
+         * @return the price
+         */
+        protected OceanusPrice getPrice() {
+<span class="nc" id="L502">            return thePrice;</span>
+        }
+
+        @Override
+        protected void formatData(final OceanusDataFormatter pFormatter,
+                                  final StringBuilder pBuilder) {
+            /* Convert to Decimal */
+<span class="nc" id="L509">            final OceanusDecimal myDecimal = new OceanusDecimal(thePrice);</span>
+
+            /* Append the string data */
+<span class="nc" id="L512">            pBuilder.append(pFormatter.formatObject(myDecimal));</span>
+<span class="nc" id="L513">        }</span>
+
+        @Override
+        public boolean equals(final Object pThat) {
+            /* Handle trivial cases */
+<span class="nc bnc" id="L518" title="All 2 branches missed.">            if (this == pThat) {</span>
+<span class="nc" id="L519">                return true;</span>
+            }
+<span class="nc bnc" id="L521" title="All 2 branches missed.">            if (pThat == null) {</span>
+<span class="nc" id="L522">                return false;</span>
+            }
+
+            /* Check class */
+<span class="nc bnc" id="L526" title="All 2 branches missed.">            if (!getClass().equals(pThat.getClass())) {</span>
+<span class="nc" id="L527">                return false;</span>
+            }
+
+            /* Cast correctly */
+<span class="nc" id="L531">            final MoneyWiseQIFPriceLine&lt;?&gt; myLine = (MoneyWiseQIFPriceLine&lt;?&gt;) pThat;</span>
+
+            /* Check line type */
+<span class="nc bnc" id="L534" title="All 2 branches missed.">            if (!getLineType().equals(myLine.getLineType())) {</span>
+<span class="nc" id="L535">                return false;</span>
+            }
+
+            /* Check value */
+<span class="nc" id="L539">            return thePrice.equals(myLine.getPrice());</span>
+        }
+
+        @Override
+        public int hashCode() {
+<span class="nc" id="L544">            final int myResult = MoneyWiseQIFFile.HASH_BASE * getLineType().hashCode();</span>
+<span class="nc" id="L545">            return myResult + thePrice.hashCode();</span>
+        }
+    }
+
+    /**
+     * The Units line.
+     *
+     * @param &lt;X&gt; the line type
+     */
+    protected abstract static class MoneyWiseQIFUnitsLine&lt;X extends MoneyWiseQLineType&gt;
+            extends MoneyWiseQIFLine&lt;X&gt; {
+        /**
+         * The units.
+         */
+        private final OceanusUnits theUnits;
+
+        /**
+         * Constructor.
+         *
+         * @param pUnits the Units
+         */
+<span class="nc" id="L566">        protected MoneyWiseQIFUnitsLine(final OceanusUnits pUnits) {</span>
+            /* Store data */
+<span class="nc" id="L568">            theUnits = pUnits;</span>
+<span class="nc" id="L569">        }</span>
+
+        @Override
+        public String toString() {
+<span class="nc" id="L573">            return getUnits().toString();</span>
+        }
+
+        /**
+         * Obtain units.
+         *
+         * @return the units
+         */
+        protected OceanusUnits getUnits() {
+<span class="nc" id="L582">            return theUnits;</span>
+        }
+
+        @Override
+        protected void formatData(final OceanusDataFormatter pFormatter,
+                                  final StringBuilder pBuilder) {
+            /* Append the string data */
+<span class="nc" id="L589">            pBuilder.append(pFormatter.formatObject(theUnits));</span>
+<span class="nc" id="L590">        }</span>
+
+        @Override
+        public boolean equals(final Object pThat) {
+            /* Handle trivial cases */
+<span class="nc bnc" id="L595" title="All 2 branches missed.">            if (this == pThat) {</span>
+<span class="nc" id="L596">                return true;</span>
+            }
+<span class="nc bnc" id="L598" title="All 2 branches missed.">            if (pThat == null) {</span>
+<span class="nc" id="L599">                return false;</span>
+            }
+
+            /* Check class */
+<span class="nc bnc" id="L603" title="All 2 branches missed.">            if (!getClass().equals(pThat.getClass())) {</span>
+<span class="nc" id="L604">                return false;</span>
+            }
+
+            /* Cast correctly */
+<span class="nc" id="L608">            final MoneyWiseQIFUnitsLine&lt;?&gt; myLine = (MoneyWiseQIFUnitsLine&lt;?&gt;) pThat;</span>
+
+            /* Check line type */
+<span class="nc bnc" id="L611" title="All 2 branches missed.">            if (!getLineType().equals(myLine.getLineType())) {</span>
+<span class="nc" id="L612">                return false;</span>
+            }
+
+            /* Check value */
+<span class="nc" id="L616">            return theUnits.equals(myLine.getUnits());</span>
+        }
+
+        @Override
+        public int hashCode() {
+<span class="nc" id="L621">            final int myResult = MoneyWiseQIFFile.HASH_BASE * getLineType().hashCode();</span>
+<span class="nc" id="L622">            return myResult + theUnits.hashCode();</span>
+        }
+    }
+
+    /**
+     * The Rate line.
+     *
+     * @param &lt;X&gt; the line type
+     */
+    protected abstract static class MoneyWiseQIFRateLine&lt;X extends MoneyWiseQLineType&gt;
+            extends MoneyWiseQIFLine&lt;X&gt; {
+        /**
+         * The Rate.
+         */
+        private final OceanusRate theRate;
+
+        /**
+         * Constructor.
+         *
+         * @param pPercent the percentage
+         */
+<span class="nc" id="L643">        protected MoneyWiseQIFRateLine(final OceanusRate pPercent) {</span>
+            /* Store data */
+<span class="nc" id="L645">            theRate = pPercent;</span>
+<span class="nc" id="L646">        }</span>
+
+        @Override
+        public String toString() {
+<span class="nc" id="L650">            return getRate().toString();</span>
+        }
+
+        /**
+         * Obtain rate.
+         *
+         * @return the rate
+         */
+        protected OceanusRate getRate() {
+<span class="nc" id="L659">            return theRate;</span>
+        }
+
+        @Override
+        protected void formatData(final OceanusDataFormatter pFormatter,
+                                  final StringBuilder pBuilder) {
+            /* Append the string data */
+<span class="nc" id="L666">            pBuilder.append(pFormatter.formatObject(theRate));</span>
+<span class="nc" id="L667">        }</span>
+
+        @Override
+        public boolean equals(final Object pThat) {
+            /* Handle trivial cases */
+<span class="nc bnc" id="L672" title="All 2 branches missed.">            if (this == pThat) {</span>
+<span class="nc" id="L673">                return true;</span>
+            }
+<span class="nc bnc" id="L675" title="All 2 branches missed.">            if (pThat == null) {</span>
+<span class="nc" id="L676">                return false;</span>
+            }
+
+            /* Check class */
+<span class="nc bnc" id="L680" title="All 2 branches missed.">            if (!getClass().equals(pThat.getClass())) {</span>
+<span class="nc" id="L681">                return false;</span>
+            }
+
+            /* Cast correctly */
+<span class="nc" id="L685">            final MoneyWiseQIFRateLine&lt;?&gt; myLine = (MoneyWiseQIFRateLine&lt;?&gt;) pThat;</span>
+
+            /* Check line type */
+<span class="nc bnc" id="L688" title="All 2 branches missed.">            if (!getLineType().equals(myLine.getLineType())) {</span>
+<span class="nc" id="L689">                return false;</span>
+            }
+
+            /* Check value */
+<span class="nc" id="L693">            return theRate.equals(myLine.getRate());</span>
+        }
+
+        @Override
+        public int hashCode() {
+<span class="nc" id="L698">            final int myResult = MoneyWiseQIFFile.HASH_BASE * getLineType().hashCode();</span>
+<span class="nc" id="L699">            return myResult + theRate.hashCode();</span>
+        }
+    }
+
+    /**
+     * The Ratio line.
+     *
+     * @param &lt;X&gt; the line type
+     */
+    protected abstract static class MoneyWiseQIFRatioLine&lt;X extends MoneyWiseQLineType&gt;
+            extends MoneyWiseQIFLine&lt;X&gt; {
+        /**
+         * The ratio.
+         */
+        private final OceanusRatio theRatio;
+
+        /**
+         * Constructor.
+         *
+         * @param pRatio the Ratio
+         */
+<span class="nc" id="L720">        protected MoneyWiseQIFRatioLine(final OceanusRatio pRatio) {</span>
+            /* Store data */
+<span class="nc" id="L722">            theRatio = pRatio;</span>
+<span class="nc" id="L723">        }</span>
+
+        @Override
+        public String toString() {
+<span class="nc" id="L727">            return getRatio().toString();</span>
+        }
+
+        /**
+         * Obtain ratio.
+         *
+         * @return the ratio
+         */
+        protected OceanusRatio getRatio() {
+<span class="nc" id="L736">            return theRatio;</span>
+        }
+
+        @Override
+        protected void formatData(final OceanusDataFormatter pFormatter,
+                                  final StringBuilder pBuilder) {
+            /* Append the string data */
+<span class="nc" id="L743">            pBuilder.append(pFormatter.formatObject(theRatio));</span>
+<span class="nc" id="L744">        }</span>
+
+        @Override
+        public boolean equals(final Object pThat) {
+            /* Handle trivial cases */
+<span class="nc bnc" id="L749" title="All 2 branches missed.">            if (this == pThat) {</span>
+<span class="nc" id="L750">                return true;</span>
+            }
+<span class="nc bnc" id="L752" title="All 2 branches missed.">            if (pThat == null) {</span>
+<span class="nc" id="L753">                return false;</span>
+            }
+
+            /* Check class */
+<span class="nc bnc" id="L757" title="All 2 branches missed.">            if (!getClass().equals(pThat.getClass())) {</span>
+<span class="nc" id="L758">                return false;</span>
+            }
+
+            /* Cast correctly */
+<span class="nc" id="L762">            final MoneyWiseQIFRatioLine&lt;?&gt; myLine = (MoneyWiseQIFRatioLine&lt;?&gt;) pThat;</span>
+
+            /* Check line type */
+<span class="nc bnc" id="L765" title="All 2 branches missed.">            if (!getLineType().equals(myLine.getLineType())) {</span>
+<span class="nc" id="L766">                return false;</span>
+            }
+
+            /* Check value */
+<span class="nc" id="L770">            return theRatio.equals(myLine.getRatio());</span>
+        }
+
+        @Override
+        public int hashCode() {
+<span class="nc" id="L775">            final int myResult = MoneyWiseQIFFile.HASH_BASE * getLineType().hashCode();</span>
+<span class="nc" id="L776">            return myResult + theRatio.hashCode();</span>
+        }
+    }
+
+    /**
+     * The Security line.
+     *
+     * @param &lt;X&gt; the line type
+     */
+    public abstract static class MoneyWiseQIFSecurityLine&lt;X extends MoneyWiseQLineType&gt;
+            extends MoneyWiseQIFLine&lt;X&gt; {
+        /**
+         * The security.
+         */
+        private final MoneyWiseQIFSecurity theSecurity;
+
+        /**
+         * Constructor.
+         *
+         * @param pSecurity the Security
+         */
+<span class="nc" id="L797">        protected MoneyWiseQIFSecurityLine(final MoneyWiseQIFSecurity pSecurity) {</span>
+            /* Store data */
+<span class="nc" id="L799">            theSecurity = pSecurity;</span>
+<span class="nc" id="L800">        }</span>
+
+        @Override
+        public String toString() {
+<span class="nc" id="L804">            return theSecurity.toString();</span>
+        }
+
+        /**
+         * Obtain account.
+         *
+         * @return the account
+         */
+        public MoneyWiseQIFSecurity getSecurity() {
+<span class="nc" id="L813">            return theSecurity;</span>
+        }
+
+        @Override
+        protected void formatData(final OceanusDataFormatter pFormatter,
+                                  final StringBuilder pBuilder) {
+            /* Append the security name */
+<span class="nc" id="L820">            pBuilder.append(theSecurity.getName());</span>
+<span class="nc" id="L821">        }</span>
+
+        @Override
+        public boolean equals(final Object pThat) {
+            /* Handle trivial cases */
+<span class="nc bnc" id="L826" title="All 2 branches missed.">            if (this == pThat) {</span>
+<span class="nc" id="L827">                return true;</span>
+            }
+<span class="nc bnc" id="L829" title="All 2 branches missed.">            if (pThat == null) {</span>
+<span class="nc" id="L830">                return false;</span>
+            }
+
+            /* Check class */
+<span class="nc bnc" id="L834" title="All 2 branches missed.">            if (!getClass().equals(pThat.getClass())) {</span>
+<span class="nc" id="L835">                return false;</span>
+            }
+
+            /* Cast correctly */
+<span class="nc" id="L839">            final MoneyWiseQIFSecurityLine&lt;?&gt; myLine = (MoneyWiseQIFSecurityLine&lt;?&gt;) pThat;</span>
+
+            /* Check line type */
+<span class="nc bnc" id="L842" title="All 2 branches missed.">            if (!getLineType().equals(myLine.getLineType())) {</span>
+<span class="nc" id="L843">                return false;</span>
+            }
+
+            /* Check value */
+<span class="nc" id="L847">            return theSecurity.equals(myLine.getSecurity());</span>
+        }
+
+        @Override
+        public int hashCode() {
+<span class="nc" id="L852">            final int myResult = MoneyWiseQIFFile.HASH_BASE * getLineType().hashCode();</span>
+<span class="nc" id="L853">            return myResult + theSecurity.hashCode();</span>
+        }
+    }
+
+    /**
+     * The Account line.
+     *
+     * @param &lt;X&gt; the line type
+     */
+    public abstract static class MoneyWiseQIFXferAccountLine&lt;X extends MoneyWiseQLineType&gt;
+            extends MoneyWiseQIFLine&lt;X&gt; {
+        /**
+         * The account.
+         */
+        private final MoneyWiseQIFAccount theAccount;
+
+        /**
+         * The class list.
+         */
+        private final List&lt;MoneyWiseQIFClass&gt; theClasses;
+
+        /**
+         * Constructor.
+         *
+         * @param pAccount the Account
+         */
+        protected MoneyWiseQIFXferAccountLine(final MoneyWiseQIFAccount pAccount) {
+<span class="nc" id="L880">            this(pAccount, null);</span>
+<span class="nc" id="L881">        }</span>
+
+        /**
+         * Constructor.
+         *
+         * @param pAccount the Account
+         * @param pClasses the classes
+         */
+        protected MoneyWiseQIFXferAccountLine(final MoneyWiseQIFAccount pAccount,
+<span class="nc" id="L890">                                              final List&lt;MoneyWiseQIFClass&gt; pClasses) {</span>
+            /* Store data */
+<span class="nc" id="L892">            theAccount = pAccount;</span>
+<span class="nc" id="L893">            theClasses = pClasses;</span>
+<span class="nc" id="L894">        }</span>
+
+        @Override
+        public String toString() {
+<span class="nc" id="L898">            return theAccount.toString();</span>
+        }
+
+        /**
+         * Obtain account.
+         *
+         * @return the account
+         */
+        public MoneyWiseQIFAccount getAccount() {
+<span class="nc" id="L907">            return theAccount;</span>
+        }
+
+        /**
+         * Obtain class list.
+         *
+         * @return the class list
+         */
+        public List&lt;MoneyWiseQIFClass&gt; getClassList() {
+<span class="nc" id="L916">            return theClasses;</span>
+        }
+
+        @Override
+        protected void formatData(final OceanusDataFormatter pFormatter,
+                                  final StringBuilder pBuilder) {
+            /* Append the string data */
+<span class="nc" id="L923">            pBuilder.append(QIF_XFERSTART);</span>
+<span class="nc" id="L924">            pBuilder.append(theAccount.getName());</span>
+<span class="nc" id="L925">            pBuilder.append(QIF_XFEREND);</span>
+
+            /* If we have classes */
+<span class="nc bnc" id="L928" title="All 2 branches missed.">            if (theClasses != null) {</span>
+                /* Add class indicator */
+<span class="nc" id="L930">                pBuilder.append(QIF_CLASS);</span>
+
+                /* Iterate through the list */
+<span class="nc" id="L933">                final Iterator&lt;MoneyWiseQIFClass&gt; myIterator = theClasses.iterator();</span>
+<span class="nc bnc" id="L934" title="All 2 branches missed.">                while (myIterator.hasNext()) {</span>
+<span class="nc" id="L935">                    final MoneyWiseQIFClass myClass = myIterator.next();</span>
+
+                    /* Add to the list */
+<span class="nc" id="L938">                    pBuilder.append(myClass.getName());</span>
+<span class="nc bnc" id="L939" title="All 2 branches missed.">                    if (myIterator.hasNext()) {</span>
+<span class="nc" id="L940">                        pBuilder.append(QIF_CLASSSEP);</span>
+                    }
+<span class="nc" id="L942">                }</span>
+            }
+<span class="nc" id="L944">        }</span>
+
+        /**
+         * Parse account line.
+         *
+         * @param pFile the QIF File definitions
+         * @param pLine the line.
+         * @return the account name (or null)
+         */
+        protected static MoneyWiseQIFAccount parseAccount(final MoneyWiseQIFFile pFile,
+                                                          final String pLine) {
+            /* Determine line to use */
+<span class="nc" id="L956">            String myLine = pLine;</span>
+
+            /* If the line contains a category separator */
+<span class="nc bnc" id="L959" title="All 2 branches missed.">            if (pLine.contains(QIF_CATSEP)) {</span>
+                /* Move to data following separator */
+<span class="nc" id="L961">                final int i = pLine.indexOf(QIF_CATSEP);</span>
+<span class="nc" id="L962">                myLine = pLine.substring(i + 1);</span>
+            }
+
+            /* If the line contains classes */
+<span class="nc bnc" id="L966" title="All 2 branches missed.">            if (myLine.contains(QIF_CLASS)) {</span>
+                /* drop class data */
+<span class="nc" id="L968">                final int i = myLine.indexOf(QIF_CLASS);</span>
+<span class="nc" id="L969">                myLine = myLine.substring(0, i);</span>
+            }
+
+            /* If we have the account delimiters */
+<span class="nc bnc" id="L973" title="All 2 branches missed.">            if ((myLine.startsWith(QIF_XFERSTART))</span>
+<span class="nc bnc" id="L974" title="All 2 branches missed.">                    &amp;&amp; (myLine.endsWith(QIF_XFEREND))) {</span>
+                /* Remove account delimiters */
+<span class="nc" id="L976">                final int i = QIF_XFERSTART.length();</span>
+<span class="nc" id="L977">                final int j = QIF_XFEREND.length();</span>
+<span class="nc" id="L978">                final String myAccount = myLine.substring(i, myLine.length()</span>
+                        - j);
+<span class="nc" id="L980">                return pFile.getAccount(myAccount);</span>
+            }
+
+            /* Return no account */
+<span class="nc" id="L984">            return null;</span>
+        }
+
+        /**
+         * Parse account classes.
+         *
+         * @param pFile the QIF File
+         * @param pLine the line.
+         * @return the account name (or null)
+         */
+        protected static List&lt;MoneyWiseQIFClass&gt; parseAccountClasses(final MoneyWiseQIFFile pFile,
+                                                                     final String pLine) {
+            /* Determine line to use */
+<span class="nc" id="L997">            String myLine = pLine;</span>
+
+            /* If the line contains a category separator */
+<span class="nc bnc" id="L1000" title="All 2 branches missed.">            if (pLine.contains(QIF_CATSEP)) {</span>
+                /* Move to data following separator */
+<span class="nc" id="L1002">                final int i = pLine.indexOf(QIF_CATSEP);</span>
+<span class="nc" id="L1003">                myLine = pLine.substring(i + 1);</span>
+            }
+
+            /* If the line contains classes */
+<span class="nc bnc" id="L1007" title="All 2 branches missed.">            if (myLine.contains(QIF_CLASS)) {</span>
+                /* drop preceding data */
+<span class="nc" id="L1009">                final int i = myLine.indexOf(QIF_CLASS);</span>
+<span class="nc" id="L1010">                myLine = myLine.substring(i + 1);</span>
+
+                /* Build list of classes */
+<span class="nc" id="L1013">                final String[] myClasses = myLine.split(QIF_CLASSSEP);</span>
+<span class="nc" id="L1014">                final List&lt;MoneyWiseQIFClass&gt; myList = new ArrayList&lt;&gt;();</span>
+<span class="nc bnc" id="L1015" title="All 2 branches missed.">                for (String myClass : myClasses) {</span>
+<span class="nc" id="L1016">                    myList.add(pFile.getClass(myClass));</span>
+                }
+
+                /* Return the classes */
+<span class="nc" id="L1020">                return myList;</span>
+            }
+
+            /* Return no classes */
+<span class="nc" id="L1024">            return null;</span>
+        }
+
+        @Override
+        public boolean equals(final Object pThat) {
+            /* Handle trivial cases */
+<span class="nc bnc" id="L1030" title="All 2 branches missed.">            if (this == pThat) {</span>
+<span class="nc" id="L1031">                return true;</span>
+            }
+<span class="nc bnc" id="L1033" title="All 2 branches missed.">            if (pThat == null) {</span>
+<span class="nc" id="L1034">                return false;</span>
+            }
+
+            /* Check class */
+<span class="nc bnc" id="L1038" title="All 2 branches missed.">            if (!getClass().equals(pThat.getClass())) {</span>
+<span class="nc" id="L1039">                return false;</span>
+            }
+
+            /* Cast correctly */
+<span class="nc" id="L1043">            final MoneyWiseQIFXferAccountLine&lt;?&gt; myLine = (MoneyWiseQIFXferAccountLine&lt;?&gt;) pThat;</span>
+
+            /* Check line type */
+<span class="nc bnc" id="L1046" title="All 2 branches missed.">            if (!getLineType().equals(myLine.getLineType())) {</span>
+<span class="nc" id="L1047">                return false;</span>
+            }
+
+            /* Check account */
+<span class="nc bnc" id="L1051" title="All 2 branches missed.">            if (!theAccount.equals(myLine.getAccount())) {</span>
+<span class="nc" id="L1052">                return false;</span>
+            }
+
+            /* Check classes */
+<span class="nc" id="L1056">            final List&lt;MoneyWiseQIFClass&gt; myClasses = myLine.getClassList();</span>
+<span class="nc bnc" id="L1057" title="All 2 branches missed.">            if (theClasses == null) {</span>
+<span class="nc bnc" id="L1058" title="All 2 branches missed.">                return myClasses == null;</span>
+<span class="nc bnc" id="L1059" title="All 2 branches missed.">            } else if (myClasses == null) {</span>
+<span class="nc" id="L1060">                return true;</span>
+            }
+<span class="nc" id="L1062">            return theClasses.equals(myClasses);</span>
+        }
+
+        @Override
+        public int hashCode() {
+<span class="nc" id="L1067">            int myResult = MoneyWiseQIFFile.HASH_BASE * getLineType().hashCode();</span>
+<span class="nc bnc" id="L1068" title="All 2 branches missed.">            if (theClasses != null) {</span>
+<span class="nc" id="L1069">                myResult += theClasses.hashCode();</span>
+<span class="nc" id="L1070">                myResult *= MoneyWiseQIFFile.HASH_BASE;</span>
+            }
+<span class="nc" id="L1072">            return myResult + theAccount.hashCode();</span>
+        }
+    }
+
+    /**
+     * The Payee line.
+     *
+     * @param &lt;X&gt; the line type
+     */
+    public abstract static class MoneyWiseQIFPayeeLine&lt;X extends MoneyWiseQLineType&gt;
+            extends MoneyWiseQIFLine&lt;X&gt; {
+        /**
+         * The payee.
+         */
+        private final MoneyWiseQIFPayee thePayee;
+
+        /**
+         * Constructor.
+         *
+         * @param pPayee the Payee
+         */
+<span class="nc" id="L1093">        protected MoneyWiseQIFPayeeLine(final MoneyWiseQIFPayee pPayee) {</span>
+            /* Store data */
+<span class="nc" id="L1095">            thePayee = pPayee;</span>
+<span class="nc" id="L1096">        }</span>
+
+        @Override
+        public String toString() {
+<span class="nc" id="L1100">            return thePayee.toString();</span>
+        }
+
+        /**
+         * Obtain payee.
+         *
+         * @return the payee
+         */
+        public MoneyWiseQIFPayee getPayee() {
+<span class="nc" id="L1109">            return thePayee;</span>
+        }
+
+        @Override
+        protected void formatData(final OceanusDataFormatter pFormatter,
+                                  final StringBuilder pBuilder) {
+            /* Append the string data */
+<span class="nc" id="L1116">            pBuilder.append(thePayee.getName());</span>
+<span class="nc" id="L1117">        }</span>
+
+        @Override
+        public boolean equals(final Object pThat) {
+            /* Handle trivial cases */
+<span class="nc bnc" id="L1122" title="All 2 branches missed.">            if (this == pThat) {</span>
+<span class="nc" id="L1123">                return true;</span>
+            }
+<span class="nc bnc" id="L1125" title="All 2 branches missed.">            if (pThat == null) {</span>
+<span class="nc" id="L1126">                return false;</span>
+            }
+
+            /* Check class */
+<span class="nc bnc" id="L1130" title="All 2 branches missed.">            if (!getClass().equals(pThat.getClass())) {</span>
+<span class="nc" id="L1131">                return false;</span>
+            }
+
+            /* Cast correctly */
+<span class="nc" id="L1135">            final MoneyWiseQIFPayeeLine&lt;?&gt; myLine = (MoneyWiseQIFPayeeLine&lt;?&gt;) pThat;</span>
+
+            /* Check line type */
+<span class="nc bnc" id="L1138" title="All 2 branches missed.">            if (!getLineType().equals(myLine.getLineType())) {</span>
+<span class="nc" id="L1139">                return false;</span>
+            }
+
+            /* Check value */
+<span class="nc" id="L1143">            return thePayee.equals(myLine.getPayee());</span>
+        }
+
+        @Override
+        public int hashCode() {
+<span class="nc" id="L1148">            final int myResult = MoneyWiseQIFFile.HASH_BASE * getLineType().hashCode();</span>
+<span class="nc" id="L1149">            return myResult + thePayee.hashCode();</span>
+        }
+    }
+
+    /**
+     * The Event Category line.
+     *
+     * @param &lt;X&gt; the line type
+     */
+    public abstract static class MoneyWiseQIFCategoryLine&lt;X extends MoneyWiseQLineType&gt;
+            extends MoneyWiseQIFLine&lt;X&gt; {
+        /**
+         * The event category.
+         */
+        private final MoneyWiseQIFEventCategory theCategory;
+
+        /**
+         * The class list.
+         */
+        private final List&lt;MoneyWiseQIFClass&gt; theClasses;
+
+        /**
+         * Constructor.
+         *
+         * @param pCategory the Event Category
+         */
+        protected MoneyWiseQIFCategoryLine(final MoneyWiseQIFEventCategory pCategory) {
+<span class="nc" id="L1176">            this(pCategory, null);</span>
+<span class="nc" id="L1177">        }</span>
+
+        /**
+         * Constructor.
+         *
+         * @param pCategory the Event Category
+         * @param pClasses  the classes
+         */
+        protected MoneyWiseQIFCategoryLine(final MoneyWiseQIFEventCategory pCategory,
+<span class="nc" id="L1186">                                           final List&lt;MoneyWiseQIFClass&gt; pClasses) {</span>
+            /* Store data */
+<span class="nc" id="L1188">            theCategory = pCategory;</span>
+<span class="nc" id="L1189">            theClasses = pClasses;</span>
+<span class="nc" id="L1190">        }</span>
+
+        @Override
+        public String toString() {
+<span class="nc" id="L1194">            return theCategory.toString();</span>
+        }
+
+        /**
+         * Obtain event category.
+         *
+         * @return the event category
+         */
+        public MoneyWiseQIFEventCategory getEventCategory() {
+<span class="nc" id="L1203">            return theCategory;</span>
+        }
+
+        /**
+         * Obtain class list.
+         *
+         * @return the class list
+         */
+        public List&lt;MoneyWiseQIFClass&gt; getClassList() {
+<span class="nc" id="L1212">            return theClasses;</span>
+        }
+
+        @Override
+        protected void formatData(final OceanusDataFormatter pFormatter,
+                                  final StringBuilder pBuilder) {
+            /* Append the string data */
+<span class="nc" id="L1219">            pBuilder.append(theCategory.getName());</span>
+
+            /* If we have classes */
+<span class="nc bnc" id="L1222" title="All 2 branches missed.">            if (theClasses != null) {</span>
+                /* Add class indicator */
+<span class="nc" id="L1224">                pBuilder.append(QIF_CLASS);</span>
+
+                /* Iterate through the list */
+<span class="nc" id="L1227">                final Iterator&lt;MoneyWiseQIFClass&gt; myIterator = theClasses.iterator();</span>
+<span class="nc bnc" id="L1228" title="All 2 branches missed.">                while (myIterator.hasNext()) {</span>
+<span class="nc" id="L1229">                    final MoneyWiseQIFClass myClass = myIterator.next();</span>
+
+                    /* Add to the list */
+<span class="nc" id="L1232">                    pBuilder.append(myClass.getName());</span>
+<span class="nc bnc" id="L1233" title="All 2 branches missed.">                    if (myIterator.hasNext()) {</span>
+<span class="nc" id="L1234">                        pBuilder.append(QIF_CLASSSEP);</span>
+                    }
+<span class="nc" id="L1236">                }</span>
+            }
+<span class="nc" id="L1238">        }</span>
+
+        /**
+         * Parse category line.
+         *
+         * @param pFile the QIF File
+         * @param pLine the line.
+         * @return the account name (or null)
+         */
+        protected static MoneyWiseQIFEventCategory parseCategory(final MoneyWiseQIFFile pFile,
+                                                                 final String pLine) {
+            /* Determine line to use */
+<span class="nc" id="L1250">            String myLine = pLine;</span>
+
+            /* If the line contains a category separator */
+<span class="nc bnc" id="L1253" title="All 2 branches missed.">            if (pLine.contains(QIF_CATSEP)) {</span>
+                /* Drop data after separator */
+<span class="nc" id="L1255">                final int i = pLine.indexOf(QIF_CATSEP);</span>
+<span class="nc" id="L1256">                myLine = pLine.substring(0, i);</span>
+            }
+
+            /* If the line contains classes */
+<span class="nc bnc" id="L1260" title="All 2 branches missed.">            if (myLine.contains(QIF_CLASS)) {</span>
+                /* drop class data */
+<span class="nc" id="L1262">                final int i = myLine.indexOf(QIF_CLASS);</span>
+<span class="nc" id="L1263">                myLine = myLine.substring(0, i);</span>
+            }
+
+            /* If we have the account delimiters */
+<span class="nc bnc" id="L1267" title="All 2 branches missed.">            if ((myLine.startsWith(QIF_XFERSTART))</span>
+<span class="nc bnc" id="L1268" title="All 2 branches missed.">                    &amp;&amp; (myLine.endsWith(QIF_XFEREND))) {</span>
+                /* This is an account */
+<span class="nc" id="L1270">                return null;</span>
+            }
+
+            /* Return category */
+<span class="nc" id="L1274">            return pFile.getCategory(myLine);</span>
+        }
+
+        /**
+         * Parse category classes.
+         *
+         * @param pFile the QIF File
+         * @param pLine the line.
+         * @return the account name (or null)
+         */
+        protected static List&lt;MoneyWiseQIFClass&gt; parseCategoryClasses(final MoneyWiseQIFFile pFile,
+                                                                      final String pLine) {
+            /* Determine line to use */
+<span class="nc" id="L1287">            String myLine = pLine;</span>
+
+            /* If the line contains a category separator */
+<span class="nc bnc" id="L1290" title="All 2 branches missed.">            if (pLine.contains(QIF_CATSEP)) {</span>
+                /* Drop data after separator */
+<span class="nc" id="L1292">                final int i = pLine.indexOf(QIF_CATSEP);</span>
+<span class="nc" id="L1293">                myLine = pLine.substring(0, i);</span>
+            }
+
+            /* If the line contains classes */
+<span class="nc bnc" id="L1297" title="All 2 branches missed.">            if (myLine.contains(QIF_CLASS)) {</span>
+                /* drop preceding data */
+<span class="nc" id="L1299">                final int i = myLine.indexOf(QIF_CLASS);</span>
+<span class="nc" id="L1300">                myLine = myLine.substring(i + 1);</span>
+
+                /* Build list of classes */
+<span class="nc" id="L1303">                final String[] myClasses = myLine.split(QIF_CLASSSEP);</span>
+<span class="nc" id="L1304">                final List&lt;MoneyWiseQIFClass&gt; myList = new ArrayList&lt;&gt;();</span>
+<span class="nc bnc" id="L1305" title="All 2 branches missed.">                for (String myClass : myClasses) {</span>
+<span class="nc" id="L1306">                    myList.add(pFile.getClass(myClass));</span>
+                }
+
+                /* Return the classes */
+<span class="nc" id="L1310">                return myList;</span>
+            }
+
+            /* Return no classes */
+<span class="nc" id="L1314">            return null;</span>
+        }
+
+        @Override
+        public boolean equals(final Object pThat) {
+            /* Handle trivial cases */
+<span class="nc bnc" id="L1320" title="All 2 branches missed.">            if (this == pThat) {</span>
+<span class="nc" id="L1321">                return true;</span>
+            }
+<span class="nc bnc" id="L1323" title="All 2 branches missed.">            if (pThat == null) {</span>
+<span class="nc" id="L1324">                return false;</span>
+            }
+
+            /* Check class */
+<span class="nc bnc" id="L1328" title="All 2 branches missed.">            if (!getClass().equals(pThat.getClass())) {</span>
+<span class="nc" id="L1329">                return false;</span>
+            }
+
+            /* Cast correctly */
+<span class="nc" id="L1333">            final MoneyWiseQIFCategoryLine&lt;?&gt; myLine = (MoneyWiseQIFCategoryLine&lt;?&gt;) pThat;</span>
+
+            /* Check line type */
+<span class="nc bnc" id="L1336" title="All 2 branches missed.">            if (!getLineType().equals(myLine.getLineType())) {</span>
+<span class="nc" id="L1337">                return false;</span>
+            }
+
+            /* Check category */
+<span class="nc bnc" id="L1341" title="All 2 branches missed.">            if (!theCategory.equals(myLine.getEventCategory())) {</span>
+<span class="nc" id="L1342">                return false;</span>
+            }
+
+            /* Check classes */
+<span class="nc" id="L1346">            final List&lt;MoneyWiseQIFClass&gt; myClasses = myLine.getClassList();</span>
+<span class="nc bnc" id="L1347" title="All 2 branches missed.">            if (theClasses == null) {</span>
+<span class="nc bnc" id="L1348" title="All 2 branches missed.">                return myClasses == null;</span>
+<span class="nc bnc" id="L1349" title="All 2 branches missed.">            } else if (myClasses == null) {</span>
+<span class="nc" id="L1350">                return true;</span>
+            }
+<span class="nc" id="L1352">            return theClasses.equals(myClasses);</span>
+        }
+
+        @Override
+        public int hashCode() {
+<span class="nc" id="L1357">            int myResult = MoneyWiseQIFFile.HASH_BASE * getLineType().hashCode();</span>
+<span class="nc bnc" id="L1358" title="All 2 branches missed.">            if (theClasses != null) {</span>
+<span class="nc" id="L1359">                myResult += theClasses.hashCode();</span>
+<span class="nc" id="L1360">                myResult *= MoneyWiseQIFFile.HASH_BASE;</span>
+            }
+<span class="nc" id="L1362">            return myResult + theCategory.hashCode();</span>
+        }
+    }
+
+    /**
+     * The Event Category line.
+     *
+     * @param &lt;X&gt; the line type
+     */
+    public abstract static class MoneyWiseQIFCategoryAccountLine&lt;X extends MoneyWiseQLineType&gt;
+            extends MoneyWiseQIFLine&lt;X&gt; {
+        /**
+         * The event category.
+         */
+        private final MoneyWiseQIFEventCategory theCategory;
+
+        /**
+         * The account.
+         */
+        private final MoneyWiseQIFAccount theAccount;
+
+        /**
+         * The class list.
+         */
+        private final List&lt;MoneyWiseQIFClass&gt; theClasses;
+
+        /**
+         * Constructor.
+         *
+         * @param pCategory the Event Category
+         * @param pAccount  the Account
+         */
+        protected MoneyWiseQIFCategoryAccountLine(final MoneyWiseQIFEventCategory pCategory,
+                                                  final MoneyWiseQIFAccount pAccount) {
+<span class="nc" id="L1396">            this(pCategory, pAccount, null);</span>
+<span class="nc" id="L1397">        }</span>
+
+        /**
+         * Constructor.
+         *
+         * @param pCategory the Event Category
+         * @param pAccount  the Account
+         * @param pClasses  the classes
+         */
+        protected MoneyWiseQIFCategoryAccountLine(final MoneyWiseQIFEventCategory pCategory,
+                                                  final MoneyWiseQIFAccount pAccount,
+<span class="nc" id="L1408">                                                  final List&lt;MoneyWiseQIFClass&gt; pClasses) {</span>
+            /* Store data */
+<span class="nc" id="L1410">            theCategory = pCategory;</span>
+<span class="nc" id="L1411">            theAccount = pAccount;</span>
+<span class="nc" id="L1412">            theClasses = pClasses;</span>
+<span class="nc" id="L1413">        }</span>
+
+        /**
+         * Obtain event category.
+         *
+         * @return the event category
+         */
+        public MoneyWiseQIFEventCategory getEventCategory() {
+<span class="nc" id="L1421">            return theCategory;</span>
+        }
+
+        /**
+         * Obtain account.
+         *
+         * @return the account
+         */
+        public MoneyWiseQIFAccount getAccount() {
+<span class="nc" id="L1430">            return theAccount;</span>
+        }
+
+        /**
+         * Obtain class list.
+         *
+         * @return the class list
+         */
+        public List&lt;MoneyWiseQIFClass&gt; getClassList() {
+<span class="nc" id="L1439">            return theClasses;</span>
+        }
+
+        @Override
+        protected void formatData(final OceanusDataFormatter pFormatter,
+                                  final StringBuilder pBuilder) {
+            /* Append the string data */
+<span class="nc" id="L1446">            pBuilder.append(theCategory.getName());</span>
+<span class="nc" id="L1447">            pBuilder.append(QIF_CATSEP);</span>
+<span class="nc" id="L1448">            pBuilder.append(QIF_XFERSTART);</span>
+<span class="nc" id="L1449">            pBuilder.append(theAccount.getName());</span>
+<span class="nc" id="L1450">            pBuilder.append(QIF_XFEREND);</span>
+
+            /* If we have classes */
+<span class="nc bnc" id="L1453" title="All 2 branches missed.">            if (theClasses != null) {</span>
+                /* Add class indicator */
+<span class="nc" id="L1455">                pBuilder.append(QIF_CLASS);</span>
+
+                /* Iterate through the list */
+<span class="nc" id="L1458">                final Iterator&lt;MoneyWiseQIFClass&gt; myIterator = theClasses.iterator();</span>
+<span class="nc bnc" id="L1459" title="All 2 branches missed.">                while (myIterator.hasNext()) {</span>
+<span class="nc" id="L1460">                    final MoneyWiseQIFClass myClass = myIterator.next();</span>
+
+                    /* Add to the list */
+<span class="nc" id="L1463">                    pBuilder.append(myClass.getName());</span>
+<span class="nc bnc" id="L1464" title="All 2 branches missed.">                    if (myIterator.hasNext()) {</span>
+<span class="nc" id="L1465">                        pBuilder.append(QIF_CLASSSEP);</span>
+                    }
+<span class="nc" id="L1467">                }</span>
+            }
+<span class="nc" id="L1469">        }</span>
+
+        @Override
+        public boolean equals(final Object pThat) {
+            /* Handle trivial cases */
+<span class="nc bnc" id="L1474" title="All 2 branches missed.">            if (this == pThat) {</span>
+<span class="nc" id="L1475">                return true;</span>
+            }
+<span class="nc bnc" id="L1477" title="All 2 branches missed.">            if (pThat == null) {</span>
+<span class="nc" id="L1478">                return false;</span>
+            }
+
+            /* Check class */
+<span class="nc bnc" id="L1482" title="All 2 branches missed.">            if (!getClass().equals(pThat.getClass())) {</span>
+<span class="nc" id="L1483">                return false;</span>
+            }
+
+            /* Cast correctly */
+<span class="nc" id="L1487">            final MoneyWiseQIFCategoryAccountLine&lt;?&gt; myLine = (MoneyWiseQIFCategoryAccountLine&lt;?&gt;) pThat;</span>
+
+            /* Check line type */
+<span class="nc bnc" id="L1490" title="All 2 branches missed.">            if (!getLineType().equals(myLine.getLineType())) {</span>
+<span class="nc" id="L1491">                return false;</span>
+            }
+
+            /* Check category */
+<span class="nc bnc" id="L1495" title="All 2 branches missed.">            if (!theCategory.equals(myLine.getEventCategory())) {</span>
+<span class="nc" id="L1496">                return false;</span>
+            }
+
+            /* Check account */
+<span class="nc bnc" id="L1500" title="All 2 branches missed.">            if (!theAccount.equals(myLine.getAccount())) {</span>
+<span class="nc" id="L1501">                return false;</span>
+            }
+
+            /* Check classes */
+<span class="nc" id="L1505">            final List&lt;MoneyWiseQIFClass&gt; myClasses = myLine.getClassList();</span>
+<span class="nc bnc" id="L1506" title="All 2 branches missed.">            if (theClasses == null) {</span>
+<span class="nc bnc" id="L1507" title="All 2 branches missed.">                return myClasses == null;</span>
+<span class="nc bnc" id="L1508" title="All 2 branches missed.">            } else if (myClasses == null) {</span>
+<span class="nc" id="L1509">                return true;</span>
+            }
+<span class="nc" id="L1511">            return theClasses.equals(myClasses);</span>
+        }
+
+        @Override
+        public int hashCode() {
+<span class="nc" id="L1516">            int myResult = MoneyWiseQIFFile.HASH_BASE * getLineType().hashCode();</span>
+<span class="nc bnc" id="L1517" title="All 2 branches missed.">            if (theClasses != null) {</span>
+<span class="nc" id="L1518">                myResult += theClasses.hashCode();</span>
+<span class="nc" id="L1519">                myResult *= MoneyWiseQIFFile.HASH_BASE;</span>
+            }
+<span class="nc" id="L1521">            myResult += theAccount.hashCode();</span>
+<span class="nc" id="L1522">            myResult *= MoneyWiseQIFFile.HASH_BASE;</span>
+<span class="nc" id="L1523">            return myResult + theCategory.hashCode();</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

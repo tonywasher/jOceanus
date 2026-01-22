@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ThemisXAnalysisNodeParser.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Themis Core Project Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.themis.xanalysis.parser.node</a> &gt; <span class="el_source">ThemisXAnalysisNodeParser.java</span></div><h1>ThemisXAnalysisNodeParser.java</h1><pre class="source lang-java linenums">/*
+ * Themis: Java Project Framework
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.themis.xanalysis.parser.node;
+
+import com.github.javaparser.ast.ArrayCreationLevel;
+import com.github.javaparser.ast.CompilationUnit;
+import com.github.javaparser.ast.ImportDeclaration;
+import com.github.javaparser.ast.Modifier;
+import com.github.javaparser.ast.Node;
+import com.github.javaparser.ast.NodeList;
+import com.github.javaparser.ast.PackageDeclaration;
+import com.github.javaparser.ast.body.Parameter;
+import com.github.javaparser.ast.body.VariableDeclarator;
+import com.github.javaparser.ast.comments.Comment;
+import com.github.javaparser.ast.expr.MemberValuePair;
+import com.github.javaparser.ast.expr.Name;
+import com.github.javaparser.ast.expr.SimpleName;
+import com.github.javaparser.ast.stmt.CatchClause;
+import com.github.javaparser.ast.stmt.SwitchEntry;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance.ThemisXAnalysisNodeInstance;
+import io.github.tonywasher.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisModifierList;
+import io.github.tonywasher.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisParserDef;
+
+import java.util.List;
+
+/**
+ * Analysis Node Parser.
+ */
+public final class ThemisXAnalysisNodeParser {
+    /**
+     * Private Constructor.
+     */
+    private ThemisXAnalysisNodeParser() {
+    }
+
+    /**
+     * Parse a node.
+     *
+     * @param pParser the parser
+     * @param pNode   the node
+     * @return the parsed node
+     * @throws OceanusException on error
+     */
+    public static ThemisXAnalysisNodeInstance parseNode(final ThemisXAnalysisParserDef pParser,
+                                                        final Node pNode) throws OceanusException {
+        /* Handle null Node */
+<span class="fc bfc" id="L62" title="All 2 branches covered.">        if (pNode == null) {</span>
+<span class="fc" id="L63">            return null;</span>
+        }
+
+        /* Create appropriate node */
+<span class="pc bpc" id="L67" title="2 of 14 branches missed.">        switch (ThemisXAnalysisNode.determineNode(pParser, pNode)) {</span>
+            case ARRAYLEVEL:
+<span class="fc" id="L69">                return new ThemisXAnalysisNodeArrayLevel(pParser, (ArrayCreationLevel) pNode);</span>
+            case CASE:
+<span class="fc" id="L71">                return new ThemisXAnalysisNodeCase(pParser, (SwitchEntry) pNode);</span>
+            case CATCH:
+<span class="fc" id="L73">                return new ThemisXAnalysisNodeCatch(pParser, (CatchClause) pNode);</span>
+            case COMPILATIONUNIT:
+<span class="fc" id="L75">                return new ThemisXAnalysisNodeCompilationUnit(pParser, (CompilationUnit) pNode);</span>
+            case COMMENT:
+<span class="fc" id="L77">                return new ThemisXAnalysisNodeComment(pParser, (Comment) pNode);</span>
+            case IMPORT:
+<span class="fc" id="L79">                return new ThemisXAnalysisNodeImport(pParser, (ImportDeclaration) pNode);</span>
+            case MODIFIER:
+<span class="fc" id="L81">                return new ThemisXAnalysisNodeModifier(pParser, (Modifier) pNode);</span>
+            case NAME:
+<span class="fc" id="L83">                return new ThemisXAnalysisNodeName(pParser, (Name) pNode);</span>
+            case PACKAGE:
+<span class="fc" id="L85">                return new ThemisXAnalysisNodePackage(pParser, (PackageDeclaration) pNode);</span>
+            case PARAMETER:
+<span class="fc" id="L87">                return new ThemisXAnalysisNodeParameter(pParser, (Parameter) pNode);</span>
+            case SIMPLENAME:
+<span class="fc" id="L89">                return new ThemisXAnalysisNodeSimpleName(pParser, (SimpleName) pNode);</span>
+            case VALUEPAIR:
+<span class="nc" id="L91">                return new ThemisXAnalysisNodeValuePair(pParser, (MemberValuePair) pNode);</span>
+            case VARIABLE:
+<span class="fc" id="L93">                return new ThemisXAnalysisNodeVariable(pParser, (VariableDeclarator) pNode);</span>
+            default:
+<span class="nc" id="L95">                throw pParser.buildException(&quot;Unsupported Node Type&quot;, pNode);</span>
+        }
+    }
+
+    /**
+     * parse a list of modifiers.
+     *
+     * @param pParser   the parser
+     * @param pNodeList the list of Modifiers
+     * @return the list of parsed modifiers
+     * @throws OceanusException on error
+     */
+    public static ThemisXAnalysisModifierList parseModifierList(final ThemisXAnalysisParserDef pParser,
+                                                                final NodeList&lt;? extends Node&gt; pNodeList) throws OceanusException {
+<span class="fc" id="L109">        final List&lt;ThemisXAnalysisNodeInstance&gt; myList = pParser.parseNodeList(pNodeList);</span>
+<span class="fc" id="L110">        return new ThemisXAnalysisNodeModifierList(myList);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

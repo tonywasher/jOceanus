@@ -1,0 +1,499 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ThemisSourceIcon.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Themis Core Project Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.themis.lethe.ui</a> &gt; <span class="el_source">ThemisSourceIcon.java</span></div><h1>ThemisSourceIcon.java</h1><pre class="source lang-java linenums">/*
+ * Themis: Java Project Framework
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.themis.lethe.ui;
+
+import io.github.tonywasher.joceanus.tethys.api.base.TethysUIIconId;
+import io.github.tonywasher.joceanus.themis.lethe.analysis.ThemisAnalysisAnnotation;
+import io.github.tonywasher.joceanus.themis.lethe.analysis.ThemisAnalysisAnonClass;
+import io.github.tonywasher.joceanus.themis.lethe.analysis.ThemisAnalysisArrayInit;
+import io.github.tonywasher.joceanus.themis.lethe.analysis.ThemisAnalysisBlock;
+import io.github.tonywasher.joceanus.themis.lethe.analysis.ThemisAnalysisCase;
+import io.github.tonywasher.joceanus.themis.lethe.analysis.ThemisAnalysisCatch;
+import io.github.tonywasher.joceanus.themis.lethe.analysis.ThemisAnalysisClass;
+import io.github.tonywasher.joceanus.themis.lethe.analysis.ThemisAnalysisComment;
+import io.github.tonywasher.joceanus.themis.lethe.analysis.ThemisAnalysisDoWhile;
+import io.github.tonywasher.joceanus.themis.lethe.analysis.ThemisAnalysisElement;
+import io.github.tonywasher.joceanus.themis.lethe.analysis.ThemisAnalysisElse;
+import io.github.tonywasher.joceanus.themis.lethe.analysis.ThemisAnalysisEnum;
+import io.github.tonywasher.joceanus.themis.lethe.analysis.ThemisAnalysisField;
+import io.github.tonywasher.joceanus.themis.lethe.analysis.ThemisAnalysisFile;
+import io.github.tonywasher.joceanus.themis.lethe.analysis.ThemisAnalysisFinally;
+import io.github.tonywasher.joceanus.themis.lethe.analysis.ThemisAnalysisFor;
+import io.github.tonywasher.joceanus.themis.lethe.analysis.ThemisAnalysisIf;
+import io.github.tonywasher.joceanus.themis.lethe.analysis.ThemisAnalysisInterface;
+import io.github.tonywasher.joceanus.themis.lethe.analysis.ThemisAnalysisLambda;
+import io.github.tonywasher.joceanus.themis.lethe.analysis.ThemisAnalysisMethod;
+import io.github.tonywasher.joceanus.themis.lethe.analysis.ThemisAnalysisModule;
+import io.github.tonywasher.joceanus.themis.lethe.analysis.ThemisAnalysisPackage;
+import io.github.tonywasher.joceanus.themis.lethe.analysis.ThemisAnalysisProject;
+import io.github.tonywasher.joceanus.themis.lethe.analysis.ThemisAnalysisStatement;
+import io.github.tonywasher.joceanus.themis.lethe.analysis.ThemisAnalysisSwitch;
+import io.github.tonywasher.joceanus.themis.lethe.analysis.ThemisAnalysisTry;
+import io.github.tonywasher.joceanus.themis.lethe.analysis.ThemisAnalysisWhile;
+
+import java.io.InputStream;
+
+/**
+ * Source Icon Ids.
+ */
+<span class="nc" id="L53">public enum ThemisSourceIcon</span>
+        implements TethysUIIconId {
+    /**
+     * The project icon.
+     */
+<span class="nc" id="L58">    PROJECT(&quot;icons/UpperCaseOrangeJ.png&quot;),</span>
+
+    /**
+     * The module icon.
+     */
+<span class="nc" id="L63">    MODULE(&quot;icons/UpperCaseOrangeM.png&quot;),</span>
+
+    /**
+     * The package icon.
+     */
+<span class="nc" id="L68">    PACKAGE(&quot;icons/UpperCaseOrangeP.png&quot;),</span>
+
+    /**
+     * The file icon.
+     */
+<span class="nc" id="L73">    FILE(&quot;icons/UpperCaseOrangeF.png&quot;),</span>
+
+    /**
+     * The class icon.
+     */
+<span class="nc" id="L78">    CLASS(&quot;icons/UpperCaseOrangeC.png&quot;),</span>
+
+    /**
+     * The enum icon.
+     */
+<span class="nc" id="L83">    ENUM(&quot;icons/UpperCaseOrangeE.png&quot;),</span>
+
+    /**
+     * The interface icon.
+     */
+<span class="nc" id="L88">    INTERFACE(&quot;icons/UpperCaseOrangeI.png&quot;),</span>
+
+    /**
+     * The annotationDef icon.
+     */
+<span class="nc" id="L93">    ANNOTATIONDEF(&quot;icons/UpperCaseOrangeA.png&quot;),</span>
+
+    /**
+     * The for icon.
+     */
+<span class="nc" id="L98">    FOR(&quot;icons/UpperCaseGreenF.png&quot;),</span>
+
+    /**
+     * The doWhile icon.
+     */
+<span class="nc" id="L103">    DOWHILE(&quot;icons/UpperCaseGreenD.png&quot;),</span>
+
+    /**
+     * The while icon.
+     */
+<span class="nc" id="L108">    WHILE(&quot;icons/UpperCaseGreenW.png&quot;),</span>
+
+    /**
+     * The switch icon.
+     */
+<span class="nc" id="L113">    SWITCH(&quot;icons/UpperCaseGreenS.png&quot;),</span>
+
+    /**
+     * The case icon.
+     */
+<span class="nc" id="L118">    CASE(&quot;icons/LowerCaseGreenC.png&quot;),</span>
+
+    /**
+     * The try icon.
+     */
+<span class="nc" id="L123">    TRY(&quot;icons/UpperCaseGreenT.png&quot;),</span>
+
+    /**
+     * The catch icon.
+     */
+<span class="nc" id="L128">    CATCH(&quot;icons/LowerCaseGreenC.png&quot;),</span>
+
+    /**
+     * The finally icon.
+     */
+<span class="nc" id="L133">    FINALLY(&quot;icons/LowerCaseGreenF.png&quot;),</span>
+
+    /**
+     * The if icon.
+     */
+<span class="nc" id="L138">    IF(&quot;icons/UpperCaseGreenI.png&quot;),</span>
+
+    /**
+     * The else icon.
+     */
+<span class="nc" id="L143">    ELSE(&quot;icons/LowerCaseGreenE.png&quot;),</span>
+
+    /**
+     * The block icon.
+     */
+<span class="nc" id="L148">    BLOCK(&quot;icons/UpperCaseBlueB.png&quot;),</span>
+
+    /**
+     * The field icon.
+     */
+<span class="nc" id="L153">    FIELD(&quot;icons/UpperCaseBlueF.png&quot;),</span>
+
+    /**
+     * The lambda icon.
+     */
+<span class="nc" id="L158">    LAMBDA(&quot;icons/UpperCaseBlueL.png&quot;),</span>
+
+    /**
+     * The method icon.
+     */
+<span class="nc" id="L163">    METHOD(&quot;icons/UpperCaseBlueM.png&quot;),</span>
+
+    /**
+     * The statement icon.
+     */
+<span class="nc" id="L168">    STATEMENT(&quot;icons/UpperCaseBlueS.png&quot;),</span>
+
+    /**
+     * The comment icon.
+     */
+<span class="nc" id="L173">    COMMENT(&quot;icons/UpperCasePinkC.png&quot;),</span>
+
+    /**
+     * The javadoc icon.
+     */
+<span class="nc" id="L178">    JAVADOC(&quot;icons/UpperCasePinkD.png&quot;),</span>
+
+    /**
+     * The statement icon.
+     */
+<span class="nc" id="L183">    ANNOTATION(&quot;icons/UpperCasePinkA.png&quot;);</span>
+
+    /**
+     * The blue colour.
+     */
+    private static final String BLUE = &quot;#00008B&quot;;
+
+    /**
+     * The green colour.
+     */
+    private static final String GREEN = &quot;#228B22&quot;;
+
+    /**
+     * The orange colour.
+     */
+    private static final String ORANGE = &quot;#FF4500&quot;;
+
+    /**
+     * The pink colour.
+     */
+    private static final String PINK = &quot;#FF1493&quot;;
+
+    /**
+     * Source name.
+     */
+    private final String theSource;
+
+    /**
+     * Constructor.
+     *
+     * @param pSourceName the source name
+     */
+<span class="nc" id="L215">    ThemisSourceIcon(final String pSourceName) {</span>
+<span class="nc" id="L216">        theSource = pSourceName;</span>
+<span class="nc" id="L217">    }</span>
+
+    @Override
+    public String getSourceName() {
+<span class="nc" id="L221">        return theSource;</span>
+    }
+
+    @Override
+    public InputStream getInputStream() {
+<span class="nc" id="L226">        return ThemisSourceIcon.class.getResourceAsStream(theSource);</span>
+    }
+
+    /**
+     * Obtain the colour for the element.
+     *
+     * @param pElement the element
+     * @return the color string
+     */
+    static String getElementColour(final ThemisAnalysisElement pElement) {
+        /* Handle statement/Field/Block */
+<span class="nc bnc" id="L237" title="All 6 branches missed.">        if (pElement instanceof ThemisAnalysisStatement</span>
+                || pElement instanceof ThemisAnalysisField
+                || pElement instanceof ThemisAnalysisBlock) {
+<span class="nc" id="L240">            return BLUE;</span>
+        }
+
+        /* Handle method/Lambda */
+<span class="nc bnc" id="L244" title="All 6 branches missed.">        if (pElement instanceof ThemisAnalysisMethod</span>
+                || pElement instanceof ThemisAnalysisArrayInit
+                || pElement instanceof ThemisAnalysisLambda) {
+<span class="nc" id="L247">            return BLUE;</span>
+        }
+
+        /* Handle for/do/while */
+<span class="nc bnc" id="L251" title="All 6 branches missed.">        if (pElement instanceof ThemisAnalysisFor</span>
+                || pElement instanceof ThemisAnalysisWhile
+                || pElement instanceof ThemisAnalysisDoWhile) {
+<span class="nc" id="L254">            return GREEN;</span>
+        }
+
+        /* Handle switch/case */
+<span class="nc bnc" id="L258" title="All 4 branches missed.">        if (pElement instanceof ThemisAnalysisSwitch</span>
+                || pElement instanceof ThemisAnalysisCase) {
+<span class="nc" id="L260">            return GREEN;</span>
+        }
+
+        /* Handle try/catch/finally */
+<span class="nc bnc" id="L264" title="All 6 branches missed.">        if (pElement instanceof ThemisAnalysisTry</span>
+                || pElement instanceof ThemisAnalysisCatch
+                || pElement instanceof ThemisAnalysisFinally) {
+<span class="nc" id="L267">            return GREEN;</span>
+        }
+
+        /* Handle if/else */
+<span class="nc bnc" id="L271" title="All 4 branches missed.">        if (pElement instanceof ThemisAnalysisIf</span>
+                || pElement instanceof ThemisAnalysisElse) {
+<span class="nc" id="L273">            return GREEN;</span>
+        }
+
+        /* Handle project/module/package */
+<span class="nc bnc" id="L277" title="All 6 branches missed.">        if (pElement instanceof ThemisAnalysisProject</span>
+                || pElement instanceof ThemisAnalysisModule
+                || pElement instanceof ThemisAnalysisPackage) {
+<span class="nc" id="L280">            return ORANGE;</span>
+        }
+
+        /* Handle file/interface */
+<span class="nc bnc" id="L284" title="All 4 branches missed.">        if (pElement instanceof ThemisAnalysisFile</span>
+                || pElement instanceof ThemisAnalysisInterface) {
+<span class="nc" id="L286">            return ORANGE;</span>
+        }
+
+        /* Handle class/enum */
+<span class="nc bnc" id="L290" title="All 6 branches missed.">        if (pElement instanceof ThemisAnalysisClass</span>
+                || pElement instanceof ThemisAnalysisAnonClass
+                || pElement instanceof ThemisAnalysisEnum) {
+<span class="nc" id="L293">            return ORANGE;</span>
+        }
+
+        /* Handle comment/annotation */
+<span class="nc bnc" id="L297" title="All 4 branches missed.">        if (pElement instanceof ThemisAnalysisComment</span>
+                || pElement instanceof ThemisAnalysisAnnotation) {
+<span class="nc" id="L299">            return PINK;</span>
+        }
+
+        /* Not found */
+<span class="nc" id="L303">        return null;</span>
+    }
+
+    /**
+     * Obtain the icon for the element.
+     *
+     * @param pElement the element
+     * @return the icon
+     */
+    static TethysUIIconId getElementIcon(final ThemisAnalysisElement pElement) {
+        /* Determine the element colour */
+<span class="nc" id="L314">        final String myColour = getElementColour(pElement);</span>
+<span class="nc bnc" id="L315" title="All 2 branches missed.">        if (myColour == null) {</span>
+<span class="nc" id="L316">            return null;</span>
+        }
+
+        /* Switch on the colour */
+<span class="nc bnc" id="L320" title="All 5 branches missed.">        switch (myColour) {</span>
+            case BLUE:
+<span class="nc" id="L322">                return getBlueElementIcon(pElement);</span>
+            case GREEN:
+<span class="nc" id="L324">                return getGreenElementIcon(pElement);</span>
+            case ORANGE:
+<span class="nc" id="L326">                return getOrangeElementIcon(pElement);</span>
+            case PINK:
+<span class="nc" id="L328">                return getPinkElementIcon(pElement);</span>
+            default:
+<span class="nc" id="L330">                return null;</span>
+        }
+    }
+
+    /**
+     * Obtain the icon for the Blue element.
+     *
+     * @param pElement the element
+     * @return the icon
+     */
+    private static TethysUIIconId getBlueElementIcon(final ThemisAnalysisElement pElement) {
+        /* Handle statement */
+<span class="nc bnc" id="L342" title="All 2 branches missed.">        if (pElement instanceof ThemisAnalysisStatement) {</span>
+<span class="nc" id="L343">            return STATEMENT;</span>
+        }
+
+        /* Handle Field */
+<span class="nc bnc" id="L347" title="All 2 branches missed.">        if (pElement instanceof ThemisAnalysisField) {</span>
+<span class="nc" id="L348">            return FIELD;</span>
+        }
+
+        /* Handle Block */
+<span class="nc bnc" id="L352" title="All 2 branches missed.">        if (pElement instanceof ThemisAnalysisBlock) {</span>
+<span class="nc" id="L353">            return BLOCK;</span>
+        }
+
+        /* Handle method */
+<span class="nc bnc" id="L357" title="All 2 branches missed.">        if (pElement instanceof ThemisAnalysisMethod) {</span>
+<span class="nc" id="L358">            return METHOD;</span>
+        }
+
+        /* Handle Lambda */
+<span class="nc bnc" id="L362" title="All 2 branches missed.">        if (pElement instanceof ThemisAnalysisLambda) {</span>
+<span class="nc" id="L363">            return LAMBDA;</span>
+        }
+
+        /* Not found */
+<span class="nc" id="L367">        return null;</span>
+    }
+
+    /**
+     * Obtain the icon for the green element.
+     *
+     * @param pElement the element
+     * @return the iconId
+     */
+    private static TethysUIIconId getGreenElementIcon(final ThemisAnalysisElement pElement) {
+        /* Handle for/do/while */
+<span class="nc bnc" id="L378" title="All 2 branches missed.">        if (pElement instanceof ThemisAnalysisFor) {</span>
+<span class="nc" id="L379">            return FOR;</span>
+        }
+
+        /* Handle do */
+<span class="nc bnc" id="L383" title="All 2 branches missed.">        if (pElement instanceof ThemisAnalysisWhile) {</span>
+<span class="nc" id="L384">            return WHILE;</span>
+        }
+
+        /* Handle while */
+<span class="nc bnc" id="L388" title="All 2 branches missed.">        if (pElement instanceof ThemisAnalysisDoWhile) {</span>
+<span class="nc" id="L389">            return DOWHILE;</span>
+        }
+
+        /* Handle switch */
+<span class="nc bnc" id="L393" title="All 2 branches missed.">        if (pElement instanceof ThemisAnalysisSwitch) {</span>
+<span class="nc" id="L394">            return SWITCH;</span>
+        }
+
+        /* Handle case */
+<span class="nc bnc" id="L398" title="All 2 branches missed.">        if (pElement instanceof ThemisAnalysisCase) {</span>
+<span class="nc" id="L399">            return CASE;</span>
+        }
+
+        /* Handle try */
+<span class="nc bnc" id="L403" title="All 2 branches missed.">        if (pElement instanceof ThemisAnalysisTry) {</span>
+<span class="nc" id="L404">            return TRY;</span>
+        }
+
+        /* Handle try/catch/finally */
+<span class="nc bnc" id="L408" title="All 2 branches missed.">        if (pElement instanceof ThemisAnalysisCatch) {</span>
+<span class="nc" id="L409">            return CATCH;</span>
+        }
+
+        /* Handle finally */
+<span class="nc bnc" id="L413" title="All 2 branches missed.">        if (pElement instanceof ThemisAnalysisFinally) {</span>
+<span class="nc" id="L414">            return FINALLY;</span>
+        }
+
+        /* Handle if */
+<span class="nc bnc" id="L418" title="All 2 branches missed.">        if (pElement instanceof ThemisAnalysisIf) {</span>
+<span class="nc" id="L419">            return IF;</span>
+        }
+
+        /* Handle else */
+<span class="nc bnc" id="L423" title="All 2 branches missed.">        if (pElement instanceof ThemisAnalysisElse) {</span>
+<span class="nc" id="L424">            return ELSE;</span>
+        }
+
+        /* Not found */
+<span class="nc" id="L428">        return null;</span>
+    }
+
+    /**
+     * Obtain the iconId for the orange element.
+     *
+     * @param pElement the element
+     * @return the iconId
+     */
+    private static TethysUIIconId getOrangeElementIcon(final ThemisAnalysisElement pElement) {
+        /* Handle project/module/package */
+<span class="nc bnc" id="L439" title="All 2 branches missed.">        if (pElement instanceof ThemisAnalysisProject) {</span>
+<span class="nc" id="L440">            return PROJECT;</span>
+        }
+
+        /* Handle project/module/package */
+<span class="nc bnc" id="L444" title="All 2 branches missed.">        if (pElement instanceof ThemisAnalysisModule) {</span>
+<span class="nc" id="L445">            return MODULE;</span>
+        }
+
+        /* Handle package */
+<span class="nc bnc" id="L449" title="All 2 branches missed.">        if (pElement instanceof ThemisAnalysisPackage) {</span>
+<span class="nc" id="L450">            return PACKAGE;</span>
+        }
+
+        /* Handle file/interface */
+<span class="nc bnc" id="L454" title="All 2 branches missed.">        if (pElement instanceof ThemisAnalysisFile) {</span>
+<span class="nc" id="L455">            return FILE;</span>
+        }
+
+        /* Handle interface */
+<span class="nc bnc" id="L459" title="All 2 branches missed.">        if (pElement instanceof ThemisAnalysisInterface myInterface) {</span>
+<span class="nc bnc" id="L460" title="All 2 branches missed.">            return myInterface.isAnnotation() ? ANNOTATIONDEF : INTERFACE;</span>
+        }
+
+        /* Handle class */
+<span class="nc bnc" id="L464" title="All 4 branches missed.">        if (pElement instanceof ThemisAnalysisClass</span>
+                || pElement instanceof ThemisAnalysisAnonClass) {
+<span class="nc" id="L466">            return CLASS;</span>
+        }
+
+        /* Handle class/enum */
+<span class="nc bnc" id="L470" title="All 2 branches missed.">        if (pElement instanceof ThemisAnalysisEnum) {</span>
+<span class="nc" id="L471">            return ENUM;</span>
+        }
+
+        /* Not found */
+<span class="nc" id="L475">        return null;</span>
+    }
+
+    /**
+     * Obtain the iconId for the pink element.
+     *
+     * @param pElement the element
+     * @return the iconId
+     */
+    private static TethysUIIconId getPinkElementIcon(final ThemisAnalysisElement pElement) {
+        /* Handle comment */
+<span class="nc bnc" id="L486" title="All 2 branches missed.">        if (pElement instanceof ThemisAnalysisComment myComment) {</span>
+<span class="nc bnc" id="L487" title="All 2 branches missed.">            return myComment.isJavaDoc() ? JAVADOC : COMMENT;</span>
+        }
+
+        /* Handle annotation */
+<span class="nc bnc" id="L491" title="All 2 branches missed.">        if (pElement instanceof ThemisAnalysisModule) {</span>
+<span class="nc" id="L492">            return ANNOTATION;</span>
+        }
+
+        /* Not found */
+<span class="nc" id="L496">        return null;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

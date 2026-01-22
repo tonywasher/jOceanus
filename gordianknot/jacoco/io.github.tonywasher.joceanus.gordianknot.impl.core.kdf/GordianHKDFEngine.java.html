@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianHKDFEngine.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.impl.core.kdf</a> &gt; <span class="el_source">GordianHKDFEngine.java</span></div><h1>GordianHKDFEngine.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.gordianknot.impl.core.kdf;
+
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigest;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestFactory;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactory;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMac;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacFactory;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacSpecBuilder;
+
+import java.util.Arrays;
+import java.util.Iterator;
+
+/**
+ * HKDF functions.
+ */
+public class GordianHKDFEngine {
+    /**
+     * The Digest.
+     */
+    private final GordianDigest theDigest;
+
+    /**
+     * The HMac.
+     */
+    private final GordianMac theHMac;
+
+    /**
+     * Is this a primary engine?
+     */
+    private boolean isPrimary;
+
+    /**
+     * Constructor.
+     *
+     * @param pFactory    the security factory
+     * @param pDigestSpec the digestSpec
+     * @throws GordianException on error
+     */
+    public GordianHKDFEngine(final GordianFactory pFactory,
+<span class="fc" id="L59">                             final GordianDigestSpec pDigestSpec) throws GordianException {</span>
+        /* Create the digest */
+<span class="fc" id="L61">        final GordianDigestFactory myDigestFactory = pFactory.getDigestFactory();</span>
+<span class="fc" id="L62">        theDigest = myDigestFactory.createDigest(pDigestSpec);</span>
+
+        /* Create the hMac */
+<span class="fc" id="L65">        final GordianMacFactory myMacFactory = pFactory.getMacFactory();</span>
+<span class="fc" id="L66">        final GordianMacSpec myMacSpec = GordianMacSpecBuilder.hMac(pDigestSpec);</span>
+<span class="fc" id="L67">        theHMac = myMacFactory.createMac(myMacSpec);</span>
+<span class="fc" id="L68">    }</span>
+
+    /**
+     * Derive bytes.
+     *
+     * @param pParams the parameters
+     * @return the derived bytes
+     * @throws GordianException on error
+     */
+    public byte[] deriveBytes(final GordianHKDFParams pParams) throws GordianException {
+        /* Check parameters */
+<span class="pc bpc" id="L79" title="1 of 2 branches missed.">        if (pParams == null) {</span>
+<span class="nc" id="L80">            throw new IllegalStateException(&quot;Null HKDF parameters&quot;);</span>
+        }
+
+        /* Determine the mode */
+<span class="fc" id="L84">        final GordianHKDFMode myMode = pParams.getMode();</span>
+<span class="fc" id="L85">        byte[] myOutput = null;</span>
+
+        /* If we should extract the information */
+<span class="fc bfc" id="L88" title="All 2 branches covered.">        if (myMode.doExtract()) {</span>
+<span class="fc" id="L89">            myOutput = extractKeyingMaterial(pParams.saltIterator(), pParams.ikmIterator());</span>
+        }
+
+        /* If we should expand the information */
+<span class="fc bfc" id="L93" title="All 2 branches covered.">        if (myMode.doExpand()) {</span>
+            /* Save the intermediate value */
+<span class="fc" id="L95">            final byte[] myIntermediate = myOutput;</span>
+
+            /* Determine PRK and expand it */
+<span class="fc bfc" id="L98" title="All 2 branches covered.">            final byte[] myPRK = myOutput == null ? pParams.getPRK() : myOutput;</span>
+<span class="fc" id="L99">            myOutput = expandKeyingMaterial(pParams, myPRK);</span>
+
+            /* Clear intermediate result */
+<span class="fc bfc" id="L102" title="All 2 branches covered.">            if (myIntermediate != null) {</span>
+<span class="fc" id="L103">                Arrays.fill(myIntermediate, (byte) 0);</span>
+            }
+        }
+
+        /* Return the result */
+<span class="fc" id="L108">        return myOutput;</span>
+    }
+
+    /**
+     * Extract keying material.
+     *
+     * @param saltIterator the iterator over the salts
+     * @param ikmIterator  the iterator over the initial keying material
+     * @return the extracted material
+     * @throws GordianException on error
+     */
+    private byte[] extractKeyingMaterial(final Iterator&lt;byte[]&gt; saltIterator,
+                                         final Iterator&lt;byte[]&gt; ikmIterator) throws GordianException {
+        /* Determine the key */
+<span class="fc bfc" id="L122" title="All 2 branches covered.">        while (saltIterator.hasNext()) {</span>
+<span class="fc" id="L123">            theDigest.update(saltIterator.next());</span>
+        }
+<span class="fc" id="L125">        theHMac.initKeyBytes(theDigest.finish());</span>
+
+        /* Extract the keying material */
+<span class="fc bfc" id="L128" title="All 2 branches covered.">        while (ikmIterator.hasNext()) {</span>
+<span class="fc" id="L129">            theHMac.update(ikmIterator.next());</span>
+        }
+<span class="fc" id="L131">        return theHMac.finish();</span>
+    }
+
+    /**
+     * Expand the pseudo-random key.
+     *
+     * @param pParams the parameters
+     * @param pPRK    the pseudo-random key
+     * @return the expanded material
+     * @throws GordianException on error
+     */
+    private byte[] expandKeyingMaterial(final GordianHKDFParams pParams,
+                                        final byte[] pPRK) throws GordianException {
+        /* Initialise the HMac */
+<span class="fc" id="L145">        theHMac.initKeyBytes(pPRK);</span>
+
+        /* Allocate the output buffer */
+<span class="fc" id="L148">        int myLenRemaining = pParams.getLength();</span>
+<span class="fc" id="L149">        final byte[] myOutput = new byte[myLenRemaining];</span>
+<span class="fc" id="L150">        final int myHashLen = theHMac.getMacSize();</span>
+
+        /* Initialise variables */
+<span class="fc" id="L153">        byte[] myInput = null;</span>
+<span class="fc" id="L154">        int myOffset = 0;</span>
+<span class="fc" id="L155">        byte myCounter = 0;</span>
+
+        /* Loop while we have more data to obtain */
+<span class="fc bfc" id="L158" title="All 2 branches covered.">        while (myLenRemaining &gt; 0) {</span>
+            /* Update with the results of the last loop */
+<span class="fc bfc" id="L160" title="All 2 branches covered.">            if (myInput != null) {</span>
+<span class="fc" id="L161">                theHMac.update(myInput);</span>
+<span class="fc" id="L162">                Arrays.fill(myInput, (byte) 0);</span>
+            }
+
+            /* Update with the info */
+<span class="fc" id="L166">            final Iterator&lt;byte[]&gt; myIterator = pParams.infoIterator();</span>
+<span class="fc bfc" id="L167" title="All 2 branches covered.">            while (myIterator.hasNext()) {</span>
+<span class="fc" id="L168">                theHMac.update(myIterator.next());</span>
+            }
+
+            /* Update with the counter */
+<span class="fc" id="L172">            theHMac.update(myCounter++);</span>
+
+            /* Calculate the hash */
+<span class="fc" id="L175">            myInput = theHMac.finish();</span>
+
+            /* Output the required bytes */
+<span class="fc" id="L178">            final int myLenToCopy = Math.min(myLenRemaining, myHashLen);</span>
+<span class="fc" id="L179">            System.arraycopy(myInput, 0, myOutput, myOffset, myLenToCopy);</span>
+<span class="fc" id="L180">            myOffset += myLenToCopy;</span>
+<span class="fc" id="L181">            myLenRemaining -= myLenToCopy;</span>
+<span class="fc" id="L182">        }</span>
+
+        /* Clear final intermediate results */
+<span class="pc bpc" id="L185" title="1 of 2 branches missed.">        if (myInput != null) {</span>
+<span class="fc" id="L186">            Arrays.fill(myInput, (byte) 0);</span>
+        }
+
+        /* Return the expanded key */
+<span class="fc" id="L190">        return myOutput;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

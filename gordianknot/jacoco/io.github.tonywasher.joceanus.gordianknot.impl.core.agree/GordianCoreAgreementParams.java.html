@@ -1,0 +1,390 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianCoreAgreementParams.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.impl.core.agree</a> &gt; <span class="el_source">GordianCoreAgreementParams.java</span></div><h1>GordianCoreAgreementParams.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.gordianknot.impl.core.agree;
+
+import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementKDF;
+import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementParams;
+import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementType;
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianCertificate;
+import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairUse;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactoryType;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
+import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySetSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignatureFactory;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignatureSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseData;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.cipher.GordianCoreCipherFactory;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianLogicException;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.keyset.GordianCoreKeySetFactory;
+
+import java.util.Arrays;
+import java.util.Objects;
+
+/**
+ * Key Agreement Parameters Implementation.
+ */
+public class GordianCoreAgreementParams
+        implements GordianAgreementParams {
+    /**
+     * The factory.
+     */
+    private final GordianBaseFactory theFactory;
+
+    /**
+     * Is this a client or server parameters.
+     */
+    private final boolean isClient;
+
+    /**
+     * The Id.
+     */
+    private Long theId;
+
+    /**
+     * The Spec.
+     */
+    private final GordianAgreementSpec theSpec;
+
+    /**
+     * The ResultType.
+     */
+    private final Object theResultType;
+
+    /**
+     * The ClientCertificate.
+     */
+    private GordianCertificate theClient;
+
+    /**
+     * The ServerCertificate.
+     */
+    private GordianCertificate theServer;
+
+    /**
+     * The SignerCertificate.
+     */
+    private GordianCertificate theSigner;
+
+    /**
+     * The SignatureSpec.
+     */
+    private GordianSignatureSpec theSignSpec;
+
+    /**
+     * The Additional data.
+     */
+    private byte[] theAdditional;
+
+    /**
+     * Constructor.
+     *
+     * @param pSupplier   the supplier
+     * @param pSpec       the agreement Spec
+     * @param pResultType the resultType
+     * @throws GordianException on error
+     */
+    GordianCoreAgreementParams(final GordianCoreAgreementSupplier pSupplier,
+                               final GordianAgreementSpec pSpec,
+<span class="fc" id="L108">                               final Object pResultType) throws GordianException {</span>
+<span class="fc" id="L109">        isClient = true;</span>
+<span class="fc" id="L110">        theFactory = pSupplier.getFactory();</span>
+<span class="fc" id="L111">        theSpec = pSpec;</span>
+<span class="fc" id="L112">        checkResultType(pResultType);</span>
+<span class="fc" id="L113">        theResultType = pResultType;</span>
+<span class="fc" id="L114">    }</span>
+
+    /**
+     * Constructor.
+     *
+     * @param pBuilder the builder
+     */
+<span class="fc" id="L121">    GordianCoreAgreementParams(final GordianCoreAgreementBuilder pBuilder) {</span>
+        /* Copy all fields */
+<span class="fc" id="L123">        final GordianCoreAgreementSupplier mySupplier = pBuilder.getSupplier();</span>
+<span class="fc" id="L124">        final GordianCoreAgreementState myState = pBuilder.getState();</span>
+<span class="fc" id="L125">        isClient = false;</span>
+<span class="fc" id="L126">        theId = mySupplier.getNextId();</span>
+<span class="fc" id="L127">        theFactory = pBuilder.getSupplier().getFactory();</span>
+<span class="fc" id="L128">        theSpec = myState.getSpec();</span>
+<span class="fc" id="L129">        theResultType = myState.getResultType();</span>
+<span class="fc" id="L130">        theClient = myState.getClient().getCertificate();</span>
+<span class="fc" id="L131">        theServer = myState.getServer().getCertificate();</span>
+<span class="fc" id="L132">        theSigner = myState.getSignerCertificate();</span>
+<span class="fc" id="L133">        theSignSpec = myState.getSignSpec();</span>
+<span class="fc" id="L134">    }</span>
+
+    /**
+     * Constructor.
+     *
+     * @param pSource the source parameters to copy
+     */
+<span class="fc" id="L141">    GordianCoreAgreementParams(final GordianCoreAgreementParams pSource) {</span>
+        /* Copy all fields */
+<span class="fc" id="L143">        isClient = pSource.isClient();</span>
+<span class="fc" id="L144">        theId = pSource.getId();</span>
+<span class="fc" id="L145">        theFactory = pSource.theFactory;</span>
+<span class="fc" id="L146">        theSpec = pSource.getAgreementSpec();</span>
+<span class="fc" id="L147">        theResultType = pSource.getResultType();</span>
+<span class="fc" id="L148">        theClient = pSource.getClientCertificate();</span>
+<span class="fc" id="L149">        theServer = pSource.getServerCertificate();</span>
+<span class="fc" id="L150">        theSigner = pSource.getSignerCertificate();</span>
+<span class="fc" id="L151">        theSignSpec = pSource.getSignatureSpec();</span>
+<span class="fc" id="L152">        theAdditional = pSource.theAdditional;</span>
+<span class="fc" id="L153">    }</span>
+
+    /**
+     * is this a client parameters.
+     *
+     * @return true/false
+     */
+    boolean isClient() {
+<span class="fc" id="L161">        return isClient;</span>
+    }
+
+    /**
+     * Obtain the id.
+     *
+     * @return the id
+     */
+    Long getId() {
+<span class="fc" id="L170">        return theId;</span>
+    }
+
+    @Override
+    public GordianAgreementSpec getAgreementSpec() {
+<span class="fc" id="L175">        return theSpec;</span>
+    }
+
+    @Override
+    public Object getResultType() {
+<span class="fc" id="L180">        return theResultType;</span>
+    }
+
+    /**
+     * Check the resultType is valid.
+     *
+     * @param pResultType the resultType
+     * @throws GordianException on error
+     */
+    private void checkResultType(final Object pResultType) throws GordianException {
+        /* No need to check FactoryType */
+<span class="fc bfc" id="L191" title="All 2 branches covered.">        if (pResultType instanceof GordianFactoryType) {</span>
+<span class="fc" id="L192">            return;</span>
+        }
+
+        /* Validate a keySetSpec */
+<span class="fc bfc" id="L196" title="All 2 branches covered.">        if (pResultType instanceof GordianKeySetSpec mySpec) {</span>
+            /* Check Spec */
+<span class="fc" id="L198">            final GordianCoreKeySetFactory myKeySetFactory = (GordianCoreKeySetFactory) theFactory.getKeySetFactory();</span>
+<span class="fc" id="L199">            myKeySetFactory.checkKeySetSpec(mySpec);</span>
+<span class="fc" id="L200">            return;</span>
+        }
+
+        /* Validate a symCipherSpec */
+<span class="fc bfc" id="L204" title="All 2 branches covered.">        if (pResultType instanceof GordianSymCipherSpec mySpec) {</span>
+            /* Check Spec */
+<span class="fc" id="L206">            final GordianCoreCipherFactory myCipherFactory = (GordianCoreCipherFactory) theFactory.getCipherFactory();</span>
+<span class="fc" id="L207">            myCipherFactory.checkSymCipherSpec(mySpec);</span>
+<span class="fc" id="L208">            return;</span>
+        }
+
+        /* Validate a streamCipherSpec */
+<span class="fc bfc" id="L212" title="All 2 branches covered.">        if (pResultType instanceof GordianStreamCipherSpec mySpec) {</span>
+            /* Check Spec */
+<span class="fc" id="L214">            final GordianCoreCipherFactory myCipherFactory = (GordianCoreCipherFactory) theFactory.getCipherFactory();</span>
+<span class="fc" id="L215">            myCipherFactory.checkStreamCipherSpec(mySpec);</span>
+<span class="fc" id="L216">            return;</span>
+        }
+
+        /* Validate a byte array */
+<span class="pc bpc" id="L220" title="1 of 2 branches missed.">        if (pResultType instanceof Integer myInt) {</span>
+<span class="pc bpc" id="L221" title="1 of 2 branches missed.">            if (myInt &lt;= 0) {</span>
+<span class="nc" id="L222">                throw new GordianLogicException(&quot;Invalid length for byteArray&quot;);</span>
+            }
+<span class="fc" id="L224">            return;</span>
+        }
+
+        /* Invalid resultType */
+<span class="nc" id="L228">        throw new GordianLogicException(&quot;Invalid resultType&quot;);</span>
+    }
+
+    @Override
+    public GordianCertificate getClientCertificate() {
+<span class="fc" id="L233">        return theClient;</span>
+    }
+
+    @Override
+    public GordianCertificate getServerCertificate() {
+<span class="fc" id="L238">        return theServer;</span>
+    }
+
+    @Override
+    public GordianCertificate getSignerCertificate() {
+<span class="fc" id="L243">        return theSigner;</span>
+    }
+
+    @Override
+    public GordianSignatureSpec getSignatureSpec() {
+<span class="fc" id="L248">        return theSignSpec;</span>
+    }
+
+    @Override
+    public byte[] getAdditionalData() {
+<span class="fc bfc" id="L253" title="All 2 branches covered.">        return theAdditional == null ? null : theAdditional.clone();</span>
+    }
+
+    @Override
+    public GordianAgreementParams setClientCertificate(final GordianCertificate pClient) throws GordianException {
+        /* Not allowed for server parameters */
+<span class="pc bpc" id="L259" title="1 of 2 branches missed.">        if (!isClient) {</span>
+<span class="nc" id="L260">            throw new GordianDataException(&quot;Client Certificate cannot be changed for server&quot;);</span>
+        }
+
+        /* If we have a client certificate */
+<span class="fc" id="L264">        final GordianAgreementSpec mySpec = getAgreementSpec();</span>
+<span class="fc" id="L265">        final GordianAgreementType myType = mySpec.getAgreementType();</span>
+<span class="fc bfc" id="L266" title="All 2 branches covered.">        if (pClient != null) {</span>
+            /* Check that the keySpec matches the agreement and that we have a private key */
+<span class="fc" id="L268">            final GordianKeyPair myKeyPair = pClient.getKeyPair();</span>
+<span class="pc bpc" id="L269" title="2 of 4 branches missed.">            if (myType.isSigned() || myType.isAnonymous()) {</span>
+<span class="nc" id="L270">                throw new GordianDataException(&quot;Client Certificate not supported for agreement&quot;);</span>
+            }
+<span class="pc bpc" id="L272" title="1 of 2 branches missed.">            if (!Objects.equals(mySpec.getKeyPairSpec(), myKeyPair.getKeyPairSpec())) {</span>
+<span class="nc" id="L273">                throw new GordianDataException(&quot;Client Certificate not valid for agreement&quot;);</span>
+            }
+<span class="pc bpc" id="L275" title="1 of 2 branches missed.">            if (!pClient.getUsage().hasUse(GordianKeyPairUse.AGREEMENT)) {</span>
+<span class="nc" id="L276">                throw new GordianDataException(&quot;Client Certificate must be capable of keyAgreement&quot;);</span>
+            }
+<span class="pc bpc" id="L278" title="1 of 2 branches missed.">            if (myKeyPair.isPublicOnly()) {</span>
+<span class="nc" id="L279">                throw new GordianDataException(&quot;Client Certificate must supply privateKey&quot;);</span>
+            }
+<span class="pc bpc" id="L281" title="1 of 4 branches missed.">        } else if (!myType.isSigned() &amp;&amp; !myType.isAnonymous()) {</span>
+<span class="nc" id="L282">            throw new GordianDataException(&quot;Null Client Certificate not allowed&quot;);</span>
+        }
+
+        /* Create new updated parameters */
+<span class="fc" id="L286">        final GordianCoreAgreementParams myParams = new GordianCoreAgreementParams(this);</span>
+<span class="fc" id="L287">        myParams.theClient = pClient;</span>
+<span class="fc" id="L288">        return myParams;</span>
+    }
+
+    @Override
+    public GordianAgreementParams setServerCertificate(final GordianCertificate pServer) throws GordianException {
+        /* If we have a server certificate */
+<span class="fc" id="L294">        final GordianAgreementSpec mySpec = getAgreementSpec();</span>
+<span class="fc bfc" id="L295" title="All 2 branches covered.">        if (pServer != null) {</span>
+            /* Check that the keySpec matches the agreement */
+<span class="fc" id="L297">            final GordianKeyPair myKeyPair = pServer.getKeyPair();</span>
+<span class="pc bpc" id="L298" title="1 of 2 branches missed.">            if (mySpec.getAgreementType().isSigned()) {</span>
+<span class="nc" id="L299">                throw new GordianDataException(&quot;Server Certificate not supported for agreement&quot;);</span>
+            }
+<span class="pc bpc" id="L301" title="1 of 2 branches missed.">            if (!Objects.equals(mySpec.getKeyPairSpec(), myKeyPair.getKeyPairSpec())) {</span>
+<span class="nc" id="L302">                throw new GordianDataException(&quot;Server Certificate not valid for agreement&quot;);</span>
+            }
+<span class="pc bpc" id="L304" title="1 of 2 branches missed.">            if (!pServer.getUsage().hasUse(GordianKeyPairUse.AGREEMENT)) {</span>
+<span class="nc" id="L305">                throw new GordianDataException(&quot;Server Certificate must be capable of keyAgreement&quot;);</span>
+            }
+
+            /* If we are a server */
+<span class="fc bfc" id="L309" title="All 2 branches covered.">            if (!isClient) {</span>
+                /* Perform additional checks */
+<span class="pc bpc" id="L311" title="1 of 2 branches missed.">                if (myKeyPair.isPublicOnly()) {</span>
+<span class="nc" id="L312">                    throw new GordianDataException(&quot;Server Certificate must supply privateKey&quot;);</span>
+                }
+
+                /* Check that we match the existing server certificate */
+<span class="pc bpc" id="L316" title="1 of 2 branches missed.">                if (!Arrays.equals(theServer.getEncoded(), pServer.getEncoded())) {</span>
+<span class="nc" id="L317">                    throw new GordianDataException(&quot;Server Certificate must match requested certificate&quot;);</span>
+                }
+            }
+
+<span class="pc bpc" id="L321" title="1 of 2 branches missed.">        } else if (!mySpec.getAgreementType().isSigned()) {</span>
+<span class="nc" id="L322">            throw new GordianDataException(&quot;Null Server Certificate not allowed&quot;);</span>
+        }
+
+        /* Create new updated parameters */
+<span class="fc" id="L326">        final GordianCoreAgreementParams myParams = new GordianCoreAgreementParams(this);</span>
+<span class="fc" id="L327">        myParams.theServer = pServer;</span>
+<span class="fc" id="L328">        return myParams;</span>
+    }
+
+    @Override
+    public GordianAgreementParams setSigner(final GordianCertificate pSigner) throws GordianException {
+<span class="fc" id="L333">        final GordianSignatureFactory mySignFactory = theFactory.getAsyncFactory().getSignatureFactory();</span>
+<span class="fc bfc" id="L334" title="All 2 branches covered.">        final GordianSignatureSpec mySignSpec = pSigner == null ? null : mySignFactory.defaultForKeyPair(pSigner.getKeyPair().getKeyPairSpec());</span>
+<span class="fc" id="L335">        return setSigner(pSigner, mySignSpec);</span>
+    }
+
+    @Override
+    public GordianAgreementParams setSigner(final GordianCertificate pSigner,
+                                            final GordianSignatureSpec pSignSpec) throws GordianException {
+        /* Not allowed for client parameters */
+<span class="pc bpc" id="L342" title="1 of 2 branches missed.">        if (isClient) {</span>
+<span class="nc" id="L343">            throw new GordianDataException(&quot;Signer Certificate cannot be set for client&quot;);</span>
+        }
+
+        /* If we have a signer certificate */
+<span class="fc" id="L347">        final GordianAgreementSpec mySpec = getAgreementSpec();</span>
+<span class="fc bfc" id="L348" title="All 2 branches covered.">        if (pSigner != null) {</span>
+            /* Check that we require a signer */
+<span class="pc bpc" id="L350" title="1 of 2 branches missed.">            if (!mySpec.getAgreementType().isSigned()) {</span>
+<span class="nc" id="L351">                throw new GordianDataException(&quot;Signer Certificate not allowed&quot;);</span>
+            }
+
+            /* Check that certificate can sign data */
+<span class="pc bpc" id="L355" title="1 of 2 branches missed.">            if (!pSigner.getUsage().hasUse(GordianKeyPairUse.SIGNATURE)) {</span>
+<span class="nc" id="L356">                throw new GordianDataException(&quot;Certificate must be capable of signing data&quot;);</span>
+            }
+
+            /* Check that signSpec is valid for keyPair */
+<span class="fc" id="L360">            final GordianSignatureFactory mySignFactory = theFactory.getAsyncFactory().getSignatureFactory();</span>
+<span class="pc bpc" id="L361" title="1 of 2 branches missed.">            if (!mySignFactory.validSignatureSpecForKeyPair(pSigner.getKeyPair(), pSignSpec)) {</span>
+<span class="nc" id="L362">                throw new GordianDataException(GordianBaseData.getInvalidText(pSignSpec));</span>
+            }
+
+<span class="pc bpc" id="L365" title="1 of 2 branches missed.">        } else if (mySpec.getAgreementType().isSigned()) {</span>
+<span class="nc" id="L366">            throw new GordianDataException(&quot;Null Signer Certificate not allowed&quot;);</span>
+        }
+
+        /* Create new updated parameters */
+<span class="fc" id="L370">        final GordianCoreAgreementParams myParams = new GordianCoreAgreementParams(this);</span>
+<span class="fc" id="L371">        myParams.theSigner = pSigner;</span>
+<span class="fc" id="L372">        myParams.theSignSpec = pSignSpec;</span>
+<span class="fc" id="L373">        return myParams;</span>
+    }
+
+    @Override
+    public GordianAgreementParams setAdditionalData(final byte[] pData) throws GordianException {
+        /* Only allowed if KDFType is not NONE */
+<span class="fc bfc" id="L379" title="All 2 branches covered.">        if (pData != null</span>
+<span class="pc bpc" id="L380" title="1 of 2 branches missed.">                &amp;&amp; GordianAgreementKDF.NONE.equals(theSpec.getKDFType())) {</span>
+<span class="nc" id="L381">            throw new GordianDataException(&quot;Additional Data not allowed for KDFType NONE&quot;);</span>
+        }
+
+        /* Create new updated parameters */
+<span class="fc" id="L385">        final GordianCoreAgreementParams myParams = new GordianCoreAgreementParams(this);</span>
+<span class="fc bfc" id="L386" title="All 2 branches covered.">        myParams.theAdditional = pData == null ? null : pData.clone();</span>
+<span class="fc" id="L387">        return myParams;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ThemisXAnalysisNode.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Themis Core Project Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.themis.xanalysis.parser.node</a> &gt; <span class="el_source">ThemisXAnalysisNode.java</span></div><h1>ThemisXAnalysisNode.java</h1><pre class="source lang-java linenums">/*
+ * Themis: Java Project Framework
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.themis.xanalysis.parser.node;
+
+import com.github.javaparser.ast.ArrayCreationLevel;
+import com.github.javaparser.ast.CompilationUnit;
+import com.github.javaparser.ast.ImportDeclaration;
+import com.github.javaparser.ast.Modifier;
+import com.github.javaparser.ast.Node;
+import com.github.javaparser.ast.PackageDeclaration;
+import com.github.javaparser.ast.body.Parameter;
+import com.github.javaparser.ast.body.VariableDeclarator;
+import com.github.javaparser.ast.comments.Comment;
+import com.github.javaparser.ast.expr.MemberValuePair;
+import com.github.javaparser.ast.expr.Name;
+import com.github.javaparser.ast.expr.SimpleName;
+import com.github.javaparser.ast.stmt.CatchClause;
+import com.github.javaparser.ast.stmt.SwitchEntry;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance.ThemisXAnalysisId;
+import io.github.tonywasher.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisParserDef;
+
+import java.util.function.Predicate;
+
+/**
+ * Analysis Node.
+ */
+<span class="fc" id="L42">public enum ThemisXAnalysisNode</span>
+        implements ThemisXAnalysisId {
+    /**
+     * ArrayLevel.
+     */
+<span class="fc" id="L47">    ARRAYLEVEL(ArrayCreationLevel.class::isInstance),</span>
+
+    /**
+     * Case.
+     */
+<span class="fc" id="L52">    CASE(SwitchEntry.class::isInstance),</span>
+
+    /**
+     * Catch.
+     */
+<span class="fc" id="L57">    CATCH(CatchClause.class::isInstance),</span>
+
+    /**
+     * Comment.
+     */
+<span class="fc" id="L62">    COMMENT(Comment.class::isInstance),</span>
+
+    /**
+     * Compilation Unit.
+     */
+<span class="fc" id="L67">    COMPILATIONUNIT(CompilationUnit.class::isInstance),</span>
+
+    /**
+     * Import.
+     */
+<span class="fc" id="L72">    IMPORT(ImportDeclaration.class::isInstance),</span>
+
+    /**
+     * Modifier.
+     */
+<span class="fc" id="L77">    MODIFIER(Modifier.class::isInstance),</span>
+
+    /**
+     * Name.
+     */
+<span class="fc" id="L82">    NAME(Name.class::isInstance),</span>
+
+    /**
+     * Parameter.
+     */
+<span class="fc" id="L87">    PACKAGE(PackageDeclaration.class::isInstance),</span>
+
+    /**
+     * Parameter.
+     */
+<span class="fc" id="L92">    PARAMETER(Parameter.class::isInstance),</span>
+
+    /**
+     * SimpleName.
+     */
+<span class="fc" id="L97">    SIMPLENAME(SimpleName.class::isInstance),</span>
+
+    /**
+     * ValuePair.
+     */
+<span class="fc" id="L102">    VALUEPAIR(MemberValuePair.class::isInstance),</span>
+
+    /**
+     * Variable.
+     */
+<span class="fc" id="L107">    VARIABLE(VariableDeclarator.class::isInstance);</span>
+
+    /**
+     * The test.
+     */
+    private final Predicate&lt;Node&gt; theTester;
+
+    /**
+     * Constructor.
+     *
+     * @param pTester the test method
+     */
+<span class="fc" id="L119">    ThemisXAnalysisNode(final Predicate&lt;Node&gt; pTester) {</span>
+<span class="fc" id="L120">        theTester = pTester;</span>
+<span class="fc" id="L121">    }</span>
+
+    /**
+     * Determine type of node.
+     *
+     * @param pParser the parser
+     * @param pNode   the node
+     * @return the nodeType
+     * @throws OceanusException on error
+     */
+    public static ThemisXAnalysisNode determineNode(final ThemisXAnalysisParserDef pParser,
+                                                    final Node pNode) throws OceanusException {
+        /* Loop testing each node type */
+<span class="pc bpc" id="L134" title="1 of 2 branches missed.">        for (ThemisXAnalysisNode myNode : values()) {</span>
+<span class="fc bfc" id="L135" title="All 2 branches covered.">            if (myNode.theTester.test(pNode)) {</span>
+<span class="fc" id="L136">                return myNode;</span>
+            }
+        }
+
+        /* Unrecognised nodeType */
+<span class="nc" id="L141">        throw pParser.buildException(&quot;Unexpected Node&quot;, pNode);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

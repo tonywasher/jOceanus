@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ThemisXAnalysisPackage.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Themis Core Project Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.themis.xanalysis.parser.proj</a> &gt; <span class="el_source">ThemisXAnalysisPackage.java</span></div><h1>ThemisXAnalysisPackage.java</h1><pre class="source lang-java linenums">/*
+ * Themis: Java Project Framework
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.themis.xanalysis.parser.proj;
+
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisChar;
+import io.github.tonywasher.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisParserDef;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+
+/**
+ * Package.
+ */
+public class ThemisXAnalysisPackage {
+    /**
+     * The package-info file.
+     */
+    private static final String PACKAGE_INFO = &quot;package-info&quot; + ThemisXAnalysisFile.SFX_JAVA;
+
+    /**
+     * The package name.
+     */
+    private final String thePackage;
+
+    /**
+     * The location.
+     */
+    private final File theLocation;
+
+    /**
+     * The list of files in this package.
+     */
+    private final List&lt;ThemisXAnalysisFile&gt; theFiles;
+
+    /**
+     * Constructor.
+     *
+     * @param pLocation the location
+     * @param pPackage  the package name.
+     * @throws OceanusException on error
+     */
+    ThemisXAnalysisPackage(final File pLocation,
+<span class="fc" id="L60">                           final String pPackage) throws OceanusException {</span>
+        /* Store package name */
+<span class="fc" id="L62">        theLocation = pLocation;</span>
+<span class="fc" id="L63">        thePackage = pPackage;</span>
+
+        /* Create directory path and record the location */
+<span class="fc" id="L66">        final String myPath = pPackage.replace(ThemisXAnalysisChar.PERIOD, File.separatorChar);</span>
+<span class="fc" id="L67">        final File myLocation = new File(pLocation, myPath);</span>
+
+        /* Build list of files */
+<span class="fc" id="L70">        theFiles = listFiles(myLocation);</span>
+<span class="fc" id="L71">    }</span>
+
+    /**
+     * Obtain the package.
+     *
+     * @return the package
+     */
+    public String getPackage() {
+<span class="nc" id="L79">        return thePackage;</span>
+    }
+
+    /**
+     * Obtain the location.
+     *
+     * @return the location
+     */
+    public File getLocation() {
+<span class="nc" id="L88">        return theLocation;</span>
+    }
+
+    /**
+     * Obtain the files.
+     *
+     * @return the files
+     */
+    public List&lt;ThemisXAnalysisFile&gt; getFiles() {
+<span class="fc" id="L97">        return theFiles;</span>
+    }
+
+    /**
+     * Build list of files.
+     *
+     * @param pLocation the location
+     * @return the list of files
+     */
+    List&lt;ThemisXAnalysisFile&gt; listFiles(final File pLocation) {
+        /* Allocate the list */
+<span class="fc" id="L108">        final List&lt;ThemisXAnalysisFile&gt; myClasses = new ArrayList&lt;&gt;();</span>
+
+        /* Loop through the entries in the directory */
+<span class="fc bfc" id="L111" title="All 2 branches covered.">        for (File myFile : Objects.requireNonNull(pLocation.listFiles())) {</span>
+            /* Handle files */
+<span class="fc bfc" id="L113" title="All 2 branches covered.">            if (!myFile.isDirectory()) {</span>
+                /* Access the name of the file */
+<span class="fc" id="L115">                final String myName = myFile.getName();</span>
+
+                /* If this is a .java that is not package-info */
+<span class="pc bpc" id="L118" title="1 of 2 branches missed.">                if (myName.endsWith(ThemisXAnalysisFile.SFX_JAVA)</span>
+<span class="fc bfc" id="L119" title="All 2 branches covered.">                        &amp;&amp; !PACKAGE_INFO.equals(myName)) {</span>
+                    /* Add the class */
+<span class="fc" id="L121">                    final ThemisXAnalysisFile myClass = new ThemisXAnalysisFile(myFile);</span>
+<span class="fc" id="L122">                    myClasses.add(myClass);</span>
+                }
+            }
+        }
+
+        /* Return the classes */
+<span class="fc" id="L128">        return myClasses;</span>
+    }
+
+    /**
+     * parse the Java Code.
+     *
+     * @param pParser the parser
+     * @throws OceanusException on error
+     */
+    void parseJavaCode(final ThemisXAnalysisParserDef pParser) throws OceanusException {
+        /* Set the current package */
+<span class="fc" id="L139">        pParser.setCurrentPackage(thePackage);</span>
+
+        /* Loop through the classes */
+<span class="fc bfc" id="L142" title="All 2 branches covered.">        for (ThemisXAnalysisFile myFile : theFiles) {</span>
+            /* Process the file */
+<span class="fc" id="L144">            myFile.parseJavaCode(pParser);</span>
+<span class="fc" id="L145">        }</span>
+<span class="fc" id="L146">    }</span>
+
+    @Override
+    public String toString() {
+<span class="nc" id="L150">        return thePackage;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

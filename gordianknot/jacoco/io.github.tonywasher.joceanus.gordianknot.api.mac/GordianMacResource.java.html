@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianMacResource.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.api.mac</a> &gt; <span class="el_source">GordianMacResource.java</span></div><h1>GordianMacResource.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.gordianknot.api.mac;
+
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianBundleLoader;
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianBundleLoader.GordianBundleId;
+
+/**
+ * Resource IDs for Mac package.
+ */
+<span class="fc" id="L25">public enum GordianMacResource</span>
+        implements GordianBundleId {
+    /**
+     * MAC HMAC.
+     */
+<span class="fc" id="L30">    MAC_HMAC(&quot;HMAC&quot;),</span>
+
+    /**
+     * MAC GMAC.
+     */
+<span class="fc" id="L35">    MAC_GMAC(&quot;GMAC&quot;),</span>
+
+    /**
+     * MAC CMAC.
+     */
+<span class="fc" id="L40">    MAC_CMAC(&quot;CMAC&quot;),</span>
+
+    /**
+     * MAC KMAC.
+     */
+<span class="fc" id="L45">    MAC_KMAC(&quot;KMAC&quot;),</span>
+
+    /**
+     * MAC POLY1305.
+     */
+<span class="fc" id="L50">    MAC_POLY(&quot;POLY1305&quot;),</span>
+
+    /**
+     * MAC SKEIN.
+     */
+<span class="fc" id="L55">    MAC_SKEIN(&quot;SKEIN&quot;),</span>
+
+    /**
+     * MAC KALYNA.
+     */
+<span class="fc" id="L60">    MAC_KALYNA(&quot;KALYNA&quot;),</span>
+
+    /**
+     * MAC KUPYNA.
+     */
+<span class="fc" id="L65">    MAC_KUPYNA(&quot;KUPYNA&quot;),</span>
+
+    /**
+     * MAC BLAKE2.
+     */
+<span class="fc" id="L70">    MAC_BLAKE2(&quot;BLAKE2&quot;),</span>
+
+    /**
+     * MAC BLAKE2.
+     */
+<span class="fc" id="L75">    MAC_BLAKE3(&quot;BLAKE3&quot;),</span>
+
+    /**
+     * MAC CBC.
+     */
+<span class="fc" id="L80">    MAC_CBC(&quot;CBC&quot;),</span>
+
+    /**
+     * MAC CFB.
+     */
+<span class="fc" id="L85">    MAC_CFB(&quot;CFB&quot;),</span>
+
+    /**
+     * MAC SipHash.
+     */
+<span class="fc" id="L90">    MAC_SIPHASH(&quot;SipHash&quot;),</span>
+
+    /**
+     * MAC GOST.
+     */
+<span class="fc" id="L95">    MAC_GOST(&quot;GOST&quot;),</span>
+
+    /**
+     * MAC VMPC.
+     */
+<span class="fc" id="L100">    MAC_VMPC(&quot;VMPC&quot;);</span>
+
+    /**
+     * The Resource Loader.
+     */
+<span class="fc" id="L105">    private static final GordianBundleLoader LOADER = GordianBundleLoader.getLoader(GordianMacResource.class.getCanonicalName());</span>
+
+    /**
+     * The Id.
+     */
+    private final String theKeyName;
+
+    /**
+     * The Value.
+     */
+    private String theValue;
+
+    /**
+     * Constructor.
+     *
+     * @param pKeyName the key name
+     */
+<span class="fc" id="L122">    GordianMacResource(final String pKeyName) {</span>
+<span class="fc" id="L123">        theKeyName = pKeyName;</span>
+<span class="fc" id="L124">    }</span>
+
+    @Override
+    public String getKeyName() {
+<span class="fc" id="L128">        return theKeyName;</span>
+    }
+
+    @Override
+    public String getNameSpace() {
+<span class="fc" id="L133">        return &quot;mac&quot;;</span>
+    }
+
+    @Override
+    public String getValue() {
+        /* If we have not initialized the value */
+<span class="pc bpc" id="L139" title="1 of 2 branches missed.">        if (theValue == null) {</span>
+            /* Derive the value */
+<span class="fc" id="L141">            theValue = LOADER.getValue(this);</span>
+        }
+
+        /* return the value */
+<span class="fc" id="L145">        return theValue;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

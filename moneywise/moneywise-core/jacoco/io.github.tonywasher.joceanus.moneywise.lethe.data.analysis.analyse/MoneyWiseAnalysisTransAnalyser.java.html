@@ -1,0 +1,1744 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseAnalysisTransAnalyser.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.analyse</a> &gt; <span class="el_source">MoneyWiseAnalysisTransAnalyser.java</span></div><h1>MoneyWiseAnalysisTransAnalyser.java</h1><pre class="source lang-java linenums">/*
+ * MoneyWise: Finance Application
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.analyse;
+
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRate;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
+import io.github.tonywasher.joceanus.oceanus.profile.OceanusProfile;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldItem;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
+import io.github.tonywasher.joceanus.metis.preference.MetisPreferenceManager;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseAssetBase;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseAssetType;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseCash;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDataSet;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDeposit;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseLoan;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePortfolio;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePortfolio.MoneyWisePortfolioList;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurity;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurityHolding;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurityHolding.MoneyWiseSecurityHoldingMap;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurityPrice.MoneyWiseSecurityPriceDataMap;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTax.MoneyWiseTaxCredit;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransAsset;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransCategory;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransTag;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransaction;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransaction.MoneyWiseTransactionList;
+import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWisePayeeClass;
+import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWisePortfolioClass;
+import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseSecurityClass;
+import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTransCategoryClass;
+import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseLogicException;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysis;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisAccountBucket;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisCashBucket.MoneyWiseAnalysisCashBucketList;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisDataResource;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisDepositBucket.MoneyWiseAnalysisDepositBucketList;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisLoanBucket.MoneyWiseAnalysisLoanBucketList;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisPayeeBucket;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisPayeeBucket.MoneyWiseAnalysisPayeeBucketList;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisPortfolioBucket;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisPortfolioBucket.MoneyWiseAnalysisPortfolioBucketList;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisPortfolioCashBucket;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisSecurityBucket;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisTaxBasisBucket.MoneyWiseAnalysisTaxBasisBucketList;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisTransCategoryBucket;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisTransCategoryBucket.MoneyWiseAnalysisTransCategoryBucketList;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisTransTagBucket.MoneyWiseAnalysisTransTagBucketList;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisTransactionHelper;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisSecurityAttr;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisSecurityValues;
+import io.github.tonywasher.joceanus.moneywise.tax.MoneyWiseCashType;
+import io.github.tonywasher.joceanus.prometheus.views.PrometheusEditSet;
+
+import java.util.Currency;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Objects;
+
+/**
+ * Class to analyse transactions.
+ *
+ * @author Tony Washer
+ */
+public class MoneyWiseAnalysisTransAnalyser
+        implements MetisFieldItem {
+    /**
+     * Local Report fields.
+     */
+    private static final String ERROR_CATEGORY = &quot;Unexpected Category Type: &quot;;
+
+    /**
+     * Local Report fields.
+     */
+<span class="fc" id="L97">    private static final MetisFieldSet&lt;MoneyWiseAnalysisTransAnalyser&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseAnalysisTransAnalyser.class);</span>
+
+    /*
+     * Declare Fields.
+     */
+    static {
+<span class="fc" id="L103">        FIELD_DEFS.declareLocalField(MoneyWiseAnalysisDataResource.ANALYSIS_NAME, MoneyWiseAnalysisTransAnalyser::getAnalysis);</span>
+    }
+
+    /**
+     * The Amount Tax threshold for &quot;small&quot; transactions (£3000).
+     */
+<span class="fc" id="L109">    private static final OceanusMoney LIMIT_VALUE = OceanusMoney.getWholeUnits(3000);</span>
+
+    /**
+     * The Rate Tax threshold for &quot;small&quot; transactions (5%).
+     */
+<span class="fc" id="L114">    private static final OceanusRate LIMIT_RATE = OceanusRate.getWholePercentage(5);</span>
+
+    /**
+     * The security holding map.
+     */
+    private final MoneyWiseSecurityHoldingMap theHoldingMap;
+
+    /**
+     * The security price map.
+     */
+    private final MoneyWiseSecurityPriceDataMap thePriceMap;
+
+    /**
+     * The analysis.
+     */
+    private final MoneyWiseAnalysis theAnalysis;
+
+    /**
+     * The transaction helper.
+     */
+    private final MoneyWiseAnalysisTransactionHelper theHelper;
+
+    /**
+     * The deposit bucket list.
+     */
+    private final MoneyWiseAnalysisDepositBucketList theDepositBuckets;
+
+    /**
+     * The cash bucket list.
+     */
+    private final MoneyWiseAnalysisCashBucketList theCashBuckets;
+
+    /**
+     * The deposit bucket list.
+     */
+    private final MoneyWiseAnalysisLoanBucketList theLoanBuckets;
+
+    /**
+     * The portfolio bucket list.
+     */
+    private final MoneyWiseAnalysisPortfolioBucketList thePortfolioBuckets;
+
+    /**
+     * The payee bucket list.
+     */
+    private final MoneyWiseAnalysisPayeeBucketList thePayeeBuckets;
+
+    /**
+     * The transaction category buckets.
+     */
+    private final MoneyWiseAnalysisTransCategoryBucketList theCategoryBuckets;
+
+    /**
+     * The transactionTag buckets.
+     */
+    private final MoneyWiseAnalysisTransTagBucketList theTagBuckets;
+
+    /**
+     * The taxBasis buckets.
+     */
+    private final MoneyWiseAnalysisTaxBasisBucketList theTaxBasisBuckets;
+
+    /**
+     * The taxMan account.
+     */
+    private final MoneyWiseAnalysisPayeeBucket theTaxMan;
+
+    /**
+     * The statePension account.
+     */
+    private final MoneyWiseAnalysisSecurityBucket theStatePension;
+
+    /**
+     * The profile.
+     */
+    private final OceanusProfile theProfile;
+
+    /**
+     * Constructor for a complete set of accounts.
+     *
+     * @param pTask          the profiled task
+     * @param pEditSet       the EditSet to analyse
+     * @param pPreferenceMgr the preference manager
+     * @throws OceanusException on error
+     */
+    public MoneyWiseAnalysisTransAnalyser(final OceanusProfile pTask,
+                                          final PrometheusEditSet pEditSet,
+<span class="fc" id="L201">                                          final MetisPreferenceManager pPreferenceMgr) throws OceanusException {</span>
+        /* Start a new task */
+<span class="fc" id="L203">        theProfile = pTask;</span>
+<span class="fc" id="L204">        final OceanusProfile myTask = theProfile.startTask(&quot;analyseTransactions&quot;);</span>
+<span class="fc" id="L205">        final MoneyWiseDataSet myDataSet = (MoneyWiseDataSet) pEditSet.getDataSet();</span>
+
+        /* Store the parameters */
+<span class="fc" id="L208">        theHoldingMap = pEditSet.getDataList(MoneyWiseBasicDataType.PORTFOLIO, MoneyWisePortfolioList.class).getSecurityHoldingsMap();</span>
+<span class="fc" id="L209">        thePriceMap = myDataSet.getSecurityPriceDataMap();</span>
+
+        /* Access the lists */
+<span class="fc" id="L212">        final MoneyWiseTransactionList myTrans = pEditSet.getDataList(MoneyWiseBasicDataType.TRANSACTION, MoneyWiseTransactionList.class);</span>
+
+        /* Create a new analysis */
+<span class="fc" id="L215">        myTask.startTask(&quot;Initialise&quot;);</span>
+<span class="fc" id="L216">        theAnalysis = new MoneyWiseAnalysis(pEditSet, pPreferenceMgr);</span>
+
+        /* Create new helper and set opening balances */
+<span class="fc" id="L219">        theHelper = new MoneyWiseAnalysisTransactionHelper(myDataSet);</span>
+<span class="fc" id="L220">        theAnalysis.addOpeningBalances(theHelper);</span>
+
+        /* Access details from the analysis */
+<span class="fc" id="L223">        theDepositBuckets = theAnalysis.getDeposits();</span>
+<span class="fc" id="L224">        theCashBuckets = theAnalysis.getCash();</span>
+<span class="fc" id="L225">        theLoanBuckets = theAnalysis.getLoans();</span>
+<span class="fc" id="L226">        thePortfolioBuckets = theAnalysis.getPortfolios();</span>
+<span class="fc" id="L227">        thePayeeBuckets = theAnalysis.getPayees();</span>
+<span class="fc" id="L228">        theCategoryBuckets = theAnalysis.getTransCategories();</span>
+<span class="fc" id="L229">        theTagBuckets = theAnalysis.getTransactionTags();</span>
+<span class="fc" id="L230">        theTaxBasisBuckets = theAnalysis.getTaxBasis();</span>
+<span class="fc" id="L231">        theTaxMan = thePayeeBuckets.getBucket(MoneyWisePayeeClass.TAXMAN);</span>
+
+        /* Access the StatePension security holding */
+<span class="fc" id="L234">        theStatePension = getStatePension(myDataSet);</span>
+
+        /* Loop through the Transactions extracting relevant elements */
+<span class="fc" id="L237">        myTask.startTask(&quot;Transactions&quot;);</span>
+<span class="fc" id="L238">        final Iterator&lt;MoneyWiseTransaction&gt; myIterator = myTrans.iterator();</span>
+<span class="pc bpc" id="L239" title="1 of 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L240">            final MoneyWiseTransaction myCurr = myIterator.next();</span>
+
+            /* Ignore deleted/header transactions */
+<span class="nc bnc" id="L243" title="All 4 branches missed.">            if (myCurr.isDeleted() || myCurr.isHeader()) {</span>
+<span class="nc" id="L244">                continue;</span>
+            }
+
+            /* Touch underlying items */
+<span class="nc" id="L248">            myCurr.touchUnderlyingItems();</span>
+
+            /* Process the transaction in the report set */
+<span class="nc" id="L251">            processTransaction(myCurr);</span>
+<span class="nc" id="L252">        }</span>
+
+        /* Complete the task */
+<span class="fc" id="L255">        myTask.end();</span>
+<span class="fc" id="L256">    }</span>
+
+    /**
+     * Obtain statePension bucket.
+     *
+     * @param pData the dataSet
+     * @return the statePension bucket
+     */
+    private MoneyWiseAnalysisSecurityBucket getStatePension(final MoneyWiseDataSet pData) {
+        /* Access the singular portfolio and security */
+<span class="fc" id="L266">        final MoneyWisePortfolio myPensionPort = pData.getPortfolios().getSingularClass(MoneyWisePortfolioClass.PENSION);</span>
+<span class="fc" id="L267">        final MoneyWiseSecurity myStatePension = pData.getSecurities().getSingularClass(MoneyWiseSecurityClass.STATEPENSION);</span>
+
+        /* If they exist, access the bucket */
+<span class="pc bpc" id="L270" title="3 of 4 branches missed.">        if (myPensionPort != null</span>
+                &amp;&amp; myStatePension != null) {
+<span class="nc" id="L272">            final MoneyWiseSecurityHolding myHolding = pData.getPortfolios().getSecurityHoldingsMap().declareHolding(myPensionPort, myStatePension);</span>
+<span class="nc" id="L273">            return thePortfolioBuckets.getBucket(myHolding);</span>
+        }
+
+        /* Default to no bucket */
+<span class="fc" id="L277">        return null;</span>
+    }
+
+    @Override
+    public MetisFieldSet&lt;MoneyWiseAnalysisTransAnalyser&gt; getDataFieldSet() {
+<span class="nc" id="L282">        return FIELD_DEFS;</span>
+    }
+
+    @Override
+    public String formatObject(final OceanusDataFormatter pFormatter) {
+<span class="nc" id="L287">        return FIELD_DEFS.getName();</span>
+    }
+
+    /**
+     * Obtain the analysis.
+     *
+     * @return the analysis
+     */
+    public MoneyWiseAnalysis getAnalysis() {
+<span class="fc" id="L296">        return theAnalysis;</span>
+    }
+
+    /**
+     * Mark active accounts.
+     *
+     * @throws OceanusException on error
+     */
+    public void postProcessAnalysis() throws OceanusException {
+        /* Start a new task */
+<span class="fc" id="L306">        final OceanusProfile myTask = theProfile.startTask(&quot;postProcessAnalysis&quot;);</span>
+<span class="fc" id="L307">        myTask.startTask(&quot;markActiveAccounts&quot;);</span>
+
+        /* Mark relevant accounts */
+<span class="fc" id="L310">        theDepositBuckets.markActiveAccounts();</span>
+<span class="fc" id="L311">        theCashBuckets.markActiveAccounts();</span>
+<span class="fc" id="L312">        theLoanBuckets.markActiveAccounts();</span>
+
+        /* Mark relevant securities */
+<span class="fc" id="L315">        thePortfolioBuckets.markActiveSecurities();</span>
+
+        /* Complete the task */
+<span class="fc" id="L318">        myTask.end();</span>
+<span class="fc" id="L319">    }</span>
+
+    /**
+     * Process a transaction.
+     *
+     * @param pTrans the transaction to process
+     * @throws OceanusException on error
+     */
+    private void processTransaction(final MoneyWiseTransaction pTrans) throws OceanusException {
+        /* Declare to helper */
+<span class="nc" id="L329">        theHelper.setTransaction(pTrans);</span>
+
+        /* Access key details */
+<span class="nc" id="L332">        final MoneyWiseTransAsset myDebitAsset = theHelper.getDebitAsset();</span>
+<span class="nc" id="L333">        final MoneyWiseTransAsset myCreditAsset = theHelper.getCreditAsset();</span>
+<span class="nc" id="L334">        final MoneyWiseTaxCredit myYear = pTrans.getTaxYear();</span>
+
+        /* Look for tags */
+<span class="nc" id="L337">        final List&lt;MoneyWiseTransTag&gt; myTags = pTrans.getTransactionTags();</span>
+<span class="nc bnc" id="L338" title="All 2 branches missed.">        if (myTags != null) {</span>
+            /* Process the transaction tags */
+<span class="nc" id="L340">            theTagBuckets.processTransaction(pTrans, myTags.iterator());</span>
+        }
+
+        /* If the event relates to a security item, split out the workings */
+<span class="nc bnc" id="L344" title="All 2 branches missed.">        if (myDebitAsset instanceof MoneyWiseSecurityHolding) {</span>
+            /* Process as a Security transaction */
+<span class="nc" id="L346">            processDebitSecurityTransaction((MoneyWiseSecurityHolding) myDebitAsset, myCreditAsset);</span>
+
+            /* If the event relates to a security item, split out the workings */
+<span class="nc bnc" id="L349" title="All 2 branches missed.">        } else if (myCreditAsset instanceof MoneyWiseSecurityHolding) {</span>
+            /* Process as a Security transaction */
+<span class="nc" id="L351">            processCreditSecurityTransaction(myDebitAsset, (MoneyWiseSecurityHolding) myCreditAsset);</span>
+
+            /* Else handle the portfolio transfer */
+<span class="nc bnc" id="L354" title="All 4 branches missed.">        } else if (myDebitAsset instanceof MoneyWisePortfolio</span>
+                &amp;&amp; myCreditAsset instanceof MoneyWisePortfolio
+<span class="nc bnc" id="L356" title="All 2 branches missed.">                &amp;&amp; pTrans.getCategoryClass() == MoneyWiseTransCategoryClass.PORTFOLIOXFER</span>
+<span class="nc bnc" id="L357" title="All 2 branches missed.">                &amp;&amp; !myDebitAsset.equals(myCreditAsset)) {</span>
+            /* Process portfolio transfer */
+<span class="nc" id="L359">            processPortfolioXfer((MoneyWisePortfolio) myDebitAsset, (MoneyWisePortfolio) myCreditAsset);</span>
+
+            /* Else handle the event normally */
+<span class="nc bnc" id="L362" title="All 4 branches missed.">        } else if (myDebitAsset instanceof MoneyWiseAssetBase</span>
+                &amp;&amp; myCreditAsset instanceof MoneyWiseAssetBase) {
+            /* Access correctly */
+<span class="nc" id="L365">            MoneyWiseAssetBase myDebit = (MoneyWiseAssetBase) myDebitAsset;</span>
+<span class="nc" id="L366">            MoneyWiseAssetBase myCredit = (MoneyWiseAssetBase) myCreditAsset;</span>
+<span class="nc" id="L367">            MoneyWiseAssetBase myChild = null;</span>
+<span class="nc" id="L368">            final OceanusMoney myAmount = pTrans.getAmount();</span>
+<span class="nc" id="L369">            MoneyWiseTransCategory myCat = pTrans.getCategory();</span>
+
+            /* Switch on category class */
+<span class="nc bnc" id="L372" title="All 5 branches missed.">            switch (myCat.getCategoryTypeClass()) {</span>
+                case INTEREST:
+                case LOYALTYBONUS:
+                    /* Obtain detailed category */
+<span class="nc" id="L376">                    myCat = myDebit.getDetailedCategory(myCat, myYear);</span>
+
+                    /* True debit account is the parent */
+<span class="nc bnc" id="L379" title="All 2 branches missed.">                    myChild = myDebit.equals(myCredit)</span>
+<span class="nc" id="L380">                            ? null</span>
+<span class="nc" id="L381">                            : myDebit;</span>
+<span class="nc" id="L382">                    myDebit = myDebit.getParent();</span>
+<span class="nc" id="L383">                    break;</span>
+                case LOANINTERESTEARNED:
+                case CASHBACK:
+                    /* True debit account is the parent of the asset */
+<span class="nc" id="L387">                    myDebit = myDebit.getParent();</span>
+<span class="nc" id="L388">                    break;</span>
+                case RENTALINCOME:
+                case ROOMRENTALINCOME:
+                    /* True debit account is the parent of the security */
+<span class="nc bnc" id="L392" title="All 2 branches missed.">                    myChild = myDebit.equals(myCredit)</span>
+<span class="nc" id="L393">                            ? null</span>
+<span class="nc" id="L394">                            : myDebit;</span>
+<span class="nc" id="L395">                    myDebit = myCredit.getParent();</span>
+<span class="nc" id="L396">                    break;</span>
+                case WRITEOFF:
+                case LOANINTERESTCHARGED:
+                    /* True credit account is the parent of the loan */
+<span class="nc" id="L400">                    myCredit = myCredit.getParent();</span>
+<span class="nc" id="L401">                    break;</span>
+                default:
+                    break;
+            }
+
+            /* If the debit account is auto-Expense */
+<span class="nc bnc" id="L407" title="All 2 branches missed.">            if (myDebit instanceof MoneyWiseCash</span>
+<span class="nc bnc" id="L408" title="All 2 branches missed.">                    &amp;&amp; myDebit.getAssetType() == MoneyWiseAssetType.AUTOEXPENSE) {</span>
+                /* Access debit as cash */
+<span class="nc" id="L410">                final MoneyWiseCash myCash = (MoneyWiseCash) myDebit;</span>
+<span class="nc" id="L411">                final MoneyWiseTransCategory myAuto = myCash.getAutoExpense();</span>
+<span class="nc" id="L412">                myDebit = myCash.getAutoPayee();</span>
+<span class="nc" id="L413">                myDebit.touchItem(pTrans);</span>
+
+                /* Subtract expense from Payee bucket */
+<span class="nc" id="L416">                final MoneyWiseAnalysisPayeeBucket myPayee = thePayeeBuckets.getBucket(myDebit);</span>
+<span class="nc" id="L417">                myPayee.subtractExpense(theHelper, myAmount);</span>
+
+                /* Subtract expense from Category bucket */
+<span class="nc" id="L420">                final MoneyWiseAnalysisTransCategoryBucket myCatBucket = theCategoryBuckets.getBucket(myAuto);</span>
+<span class="nc" id="L421">                myCatBucket.subtractExpense(theHelper, myAmount);</span>
+<span class="nc" id="L422">                theTaxBasisBuckets.adjustAutoExpense(theHelper, false);</span>
+
+                /* handle Payees */
+<span class="nc bnc" id="L425" title="All 2 branches missed.">            } else if (MoneyWiseAssetType.PAYEE.equals(myDebit.getAssetType())) {</span>
+<span class="nc" id="L426">                final MoneyWiseAnalysisPayeeBucket myPayee = thePayeeBuckets.getBucket(myDebit);</span>
+<span class="nc" id="L427">                myPayee.adjustForDebit(theHelper);</span>
+
+                /* handle valued assets */
+<span class="nc" id="L430">            } else {</span>
+<span class="nc" id="L431">                final MoneyWiseAnalysisAccountBucket&lt;?&gt; myBucket = getAccountBucket(myDebit);</span>
+<span class="nc" id="L432">                myBucket.adjustForDebit(theHelper);</span>
+            }
+
+            /* If the credit account is auto-Expense */
+<span class="nc bnc" id="L436" title="All 2 branches missed.">            if (myCredit instanceof MoneyWiseCash</span>
+<span class="nc bnc" id="L437" title="All 2 branches missed.">                    &amp;&amp; myCredit.getAssetType() == MoneyWiseAssetType.AUTOEXPENSE) {</span>
+                /* Access credit as cash */
+<span class="nc" id="L439">                final MoneyWiseCash myCash = (MoneyWiseCash) myCredit;</span>
+<span class="nc" id="L440">                final MoneyWiseTransCategory myAuto = myCash.getAutoExpense();</span>
+<span class="nc" id="L441">                myCredit = myCash.getAutoPayee();</span>
+<span class="nc" id="L442">                myCredit.touchItem(pTrans);</span>
+
+                /* Add expense to Payee bucket */
+<span class="nc" id="L445">                final MoneyWiseAnalysisPayeeBucket myPayee = thePayeeBuckets.getBucket(myCredit);</span>
+<span class="nc" id="L446">                myPayee.addExpense(theHelper, myAmount);</span>
+
+                /* Adjust the relevant category bucket */
+<span class="nc" id="L449">                final MoneyWiseAnalysisTransCategoryBucket myCatBucket = theCategoryBuckets.getBucket(myAuto);</span>
+<span class="nc" id="L450">                myCatBucket.addExpense(theHelper, myAmount);</span>
+<span class="nc" id="L451">                theTaxBasisBuckets.adjustAutoExpense(theHelper, true);</span>
+
+                /* handle Payees */
+<span class="nc bnc" id="L454" title="All 2 branches missed.">            } else if (MoneyWiseAssetType.PAYEE.equals(myCredit.getAssetType())) {</span>
+<span class="nc" id="L455">                final MoneyWiseAnalysisPayeeBucket myPayee = thePayeeBuckets.getBucket(myCredit);</span>
+<span class="nc" id="L456">                myPayee.adjustForCredit(theHelper);</span>
+
+                /* handle valued assets */
+<span class="nc" id="L459">            } else {</span>
+<span class="nc" id="L460">                final MoneyWiseAnalysisAccountBucket&lt;?&gt; myBucket = getAccountBucket(myCredit);</span>
+<span class="nc" id="L461">                myBucket.adjustForCredit(theHelper);</span>
+            }
+
+            /* If we should register the event with a child */
+<span class="nc bnc" id="L465" title="All 2 branches missed.">            if (myChild != null) {</span>
+                /* Access bucket and register it */
+<span class="nc" id="L467">                final MoneyWiseAnalysisAccountBucket&lt;?&gt; myBucket = getAccountBucket(myChild);</span>
+<span class="nc" id="L468">                myBucket.registerTransaction(pTrans);</span>
+            }
+
+            /* Adjust the tax and NI payments */
+<span class="nc" id="L472">            theTaxMan.adjustForTaxPayments(theHelper);</span>
+<span class="nc" id="L473">            theStatePension.adjustForNIPayments(theHelper);</span>
+
+            /* If the event category is not a transfer */
+<span class="nc bnc" id="L476" title="All 2 branches missed.">            if (!myCat.isTransfer()) {</span>
+                /* Adjust the relevant category buckets */
+<span class="nc" id="L478">                theCategoryBuckets.adjustCategories(theHelper, myCat);</span>
+            }
+
+            /* Unknown combination */
+<span class="nc" id="L482">        } else {</span>
+<span class="nc" id="L483">            throw new MoneyWiseLogicException(&quot;Invalid Asset Pair: &quot;</span>
+<span class="nc" id="L484">                    + pTrans.getAccount().getAssetType()</span>
+                    + &quot; &quot;
+<span class="nc" id="L486">                    + pTrans.getDirection()</span>
+                    + &quot; &quot;
+<span class="nc" id="L488">                    + pTrans.getPartner().getAssetType());</span>
+        }
+<span class="nc" id="L490">    }</span>
+
+    /**
+     * Process a debit security transaction.
+     *
+     * @param pDebit  the debit security
+     * @param pCredit the credit account
+     * @throws OceanusException on error
+     */
+    private void processDebitSecurityTransaction(final MoneyWiseSecurityHolding pDebit,
+                                                 final MoneyWiseTransAsset pCredit) throws OceanusException {
+        /* If credit account is also SecurityHolding */
+<span class="nc bnc" id="L502" title="All 2 branches missed.">        if (pCredit instanceof MoneyWiseSecurityHolding) {</span>
+            /* Split out working */
+<span class="nc" id="L504">            processDebitCreditSecurityTransaction(pDebit, (MoneyWiseSecurityHolding) pCredit);</span>
+<span class="nc" id="L505">            return;</span>
+        }
+
+        /* Switch on the category */
+<span class="nc" id="L509">        final MoneyWiseTransCategory myCat = theHelper.getCategory();</span>
+<span class="nc bnc" id="L510" title="All 5 branches missed.">        switch (myCat.getCategoryTypeClass()) {</span>
+            /* Process a stock right waived */
+            case STOCKRIGHTSISSUE:
+<span class="nc" id="L513">                processTransferOut(pDebit, (MoneyWiseAssetBase) pCredit);</span>
+<span class="nc" id="L514">                break;</span>
+            /* Process a dividend */
+            case DIVIDEND:
+<span class="nc" id="L517">                processDividend(pDebit, pCredit);</span>
+<span class="nc" id="L518">                break;</span>
+            case PORTFOLIOXFER:
+<span class="nc" id="L520">                processPortfolioXfer(pDebit, (MoneyWisePortfolio) pCredit);</span>
+<span class="nc" id="L521">                break;</span>
+            /* Process standard transfer in/out */
+            case TRANSFER:
+            case SECURITYCLOSURE:
+            case EXPENSE:
+            case INHERITED:
+            case OTHERINCOME:
+<span class="nc bnc" id="L528" title="All 2 branches missed.">                if (pDebit.getSecurity().isSecurityClass(MoneyWiseSecurityClass.LIFEBOND)) {</span>
+<span class="nc" id="L529">                    processChargeableGain(pDebit, (MoneyWiseAssetBase) pCredit);</span>
+                } else {
+<span class="nc" id="L531">                    processTransferOut(pDebit, (MoneyWiseAssetBase) pCredit);</span>
+                }
+<span class="nc" id="L533">                break;</span>
+            /* Throw an Exception */
+            default:
+<span class="nc" id="L536">                throw new MoneyWiseLogicException(ERROR_CATEGORY</span>
+<span class="nc" id="L537">                        + myCat.getCategoryTypeClass());</span>
+        }
+<span class="nc" id="L539">    }</span>
+
+    /**
+     * Process a debit+credit security transaction.
+     *
+     * @param pDebit  the debit security
+     * @param pCredit the credit security
+     * @throws OceanusException on error
+     */
+    private void processDebitCreditSecurityTransaction(final MoneyWiseSecurityHolding pDebit,
+                                                       final MoneyWiseSecurityHolding pCredit) throws OceanusException {
+        /* Switch on the category */
+<span class="nc" id="L551">        final MoneyWiseTransCategory myCat = theHelper.getCategory();</span>
+<span class="nc bnc" id="L552" title="All 6 branches missed.">        switch (myCat.getCategoryTypeClass()) {</span>
+            /* Process a stock split */
+            case STOCKSPLIT:
+            case UNITSADJUST:
+<span class="nc" id="L556">                processUnitsAdjust(pDebit);</span>
+<span class="nc" id="L557">                break;</span>
+            /* Process a stock DeMerger */
+            case STOCKDEMERGER:
+<span class="nc" id="L560">                processStockDeMerger(pDebit, pCredit);</span>
+<span class="nc" id="L561">                break;</span>
+            /* Process a Stock TakeOver */
+            case SECURITYREPLACE:
+            case STOCKTAKEOVER:
+<span class="nc" id="L565">                processStockTakeover(pDebit, pCredit);</span>
+<span class="nc" id="L566">                break;</span>
+            /* Process a dividend */
+            case DIVIDEND:
+<span class="nc" id="L569">                processDividend(pDebit, pCredit);</span>
+<span class="nc" id="L570">                break;</span>
+            /* Process standard transfer in/out */
+            case TRANSFER:
+            case EXPENSE:
+            case INHERITED:
+            case OTHERINCOME:
+<span class="nc" id="L576">                processStockXchange(pDebit, pCredit);</span>
+<span class="nc" id="L577">                break;</span>
+            /* Throw an Exception */
+            default:
+<span class="nc" id="L580">                throw new MoneyWiseLogicException(ERROR_CATEGORY</span>
+<span class="nc" id="L581">                        + myCat.getCategoryTypeClass());</span>
+        }
+<span class="nc" id="L583">    }</span>
+
+    /**
+     * Process a credit security transaction.
+     *
+     * @param pDebit  the debit account
+     * @param pCredit the credit security holding
+     * @throws OceanusException on error
+     */
+    private void processCreditSecurityTransaction(final MoneyWiseTransAsset pDebit,
+                                                  final MoneyWiseSecurityHolding pCredit) throws OceanusException {
+        /* Input asset must be AssetBase */
+<span class="nc bnc" id="L595" title="All 2 branches missed.">        if (!(pDebit instanceof MoneyWiseAssetBase)) {</span>
+<span class="nc" id="L596">            throw new MoneyWiseLogicException(&quot;Invalid Debit Asset: &quot;</span>
+<span class="nc" id="L597">                    + pDebit.getAssetType());</span>
+        }
+<span class="nc" id="L599">        final MoneyWiseAssetBase myDebit = (MoneyWiseAssetBase) pDebit;</span>
+
+        /* Switch on the category */
+<span class="nc" id="L602">        final MoneyWiseTransCategory myCat = theHelper.getCategory();</span>
+<span class="nc bnc" id="L603" title="All 2 branches missed.">        switch (myCat.getCategoryTypeClass()) {</span>
+            /* Process standard transfer in/out */
+            case STOCKRIGHTSISSUE:
+            case TRANSFER:
+            case EXPENSE:
+            case INHERITED:
+            case OTHERINCOME:
+            case PENSIONCONTRIB:
+<span class="nc" id="L611">                processTransferIn(myDebit, pCredit);</span>
+<span class="nc" id="L612">                break;</span>
+            /* Throw an Exception */
+            default:
+<span class="nc" id="L615">                throw new MoneyWiseLogicException(ERROR_CATEGORY</span>
+<span class="nc" id="L616">                        + myCat.getCategoryTypeClass());</span>
+        }
+<span class="nc" id="L618">    }</span>
+
+    /**
+     * Process a transaction that is a portfolio transfer.
+     * &lt;p&gt;
+     * This capital event relates only to both Debit and credit accounts.
+     *
+     * @param pSource the source portfolio
+     * @param pTarget the target portfolio
+     */
+    private void processPortfolioXfer(final MoneyWisePortfolio pSource,
+                                      final MoneyWisePortfolio pTarget) {
+        /* Access the portfolio buckets */
+<span class="nc" id="L631">        final MoneyWiseAnalysisPortfolioBucket mySource = thePortfolioBuckets.getBucket(pSource);</span>
+<span class="nc" id="L632">        final MoneyWiseAnalysisPortfolioBucket myTarget = thePortfolioBuckets.getBucket(pTarget);</span>
+
+        /* Access source cash bucket */
+<span class="nc" id="L635">        final MoneyWiseAnalysisPortfolioCashBucket mySourceCash = mySource.getPortfolioCash();</span>
+<span class="nc bnc" id="L636" title="All 2 branches missed.">        if (mySourceCash.isActive()) {</span>
+            /* Transfer any cash element */
+<span class="nc" id="L638">            final MoneyWiseAnalysisPortfolioCashBucket myTargetCash = myTarget.getPortfolioCash();</span>
+<span class="nc" id="L639">            myTargetCash.adjustForXfer(mySourceCash, theHelper);</span>
+        }
+
+        /* Loop through the source portfolio */
+<span class="nc" id="L643">        final Iterator&lt;MoneyWiseAnalysisSecurityBucket&gt; myIterator = mySource.securityIterator();</span>
+<span class="nc bnc" id="L644" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L645">            final MoneyWiseAnalysisSecurityBucket myBucket = myIterator.next();</span>
+
+            /* If the bucket is active */
+<span class="nc bnc" id="L648" title="All 2 branches missed.">            if (myBucket.isActive()) {</span>
+                /* Adjust the Target Bucket */
+<span class="nc" id="L650">                final MoneyWiseSecurityHolding myTargetHolding = theHoldingMap.declareHolding(pTarget, myBucket.getSecurity());</span>
+<span class="nc" id="L651">                final MoneyWiseAnalysisSecurityBucket myTargetBucket = myTarget.getSecurityBucket(myTargetHolding);</span>
+<span class="nc" id="L652">                theHelper.setSecurity(myBucket.getSecurity());</span>
+
+                /* Process the Transfer */
+<span class="nc" id="L655">                processPortfolioXfer(myBucket, myTargetBucket);</span>
+            }
+<span class="nc" id="L657">        }</span>
+
+        /* PortfolioXfer is a transfer, so no need to update the categories */
+<span class="nc" id="L660">    }</span>
+
+    /**
+     * Process a portfolio transfer.
+     *
+     * @param pSource the source holding
+     * @param pTarget the target holding
+     */
+    private void processPortfolioXfer(final MoneyWiseAnalysisSecurityBucket pSource,
+                                      final MoneyWiseAnalysisSecurityBucket pTarget) {
+        /* Access source details */
+<span class="nc" id="L671">        MoneyWiseAnalysisSecurityValues mySourceValues = pSource.getValues();</span>
+<span class="nc" id="L672">        OceanusUnits myUnits = mySourceValues.getUnitsValue(MoneyWiseAnalysisSecurityAttr.UNITS);</span>
+<span class="nc" id="L673">        OceanusMoney myCost = mySourceValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.RESIDUALCOST);</span>
+<span class="nc" id="L674">        OceanusMoney myGains = mySourceValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.REALISEDGAINS);</span>
+<span class="nc" id="L675">        OceanusMoney myInvested = mySourceValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.INVESTED);</span>
+<span class="nc" id="L676">        OceanusMoney myForeignInvested = mySourceValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.FOREIGNINVESTED);</span>
+<span class="nc" id="L677">        final boolean isForeign = pSource.isForeignCurrency();</span>
+
+        /* Determine value of the stock being transferred */
+<span class="nc" id="L680">        final OceanusPrice myPrice = thePriceMap.getPriceForDate(pSource.getSecurity(), theHelper.getDate());</span>
+<span class="nc" id="L681">        OceanusMoney myStockValue = myUnits.valueAtPrice(myPrice);</span>
+<span class="nc" id="L682">        OceanusMoney myForeignValue = null;</span>
+<span class="nc" id="L683">        OceanusRatio myRate = null;</span>
+
+        /* If we are foreign */
+<span class="nc bnc" id="L686" title="All 2 branches missed.">        if (isForeign) {</span>
+            /* Determine foreign and local value */
+<span class="nc" id="L688">            myRate = theHelper.getDebitExchangeRate();</span>
+<span class="nc" id="L689">            myForeignValue = myStockValue;</span>
+<span class="nc" id="L690">            myStockValue = myStockValue.convertCurrency(theAnalysis.getCurrency().getCurrency(), myRate);</span>
+        }
+
+        /* Allocate current profit between the two stocks */
+<span class="nc" id="L694">        OceanusMoney myProfit = new OceanusMoney(myStockValue);</span>
+<span class="nc" id="L695">        myProfit.subtractAmount(myCost);</span>
+<span class="nc" id="L696">        pSource.adjustCounter(MoneyWiseAnalysisSecurityAttr.GROWTHADJUST, myProfit);</span>
+<span class="nc" id="L697">        myProfit = new OceanusMoney(myProfit);</span>
+<span class="nc" id="L698">        myProfit.negate();</span>
+<span class="nc" id="L699">        pTarget.adjustCounter(MoneyWiseAnalysisSecurityAttr.GROWTHADJUST, myProfit);</span>
+
+        /* Transfer Units/Cost/Invested to target */
+<span class="nc" id="L702">        pTarget.adjustCounter(MoneyWiseAnalysisSecurityAttr.UNITS, myUnits);</span>
+<span class="nc" id="L703">        pTarget.adjustCounter(MoneyWiseAnalysisSecurityAttr.RESIDUALCOST, myCost);</span>
+<span class="nc" id="L704">        pTarget.adjustCounter(MoneyWiseAnalysisSecurityAttr.INVESTED, myInvested);</span>
+<span class="nc" id="L705">        pTarget.adjustCounter(MoneyWiseAnalysisSecurityAttr.REALISEDGAINS, myGains);</span>
+<span class="nc" id="L706">        final MoneyWiseAnalysisSecurityValues myTargetValues = pTarget.registerTransaction(theHelper);</span>
+<span class="nc" id="L707">        myTargetValues.setValue(MoneyWiseAnalysisSecurityAttr.PRICE, myPrice);</span>
+<span class="nc" id="L708">        myTargetValues.setValue(MoneyWiseAnalysisSecurityAttr.VALUATION, myStockValue);</span>
+<span class="nc" id="L709">        myTargetValues.setValue(MoneyWiseAnalysisSecurityAttr.XFERREDCOST, myCost);</span>
+<span class="nc bnc" id="L710" title="All 2 branches missed.">        if (isForeign) {</span>
+<span class="nc" id="L711">            myTargetValues.setValue(MoneyWiseAnalysisSecurityAttr.FOREIGNVALUE, myForeignValue);</span>
+<span class="nc" id="L712">            myTargetValues.setValue(MoneyWiseAnalysisSecurityAttr.EXCHANGERATE, myRate);</span>
+<span class="nc" id="L713">            pTarget.adjustCounter(MoneyWiseAnalysisSecurityAttr.FOREIGNINVESTED, myForeignInvested);</span>
+        }
+
+        /* Adjust the Source Units/Cost/Invested to zero */
+<span class="nc" id="L717">        myUnits = new OceanusUnits(myUnits);</span>
+<span class="nc" id="L718">        myUnits.negate();</span>
+<span class="nc" id="L719">        pSource.adjustCounter(MoneyWiseAnalysisSecurityAttr.UNITS, myUnits);</span>
+<span class="nc" id="L720">        myCost = new OceanusMoney(myCost);</span>
+<span class="nc" id="L721">        myCost.negate();</span>
+<span class="nc" id="L722">        pSource.adjustCounter(MoneyWiseAnalysisSecurityAttr.RESIDUALCOST, myCost);</span>
+<span class="nc" id="L723">        myCost.negate();</span>
+<span class="nc" id="L724">        myInvested = new OceanusMoney(myInvested);</span>
+<span class="nc" id="L725">        myInvested.negate();</span>
+<span class="nc" id="L726">        pSource.adjustCounter(MoneyWiseAnalysisSecurityAttr.INVESTED, myInvested);</span>
+<span class="nc" id="L727">        myGains = new OceanusMoney(myGains);</span>
+<span class="nc" id="L728">        myGains.negate();</span>
+<span class="nc" id="L729">        pSource.adjustCounter(MoneyWiseAnalysisSecurityAttr.REALISEDGAINS, myGains);</span>
+<span class="nc" id="L730">        mySourceValues = pSource.registerTransaction(theHelper);</span>
+<span class="nc" id="L731">        mySourceValues.setValue(MoneyWiseAnalysisSecurityAttr.PRICE, myPrice);</span>
+<span class="nc" id="L732">        mySourceValues.setValue(MoneyWiseAnalysisSecurityAttr.VALUATION, myStockValue);</span>
+<span class="nc" id="L733">        mySourceValues.setValue(MoneyWiseAnalysisSecurityAttr.XFERREDCOST, myCost);</span>
+<span class="nc bnc" id="L734" title="All 2 branches missed.">        if (isForeign) {</span>
+<span class="nc" id="L735">            mySourceValues.setValue(MoneyWiseAnalysisSecurityAttr.FOREIGNVALUE, myForeignValue);</span>
+<span class="nc" id="L736">            mySourceValues.setValue(MoneyWiseAnalysisSecurityAttr.EXCHANGERATE, myRate);</span>
+<span class="nc" id="L737">            myForeignInvested = new OceanusMoney(myForeignInvested);</span>
+<span class="nc" id="L738">            myForeignInvested.negate();</span>
+<span class="nc" id="L739">            pTarget.adjustCounter(MoneyWiseAnalysisSecurityAttr.FOREIGNINVESTED, myForeignInvested);</span>
+        }
+<span class="nc" id="L741">    }</span>
+
+    /**
+     * Process a transaction that is a portfolio transfer.
+     * &lt;p&gt;
+     * This capital event relates only to both Debit and credit accounts.
+     *
+     * @param pSource the source holding
+     * @param pTarget the target portfolio
+     */
+    private void processPortfolioXfer(final MoneyWiseSecurityHolding pSource,
+                                      final MoneyWisePortfolio pTarget) {
+        /* Access the portfolio buckets */
+<span class="nc" id="L754">        final MoneyWiseAnalysisPortfolioBucket mySource = thePortfolioBuckets.getBucket(pSource.getPortfolio());</span>
+<span class="nc" id="L755">        final MoneyWiseAnalysisPortfolioBucket myTarget = thePortfolioBuckets.getBucket(pTarget);</span>
+
+        /* Access source security bucket */
+<span class="nc" id="L758">        final MoneyWiseAnalysisSecurityBucket myBucket = mySource.getSecurityBucket(pSource);</span>
+
+        /* If the bucket is active */
+<span class="nc bnc" id="L761" title="All 2 branches missed.">        if (myBucket.isActive()) {</span>
+            /* Adjust the Target Bucket */
+<span class="nc" id="L763">            final MoneyWiseSecurityHolding myTargetHolding = theHoldingMap.declareHolding(pTarget, myBucket.getSecurity());</span>
+<span class="nc" id="L764">            final MoneyWiseAnalysisSecurityBucket myTargetBucket = myTarget.getSecurityBucket(myTargetHolding);</span>
+
+            /* Process the Transfer */
+<span class="nc" id="L767">            processPortfolioXfer(myBucket, myTargetBucket);</span>
+        }
+
+        /* PortfolioXfer is a transfer, so no need to update the categories */
+<span class="nc" id="L771">    }</span>
+
+    /**
+     * Process a transaction that is a stock split.
+     * &lt;p&gt;
+     * This capital event relates only to the Debit Account since the credit account is the same.
+     *
+     * @param pHolding the security holding
+     */
+    private void processUnitsAdjust(final MoneyWiseSecurityHolding pHolding) {
+        /* Access the units */
+<span class="nc" id="L782">        final OceanusUnits myDelta = theHelper.getAccountDeltaUnits();</span>
+
+        /* Adjust the Security Units */
+<span class="nc" id="L785">        final MoneyWiseAnalysisSecurityBucket myAsset = thePortfolioBuckets.getBucket(pHolding);</span>
+<span class="nc" id="L786">        myAsset.adjustCounter(MoneyWiseAnalysisSecurityAttr.UNITS, myDelta);</span>
+
+        /* Register the transaction */
+<span class="nc" id="L789">        myAsset.registerTransaction(theHelper);</span>
+
+        /* StockSplit/Adjust is a transfer, so no need to update the categories */
+<span class="nc" id="L792">    }</span>
+
+    /**
+     * Process a transaction that is a transfer into capital (also StockRightTaken).
+     * &lt;p&gt;
+     * This capital event relates only to the Credit Account.
+     *
+     * @param pDebit  the debit account
+     * @param pCredit the credit security holding
+     */
+    private void processTransferIn(final MoneyWiseAssetBase pDebit,
+                                   final MoneyWiseSecurityHolding pCredit) {
+        /* Access debit account and category */
+<span class="nc" id="L805">        final MoneyWiseTransCategory myCat = theHelper.getCategory();</span>
+
+        /* Adjust the credit transfer details */
+<span class="nc" id="L808">        processCreditXferIn(pCredit);</span>
+
+        /* Adjust the tax payments */
+<span class="nc" id="L811">        theTaxMan.adjustForTaxPayments(theHelper);</span>
+
+        /* Determine the type of the debit account */
+<span class="nc bnc" id="L814" title="All 2 branches missed.">        switch (pDebit.getAssetType()) {</span>
+            case PAYEE:
+<span class="nc" id="L816">                final MoneyWiseAnalysisPayeeBucket myPayee = thePayeeBuckets.getBucket(pDebit);</span>
+<span class="nc" id="L817">                myPayee.adjustForDebit(theHelper);</span>
+<span class="nc" id="L818">                break;</span>
+            default:
+<span class="nc" id="L820">                final MoneyWiseAnalysisAccountBucket&lt;?&gt; myAccount = getAccountBucket(pDebit);</span>
+<span class="nc" id="L821">                myAccount.adjustForDebit(theHelper);</span>
+                break;
+        }
+
+        /* If the event category is not a transfer */
+<span class="nc bnc" id="L826" title="All 2 branches missed.">        if (!myCat.isTransfer()) {</span>
+            /* Adjust the relevant category buckets */
+<span class="nc" id="L828">            theCategoryBuckets.adjustCategories(theHelper, myCat);</span>
+        }
+<span class="nc" id="L830">    }</span>
+
+    /**
+     * Process the credit side of a transfer in transaction.
+     *
+     * @param pHolding the credit holding
+     */
+    private void processCreditXferIn(final MoneyWiseSecurityHolding pHolding) {
+        /* Transfer is to the credit account and may or may not have a change to the units */
+<span class="nc" id="L839">        OceanusMoney myAmount = theHelper.getCreditAmount();</span>
+<span class="nc" id="L840">        final OceanusRatio myExchangeRate = theHelper.getCreditExchangeRate();</span>
+<span class="nc" id="L841">        final MoneyWiseSecurity mySecurity = pHolding.getSecurity();</span>
+
+        /* Access the Asset Security Bucket */
+<span class="nc" id="L844">        final MoneyWiseAnalysisSecurityBucket myAsset = thePortfolioBuckets.getBucket(pHolding);</span>
+<span class="nc" id="L845">        final boolean isForeign = myAsset.isForeignCurrency();</span>
+
+        /* If this is a foreign currency asset */
+<span class="nc bnc" id="L848" title="All 2 branches missed.">        if (isForeign) {</span>
+            /* Adjust foreign invested amount */
+<span class="nc" id="L850">            myAsset.adjustCounter(MoneyWiseAnalysisSecurityAttr.FOREIGNINVESTED, myAmount);</span>
+
+            /* Switch to local amount */
+<span class="nc" id="L853">            myAmount = theHelper.getLocalAmount();</span>
+        }
+
+        /* Adjust the cost and investment */
+<span class="nc" id="L857">        myAsset.adjustCounter(MoneyWiseAnalysisSecurityAttr.RESIDUALCOST, myAmount);</span>
+<span class="nc" id="L858">        myAsset.adjustCounter(MoneyWiseAnalysisSecurityAttr.INVESTED, myAmount);</span>
+
+        /* Determine the delta units */
+<span class="nc" id="L861">        final MoneyWiseSecurityClass mySecClass = mySecurity.getCategoryClass();</span>
+<span class="nc" id="L862">        OceanusUnits myDeltaUnits = theHelper.getCreditUnits();</span>
+<span class="nc" id="L863">        OceanusUnits myUnits = myAsset.getValues().getUnitsValue(MoneyWiseAnalysisSecurityAttr.UNITS);</span>
+<span class="nc bnc" id="L864" title="All 4 branches missed.">        if (mySecClass.isAutoUnits() &amp;&amp; myUnits.isZero()) {</span>
+<span class="nc" id="L865">            myDeltaUnits = OceanusUnits.getWholeUnits(mySecClass.getAutoUnits());</span>
+        }
+
+        /* If we have new units */
+<span class="nc bnc" id="L869" title="All 2 branches missed.">        if (myDeltaUnits != null) {</span>
+            /* Record change in units */
+<span class="nc" id="L871">            myAsset.adjustCounter(MoneyWiseAnalysisSecurityAttr.UNITS, myDeltaUnits);</span>
+        }
+
+        /* Adjust for National Insurance */
+<span class="nc" id="L875">        myAsset.adjustForNIPayments(theHelper);</span>
+
+        /* Get the appropriate price for the account */
+<span class="nc" id="L878">        final OceanusPrice myPrice = thePriceMap.getPriceForDate(mySecurity, theHelper.getDate());</span>
+
+        /* Determine value of this stock after the transaction */
+<span class="nc" id="L881">        myUnits = myAsset.getValues().getUnitsValue(MoneyWiseAnalysisSecurityAttr.UNITS);</span>
+<span class="nc" id="L882">        OceanusMoney myValue = myUnits.valueAtPrice(myPrice);</span>
+
+        /* If we are foreign */
+<span class="nc bnc" id="L885" title="All 2 branches missed.">        if (isForeign) {</span>
+            /* Determine local value */
+<span class="nc" id="L887">            myValue = myValue.convertCurrency(theAnalysis.getCurrency().getCurrency(), myExchangeRate);</span>
+        }
+
+        /* Register the transaction */
+<span class="nc" id="L891">        final MoneyWiseAnalysisSecurityValues myValues = myAsset.registerTransaction(theHelper);</span>
+<span class="nc" id="L892">        myValues.setValue(MoneyWiseAnalysisSecurityAttr.PRICE, myPrice);</span>
+<span class="nc" id="L893">        myValues.setValue(MoneyWiseAnalysisSecurityAttr.VALUATION, myValue);</span>
+<span class="nc" id="L894">        myValues.setValue(MoneyWiseAnalysisSecurityAttr.CASHINVESTED, myAmount);</span>
+<span class="nc bnc" id="L895" title="All 2 branches missed.">        if (isForeign) {</span>
+<span class="nc" id="L896">            myValues.setValue(MoneyWiseAnalysisSecurityAttr.EXCHANGERATE, myExchangeRate);</span>
+        }
+<span class="nc" id="L898">    }</span>
+
+    /**
+     * Process a dividend transaction.
+     * &lt;p&gt;
+     * This capital event relates to the only to Debit account, although the Credit account may be
+     * identical to the credit account in which case the dividend is re-invested
+     *
+     * @param pHolding the debit security holding
+     * @param pCredit  the credit account
+     */
+    private void processDividend(final MoneyWiseSecurityHolding pHolding,
+                                 final MoneyWiseTransAsset pCredit) {
+        /* The main security that we are interested in is the debit account */
+<span class="nc" id="L912">        final MoneyWisePortfolio myPortfolio = pHolding.getPortfolio();</span>
+<span class="nc" id="L913">        final MoneyWiseSecurity mySecurity = pHolding.getSecurity();</span>
+<span class="nc" id="L914">        OceanusMoney myAmount = theHelper.getDebitAmount();</span>
+<span class="nc" id="L915">        final OceanusMoney myTaxCredit = theHelper.getTaxCredit();</span>
+<span class="nc" id="L916">        final OceanusUnits myDeltaUnits = theHelper.getAccountDeltaUnits();</span>
+<span class="nc" id="L917">        final MoneyWiseTaxCredit myYear = theHelper.getTransaction().getTaxYear();</span>
+
+        /* Obtain detailed category */
+<span class="nc" id="L920">        MoneyWiseTransCategory myCat = myPortfolio.getDetailedCategory(theHelper.getCategory(), myYear);</span>
+<span class="nc" id="L921">        myCat = mySecurity.getDetailedCategory(myCat, myYear);</span>
+
+        /* True debit account is the parent */
+<span class="nc" id="L924">        final MoneyWiseAssetBase myDebit = mySecurity.getParent();</span>
+
+        /* Adjust the debit payee bucket */
+<span class="nc" id="L927">        final MoneyWiseAnalysisPayeeBucket myPayee = thePayeeBuckets.getBucket(myDebit);</span>
+<span class="nc" id="L928">        myPayee.adjustForDebit(theHelper);</span>
+
+        /* Access the Asset Account Bucket */
+<span class="nc" id="L931">        final MoneyWiseAnalysisSecurityBucket myAsset = thePortfolioBuckets.getBucket(pHolding);</span>
+<span class="nc" id="L932">        final boolean isForeign = myAsset.isForeignCurrency();</span>
+<span class="nc" id="L933">        final boolean isReInvest = pCredit instanceof MoneyWiseSecurityHolding;</span>
+
+        /* If this is a foreign dividend */
+<span class="nc bnc" id="L936" title="All 2 branches missed.">        if (isForeign) {</span>
+            /* If this is a reInvestment */
+<span class="nc bnc" id="L938" title="All 2 branches missed.">            if (isReInvest) {</span>
+                /* Adjust counters */
+<span class="nc" id="L940">                myAsset.adjustCounter(MoneyWiseAnalysisSecurityAttr.FOREIGNINVESTED, myAmount);</span>
+<span class="nc" id="L941">                myAsset.getValues().setValue(MoneyWiseAnalysisSecurityAttr.EXCHANGERATE, theHelper.getCreditExchangeRate());</span>
+            }
+
+            /* Switch to local amount */
+<span class="nc" id="L945">            myAmount = theHelper.getLocalAmount();</span>
+        }
+
+        /* If this is a re-investment */
+<span class="nc bnc" id="L949" title="All 2 branches missed.">        if (isReInvest) {</span>
+            /* This amount is added to the cost, so record as the delta cost */
+<span class="nc" id="L951">            myAsset.adjustCounter(MoneyWiseAnalysisSecurityAttr.RESIDUALCOST, myAmount);</span>
+
+            /* Record the investment */
+<span class="nc" id="L954">            myAsset.adjustCounter(MoneyWiseAnalysisSecurityAttr.INVESTED, myAmount);</span>
+
+            /* If we have new units */
+<span class="nc bnc" id="L957" title="All 2 branches missed.">            if (myDeltaUnits != null) {</span>
+                /* Record delta units */
+<span class="nc" id="L959">                myAsset.adjustCounter(MoneyWiseAnalysisSecurityAttr.UNITS, myDeltaUnits);</span>
+            }
+
+            /* If we have a tax credit */
+<span class="nc bnc" id="L963" title="All 2 branches missed.">            if (myTaxCredit != null) {</span>
+                /* The Tax Credit is viewed as a received dividend from the account */
+<span class="nc" id="L965">                myAsset.adjustCounter(MoneyWiseAnalysisSecurityAttr.DIVIDEND, myTaxCredit);</span>
+            }
+
+            /* else we are paying out to another account */
+        } else {
+            /* Adjust the dividend total for this asset */
+<span class="nc" id="L971">            final OceanusMoney myAdjust = new OceanusMoney(myAmount);</span>
+
+            /* Any tax credit is viewed as a realised dividend from the account */
+<span class="nc bnc" id="L974" title="All 2 branches missed.">            if (myTaxCredit != null) {</span>
+<span class="nc" id="L975">                myAdjust.addAmount(myTaxCredit);</span>
+            }
+
+            /* The Dividend is viewed as a dividend from the account */
+<span class="nc" id="L979">            myAsset.adjustCounter(MoneyWiseAnalysisSecurityAttr.DIVIDEND, myAdjust);</span>
+
+            /* Adjust the credit account bucket */
+<span class="nc" id="L982">            final MoneyWiseAnalysisAccountBucket&lt;?&gt; myBucket = getAccountBucket((MoneyWiseAssetBase) pCredit);</span>
+<span class="nc" id="L983">            myBucket.adjustForCredit(theHelper);</span>
+        }
+
+        /* Register the transaction */
+<span class="nc" id="L987">        myAsset.registerTransaction(theHelper);</span>
+
+        /* Adjust the tax payments */
+<span class="nc" id="L990">        theTaxMan.adjustForTaxPayments(theHelper);</span>
+
+        /* Adjust the relevant category buckets */
+<span class="nc" id="L993">        theCategoryBuckets.adjustCategories(theHelper, myCat);</span>
+<span class="nc" id="L994">    }</span>
+
+    /**
+     * Process a transaction that is a transfer from capital.
+     * &lt;p&gt;
+     * This capital event relates only to the Debit Account
+     *
+     * @param pHolding the debit holding
+     * @param pCredit  the credit account
+     */
+    private void processTransferOut(final MoneyWiseSecurityHolding pHolding,
+                                    final MoneyWiseAssetBase pCredit) {
+        /* Access credit account and category */
+<span class="nc" id="L1007">        final MoneyWiseTransCategory myCat = theHelper.getCategory();</span>
+
+        /* Adjust the debit transfer details */
+<span class="nc" id="L1010">        processDebitXferOut(pHolding);</span>
+
+        /* Adjust the credit account bucket */
+<span class="nc" id="L1013">        final MoneyWiseAnalysisAccountBucket&lt;?&gt; myBucket = getAccountBucket(pCredit);</span>
+<span class="nc" id="L1014">        myBucket.adjustForCredit(theHelper);</span>
+
+        /* If the event category is not a transfer */
+<span class="nc bnc" id="L1017" title="All 2 branches missed.">        if (!myCat.isTransfer()) {</span>
+            /* Adjust the relevant category buckets */
+<span class="nc" id="L1019">            theCategoryBuckets.adjustCategories(theHelper, myCat);</span>
+        }
+<span class="nc" id="L1021">    }</span>
+
+    /**
+     * Process the debit side of a transfer out transaction.
+     * &lt;p&gt;
+     * This capital event relates only to the Debit Account
+     *
+     * @param pHolding the debit holding
+     */
+    private void processDebitXferOut(final MoneyWiseSecurityHolding pHolding) {
+        /* Transfer out is from the debit account and may or may not have units */
+<span class="nc" id="L1032">        final MoneyWiseSecurity myDebit = pHolding.getSecurity();</span>
+<span class="nc" id="L1033">        OceanusMoney myAmount = theHelper.getDebitAmount();</span>
+<span class="nc" id="L1034">        boolean isLargeCash = false;</span>
+
+        /* Access the Asset Security Bucket */
+<span class="nc" id="L1037">        final MoneyWiseAnalysisSecurityBucket myAsset = thePortfolioBuckets.getBucket(pHolding);</span>
+<span class="nc" id="L1038">        MoneyWiseAnalysisSecurityValues myValues = myAsset.getValues();</span>
+<span class="nc" id="L1039">        final OceanusRatio myXchangeRate = theHelper.getDebitExchangeRate();</span>
+<span class="nc" id="L1040">        final boolean isForeign = myAsset.isForeignCurrency();</span>
+
+        /* If this is a foreign currency asset */
+<span class="nc bnc" id="L1043" title="All 2 branches missed.">        if (isForeign) {</span>
+            /* Adjust foreign invested amount */
+<span class="nc" id="L1045">            final OceanusMoney myDelta = new OceanusMoney(myAmount);</span>
+<span class="nc" id="L1046">            myDelta.negate();</span>
+<span class="nc" id="L1047">            myAsset.adjustCounter(MoneyWiseAnalysisSecurityAttr.FOREIGNINVESTED, myDelta);</span>
+
+            /* Switch to local amount */
+<span class="nc" id="L1050">            myAmount = theHelper.getLocalAmount();</span>
+        }
+
+        /* Record the delta investment */
+<span class="nc" id="L1054">        final OceanusMoney myDelta = new OceanusMoney(myAmount);</span>
+<span class="nc" id="L1055">        myDelta.negate();</span>
+<span class="nc" id="L1056">        myAsset.adjustCounter(MoneyWiseAnalysisSecurityAttr.INVESTED, myDelta);</span>
+
+        /* Get the appropriate price for the account */
+<span class="nc" id="L1059">        final OceanusPrice myPrice = thePriceMap.getPriceForDate(myDebit, theHelper.getDate());</span>
+
+        /* Assume that the allowed cost is the full value */
+<span class="nc" id="L1062">        OceanusUnits myUnits = Objects.requireNonNull(myValues.getUnitsValue(MoneyWiseAnalysisSecurityAttr.UNITS));</span>
+<span class="nc" id="L1063">        OceanusMoney myAllowedCost = new OceanusMoney(myAmount);</span>
+<span class="nc" id="L1064">        final OceanusMoney myCost = myValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.RESIDUALCOST);</span>
+<span class="nc" id="L1065">        OceanusRatio myCostDilution = null;</span>
+<span class="nc" id="L1066">        OceanusMoney myConsideration = null;</span>
+
+        /* Determine the delta units */
+<span class="nc bnc" id="L1069" title="All 2 branches missed.">        OceanusUnits myDeltaUnits = theHelper.getCategoryClass().isSecurityClosure()</span>
+<span class="nc" id="L1070">                ? myUnits</span>
+<span class="nc" id="L1071">                : theHelper.getDebitUnits();</span>
+<span class="nc bnc" id="L1072" title="All 2 branches missed.">        final boolean isCapitalDistribution = myDeltaUnits == null;</span>
+
+        /* If this is not a capital distribution */
+<span class="nc bnc" id="L1075" title="All 2 branches missed.">        if (!isCapitalDistribution) {</span>
+            /* The allowed cost is the relevant fraction of the cost */
+<span class="nc" id="L1077">            myAllowedCost = myCost.valueAtWeight(myDeltaUnits, myUnits);</span>
+
+            /* Access units as negative value */
+<span class="nc" id="L1080">            myDeltaUnits = new OceanusUnits(myDeltaUnits);</span>
+<span class="nc" id="L1081">            myDeltaUnits.negate();</span>
+
+            /* Record delta to units */
+<span class="nc" id="L1084">            myAsset.adjustCounter(MoneyWiseAnalysisSecurityAttr.UNITS, myDeltaUnits);</span>
+<span class="nc" id="L1085">            final OceanusUnits myNewUnits = myValues.getUnitsValue(MoneyWiseAnalysisSecurityAttr.UNITS);</span>
+
+            /* Determine the cost dilution */
+<span class="nc" id="L1088">            myCostDilution = new OceanusRatio(myNewUnits, myUnits);</span>
+<span class="nc" id="L1089">            myUnits = myNewUnits;</span>
+        }
+
+        /* Determine value of this stock after the transaction */
+<span class="nc" id="L1093">        OceanusMoney myValue = myUnits.valueAtPrice(myPrice);</span>
+
+        /* If we are foreign */
+<span class="nc bnc" id="L1096" title="All 2 branches missed.">        if (isForeign) {</span>
+            /* Determine local value */
+<span class="nc" id="L1098">            myValue = myValue.convertCurrency(theAnalysis.getCurrency().getCurrency(), myXchangeRate);</span>
+        }
+
+        /* If we are performing a capital distribution */
+<span class="nc bnc" id="L1102" title="All 2 branches missed.">        if (isCapitalDistribution) {</span>
+            /* Determine condition as to whether this is a large cash transaction */
+<span class="nc" id="L1104">            final OceanusMoney myPortion = myValue.valueAtRate(LIMIT_RATE);</span>
+<span class="nc bnc" id="L1105" title="All 2 branches missed.">            isLargeCash = (myAmount.compareTo(LIMIT_VALUE) &gt; 0)</span>
+<span class="nc bnc" id="L1106" title="All 2 branches missed.">                    &amp;&amp; (myAmount.compareTo(myPortion) &gt; 0);</span>
+
+            /* If this is large cash */
+<span class="nc bnc" id="L1109" title="All 2 branches missed.">            if (isLargeCash) {</span>
+                /* Determine the total value of rights plus share value */
+<span class="nc" id="L1111">                myConsideration = new OceanusMoney(myAmount);</span>
+<span class="nc" id="L1112">                myConsideration.addAmount(myValue);</span>
+
+                /* Determine the allowedCost as a proportion of the total value */
+<span class="nc" id="L1115">                myAllowedCost = myCost.valueAtWeight(myAmount, myConsideration);</span>
+
+                /* Determine the cost dilution */
+<span class="nc" id="L1118">                myCostDilution = new OceanusRatio(myValue, myConsideration);</span>
+
+                /* else this is viewed as small and is taken out of the cost */
+            } else {
+                /* Set the allowed cost to be the least of the cost or the returned cash */
+<span class="nc bnc" id="L1123" title="All 2 branches missed.">                myAllowedCost = myAmount.compareTo(myCost) &gt; 0</span>
+<span class="nc" id="L1124">                        ? new OceanusMoney(myCost)</span>
+<span class="nc" id="L1125">                        : new OceanusMoney(myAmount);</span>
+            }
+        }
+
+        /* Determine the delta to the cost */
+<span class="nc" id="L1130">        final OceanusMoney myDeltaCost = new OceanusMoney(myAllowedCost);</span>
+<span class="nc" id="L1131">        myDeltaCost.negate();</span>
+
+        /* If we have a delta to the cost */
+<span class="nc bnc" id="L1134" title="All 2 branches missed.">        if (myDeltaCost.isNonZero()) {</span>
+            /* Adjust the cost */
+<span class="nc" id="L1136">            myAsset.adjustCounter(MoneyWiseAnalysisSecurityAttr.RESIDUALCOST, myDeltaCost);</span>
+        }
+
+        /* Determine the capital gain */
+<span class="nc" id="L1140">        final OceanusMoney myCapitalGain = new OceanusMoney(myAmount);</span>
+<span class="nc" id="L1141">        myCapitalGain.addAmount(myDeltaCost);</span>
+
+        /* If we have a delta to the gains */
+<span class="nc bnc" id="L1144" title="All 2 branches missed.">        if (myCapitalGain.isNonZero()) {</span>
+            /* Adjust the gains */
+<span class="nc" id="L1146">            myAsset.adjustCounter(MoneyWiseAnalysisSecurityAttr.REALISEDGAINS, myCapitalGain);</span>
+
+            /* Adjust the capitalGains category bucket */
+<span class="nc" id="L1149">            theCategoryBuckets.adjustStandardGain(theHelper, pHolding, myCapitalGain);</span>
+        }
+
+        /* Register the transaction */
+<span class="nc" id="L1153">        myValues = myAsset.registerTransaction(theHelper);</span>
+
+        /* record details */
+<span class="nc" id="L1156">        myValues.setValue(MoneyWiseAnalysisSecurityAttr.PRICE, myPrice);</span>
+<span class="nc" id="L1157">        myValues.setValue(MoneyWiseAnalysisSecurityAttr.VALUATION, myValue);</span>
+<span class="nc" id="L1158">        myValues.setValue(MoneyWiseAnalysisSecurityAttr.RETURNEDCASH, myAmount);</span>
+<span class="nc" id="L1159">        myValues.setValue(MoneyWiseAnalysisSecurityAttr.ALLOWEDCOST, myAllowedCost);</span>
+<span class="nc bnc" id="L1160" title="All 2 branches missed.">        if (myCostDilution != null) {</span>
+<span class="nc" id="L1161">            myValues.setValue(MoneyWiseAnalysisSecurityAttr.COSTDILUTION, myCostDilution);</span>
+        }
+<span class="nc bnc" id="L1163" title="All 2 branches missed.">        if (myConsideration != null) {</span>
+<span class="nc" id="L1164">            myValues.setValue(MoneyWiseAnalysisSecurityAttr.CONSIDERATION, myConsideration);</span>
+        }
+<span class="nc bnc" id="L1166" title="All 2 branches missed.">        if (myCapitalGain.isNonZero()) {</span>
+<span class="nc" id="L1167">            myValues.setValue(MoneyWiseAnalysisSecurityAttr.CAPITALGAIN, myCapitalGain);</span>
+        }
+<span class="nc bnc" id="L1169" title="All 2 branches missed.">        if (isForeign) {</span>
+<span class="nc" id="L1170">            myValues.setValue(MoneyWiseAnalysisSecurityAttr.EXCHANGERATE, myXchangeRate);</span>
+        }
+<span class="nc bnc" id="L1172" title="All 2 branches missed.">        if (isCapitalDistribution) {</span>
+<span class="nc bnc" id="L1173" title="All 2 branches missed.">            myValues.setValue(MoneyWiseAnalysisSecurityAttr.CASHTYPE, isLargeCash</span>
+<span class="nc" id="L1174">                    ? MoneyWiseCashType.LARGECASH</span>
+<span class="nc" id="L1175">                    : MoneyWiseCashType.SMALLCASH);</span>
+        }
+<span class="nc" id="L1177">    }</span>
+
+    /**
+     * Process a transaction that is a exchange between two capital accounts.
+     * &lt;p&gt;
+     * This represent a transfer out from the debit account and a transfer in to the credit account
+     *
+     * @param pDebit  the debit holding
+     * @param pCredit the credit holding
+     */
+    private void processStockXchange(final MoneyWiseSecurityHolding pDebit,
+                                     final MoneyWiseSecurityHolding pCredit) {
+        /* Adjust the debit transfer details */
+<span class="nc" id="L1190">        processDebitXferOut(pDebit);</span>
+
+        /* Adjust the credit transfer details */
+<span class="nc" id="L1193">        processCreditXferIn(pCredit);</span>
+<span class="nc" id="L1194">    }</span>
+
+    /**
+     * Process a transaction that is a chargeable gain.
+     * &lt;p&gt;
+     * This capital event relates only to the Debit Asset
+     *
+     * @param pHolding the debit security holding
+     * @param pCredit  the credit account
+     */
+    private void processChargeableGain(final MoneyWiseSecurityHolding pHolding,
+                                       final MoneyWiseAssetBase pCredit) {
+        /* Chargeable Gain is from the debit account and may or may not have units */
+<span class="nc" id="L1207">        final MoneyWiseSecurity myDebit = pHolding.getSecurity();</span>
+<span class="nc" id="L1208">        OceanusMoney myAmount = theHelper.getDebitAmount();</span>
+<span class="nc" id="L1209">        OceanusUnits myDeltaUnits = theHelper.getDebitUnits();</span>
+
+        /* Access the Asset Security Bucket */
+<span class="nc" id="L1212">        final MoneyWiseAnalysisSecurityBucket myAsset = thePortfolioBuckets.getBucket(pHolding);</span>
+<span class="nc" id="L1213">        final MoneyWiseAnalysisSecurityValues myValues = myAsset.getValues();</span>
+
+        /* If this is a foreign currency asset */
+<span class="nc bnc" id="L1216" title="All 2 branches missed.">        if (Boolean.TRUE.equals(myAsset.isForeignCurrency())) {</span>
+            /* Adjust foreign invested amount */
+<span class="nc" id="L1218">            final OceanusMoney myDelta = new OceanusMoney(myAmount);</span>
+<span class="nc" id="L1219">            myDelta.negate();</span>
+<span class="nc" id="L1220">            myValues.setValue(MoneyWiseAnalysisSecurityAttr.EXCHANGERATE, theHelper.getDebitExchangeRate());</span>
+<span class="nc" id="L1221">            myAsset.adjustCounter(MoneyWiseAnalysisSecurityAttr.FOREIGNINVESTED, myDelta);</span>
+
+            /* Switch to local amount */
+<span class="nc" id="L1224">            myAmount = theHelper.getLocalAmount();</span>
+        }
+
+        /* Record the delta investment */
+<span class="nc" id="L1228">        final OceanusMoney myDelta = new OceanusMoney(myAmount);</span>
+<span class="nc" id="L1229">        myDelta.negate();</span>
+<span class="nc" id="L1230">        myAsset.adjustCounter(MoneyWiseAnalysisSecurityAttr.INVESTED, myDelta);</span>
+
+        /* Assume the cost reduction is the full value */
+<span class="nc" id="L1233">        OceanusMoney myReduction = new OceanusMoney(myAmount);</span>
+<span class="nc" id="L1234">        final OceanusMoney myCost = myValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.RESIDUALCOST);</span>
+
+        /* If we are reducing units in the account */
+<span class="nc bnc" id="L1237" title="All 2 branches missed.">        if (myDeltaUnits != null) {</span>
+            /* The reduction is the relevant fraction of the cost */
+<span class="nc" id="L1239">            final OceanusUnits myUnits = myValues.getUnitsValue(MoneyWiseAnalysisSecurityAttr.UNITS);</span>
+<span class="nc" id="L1240">            myReduction = myCost.valueAtWeight(myDeltaUnits, myUnits);</span>
+
+            /* Access units as negative value */
+<span class="nc" id="L1243">            myDeltaUnits = new OceanusUnits(myDeltaUnits);</span>
+<span class="nc" id="L1244">            myDeltaUnits.negate();</span>
+
+            /* Record delta to units */
+<span class="nc" id="L1247">            myAsset.adjustCounter(MoneyWiseAnalysisSecurityAttr.UNITS, myDeltaUnits);</span>
+        }
+
+        /* If the reduction is greater than the total cost */
+<span class="nc bnc" id="L1251" title="All 2 branches missed.">        if (myReduction.compareTo(myCost) &gt; 0) {</span>
+            /* Reduction is the total cost */
+<span class="nc" id="L1253">            myReduction = new OceanusMoney(myCost);</span>
+        }
+
+        /* Determine the delta to the cost */
+<span class="nc" id="L1257">        final OceanusMoney myDeltaCost = new OceanusMoney(myReduction);</span>
+<span class="nc" id="L1258">        myDeltaCost.negate();</span>
+
+        /* If we have a delta to the cost */
+<span class="nc bnc" id="L1261" title="All 2 branches missed.">        if (myDeltaCost.isNonZero()) {</span>
+            /* Adjust the cost */
+<span class="nc" id="L1263">            myAsset.adjustCounter(MoneyWiseAnalysisSecurityAttr.RESIDUALCOST, myDeltaCost);</span>
+        }
+
+        /* Determine the delta to the gains */
+<span class="nc" id="L1267">        final OceanusMoney myDeltaGains = new OceanusMoney(myAmount);</span>
+<span class="nc" id="L1268">        myDeltaGains.addAmount(myDeltaCost);</span>
+
+        /* If we have a delta to the gains */
+<span class="nc bnc" id="L1271" title="All 2 branches missed.">        if (myDeltaGains.isNonZero()) {</span>
+            /* Adjust the gains */
+<span class="nc" id="L1273">            myAsset.adjustCounter(MoneyWiseAnalysisSecurityAttr.REALISEDGAINS, myDeltaGains);</span>
+        }
+
+        /* Register the event */
+<span class="nc" id="L1277">        myAsset.registerTransaction(theHelper);</span>
+
+        /* True debit account is the parent */
+<span class="nc" id="L1280">        final MoneyWiseAssetBase myParent = myDebit.getParent();</span>
+
+        /* Adjust the debit account bucket */
+<span class="nc" id="L1283">        final MoneyWiseAnalysisPayeeBucket myPayee = thePayeeBuckets.getBucket(myParent);</span>
+<span class="nc" id="L1284">        myPayee.adjustForTaxCredit(theHelper);</span>
+
+        /* Adjust the credit account bucket */
+<span class="nc" id="L1287">        final MoneyWiseAnalysisAccountBucket&lt;?&gt; myBucket = getAccountBucket(pCredit);</span>
+<span class="nc" id="L1288">        myBucket.adjustForCredit(theHelper);</span>
+
+        /* Adjust the chargeableGains category bucket */
+<span class="nc" id="L1291">        theCategoryBuckets.adjustChargeableGain(theHelper, myReduction);</span>
+
+        /* Adjust the TaxMan account for the tax credit */
+<span class="nc" id="L1294">        theTaxMan.adjustForTaxPayments(theHelper);</span>
+
+        /* Add the chargeable event */
+<span class="nc" id="L1297">        theTaxBasisBuckets.recordChargeableGain(theHelper.getTransaction(), myDeltaGains);</span>
+<span class="nc" id="L1298">    }</span>
+
+    /**
+     * Process a transaction that is Stock DeMerger.
+     * &lt;p&gt;
+     * This capital event relates to both the Credit and Debit accounts
+     *
+     * @param pDebit  the debit account
+     * @param pCredit the credit account
+     */
+    private void processStockDeMerger(final MoneyWiseSecurityHolding pDebit,
+                                      final MoneyWiseSecurityHolding pCredit) {
+        /* Access the Debit Asset Security Bucket */
+<span class="nc" id="L1311">        MoneyWiseAnalysisSecurityBucket myAsset = thePortfolioBuckets.getBucket(pDebit);</span>
+<span class="nc" id="L1312">        MoneyWiseAnalysisSecurityValues myValues = myAsset.getValues();</span>
+<span class="nc" id="L1313">        final OceanusRatio myDebitRate = theHelper.getDebitExchangeRate();</span>
+
+        /* Obtain current cost */
+<span class="nc" id="L1316">        final OceanusMoney myCost = myValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.RESIDUALCOST);</span>
+<span class="nc" id="L1317">        final OceanusRatio myDilution = theHelper.getDilution();</span>
+<span class="nc" id="L1318">        final OceanusUnits myDeltaUnits = theHelper.getAccountDeltaUnits();</span>
+
+        /* If we reduced the units */
+<span class="nc bnc" id="L1321" title="All 2 branches missed.">        if (myDeltaUnits != null) {</span>
+            /* Record the delta units */
+<span class="nc" id="L1323">            myAsset.adjustCounter(MoneyWiseAnalysisSecurityAttr.UNITS, myDeltaUnits);</span>
+        }
+
+        /* Calculate the cost dilution */
+<span class="nc" id="L1327">        final OceanusMoney myNewCost = myCost.getDilutedMoney(myDilution);</span>
+<span class="nc" id="L1328">        final OceanusRatio myCostDilution = new OceanusRatio(myNewCost, myCost);</span>
+
+        /* Calculate the delta to the cost */
+<span class="nc" id="L1331">        OceanusMoney myDeltaCost = new OceanusMoney(myNewCost);</span>
+<span class="nc" id="L1332">        myDeltaCost.subtractAmount(myCost);</span>
+
+        /* Record the delta cost/investment */
+<span class="nc" id="L1335">        myAsset.adjustCounter(MoneyWiseAnalysisSecurityAttr.RESIDUALCOST, myDeltaCost);</span>
+<span class="nc" id="L1336">        myAsset.adjustCounter(MoneyWiseAnalysisSecurityAttr.INVESTED, myDeltaCost);</span>
+<span class="nc" id="L1337">        final boolean isForeignDebit = myAsset.isForeignCurrency();</span>
+<span class="nc bnc" id="L1338" title="All 2 branches missed.">        if (isForeignDebit) {</span>
+<span class="nc" id="L1339">            final OceanusMoney myInvested = myDeltaCost.convertCurrency(myAsset.getCurrency().getCurrency(), myDebitRate);</span>
+<span class="nc" id="L1340">            myAsset.adjustCounter(MoneyWiseAnalysisSecurityAttr.FOREIGNINVESTED, myInvested);</span>
+        }
+
+        /* Register the event */
+<span class="nc" id="L1344">        myValues = myAsset.registerTransaction(theHelper);</span>
+
+        /* Access the Credit Asset Account Bucket */
+<span class="nc" id="L1347">        myAsset = thePortfolioBuckets.getBucket(pCredit);</span>
+
+        /* The deltaCost is transferred to the credit account */
+<span class="nc" id="L1350">        myDeltaCost = new OceanusMoney(myDeltaCost);</span>
+<span class="nc" id="L1351">        myDeltaCost.negate();</span>
+
+        /* Record details */
+<span class="nc" id="L1354">        myValues.setValue(MoneyWiseAnalysisSecurityAttr.XFERREDCOST, myDeltaCost);</span>
+<span class="nc" id="L1355">        myValues.setValue(MoneyWiseAnalysisSecurityAttr.COSTDILUTION, myCostDilution);</span>
+<span class="nc bnc" id="L1356" title="All 2 branches missed.">        if (isForeignDebit) {</span>
+<span class="nc" id="L1357">            myValues.setValue(MoneyWiseAnalysisSecurityAttr.EXCHANGERATE, myDebitRate);</span>
+        }
+
+        /* Record the delta cost/investment */
+<span class="nc" id="L1361">        myAsset.adjustCounter(MoneyWiseAnalysisSecurityAttr.RESIDUALCOST, myDeltaCost);</span>
+<span class="nc" id="L1362">        myAsset.adjustCounter(MoneyWiseAnalysisSecurityAttr.INVESTED, myDeltaCost);</span>
+<span class="nc" id="L1363">        final boolean isForeignCredit = myAsset.isForeignCurrency();</span>
+<span class="nc" id="L1364">        final OceanusRatio myCreditRate = theHelper.getCreditExchangeRate();</span>
+<span class="nc bnc" id="L1365" title="All 2 branches missed.">        if (isForeignCredit) {</span>
+<span class="nc" id="L1366">            final OceanusMoney myInvested = myDeltaCost.convertCurrency(myAsset.getCurrency().getCurrency(), myCreditRate);</span>
+<span class="nc" id="L1367">            myAsset.adjustCounter(MoneyWiseAnalysisSecurityAttr.FOREIGNINVESTED, myInvested);</span>
+        }
+
+        /* Get the appropriate prices/rates for the stock */
+<span class="nc" id="L1371">        final OceanusDate myDate = theHelper.getDate();</span>
+<span class="nc" id="L1372">        final OceanusPrice myCreditPrice = thePriceMap.getPriceForDate(myAsset.getSecurity(), myDate);</span>
+<span class="nc" id="L1373">        final Currency myCurrency = theAnalysis.getCurrency().getCurrency();</span>
+
+        /* Determine value of the stock being deMerged */
+<span class="nc" id="L1376">        final OceanusUnits myCreditUnits = theHelper.getPartnerDeltaUnits();</span>
+<span class="nc" id="L1377">        OceanusMoney myCreditXferValue = myCreditUnits.valueAtPrice(myCreditPrice);</span>
+<span class="nc bnc" id="L1378" title="All 2 branches missed.">        if (isForeignCredit) {</span>
+<span class="nc" id="L1379">            myCreditXferValue = myCreditXferValue.convertCurrency(myCurrency, myCreditRate);</span>
+        }
+
+        /* Record the current/delta units */
+<span class="nc" id="L1383">        myAsset.adjustCounter(MoneyWiseAnalysisSecurityAttr.UNITS, myCreditUnits);</span>
+
+        /* Register the transaction */
+<span class="nc" id="L1386">        myValues = myAsset.registerTransaction(theHelper);</span>
+
+        /* Record values */
+<span class="nc" id="L1389">        myValues.setValue(MoneyWiseAnalysisSecurityAttr.XFERREDCOST, myDeltaCost);</span>
+<span class="nc" id="L1390">        myValues.setValue(MoneyWiseAnalysisSecurityAttr.PRICE, myCreditPrice);</span>
+<span class="nc" id="L1391">        myValues.setValue(MoneyWiseAnalysisSecurityAttr.XFERREDVALUE, myCreditXferValue);</span>
+<span class="nc bnc" id="L1392" title="All 2 branches missed.">        if (isForeignCredit) {</span>
+<span class="nc" id="L1393">            myValues.setValue(MoneyWiseAnalysisSecurityAttr.EXCHANGERATE, myCreditRate);</span>
+        }
+
+        /* StockDeMerger is a transfer, so no need to update the categories */
+<span class="nc" id="L1397">    }</span>
+
+    /**
+     * Process a transaction that is StockTakeover.
+     * &lt;p&gt;
+     * This can be accomplished using a cash portion (to a ThirdParty account) and these workings
+     * are split out.
+     *
+     * @param pDebit  the debit holding
+     * @param pCredit the credit holding
+     */
+    private void processStockTakeover(final MoneyWiseSecurityHolding pDebit,
+                                      final MoneyWiseSecurityHolding pCredit) {
+<span class="nc" id="L1410">        final OceanusMoney myAmount = theHelper.getReturnedCash();</span>
+<span class="nc" id="L1411">        final MoneyWiseTransAsset myReturnedCashAct = theHelper.getReturnedCashAccount();</span>
+
+        /* If we have a returned cash part of the transaction */
+<span class="nc bnc" id="L1414" title="All 2 branches missed.">        if (myReturnedCashAct != null</span>
+<span class="nc bnc" id="L1415" title="All 2 branches missed.">                &amp;&amp; myAmount.isNonZero()) {</span>
+            /* Process a Stock And Cash TakeOver */
+<span class="nc" id="L1417">            processStockAndCashTakeOver(pDebit, pCredit);</span>
+        } else {
+            /* Process a StockOnly TakeOver */
+<span class="nc" id="L1420">            processStockOnlyTakeOver(pDebit, pCredit);</span>
+        }
+<span class="nc" id="L1422">    }</span>
+
+    /**
+     * Process a transaction that is a StockOnlyTakeover.
+     * &lt;p&gt;
+     * This capital event relates to both the Credit and Debit accounts
+     *
+     * @param pDebit  the debit holding
+     * @param pCredit the credit holding
+     */
+    private void processStockOnlyTakeOver(final MoneyWiseSecurityHolding pDebit,
+                                          final MoneyWiseSecurityHolding pCredit) {
+        /* Access details */
+<span class="nc" id="L1435">        final MoneyWiseSecurity myCredit = pCredit.getSecurity();</span>
+<span class="nc" id="L1436">        final MoneyWiseSecurity myDebit = pDebit.getSecurity();</span>
+
+        /* Access the Asset Security Buckets */
+<span class="nc" id="L1439">        final MoneyWiseAnalysisSecurityBucket myDebitAsset = thePortfolioBuckets.getBucket(pDebit);</span>
+<span class="nc" id="L1440">        MoneyWiseAnalysisSecurityValues myDebitValues = myDebitAsset.getValues();</span>
+<span class="nc" id="L1441">        final MoneyWiseAnalysisSecurityBucket myCreditAsset = thePortfolioBuckets.getBucket(pCredit);</span>
+<span class="nc" id="L1442">        final OceanusDate myDate = theHelper.getDate();</span>
+
+        /* Get the appropriate prices/rates for the stock */
+<span class="nc" id="L1445">        final OceanusPrice myCreditPrice = thePriceMap.getPriceForDate(myCredit, myDate);</span>
+<span class="nc" id="L1446">        final OceanusPrice myDebitPrice = thePriceMap.getPriceForDate(myDebit, myDate);</span>
+<span class="nc" id="L1447">        final OceanusRatio myDebitRate = theHelper.getDebitExchangeRate();</span>
+<span class="nc" id="L1448">        final OceanusRatio myCreditRate = theHelper.getCreditExchangeRate();</span>
+<span class="nc" id="L1449">        final Currency myCurrency = theAnalysis.getCurrency().getCurrency();</span>
+
+        /* Determine value of the stock in both parts of the takeOver */
+<span class="nc" id="L1452">        OceanusUnits myCreditUnits = theHelper.getPartnerDeltaUnits();</span>
+<span class="nc" id="L1453">        OceanusMoney myCreditXferValue = myCreditUnits.valueAtPrice(myCreditPrice);</span>
+<span class="nc" id="L1454">        OceanusUnits myDebitUnits = myDebitValues.getUnitsValue(MoneyWiseAnalysisSecurityAttr.UNITS);</span>
+<span class="nc" id="L1455">        OceanusMoney myDebitValue = myDebitUnits.valueAtPrice(myDebitPrice);</span>
+<span class="nc" id="L1456">        OceanusMoney myInvested = myDebitValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.INVESTED);</span>
+
+        /* Handle foreign debit */
+<span class="nc" id="L1459">        final boolean isForeignDebit = myDebitAsset.isForeignCurrency();</span>
+<span class="nc bnc" id="L1460" title="All 2 branches missed.">        if (isForeignDebit) {</span>
+<span class="nc" id="L1461">            myDebitValue = myDebitValue.convertCurrency(myCurrency, myDebitRate);</span>
+        }
+
+        /* Handle foreign credit */
+<span class="nc" id="L1465">        final boolean isForeignCredit = myCreditAsset.isForeignCurrency();</span>
+<span class="nc bnc" id="L1466" title="All 2 branches missed.">        if (isForeignCredit) {</span>
+<span class="nc" id="L1467">            myCreditXferValue = myCreditXferValue.convertCurrency(myCurrency, myCreditRate);</span>
+        }
+
+        /* Determine the residual cost of the old stock */
+<span class="nc" id="L1471">        final OceanusMoney myDebitCost = myDebitValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.RESIDUALCOST);</span>
+
+        /* Allocate current profit between the two stocks */
+<span class="nc" id="L1474">        OceanusMoney myProfit = new OceanusMoney(myDebitValue);</span>
+<span class="nc" id="L1475">        myProfit.subtractAmount(myDebitCost);</span>
+<span class="nc" id="L1476">        myDebitAsset.adjustCounter(MoneyWiseAnalysisSecurityAttr.GROWTHADJUST, myProfit);</span>
+<span class="nc" id="L1477">        myProfit = new OceanusMoney(myProfit);</span>
+<span class="nc" id="L1478">        myProfit.negate();</span>
+<span class="nc" id="L1479">        myCreditAsset.adjustCounter(MoneyWiseAnalysisSecurityAttr.GROWTHADJUST, myProfit);</span>
+
+        /* Adjust cost/units/invested of the credit account */
+<span class="nc" id="L1482">        myCreditAsset.adjustCounter(MoneyWiseAnalysisSecurityAttr.RESIDUALCOST, myDebitCost);</span>
+<span class="nc" id="L1483">        myCreditAsset.adjustCounter(MoneyWiseAnalysisSecurityAttr.UNITS, myCreditUnits);</span>
+<span class="nc" id="L1484">        myCreditAsset.adjustCounter(MoneyWiseAnalysisSecurityAttr.INVESTED, myInvested);</span>
+<span class="nc bnc" id="L1485" title="All 2 branches missed.">        if (isForeignCredit) {</span>
+<span class="nc" id="L1486">            final OceanusMoney myForeign = myInvested.convertCurrency(myCreditAsset.getCurrency().getCurrency(), myCreditRate);</span>
+<span class="nc" id="L1487">            myCreditAsset.adjustCounter(MoneyWiseAnalysisSecurityAttr.FOREIGNINVESTED, myForeign);</span>
+        }
+
+        /* Determine final value of the credit stock after the takeOver */
+<span class="nc" id="L1491">        myCreditUnits = myCreditAsset.getValues().getUnitsValue(MoneyWiseAnalysisSecurityAttr.UNITS);</span>
+<span class="nc" id="L1492">        OceanusMoney myCreditValue = myCreditUnits.valueAtPrice(myCreditPrice);</span>
+<span class="nc bnc" id="L1493" title="All 2 branches missed.">        if (isForeignCredit) {</span>
+<span class="nc" id="L1494">            myCreditValue = myCreditValue.convertCurrency(myCurrency, myCreditRate);</span>
+        }
+
+        /* Register the transaction */
+<span class="nc" id="L1498">        final MoneyWiseAnalysisSecurityValues myCreditValues = myCreditAsset.registerTransaction(theHelper);</span>
+<span class="nc" id="L1499">        myCreditValues.setValue(MoneyWiseAnalysisSecurityAttr.PRICE, myCreditPrice);</span>
+<span class="nc" id="L1500">        myCreditValues.setValue(MoneyWiseAnalysisSecurityAttr.XFERREDVALUE, myCreditXferValue);</span>
+<span class="nc" id="L1501">        myCreditValues.setValue(MoneyWiseAnalysisSecurityAttr.XFERREDCOST, myDebitCost);</span>
+<span class="nc" id="L1502">        myCreditValues.setValue(MoneyWiseAnalysisSecurityAttr.VALUATION, myCreditValue);</span>
+<span class="nc bnc" id="L1503" title="All 2 branches missed.">        if (isForeignCredit) {</span>
+<span class="nc" id="L1504">            myCreditValues.setValue(MoneyWiseAnalysisSecurityAttr.EXCHANGERATE, myCreditRate);</span>
+        }
+
+        /* Drive debit cost down to zero */
+<span class="nc" id="L1508">        final OceanusMoney myDeltaCost = new OceanusMoney(myDebitCost);</span>
+<span class="nc" id="L1509">        myDeltaCost.negate();</span>
+<span class="nc" id="L1510">        myDebitAsset.adjustCounter(MoneyWiseAnalysisSecurityAttr.RESIDUALCOST, myDeltaCost);</span>
+<span class="nc" id="L1511">        myDeltaCost.negate();</span>
+
+        /* Drive debit units down to zero */
+<span class="nc" id="L1514">        myDebitUnits = new OceanusUnits(myDebitUnits);</span>
+<span class="nc" id="L1515">        myDebitUnits.negate();</span>
+<span class="nc" id="L1516">        myDebitAsset.adjustCounter(MoneyWiseAnalysisSecurityAttr.UNITS, myDebitUnits);</span>
+
+        /* Adjust debit Invested amount */
+<span class="nc" id="L1519">        myInvested = new OceanusMoney(myInvested);</span>
+<span class="nc" id="L1520">        myInvested.negate();</span>
+<span class="nc" id="L1521">        myDebitAsset.adjustCounter(MoneyWiseAnalysisSecurityAttr.INVESTED, myInvested);</span>
+<span class="nc bnc" id="L1522" title="All 2 branches missed.">        if (isForeignDebit) {</span>
+<span class="nc" id="L1523">            myInvested = new OceanusMoney(myDebitValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.FOREIGNINVESTED));</span>
+<span class="nc" id="L1524">            myInvested.negate();</span>
+<span class="nc" id="L1525">            myDebitAsset.adjustCounter(MoneyWiseAnalysisSecurityAttr.FOREIGNINVESTED, myInvested);</span>
+        }
+
+        /* Register the transaction */
+<span class="nc" id="L1529">        myDebitValues = myDebitAsset.registerTransaction(theHelper);</span>
+<span class="nc" id="L1530">        myDebitValues.setValue(MoneyWiseAnalysisSecurityAttr.PRICE, myDebitPrice);</span>
+<span class="nc" id="L1531">        myDebitValues.setValue(MoneyWiseAnalysisSecurityAttr.VALUATION, myDebitValue);</span>
+<span class="nc" id="L1532">        myDebitValues.setValue(MoneyWiseAnalysisSecurityAttr.XFERREDVALUE, myCreditXferValue);</span>
+<span class="nc" id="L1533">        myDebitValues.setValue(MoneyWiseAnalysisSecurityAttr.XFERREDCOST, myDeltaCost);</span>
+<span class="nc bnc" id="L1534" title="All 2 branches missed.">        if (isForeignDebit) {</span>
+<span class="nc" id="L1535">            myDebitValues.setValue(MoneyWiseAnalysisSecurityAttr.EXCHANGERATE, myDebitRate);</span>
+        }
+<span class="nc" id="L1537">    }</span>
+
+    /**
+     * Process a transaction that is StockAndCashTakeover.
+     * &lt;p&gt;
+     * This capital event relates to both the Credit and Debit accounts. In particular it makes
+     * reference to the CashTakeOver aspect of the debit account
+     *
+     * @param pDebit  the debit holding
+     * @param pCredit the credit holding
+     */
+    private void processStockAndCashTakeOver(final MoneyWiseSecurityHolding pDebit,
+                                             final MoneyWiseSecurityHolding pCredit) {
+        /* Access details */
+<span class="nc" id="L1551">        final MoneyWiseSecurity myDebit = pDebit.getSecurity();</span>
+<span class="nc" id="L1552">        final MoneyWiseSecurity myCredit = pCredit.getSecurity();</span>
+<span class="nc" id="L1553">        final OceanusDate myDate = theHelper.getDate();</span>
+<span class="nc" id="L1554">        final MoneyWiseTransAsset myReturnedCashAccount = theHelper.getReturnedCashAccount();</span>
+<span class="nc" id="L1555">        final OceanusMoney myAmount = theHelper.getLocalReturnedCash();</span>
+
+        /* Access the Asset Security Buckets */
+<span class="nc" id="L1558">        final MoneyWiseAnalysisSecurityBucket myDebitAsset = thePortfolioBuckets.getBucket(pDebit);</span>
+<span class="nc" id="L1559">        MoneyWiseAnalysisSecurityValues myDebitValues = myDebitAsset.getValues();</span>
+<span class="nc" id="L1560">        final MoneyWiseAnalysisSecurityBucket myCreditAsset = thePortfolioBuckets.getBucket(pCredit);</span>
+
+        /* Get the appropriate prices for the assets */
+<span class="nc" id="L1563">        final OceanusPrice myDebitPrice = thePriceMap.getPriceForDate(myDebit, myDate);</span>
+<span class="nc" id="L1564">        final OceanusPrice myCreditPrice = thePriceMap.getPriceForDate(myCredit, myDate);</span>
+<span class="nc" id="L1565">        final OceanusRatio myDebitRate = theHelper.getDebitExchangeRate();</span>
+<span class="nc" id="L1566">        final OceanusRatio myCreditRate = theHelper.getCreditExchangeRate();</span>
+<span class="nc" id="L1567">        final Currency myCurrency = theAnalysis.getCurrency().getCurrency();</span>
+
+        /* Determine value of the base stock */
+<span class="nc" id="L1570">        OceanusUnits myDebitUnits = myDebitValues.getUnitsValue(MoneyWiseAnalysisSecurityAttr.UNITS);</span>
+<span class="nc" id="L1571">        OceanusMoney myDebitValue = myDebitUnits.valueAtPrice(myDebitPrice);</span>
+
+        /* Determine value of the stock part of the takeOver */
+<span class="nc" id="L1574">        OceanusUnits myCreditUnits = theHelper.getPartnerDeltaUnits();</span>
+<span class="nc" id="L1575">        OceanusMoney myCreditXferValue = myCreditUnits.valueAtPrice(myCreditPrice);</span>
+
+        /* Handle foreign debit */
+<span class="nc" id="L1578">        final boolean isForeignDebit = myDebitAsset.isForeignCurrency();</span>
+<span class="nc bnc" id="L1579" title="All 2 branches missed.">        if (isForeignDebit) {</span>
+<span class="nc" id="L1580">            myDebitValue = myDebitValue.convertCurrency(myCurrency, myDebitRate);</span>
+        }
+
+        /* Handle foreign credit */
+<span class="nc" id="L1584">        final boolean isForeignCredit = myCreditAsset.isForeignCurrency();</span>
+<span class="nc bnc" id="L1585" title="All 2 branches missed.">        if (isForeignCredit) {</span>
+<span class="nc" id="L1586">            myCreditXferValue = myCreditXferValue.convertCurrency(myCurrency, myCreditRate);</span>
+        }
+
+        /* Calculate the total consideration */
+<span class="nc" id="L1590">        final OceanusMoney myConsideration = new OceanusMoney(myAmount);</span>
+<span class="nc" id="L1591">        myConsideration.addAmount(myCreditXferValue);</span>
+
+        /* Access the current debit cost */
+<span class="nc" id="L1594">        final OceanusMoney myCost = myDebitValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.RESIDUALCOST);</span>
+<span class="nc" id="L1595">        OceanusRatio myCostDilution = null;</span>
+        final OceanusMoney myCostXfer;
+        final OceanusMoney myAllowedCost;
+
+        /* Determine condition as to whether this is a large cash transaction */
+<span class="nc" id="L1600">        final OceanusMoney myPortion = myDebitValue.valueAtRate(LIMIT_RATE);</span>
+<span class="nc bnc" id="L1601" title="All 2 branches missed.">        final boolean isLargeCash = (myAmount.compareTo(LIMIT_VALUE) &gt; 0)</span>
+<span class="nc bnc" id="L1602" title="All 2 branches missed.">                &amp;&amp; (myAmount.compareTo(myPortion) &gt; 0);</span>
+
+        /* If this is a large cash takeOver */
+<span class="nc bnc" id="L1605" title="All 2 branches missed.">        if (isLargeCash) {</span>
+            /* Determine the transferable cost */
+<span class="nc" id="L1607">            myCostXfer = myCost.valueAtWeight(myCreditXferValue, myConsideration);</span>
+
+            /* Determine the cost dilution */
+<span class="nc" id="L1610">            myCostDilution = new OceanusRatio(myAmount, myConsideration);</span>
+
+            /* Determine the allowed cost */
+<span class="nc" id="L1613">            myAllowedCost = new OceanusMoney(myCost);</span>
+<span class="nc" id="L1614">            myAllowedCost.subtractAmount(myCostXfer);</span>
+
+            /* else this is viewed as small and is taken out of the cost */
+        } else {
+            /* Set the allowed cost to be the least of the cost or the returned cash */
+<span class="nc bnc" id="L1619" title="All 2 branches missed.">            myAllowedCost = myAmount.compareTo(myCost) &gt; 0</span>
+<span class="nc" id="L1620">                    ? new OceanusMoney(myCost)</span>
+<span class="nc" id="L1621">                    : new OceanusMoney(myAmount);</span>
+
+            /* Transferred cost is cost minus the allowed cost */
+<span class="nc" id="L1624">            myCostXfer = new OceanusMoney(myCost);</span>
+<span class="nc" id="L1625">            myCostXfer.subtractAmount(myAllowedCost);</span>
+        }
+
+        /* Determine the capital gain */
+<span class="nc" id="L1629">        final OceanusMoney myCapitalGain = new OceanusMoney(myAmount);</span>
+<span class="nc" id="L1630">        myCapitalGain.subtractAmount(myAllowedCost);</span>
+<span class="nc bnc" id="L1631" title="All 2 branches missed.">        if (myCapitalGain.isNonZero()) {</span>
+            /* Record the delta gains */
+<span class="nc" id="L1633">            myDebitAsset.adjustCounter(MoneyWiseAnalysisSecurityAttr.REALISEDGAINS, myCapitalGain);</span>
+
+            /* Adjust the capitalGains category bucket */
+<span class="nc" id="L1636">            theCategoryBuckets.adjustStandardGain(theHelper, pDebit, myCapitalGain);</span>
+        }
+
+        /* Allocate current profit between the two stocks */
+<span class="nc" id="L1640">        OceanusMoney myProfit = new OceanusMoney(myCreditXferValue);</span>
+<span class="nc" id="L1641">        myProfit.subtractAmount(myCostXfer);</span>
+<span class="nc" id="L1642">        myDebitAsset.adjustCounter(MoneyWiseAnalysisSecurityAttr.GROWTHADJUST, myProfit);</span>
+<span class="nc" id="L1643">        myProfit = new OceanusMoney(myProfit);</span>
+<span class="nc" id="L1644">        myProfit.negate();</span>
+<span class="nc" id="L1645">        myCreditAsset.adjustCounter(MoneyWiseAnalysisSecurityAttr.GROWTHADJUST, myProfit);</span>
+
+        /* Adjust cost/units/invested of the credit account */
+<span class="nc" id="L1648">        myCreditAsset.adjustCounter(MoneyWiseAnalysisSecurityAttr.RESIDUALCOST, myCostXfer);</span>
+<span class="nc" id="L1649">        myCreditAsset.adjustCounter(MoneyWiseAnalysisSecurityAttr.UNITS, myCreditUnits);</span>
+<span class="nc" id="L1650">        myCreditAsset.adjustCounter(MoneyWiseAnalysisSecurityAttr.INVESTED, myCostXfer);</span>
+<span class="nc bnc" id="L1651" title="All 2 branches missed.">        if (isForeignCredit) {</span>
+<span class="nc" id="L1652">            final OceanusMoney myForeign = myCostXfer.convertCurrency(myCreditAsset.getCurrency().getCurrency(), myCreditRate);</span>
+<span class="nc" id="L1653">            myCreditAsset.adjustCounter(MoneyWiseAnalysisSecurityAttr.FOREIGNINVESTED, myForeign);</span>
+        }
+
+        /* Determine final value of the credit stock after the takeOver */
+<span class="nc" id="L1657">        myCreditUnits = myCreditAsset.getValues().getUnitsValue(MoneyWiseAnalysisSecurityAttr.UNITS);</span>
+<span class="nc" id="L1658">        OceanusMoney myCreditValue = myCreditUnits.valueAtPrice(myCreditPrice);</span>
+<span class="nc bnc" id="L1659" title="All 2 branches missed.">        if (isForeignCredit) {</span>
+<span class="nc" id="L1660">            myCreditValue = myCreditValue.convertCurrency(myCurrency, myCreditRate);</span>
+        }
+
+        /* Register the transaction */
+<span class="nc" id="L1664">        final MoneyWiseAnalysisSecurityValues myCreditValues = myCreditAsset.registerTransaction(theHelper);</span>
+<span class="nc" id="L1665">        myCreditValues.setValue(MoneyWiseAnalysisSecurityAttr.PRICE, myCreditPrice);</span>
+<span class="nc" id="L1666">        myCreditValues.setValue(MoneyWiseAnalysisSecurityAttr.XFERREDVALUE, myCreditXferValue);</span>
+<span class="nc" id="L1667">        myCreditValues.setValue(MoneyWiseAnalysisSecurityAttr.XFERREDCOST, myCostXfer);</span>
+<span class="nc" id="L1668">        myCreditValues.setValue(MoneyWiseAnalysisSecurityAttr.VALUATION, myCreditValue);</span>
+<span class="nc bnc" id="L1669" title="All 2 branches missed.">        if (isForeignCredit) {</span>
+<span class="nc" id="L1670">            myCreditValues.setValue(MoneyWiseAnalysisSecurityAttr.EXCHANGERATE, myCreditRate);</span>
+        }
+
+        /* Drive debit cost down to zero */
+<span class="nc" id="L1674">        final OceanusMoney myDeltaCost = new OceanusMoney(myCost);</span>
+<span class="nc" id="L1675">        myDeltaCost.negate();</span>
+<span class="nc" id="L1676">        myDebitAsset.adjustCounter(MoneyWiseAnalysisSecurityAttr.RESIDUALCOST, myDeltaCost);</span>
+
+        /* Drive debit units down to zero */
+<span class="nc" id="L1679">        myDebitUnits = new OceanusUnits(myDebitUnits);</span>
+<span class="nc" id="L1680">        myDebitUnits.negate();</span>
+<span class="nc" id="L1681">        myDebitAsset.adjustCounter(MoneyWiseAnalysisSecurityAttr.UNITS, myDebitUnits);</span>
+
+        /* Adjust debit Invested amount */
+<span class="nc" id="L1684">        OceanusMoney myInvested = myDebitValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.INVESTED);</span>
+<span class="nc" id="L1685">        myInvested = new OceanusMoney(myInvested);</span>
+<span class="nc" id="L1686">        myInvested.setZero();</span>
+<span class="nc" id="L1687">        myInvested.subtractAmount(myAmount);</span>
+<span class="nc" id="L1688">        myInvested.subtractAmount(myCostXfer);</span>
+<span class="nc" id="L1689">        myDebitAsset.adjustCounter(MoneyWiseAnalysisSecurityAttr.INVESTED, myInvested);</span>
+<span class="nc bnc" id="L1690" title="All 2 branches missed.">        if (isForeignDebit) {</span>
+<span class="nc" id="L1691">            myInvested = myInvested.convertCurrency(myDebitAsset.getCurrency().getCurrency(), myDebitRate);</span>
+<span class="nc" id="L1692">            myInvested.negate();</span>
+<span class="nc" id="L1693">            myDebitAsset.adjustCounter(MoneyWiseAnalysisSecurityAttr.FOREIGNINVESTED, myInvested);</span>
+        }
+
+        /* Register the transaction */
+<span class="nc" id="L1697">        myDebitValues = myDebitAsset.registerTransaction(theHelper);</span>
+<span class="nc" id="L1698">        myDebitValues.setValue(MoneyWiseAnalysisSecurityAttr.PRICE, myDebitPrice);</span>
+<span class="nc" id="L1699">        myDebitValues.setValue(MoneyWiseAnalysisSecurityAttr.VALUATION, myDebitValue);</span>
+<span class="nc" id="L1700">        myDebitValues.setValue(MoneyWiseAnalysisSecurityAttr.CONSIDERATION, myConsideration);</span>
+<span class="nc" id="L1701">        myDebitValues.setValue(MoneyWiseAnalysisSecurityAttr.RETURNEDCASH, myAmount);</span>
+<span class="nc" id="L1702">        myDebitValues.setValue(MoneyWiseAnalysisSecurityAttr.XFERREDVALUE, myCreditXferValue);</span>
+<span class="nc" id="L1703">        myDebitValues.setValue(MoneyWiseAnalysisSecurityAttr.XFERREDCOST, myCostXfer);</span>
+<span class="nc" id="L1704">        myDebitValues.setValue(MoneyWiseAnalysisSecurityAttr.ALLOWEDCOST, myAllowedCost);</span>
+<span class="nc bnc" id="L1705" title="All 2 branches missed.">        if (myCostDilution != null) {</span>
+<span class="nc" id="L1706">            myDebitValues.setValue(MoneyWiseAnalysisSecurityAttr.COSTDILUTION, myCostDilution);</span>
+        }
+<span class="nc bnc" id="L1708" title="All 2 branches missed.">        if (myCapitalGain.isNonZero()) {</span>
+<span class="nc" id="L1709">            myDebitValues.setValue(MoneyWiseAnalysisSecurityAttr.CAPITALGAIN, myCapitalGain);</span>
+        }
+<span class="nc bnc" id="L1711" title="All 2 branches missed.">        if (isForeignDebit) {</span>
+<span class="nc" id="L1712">            myDebitValues.setValue(MoneyWiseAnalysisSecurityAttr.EXCHANGERATE, myDebitRate);</span>
+        }
+<span class="nc bnc" id="L1714" title="All 2 branches missed.">        myDebitValues.setValue(MoneyWiseAnalysisSecurityAttr.CASHTYPE, isLargeCash</span>
+<span class="nc" id="L1715">                ? MoneyWiseCashType.LARGECASH</span>
+<span class="nc" id="L1716">                : MoneyWiseCashType.SMALLCASH);</span>
+
+        /* Adjust the ThirdParty account bucket */
+<span class="nc" id="L1719">        final MoneyWiseAnalysisAccountBucket&lt;?&gt; myBucket = getAccountBucket((MoneyWiseAssetBase) myReturnedCashAccount);</span>
+<span class="nc" id="L1720">        myBucket.adjustForReturnedCashCredit(theHelper);</span>
+<span class="nc" id="L1721">    }</span>
+
+    /**
+     * Obtain Account bucket for asset.
+     *
+     * @param pAsset the asset
+     * @return the bucket
+     */
+    private MoneyWiseAnalysisAccountBucket&lt;?&gt; getAccountBucket(final MoneyWiseAssetBase pAsset) {
+<span class="nc bnc" id="L1730" title="All 5 branches missed.">        switch (pAsset.getAssetType()) {</span>
+            case DEPOSIT:
+<span class="nc" id="L1732">                return theDepositBuckets.getBucket((MoneyWiseDeposit) pAsset);</span>
+            case CASH:
+<span class="nc" id="L1734">                return theCashBuckets.getBucket((MoneyWiseCash) pAsset);</span>
+            case LOAN:
+<span class="nc" id="L1736">                return theLoanBuckets.getBucket((MoneyWiseLoan) pAsset);</span>
+            case PORTFOLIO:
+<span class="nc" id="L1738">                return thePortfolioBuckets.getCashBucket((MoneyWisePortfolio) pAsset);</span>
+            default:
+<span class="nc" id="L1740">                throw new IllegalArgumentException();</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

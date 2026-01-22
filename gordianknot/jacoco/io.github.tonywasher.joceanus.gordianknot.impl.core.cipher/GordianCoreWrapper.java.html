@@ -1,0 +1,482 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianCoreWrapper.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.impl.core.cipher</a> &gt; <span class="el_source">GordianCoreWrapper.java</span></div><h1>GordianCoreWrapper.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.gordianknot.impl.core.cipher;
+
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherParameters;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianWrapper;
+import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKey;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairFactory;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianDataConverter;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianLogicException;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.key.GordianCoreKey;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.key.GordianCoreKeyGenerator;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianCoreKeyPairGenerator;
+import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
+import org.bouncycastle.util.Arrays;
+
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
+
+/**
+ * GordianKnot base for WrapCipher.
+ * &lt;p&gt;
+ * This class uses a variant of RFC5649 to wrap keyData. It has been modified so that it does not
+ * require a 128-block cipher.
+ */
+public class GordianCoreWrapper
+        implements GordianWrapper {
+    /**
+     * Wrap repeat count.
+     */
+    private static final int WRAP_COUNT = 6;
+
+    /**
+     * Integrity value.
+     */
+    private static final byte INTEGRITY_VALUE1 = (byte) 0xA6;
+
+    /**
+     * Integrity value.
+     */
+    private static final byte INTEGRITY_VALUE2 = (byte) 0x59;
+
+    /**
+     * Integrity modulo.
+     */
+    private static final int INTEGRITY_MODULO = 4;
+
+    /**
+     * The Security Factory.
+     */
+    private final GordianBaseFactory theFactory;
+
+    /**
+     * Underlying key.
+     */
+    private final GordianKey&lt;GordianSymKeySpec&gt; theKey;
+
+    /**
+     * Underlying cipher.
+     */
+    private final GordianCoreCipher&lt;GordianSymKeySpec&gt; theCipher;
+
+    /**
+     * The block size.
+     */
+    private final int theBlockLen;
+
+    /**
+     * Constructor.
+     *
+     * @param pFactory the Security Factory
+     * @param pKey     the key
+     * @param pCipher  the underlying cipher
+     */
+    GordianCoreWrapper(final GordianBaseFactory pFactory,
+                       final GordianKey&lt;GordianSymKeySpec&gt; pKey,
+<span class="fc" id="L100">                       final GordianCoreCipher&lt;GordianSymKeySpec&gt; pCipher) {</span>
+<span class="fc" id="L101">        theFactory = pFactory;</span>
+<span class="fc" id="L102">        theKey = pKey;</span>
+<span class="fc" id="L103">        theCipher = pCipher;</span>
+<span class="fc" id="L104">        theBlockLen = getKeySpec().getBlockLength().getByteLength() &gt;&gt; 1;</span>
+<span class="fc" id="L105">    }</span>
+
+    /**
+     * Constructor.
+     *
+     * @param pFactory  the Security Factory
+     * @param pBlockLen the blockLength
+     */
+    protected GordianCoreWrapper(final GordianBaseFactory pFactory,
+<span class="fc" id="L114">                                 final int pBlockLen) {</span>
+<span class="fc" id="L115">        theFactory = pFactory;</span>
+<span class="fc" id="L116">        theKey = null;</span>
+<span class="fc" id="L117">        theCipher = null;</span>
+<span class="fc" id="L118">        theBlockLen = pBlockLen &gt;&gt; 1;</span>
+<span class="fc" id="L119">    }</span>
+
+    @Override
+    public GordianSymKeySpec getKeySpec() {
+<span class="fc" id="L123">        return theCipher.getKeyType();</span>
+    }
+
+    /**
+     * Obtain the factory.
+     *
+     * @return the factory
+     */
+    protected GordianBaseFactory getFactory() {
+<span class="nc" id="L132">        return theFactory;</span>
+    }
+
+    @Override
+    public byte[] secureKey(final GordianKey&lt;?&gt; pKeyToSecure) throws GordianException {
+        /* Secure the bytes */
+<span class="fc" id="L138">        final byte[] myBytes = secureBytes(((GordianCoreKey&lt;?&gt;) pKeyToSecure).getKeyBytes());</span>
+
+        /* Create the ASN1 */
+<span class="fc" id="L141">        final AlgorithmIdentifier myAlgId = theFactory.getIdentifierForSpec(pKeyToSecure.getKeyType());</span>
+<span class="fc" id="L142">        final GordianWrappedKeyASN1 myASN1 = new GordianWrappedKeyASN1(myAlgId, myBytes);</span>
+<span class="fc" id="L143">        return myASN1.getEncodedBytes();</span>
+    }
+
+    @Override
+    public &lt;T extends GordianKeySpec&gt; GordianKey&lt;T&gt; deriveKey(final byte[] pSecuredKey,
+                                                              final T pKeyType) throws GordianException {
+        /* Parse the ASN1 */
+<span class="fc" id="L150">        final GordianWrappedKeyASN1 myASN1 = GordianWrappedKeyASN1.getInstance(pSecuredKey);</span>
+<span class="fc" id="L151">        final AlgorithmIdentifier myAlgId = myASN1.getKeySpecId();</span>
+<span class="fc" id="L152">        final byte[] myWrappedKey = myASN1.getWrappedKey();</span>
+
+        /* Check the algorithmId */
+<span class="fc" id="L155">        final GordianKeySpec mySpec = theFactory.getKeySpecForIdentifier(myAlgId);</span>
+<span class="pc bpc" id="L156" title="2 of 4 branches missed.">        if (mySpec == null || !mySpec.equals(pKeyType)) {</span>
+<span class="nc" id="L157">            throw new GordianDataException(&quot;Incorrect KeySpec&quot;);</span>
+        }
+
+        /* Unwrap the bytes */
+<span class="fc" id="L161">        final byte[] myBytes = deriveBytes(myWrappedKey);</span>
+
+        /* Access the relevant keyGenerator */
+<span class="pc bpc" id="L164" title="1 of 2 branches missed.">        final GordianCoreKeyGenerator&lt;T&gt; myGenerator = pKeyType instanceof GordianMacSpec</span>
+<span class="nc" id="L165">                ? (GordianCoreKeyGenerator&lt;T&gt;) theFactory.getMacFactory().getKeyGenerator(pKeyType)</span>
+<span class="fc" id="L166">                : (GordianCoreKeyGenerator&lt;T&gt;) theFactory.getCipherFactory().getKeyGenerator(pKeyType);</span>
+
+        /* Generate the key */
+<span class="fc" id="L169">        return myGenerator.buildKeyFromBytes(myBytes);</span>
+    }
+
+    @Override
+    public byte[] securePrivateKey(final GordianKeyPair pKeyPairToSecure) throws GordianException {
+        /* Access the KeyPair Generator */
+<span class="nc" id="L175">        final GordianKeyPairFactory myFactory = theFactory.getAsyncFactory().getKeyPairFactory();</span>
+<span class="nc" id="L176">        final GordianCoreKeyPairGenerator myGenerator = (GordianCoreKeyPairGenerator) myFactory.getKeyPairGenerator(pKeyPairToSecure.getKeyPairSpec());</span>
+<span class="nc" id="L177">        final PKCS8EncodedKeySpec myPKCS8Key = myGenerator.getPKCS8Encoding(pKeyPairToSecure);</span>
+<span class="nc" id="L178">        return secureBytes(myPKCS8Key.getEncoded());</span>
+    }
+
+    @Override
+    public GordianKeyPair deriveKeyPair(final X509EncodedKeySpec pPublicKeySpec,
+                                        final byte[] pSecuredPrivateKey) throws GordianException {
+        /* Access the PKCS8Encoding */
+<span class="nc" id="L185">        final PKCS8EncodedKeySpec myPrivate = derivePrivateKeySpec(pSecuredPrivateKey);</span>
+
+        /* Determine and check the keyPairSpec */
+<span class="nc" id="L188">        final GordianKeyPairFactory myFactory = theFactory.getAsyncFactory().getKeyPairFactory();</span>
+<span class="nc" id="L189">        final GordianKeyPairSpec myKeySpec = myFactory.determineKeyPairSpec(pPublicKeySpec);</span>
+<span class="nc bnc" id="L190" title="All 2 branches missed.">        if (!myKeySpec.equals(myFactory.determineKeyPairSpec(myPrivate))) {</span>
+<span class="nc" id="L191">            throw new GordianLogicException(&quot;Mismatch on keySpecs&quot;);</span>
+        }
+
+        /* Derive the keyPair */
+<span class="nc" id="L195">        final GordianCoreKeyPairGenerator myGenerator = (GordianCoreKeyPairGenerator) myFactory.getKeyPairGenerator(myKeySpec);</span>
+<span class="nc" id="L196">        return myGenerator.deriveKeyPair(pPublicKeySpec, myPrivate);</span>
+    }
+
+    /**
+     * derive private key.
+     *
+     * @param pSecuredPrivateKey the secured privateKey
+     * @return the derived key
+     * @throws GordianException on error
+     */
+    private PKCS8EncodedKeySpec derivePrivateKeySpec(final byte[] pSecuredPrivateKey) throws GordianException {
+        /* Derive the keySpec */
+<span class="nc" id="L208">        final byte[] myBytes = deriveBytes(pSecuredPrivateKey);</span>
+<span class="nc" id="L209">        return new PKCS8EncodedKeySpec(myBytes);</span>
+    }
+
+    @Override
+    public byte[] secureBytes(final byte[] pBytesToSecure) throws GordianException {
+        /* Determine number of blocks */
+<span class="fc" id="L215">        final int myDataLen = pBytesToSecure.length;</span>
+<span class="fc" id="L216">        int myNumBlocks = myDataLen</span>
+                / theBlockLen;
+
+        /* Calculate padding length */
+        final int myTrueLen;
+<span class="fc bfc" id="L221" title="All 2 branches covered.">        if (myDataLen % theBlockLen == 0) {</span>
+<span class="fc" id="L222">            myTrueLen = myDataLen;</span>
+        } else {
+<span class="fc" id="L224">            myNumBlocks++;</span>
+<span class="fc" id="L225">            myTrueLen = myNumBlocks</span>
+                    * theBlockLen;
+        }
+
+        /* Determine semantics of the initial block */
+<span class="fc" id="L230">        final byte[] myByteLen = GordianDataConverter.integerToByteArray(myDataLen);</span>
+<span class="fc" id="L231">        int myCheckLen = theBlockLen - Integer.BYTES;</span>
+<span class="fc" id="L232">        int myHdrLen = theBlockLen;</span>
+
+        /* Handle 64-bit ciphers */
+<span class="fc bfc" id="L235" title="All 2 branches covered.">        if (myCheckLen == 0) {</span>
+<span class="fc" id="L236">            myCheckLen = theBlockLen;</span>
+<span class="fc" id="L237">            myHdrLen += Integer.BYTES;</span>
+<span class="fc" id="L238">            myNumBlocks++;</span>
+        }
+
+        /* Add a block for random data */
+<span class="fc" id="L242">        myNumBlocks++;</span>
+<span class="fc" id="L243">        myHdrLen += theBlockLen;</span>
+
+        /* Allocate buffer for data and encryption */
+<span class="fc" id="L246">        final int myBufferLen = theBlockLen &lt;&lt; 1;</span>
+<span class="fc" id="L247">        final byte[] myData = new byte[myTrueLen</span>
+                + myHdrLen];
+<span class="fc" id="L249">        final byte[] myBuffer = new byte[myBufferLen];</span>
+<span class="fc" id="L250">        final byte[] myResult = new byte[myBufferLen];</span>
+<span class="fc" id="L251">        final byte[] myRandom = new byte[theBlockLen];</span>
+
+        /* Build the initial block */
+<span class="fc bfc" id="L254" title="All 2 branches covered.">        for (int i = 0; i &lt; myCheckLen; i++) {</span>
+<span class="fc" id="L255">            myData[i] = getIntegrityValue(i);</span>
+        }
+<span class="fc" id="L257">        System.arraycopy(myByteLen, 0, myData, myCheckLen, Integer.BYTES);</span>
+<span class="fc" id="L258">        theFactory.getRandomSource().getRandom().nextBytes(myRandom);</span>
+<span class="fc" id="L259">        System.arraycopy(myRandom, 0, myData, myCheckLen + Integer.BYTES, theBlockLen);</span>
+<span class="fc" id="L260">        System.arraycopy(pBytesToSecure, 0, myData, myHdrLen, myDataLen);</span>
+
+        /* Initialise the cipher */
+<span class="fc" id="L263">        initCipherForWrapping();</span>
+
+        /* Loop WRAP_COUNT times */
+<span class="fc" id="L266">        int myCount = 1;</span>
+<span class="fc bfc" id="L267" title="All 2 branches covered.">        for (int myCycle = 0; myCycle &lt; WRAP_COUNT; myCycle++) {</span>
+            /* Loop through the data blocks */
+<span class="fc bfc" id="L269" title="All 2 branches covered.">            for (int myBlock = 1, myOffset = theBlockLen; myBlock &lt;= myNumBlocks; myBlock++, myOffset += theBlockLen) {</span>
+                /* Build the data to be encrypted */
+<span class="fc" id="L271">                System.arraycopy(myData, 0, myBuffer, 0, theBlockLen);</span>
+<span class="fc" id="L272">                System.arraycopy(myData, myOffset, myBuffer, theBlockLen, theBlockLen);</span>
+
+                /* Encrypt the byte array */
+<span class="fc" id="L275">                iterateCipher(myBuffer, myBufferLen, myResult);</span>
+
+                /* Adjust the result using the count as a mask */
+<span class="fc bfc" id="L278" title="All 2 branches covered.">                for (int myMask = myCount++, myIndex = myBufferLen - 1; myMask != 0; myMask &gt;&gt;&gt;= Byte.SIZE, myIndex--) {</span>
+<span class="fc" id="L279">                    myResult[myIndex] ^= (byte) myMask;</span>
+                }
+
+                /* Restore encrypted data */
+<span class="fc" id="L283">                System.arraycopy(myResult, 0, myData, 0, theBlockLen);</span>
+<span class="fc" id="L284">                System.arraycopy(myResult, theBlockLen, myData, myOffset, theBlockLen);</span>
+            }
+        }
+
+        /* Return the wrapped data */
+<span class="fc" id="L289">        return myData;</span>
+    }
+
+    @Override
+    public byte[] deriveBytes(final byte[] pSecuredBytes,
+                              final int pOffset) throws GordianException {
+        /* Determine number of blocks */
+<span class="fc" id="L296">        int myDataLen = pSecuredBytes.length</span>
+                - theBlockLen - pOffset;
+<span class="fc" id="L298">        final int myNumBlocks = myDataLen</span>
+                / theBlockLen;
+
+        /* Data must be a multiple of BlockLength */
+<span class="pc bpc" id="L302" title="1 of 2 branches missed.">        if (myNumBlocks * theBlockLen != myDataLen) {</span>
+<span class="nc" id="L303">            throw new GordianDataException(&quot;Invalid data length&quot;);</span>
+        }
+
+        /* Allocate buffers for data and encryption */
+<span class="fc" id="L307">        final int myBufferLen = theBlockLen &lt;&lt; 1;</span>
+<span class="fc" id="L308">        final byte[] myData = new byte[pSecuredBytes.length - pOffset];</span>
+<span class="fc" id="L309">        System.arraycopy(pSecuredBytes, pOffset, myData, 0, pSecuredBytes.length - pOffset);</span>
+<span class="fc" id="L310">        final byte[] myBuffer = new byte[myBufferLen];</span>
+<span class="fc" id="L311">        final byte[] myResult = new byte[myBufferLen];</span>
+
+        /* Initialise the cipher */
+<span class="fc" id="L314">        initCipherForUnwrapping();</span>
+
+        /* Loop WRAP_COUNT times */
+<span class="fc" id="L317">        int myCount = myNumBlocks * WRAP_COUNT;</span>
+<span class="fc bfc" id="L318" title="All 2 branches covered.">        for (int myCycle = WRAP_COUNT; myCycle &gt; 0; myCycle--) {</span>
+            /* Loop through the data blocks */
+<span class="fc" id="L320">            for (int myBlock = myNumBlocks, myOffset = theBlockLen</span>
+<span class="fc bfc" id="L321" title="All 2 branches covered.">                    * myBlock; myBlock &gt;= 1; myBlock--, myOffset -= theBlockLen) {</span>
+                /* Build the data to be decrypted */
+<span class="fc" id="L323">                System.arraycopy(myData, 0, myBuffer, 0, theBlockLen);</span>
+<span class="fc" id="L324">                System.arraycopy(myData, myOffset, myBuffer, theBlockLen, theBlockLen);</span>
+
+                /* Adjust the buffer using the count as a mask */
+<span class="fc bfc" id="L327" title="All 2 branches covered.">                for (int myMask = myCount--, myIndex = myBufferLen - 1; myMask != 0; myMask &gt;&gt;&gt;= Byte.SIZE, myIndex--) {</span>
+<span class="fc" id="L328">                    myBuffer[myIndex] ^= (byte) myMask;</span>
+                }
+
+                /* Decrypt the byte array */
+<span class="fc" id="L332">                iterateCipher(myBuffer, myBufferLen, myResult);</span>
+
+                /* Restore decrypted data */
+<span class="fc" id="L335">                System.arraycopy(myResult, 0, myData, 0, theBlockLen);</span>
+<span class="fc" id="L336">                System.arraycopy(myResult, theBlockLen, myData, myOffset, theBlockLen);</span>
+            }
+        }
+
+        /* Handle 64-bit ciphers */
+<span class="fc" id="L341">        int myCheckLen = theBlockLen - Integer.BYTES;</span>
+<span class="fc bfc" id="L342" title="All 2 branches covered.">        if (myCheckLen == 0) {</span>
+<span class="fc" id="L343">            myCheckLen = theBlockLen;</span>
+<span class="fc" id="L344">            myDataLen -= theBlockLen;</span>
+        }
+
+        /* Adjust for random data */
+<span class="fc" id="L348">        myDataLen -= theBlockLen;</span>
+
+        /* Check initialisation value */
+<span class="fc" id="L351">        int checkFail = 0;</span>
+<span class="fc bfc" id="L352" title="All 2 branches covered.">        for (int myInit = 0; myInit &lt; myCheckLen; myInit++) {</span>
+<span class="fc" id="L353">            checkFail |= myData[myInit] ^ getIntegrityValue(myInit);</span>
+        }
+
+        /* Obtain encoded length */
+<span class="fc" id="L357">        final byte[] myByteLen = Arrays.copyOfRange(myData, myCheckLen, myCheckLen + Integer.BYTES);</span>
+<span class="fc" id="L358">        final int myEncodedLen = GordianDataConverter.byteArrayToInteger(myByteLen);</span>
+
+        /* Obtain zeroLen and check that it is valid */
+<span class="fc" id="L361">        final int myZeroLen = myDataLen - myEncodedLen;</span>
+<span class="pc bpc" id="L362" title="1 of 2 branches missed.">        checkFail |= myZeroLen &lt; 0 ? 1 : 0;</span>
+<span class="pc bpc" id="L363" title="1 of 2 branches missed.">        checkFail |= myZeroLen &gt;= theBlockLen ? 2 : 0;</span>
+
+        /* Check trailing bytes */
+<span class="pc bpc" id="L366" title="1 of 4 branches missed.">        for (int myZeros = myZeroLen, myLoc = myData.length - 1; myZeros &gt; 0 &amp;&amp; myLoc &gt; 0; myZeros--, myLoc--) {</span>
+            /* Check that byte is zero */
+<span class="fc" id="L368">            checkFail |= myData[myLoc];</span>
+        }
+
+        /* Return unwrapped data */
+<span class="pc bpc" id="L372" title="1 of 2 branches missed.">        if (checkFail == 0) {</span>
+<span class="fc" id="L373">            return Arrays.copyOfRange(myData, myCheckLen + Integer.BYTES + theBlockLen, myData.length</span>
+                    - myZeroLen);
+        }
+
+        /* Reject if checks fail */
+<span class="nc" id="L378">        throw new GordianDataException(&quot;Integrity checks failed&quot;);</span>
+    }
+
+    /**
+     * Determine integrity value for position.
+     *
+     * @param pIndex the index
+     * @return the integrity value
+     */
+    private static byte getIntegrityValue(final int pIndex) {
+<span class="fc bfc" id="L388" title="All 2 branches covered.">        return (pIndex + 1) % INTEGRITY_MODULO &lt; 2</span>
+<span class="fc" id="L389">                ? INTEGRITY_VALUE1</span>
+<span class="fc" id="L390">                : INTEGRITY_VALUE2;</span>
+    }
+
+    /**
+     * Initialise cipher for wrapping.
+     *
+     * @throws GordianException on error
+     */
+    protected void initCipherForWrapping() throws GordianException {
+<span class="fc" id="L399">        theCipher.initForEncrypt(GordianCipherParameters.key(theKey));</span>
+<span class="fc" id="L400">    }</span>
+
+    /**
+     * Initialise cipher for unwrapping.
+     *
+     * @throws GordianException on error
+     */
+    protected void initCipherForUnwrapping() throws GordianException {
+<span class="fc" id="L408">        theCipher.initForDecrypt(GordianCipherParameters.key(theKey));</span>
+<span class="fc" id="L409">    }</span>
+
+    /**
+     * Perform Cipher operation.
+     *
+     * @param pInBuffer  the input buffer
+     * @param pBufferLen the buffer length
+     * @param pResult    the results buffer
+     * @throws GordianException on erro
+     */
+    protected void iterateCipher(final byte[] pInBuffer,
+                                 final int pBufferLen,
+                                 final byte[] pResult) throws GordianException {
+<span class="fc" id="L422">        theCipher.finish(pInBuffer, 0, pBufferLen, pResult, 0);</span>
+<span class="fc" id="L423">    }</span>
+
+    @Override
+    public int getKeyWrapLength(final GordianKey&lt;?&gt; pKey) {
+        /* Obtain the id of the keySpec */
+<span class="fc" id="L428">        final GordianKeySpec mySpec = pKey.getKeyType();</span>
+<span class="fc" id="L429">        final AlgorithmIdentifier myAlgId = theFactory.getIdentifierForSpec(mySpec);</span>
+
+        /* Determine wrapped key length */
+<span class="fc" id="L432">        final int myDataLen = getDataWrapLength(mySpec.getKeyLength().getByteLength());</span>
+
+        /* return the calculated length */
+<span class="fc" id="L435">        return GordianWrappedKeyASN1.getEncodedLength(myAlgId, myDataLen);</span>
+    }
+
+    @Override
+    public int getDataWrapLength(final int pDataLength) {
+<span class="fc" id="L440">        final GordianLength myBlockLen = getKeySpec().getBlockLength();</span>
+<span class="fc" id="L441">        return getKeyWrapLength(pDataLength, myBlockLen)</span>
+<span class="fc" id="L442">                + getKeyWrapExpansion(myBlockLen);</span>
+    }
+
+    @Override
+    public int getPrivateKeyWrapLength(final GordianKeyPair pKeyPair) throws GordianException {
+        /* Determine and check the keySpec */
+<span class="nc" id="L448">        final GordianKeyPairFactory myFactory = theFactory.getAsyncFactory().getKeyPairFactory();</span>
+<span class="nc" id="L449">        final GordianCoreKeyPairGenerator myGenerator = (GordianCoreKeyPairGenerator) myFactory.getKeyPairGenerator(pKeyPair.getKeyPairSpec());</span>
+<span class="nc" id="L450">        final PKCS8EncodedKeySpec myPrivateKey = myGenerator.getPKCS8Encoding(pKeyPair);</span>
+<span class="nc" id="L451">        return getDataWrapLength(myPrivateKey.getEncoded().length);</span>
+    }
+
+    /**
+     * Obtain initial wrapLength for a particular dataLength and BlockSize.
+     *
+     * @param pDataLength the data length
+     * @param pBlockLen   the number of bits in the blockLen
+     * @return the keyWrap expansion
+     */
+    public static int getKeyWrapLength(final int pDataLength,
+                                       final GordianLength pBlockLen) {
+<span class="fc" id="L463">        final int myBlockLen = pBlockLen.getByteLength() &gt;&gt; 1;</span>
+<span class="fc" id="L464">        final int myNumBlocks = (pDataLength + myBlockLen - 1) / myBlockLen;</span>
+<span class="fc" id="L465">        return myNumBlocks * myBlockLen;</span>
+    }
+
+    /**
+     * Obtain keyWrapExpansion for a blockLen.
+     *
+     * @param pBlockLen the number of bits in the blockLen
+     * @return the keyWrap expansion
+     */
+    public static int getKeyWrapExpansion(final GordianLength pBlockLen) {
+<span class="fc" id="L475">        final int myBlockLen = pBlockLen.getByteLength() &gt;&gt; 1;</span>
+<span class="fc bfc" id="L476" title="All 2 branches covered.">        final int myNumBlocks = 1 + (myBlockLen &lt;= Integer.BYTES</span>
+<span class="fc" id="L477">                ? 2</span>
+<span class="fc" id="L478">                : 1);</span>
+<span class="fc" id="L479">        return myNumBlocks * myBlockLen;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

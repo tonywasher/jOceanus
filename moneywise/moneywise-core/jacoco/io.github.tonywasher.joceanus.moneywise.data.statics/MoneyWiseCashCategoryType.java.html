@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseCashCategoryType.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.moneywise.data.statics</a> &gt; <span class="el_source">MoneyWiseCashCategoryType.java</span></div><h1>MoneyWiseCashCategoryType.java</h1><pre class="source lang-java linenums">/*
+ * MoneyWise: Finance Application
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.moneywise.data.statics;
+
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.metis.data.MetisDataResource;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
+import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataSet;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValues;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusStaticDataClass;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusStaticDataItem;
+
+/**
+ * AccountCategoryType data type.
+ *
+ * @author Tony Washer
+ */
+public class MoneyWiseCashCategoryType
+        extends PrometheusStaticDataItem {
+    /**
+     * Object name.
+     */
+<span class="fc" id="L39">    public static final String OBJECT_NAME = MoneyWiseStaticDataType.CASHTYPE.getItemName();</span>
+
+    /**
+     * List name.
+     */
+<span class="fc" id="L44">    public static final String LIST_NAME = MoneyWiseStaticDataType.CASHTYPE.getListName();</span>
+
+    /**
+     * Report fields.
+     */
+<span class="fc" id="L49">    private static final MetisFieldSet&lt;MoneyWiseCashCategoryType&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseCashCategoryType.class);</span>
+
+    /**
+     * Copy Constructor.
+     *
+     * @param pList    The list to associate the Cash Category Type with
+     * @param pCatType The Cash Category Type to copy
+     */
+    protected MoneyWiseCashCategoryType(final MoneyWiseCashCategoryTypeList pList,
+                                        final MoneyWiseCashCategoryType pCatType) {
+<span class="fc" id="L59">        super(pList, pCatType);</span>
+<span class="fc" id="L60">    }</span>
+
+    /**
+     * Basic constructor.
+     *
+     * @param pList The list to associate the Cash Category Type with
+     * @param pName Name of Cash Category Type
+     * @throws OceanusException on error
+     */
+    private MoneyWiseCashCategoryType(final MoneyWiseCashCategoryTypeList pList,
+                                      final String pName) throws OceanusException {
+<span class="fc" id="L71">        super(pList, pName);</span>
+<span class="fc" id="L72">    }</span>
+
+    /**
+     * Basic constructor.
+     *
+     * @param pList  The list to associate the Cash Category Type with
+     * @param pClass Class of Cash Category Type
+     * @throws OceanusException on error
+     */
+    private MoneyWiseCashCategoryType(final MoneyWiseCashCategoryTypeList pList,
+                                      final MoneyWiseCashCategoryClass pClass) throws OceanusException {
+<span class="nc" id="L83">        super(pList, pClass);</span>
+<span class="nc" id="L84">    }</span>
+
+    /**
+     * Values constructor.
+     *
+     * @param pList   The list to associate the item with
+     * @param pValues the values
+     * @throws OceanusException on error
+     */
+    private MoneyWiseCashCategoryType(final MoneyWiseCashCategoryTypeList pList,
+                                      final PrometheusDataValues pValues) throws OceanusException {
+<span class="fc" id="L95">        super(pList, pValues);</span>
+<span class="fc" id="L96">    }</span>
+
+    @Override
+    public MetisFieldSetDef getDataFieldSet() {
+<span class="fc" id="L100">        return FIELD_DEFS;</span>
+    }
+
+    /**
+     * Return the Cash class of the CashCategoryType.
+     *
+     * @return the class
+     */
+    public MoneyWiseCashCategoryClass getCashClass() {
+<span class="fc" id="L109">        return (MoneyWiseCashCategoryClass) super.getStaticClass();</span>
+    }
+
+    /**
+     * Determine whether the CashCategoryType is the required class.
+     *
+     * @param pClass the desired class
+     * @return &lt;code&gt;true&lt;/code&gt; if the cash category type is the required class, &lt;code&gt;false&lt;/code&gt;
+     * otherwise.
+     */
+    public boolean isCashCategory(final MoneyWiseCashCategoryClass pClass) {
+<span class="nc" id="L120">        return getCashClass().equals(pClass);</span>
+    }
+
+    @Override
+    public MoneyWiseCashCategoryType getBase() {
+<span class="fc" id="L125">        return (MoneyWiseCashCategoryType) super.getBase();</span>
+    }
+
+    @Override
+    public MoneyWiseCashCategoryTypeList getList() {
+<span class="fc" id="L130">        return (MoneyWiseCashCategoryTypeList) super.getList();</span>
+    }
+
+    /**
+     * Represents a list of {@link MoneyWiseCashCategoryType} objects.
+     */
+    public static class MoneyWiseCashCategoryTypeList
+            extends PrometheusStaticList&lt;MoneyWiseCashCategoryType&gt; {
+        /**
+         * Report fields.
+         */
+<span class="fc" id="L141">        private static final MetisFieldSet&lt;MoneyWiseCashCategoryTypeList&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseCashCategoryTypeList.class);</span>
+
+        /**
+         * Construct an empty CORE account category list.
+         *
+         * @param pData the DataSet for the list
+         */
+        public MoneyWiseCashCategoryTypeList(final PrometheusDataSet pData) {
+<span class="fc" id="L149">            super(MoneyWiseCashCategoryType.class, pData, MoneyWiseStaticDataType.CASHTYPE, PrometheusListStyle.CORE);</span>
+<span class="fc" id="L150">        }</span>
+
+        /**
+         * Constructor for a cloned List.
+         *
+         * @param pSource the source List
+         */
+        private MoneyWiseCashCategoryTypeList(final MoneyWiseCashCategoryTypeList pSource) {
+<span class="fc" id="L158">            super(pSource);</span>
+<span class="fc" id="L159">        }</span>
+
+        @Override
+        public MetisFieldSet&lt;MoneyWiseCashCategoryTypeList&gt; getDataFieldSet() {
+<span class="nc" id="L163">            return FIELD_DEFS;</span>
+        }
+
+        @Override
+        public String listName() {
+<span class="fc" id="L168">            return LIST_NAME;</span>
+        }
+
+        @Override
+        public MetisFieldSetDef getItemFields() {
+<span class="fc" id="L173">            return MoneyWiseCashCategoryType.FIELD_DEFS;</span>
+        }
+
+        @Override
+        protected Class&lt;MoneyWiseCashCategoryClass&gt; getEnumClass() {
+<span class="fc" id="L178">            return MoneyWiseCashCategoryClass.class;</span>
+        }
+
+        @Override
+        protected MoneyWiseCashCategoryTypeList getEmptyList(final PrometheusListStyle pStyle) {
+<span class="fc" id="L183">            final MoneyWiseCashCategoryTypeList myList = new MoneyWiseCashCategoryTypeList(this);</span>
+<span class="fc" id="L184">            myList.setStyle(pStyle);</span>
+<span class="fc" id="L185">            return myList;</span>
+        }
+
+        @Override
+        public MoneyWiseCashCategoryType addCopyItem(final PrometheusDataItem pItem) {
+            /* Can only clone a CashCategoryType */
+<span class="pc bpc" id="L191" title="1 of 2 branches missed.">            if (!(pItem instanceof MoneyWiseCashCategoryType)) {</span>
+<span class="nc" id="L192">                throw new UnsupportedOperationException();</span>
+            }
+
+<span class="fc" id="L195">            final MoneyWiseCashCategoryType myType = new MoneyWiseCashCategoryType(this, (MoneyWiseCashCategoryType) pItem);</span>
+<span class="fc" id="L196">            add(myType);</span>
+<span class="fc" id="L197">            return myType;</span>
+        }
+
+        @Override
+        public MoneyWiseCashCategoryType addNewItem() {
+<span class="nc" id="L202">            throw new UnsupportedOperationException();</span>
+        }
+
+        /**
+         * Obtain the type of the item.
+         *
+         * @return the type of the item
+         */
+        public String itemType() {
+<span class="nc" id="L211">            return LIST_NAME;</span>
+        }
+
+        /**
+         * Add a CashCategoryType to the list.
+         *
+         * @param pCatType the Name of the cash category type
+         * @return the new type
+         * @throws OceanusException on error
+         */
+        public MoneyWiseCashCategoryType addBasicItem(final String pCatType) throws OceanusException {
+            /* Create a new Cash Category Type */
+<span class="fc" id="L223">            final MoneyWiseCashCategoryType myCashType = new MoneyWiseCashCategoryType(this, pCatType);</span>
+
+            /* Check that this CashCategoryTypeId has not been previously added */
+<span class="pc bpc" id="L226" title="1 of 2 branches missed.">            if (!isIdUnique(myCashType.getIndexedId())) {</span>
+<span class="nc" id="L227">                myCashType.addError(ERROR_DUPLICATE, MetisDataResource.DATA_ID);</span>
+<span class="nc" id="L228">                throw new MoneyWiseDataException(myCashType, ERROR_VALIDATION);</span>
+            }
+
+            /* Add the Cash Category to the list */
+<span class="fc" id="L232">            add(myCashType);</span>
+<span class="fc" id="L233">            return myCashType;</span>
+        }
+
+        @Override
+        public MoneyWiseCashCategoryType addValuesItem(final PrometheusDataValues pValues) throws OceanusException {
+            /* Create the type */
+<span class="fc" id="L239">            final MoneyWiseCashCategoryType myType = new MoneyWiseCashCategoryType(this, pValues);</span>
+
+            /* Check that this TypeId has not been previously added */
+<span class="pc bpc" id="L242" title="1 of 2 branches missed.">            if (!isIdUnique(myType.getIndexedId())) {</span>
+<span class="nc" id="L243">                myType.addError(ERROR_DUPLICATE, MetisDataResource.DATA_ID);</span>
+<span class="nc" id="L244">                throw new MoneyWiseDataException(myType, ERROR_VALIDATION);</span>
+            }
+
+            /* Add to the list */
+<span class="fc" id="L248">            add(myType);</span>
+
+            /* Return it */
+<span class="fc" id="L251">            return myType;</span>
+        }
+
+        @Override
+        protected MoneyWiseCashCategoryType newItem(final PrometheusStaticDataClass pClass) throws OceanusException {
+            /* Create the type */
+<span class="nc" id="L257">            final MoneyWiseCashCategoryType myType = new MoneyWiseCashCategoryType(this, (MoneyWiseCashCategoryClass) pClass);</span>
+
+            /* Check that this TypeId has not been previously added */
+<span class="nc bnc" id="L260" title="All 2 branches missed.">            if (!isIdUnique(myType.getIndexedId())) {</span>
+<span class="nc" id="L261">                myType.addError(ERROR_DUPLICATE, MetisDataResource.DATA_ID);</span>
+<span class="nc" id="L262">                throw new MoneyWiseDataException(myType, ERROR_VALIDATION);</span>
+            }
+
+            /* Add to the list */
+<span class="nc" id="L266">            add(myType);</span>
+
+            /* Return it */
+<span class="nc" id="L269">            return myType;</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

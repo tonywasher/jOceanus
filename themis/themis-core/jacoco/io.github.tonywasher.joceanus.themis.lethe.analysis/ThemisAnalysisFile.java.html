@@ -1,0 +1,416 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ThemisAnalysisFile.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Themis Core Project Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.themis.lethe.analysis</a> &gt; <span class="el_source">ThemisAnalysisFile.java</span></div><h1>ThemisAnalysisFile.java</h1><pre class="source lang-java linenums">/*
+ * Themis: Java Project Framework
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.themis.lethe.analysis;
+
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.themis.exc.ThemisDataException;
+import io.github.tonywasher.joceanus.themis.exc.ThemisIOException;
+import io.github.tonywasher.joceanus.themis.lethe.analysis.ThemisAnalysisDataMap.ThemisAnalysisDataType;
+import io.github.tonywasher.joceanus.themis.lethe.analysis.ThemisAnalysisDataMap.ThemisAnalysisIntermediate;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayDeque;
+import java.util.Deque;
+import java.util.List;
+
+/**
+ * Analysis representation of a java file.
+ */
+public class ThemisAnalysisFile
+        implements ThemisAnalysisContainer, ThemisAnalysisIntermediate {
+    /**
+     * Object class.
+     */
+    public interface ThemisAnalysisObject
+            extends ThemisAnalysisDataType, ThemisAnalysisContainer {
+        /**
+         * Obtain the short name.
+         *
+         * @return the name
+         */
+        String getShortName();
+
+        /**
+         * Obtain the full name of the object.
+         *
+         * @return the fullName
+         */
+        String getFullName();
+
+        /**
+         * Obtain ancestors.
+         *
+         * @return the list of ancestors
+         */
+        List&lt;ThemisAnalysisReference&gt; getAncestors();
+
+        /**
+         * Obtain properties.
+         *
+         * @return the properties
+         */
+        ThemisAnalysisProperties getProperties();
+    }
+
+    /**
+     * The buffer length (must be longer than longest line).
+     */
+    private static final int BUFLEN = 1024;
+
+    /**
+     * The location of the file.
+     */
+    private final File theLocation;
+
+    /**
+     * The name of the file.
+     */
+    private final String theName;
+
+    /**
+     * The package file.
+     */
+    private final ThemisAnalysisPackage thePackage;
+
+    /**
+     * The dataMap.
+     */
+    private final ThemisAnalysisDataMap theDataMap;
+
+    /**
+     * The contents.
+     */
+    private final Deque&lt;ThemisAnalysisElement&gt; theContents;
+
+    /**
+     * The number of lines in the file.
+     */
+    private int theNumLines;
+
+    /**
+     * Constructor.
+     *
+     * @param pPackage the package
+     * @param pFile    the file to analyse
+     */
+    ThemisAnalysisFile(final ThemisAnalysisPackage pPackage,
+<span class="nc" id="L117">                       final File pFile) {</span>
+        /* Store the parameters */
+<span class="nc" id="L119">        thePackage = pPackage;</span>
+<span class="nc" id="L120">        theLocation = pFile;</span>
+<span class="nc" id="L121">        theName = pFile.getName().replace(ThemisAnalysisPackage.SFX_JAVA, &quot;&quot;);</span>
+<span class="nc" id="L122">        theDataMap = new ThemisAnalysisDataMap(thePackage.getDataMap());</span>
+
+        /* Create the list */
+<span class="nc" id="L125">        theContents = new ArrayDeque&lt;&gt;();</span>
+<span class="nc" id="L126">    }</span>
+
+    /**
+     * Obtain the name of the fileClass.
+     *
+     * @return the name
+     */
+    public String getName() {
+<span class="nc" id="L134">        return theName;</span>
+    }
+
+    /**
+     * Obtain the location of the fileClass.
+     *
+     * @return the location
+     */
+    public String getLocation() {
+<span class="nc" id="L143">        return theLocation.getAbsolutePath();</span>
+    }
+
+    /**
+     * Process the file.
+     *
+     * @throws OceanusException on error
+     */
+    void processFile() throws OceanusException {
+        /* Create the queue */
+<span class="nc" id="L153">        final Deque&lt;ThemisAnalysisElement&gt; myLines = new ArrayDeque&lt;&gt;();</span>
+
+        /* create a read buffer */
+<span class="nc" id="L156">        final char[] myBuffer = new char[BUFLEN];</span>
+<span class="nc" id="L157">        int myOffset = 0;</span>
+
+        /* Protect against exceptions */
+<span class="nc" id="L160">        try (InputStream myStream = new FileInputStream(theLocation);</span>
+<span class="nc" id="L161">             InputStreamReader myInputReader = new InputStreamReader(myStream, StandardCharsets.UTF_8);</span>
+<span class="nc" id="L162">             BufferedReader myReader = new BufferedReader(myInputReader)) {</span>
+
+            /* Read the header entry */
+            while (true) {
+                /* Read some characters into the buffer */
+<span class="nc" id="L167">                final int myChars = myReader.read(myBuffer, myOffset, BUFLEN - myOffset);</span>
+<span class="nc bnc" id="L168" title="All 4 branches missed.">                if (myChars == -1 &amp;&amp; myOffset == 0) {</span>
+<span class="nc" id="L169">                    break;</span>
+                }
+
+                /* Process lines in the buffer */
+<span class="nc" id="L173">                myOffset = processLines(myLines, myBuffer, myChars + myOffset);</span>
+<span class="nc" id="L174">            }</span>
+
+            /* Record the number of lines */
+<span class="nc" id="L177">            theNumLines = myLines.size();</span>
+
+            /* Perform initial processing pass */
+<span class="nc" id="L180">            initialProcessingPass(myLines);</span>
+
+            /* Catch exceptions */
+<span class="nc" id="L183">        } catch (IOException e) {</span>
+            /* Throw an exception */
+<span class="nc" id="L185">            throw new ThemisIOException(&quot;Failed to load file &quot;</span>
+<span class="nc" id="L186">                    + theLocation.getAbsolutePath(), e);</span>
+<span class="nc" id="L187">        }</span>
+<span class="nc" id="L188">    }</span>
+
+    @Override
+    public ThemisAnalysisDataMap getDataMap() {
+<span class="nc" id="L192">        return theDataMap;</span>
+    }
+
+    @Override
+    public Deque&lt;ThemisAnalysisElement&gt; getContents() {
+<span class="nc" id="L197">        return theContents;</span>
+    }
+
+    @Override
+    public ThemisAnalysisContainer getParent() {
+<span class="nc" id="L202">        return this;</span>
+    }
+
+    /**
+     * Obtain the package.
+     *
+     * @return the package
+     */
+    String getPackageName() {
+<span class="nc" id="L211">        return thePackage.getPackage();</span>
+    }
+
+    @Override
+    public int getNumLines() {
+<span class="nc" id="L216">        return theNumLines;</span>
+    }
+
+    /**
+     * Process lines.
+     *
+     * @param pLines    the list of lines to build
+     * @param pBuffer   the character buffer
+     * @param pNumChars the number of characters in the buffer
+     * @return the remaining characters in the buffer
+     * @throws OceanusException on error
+     */
+    private static int processLines(final Deque&lt;ThemisAnalysisElement&gt; pLines,
+                                    final char[] pBuffer,
+                                    final int pNumChars) throws OceanusException {
+        /* The start of the current line */
+<span class="nc" id="L232">        int myOffset = 0;</span>
+
+        /* Look for line feed in the buffer */
+<span class="nc" id="L235">        int myLF = findLineFeedInBuffer(pBuffer, 0, pNumChars);</span>
+<span class="nc bnc" id="L236" title="All 2 branches missed.">        while (myLF != -1) {</span>
+            /* Build the line */
+<span class="nc" id="L238">            final ThemisAnalysisLine myLine = buildLine(pBuffer, myOffset, myLF);</span>
+<span class="nc" id="L239">            pLines.add(myLine);</span>
+
+            /* Look for next lineFeed */
+<span class="nc" id="L242">            myOffset = myLF + 1;</span>
+<span class="nc" id="L243">            myLF = findLineFeedInBuffer(pBuffer, myOffset, pNumChars);</span>
+<span class="nc" id="L244">        }</span>
+
+        /* Copy remaining characters down */
+<span class="nc" id="L247">        final int myRemaining = pNumChars - myOffset;</span>
+<span class="nc bnc" id="L248" title="All 2 branches missed.">        if (myRemaining &gt; 0) {</span>
+<span class="nc" id="L249">            System.arraycopy(pBuffer, myOffset, pBuffer, 0, myRemaining);</span>
+        }
+
+        /* Return the number remaining */
+<span class="nc" id="L253">        return myRemaining;</span>
+    }
+
+    /**
+     * Find lineFeed in buffer.
+     *
+     * @param pBuffer   the character buffer
+     * @param pOffset   the starting offset
+     * @param pNumChars the number of characters in the buffer
+     * @return the remaining characters in the buffer
+     * @throws OceanusException on error
+     */
+    private static int findLineFeedInBuffer(final char[] pBuffer,
+                                            final int pOffset,
+                                            final int pNumChars) throws OceanusException {
+        /* Loop through the buffer */
+<span class="nc bnc" id="L269" title="All 2 branches missed.">        for (int i = pOffset; i &lt; pNumChars; i++) {</span>
+            /* Check for LF and NULL */
+<span class="nc bnc" id="L271" title="All 3 branches missed.">            switch (pBuffer[i]) {</span>
+                case ThemisAnalysisChar.LF:
+<span class="nc" id="L273">                    return i;</span>
+                case ThemisAnalysisChar.NULL:
+<span class="nc" id="L275">                    throw new ThemisDataException(&quot;Null character in file&quot;);</span>
+                default:
+                    break;
+            }
+        }
+
+        /* Look for line feed in the buffer */
+<span class="nc" id="L282">        return -1;</span>
+    }
+
+    /**
+     * Build line from buffer.
+     *
+     * @param pBuffer   the character buffer
+     * @param pOffset   the starting offset
+     * @param pLineFeed the location of the lineFeed
+     * @return the new line
+     */
+    private static ThemisAnalysisLine buildLine(final char[] pBuffer,
+                                                final int pOffset,
+                                                final int pLineFeed) {
+        /* Strip any trailing cr */
+<span class="nc" id="L297">        int myLen = pLineFeed - pOffset;</span>
+<span class="nc bnc" id="L298" title="All 4 branches missed.">        if (myLen &gt; 0 &amp;&amp; pBuffer[pOffset + myLen - 1] == ThemisAnalysisChar.CR) {</span>
+<span class="nc" id="L299">            myLen--;</span>
+        }
+
+        /* Build the line */
+<span class="nc" id="L303">        return new ThemisAnalysisLine(pBuffer, pOffset, myLen);</span>
+    }
+
+    /**
+     * Post-process the lines as first Pass.
+     *
+     * @param pLines the lines to process
+     * @throws OceanusException on error
+     */
+    private void initialProcessingPass(final Deque&lt;ThemisAnalysisElement&gt; pLines) throws OceanusException {
+        /* Create the parser */
+<span class="nc" id="L314">        final ThemisAnalysisParser myParser = new ThemisAnalysisParser(pLines, theContents, this);</span>
+
+        /* Loop through the lines */
+<span class="nc bnc" id="L317" title="All 2 branches missed.">        while (myParser.hasLines()) {</span>
+            /* Access next line */
+<span class="nc" id="L319">            ThemisAnalysisLine myLine = (ThemisAnalysisLine) myParser.popNextLine();</span>
+
+            /* Process comments/blanks/package/imports */
+<span class="nc bnc" id="L322" title="All 2 branches missed.">            boolean processed = myParser.processCommentsAndBlanks(myLine)</span>
+<span class="nc bnc" id="L323" title="All 2 branches missed.">                    || processPackage(myLine)</span>
+<span class="nc bnc" id="L324" title="All 2 branches missed.">                    || myParser.processImports(myLine);</span>
+
+            /* If we haven't processed yet */
+<span class="nc bnc" id="L327" title="All 2 branches missed.">            if (!processed) {</span>
+                /* Process the class */
+<span class="nc" id="L329">                processed = myParser.processClass(myLine);</span>
+<span class="nc bnc" id="L330" title="All 2 branches missed.">                if (!processed) {</span>
+<span class="nc" id="L331">                    throw new ThemisDataException(&quot;Unexpected construct in file&quot;);</span>
+                }
+
+                /* Process any trailing blanks/comments */
+<span class="nc bnc" id="L335" title="All 2 branches missed.">                while (myParser.hasLines()) {</span>
+<span class="nc" id="L336">                    myLine = (ThemisAnalysisLine) myParser.popNextLine();</span>
+<span class="nc bnc" id="L337" title="All 2 branches missed.">                    if (!myParser.processCommentsAndBlanks(myLine)) {</span>
+<span class="nc" id="L338">                        throw new ThemisDataException(&quot;Trailing data in file&quot;);</span>
+                    }
+                }
+            }
+<span class="nc" id="L342">        }</span>
+<span class="nc" id="L343">    }</span>
+
+    /**
+     * perform consolidation processing pass.
+     *
+     * @throws OceanusException on error
+     */
+    void consolidationProcessingPass() throws OceanusException {
+        /* Consolidate classMap */
+<span class="nc" id="L352">        theDataMap.consolidateMap();</span>
+<span class="nc" id="L353">    }</span>
+
+    /**
+     * Perform final processing pass.
+     *
+     * @throws OceanusException on error
+     */
+    void finalProcessingPass() throws OceanusException {
+        /* Resolve references */
+<span class="nc" id="L362">        theDataMap.resolveReferences();</span>
+
+        /* Loop through the lines */
+<span class="nc bnc" id="L365" title="All 2 branches missed.">        for (ThemisAnalysisElement myElement : theContents) {</span>
+            /* If the element is a container */
+<span class="nc bnc" id="L367" title="All 2 branches missed.">            if (myElement instanceof ThemisAnalysisContainer myContainer) {</span>
+                /* Access and process the container */
+<span class="nc" id="L369">                myContainer.postProcessLines();</span>
+            }
+<span class="nc" id="L371">        }</span>
+
+        /* Report unknown items */
+<span class="nc" id="L374">        theDataMap.reportUnknown();</span>
+<span class="nc" id="L375">    }</span>
+
+    /**
+     * Process a potential import line.
+     *
+     * @param pLine the line
+     * @return have we processed the line?
+     * @throws OceanusException on error
+     */
+    private boolean processPackage(final ThemisAnalysisLine pLine) throws OceanusException {
+        /* If this is a package line */
+<span class="nc bnc" id="L386" title="All 2 branches missed.">        if (ThemisAnalysisPackage.isPackage(pLine)) {</span>
+            /* Check that the package is correct named */
+<span class="nc bnc" id="L388" title="All 2 branches missed.">            if (!thePackage.getPackage().equals(pLine.toString())) {</span>
+<span class="nc" id="L389">                throw new ThemisDataException(&quot;Bad package&quot;);</span>
+            }
+
+            /* Setup the file resources */
+<span class="nc" id="L393">            theDataMap.setUpFileResources();</span>
+
+            /* Declare all the files in this package to the dataMap */
+<span class="nc bnc" id="L396" title="All 2 branches missed.">            for (ThemisAnalysisFile myFile : thePackage.getFiles()) {</span>
+<span class="nc" id="L397">                theDataMap.declareFile(myFile);</span>
+<span class="nc" id="L398">            }</span>
+
+            /* Process the package line */
+<span class="nc" id="L401">            theContents.add(thePackage);</span>
+
+            /* Processed */
+<span class="nc" id="L404">            return true;</span>
+        }
+
+        /* return false */
+<span class="nc" id="L408">        return false;</span>
+    }
+
+    @Override
+    public String toString() {
+<span class="nc" id="L413">        return getName();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

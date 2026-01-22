@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>OceanusLogger.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Oceanus Java Core Utilities</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.oceanus.logger</a> &gt; <span class="el_source">OceanusLogger.java</span></div><h1>OceanusLogger.java</h1><pre class="source lang-java linenums">/*
+ * Oceanus: Java Utilities
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.oceanus.logger;
+
+/**
+ * Logger instance.
+ */
+public class OceanusLogger {
+    /**
+     * The log manager instance.
+     */
+    private final OceanusLogManager theManager;
+
+    /**
+     * The class for which this is the logger.
+     */
+    private final Class&lt;?&gt; theOwner;
+
+    /**
+     * Constructor.
+     *
+     * @param pManager the manager
+     * @param pOwner   the owning class
+     */
+    public OceanusLogger(final OceanusLogManager pManager,
+<span class="nc" id="L40">                         final Class&lt;?&gt; pOwner) {</span>
+<span class="nc" id="L41">        theManager = pManager;</span>
+<span class="nc" id="L42">        theOwner = pOwner;</span>
+<span class="nc" id="L43">    }</span>
+
+    /**
+     * Write a debug message with parameters.
+     *
+     * @param pFormat the format
+     * @param pArgs   the arguments
+     */
+    public void debug(final String pFormat,
+                      final Object... pArgs) {
+<span class="nc" id="L53">        final String myMessage = String.format(pFormat, pArgs);</span>
+<span class="nc" id="L54">        final String myLogMessage = theManager.formatMessage(theOwner, OceanusLogLevel.DEBUG, myMessage);</span>
+<span class="nc" id="L55">        theManager.writeLogMessage(myLogMessage);</span>
+<span class="nc" id="L56">    }</span>
+
+    /**
+     * Write a debug message with hex data.
+     *
+     * @param pMessage the message
+     * @param pData    the data
+     */
+    public void debug(final String pMessage,
+                      final byte[] pData) {
+<span class="nc" id="L66">        final String myLogMessage = theManager.formatMessage(theOwner, OceanusLogLevel.DEBUG, pMessage);</span>
+<span class="nc" id="L67">        final String myLogData = OceanusLogManager.formatData(pData);</span>
+<span class="nc" id="L68">        theManager.writeLogMessage(myLogMessage + myLogData);</span>
+<span class="nc" id="L69">    }</span>
+
+    /**
+     * Write a debug message with hex data.
+     *
+     * @param pMessage the message
+     * @param pData    the data
+     * @param pOffset  the offset
+     * @param pLength  the length of data
+     */
+    public void debug(final String pMessage,
+                      final byte[] pData,
+                      final int pOffset,
+                      final int pLength) {
+<span class="nc" id="L83">        final String myLogMessage = theManager.formatMessage(theOwner, OceanusLogLevel.DEBUG, pMessage);</span>
+<span class="nc" id="L84">        final String myLogData = OceanusLogManager.formatData(pData, pOffset, pLength);</span>
+<span class="nc" id="L85">        theManager.writeLogMessage(myLogMessage + myLogData);</span>
+<span class="nc" id="L86">    }</span>
+
+    /**
+     * Write an information message with parameters.
+     *
+     * @param pFormat the format
+     * @param pArgs   the arguments
+     */
+    public void info(final String pFormat,
+                     final Object... pArgs) {
+<span class="nc" id="L96">        final String myMessage = String.format(pFormat, pArgs);</span>
+<span class="nc" id="L97">        final String myLogMessage = theManager.formatMessage(theOwner, OceanusLogLevel.INFO, myMessage);</span>
+<span class="nc" id="L98">        theManager.writeLogMessage(myLogMessage);</span>
+<span class="nc" id="L99">    }</span>
+
+    /**
+     * Write an error message with parameters.
+     *
+     * @param pFormat the format
+     * @param pArgs   the arguments
+     */
+    public void error(final String pFormat,
+                      final Object... pArgs) {
+<span class="nc" id="L109">        final String myMessage = String.format(pFormat, pArgs);</span>
+<span class="nc" id="L110">        final String myLogMessage = theManager.formatMessage(theOwner, OceanusLogLevel.ERROR, myMessage);</span>
+<span class="nc" id="L111">        theManager.writeLogMessage(myLogMessage);</span>
+<span class="nc" id="L112">    }</span>
+
+    /**
+     * Write an error message with exception.
+     *
+     * @param pMessage   the message
+     * @param pException the exception
+     */
+    public void error(final String pMessage,
+                      final Throwable pException) {
+<span class="nc" id="L122">        final String myLogMessage = theManager.formatMessage(theOwner, OceanusLogLevel.ERROR, pMessage);</span>
+<span class="nc" id="L123">        theManager.writeLogMessage(myLogMessage, pException);</span>
+<span class="nc" id="L124">    }</span>
+
+    /**
+     * Write a fatal error message with parameters.
+     *
+     * @param pFormat the format
+     * @param pArgs   the arguments
+     */
+    public void fatal(final String pFormat,
+                      final Object... pArgs) {
+<span class="nc" id="L134">        final String myMessage = String.format(pFormat, pArgs);</span>
+<span class="nc" id="L135">        final String myLogMessage = theManager.formatMessage(theOwner, OceanusLogLevel.FATAL, myMessage);</span>
+<span class="nc" id="L136">        theManager.writeLogMessage(myLogMessage);</span>
+<span class="nc" id="L137">    }</span>
+
+    /**
+     * Write a fatal error message with exception.
+     *
+     * @param pMessage   the message
+     * @param pException the exception
+     */
+    public void fatal(final String pMessage,
+                      final Throwable pException) {
+<span class="nc" id="L147">        final String myLogMessage = theManager.formatMessage(theOwner, OceanusLogLevel.FATAL, pMessage);</span>
+<span class="nc" id="L148">        theManager.writeLogMessage(myLogMessage, pException);</span>
+<span class="nc" id="L149">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

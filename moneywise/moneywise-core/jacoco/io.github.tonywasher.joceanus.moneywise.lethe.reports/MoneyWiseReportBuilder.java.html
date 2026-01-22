@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseReportBuilder.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.moneywise.lethe.reports</a> &gt; <span class="el_source">MoneyWiseReportBuilder.java</span></div><h1>MoneyWiseReportBuilder.java</h1><pre class="source lang-java linenums">/*
+ * MoneyWise: Finance Application
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.moneywise.lethe.reports;
+
+import java.util.EnumMap;
+import java.util.Map;
+
+import org.w3c.dom.Document;
+
+import io.github.tonywasher.joceanus.metis.report.MetisReportBase;
+import io.github.tonywasher.joceanus.metis.report.MetisReportManager;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysis;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisDataResource;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisSecurityBucket;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisValuesResource;
+import io.github.tonywasher.joceanus.moneywise.lethe.views.MoneyWiseAnalysisFilter;
+
+/**
+ * Report Classes.
+ *
+ * @author Tony Washer
+ */
+public class MoneyWiseReportBuilder {
+    /**
+     * The Total text.
+     */
+<span class="nc" id="L41">    protected static final String TEXT_TOTAL = MoneyWiseAnalysisDataResource.ANALYSIS_TOTALS.getValue();</span>
+
+    /**
+     * The Profit text.
+     */
+<span class="nc" id="L46">    protected static final String TEXT_PROFIT = MoneyWiseAnalysisValuesResource.SECURITYATTR_PROFIT.getValue();</span>
+
+    /**
+     * The Income text.
+     */
+<span class="nc" id="L51">    protected static final String TEXT_INCOME = MoneyWiseAnalysisValuesResource.PAYEEATTR_INCOME.getValue();</span>
+
+    /**
+     * The Expense text.
+     */
+<span class="nc" id="L56">    protected static final String TEXT_EXPENSE = MoneyWiseAnalysisValuesResource.PAYEEATTR_EXPENSE.getValue();</span>
+
+    /**
+     * The Report Manager.
+     */
+    private final MetisReportManager&lt;MoneyWiseAnalysisFilter&lt;?, ?&gt;&gt; theManager;
+
+    /**
+     * Map of allocated reports.
+     */
+    private final Map&lt;MoneyWiseReportType, MetisReportBase&lt;MoneyWiseAnalysis, MoneyWiseAnalysisFilter&lt;?, ?&gt;&gt;&gt; theReportMap;
+
+    /**
+     * Constructor.
+     *
+     * @param pManager the report manager
+     */
+<span class="nc" id="L73">    public MoneyWiseReportBuilder(final MetisReportManager&lt;MoneyWiseAnalysisFilter&lt;?, ?&gt;&gt; pManager) {</span>
+        /* Record the details */
+<span class="nc" id="L75">        theManager = pManager;</span>
+
+        /* Allocate map */
+<span class="nc" id="L78">        theReportMap = new EnumMap&lt;&gt;(MoneyWiseReportType.class);</span>
+<span class="nc" id="L79">    }</span>
+
+    /**
+     * Build a report of the appropriate type.
+     *
+     * @param pAnalysis the analysis
+     * @param pType     the report type
+     * @param pSecurity the security
+     * @return the Web document
+     */
+    public Document createReport(final MoneyWiseAnalysis pAnalysis,
+                                 final MoneyWiseReportType pType,
+                                 final MoneyWiseAnalysisSecurityBucket pSecurity) {
+        /* Access existing report */
+<span class="nc" id="L93">        MetisReportBase&lt;MoneyWiseAnalysis, MoneyWiseAnalysisFilter&lt;?, ?&gt;&gt; myReport = theReportMap.get(pType);</span>
+
+        /* If we have not previously allocated this report */
+<span class="nc bnc" id="L96" title="All 2 branches missed.">        if (myReport == null) {</span>
+            /* Switch on the report type */
+<span class="nc bnc" id="L98" title="All 11 branches missed.">            switch (pType) {</span>
+                case NETWORTH:
+<span class="nc" id="L100">                    myReport = new MoneyWiseReportNetWorth(theManager);</span>
+<span class="nc" id="L101">                    break;</span>
+                case BALANCESHEET:
+<span class="nc" id="L103">                    myReport = new MoneyWiseReportBalanceSheet(theManager);</span>
+<span class="nc" id="L104">                    break;</span>
+                case CASHFLOW:
+<span class="nc" id="L106">                    myReport = new MoneyWiseReportCashFlow(theManager);</span>
+<span class="nc" id="L107">                    break;</span>
+                case INCOMEEXPENSE:
+<span class="nc" id="L109">                    myReport = new MoneyWiseReportIncomeExpense(theManager);</span>
+<span class="nc" id="L110">                    break;</span>
+                case PORTFOLIO:
+<span class="nc" id="L112">                    myReport = new MoneyWiseReportPortfolioView(theManager);</span>
+<span class="nc" id="L113">                    break;</span>
+                case MARKETGROWTH:
+<span class="nc" id="L115">                    myReport = new MoneyWiseReportMarketGrowth(theManager);</span>
+<span class="nc" id="L116">                    break;</span>
+                case TAXBASIS:
+<span class="nc" id="L118">                    myReport = new MoneyWiseReportTaxationBasis(theManager);</span>
+<span class="nc" id="L119">                    break;</span>
+                case TAXCALC:
+<span class="nc" id="L121">                    myReport = new MoneyWiseReportTaxCalculation(theManager);</span>
+<span class="nc" id="L122">                    break;</span>
+                case ASSETGAINS:
+<span class="nc" id="L124">                    myReport = new MoneyWiseReportAssetGains(theManager);</span>
+<span class="nc" id="L125">                    break;</span>
+                case CAPITALGAINS:
+<span class="nc" id="L127">                    myReport = new MoneyWiseReportCapitalGains(theManager);</span>
+<span class="nc" id="L128">                    break;</span>
+                default:
+<span class="nc" id="L130">                    return null;</span>
+            }
+
+            /* Store allocated report */
+<span class="nc" id="L134">            theReportMap.put(pType, myReport);</span>
+        }
+
+        /* If the report requires the security */
+<span class="nc bnc" id="L138" title="All 2 branches missed.">        if (myReport instanceof MoneyWiseReportCapitalGains) {</span>
+<span class="nc" id="L139">            ((MoneyWiseReportCapitalGains) myReport).setSecurity(pSecurity);</span>
+        }
+
+        /* Set up the report */
+<span class="nc" id="L143">        theManager.setReport(myReport);</span>
+
+        /* Create the report */
+<span class="nc" id="L146">        return myReport.createReport(pAnalysis);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

@@ -1,0 +1,625 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseReportSelect.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.moneywise.lethe.ui.controls</a> &gt; <span class="el_source">MoneyWiseReportSelect.java</span></div><h1>MoneyWiseReportSelect.java</h1><pre class="source lang-java linenums">/*
+ * MoneyWise: Finance Application
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.moneywise.lethe.ui.controls;
+
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDatePeriod;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventManager;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
+import io.github.tonywasher.joceanus.metis.data.MetisDataDifference;
+import io.github.tonywasher.joceanus.metis.ui.MetisIcon;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysis;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisPortfolioBucket;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisPortfolioBucket.MoneyWiseAnalysisPortfolioBucketList;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisSecurityBucket;
+import io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisSecurityBucket.MoneyWiseAnalysisSecurityBucketList;
+import io.github.tonywasher.joceanus.moneywise.lethe.reports.MoneyWiseReportType;
+import io.github.tonywasher.joceanus.moneywise.ui.MoneyWiseUIResource;
+import io.github.tonywasher.joceanus.prometheus.views.PrometheusDataEvent;
+import io.github.tonywasher.joceanus.tethys.api.base.TethysUIComponent;
+import io.github.tonywasher.joceanus.tethys.api.base.TethysUIEvent;
+import io.github.tonywasher.joceanus.tethys.api.button.TethysUIButton;
+import io.github.tonywasher.joceanus.tethys.api.button.TethysUIButtonFactory;
+import io.github.tonywasher.joceanus.tethys.api.button.TethysUIDateRangeSelector;
+import io.github.tonywasher.joceanus.tethys.api.button.TethysUIScrollButtonManager;
+import io.github.tonywasher.joceanus.tethys.api.control.TethysUILabel;
+import io.github.tonywasher.joceanus.tethys.api.factory.TethysUIFactory;
+import io.github.tonywasher.joceanus.tethys.api.menu.TethysUIScrollItem;
+import io.github.tonywasher.joceanus.tethys.api.menu.TethysUIScrollMenu;
+import io.github.tonywasher.joceanus.tethys.api.menu.TethysUIScrollSubMenu;
+import io.github.tonywasher.joceanus.tethys.api.pane.TethysUIBoxPaneManager;
+
+import java.util.Iterator;
+
+/**
+ * Report selection panel.
+ */
+public class MoneyWiseReportSelect
+        implements OceanusEventProvider&lt;PrometheusDataEvent&gt;, TethysUIComponent {
+    /**
+     * Text for Report Label.
+     */
+<span class="nc" id="L57">    private static final String NLS_REPORT = MoneyWiseUIResource.REPORT_PROMPT.getValue();</span>
+
+    /**
+     * Text for Selection Title.
+     */
+<span class="nc" id="L62">    private static final String NLS_TITLE = MoneyWiseUIResource.REPORT_TITLE.getValue();</span>
+
+    /**
+     * The Event Manager.
+     */
+    private final OceanusEventManager&lt;PrometheusDataEvent&gt; theEventManager;
+
+    /**
+     * The panel.
+     */
+    private final TethysUIBoxPaneManager thePanel;
+
+    /**
+     * Reports scroll button.
+     */
+    private final TethysUIScrollButtonManager&lt;MoneyWiseReportType&gt; theReportButton;
+
+    /**
+     * Holding scroll button.
+     */
+    private final TethysUIScrollButtonManager&lt;MoneyWiseAnalysisSecurityBucket&gt; theHoldingButton;
+
+    /**
+     * Range select.
+     */
+    private final TethysUIDateRangeSelector theRangeSelect;
+
+    /**
+     * Print button.
+     */
+    private final TethysUIButton thePrintButton;
+
+    /**
+     * Save button.
+     */
+    private final TethysUIButton theSaveButton;
+
+    /**
+     * Current state.
+     */
+    private MoneyWiseReportState theState;
+
+    /**
+     * Saved state.
+     */
+    private MoneyWiseReportState theSavePoint;
+
+    /**
+     * Active flag.
+     */
+    private boolean isActive;
+
+    /**
+     * Constructor.
+     *
+     * @param pFactory the GUI factory
+     */
+<span class="nc" id="L119">    public MoneyWiseReportSelect(final TethysUIFactory&lt;?&gt; pFactory) {</span>
+        /* Create the buttons */
+<span class="nc" id="L121">        final TethysUIButtonFactory&lt;?&gt; myButtons = pFactory.buttonFactory();</span>
+<span class="nc" id="L122">        theReportButton = myButtons.newScrollButton(MoneyWiseReportType.class);</span>
+<span class="nc" id="L123">        theHoldingButton = myButtons.newScrollButton(MoneyWiseAnalysisSecurityBucket.class);</span>
+
+        /* Create the Range Select and disable its border */
+<span class="nc" id="L126">        theRangeSelect = myButtons.newDateRangeSelector();</span>
+
+        /* Create the labels */
+<span class="nc" id="L129">        final TethysUILabel myRepLabel = pFactory.controlFactory().newLabel(NLS_REPORT);</span>
+
+        /* Create the print button */
+<span class="nc" id="L132">        thePrintButton = myButtons.newButton();</span>
+<span class="nc" id="L133">        MetisIcon.configurePrintIconButton(thePrintButton);</span>
+
+        /* Create the save button */
+<span class="nc" id="L136">        theSaveButton = myButtons.newButton();</span>
+<span class="nc" id="L137">        MetisIcon.configureSaveIconButton(theSaveButton);</span>
+
+        /* Create initial state */
+<span class="nc" id="L140">        theState = new MoneyWiseReportState();</span>
+<span class="nc" id="L141">        theState.setRange(theRangeSelect);</span>
+<span class="nc" id="L142">        theState.setType(MoneyWiseReportType.getDefault());</span>
+
+        /* Create Event Manager */
+<span class="nc" id="L145">        theEventManager = new OceanusEventManager&lt;&gt;();</span>
+
+        /* Create the selection panel */
+<span class="nc" id="L148">        thePanel = pFactory.paneFactory().newHBoxPane();</span>
+<span class="nc" id="L149">        thePanel.setBorderTitle(NLS_TITLE);</span>
+
+        /* Define the layout */
+<span class="nc" id="L152">        thePanel.addNode(myRepLabel);</span>
+<span class="nc" id="L153">        thePanel.addNode(theReportButton);</span>
+<span class="nc" id="L154">        thePanel.addSpacer();</span>
+<span class="nc" id="L155">        thePanel.addNode(theHoldingButton);</span>
+<span class="nc" id="L156">        thePanel.addSpacer();</span>
+<span class="nc" id="L157">        thePanel.addNode(theRangeSelect);</span>
+<span class="nc" id="L158">        thePanel.addSpacer();</span>
+<span class="nc" id="L159">        thePanel.addNode(thePrintButton);</span>
+<span class="nc" id="L160">        thePanel.addNode(theSaveButton);</span>
+
+        /* Add the listeners */
+<span class="nc" id="L163">        theReportButton.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -&gt; handleNewReport());</span>
+<span class="nc" id="L164">        theReportButton.setMenuConfigurator(e -&gt; buildReportMenu());</span>
+<span class="nc" id="L165">        theHoldingButton.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -&gt; handleNewSecurity());</span>
+<span class="nc" id="L166">        theHoldingButton.setMenuConfigurator(e -&gt; buildHoldingMenu());</span>
+<span class="nc" id="L167">        thePrintButton.getEventRegistrar().addEventListener(e -&gt; theEventManager.fireEvent(PrometheusDataEvent.PRINT));</span>
+<span class="nc" id="L168">        theSaveButton.getEventRegistrar().addEventListener(e -&gt; theEventManager.fireEvent(PrometheusDataEvent.SAVETOFILE));</span>
+<span class="nc" id="L169">        theRangeSelect.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -&gt; handleNewRange());</span>
+<span class="nc" id="L170">    }</span>
+
+    @Override
+    public TethysUIComponent getUnderlying() {
+<span class="nc" id="L174">        return thePanel;</span>
+    }
+
+    @Override
+    public OceanusEventRegistrar&lt;PrometheusDataEvent&gt; getEventRegistrar() {
+<span class="nc" id="L179">        return theEventManager.getEventRegistrar();</span>
+    }
+
+    /**
+     * Obtain the report type.
+     *
+     * @return the report type
+     */
+    public MoneyWiseReportType getReportType() {
+<span class="nc" id="L188">        return theState.getType();</span>
+    }
+
+    /**
+     * Obtain the selected date range.
+     *
+     * @return the date range
+     */
+    public OceanusDateRange getDateRange() {
+<span class="nc" id="L197">        return theState.getRange();</span>
+    }
+
+    /**
+     * Obtain the securityBucket.
+     *
+     * @return the security
+     */
+    public MoneyWiseAnalysisSecurityBucket getSecurity() {
+<span class="nc" id="L206">        return theState.getSecurity();</span>
+    }
+
+    /**
+     * Obtain the date range selection control.
+     *
+     * @return the date range selection
+     */
+    public TethysUIDateRangeSelector getDateRangeSelector() {
+<span class="nc" id="L215">        return theRangeSelect;</span>
+    }
+
+    /**
+     * Build report menu.
+     */
+    private void buildReportMenu() {
+        /* Access builder */
+<span class="nc" id="L223">        final boolean hasSecurities = theState.hasSecurities();</span>
+<span class="nc" id="L224">        final TethysUIScrollMenu&lt;MoneyWiseReportType&gt; myBuilder = theReportButton.getMenu();</span>
+<span class="nc" id="L225">        myBuilder.removeAllItems();</span>
+
+        /* Loop through the reports */
+<span class="nc bnc" id="L228" title="All 2 branches missed.">        for (MoneyWiseReportType myType : MoneyWiseReportType.values()) {</span>
+            /* If we can produce the report */
+<span class="nc bnc" id="L230" title="All 2 branches missed.">            if (hasSecurities</span>
+<span class="nc bnc" id="L231" title="All 2 branches missed.">                    || !myType.needSecurities()) {</span>
+                /* Create a new MenuItem for the report type */
+<span class="nc" id="L233">                myBuilder.addItem(myType);</span>
+            }
+        }
+<span class="nc" id="L236">    }</span>
+
+    /**
+     * Build holding menu.
+     */
+    private void buildHoldingMenu() {
+        /* Access state details */
+<span class="nc" id="L243">        final MoneyWiseAnalysis myAnalysis = theState.getAnalysis();</span>
+<span class="nc" id="L244">        final MoneyWiseAnalysisSecurityBucket mySecurity = theState.getSecurity();</span>
+<span class="nc" id="L245">        final MoneyWiseAnalysisPortfolioBucketList myPortfolios = myAnalysis.getPortfolios();</span>
+
+        /* Access builder */
+<span class="nc" id="L248">        final TethysUIScrollMenu&lt;MoneyWiseAnalysisSecurityBucket&gt; myBuilder = theHoldingButton.getMenu();</span>
+<span class="nc" id="L249">        myBuilder.removeAllItems();</span>
+<span class="nc" id="L250">        TethysUIScrollItem&lt;MoneyWiseAnalysisSecurityBucket&gt; myActive = null;</span>
+
+        /* Loop through the Portfolio Buckets */
+<span class="nc" id="L253">        final Iterator&lt;MoneyWiseAnalysisPortfolioBucket&gt; myPortIterator = myPortfolios.iterator();</span>
+<span class="nc bnc" id="L254" title="All 2 branches missed.">        while (myPortIterator.hasNext()) {</span>
+<span class="nc" id="L255">            final MoneyWiseAnalysisPortfolioBucket myPortBucket = myPortIterator.next();</span>
+
+            /* Create subMenu */
+<span class="nc" id="L258">            final String myName = myPortBucket.getName();</span>
+<span class="nc" id="L259">            final TethysUIScrollSubMenu&lt;MoneyWiseAnalysisSecurityBucket&gt; myMenu = myBuilder.addSubMenu(myName);</span>
+
+            /* Loop through the Security Buckets */
+<span class="nc" id="L262">            final MoneyWiseAnalysisSecurityBucketList mySecurities = myPortBucket.getSecurities();</span>
+<span class="nc" id="L263">            final Iterator&lt;MoneyWiseAnalysisSecurityBucket&gt; myIterator = mySecurities.iterator();</span>
+<span class="nc bnc" id="L264" title="All 2 branches missed.">            while (myIterator.hasNext()) {</span>
+<span class="nc" id="L265">                final MoneyWiseAnalysisSecurityBucket myBucket = myIterator.next();</span>
+
+                /* Add menuItem */
+<span class="nc" id="L268">                final TethysUIScrollItem&lt;MoneyWiseAnalysisSecurityBucket&gt; myItem = myMenu.getSubMenu().addItem(myBucket, myBucket.getSecurityName());</span>
+
+                /* Record active item */
+<span class="nc bnc" id="L271" title="All 2 branches missed.">                if (myBucket.equals(mySecurity)) {</span>
+<span class="nc" id="L272">                    myActive = myItem;</span>
+                }
+<span class="nc" id="L274">            }</span>
+<span class="nc" id="L275">        }</span>
+
+        /* Ensure that active item is displayed */
+<span class="nc bnc" id="L278" title="All 2 branches missed.">        if (myActive != null) {</span>
+<span class="nc" id="L279">            myActive.scrollToItem();</span>
+        }
+<span class="nc" id="L281">    }</span>
+
+    /**
+     * Set the range for the date box.
+     *
+     * @param pRange the date range
+     */
+    public final void setRange(final OceanusDateRange pRange) {
+        /* Set up range */
+<span class="nc" id="L290">        theRangeSelect.setOverallRange(pRange);</span>
+<span class="nc" id="L291">    }</span>
+
+    /**
+     * Set securities flag.
+     *
+     * @param pSecurities do we have securities?
+     */
+    public void setSecurities(final boolean pSecurities) {
+<span class="nc" id="L299">        theState.setSecurities(pSecurities);</span>
+<span class="nc" id="L300">    }</span>
+
+    /**
+     * Set analysis.
+     *
+     * @param pAnalysis the analysis.
+     */
+    public void setAnalysis(final MoneyWiseAnalysis pAnalysis) {
+        /* Record the analysis */
+<span class="nc" id="L309">        theState.setAnalysis(pAnalysis);</span>
+
+        /* Access the portfolios */
+<span class="nc" id="L312">        final MoneyWiseAnalysisPortfolioBucketList myPortfolios = pAnalysis.getPortfolios();</span>
+
+        /* If we have an existing security bucket */
+<span class="nc" id="L315">        MoneyWiseAnalysisSecurityBucket mySecurity = theState.getSecurity();</span>
+
+        /* If we have a selected Security */
+<span class="nc bnc" id="L318" title="All 2 branches missed.">        if (mySecurity != null) {</span>
+            /* Look for the equivalent bucket */
+<span class="nc" id="L320">            mySecurity = myPortfolios.getMatchingSecurityHolding(mySecurity.getSecurityHolding());</span>
+        }
+
+        /* If we no longer have a selected security */
+<span class="nc bnc" id="L324" title="All 2 branches missed.">        if (mySecurity == null) {</span>
+            /* Obtain the default security holding */
+<span class="nc" id="L326">            mySecurity = myPortfolios.getDefaultSecurityHolding();</span>
+        }
+
+        /* Set the selected security */
+<span class="nc" id="L330">        theState.setSecurity(mySecurity);</span>
+<span class="nc" id="L331">    }</span>
+
+    /**
+     * Set security.
+     *
+     * @param pSecurity the security.
+     */
+    public void setSecurity(final MoneyWiseAnalysisSecurityBucket pSecurity) {
+        /* Set the selected security */
+<span class="nc" id="L340">        theState.setSecurity(pSecurity);</span>
+<span class="nc" id="L341">        theState.setType(MoneyWiseReportType.CAPITALGAINS);</span>
+
+        /* Notify that the state has changed */
+<span class="nc" id="L344">        theEventManager.fireEvent(PrometheusDataEvent.SELECTIONCHANGED);</span>
+<span class="nc" id="L345">    }</span>
+
+    /**
+     * Create SavePoint.
+     */
+    public void createSavePoint() {
+        /* Create the savePoint */
+<span class="nc" id="L352">        theSavePoint = new MoneyWiseReportState(theState);</span>
+<span class="nc" id="L353">    }</span>
+
+    /**
+     * Restore SavePoint.
+     */
+    public void restoreSavePoint() {
+        /* Restore the savePoint */
+<span class="nc" id="L360">        theState = new MoneyWiseReportState(theSavePoint);</span>
+
+        /* Apply the state */
+<span class="nc" id="L363">        theState.applyState();</span>
+<span class="nc" id="L364">    }</span>
+
+    @Override
+    public void setEnabled(final boolean bEnable) {
+<span class="nc" id="L368">        theRangeSelect.setEnabled(bEnable);</span>
+<span class="nc" id="L369">        theReportButton.setEnabled(bEnable);</span>
+<span class="nc" id="L370">        theHoldingButton.setEnabled(bEnable);</span>
+<span class="nc" id="L371">        thePrintButton.setEnabled(bEnable);</span>
+<span class="nc" id="L372">        theSaveButton.setEnabled(bEnable);</span>
+<span class="nc" id="L373">    }</span>
+
+    @Override
+    public void setVisible(final boolean pVisible) {
+<span class="nc" id="L377">        thePanel.setVisible(pVisible);</span>
+<span class="nc" id="L378">    }</span>
+
+    /**
+     * Handle new report.
+     */
+    private void handleNewReport() {
+        /* Set active flag */
+<span class="nc" id="L385">        isActive = true;</span>
+
+        /* Look for a changed report type */
+<span class="nc bnc" id="L388" title="All 2 branches missed.">        if (theState.setType(theReportButton.getValue())) {</span>
+            /* Notify that the state has changed */
+<span class="nc" id="L390">            theEventManager.fireEvent(PrometheusDataEvent.SELECTIONCHANGED);</span>
+        }
+
+        /* Clear active flag */
+<span class="nc" id="L394">        isActive = false;</span>
+<span class="nc" id="L395">    }</span>
+
+    /**
+     * Handle new holding.
+     */
+    private void handleNewSecurity() {
+        /* Set active flag */
+<span class="nc" id="L402">        isActive = true;</span>
+
+        /* Look for a changed report type */
+<span class="nc bnc" id="L405" title="All 2 branches missed.">        if (theState.setSecurity(theHoldingButton.getValue())) {</span>
+            /* Notify that the state has changed */
+<span class="nc" id="L407">            theEventManager.fireEvent(PrometheusDataEvent.SELECTIONCHANGED);</span>
+        }
+
+        /* Clear active flag */
+<span class="nc" id="L411">        isActive = false;</span>
+<span class="nc" id="L412">    }</span>
+
+    /**
+     * Handle new range.
+     */
+    private void handleNewRange() {
+        /* if we have a changed range and are not changing report */
+<span class="nc bnc" id="L419" title="All 4 branches missed.">        if (theState.setRange(theRangeSelect)</span>
+                &amp;&amp; !isActive) {
+            /* Notify that the state has changed */
+<span class="nc" id="L422">            theEventManager.fireEvent(PrometheusDataEvent.SELECTIONCHANGED);</span>
+        }
+<span class="nc" id="L424">    }</span>
+
+    /**
+     * SavePoint values.
+     */
+    private final class MoneyWiseReportState {
+        /**
+         * The analysis.
+         */
+        private MoneyWiseAnalysis theAnalysis;
+
+        /**
+         * The selected range.
+         */
+        private OceanusDateRange theRange;
+
+        /**
+         * Do we have securities?
+         */
+        private boolean hasSecurities;
+
+        /**
+         * The securityBucket.
+         */
+        private MoneyWiseAnalysisSecurityBucket theSecurity;
+
+        /**
+         * The selected report type.
+         */
+        private MoneyWiseReportType theType;
+
+        /**
+         * Constructor.
+         */
+<span class="nc" id="L458">        private MoneyWiseReportState() {</span>
+<span class="nc" id="L459">        }</span>
+
+        /**
+         * Constructor.
+         *
+         * @param pState state to copy from
+         */
+<span class="nc" id="L466">        private MoneyWiseReportState(final MoneyWiseReportState pState) {</span>
+<span class="nc" id="L467">            theAnalysis = pState.getAnalysis();</span>
+<span class="nc" id="L468">            theRange = pState.getRange();</span>
+<span class="nc" id="L469">            hasSecurities = pState.hasSecurities();</span>
+<span class="nc" id="L470">            theSecurity = pState.getSecurity();</span>
+<span class="nc" id="L471">            theType = pState.getType();</span>
+<span class="nc" id="L472">        }</span>
+
+        /**
+         * Obtain the analysis.
+         *
+         * @return the analysis
+         */
+        private MoneyWiseAnalysis getAnalysis() {
+<span class="nc" id="L480">            return theAnalysis;</span>
+        }
+
+        /**
+         * Obtain the selected range.
+         *
+         * @return the range
+         */
+        private OceanusDateRange getRange() {
+<span class="nc" id="L489">            return theRange;</span>
+        }
+
+        /**
+         * Do we have securities?
+         *
+         * @return true/false
+         */
+        private boolean hasSecurities() {
+<span class="nc" id="L498">            return hasSecurities;</span>
+        }
+
+        /**
+         * Obtain the security bucket.
+         *
+         * @return the bucket
+         */
+        private MoneyWiseAnalysisSecurityBucket getSecurity() {
+<span class="nc" id="L507">            return theSecurity;</span>
+        }
+
+        /**
+         * Obtain the selected report type.
+         *
+         * @return the report type
+         */
+        private MoneyWiseReportType getType() {
+<span class="nc" id="L516">            return theType;</span>
+        }
+
+        /**
+         * Set new Range.
+         *
+         * @param pSelect the Panel with the new range
+         * @return true/false did a change occur
+         */
+        private boolean setRange(final TethysUIDateRangeSelector pSelect) {
+            /* Adjust the date and build the new range */
+<span class="nc" id="L527">            final OceanusDateRange myRange = pSelect.getRange();</span>
+<span class="nc bnc" id="L528" title="All 2 branches missed.">            if (!MetisDataDifference.isEqual(myRange, theRange)) {</span>
+<span class="nc" id="L529">                theRange = new OceanusDateRange(myRange);</span>
+<span class="nc" id="L530">                return true;</span>
+            }
+<span class="nc" id="L532">            return false;</span>
+        }
+
+        /**
+         * Set securities flag.
+         *
+         * @param pSecurities do we have securities?
+         */
+        private void setSecurities(final boolean pSecurities) {
+            /* Adjust the flag */
+<span class="nc bnc" id="L542" title="All 2 branches missed.">            if (pSecurities != hasSecurities) {</span>
+<span class="nc" id="L543">                hasSecurities = pSecurities;</span>
+<span class="nc bnc" id="L544" title="All 2 branches missed.">                if (!hasSecurities</span>
+<span class="nc bnc" id="L545" title="All 2 branches missed.">                        &amp;&amp; theType.needSecurities()) {</span>
+<span class="nc" id="L546">                    theType = MoneyWiseReportType.getDefault();</span>
+                }
+            }
+<span class="nc" id="L549">        }</span>
+
+        /**
+         * Set analysis.
+         *
+         * @param pAnalysis the analysis
+         */
+        private void setAnalysis(final MoneyWiseAnalysis pAnalysis) {
+<span class="nc" id="L557">            theAnalysis = pAnalysis;</span>
+<span class="nc" id="L558">        }</span>
+
+        /**
+         * Set security.
+         *
+         * @param pSecurity the security
+         * @return true/false did a change occur
+         */
+        private boolean setSecurity(final MoneyWiseAnalysisSecurityBucket pSecurity) {
+<span class="nc bnc" id="L567" title="All 2 branches missed.">            if (!pSecurity.equals(theSecurity)) {</span>
+<span class="nc" id="L568">                theSecurity = pSecurity;</span>
+<span class="nc" id="L569">                applyState();</span>
+<span class="nc" id="L570">                return true;</span>
+            }
+<span class="nc" id="L572">            return false;</span>
+        }
+
+        /**
+         * Set new Report Type.
+         *
+         * @param pType the new type
+         * @return true/false did a change occur
+         */
+        private boolean setType(final MoneyWiseReportType pType) {
+<span class="nc bnc" id="L582" title="All 2 branches missed.">            if (!pType.equals(theType)) {</span>
+                /* Are we currently point in time */
+<span class="nc bnc" id="L584" title="All 2 branches missed.">                final boolean isPointInTime = theType != null</span>
+<span class="nc bnc" id="L585" title="All 2 branches missed.">                        &amp;&amp; theType.isPointInTime();</span>
+
+                /* Store the new type */
+<span class="nc" id="L588">                theType = pType;</span>
+
+                /* If we need to switch point in time */
+<span class="nc bnc" id="L591" title="All 2 branches missed.">                if (theType.isPointInTime() != isPointInTime) {</span>
+                    /* Switch it appropriately */
+<span class="nc bnc" id="L593" title="All 2 branches missed.">                    theRangeSelect.setPeriod(isPointInTime</span>
+<span class="nc" id="L594">                            ? OceanusDatePeriod.FISCALYEAR</span>
+<span class="nc" id="L595">                            : OceanusDatePeriod.DATESUPTO);</span>
+<span class="nc bnc" id="L596" title="All 2 branches missed.">                    theRangeSelect.lockPeriod(!isPointInTime);</span>
+
+                    /* else if we are switching to tax calculation */
+<span class="nc bnc" id="L599" title="All 2 branches missed.">                } else if (theType == MoneyWiseReportType.TAXCALC) {</span>
+                    /* Switch explicitly to Fiscal Year */
+<span class="nc" id="L601">                    theRangeSelect.setPeriod(OceanusDatePeriod.FISCALYEAR);</span>
+                }
+
+                /* Apply the state */
+<span class="nc" id="L605">                applyState();</span>
+<span class="nc" id="L606">                return true;</span>
+            }
+<span class="nc" id="L608">            return false;</span>
+        }
+
+        /**
+         * Apply the State.
+         */
+        private void applyState() {
+            /* Adjust the lock-down */
+<span class="nc" id="L616">            setEnabled(true);</span>
+<span class="nc bnc" id="L617" title="All 2 branches missed.">            theReportButton.setFixedText(theType == null</span>
+<span class="nc" id="L618">                    ? null</span>
+<span class="nc" id="L619">                    : theType.toString());</span>
+<span class="nc" id="L620">            theHoldingButton.setValue(theSecurity);</span>
+<span class="nc" id="L621">            theHoldingButton.setVisible(MoneyWiseReportType.CAPITALGAINS.equals(theType));</span>
+<span class="nc" id="L622">        }</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

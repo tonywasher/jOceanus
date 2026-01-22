@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PrometheusEditEntry.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Prometheus Core Application Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.prometheus.views</a> &gt; <span class="el_source">PrometheusEditEntry.java</span></div><h1>PrometheusEditEntry.java</h1><pre class="source lang-java linenums">/*
+ * Prometheus: Application Framework
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.prometheus.views;
+
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataList;
+import io.github.tonywasher.joceanus.metis.list.MetisListKey;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataList;
+
+import java.util.Iterator;
+import java.util.List;
+
+/**
+ * Update entry items.
+ *
+ * @param &lt;T&gt; the data type
+ */
+public final class PrometheusEditEntry&lt;T extends PrometheusDataItem&gt;
+        implements MetisDataList&lt;T&gt; {
+    /**
+     * The data type.
+     */
+    private final MetisListKey theDataType;
+
+    /**
+     * The DataList.
+     */
+    private PrometheusDataList&lt;T&gt; theDataList;
+
+    /**
+     * Constructor.
+     *
+     * @param pDataType the dataType
+     */
+<span class="nc" id="L50">    PrometheusEditEntry(final MetisListKey pDataType) {</span>
+        /* Store details */
+<span class="nc" id="L52">        theDataType = pDataType;</span>
+<span class="nc" id="L53">        theDataList = null;</span>
+<span class="nc" id="L54">    }</span>
+
+    @Override
+    public List&lt;T&gt; getUnderlyingList() {
+<span class="nc bnc" id="L58" title="All 2 branches missed.">        return theDataList == null</span>
+<span class="nc" id="L59">                ? null</span>
+<span class="nc" id="L60">                : theDataList.getUnderlyingList();</span>
+    }
+
+    /**
+     * Obtain the name of the entry.
+     *
+     * @return the name
+     */
+    public String getName() {
+<span class="nc" id="L69">        return theDataType.toString();</span>
+    }
+
+    @Override
+    public String toString() {
+<span class="nc" id="L74">        return getName();</span>
+    }
+
+    /**
+     * Obtain the list for the entry.
+     *
+     * @return the list
+     */
+    public PrometheusDataList&lt;T&gt; getDataList() {
+<span class="nc" id="L83">        return theDataList;</span>
+    }
+
+    /**
+     * Is this entry related to this dataType.
+     *
+     * @param pDataType the dataType to compare
+     * @return true/false
+     */
+    public boolean isDataType(final MetisListKey pDataType) {
+<span class="nc" id="L93">        return theDataType.equals(pDataType);</span>
+    }
+
+    /**
+     * Set the Data list.
+     *
+     * @param pDataList the DataList
+     */
+    public void setDataList(final PrometheusDataList&lt;T&gt; pDataList) {
+<span class="nc" id="L102">        theDataList = pDataList;</span>
+<span class="nc" id="L103">    }</span>
+
+    /**
+     * Prepare changes in an edit view back into the core data.
+     *
+     * @throws OceanusException on error
+     */
+    public void prepareChanges() throws OceanusException {
+        /* Ignore if we have no list */
+<span class="nc bnc" id="L112" title="All 2 branches missed.">        if (theDataList == null) {</span>
+<span class="nc" id="L113">            return;</span>
+        }
+
+        /* Create an iterator for the changes list */
+<span class="nc" id="L117">        final Iterator&lt;T&gt; myIterator = theDataList.iterator();</span>
+<span class="nc" id="L118">        final PrometheusDataList&lt;?&gt; myBaseList = theDataList.getBaseList();</span>
+
+        /* Loop through the elements */
+<span class="nc bnc" id="L121" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L122">            final PrometheusDataItem myCurr = myIterator.next();</span>
+            final PrometheusDataItem myBase;
+
+            /* Switch on the state */
+<span class="nc bnc" id="L126" title="All 6 branches missed.">            switch (myCurr.getState()) {</span>
+                /* Ignore the item if it is clean or DELNEW */
+                case CLEAN:
+                case DELNEW:
+<span class="nc" id="L130">                    break;</span>
+
+                /* If this is a new item, add it to the list */
+                case NEW:
+                    /* Link this item to the new item */
+<span class="nc" id="L135">                    myBase = myBaseList.addCopyItem(myCurr);</span>
+<span class="nc" id="L136">                    myBase.setNewVersion();</span>
+<span class="nc" id="L137">                    myCurr.setBase(myBase);</span>
+<span class="nc" id="L138">                    myCurr.setIndexedId(myBase.getIndexedId());</span>
+
+                    /* Resolve the links */
+<span class="nc" id="L141">                    myBase.resolveDataSetLinks();</span>
+<span class="nc" id="L142">                    break;</span>
+
+                /* If this is a deleted item */
+                case DELETED:
+                    /* Access the underlying item and mark as deleted */
+<span class="nc" id="L147">                    myBase = myCurr.getBase();</span>
+<span class="nc" id="L148">                    myBase.setDeleted(true);</span>
+<span class="nc" id="L149">                    break;</span>
+
+                /* If this is a recovered item */
+                case RECOVERED:
+                    /* Access the underlying item and mark as restored */
+<span class="nc" id="L154">                    myBase = myCurr.getBase();</span>
+<span class="nc" id="L155">                    myBase.setDeleted(false);</span>
+<span class="nc" id="L156">                    break;</span>
+
+                /* If this is a changed item */
+                case CHANGED:
+                    /* Access underlying item and apply changes */
+<span class="nc" id="L161">                    myBase = myCurr.getBase();</span>
+<span class="nc" id="L162">                    myBase.applyChanges(myCurr);</span>
+<span class="nc" id="L163">                    break;</span>
+                default:
+                    break;
+            }
+<span class="nc" id="L167">        }</span>
+
+        /* Resolve links and re-sort the underlying list */
+<span class="nc" id="L170">        myBaseList.resolveDataSetLinks();</span>
+<span class="nc" id="L171">        myBaseList.reSort();</span>
+<span class="nc" id="L172">    }</span>
+
+    /**
+     * RollBack changes in an edit view that have been applied to core data.
+     */
+    public void rollBackChanges() {
+        /* Ignore if we have no list */
+<span class="nc bnc" id="L179" title="All 2 branches missed.">        if (theDataList == null) {</span>
+<span class="nc" id="L180">            return;</span>
+        }
+
+        /* Create an iterator for this list */
+<span class="nc" id="L184">        final Iterator&lt;T&gt; myIterator = theDataList.iterator();</span>
+<span class="nc" id="L185">        final PrometheusDataList&lt;?&gt; myBaseList = theDataList.getBaseList();</span>
+<span class="nc" id="L186">        final int myVersion = theDataList.getVersion();</span>
+
+        /* Loop through the elements */
+<span class="nc bnc" id="L189" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L190">            final T myCurr = myIterator.next();</span>
+            final PrometheusDataItem myBase;
+
+            /* Switch on the state */
+<span class="nc bnc" id="L194" title="All 4 branches missed.">            switch (myCurr.getState()) {</span>
+                /* Ignore the item if it is clean or DelNew */
+                case CLEAN:
+                case DELNEW:
+<span class="nc" id="L198">                    break;</span>
+
+                /* If this is a new item, remove the base item */
+                case NEW:
+                    /* Remove the base item and its reference */
+<span class="nc" id="L203">                    myBaseList.remove(myCurr.getBase());</span>
+<span class="nc" id="L204">                    myCurr.setBase(null);</span>
+<span class="nc" id="L205">                    break;</span>
+
+                /* If we made changes to the underlying item */
+                case DELETED:
+                case RECOVERED:
+                case CHANGED:
+                    /* Access underlying item */
+<span class="nc" id="L212">                    myBase = myCurr.getBase();</span>
+
+                    /* Rewind any changes */
+<span class="nc" id="L215">                    myBase.rewindToVersion(myVersion);</span>
+<span class="nc" id="L216">                    break;</span>
+                default:
+                    break;
+            }
+<span class="nc" id="L220">        }</span>
+
+        /* Re-sort the underlying list */
+<span class="nc" id="L223">        myBaseList.reSort();</span>
+<span class="nc" id="L224">    }</span>
+
+    /**
+     * Commit changes in an edit view that have been applied to the core data.
+     */
+    public void commitChanges() {
+        /* Ignore if we have no list */
+<span class="nc bnc" id="L231" title="All 2 branches missed.">        if (theDataList == null) {</span>
+<span class="nc" id="L232">            return;</span>
+        }
+
+        /* Create an iterator for this list */
+<span class="nc" id="L236">        final Iterator&lt;T&gt; myIterator = theDataList.iterator();</span>
+
+        /* Loop through the elements */
+<span class="nc bnc" id="L239" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L240">            final T myCurr = myIterator.next();</span>
+
+            /* Switch on the state */
+<span class="nc bnc" id="L243" title="All 4 branches missed.">            switch (myCurr.getState()) {</span>
+                /* Ignore the item if it is clean */
+                case CLEAN:
+<span class="nc" id="L246">                    break;</span>
+
+                /* Delete the item from the list if it is a deleted new item */
+                case DELNEW:
+<span class="nc" id="L250">                    myIterator.remove();</span>
+<span class="nc" id="L251">                    break;</span>
+
+                /* All other states clear history and, convert it to Clean */
+                case NEW:
+                case DELETED:
+                case RECOVERED:
+                case CHANGED:
+                    /* Clear history and set as a clean item */
+<span class="nc" id="L259">                    myCurr.clearHistory();</span>
+<span class="nc" id="L260">                    break;</span>
+                default:
+                    break;
+            }
+<span class="nc" id="L264">        }</span>
+
+        /* Set version back to zero */
+<span class="nc" id="L267">        theDataList.setVersion(0);</span>
+<span class="nc" id="L268">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

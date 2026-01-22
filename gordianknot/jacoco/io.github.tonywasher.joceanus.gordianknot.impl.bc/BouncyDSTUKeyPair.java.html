@@ -1,0 +1,413 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BouncyDSTUKeyPair.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.impl.bc</a> &gt; <span class="el_source">BouncyDSTUKeyPair.java</span></div><h1>BouncyDSTUKeyPair.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.gordianknot.impl.bc;
+
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignParams;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignatureSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyEllipticKeyPair.BouncyECPrivateKey;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyEllipticKeyPair.BouncyECPublicKey;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncySignature.BouncyDSACoder;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncySignature.BouncyDigestSignature;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianDataConverter;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianIOException;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianKeyPairValidity;
+import org.bouncycastle.asn1.ASN1BitString;
+import org.bouncycastle.asn1.ASN1Encodable;
+import org.bouncycastle.asn1.ASN1Integer;
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.ASN1OctetString;
+import org.bouncycastle.asn1.ASN1Primitive;
+import org.bouncycastle.asn1.DEROctetString;
+import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
+import org.bouncycastle.asn1.sec.ECPrivateKey;
+import org.bouncycastle.asn1.ua.DSTU4145NamedCurves;
+import org.bouncycastle.asn1.ua.DSTU4145Params;
+import org.bouncycastle.asn1.ua.DSTU4145PointEncoder;
+import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
+import org.bouncycastle.crypto.AsymmetricCipherKeyPair;
+import org.bouncycastle.crypto.Digest;
+import org.bouncycastle.crypto.digests.GOST3411Digest;
+import org.bouncycastle.crypto.generators.DSTU4145KeyPairGenerator;
+import org.bouncycastle.crypto.generators.ECKeyPairGenerator;
+import org.bouncycastle.crypto.params.ECDomainParameters;
+import org.bouncycastle.crypto.params.ECKeyGenerationParameters;
+import org.bouncycastle.crypto.params.ECPrivateKeyParameters;
+import org.bouncycastle.crypto.params.ECPublicKeyParameters;
+import org.bouncycastle.crypto.params.ParametersWithRandom;
+import org.bouncycastle.crypto.signers.DSTU4145Signer;
+import org.bouncycastle.jcajce.provider.asymmetric.dstu.BCDSTU4145PrivateKey;
+import org.bouncycastle.jcajce.provider.asymmetric.dstu.BCDSTU4145PublicKey;
+import org.bouncycastle.jcajce.provider.asymmetric.util.EC5Util;
+import org.bouncycastle.jce.spec.ECNamedCurveSpec;
+import org.bouncycastle.math.ec.ECCurve;
+import org.bouncycastle.math.ec.ECPoint;
+
+import java.io.IOException;
+import java.math.BigInteger;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
+
+/**
+ * DSTU KeyPair classes.
+ */
+public final class BouncyDSTUKeyPair {
+    /**
+     * DSTU algorithm.
+     */
+    private static final String ALGO = &quot;DSTU4145&quot;;
+
+    /**
+     * Expanded sandBox length.
+     */
+    private static final int EXPANDED_LEN = 128;
+
+    /**
+     * Private constructor.
+     */
+    private BouncyDSTUKeyPair() {
+    }
+
+    /**
+     * BouncyCastle DSTU KeyPair generator.
+     */
+    public static class BouncyDSTUKeyPairGenerator
+            extends BouncyKeyPairGenerator {
+        /**
+         * Generator.
+         */
+        private final ECKeyPairGenerator theGenerator;
+
+        /**
+         * Domain.
+         */
+        private final ECDomainParameters theDomain;
+
+        /**
+         * Spec.
+         */
+        private final ECNamedCurveSpec theSpec;
+
+        /**
+         * Constructor.
+         *
+         * @param pFactory the Security Factory
+         * @param pKeySpec the keySpec
+         */
+        BouncyDSTUKeyPairGenerator(final GordianBaseFactory pFactory,
+                                   final GordianKeyPairSpec pKeySpec) {
+            /* Initialise underlying class */
+<span class="fc" id="L118">            super(pFactory, pKeySpec);</span>
+
+            /* Create the generator */
+<span class="fc" id="L121">            theGenerator = new DSTU4145KeyPairGenerator();</span>
+
+            /* Determine domain */
+<span class="fc" id="L124">            final String myCurveName = pKeySpec.getElliptic().getCurveName();</span>
+<span class="fc" id="L125">            theDomain = DSTU4145NamedCurves.getByOID(new ASN1ObjectIdentifier(myCurveName));</span>
+<span class="fc" id="L126">            theSpec = new ECNamedCurveSpec(myCurveName,</span>
+<span class="fc" id="L127">                    theDomain.getCurve(),</span>
+<span class="fc" id="L128">                    theDomain.getG(),</span>
+<span class="fc" id="L129">                    theDomain.getN(),</span>
+<span class="fc" id="L130">                    theDomain.getH(),</span>
+<span class="fc" id="L131">                    theDomain.getSeed());</span>
+
+            /* Perform conversion */
+<span class="fc" id="L134">            final ECCurve myCurve = EC5Util.convertCurve(theSpec.getCurve());</span>
+<span class="fc" id="L135">            final ECPoint myG = EC5Util.convertPoint(myCurve, theSpec.getGenerator());</span>
+
+            /* Initialise the generator */
+<span class="fc" id="L138">            final ECKeyGenerationParameters myParams = new ECKeyGenerationParameters(</span>
+<span class="fc" id="L139">                    new ECDomainParameters(myCurve, myG, theSpec.getOrder(), BigInteger.valueOf(theSpec.getCofactor())), getRandom());</span>
+<span class="fc" id="L140">            theGenerator.init(myParams);</span>
+<span class="fc" id="L141">        }</span>
+
+        @Override
+        public BouncyKeyPair generateKeyPair() {
+            /* Generate and return the keyPair */
+<span class="fc" id="L146">            final AsymmetricCipherKeyPair myPair = theGenerator.generateKeyPair();</span>
+<span class="fc" id="L147">            final BouncyECPublicKey myPublic = new BouncyECPublicKey(getKeySpec(), (ECPublicKeyParameters) myPair.getPublic());</span>
+<span class="fc" id="L148">            final BouncyECPrivateKey myPrivate = new BouncyECPrivateKey(getKeySpec(), (ECPrivateKeyParameters) myPair.getPrivate());</span>
+<span class="fc" id="L149">            return new BouncyKeyPair(myPublic, myPrivate);</span>
+        }
+
+        @Override
+        public PKCS8EncodedKeySpec getPKCS8Encoding(final GordianKeyPair pKeyPair) throws GordianException {
+            /* Check the keyPair type and keySpecs */
+<span class="fc" id="L155">            BouncyKeyPair.checkKeyPair(pKeyPair, getKeySpec());</span>
+
+            /* build and return the encoding */
+<span class="fc" id="L158">            final BouncyECPrivateKey myPrivateKey = (BouncyECPrivateKey) getPrivateKey(pKeyPair);</span>
+<span class="fc" id="L159">            final ECPrivateKeyParameters myParms = myPrivateKey.getPrivateKey();</span>
+<span class="fc" id="L160">            final BouncyECPublicKey myPublicKey = (BouncyECPublicKey) getPublicKey(pKeyPair);</span>
+<span class="fc" id="L161">            final ECPublicKeyParameters myPubParms = myPublicKey.getPublicKey();</span>
+<span class="fc" id="L162">            final BCDSTU4145PublicKey pubKey = new BCDSTU4145PublicKey(ALGO, myPubParms, theSpec);</span>
+<span class="fc" id="L163">            final BCDSTU4145PrivateKey privKey = new BCDSTU4145PrivateKey(ALGO, myParms, pubKey, theSpec);</span>
+<span class="fc" id="L164">            return new PKCS8EncodedKeySpec(privKey.getEncoded());</span>
+        }
+
+        @Override
+        public BouncyKeyPair deriveKeyPair(final X509EncodedKeySpec pPublicKey,
+                                           final PKCS8EncodedKeySpec pPrivateKey) throws GordianException {
+            /* Check the keySpecs */
+<span class="fc" id="L171">            checkKeySpec(pPrivateKey);</span>
+
+            /* derive keyPair */
+<span class="fc" id="L174">            final BouncyECPublicKey myPublic = derivePublicKey(pPublicKey);</span>
+<span class="fc" id="L175">            final PrivateKeyInfo myInfo = PrivateKeyInfo.getInstance(pPrivateKey.getEncoded());</span>
+<span class="fc" id="L176">            final ECPrivateKeyParameters myParms = deriveFromPrivKeyInfo(myInfo);</span>
+<span class="fc" id="L177">            final BouncyECPrivateKey myPrivate = new BouncyECPrivateKey(getKeySpec(), myParms);</span>
+<span class="fc" id="L178">            final BouncyKeyPair myPair = new BouncyKeyPair(myPublic, myPrivate);</span>
+
+            /* Check that we have a matching pair */
+<span class="fc" id="L181">            GordianKeyPairValidity.checkValidity(getFactory(), myPair);</span>
+
+            /* Return the keyPair */
+<span class="fc" id="L184">            return myPair;</span>
+        }
+
+        @Override
+        public X509EncodedKeySpec getX509Encoding(final GordianKeyPair pKeyPair) throws GordianException {
+            /* Check the keyPair type and keySpecs */
+<span class="fc" id="L190">            BouncyKeyPair.checkKeyPair(pKeyPair, getKeySpec());</span>
+
+            /* build and return the encoding */
+<span class="fc" id="L193">            final BouncyECPublicKey myPublicKey = (BouncyECPublicKey) getPublicKey(pKeyPair);</span>
+<span class="fc" id="L194">            final ECPublicKeyParameters myParms = myPublicKey.getPublicKey();</span>
+<span class="fc" id="L195">            final BCDSTU4145PublicKey pubKey = new BCDSTU4145PublicKey(ALGO, myParms, theSpec);</span>
+<span class="fc" id="L196">            return new X509EncodedKeySpec(pubKey.getEncoded());</span>
+        }
+
+        @Override
+        public BouncyKeyPair derivePublicOnlyKeyPair(final X509EncodedKeySpec pEncodedKey) throws GordianException {
+<span class="fc" id="L201">            final BouncyECPublicKey myPublic = derivePublicKey(pEncodedKey);</span>
+<span class="fc" id="L202">            return new BouncyKeyPair(myPublic);</span>
+        }
+
+        /**
+         * Derive public key from encoded.
+         *
+         * @param pEncodedKey the encoded key
+         * @return the public key
+         * @throws GordianException on error
+         */
+        private BouncyECPublicKey derivePublicKey(final X509EncodedKeySpec pEncodedKey) throws GordianException {
+            /* Check the keySpecs */
+<span class="fc" id="L214">            checkKeySpec(pEncodedKey);</span>
+
+            /* derive publicKey */
+<span class="fc" id="L217">            final SubjectPublicKeyInfo myInfo = SubjectPublicKeyInfo.getInstance(pEncodedKey.getEncoded());</span>
+<span class="fc" id="L218">            final ECPublicKeyParameters myParms = deriveFromPubKeyInfo(myInfo);</span>
+<span class="fc" id="L219">            return new BouncyECPublicKey(getKeySpec(), myParms);</span>
+        }
+
+        /**
+         * Derive Public Key parameters from SubjectPublicKeyInfo. (extracted from BouncyCastle initialiser)
+         *
+         * @param pKeyInfo the keyInfo
+         * @return the PrivateKeyParameters
+         * @throws GordianException on error
+         */
+        private ECPublicKeyParameters deriveFromPubKeyInfo(final SubjectPublicKeyInfo pKeyInfo) throws GordianException {
+<span class="fc" id="L230">            final ASN1BitString bits = pKeyInfo.getPublicKeyData();</span>
+            final ASN1OctetString key;
+
+            try {
+<span class="fc" id="L234">                key = (ASN1OctetString) ASN1Primitive.fromByteArray(bits.getBytes());</span>
+<span class="nc" id="L235">            } catch (IOException ex) {</span>
+<span class="nc" id="L236">                throw new GordianIOException(&quot;error recovering public key&quot;, ex);</span>
+<span class="fc" id="L237">            }</span>
+
+<span class="fc" id="L239">            final byte[] keyEnc = key.getOctets();</span>
+<span class="fc" id="L240">            final ECCurve curve = theDomain.getCurve();</span>
+<span class="fc" id="L241">            return new ECPublicKeyParameters(DSTU4145PointEncoder.decodePoint(curve, keyEnc), theDomain);</span>
+        }
+
+        /**
+         * Derive Private Key parameters from PrivateKeyInfo. (extracted from BouncyCastle initialiser)
+         *
+         * @param pKeyInfo the keyInfo
+         * @return the PrivateKeyParameters
+         * @throws GordianException on error
+         */
+        private ECPrivateKeyParameters deriveFromPrivKeyInfo(final PrivateKeyInfo pKeyInfo) throws GordianException {
+            try {
+<span class="fc" id="L253">                final ASN1Encodable privKey = pKeyInfo.parsePrivateKey();</span>
+                final BigInteger myD;
+<span class="pc bpc" id="L255" title="1 of 2 branches missed.">                if (privKey instanceof ASN1Integer) {</span>
+<span class="nc" id="L256">                    myD = ASN1Integer.getInstance(privKey).getPositiveValue();</span>
+                } else {
+<span class="fc" id="L258">                    final ECPrivateKey ec = ECPrivateKey.getInstance(privKey);</span>
+
+<span class="fc" id="L260">                    myD = ec.getKey();</span>
+                }
+<span class="fc" id="L262">                return new ECPrivateKeyParameters(myD, theDomain);</span>
+
+<span class="nc" id="L264">            } catch (IOException e) {</span>
+<span class="nc" id="L265">                throw new GordianCryptoException(ERROR_PARSE, e);</span>
+            }
+        }
+    }
+
+    /**
+     * DSTU encoder.
+     */
+<span class="fc" id="L273">    static final class BouncyDSTUCoder implements BouncyDSACoder {</span>
+        @Override
+        public byte[] dsaEncode(final BigInteger r,
+                                final BigInteger s) throws GordianException {
+            /* Protect against exceptions */
+            try {
+                /* Access byteArrays */
+<span class="fc" id="L280">                final byte[] myFirst = s.toByteArray();</span>
+<span class="fc" id="L281">                final byte[] mySecond = r.toByteArray();</span>
+<span class="fc bfc" id="L282" title="All 2 branches covered.">                final byte[] myResult = myFirst.length &gt; mySecond.length</span>
+<span class="fc" id="L283">                        ? new byte[myFirst.length * 2]</span>
+<span class="fc" id="L284">                        : new byte[mySecond.length * 2];</span>
+
+                /* Build array and return */
+<span class="fc" id="L287">                System.arraycopy(myFirst, 0, myResult, myResult.length / 2 - myFirst.length, myFirst.length);</span>
+<span class="fc" id="L288">                System.arraycopy(mySecond, 0, myResult, myResult.length - mySecond.length, mySecond.length);</span>
+<span class="fc" id="L289">                return new DEROctetString(myResult).getEncoded();</span>
+<span class="nc" id="L290">            } catch (Exception e) {</span>
+<span class="nc" id="L291">                throw new GordianCryptoException(BouncySignature.ERROR_SIGGEN, e);</span>
+            }
+        }
+
+        @Override
+        public BigInteger[] dsaDecode(final byte[] pEncoded) throws GordianException {
+            /* Protect against exceptions */
+            try {
+                /* Access the bytes */
+<span class="fc" id="L300">                final byte[] bytes = ((ASN1OctetString) ASN1Primitive.fromByteArray(pEncoded)).getOctets();</span>
+
+                /* Build the value arrays */
+<span class="fc" id="L303">                final byte[] myFirst = new byte[bytes.length / 2];</span>
+<span class="fc" id="L304">                final byte[] mySecond = new byte[bytes.length / 2];</span>
+<span class="fc" id="L305">                System.arraycopy(bytes, 0, myFirst, 0, myFirst.length);</span>
+<span class="fc" id="L306">                System.arraycopy(bytes, myFirst.length, mySecond, 0, mySecond.length);</span>
+
+                /* Create the signature values and return */
+<span class="fc" id="L309">                final BigInteger[] sig = new BigInteger[2];</span>
+<span class="fc" id="L310">                sig[1] = new BigInteger(1, myFirst);</span>
+<span class="fc" id="L311">                sig[0] = new BigInteger(1, mySecond);</span>
+<span class="fc" id="L312">                return sig;</span>
+<span class="nc" id="L313">            } catch (Exception e) {</span>
+<span class="nc" id="L314">                throw new GordianCryptoException(BouncySignature.ERROR_SIGPARSE, e);</span>
+            }
+        }
+    }
+
+    /**
+     * DSTU signer.
+     */
+    public static class BouncyDSTUSignature
+            extends BouncyDigestSignature {
+        /**
+         * The Signer.
+         */
+        private final DSTU4145Signer theSigner;
+
+        /**
+         * The Coder.
+         */
+        private final BouncyDSTUCoder theCoder;
+
+        /**
+         * Constructor.
+         *
+         * @param pFactory the factory
+         * @param pSpec    the signatureSpec.
+         */
+        BouncyDSTUSignature(final GordianBaseFactory pFactory,
+                            final GordianSignatureSpec pSpec) {
+            /* Initialise underlying class */
+<span class="fc" id="L343">            super(pFactory, pSpec, newDigest());</span>
+
+            /* Create the signer and Coder */
+<span class="fc" id="L346">            theSigner = new DSTU4145Signer();</span>
+<span class="fc" id="L347">            theCoder = new BouncyDSTUCoder();</span>
+<span class="fc" id="L348">        }</span>
+
+        @Override
+        public void initForSigning(final GordianSignParams pParams) throws GordianException {
+            /* Initialise detail */
+<span class="fc" id="L353">            super.initForSigning(pParams);</span>
+<span class="fc" id="L354">            final BouncyKeyPair myPair = getKeyPair();</span>
+<span class="fc" id="L355">            BouncyKeyPair.checkKeyPair(myPair);</span>
+
+            /* Initialise and set the signer */
+<span class="fc" id="L358">            final BouncyECPrivateKey myPrivate = (BouncyECPrivateKey) myPair.getPrivateKey();</span>
+<span class="fc" id="L359">            final ParametersWithRandom myParms = new ParametersWithRandom(myPrivate.getPrivateKey(), getRandom());</span>
+<span class="fc" id="L360">            theSigner.init(true, myParms);</span>
+<span class="fc" id="L361">        }</span>
+
+        @Override
+        public void initForVerify(final GordianSignParams pParams) throws GordianException {
+            /* Initialise detail */
+<span class="fc" id="L366">            super.initForVerify(pParams);</span>
+<span class="fc" id="L367">            final BouncyKeyPair myPair = getKeyPair();</span>
+<span class="fc" id="L368">            BouncyKeyPair.checkKeyPair(myPair);</span>
+
+            /* Initialise and set the signer */
+<span class="fc" id="L371">            final BouncyECPublicKey myPublic = (BouncyECPublicKey) myPair.getPublicKey();</span>
+<span class="fc" id="L372">            theSigner.init(false, myPublic.getPublicKey());</span>
+<span class="fc" id="L373">        }</span>
+
+        @Override
+        public byte[] sign() throws GordianException {
+            /* Check that we are in signing mode */
+<span class="fc" id="L378">            checkMode(GordianSignatureMode.SIGN);</span>
+
+            /* Sign the message */
+<span class="fc" id="L381">            final BigInteger[] myValues = theSigner.generateSignature(getDigest());</span>
+<span class="fc" id="L382">            return theCoder.dsaEncode(myValues[0], myValues[1]);</span>
+        }
+
+        @Override
+        public boolean verify(final byte[] pSignature) throws GordianException {
+            /* Check that we are in verify mode */
+<span class="fc" id="L388">            checkMode(GordianSignatureMode.VERIFY);</span>
+
+            /* Verify the message */
+<span class="fc" id="L391">            final BigInteger[] myValues = theCoder.dsaDecode(pSignature);</span>
+<span class="fc" id="L392">            return theSigner.verifySignature(getDigest(), myValues[0], myValues[1]);</span>
+        }
+
+        /**
+         * Obtain new digest for DSTU signer.
+         *
+         * @return the new digest
+         */
+        private static Digest newDigest() {
+<span class="fc" id="L401">            final byte[] myCompressed = DSTU4145Params.getDefaultDKE();</span>
+<span class="fc" id="L402">            final byte[] myExpanded = new byte[EXPANDED_LEN];</span>
+
+<span class="fc bfc" id="L404" title="All 2 branches covered.">            for (int i = 0; i &lt; myCompressed.length; i++) {</span>
+<span class="fc" id="L405">                myExpanded[i * 2] = (byte) ((myCompressed[i] &gt;&gt; GordianDataConverter.NYBBLE_SHIFT)</span>
+                        &amp; GordianDataConverter.NYBBLE_MASK);
+<span class="fc" id="L407">                myExpanded[i * 2 + 1] = (byte) (myCompressed[i] &amp; GordianDataConverter.NYBBLE_MASK);</span>
+            }
+<span class="fc" id="L409">            return new GOST3411Digest(myExpanded);</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

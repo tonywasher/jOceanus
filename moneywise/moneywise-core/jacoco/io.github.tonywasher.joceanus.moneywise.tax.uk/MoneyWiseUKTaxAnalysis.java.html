@@ -1,0 +1,344 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseUKTaxAnalysis.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.moneywise.tax.uk</a> &gt; <span class="el_source">MoneyWiseUKTaxAnalysis.java</span></div><h1>MoneyWiseUKTaxAnalysis.java</h1><pre class="source lang-java linenums">/*
+ * MoneyWise: Finance Application
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.moneywise.tax.uk;
+
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldItem;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
+import io.github.tonywasher.joceanus.metis.preference.MetisPreferenceKey;
+import io.github.tonywasher.joceanus.metis.preference.MetisPreferenceManager;
+import io.github.tonywasher.joceanus.metis.preference.MetisPreferenceSet;
+import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseStaticResource;
+import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTaxClass;
+import io.github.tonywasher.joceanus.moneywise.tax.MoneyWiseTaxAnalysis;
+import io.github.tonywasher.joceanus.moneywise.tax.MoneyWiseTaxBandSet;
+import io.github.tonywasher.joceanus.moneywise.tax.MoneyWiseTaxDueBucket;
+import io.github.tonywasher.joceanus.moneywise.tax.MoneyWiseTaxResource;
+import io.github.tonywasher.joceanus.moneywise.tax.MoneyWiseTaxSource;
+import io.github.tonywasher.joceanus.moneywise.tax.uk.MoneyWiseUKChargeableGainsScheme.MoneyWiseUKSlicedTaxDueBucket;
+
+import java.time.Month;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+/**
+ * UK Tax Analysis.
+ */
+public class MoneyWiseUKTaxAnalysis
+        implements MetisFieldItem, MoneyWiseTaxAnalysis {
+    /**
+     * Local Report fields.
+     */
+<span class="nc" id="L50">    private static final MetisFieldSet&lt;MoneyWiseUKTaxAnalysis&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseUKTaxAnalysis.class);</span>
+
+    /*
+     * Declare Fields.
+     */
+    static {
+<span class="nc" id="L56">        FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXYEAR_NAME, MoneyWiseUKTaxAnalysis::getTaxYear);</span>
+<span class="nc" id="L57">        FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXCONFIG_NAME, MoneyWiseUKTaxAnalysis::getTaxConfig);</span>
+<span class="nc" id="L58">        FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXANALYSIS_TAXBUCKETS, MoneyWiseUKTaxAnalysis::getTaxBuckets);</span>
+<span class="nc" id="L59">        FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXBANDS_INCOME, MoneyWiseUKTaxAnalysis::getTaxableIncome);</span>
+<span class="nc" id="L60">        FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXBANDS_TAXDUE, MoneyWiseUKTaxAnalysis::getTaxDue);</span>
+<span class="nc" id="L61">        FIELD_DEFS.declareLocalField(MoneyWiseStaticResource.TAXBASIS_TAXPAID, MoneyWiseUKTaxAnalysis::getTaxPaid);</span>
+<span class="nc" id="L62">        FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXANALYSIS_TAXPROFIT, MoneyWiseUKTaxAnalysis::getTaxProfit);</span>
+<span class="nc" id="L63">    }</span>
+
+    /**
+     * The TaxYear.
+     */
+    private final MoneyWiseUKTaxYear theTaxYear;
+
+    /**
+     * The TaxSource.
+     */
+    private final MoneyWiseTaxSource theTaxSource;
+
+    /**
+     * The TaxConfig.
+     */
+    private final MoneyWiseUKTaxConfig theTaxConfig;
+
+    /**
+     * The TaxDueBuckets.
+     */
+    private final List&lt;MoneyWiseTaxDueBucket&gt; theTaxBuckets;
+
+    /**
+     * The Total TaxableIncome.
+     */
+    private final OceanusMoney theTaxableIncome;
+
+    /**
+     * The Total TaxDue.
+     */
+    private final OceanusMoney theTaxDue;
+
+    /**
+     * The Total Tax Paid.
+     */
+    private final OceanusMoney theTaxPaid;
+
+    /**
+     * The TaxProfit/Loss.
+     */
+    private final OceanusMoney theTaxProfit;
+
+    /**
+     * TaxPreferenceKeys.
+     */
+<span class="nc" id="L108">    public enum MoneyWiseUKTaxPreferenceKey implements MetisPreferenceKey {</span>
+        /**
+         * Birth Date.
+         */
+<span class="nc" id="L112">        BIRTHDATE(&quot;BirthDate&quot;, MoneyWiseTaxResource.TAXPREF_BIRTH);</span>
+
+        /**
+         * The name of the Preference.
+         */
+        private final String theName;
+
+        /**
+         * The display string.
+         */
+        private final String theDisplay;
+
+        /**
+         * Constructor.
+         *
+         * @param pName    the name
+         * @param pDisplay the display string;
+         */
+        MoneyWiseUKTaxPreferenceKey(final String pName,
+<span class="nc" id="L131">                                    final MoneyWiseTaxResource pDisplay) {</span>
+<span class="nc" id="L132">            theName = pName;</span>
+<span class="nc" id="L133">            theDisplay = pDisplay.getValue();</span>
+<span class="nc" id="L134">        }</span>
+
+        @Override
+        public String getName() {
+<span class="nc" id="L138">            return theName;</span>
+        }
+
+        @Override
+        public String getDisplay() {
+<span class="nc" id="L143">            return theDisplay;</span>
+        }
+    }
+
+    /**
+     * Taxation Preferences.
+     */
+    public static class MoneyWiseUKTaxPreferences
+            extends MetisPreferenceSet {
+        /**
+         * Default year.
+         */
+        private static final int YEAR = 1970;
+
+        /**
+         * Constructor.
+         *
+         * @param pManager the preference manager
+         * @throws OceanusException on error
+         */
+        public MoneyWiseUKTaxPreferences(final MetisPreferenceManager pManager) throws OceanusException {
+<span class="nc" id="L164">            super(pManager, MoneyWiseTaxResource.TAXPREF_NAME);</span>
+<span class="nc" id="L165">        }</span>
+
+        @Override
+        protected void definePreferences() {
+<span class="nc" id="L169">            defineDatePreference(MoneyWiseUKTaxPreferenceKey.BIRTHDATE);</span>
+<span class="nc" id="L170">        }</span>
+
+        @Override
+        public void autoCorrectPreferences() {
+            /* Make sure that the birthDate is specified */
+<span class="nc" id="L175">            final MetisDatePreference myPref = getDatePreference(MoneyWiseUKTaxPreferenceKey.BIRTHDATE);</span>
+<span class="nc bnc" id="L176" title="All 2 branches missed.">            if (!myPref.isAvailable()) {</span>
+<span class="nc" id="L177">                myPref.setValue(new OceanusDate(YEAR, Month.JANUARY, 1));</span>
+            }
+<span class="nc" id="L179">        }</span>
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param pTaxSource the taxSource
+     * @param pPrefMgr   the preference manager
+     * @param pTaxYear   the tax year
+     */
+    protected MoneyWiseUKTaxAnalysis(final MoneyWiseTaxSource pTaxSource,
+                                     final MetisPreferenceManager pPrefMgr,
+<span class="nc" id="L191">                                     final MoneyWiseUKTaxYear pTaxYear) {</span>
+        /* Store the parameters */
+<span class="nc" id="L193">        theTaxYear = pTaxYear;</span>
+<span class="nc" id="L194">        theTaxSource = pTaxSource;</span>
+
+        /* Create the TaxDue Buckets */
+<span class="nc" id="L197">        theTaxBuckets = new ArrayList&lt;&gt;();</span>
+
+        /* Determine the client birthday */
+<span class="nc" id="L200">        final MoneyWiseUKTaxPreferences myPreferences = pPrefMgr.getPreferenceSet(MoneyWiseUKTaxPreferences.class);</span>
+<span class="nc" id="L201">        final OceanusDate myBirthday = myPreferences.getDateValue(MoneyWiseUKTaxPreferenceKey.BIRTHDATE);</span>
+<span class="nc" id="L202">        theTaxConfig = new MoneyWiseUKTaxConfig(theTaxYear, theTaxSource, myBirthday);</span>
+
+        /* Create the totals */
+<span class="nc" id="L205">        theTaxPaid = pTaxSource.getAmountForTaxBasis(MoneyWiseTaxClass.TAXPAID);</span>
+<span class="nc" id="L206">        theTaxableIncome = new OceanusMoney(theTaxPaid);</span>
+<span class="nc" id="L207">        theTaxableIncome.setZero();</span>
+<span class="nc" id="L208">        theTaxDue = new OceanusMoney(theTaxPaid);</span>
+<span class="nc" id="L209">        theTaxDue.setZero();</span>
+<span class="nc" id="L210">        theTaxProfit = new OceanusMoney(theTaxPaid);</span>
+<span class="nc" id="L211">        theTaxProfit.setZero();</span>
+<span class="nc" id="L212">    }</span>
+
+    @Override
+    public MoneyWiseUKTaxYear getTaxYear() {
+<span class="nc" id="L216">        return theTaxYear;</span>
+    }
+
+    /**
+     * Obtain the taxConfig.
+     *
+     * @return the taxConfig
+     */
+    public MoneyWiseUKTaxConfig getTaxConfig() {
+<span class="nc" id="L225">        return theTaxConfig;</span>
+    }
+
+    @Override
+    public Iterator&lt;MoneyWiseTaxDueBucket&gt; taxDueIterator() {
+<span class="nc" id="L230">        return theTaxBuckets.iterator();</span>
+    }
+
+    /**
+     * Obtain the taxBuckets.
+     *
+     * @return the taxBuckets
+     */
+    private List&lt;MoneyWiseTaxDueBucket&gt; getTaxBuckets() {
+<span class="nc" id="L239">        return theTaxBuckets;</span>
+    }
+
+    @Override
+    public OceanusMoney getTaxableIncome() {
+<span class="nc" id="L244">        return theTaxableIncome;</span>
+    }
+
+    @Override
+    public OceanusMoney getTaxDue() {
+<span class="nc" id="L249">        return theTaxDue;</span>
+    }
+
+    @Override
+    public OceanusMoney getTaxPaid() {
+<span class="nc" id="L254">        return theTaxPaid;</span>
+    }
+
+    @Override
+    public OceanusMoney getTaxProfit() {
+<span class="nc" id="L259">        return theTaxProfit;</span>
+    }
+
+    /**
+     * Calculate the taxDue.
+     */
+    protected void calculateTaxDue() {
+        /* Reset the tax Due */
+<span class="nc" id="L267">        theTaxableIncome.setZero();</span>
+<span class="nc" id="L268">        theTaxDue.setZero();</span>
+
+        /* Loop through the tax bands */
+<span class="nc" id="L271">        final Iterator&lt;MoneyWiseTaxDueBucket&gt; myIterator = theTaxBuckets.iterator();</span>
+<span class="nc bnc" id="L272" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L273">            final MoneyWiseTaxDueBucket myBucket = myIterator.next();</span>
+
+            /* Add the values */
+<span class="nc" id="L276">            theTaxableIncome.addAmount(myBucket.getTaxableIncome());</span>
+<span class="nc" id="L277">            theTaxDue.addAmount(myBucket.getTaxDue());</span>
+
+            /* If this is a sliced tax bucket */
+<span class="nc bnc" id="L280" title="All 2 branches missed.">            if (myBucket instanceof MoneyWiseUKSlicedTaxDueBucket mySliced) {</span>
+                /* Apply Tax Relief */
+<span class="nc" id="L282">                theTaxDue.subtractAmount(mySliced.getTaxRelief());</span>
+            }
+<span class="nc" id="L284">        }</span>
+<span class="nc" id="L285">    }</span>
+
+    /**
+     * Calculate the taxProfit.
+     */
+    protected void calculateTaxProfit() {
+        /* Calculate the profit */
+<span class="nc" id="L292">        theTaxProfit.setZero();</span>
+<span class="nc" id="L293">        theTaxProfit.addAmount(theTaxDue);</span>
+<span class="nc" id="L294">        theTaxProfit.addAmount(theTaxPaid);</span>
+<span class="nc" id="L295">    }</span>
+
+    /**
+     * Process the item.
+     *
+     * @param pBasis  the tax basis
+     * @param pScheme the income scheme
+     */
+    protected void processItem(final MoneyWiseTaxClass pBasis,
+                               final MoneyWiseUKIncomeScheme pScheme) {
+        /* Obtain the amount */
+<span class="nc" id="L306">        final OceanusMoney myAmount = theTaxSource.getAmountForTaxBasis(pBasis);</span>
+
+        /* Ignore zero or negative amounts */
+<span class="nc bnc" id="L309" title="All 2 branches missed.">        if (myAmount.isZero()</span>
+<span class="nc bnc" id="L310" title="All 2 branches missed.">                || !myAmount.isPositive()) {</span>
+<span class="nc" id="L311">            return;</span>
+        }
+
+        /* Take a clone of the taxConfig */
+<span class="nc" id="L315">        final MoneyWiseUKTaxConfig myConfig = theTaxConfig.cloneIt();</span>
+
+        /* Allocate the amount to the various taxBands */
+<span class="nc" id="L318">        final MoneyWiseTaxBandSet myBands = pScheme.allocateToTaxBands(theTaxConfig, pBasis, myAmount);</span>
+
+        /* Create the TaxDueBucket */
+<span class="nc" id="L321">        MoneyWiseTaxDueBucket myBucket = new MoneyWiseTaxDueBucket(pBasis, myBands, myConfig);</span>
+
+        /* If this is ChargeableGains, and we have multiple Bands */
+<span class="nc bnc" id="L324" title="All 2 branches missed.">        if (MoneyWiseTaxClass.CHARGEABLEGAINS.equals(pBasis)</span>
+<span class="nc bnc" id="L325" title="All 2 branches missed.">                &amp;&amp; myBands.multipleBands()) {</span>
+            /* Analyse the Slices */
+<span class="nc" id="L327">            myBucket = new MoneyWiseUKSlicedTaxDueBucket(myBucket, theTaxSource);</span>
+        }
+
+        /* Add the bucket to the list */
+<span class="nc" id="L331">        theTaxBuckets.add(myBucket);</span>
+<span class="nc" id="L332">    }</span>
+
+    @Override
+    public MetisFieldSet&lt;MoneyWiseUKTaxAnalysis&gt; getDataFieldSet() {
+<span class="nc" id="L336">        return FIELD_DEFS;</span>
+    }
+
+    @Override
+    public String formatObject(final OceanusDataFormatter pFormatter) {
+<span class="nc" id="L341">        return FIELD_DEFS.getName();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

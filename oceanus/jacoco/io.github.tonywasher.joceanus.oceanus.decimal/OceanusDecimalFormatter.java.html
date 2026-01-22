@@ -1,0 +1,531 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>OceanusDecimalFormatter.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Oceanus Java Core Utilities</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.oceanus.decimal</a> &gt; <span class="el_source">OceanusDecimalFormatter.java</span></div><h1>OceanusDecimalFormatter.java</h1><pre class="source lang-java linenums">/*
+ * Oceanus: Java Utilities
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.oceanus.decimal;
+
+import io.github.tonywasher.joceanus.oceanus.base.OceanusLocale;
+
+import java.util.Currency;
+import java.util.Locale;
+
+/**
+ * Presentation methods for decimals in a particular locale.
+ *
+ * @author Tony Washer
+ */
+public class OceanusDecimalFormatter {
+    /**
+     * The Buffer length for building decimal strings.
+     */
+    protected static final int INITIAL_BUFLEN = 20;
+
+    /**
+     * The Blank character.
+     */
+    public static final char CHAR_BLANK = ' ';
+
+    /**
+     * The Zero character.
+     */
+    public static final char CHAR_ZERO = '0';
+
+    /**
+     * The Minus character.
+     */
+    public static final char CHAR_MINUS = '-';
+
+    /**
+     * The Group character.
+     */
+    public static final char CHAR_GROUP = ',';
+
+    /**
+     * The Decimal character.
+     */
+    public static final String STR_DEC = &quot;.&quot;;
+
+    /**
+     * The Currency separator.
+     */
+    protected static final String STR_CURRSEP = &quot;:&quot;;
+
+    /**
+     * The locale.
+     */
+<span class="fc" id="L68">    static final OceanusDecimalLocale LOCALE_DEFAULT = new OceanusDecimalLocale();</span>
+
+    /**
+     * The locale.
+     */
+    private OceanusDecimalLocale theLocale;
+
+    /**
+     * Do we use accounting format for monetary values?
+     */
+    private boolean useAccounting;
+
+    /**
+     * Width for accounting format.
+     */
+    private int theAccountingWidth;
+
+    /**
+     * Constructor.
+     */
+    public OceanusDecimalFormatter() {
+        /* Use default locale */
+<span class="nc" id="L90">        this(OceanusLocale.getDefaultLocale());</span>
+<span class="nc" id="L91">    }</span>
+
+    /**
+     * Constructor.
+     *
+     * @param pLocale the locale
+     */
+<span class="nc" id="L98">    public OceanusDecimalFormatter(final Locale pLocale) {</span>
+        /* Set the locale */
+<span class="nc" id="L100">        setLocale(pLocale);</span>
+<span class="nc" id="L101">    }</span>
+
+    /**
+     * Set the locale.
+     *
+     * @param pLocale the locale
+     */
+    public final void setLocale(final Locale pLocale) {
+        /* Store the locale */
+<span class="nc" id="L110">        theLocale = new OceanusDecimalLocale(pLocale);</span>
+<span class="nc" id="L111">    }</span>
+
+    /**
+     * Set accounting width.
+     *
+     * @param pWidth the accounting width to use
+     */
+    public void setAccountingWidth(final int pWidth) {
+        /* Set accounting mode on and set the width */
+<span class="nc" id="L120">        useAccounting = true;</span>
+<span class="nc" id="L121">        theAccountingWidth = pWidth;</span>
+<span class="nc" id="L122">    }</span>
+
+    /**
+     * Clear accounting mode.
+     */
+    public void clearAccounting() {
+        /* Clear the accounting mode flag */
+<span class="nc" id="L129">        useAccounting = false;</span>
+<span class="nc" id="L130">    }</span>
+
+    /**
+     * Format a decimal value without reference to locale.
+     *
+     * @param pValue the value to format
+     * @return the formatted value
+     */
+    protected static String toString(final OceanusDecimal pValue) {
+        /* Access the value and scale */
+<span class="fc" id="L140">        long myValue = pValue.unscaledValue();</span>
+<span class="fc" id="L141">        final int myScale = pValue.scale();</span>
+
+        /* handle negative values */
+<span class="fc bfc" id="L144" title="All 2 branches covered.">        final boolean isNegative = myValue &lt; 0;</span>
+<span class="fc bfc" id="L145" title="All 2 branches covered.">        if (isNegative) {</span>
+<span class="fc" id="L146">            myValue = -myValue;</span>
+        }
+
+        /* Format the string */
+<span class="fc" id="L150">        final StringBuilder myString = new StringBuilder(INITIAL_BUFLEN);</span>
+<span class="fc" id="L151">        myString.append(myValue);</span>
+
+        /* Add leading zeroes */
+<span class="fc" id="L154">        int myLen = myString.length();</span>
+<span class="fc bfc" id="L155" title="All 2 branches covered.">        while (myLen &lt; (myScale + 1)) {</span>
+<span class="fc" id="L156">            myString.insert(0, CHAR_ZERO);</span>
+<span class="fc" id="L157">            myLen++;</span>
+        }
+
+        /* Insert the decimal into correct position if needed */
+<span class="pc bpc" id="L161" title="1 of 2 branches missed.">        if (myScale &gt; 0) {</span>
+<span class="fc" id="L162">            myString.insert(myLen</span>
+                    - myScale, STR_DEC);
+        }
+
+        /* Add minus sign if required */
+<span class="fc bfc" id="L167" title="All 2 branches covered.">        if (isNegative) {</span>
+<span class="fc" id="L168">            myString.insert(0, CHAR_MINUS);</span>
+        }
+
+        /* Return the string */
+<span class="fc" id="L172">        return myString.toString();</span>
+    }
+
+    /**
+     * Format a money value with currency code, into a locale independent format.
+     *
+     * @param pValue the value to format
+     * @return the formatted value
+     */
+    public String toCurrencyString(final OceanusMoney pValue) {
+        /* Format the basic value */
+<span class="nc" id="L183">        final StringBuilder myWork = new StringBuilder(toString(pValue));</span>
+
+        /* Add the currency symbol */
+<span class="nc" id="L186">        final Currency myCurrency = pValue.getCurrency();</span>
+<span class="nc" id="L187">        myWork.insert(0, STR_CURRSEP);</span>
+<span class="nc" id="L188">        myWork.insert(0, myCurrency.getCurrencyCode());</span>
+
+        /* Return the string */
+<span class="nc" id="L191">        return myWork.toString();</span>
+    }
+
+    /**
+     * Format a numeric decimal value.
+     *
+     * @param pValue        the value to format
+     * @param pScale        the scale of the decimal
+     * @param pDecSeparator the decimal separator
+     * @return the formatted value.
+     */
+    private StringBuilder formatDecimal(final long pValue,
+                                        final int pScale,
+                                        final String pDecSeparator) {
+        /* Access the value */
+<span class="nc" id="L206">        long myValue = pValue;</span>
+
+        /* Reject negative scales */
+<span class="nc bnc" id="L209" title="All 2 branches missed.">        if (pScale &lt; 0) {</span>
+<span class="nc" id="L210">            throw new IllegalArgumentException(&quot;Decimals cannot be negative&quot;);</span>
+        }
+
+        /* handle negative values */
+<span class="nc bnc" id="L214" title="All 2 branches missed.">        final boolean isNegative = myValue &lt; 0;</span>
+<span class="nc bnc" id="L215" title="All 2 branches missed.">        if (isNegative) {</span>
+<span class="nc" id="L216">            myValue = -myValue;</span>
+        }
+
+        /* Format the string */
+<span class="nc" id="L220">        final StringBuilder myString = new StringBuilder(INITIAL_BUFLEN);</span>
+<span class="nc" id="L221">        myString.append(myValue);</span>
+
+        /* Add leading zeroes */
+<span class="nc" id="L224">        int myLen = myString.length();</span>
+<span class="nc bnc" id="L225" title="All 2 branches missed.">        while (myLen &lt; (pScale + 1)) {</span>
+<span class="nc" id="L226">            myString.insert(0, CHAR_ZERO);</span>
+<span class="nc" id="L227">            myLen++;</span>
+        }
+
+        /* If we have decimals */
+<span class="nc bnc" id="L231" title="All 2 branches missed.">        if (pScale &gt; 0) {</span>
+            /* Insert decimal point and remove decimals from length */
+<span class="nc" id="L233">            myString.insert(myLen</span>
+                    - pScale, pDecSeparator);
+<span class="nc" id="L235">            myLen -= pScale;</span>
+        }
+
+        /* Loop while we need to add grouping */
+<span class="nc" id="L239">        final int myGroupingSize = theLocale.getGroupingSize();</span>
+<span class="nc" id="L240">        final String myGrouping = theLocale.getGrouping();</span>
+<span class="nc bnc" id="L241" title="All 2 branches missed.">        while (myLen &gt; myGroupingSize) {</span>
+            /* Insert grouping character and remove grouping size from length */
+<span class="nc" id="L243">            myString.insert(myLen</span>
+                    - myGroupingSize, myGrouping);
+<span class="nc" id="L245">            myLen -= myGroupingSize;</span>
+        }
+
+        /* Add minus sign if required */
+<span class="nc bnc" id="L249" title="All 2 branches missed.">        if (isNegative) {</span>
+<span class="nc" id="L250">            myString.insert(0, theLocale.getMinusSign());</span>
+        }
+
+        /* Return the string */
+<span class="nc" id="L254">        return myString;</span>
+    }
+
+    /**
+     * Format a long value.
+     *
+     * @param pValue the value to format
+     * @return the formatted value.
+     */
+    private StringBuilder formatLong(final long pValue) {
+        /* Access the value */
+<span class="nc" id="L265">        long myValue = pValue;</span>
+
+        /* handle negative values */
+<span class="nc bnc" id="L268" title="All 2 branches missed.">        final boolean isNegative = myValue &lt; 0;</span>
+<span class="nc bnc" id="L269" title="All 2 branches missed.">        if (isNegative) {</span>
+<span class="nc" id="L270">            myValue = -myValue;</span>
+        }
+
+        /* Format the string */
+<span class="nc" id="L274">        final StringBuilder myString = new StringBuilder(INITIAL_BUFLEN);</span>
+<span class="nc" id="L275">        myString.append(myValue);</span>
+
+        /* Loop while we need to add grouping */
+<span class="nc" id="L278">        int myLen = myString.length();</span>
+<span class="nc" id="L279">        final int myGroupingSize = theLocale.getGroupingSize();</span>
+<span class="nc" id="L280">        final String myGrouping = theLocale.getGrouping();</span>
+<span class="nc bnc" id="L281" title="All 2 branches missed.">        while (myLen &gt; myGroupingSize) {</span>
+            /* Insert grouping character and remove grouping size from length */
+<span class="nc" id="L283">            myString.insert(myLen</span>
+                    - myGroupingSize, myGrouping);
+<span class="nc" id="L285">            myLen -= myGroupingSize;</span>
+        }
+
+        /* Add minus sign if required */
+<span class="nc bnc" id="L289" title="All 2 branches missed.">        if (isNegative) {</span>
+<span class="nc" id="L290">            myString.insert(0, theLocale.getMinusSign());</span>
+        }
+
+        /* Return the string */
+<span class="nc" id="L294">        return myString;</span>
+    }
+
+    /**
+     * Format Money value.
+     *
+     * @param pMoney the value to format
+     * @return the formatted value
+     */
+    public String formatMoney(final OceanusMoney pMoney) {
+        /* If we are using accounting and have zero */
+<span class="nc bnc" id="L305" title="All 2 branches missed.">        if (useAccounting</span>
+<span class="nc bnc" id="L306" title="All 2 branches missed.">                &amp;&amp; pMoney.isZero()) {</span>
+            /* Format the zero */
+<span class="nc" id="L308">            return formatZeroAccounting(pMoney.getCurrency());</span>
+        }
+
+        /* Format the basic value */
+<span class="nc" id="L312">        final StringBuilder myWork = formatDecimal(pMoney.unscaledValue(), pMoney.scale(), theLocale.getMoneyDecimal());</span>
+
+        /* If we have a leading minus sign */
+<span class="nc" id="L315">        final char myMinus = theLocale.getMinusSign();</span>
+<span class="nc bnc" id="L316" title="All 2 branches missed.">        final boolean isNegative = myWork.charAt(0) == myMinus;</span>
+<span class="nc bnc" id="L317" title="All 2 branches missed.">        if (isNegative) {</span>
+            /* Remove the minus sign */
+<span class="nc" id="L319">            myWork.deleteCharAt(0);</span>
+        }
+
+        /* If we are using accounting mode */
+<span class="nc bnc" id="L323" title="All 2 branches missed.">        if (useAccounting) {</span>
+            /* Format for accounting */
+<span class="nc" id="L325">            formatForAccounting(myWork);</span>
+        }
+
+        /* Add the currency symbol */
+<span class="nc" id="L329">        final Currency myCurrency = pMoney.getCurrency();</span>
+<span class="nc" id="L330">        myWork.insert(0, theLocale.getSymbol(myCurrency));</span>
+
+        /* Re-Add the minus sign */
+<span class="nc bnc" id="L333" title="All 2 branches missed.">        if (isNegative) {</span>
+<span class="nc" id="L334">            myWork.insert(0, myMinus);</span>
+        }
+
+        /* return the formatted value */
+<span class="nc" id="L338">        return myWork.toString();</span>
+    }
+
+    /**
+     * Format Price value.
+     *
+     * @param pPrice the value to format
+     * @return the formatted value
+     */
+    public String formatPrice(final OceanusPrice pPrice) {
+        /* return the formatted value */
+<span class="nc" id="L349">        return formatMoney(pPrice);</span>
+    }
+
+    /**
+     * Format Rate value.
+     *
+     * @param pRate the value to format
+     * @return the formatted value
+     */
+    public String formatRate(final OceanusRate pRate) {
+        /* Format the basic value */
+<span class="nc" id="L360">        final StringBuilder myWork = formatDecimal(pRate.unscaledValue(), pRate.scale()</span>
+<span class="nc" id="L361">                - OceanusDecimalParser.ADJUST_PERCENT, theLocale.getDecimal());</span>
+
+        /* Append the perCent sign */
+<span class="nc" id="L364">        myWork.append(theLocale.getPerCent());</span>
+
+        /* return the formatted value */
+<span class="nc" id="L367">        return myWork.toString();</span>
+    }
+
+    /**
+     * Format Rate value.
+     *
+     * @param pRate the value to format
+     * @return the formatted value
+     */
+    public String formatRatePerMille(final OceanusRate pRate) {
+        /* Format the basic value */
+<span class="nc" id="L378">        final StringBuilder myWork = formatDecimal(pRate.unscaledValue(), pRate.scale()</span>
+<span class="nc" id="L379">                - OceanusDecimalParser.ADJUST_PERMILLE, theLocale.getDecimal());</span>
+
+        /* Append the perMille sign */
+<span class="nc" id="L382">        myWork.append(theLocale.getPerMille());</span>
+
+        /* return the formatted value */
+<span class="nc" id="L385">        return myWork.toString();</span>
+    }
+
+    /**
+     * Format Units value.
+     *
+     * @param pUnits the value to format
+     * @return the formatted value
+     */
+    public String formatUnits(final OceanusUnits pUnits) {
+        /* Format the basic value */
+<span class="nc" id="L396">        return formatBasicDecimal(pUnits);</span>
+    }
+
+    /**
+     * Format Ratio value.
+     *
+     * @param pRatio the value to format
+     * @return the formatted value
+     */
+    public String formatRatio(final OceanusRatio pRatio) {
+        /* Format the basic value */
+<span class="nc" id="L407">        return formatBasicDecimal(pRatio);</span>
+    }
+
+    /**
+     * Format Decimal value.
+     *
+     * @param pDecimal the value to format
+     * @return the formatted value
+     */
+    public String formatDecimal(final OceanusDecimal pDecimal) {
+        /* Split out special cases */
+<span class="nc bnc" id="L418" title="All 2 branches missed.">        if (pDecimal instanceof OceanusMoney myMoney) {</span>
+<span class="nc" id="L419">            return formatMoney(myMoney);</span>
+<span class="nc bnc" id="L420" title="All 2 branches missed.">        } else if (pDecimal instanceof OceanusRate myRate) {</span>
+<span class="nc" id="L421">            return formatRate(myRate);</span>
+        }
+
+        /* return the formatted value */
+<span class="nc" id="L425">        return formatBasicDecimal(pDecimal);</span>
+    }
+
+    /**
+     * Format Decimal value.
+     *
+     * @param pDecimal the value to format
+     * @return the formatted value
+     */
+    private String formatBasicDecimal(final OceanusDecimal pDecimal) {
+        /* Format the basic value */
+<span class="nc" id="L436">        final StringBuilder myWork = formatDecimal(pDecimal.unscaledValue(), pDecimal.scale(), theLocale.getDecimal());</span>
+
+        /* return the formatted value */
+<span class="nc" id="L439">        return myWork.toString();</span>
+    }
+
+    /**
+     * Format for accounting.
+     *
+     * @param pWork the working buffer
+     */
+    private void formatForAccounting(final StringBuilder pWork) {
+        /* If we are short of the width */
+<span class="nc" id="L449">        int myLen = pWork.length();</span>
+<span class="nc bnc" id="L450" title="All 2 branches missed.">        while (myLen &lt; theAccountingWidth) {</span>
+            /* Prefix with blank */
+<span class="nc" id="L452">            pWork.insert(0, CHAR_BLANK);</span>
+<span class="nc" id="L453">            myLen++;</span>
+        }
+<span class="nc" id="L455">    }</span>
+
+    /**
+     * Format a Zero for accounting.
+     *
+     * @param pCurrency the currency
+     * @return the formatted string
+     */
+    private String formatZeroAccounting(final Currency pCurrency) {
+        /* Determine the scale */
+<span class="nc" id="L465">        final int myScale = pCurrency.getDefaultFractionDigits();</span>
+
+        /* Create a buffer build */
+<span class="nc" id="L468">        final StringBuilder myWork = new StringBuilder(Character.toString(CHAR_MINUS));</span>
+
+        /* If we have decimals */
+        /* Add a blank in place of the decimal digit */
+<span class="nc" id="L472">        myWork.append(String.valueOf(CHAR_BLANK).repeat(Math.max(0, myScale)));</span>
+
+        /* If we are short of the width */
+<span class="nc" id="L475">        int myLen = myWork.length();</span>
+<span class="nc bnc" id="L476" title="All 2 branches missed.">        while (myLen &lt; theAccountingWidth) {</span>
+            /* Prefix with blank */
+<span class="nc" id="L478">            myWork.insert(0, CHAR_BLANK);</span>
+<span class="nc" id="L479">            myLen++;</span>
+        }
+
+        /* Add the currency symbol */
+<span class="nc" id="L483">        myWork.insert(0, theLocale.getSymbol(pCurrency));</span>
+
+        /* Return the string */
+<span class="nc" id="L486">        return myWork.toString();</span>
+    }
+
+    /**
+     * Format Long value.
+     *
+     * @param pValue the value to format
+     * @return the formatted value
+     */
+    public String formatLong(final Long pValue) {
+        /* Format the basic value */
+<span class="nc" id="L497">        final StringBuilder myWork = formatLong(pValue.longValue());</span>
+
+        /* return the formatted value */
+<span class="nc" id="L500">        return myWork.toString();</span>
+    }
+
+    /**
+     * Format Integer value.
+     *
+     * @param pValue the value to format
+     * @return the formatted value
+     */
+    public String formatInteger(final Integer pValue) {
+        /* Format the basic value */
+<span class="nc" id="L511">        final StringBuilder myWork = formatLong(pValue.longValue());</span>
+
+        /* return the formatted value */
+<span class="nc" id="L514">        return myWork.toString();</span>
+    }
+
+    /**
+     * Format Short value.
+     *
+     * @param pValue the value to format
+     * @return the formatted value
+     */
+    public String formatShort(final Short pValue) {
+        /* Format the basic value */
+<span class="nc" id="L525">        final StringBuilder myWork = formatLong(pValue.longValue());</span>
+
+        /* return the formatted value */
+<span class="nc" id="L528">        return myWork.toString();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

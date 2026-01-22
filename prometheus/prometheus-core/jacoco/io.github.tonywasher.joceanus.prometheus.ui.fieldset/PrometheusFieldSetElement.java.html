@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PrometheusFieldSetElement.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Prometheus Core Application Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.prometheus.ui.fieldset</a> &gt; <span class="el_source">PrometheusFieldSetElement.java</span></div><h1>PrometheusFieldSetElement.java</h1><pre class="source lang-java linenums">/*
+ * Prometheus: Application Framework
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+package io.github.tonywasher.joceanus.prometheus.ui.fieldset;
+
+import java.util.function.Consumer;
+
+import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
+import io.github.tonywasher.joceanus.tethys.api.base.TethysUIAlignment;
+import io.github.tonywasher.joceanus.tethys.api.base.TethysUIComponent;
+import io.github.tonywasher.joceanus.tethys.api.control.TethysUILabel;
+import io.github.tonywasher.joceanus.tethys.api.factory.TethysUIFactory;
+import io.github.tonywasher.joceanus.tethys.api.field.TethysUIDataEditField;
+import io.github.tonywasher.joceanus.tethys.api.field.TethysUIDataEditField.TethysUIValidatedField;
+import io.github.tonywasher.joceanus.tethys.api.field.TethysUIFieldAttribute;
+import io.github.tonywasher.joceanus.tethys.api.pane.TethysUIBorderPaneManager;
+import io.github.tonywasher.joceanus.tethys.api.pane.TethysUIPaneFactory;
+
+/**
+ * FieldSet Element.
+ *
+ * @param &lt;V&gt; the value type
+ */
+public class PrometheusFieldSetElement&lt;V&gt; {
+    /**
+     * The fieldId.
+     */
+    private final MetisDataFieldId theFieldId;
+
+    /**
+     * The label.
+     */
+    private final TethysUILabel theLabel;
+
+    /**
+     * The editField.
+     */
+    private final TethysUIDataEditField&lt;V&gt; theField;
+
+    /**
+     * The element.
+     */
+    private final TethysUIBorderPaneManager theElement;
+
+    /**
+     * Is the panel visible?.
+     */
+    private boolean isVisible;
+
+    /**
+     * Constructor.
+     *
+     * @param pFactory the gui factory.
+     * @param pFieldId the fieldId
+     * @param pField   the field
+     */
+    PrometheusFieldSetElement(final TethysUIFactory&lt;?&gt; pFactory,
+                              final MetisDataFieldId pFieldId,
+<span class="nc" id="L73">                              final TethysUIDataEditField&lt;V&gt; pField) {</span>
+        /* Store field and id */
+<span class="nc" id="L75">        theFieldId = pFieldId;</span>
+<span class="nc" id="L76">        theField = pField;</span>
+
+        /* Create the label */
+<span class="nc" id="L79">        theLabel = pFactory.controlFactory().newLabel(theFieldId.toString() + &quot;:&quot;);</span>
+<span class="nc" id="L80">        theLabel.setAlignment(TethysUIAlignment.EAST);</span>
+
+        /* Create border pane to centre the label */
+<span class="nc" id="L83">        final TethysUIPaneFactory myPanes = pFactory.paneFactory();</span>
+<span class="nc" id="L84">        final TethysUIBorderPaneManager myPane = myPanes.newBorderPane();</span>
+<span class="nc" id="L85">        myPane.setCentre(theLabel);</span>
+
+        /* Create the element */
+<span class="nc" id="L88">        theElement = myPanes.newBorderPane();</span>
+<span class="nc" id="L89">        theElement.setWest(myPane);</span>
+<span class="nc" id="L90">        theElement.setCentre(theField);</span>
+<span class="nc" id="L91">        isVisible = true;</span>
+<span class="nc" id="L92">    }</span>
+
+    /**
+     * Obtain the fieldId.
+     *
+     * @return the fieldId
+     */
+    MetisDataFieldId getFieldId() {
+<span class="nc" id="L100">        return theFieldId;</span>
+    }
+
+    /**
+     * Obtain the component.
+     *
+     * @return the component
+     */
+    TethysUIComponent getComponent() {
+<span class="nc" id="L109">        return theElement;</span>
+    }
+
+    /**
+     * Set value.
+     *
+     * @param pValue the value
+     */
+    void setValue(final Object pValue) {
+<span class="nc" id="L118">        theField.setValue(theField.getCastValue(pValue));</span>
+<span class="nc" id="L119">    }</span>
+
+    /**
+     * Set editable.
+     *
+     * @param pEditable true/false
+     */
+    void setEditable(final boolean pEditable) {
+<span class="nc" id="L127">        theField.setEditable(pEditable);</span>
+<span class="nc" id="L128">    }</span>
+
+    /**
+     * Set visible.
+     *
+     * @param pVisible true/false
+     */
+    void setVisible(final boolean pVisible) {
+<span class="nc" id="L136">        theElement.setVisible(pVisible);</span>
+<span class="nc" id="L137">        isVisible = pVisible;</span>
+<span class="nc" id="L138">    }</span>
+
+    /**
+     * Is the element visible.
+     *
+     * @return true/false
+     */
+    boolean isVisible() {
+<span class="nc" id="L146">        return isVisible;</span>
+    }
+
+    /**
+     * Obtain the label width.
+     *
+     * @return the label width
+     */
+    int getLabelWidth() {
+<span class="nc" id="L155">        return theLabel.getWidth();</span>
+    }
+
+    /**
+     * Set the label width.
+     *
+     * @param pWidth the label width
+     */
+    void setLabelWidth(final int pWidth) {
+<span class="nc" id="L164">        theLabel.setPreferredWidth(pWidth);</span>
+<span class="nc" id="L165">    }</span>
+
+    /**
+     * Obtain the field height.
+     *
+     * @return the field height
+     */
+    int getFieldHeight() {
+<span class="nc" id="L173">        return theField.getHeight();</span>
+    }
+
+    /**
+     * Set the field height.
+     *
+     * @param pHeight the field height
+     */
+    void setFieldHeight(final int pHeight) {
+<span class="nc" id="L182">        theField.setPreferredHeight(pHeight);</span>
+<span class="nc" id="L183">    }</span>
+
+    /**
+     * Adjust changed indications.
+     *
+     * @param pChanged is the field changed?
+     */
+    void adjustChanged(final boolean pChanged) {
+<span class="nc" id="L191">        theField.setTheAttributeState(TethysUIFieldAttribute.CHANGED, pChanged);</span>
+<span class="nc" id="L192">        theField.adjustField();</span>
+<span class="nc" id="L193">    }</span>
+
+    /**
+     * Set reporter.
+     *
+     * @param pReporter the reporter
+     */
+    void setReporter(final Consumer&lt;String&gt; pReporter) {
+<span class="nc bnc" id="L201" title="All 2 branches missed.">        if (theField instanceof TethysUIValidatedField) {</span>
+<span class="nc" id="L202">            ((TethysUIValidatedField&lt;?&gt;) theField).setReporter(pReporter);</span>
+        }
+<span class="nc" id="L204">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

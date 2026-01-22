@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseDepositRateTable.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.moneywise.ui.dialog</a> &gt; <span class="el_source">MoneyWiseDepositRateTable.java</span></div><h1>MoneyWiseDepositRateTable.java</h1><pre class="source lang-java linenums">/*
+ * MoneyWise: Finance Application
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.moneywise.ui.dialog;
+
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateConfig;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRate;
+import io.github.tonywasher.joceanus.metis.data.MetisDataDifference;
+import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
+import io.github.tonywasher.joceanus.metis.ui.MetisAction;
+import io.github.tonywasher.joceanus.metis.ui.MetisErrorPanel;
+import io.github.tonywasher.joceanus.metis.ui.MetisIcon;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDeposit;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDepositRate;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDepositRate.MoneyWiseDepositRateList;
+import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
+import io.github.tonywasher.joceanus.moneywise.ui.MoneyWiseUIResource;
+import io.github.tonywasher.joceanus.moneywise.ui.base.MoneyWiseDialogTable;
+import io.github.tonywasher.joceanus.moneywise.views.MoneyWiseView;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataResource;
+import io.github.tonywasher.joceanus.prometheus.ui.fieldset.PrometheusFieldSetTableTab.PrometheusFieldSetTable;
+import io.github.tonywasher.joceanus.prometheus.views.PrometheusEditSet;
+import io.github.tonywasher.joceanus.tethys.api.control.TethysUIControl.TethysUIIconMapSet;
+import io.github.tonywasher.joceanus.tethys.api.table.TethysUITableColumn;
+import io.github.tonywasher.joceanus.tethys.api.table.TethysUITableManager;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+/**
+ * Deposit Rate Table.
+ */
+public class MoneyWiseDepositRateTable
+        extends MoneyWiseDialogTable&lt;MoneyWiseDepositRate&gt;
+        implements PrometheusFieldSetTable&lt;MoneyWiseDeposit&gt; {
+    /**
+     * Deposit.
+     */
+    private MoneyWiseDeposit theDeposit;
+
+    /**
+     * The edit list.
+     */
+    private MoneyWiseDepositRateList theRates;
+
+    /**
+     * The active column.
+     */
+    private final TethysUITableColumn&lt;MetisAction, MetisDataFieldId, MoneyWiseDepositRate&gt; theActiveColumn;
+
+    /**
+     * Constructor.
+     *
+     * @param pView    the view
+     * @param pEditSet the editSet
+     * @param pError   the error panel
+     */
+    public MoneyWiseDepositRateTable(final MoneyWiseView pView,
+                                     final PrometheusEditSet pEditSet,
+                                     final MetisErrorPanel pError) {
+        /* Store parameters */
+<span class="nc" id="L80">        super(pView, pEditSet, pError, MoneyWiseBasicDataType.DEPOSITRATE);</span>
+
+        /* Access Gui factory */
+<span class="nc" id="L83">        final TethysUITableManager&lt;MetisDataFieldId, MoneyWiseDepositRate&gt; myTable = getTable();</span>
+
+        /* Set table configuration */
+<span class="nc" id="L86">        myTable.setDisabled(MoneyWiseDepositRate::isDisabled)</span>
+<span class="nc" id="L87">                .setComparator(MoneyWiseDepositRate::compareTo);</span>
+
+        /* Create the rate column */
+<span class="nc" id="L90">        myTable.declareRateColumn(MoneyWiseBasicResource.MONEYWISEDATA_FIELD_RATE)</span>
+<span class="nc" id="L91">                .setCellValueFactory(MoneyWiseDepositRate::getRate)</span>
+<span class="nc" id="L92">                .setEditable(true)</span>
+<span class="nc" id="L93">                .setColumnWidth(WIDTH_RATE)</span>
+<span class="nc" id="L94">                .setOnCommit((r, v) -&gt; updateField(MoneyWiseDepositRate::setRate, r, v));</span>
+
+        /* Create the bonus column */
+<span class="nc" id="L97">        myTable.declareRateColumn(MoneyWiseBasicResource.DEPOSITRATE_BONUS)</span>
+<span class="nc" id="L98">                .setCellValueFactory(MoneyWiseDepositRate::getBonus)</span>
+<span class="nc" id="L99">                .setEditable(true)</span>
+<span class="nc" id="L100">                .setColumnWidth(WIDTH_RATE)</span>
+<span class="nc" id="L101">                .setOnCommit((r, v) -&gt; updateField(MoneyWiseDepositRate::setBonus, r, v));</span>
+
+        /* Create the endDate column */
+<span class="nc" id="L104">        myTable.declareDateColumn(MoneyWiseBasicResource.DEPOSITRATE_ENDDATE)</span>
+<span class="nc" id="L105">                .setDateConfigurator(this::handleDateConfig)</span>
+<span class="nc" id="L106">                .setCellValueFactory(MoneyWiseDepositRate::getEndDate)</span>
+<span class="nc" id="L107">                .setEditable(true)</span>
+<span class="nc" id="L108">                .setColumnWidth(WIDTH_DATE)</span>
+<span class="nc" id="L109">                .setOnCommit((r, v) -&gt; updateField(MoneyWiseDepositRate::setEndDate, r, v));</span>
+
+        /* Create the Active column */
+<span class="nc" id="L112">        final TethysUIIconMapSet&lt;MetisAction&gt; myActionMapSet = MetisIcon.configureStatusIconButton(pView.getGuiFactory());</span>
+<span class="nc" id="L113">        theActiveColumn = myTable.declareIconColumn(PrometheusDataResource.DATAITEM_TOUCH, MetisAction.class)</span>
+<span class="nc" id="L114">                .setIconMapSet(r -&gt; myActionMapSet)</span>
+<span class="nc bnc" id="L115" title="All 2 branches missed.">                .setCellValueFactory(r -&gt; r.isActive() ? MetisAction.ACTIVE : MetisAction.DELETE)</span>
+<span class="nc" id="L116">                .setName(MoneyWiseUIResource.STATICDATA_ACTIVE.getValue())</span>
+<span class="nc" id="L117">                .setEditable(true)</span>
+<span class="nc bnc" id="L118" title="All 2 branches missed.">                .setCellEditable(r -&gt; !r.isActive())</span>
+<span class="nc" id="L119">                .setColumnWidth(WIDTH_ICON)</span>
+<span class="nc" id="L120">                .setOnCommit((r, v) -&gt; updateField(this::deleteRow, r, v));</span>
+<span class="nc" id="L121">    }</span>
+
+    @Override
+    public void refreshData() {
+        /* Access the rates list */
+<span class="nc" id="L126">        theRates = getEditSet().getDataList(MoneyWiseBasicDataType.DEPOSITRATE, MoneyWiseDepositRateList.class);</span>
+<span class="nc" id="L127">        getTable().setItems(theRates.getUnderlyingList());</span>
+<span class="nc" id="L128">    }</span>
+
+    @Override
+    public void setItem(final MoneyWiseDeposit pDeposit) {
+        /* Store the security */
+<span class="nc bnc" id="L133" title="All 2 branches missed.">        if (!MetisDataDifference.isEqual(pDeposit, theDeposit)) {</span>
+<span class="nc" id="L134">            theDeposit = pDeposit;</span>
+<span class="nc" id="L135">            updateTableData();</span>
+        }
+<span class="nc" id="L137">    }</span>
+
+    @Override
+    protected void addNewItem() {
+        /* Protect against Exceptions */
+        try {
+            /* Add a new rate */
+<span class="nc" id="L144">            final MoneyWiseDepositRate myRate = addNewRate();</span>
+
+            /* Shift display to line */
+<span class="nc" id="L147">            updateTableData();</span>
+<span class="nc" id="L148">            selectItem(myRate);</span>
+<span class="nc" id="L149">            getEditSet().incrementVersion();</span>
+<span class="nc" id="L150">            notifyChanges();</span>
+
+            /* Handle Exceptions */
+<span class="nc" id="L153">        } catch (OceanusException e) {</span>
+            /* Build the error */
+<span class="nc" id="L155">            final OceanusException myError = new MoneyWiseDataException(&quot;Failed to create new rate&quot;, e);</span>
+
+            /* Show the error */
+<span class="nc" id="L158">            setError(myError);</span>
+<span class="nc" id="L159">        }</span>
+<span class="nc" id="L160">    }</span>
+
+    /**
+     * Add a new rate for a deposit.
+     *
+     * @return the rate
+     * @throws OceanusException on error
+     */
+    private MoneyWiseDepositRate addNewRate() throws OceanusException {
+        /* Create the new rate */
+<span class="nc" id="L170">        final MoneyWiseDepositRate myRate = new MoneyWiseDepositRate(theRates);</span>
+
+        /* Set the item value */
+<span class="nc" id="L173">        myRate.setDeposit(theDeposit);</span>
+<span class="nc" id="L174">        myRate.setRate(OceanusRate.getWholePercentage(0));</span>
+
+        /* Access iterator */
+<span class="nc" id="L177">        final Iterator&lt;MoneyWiseDepositRate&gt; myIterator = getTable().viewIterator();</span>
+
+        /* Access the last rate and look to see whether we have a null date */
+<span class="nc bnc" id="L180" title="All 2 branches missed.">        final MoneyWiseDepositRate myLast = myIterator.hasNext()</span>
+<span class="nc" id="L181">                ? myIterator.next()</span>
+<span class="nc" id="L182">                : null;</span>
+<span class="nc bnc" id="L183" title="All 4 branches missed.">        final boolean hasNullDate = myLast != null &amp;&amp; myLast.getEndDate() == null;</span>
+
+        /* If we have a null date in the last element */
+<span class="nc bnc" id="L186" title="All 2 branches missed.">        if (hasNullDate) {</span>
+            /* Access the previous element */
+<span class="nc bnc" id="L188" title="All 2 branches missed.">            final MoneyWiseDepositRate myLatest = myIterator.hasNext()</span>
+<span class="nc" id="L189">                    ? myIterator.next()</span>
+<span class="nc" id="L190">                    : null;</span>
+
+            /* Assume that we can use today's date */
+<span class="nc" id="L193">            OceanusDate myDate = new OceanusDate();</span>
+<span class="nc bnc" id="L194" title="All 2 branches missed.">            if (myLatest != null) {</span>
+                /* Obtain the date that is one after the latest date used */
+<span class="nc" id="L196">                final OceanusDate myNew = new OceanusDate(myLatest.getEndDate());</span>
+<span class="nc" id="L197">                myNew.adjustDay(1);</span>
+
+                /* Use the latest of the two dates */
+<span class="nc bnc" id="L200" title="All 2 branches missed.">                if (myDate.compareTo(myNew) &lt; 0) {</span>
+<span class="nc" id="L201">                    myDate = myNew;</span>
+                }
+            }
+
+            /* Adjust the last date */
+<span class="nc" id="L206">            myLast.pushHistory();</span>
+<span class="nc" id="L207">            myLast.setNewVersion();</span>
+<span class="nc" id="L208">            myLast.setEndDate(myDate);</span>
+        }
+
+        /* Add the new item */
+<span class="nc" id="L212">        myRate.setNewVersion();</span>
+<span class="nc" id="L213">        theRates.add(myRate);</span>
+
+        /*
+         * Don't validate the rate yet. We need to take care such that we can only add a new price
+         * when there is a slot available, and that we validate the entire list after an update
+         */
+<span class="nc" id="L219">        return myRate;</span>
+    }
+
+    @Override
+    public boolean isVisible() {
+<span class="nc" id="L224">        return isViewActive();</span>
+    }
+
+    @Override
+    public void setEditable(final boolean pEditable) {
+        /* Show/Hide columns/panels */
+<span class="nc" id="L230">        super.setEditable(pEditable);</span>
+<span class="nc" id="L231">        theActiveColumn.setVisible(pEditable);</span>
+<span class="nc" id="L232">    }</span>
+
+    @Override
+    protected boolean isFiltered(final MoneyWiseDepositRate pRow) {
+<span class="nc bnc" id="L236" title="All 4 branches missed.">        return super.isFiltered(pRow)</span>
+                &amp;&amp; theDeposit != null
+<span class="nc bnc" id="L238" title="All 2 branches missed.">                &amp;&amp; theDeposit.equals(pRow.getDeposit());</span>
+    }
+
+    /**
+     * Handle dateConfig.
+     *
+     * @param pRow    the row
+     * @param pConfig the dateConfig
+     */
+    private void handleDateConfig(final MoneyWiseDepositRate pRow,
+                                  final OceanusDateConfig pConfig) {
+        /* Build a list of used dates */
+<span class="nc" id="L250">        final List&lt;OceanusDate&gt; myDates = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L251">        final Iterator&lt;MoneyWiseDepositRate&gt; myIterator = getTable().viewIterator();</span>
+<span class="nc bnc" id="L252" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L253">            final MoneyWiseDepositRate myRate = myIterator.next();</span>
+<span class="nc" id="L254">            myDates.add(myRate.getEndDate());</span>
+<span class="nc" id="L255">        }</span>
+
+        /* Set filter constraint */
+<span class="nc" id="L258">        final OceanusDate myCurrent = pRow.getEndDate();</span>
+<span class="nc bnc" id="L259" title="All 4 branches missed.">        pConfig.setAllowed(d -&gt; d.equals(myCurrent) || !myDates.contains(d));</span>
+
+        /* Set null constraint */
+<span class="nc" id="L262">        final boolean hasNull = myDates.contains(null);</span>
+<span class="nc bnc" id="L263" title="All 4 branches missed.">        pConfig.setAllowNullDateSelection(!hasNull || myCurrent == null);</span>
+<span class="nc" id="L264">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

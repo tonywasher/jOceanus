@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PrometheusMapsItemTouch.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Prometheus Core Application Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.prometheus.maps</a> &gt; <span class="el_source">PrometheusMapsItemTouch.java</span></div><h1>PrometheusMapsItemTouch.java</h1><pre class="source lang-java linenums">/*
+ * Prometheus: Application Framework
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.prometheus.maps;
+
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldItem;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+/**
+ * DataTouchMap for Item.
+ */
+public class PrometheusMapsItemTouch
+        implements MetisFieldItem {
+    /**
+     * Report fields.
+     */
+<span class="nc" id="L35">    private static final MetisFieldSet&lt;PrometheusMapsItemTouch&gt; FIELD_DEFS</span>
+<span class="nc" id="L36">            = MetisFieldSet.newFieldSet(PrometheusMapsItemTouch.class);</span>
+
+    /*
+     * Declare Fields.
+     */
+    static {
+<span class="nc" id="L42">        FIELD_DEFS.declareLocalField(PrometheusMapsResource.MAPS_ITEM, PrometheusMapsItemTouch::getItem);</span>
+<span class="nc" id="L43">        FIELD_DEFS.declareLocalField(PrometheusMapsResource.TOUCH_TOUCHEDBY, PrometheusMapsItemTouch::getTouchedByMap);</span>
+<span class="nc" id="L44">        FIELD_DEFS.declareLocalField(PrometheusMapsResource.TOUCH_TOUCHES, PrometheusMapsItemTouch::getTouchesMap);</span>
+<span class="nc" id="L45">    }</span>
+
+    /**
+     * Item itself.
+     */
+    private final PrometheusDataItem theItem;
+
+    /**
+     * The map of items that touch this item.
+     */
+    private final Map&lt;PrometheusMapsItemId, PrometheusDataItem&gt; theTouchedBy;
+
+    /**
+     * The map of items that this item touches.
+     */
+    private final Map&lt;PrometheusMapsItemId, PrometheusDataItem&gt; theTouches;
+
+    /**
+     * Constructor.
+     *
+     * @param pItem the item
+     */
+<span class="nc" id="L67">    PrometheusMapsItemTouch(final PrometheusDataItem pItem) {</span>
+<span class="nc" id="L68">        theItem = pItem;</span>
+<span class="nc" id="L69">        theTouchedBy = new LinkedHashMap&lt;&gt;();</span>
+<span class="nc" id="L70">        theTouches = new LinkedHashMap&lt;&gt;();</span>
+<span class="nc" id="L71">    }</span>
+
+    @Override
+    public MetisFieldSetDef getDataFieldSet() {
+<span class="nc" id="L75">        return FIELD_DEFS;</span>
+    }
+
+    @Override
+    public String formatObject(final OceanusDataFormatter pFormatter) {
+<span class="nc" id="L80">        return theItem.formatObject(pFormatter);</span>
+    }
+
+    /**
+     * Obtain the item.
+     *
+     * @return the item
+     */
+    private PrometheusDataItem getItem() {
+<span class="nc" id="L89">        return theItem;</span>
+    }
+
+    /**
+     * Obtain the touchedBy map.
+     *
+     * @return the map
+     */
+    private Map&lt;PrometheusMapsItemId, PrometheusDataItem&gt; getTouchedByMap() {
+<span class="nc" id="L98">        return theTouchedBy;</span>
+    }
+
+    /**
+     * Obtain the touches map.
+     *
+     * @return the map
+     */
+    private Map&lt;PrometheusMapsItemId, PrometheusDataItem&gt; getTouchesMap() {
+<span class="nc" id="L107">        return theTouches;</span>
+    }
+
+    /**
+     * Register touchedBy item.
+     *
+     * @param pItem the item that touches this item
+     */
+    void touchedByItem(final PrometheusDataItem pItem) {
+<span class="nc" id="L116">        final PrometheusMapsItemId myId = new PrometheusMapsItemId(pItem);</span>
+<span class="nc" id="L117">        theTouchedBy.put(myId, pItem);</span>
+<span class="nc" id="L118">    }</span>
+
+    /**
+     * Register touches item.
+     *
+     * @param pItem the item that is touched by this item
+     */
+    void touchesItem(final PrometheusDataItem pItem) {
+<span class="nc" id="L126">        final PrometheusMapsItemId myId = new PrometheusMapsItemId(pItem);</span>
+<span class="nc" id="L127">        theTouches.put(myId, pItem);</span>
+<span class="nc" id="L128">    }</span>
+
+    /**
+     * Is the item touched?
+     *
+     * @return true/false
+     */
+    boolean isTouched() {
+<span class="nc bnc" id="L136" title="All 2 branches missed.">        return !theTouchedBy.isEmpty();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

@@ -1,0 +1,322 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianBlake2Xof.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.impl.ext.digests</a> &gt; <span class="el_source">GordianBlake2Xof.java</span></div><h1>GordianBlake2Xof.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.gordianknot.impl.ext.digests;
+
+import io.github.tonywasher.joceanus.gordianknot.impl.ext.params.GordianBlake2Parameters;
+import org.bouncycastle.crypto.ExtendedDigest;
+import org.bouncycastle.crypto.Xof;
+import org.bouncycastle.util.Arrays;
+import org.bouncycastle.util.Memoable;
+
+/**
+ * Blake2X implementation.
+ * &lt;p&gt;This implementation supports the following elements of Blake2Parameters
+ * &lt;ul&gt;
+ *     &lt;li&gt;Key
+ *     &lt;li&gt;Nonce
+ *     &lt;li&gt;Personalisation
+ *     &lt;li&gt;Max Output length
+ * &lt;/ul&gt;
+ * &lt;p&gt;If OutputLen is set to zero, then Blake2X defaults to the underlying digestLength.
+ */
+public class GordianBlake2Xof
+        implements ExtendedDigest, Memoable, Xof {
+    /**
+     * The underlying Blake instance.
+     */
+    private final GordianBlake2Base theUnderlying;
+
+    /**
+     * The combining Blake instance.
+     */
+    private final GordianBlake2Base theComposite;
+
+    /**
+     * The single byte buffer.
+     */
+<span class="fc" id="L51">    private final byte[] singleByte = new byte[1];</span>
+
+    /**
+     * The XofLen.
+     */
+    private long theXofLen;
+
+    /**
+     * The Root hash.
+     */
+    private byte[] theRoot;
+
+    /**
+     * The XofRemaining.
+     */
+    private long theXofRemaining;
+
+    /**
+     * The current hash.
+     */
+    private byte[] theCurrent;
+
+    /**
+     * The data index within the current hash.
+     */
+    private int theHashIndex;
+
+    /**
+     * The Xof NodeIndex.
+     */
+    private int theNodeIndex;
+
+    /**
+     * Constructor.
+     *
+     * @param pDigest the underlying digest.
+     */
+<span class="fc" id="L88">    public GordianBlake2Xof(final GordianBlake2Base pDigest) {</span>
+        /* Create the two digests */
+<span class="fc" id="L90">        theUnderlying = pDigest;</span>
+<span class="fc" id="L91">        theComposite = (GordianBlake2Base) theUnderlying.copy();</span>
+
+        /* Configure the composite */
+<span class="fc" id="L94">        theComposite.setTreeConfig(0, 0, theUnderlying.getDigestSize());</span>
+<span class="fc" id="L95">        theComposite.setInnerLength(theUnderlying.getDigestSize());</span>
+<span class="fc" id="L96">        theComposite.setXofLen(0);</span>
+
+        /* Clear outputting flag */
+<span class="fc" id="L99">        theXofRemaining = -1L;</span>
+<span class="fc" id="L100">        theXofLen = -1L;</span>
+<span class="fc" id="L101">    }</span>
+
+    /**
+     * Constructor.
+     *
+     * @param pSource the source digest.
+     */
+<span class="fc" id="L108">    public GordianBlake2Xof(final GordianBlake2Xof pSource) {</span>
+        /* Create hashes */
+<span class="fc bfc" id="L110" title="All 2 branches covered.">        theUnderlying = pSource.theUnderlying instanceof GordianBlake2bDigest ? new GordianBlake2bDigest() : new GordianBlake2sDigest();</span>
+<span class="fc" id="L111">        theComposite = (GordianBlake2Base) theUnderlying.copy();</span>
+
+        /* Initialise from source */
+<span class="fc" id="L114">        reset(pSource);</span>
+<span class="fc" id="L115">    }</span>
+
+    /**
+     * Initialise.
+     *
+     * @param pParams the parameters.
+     */
+    public void init(final GordianBlake2Parameters pParams) {
+        /* Pass selective parameters to the underlying hash */
+<span class="fc" id="L124">        theUnderlying.setKey(pParams.getKey());</span>
+<span class="fc" id="L125">        theUnderlying.setSalt(pParams.getSalt());</span>
+<span class="fc" id="L126">        theUnderlying.setPersonalisation(pParams.getPersonalisation());</span>
+<span class="fc" id="L127">        theUnderlying.setXofLen(pParams.getMaxOutputLength());</span>
+<span class="fc" id="L128">        theUnderlying.reset();</span>
+
+        /* Pass selective parameters to the underlying hash */
+<span class="fc" id="L131">        theComposite.setSalt(pParams.getSalt());</span>
+<span class="fc" id="L132">        theComposite.setPersonalisation(pParams.getPersonalisation());</span>
+<span class="fc" id="L133">        theComposite.setXofLen(pParams.getMaxOutputLength());</span>
+<span class="fc" id="L134">        theComposite.reset();</span>
+
+        /* Adjust XofLength */
+<span class="fc" id="L137">        theXofLen = theUnderlying.getXofLen();</span>
+<span class="fc" id="L138">        theXofRemaining = -1L;</span>
+<span class="fc" id="L139">        theRoot = null;</span>
+<span class="fc" id="L140">        theCurrent = null;</span>
+<span class="fc" id="L141">    }</span>
+
+    @Override
+    public String getAlgorithmName() {
+<span class="fc bfc" id="L145" title="All 2 branches covered.">        final String myBase = theUnderlying instanceof GordianBlake2bDigest ? &quot;Blake2Xb&quot; : &quot;Blake2Xs&quot;;</span>
+<span class="pc bpc" id="L146" title="1 of 2 branches missed.">        if (theXofLen == -1) {</span>
+<span class="fc" id="L147">            return myBase;</span>
+        }
+<span class="nc bnc" id="L149" title="All 2 branches missed.">        final long myLen = theXofLen == 0 ? theUnderlying.getDigestSize() : theXofLen;</span>
+<span class="nc" id="L150">        return myBase + &quot;-&quot; + (myLen * Byte.SIZE);</span>
+    }
+
+    @Override
+    public int getDigestSize() {
+<span class="fc bfc" id="L155" title="All 4 branches covered.">        return (theXofLen == 0 || theXofLen == -1) ? theUnderlying.getDigestSize() : (int) theXofLen;</span>
+    }
+
+    @Override
+    public int getByteLength() {
+<span class="fc" id="L160">        return theUnderlying.getByteLength();</span>
+    }
+
+    @Override
+    public void update(final byte b) {
+<span class="fc" id="L165">        singleByte[0] = b;</span>
+<span class="fc" id="L166">        update(singleByte, 0, 1);</span>
+<span class="fc" id="L167">    }</span>
+
+    @Override
+    public void update(final byte[] pMessage,
+                       final int pOffset,
+                       final int pLen) {
+<span class="pc bpc" id="L173" title="1 of 2 branches missed.">        if (theXofRemaining != -1) {</span>
+<span class="nc" id="L174">            throw new IllegalStateException(&quot;Already outputting&quot;);</span>
+        }
+<span class="fc" id="L176">        theUnderlying.update(pMessage, pOffset, pLen);</span>
+<span class="fc" id="L177">    }</span>
+
+    @Override
+    public int doFinal(final byte[] pOut,
+                       final int pOutOffset) {
+<span class="fc" id="L182">        return doFinal(pOut, pOutOffset, getDigestSize());</span>
+    }
+
+    @Override
+    public int doFinal(final byte[] pOut,
+                       final int pOutOffset,
+                       final int pOutLen) {
+        /* Build the required output */
+<span class="fc" id="L190">        final int length = doOutput(pOut, pOutOffset, pOutLen);</span>
+
+        /* reset the underlying digest and return the length */
+<span class="fc" id="L193">        reset();</span>
+<span class="fc" id="L194">        return length;</span>
+    }
+
+    @Override
+    public int doOutput(final byte[] pOut,
+                        final int pOutOffset,
+                        final int pOutLen) {
+        /* If we have not created the root hash yet */
+<span class="fc bfc" id="L202" title="All 2 branches covered.">        if (theRoot == null) {</span>
+            /* Calculate the underlying hash */
+<span class="fc" id="L204">            theRoot = new byte[theUnderlying.getDigestSize()];</span>
+<span class="fc" id="L205">            theUnderlying.doFinal(theRoot, 0);</span>
+<span class="fc" id="L206">            theNodeIndex = 0;</span>
+
+            /* If we have a null Xof */
+<span class="fc bfc" id="L209" title="All 2 branches covered.">            if (theXofLen == 0) {</span>
+                /* Calculate the number of bytes available */
+<span class="fc" id="L211">                theXofRemaining = theUnderlying.getDigestSize();</span>
+<span class="fc" id="L212">                theCurrent = theRoot;</span>
+
+                /* Else we are handling a normal Xof */
+            } else {
+                /* Calculate the number of bytes available */
+<span class="fc bfc" id="L217" title="All 2 branches covered.">                theXofRemaining = theXofLen == -1</span>
+<span class="fc" id="L218">                        ? (1L &lt;&lt; Integer.SIZE) * theUnderlying.getDigestSize()</span>
+<span class="fc" id="L219">                        : theXofLen;</span>
+
+                /* Allocate a new current hash buffer */
+<span class="fc" id="L222">                theCurrent = new byte[theUnderlying.getDigestSize()];</span>
+<span class="fc" id="L223">                theHashIndex = theCurrent.length;</span>
+            }
+        }
+
+        /* Reject if there is insufficient Xof remaining */
+<span class="pc bpc" id="L228" title="3 of 6 branches missed.">        if (pOutLen &lt; 0</span>
+                || (theXofRemaining &gt; 0 &amp;&amp; pOutLen &gt; theXofRemaining)) {
+<span class="nc" id="L230">            throw new IllegalArgumentException(&quot;Insufficient bytes remaining&quot;);</span>
+        }
+
+        /* If we have some remaining data in the current hash */
+<span class="fc" id="L234">        int dataLeft = pOutLen;</span>
+<span class="fc" id="L235">        int outPos = pOutOffset;</span>
+<span class="fc bfc" id="L236" title="All 2 branches covered.">        if (theHashIndex &lt; theCurrent.length) {</span>
+            /* Copy data from current hash */
+<span class="fc" id="L238">            final int dataToCopy = Math.min(dataLeft, theCurrent.length - theHashIndex);</span>
+<span class="fc" id="L239">            System.arraycopy(theCurrent, theHashIndex, pOut, outPos, dataToCopy);</span>
+
+            /* Adjust counters */
+<span class="fc" id="L242">            theXofRemaining -= dataToCopy;</span>
+<span class="fc" id="L243">            theHashIndex += dataToCopy;</span>
+<span class="fc" id="L244">            outPos += dataToCopy;</span>
+<span class="fc" id="L245">            dataLeft -= dataToCopy;</span>
+        }
+
+        /* Loop until we have completed the request */
+<span class="fc bfc" id="L249" title="All 2 branches covered.">        while (dataLeft &gt; 0) {</span>
+            /* Calculate the next hash */
+<span class="fc" id="L251">            obtainNextHash();</span>
+
+            /* Copy data from current hash */
+<span class="fc" id="L254">            final int dataToCopy = Math.min(dataLeft, theCurrent.length);</span>
+<span class="fc" id="L255">            System.arraycopy(theCurrent, 0, pOut, outPos, dataToCopy);</span>
+
+            /* Adjust counters */
+<span class="fc" id="L258">            theXofRemaining -= dataToCopy;</span>
+<span class="fc" id="L259">            theHashIndex += dataToCopy;</span>
+<span class="fc" id="L260">            outPos += dataToCopy;</span>
+<span class="fc" id="L261">            dataLeft -= dataToCopy;</span>
+<span class="fc" id="L262">        }</span>
+
+        /* Return the number of bytes transferred */
+<span class="fc" id="L265">        return pOutLen;</span>
+    }
+
+    @Override
+    public void reset() {
+<span class="fc" id="L270">        theUnderlying.reset();</span>
+<span class="fc" id="L271">        theComposite.reset();</span>
+<span class="fc" id="L272">        theRoot = null;</span>
+<span class="fc" id="L273">        theCurrent = null;</span>
+<span class="fc" id="L274">        theXofRemaining = -1L;</span>
+<span class="fc" id="L275">        theHashIndex = 0;</span>
+<span class="fc" id="L276">        theNodeIndex = 0;</span>
+<span class="fc" id="L277">    }</span>
+
+    @Override
+    public void reset(final Memoable pSource) {
+        /* Access source */
+<span class="fc" id="L282">        final GordianBlake2Xof mySource = (GordianBlake2Xof) pSource;</span>
+
+        /* Reset digests */
+<span class="fc" id="L285">        theUnderlying.reset(mySource.theUnderlying);</span>
+<span class="fc" id="L286">        theComposite.reset(mySource.theComposite);</span>
+
+        /* Clone hashes */
+<span class="fc" id="L289">        theRoot = Arrays.clone(mySource.theRoot);</span>
+<span class="fc" id="L290">        theCurrent = Arrays.clone(mySource.theCurrent);</span>
+
+        /* Copy state */
+<span class="fc" id="L293">        theXofLen = mySource.theXofLen;</span>
+<span class="fc" id="L294">        theXofRemaining = mySource.theXofRemaining;</span>
+<span class="fc" id="L295">        theHashIndex = mySource.theHashIndex;</span>
+<span class="fc" id="L296">        theNodeIndex = mySource.theNodeIndex;</span>
+<span class="fc" id="L297">    }</span>
+
+    @Override
+    public GordianBlake2Xof copy() {
+<span class="fc" id="L301">        return new GordianBlake2Xof(this);</span>
+    }
+
+    /**
+     * Obtain the next hash.
+     */
+    private void obtainNextHash() {
+        /* Set the digestLength */
+<span class="fc" id="L309">        int digestLen = theUnderlying.getDigestSize();</span>
+<span class="fc bfc" id="L310" title="All 2 branches covered.">        if (theXofRemaining &lt; digestLen) {</span>
+<span class="fc" id="L311">            digestLen = (int) theXofRemaining;</span>
+        }
+<span class="fc" id="L313">        theComposite.setDigestLength(digestLen);</span>
+
+        /* Calculate the hash */
+<span class="fc" id="L316">        theComposite.setNodePosition(theNodeIndex++, 0);</span>
+<span class="fc" id="L317">        theComposite.update(theRoot, 0, theRoot.length);</span>
+<span class="fc" id="L318">        theComposite.doFinal(theCurrent, 0);</span>
+<span class="fc" id="L319">        theHashIndex = 0;</span>
+<span class="fc" id="L320">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

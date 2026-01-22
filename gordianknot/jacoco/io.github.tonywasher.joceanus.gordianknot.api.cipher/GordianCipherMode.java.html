@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianCipherMode.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.api.cipher</a> &gt; <span class="el_source">GordianCipherMode.java</span></div><h1>GordianCipherMode.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.gordianknot.api.cipher;
+
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
+
+/**
+ * Cipher Modes. Available algorithms.
+ */
+<span class="fc" id="L24">public enum GordianCipherMode {</span>
+    /**
+     * ECB Mode.
+     */
+<span class="fc" id="L28">    ECB,</span>
+
+    /**
+     * CBC Mode.
+     */
+<span class="fc" id="L33">    CBC,</span>
+
+    /**
+     * SIC(CTR) Mode.
+     */
+<span class="fc" id="L38">    SIC,</span>
+
+    /**
+     * CFB Mode.
+     */
+<span class="fc" id="L43">    CFB,</span>
+
+    /**
+     * CFB8 Mode.
+     */
+<span class="fc" id="L48">    CFB8,</span>
+
+    /**
+     * OFB Mode.
+     */
+<span class="fc" id="L53">    OFB,</span>
+
+    /**
+     * OFB8 Mode.
+     */
+<span class="fc" id="L58">    OFB8,</span>
+
+    /**
+     * EAX Mode.
+     */
+<span class="fc" id="L63">    EAX,</span>
+
+    /**
+     * CCM Mode.
+     */
+<span class="fc" id="L68">    CCM,</span>
+
+    /**
+     * GCM Mode.
+     */
+<span class="fc" id="L73">    GCM,</span>
+
+    /**
+     * OCB Mode.
+     */
+<span class="fc" id="L78">    OCB,</span>
+
+    /**
+     * GCFB Mode.
+     */
+<span class="fc" id="L83">    GCFB,</span>
+
+    /**
+     * GOFB Mode.
+     */
+<span class="fc" id="L88">    GOFB,</span>
+
+    /**
+     * KCTR Mode.
+     */
+<span class="fc" id="L93">    KCTR,</span>
+
+    /**
+     * KCCM Mode.
+     */
+<span class="fc" id="L98">    KCCM,</span>
+
+    /**
+     * KGCM Mode.
+     */
+<span class="fc" id="L103">    KGCM,</span>
+
+    /**
+     * G3413CBC Mode.
+     */
+<span class="fc" id="L108">    G3413CBC,</span>
+
+    /**
+     * G3413CFB Mode.
+     */
+<span class="fc" id="L113">    G3413CFB,</span>
+
+    /**
+     * G3413OFB Mode.
+     */
+<span class="fc" id="L118">    G3413OFB,</span>
+
+    /**
+     * G3413CTR Mode.
+     */
+<span class="fc" id="L123">    G3413CTR,</span>
+
+    /**
+     * GCMSIV Mode.
+     */
+<span class="fc" id="L128">    GCMSIV;</span>
+
+    /**
+     * Does the mode require padding?
+     *
+     * @return true/false
+     */
+    public boolean hasPadding() {
+<span class="fc bfc" id="L136" title="All 2 branches covered.">        switch (this) {</span>
+            case ECB:
+            case CBC:
+            case G3413CBC:
+<span class="fc" id="L140">                return true;</span>
+            default:
+<span class="fc" id="L142">                return false;</span>
+        }
+    }
+
+    /**
+     * Is this an AAD mode?
+     *
+     * @return true/false
+     */
+    public boolean isAAD() {
+<span class="fc bfc" id="L152" title="All 2 branches covered.">        switch (this) {</span>
+            case CCM:
+            case GCM:
+            case EAX:
+            case OCB:
+            case KCCM:
+            case KGCM:
+            case GCMSIV:
+<span class="fc" id="L160">                return true;</span>
+            default:
+<span class="fc" id="L162">                return false;</span>
+        }
+    }
+
+    /**
+     * Can we work on a short block?
+     *
+     * @return true/false
+     */
+    public boolean allowShortBlock() {
+<span class="fc bfc" id="L172" title="All 2 branches covered.">        switch (this) {</span>
+            case CCM:
+            case GCM:
+            case OCB:
+            case SIC:
+<span class="fc" id="L177">                return false;</span>
+            default:
+<span class="fc" id="L179">                return true;</span>
+        }
+    }
+
+    /**
+     * Does the mode require a standard block?
+     *
+     * @return true/false
+     */
+    public boolean needsStdBlock() {
+<span class="fc bfc" id="L189" title="All 2 branches covered.">        switch (this) {</span>
+            case CCM:
+            case GCM:
+            case GCMSIV:
+            case OCB:
+<span class="fc" id="L194">                return true;</span>
+            default:
+<span class="fc" id="L196">                return false;</span>
+        }
+    }
+
+    /**
+     * Is this mode valid for the symKeySpec?
+     *
+     * @param pKeySpec the keySpec
+     * @return true/false
+     */
+    public boolean validForSymKey(final GordianSymKeySpec pKeySpec) {
+<span class="fc" id="L207">        final GordianSymKeyType myKeyType = pKeySpec.getSymKeyType();</span>
+<span class="fc" id="L208">        final GordianLength myKeyLen = pKeySpec.getKeyLength();</span>
+<span class="fc bfc" id="L209" title="All 5 branches covered.">        switch (this) {</span>
+            case G3413OFB:
+            case G3413CFB:
+            case G3413CBC:
+            case G3413CTR:
+<span class="fc" id="L214">                return GordianSymKeyType.KUZNYECHIK.equals(myKeyType);</span>
+            case GOFB:
+            case GCFB:
+<span class="fc" id="L217">                return GordianSymKeyType.GOST.equals(myKeyType);</span>
+            case KCTR:
+            case KGCM:
+            case KCCM:
+<span class="fc" id="L221">                return GordianSymKeyType.KALYNA.equals(myKeyType);</span>
+            case GCMSIV:
+<span class="fc bfc" id="L223" title="All 2 branches covered.">                return GordianLength.LEN_128.equals(myKeyLen)</span>
+<span class="fc bfc" id="L224" title="All 2 branches covered.">                        || GordianLength.LEN_256.equals(myKeyLen);</span>
+            default:
+<span class="fc" id="L226">                return true;</span>
+        }
+    }
+
+    /**
+     * Does the mode need an IV?
+     *
+     * @return true/false
+     */
+    public boolean needsIV() {
+<span class="fc bfc" id="L236" title="All 2 branches covered.">        return this != ECB;</span>
+    }
+
+    /**
+     * Needs re-initialisation after final.
+     *
+     * @return true/false
+     */
+    public boolean needsReInitialisation() {
+<span class="fc bfc" id="L245" title="All 2 branches covered.">        return this == GCM;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWisePayeeInfoSet.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.moneywise.data.basic</a> &gt; <span class="el_source">MoneyWisePayeeInfoSet.java</span></div><h1>MoneyWisePayeeInfoSet.java</h1><pre class="source lang-java linenums">/*
+ * MoneyWise: Finance Application
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.moneywise.data.basic;
+
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.metis.data.MetisDataFieldValue;
+import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePayeeInfo.MoneyWisePayeeInfoList;
+import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseAccountInfoClass;
+import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseAccountInfoType.MoneyWiseAccountInfoTypeList;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataInfoClass;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataInfoSet;
+import io.github.tonywasher.joceanus.prometheus.views.PrometheusEditSet;
+
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.Map;
+
+/**
+ * PayeeInfoSet class.
+ *
+ * @author Tony Washer
+ */
+public class MoneyWisePayeeInfoSet
+        extends PrometheusDataInfoSet&lt;MoneyWisePayeeInfo&gt; {
+    /**
+     * Report fields.
+     */
+<span class="fc" id="L44">    private static final MetisFieldSet&lt;MoneyWisePayeeInfoSet&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWisePayeeInfoSet.class);</span>
+
+    /**
+     * FieldSet map.
+     */
+<span class="fc" id="L49">    private static final Map&lt;MetisDataFieldId, MoneyWiseAccountInfoClass&gt; FIELDSET_MAP = FIELD_DEFS.buildFieldMap(MoneyWiseAccountInfoClass.class, MoneyWisePayeeInfoSet::getFieldValue);</span>
+
+    /**
+     * Reverse FieldSet map.
+     */
+<span class="fc" id="L54">    private static final Map&lt;MoneyWiseAccountInfoClass, MetisDataFieldId&gt; REVERSE_FIELDMAP = MetisFieldSet.reverseFieldMap(FIELDSET_MAP, MoneyWiseAccountInfoClass.class);</span>
+
+    /**
+     * Constructor.
+     *
+     * @param pOwner    the Owner to which this Set belongs
+     * @param pTypeList the infoTypeList for the set
+     * @param pInfoList the InfoList for the set
+     */
+    protected MoneyWisePayeeInfoSet(final MoneyWisePayee pOwner,
+                                    final MoneyWiseAccountInfoTypeList pTypeList,
+                                    final MoneyWisePayeeInfoList pInfoList) {
+        /* Store the Owner and Info List */
+<span class="fc" id="L67">        super(pOwner, pTypeList, pInfoList);</span>
+<span class="fc" id="L68">    }</span>
+
+    @Override
+    public MetisFieldSetDef getDataFieldSet() {
+<span class="nc" id="L72">        return FIELD_DEFS;</span>
+    }
+
+    @Override
+    public MoneyWisePayee getOwner() {
+<span class="fc" id="L77">        return (MoneyWisePayee) super.getOwner();</span>
+    }
+
+    /**
+     * Obtain fieldValue for infoSet.
+     *
+     * @param pFieldId the fieldId
+     * @return the value
+     */
+    public Object getFieldValue(final MetisDataFieldId pFieldId) {
+        /* Handle InfoSet fields */
+<span class="fc" id="L88">        final MoneyWiseAccountInfoClass myClass = getClassForField(pFieldId);</span>
+<span class="pc bpc" id="L89" title="1 of 2 branches missed.">        if (myClass != null) {</span>
+<span class="fc" id="L90">            return getInfoSetValue(myClass);</span>
+        }
+
+        /* Pass onwards */
+<span class="nc" id="L94">        return null;</span>
+    }
+
+    /**
+     * Get an infoSet value.
+     *
+     * @param pInfoClass the class of info to get
+     * @return the value to set
+     */
+    private Object getInfoSetValue(final MoneyWiseAccountInfoClass pInfoClass) {
+        /* Return the value */
+<span class="fc" id="L105">        final Object myValue = getField(pInfoClass);</span>
+<span class="pc bpc" id="L106" title="1 of 2 branches missed.">        return myValue != null</span>
+<span class="nc" id="L107">                ? myValue</span>
+<span class="fc" id="L108">                : MetisDataFieldValue.SKIP;</span>
+    }
+
+    /**
+     * Obtain the class of the field if it is an infoSet field.
+     *
+     * @param pField the field
+     * @return the class
+     */
+    public static MoneyWiseAccountInfoClass getClassForField(final MetisDataFieldId pField) {
+        /* Look up field in map */
+<span class="fc" id="L119">        return FIELDSET_MAP.get(pField);</span>
+    }
+
+    /**
+     * Obtain the field for the infoSet class.
+     *
+     * @param pClass the class
+     * @return the field
+     */
+    public static MetisDataFieldId getFieldForClass(final MoneyWiseAccountInfoClass pClass) {
+        /* Look up field in map */
+<span class="nc" id="L130">        return REVERSE_FIELDMAP.get(pClass);</span>
+    }
+
+    @Override
+    public MetisDataFieldId getFieldForClass(final PrometheusDataInfoClass pClass) {
+<span class="nc" id="L135">        return getFieldForClass((MoneyWiseAccountInfoClass) pClass);</span>
+    }
+
+    @Override
+    public Iterator&lt;PrometheusDataInfoClass&gt; classIterator() {
+<span class="fc" id="L140">        final PrometheusDataInfoClass[] myValues = MoneyWiseAccountInfoClass.values();</span>
+<span class="fc" id="L141">        return Arrays.stream(myValues).iterator();</span>
+    }
+
+    /**
+     * Clone the dataInfoSet.
+     *
+     * @param pSource the InfoSet to clone
+     */
+    protected void cloneDataInfoSet(final MoneyWisePayeeInfoSet pSource) {
+        /* Clone the dataInfoSet */
+<span class="fc" id="L151">        cloneTheDataInfoSet(pSource);</span>
+<span class="fc" id="L152">    }</span>
+
+    /**
+     * Resolve editSetLinks.
+     *
+     * @param pEditSet the editSet
+     * @throws OceanusException on error
+     */
+    void resolveEditSetLinks(final PrometheusEditSet pEditSet) throws OceanusException {
+        /* Loop through the items */
+<span class="pc bpc" id="L162" title="1 of 2 branches missed.">        for (MoneyWisePayeeInfo myInfo : this) {</span>
+<span class="nc" id="L163">            myInfo.resolveEditSetLinks(pEditSet);</span>
+<span class="nc" id="L164">        }</span>
+<span class="fc" id="L165">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

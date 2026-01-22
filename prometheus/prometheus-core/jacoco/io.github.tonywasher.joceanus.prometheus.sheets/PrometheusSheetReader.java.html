@@ -1,0 +1,317 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PrometheusSheetReader.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Prometheus Core Application Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.prometheus.sheets</a> &gt; <span class="el_source">PrometheusSheetReader.java</span></div><h1>PrometheusSheetReader.java</h1><pre class="source lang-java linenums">/*
+ * Prometheus: Application Framework
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.prometheus.sheets;
+
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.zip.GordianZipFactory;
+import io.github.tonywasher.joceanus.gordianknot.api.zip.GordianZipFileContents;
+import io.github.tonywasher.joceanus.gordianknot.api.zip.GordianZipFileEntry;
+import io.github.tonywasher.joceanus.gordianknot.api.zip.GordianZipLock;
+import io.github.tonywasher.joceanus.gordianknot.api.zip.GordianZipReadFile;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.profile.OceanusProfile;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataSet;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataSet.PrometheusCryptographyDataType;
+import io.github.tonywasher.joceanus.prometheus.exc.PrometheusIOException;
+import io.github.tonywasher.joceanus.prometheus.exc.PrometheusSecurityException;
+import io.github.tonywasher.joceanus.prometheus.security.PrometheusSecurityPasswordManager;
+import io.github.tonywasher.joceanus.prometheus.service.sheet.PrometheusSheetProvider;
+import io.github.tonywasher.joceanus.prometheus.service.sheet.PrometheusSheetWorkBook;
+import io.github.tonywasher.joceanus.prometheus.service.sheet.PrometheusSheetWorkBookType;
+import io.github.tonywasher.joceanus.tethys.api.factory.TethysUIFactory;
+import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadStatusReport;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+/**
+ * Load control for spreadsheets.
+ *
+ * @author Tony Washer
+ */
+public abstract class PrometheusSheetReader {
+    /**
+     * Gui Factory.
+     */
+    private final TethysUIFactory&lt;?&gt; theGuiFactory;
+
+    /**
+     * Report.
+     */
+    private final TethysUIThreadStatusReport theReport;
+
+    /**
+     * The password manager.
+     */
+    private final PrometheusSecurityPasswordManager thePasswordMgr;
+
+    /**
+     * Spreadsheet.
+     */
+    private PrometheusSheetWorkBook theWorkBook;
+
+    /**
+     * DataSet.
+     */
+    private PrometheusDataSet theData;
+
+    /**
+     * The WorkSheets.
+     */
+    private List&lt;PrometheusSheetDataItem&lt;?&gt;&gt; theSheets;
+
+    /**
+     * Constructor.
+     *
+     * @param pFactory     the gui factory
+     * @param pReport      the report
+     * @param pPasswordMgr the password manager
+     */
+    protected PrometheusSheetReader(final TethysUIFactory&lt;?&gt; pFactory,
+                                    final TethysUIThreadStatusReport pReport,
+<span class="nc" id="L91">                                    final PrometheusSecurityPasswordManager pPasswordMgr) {</span>
+<span class="nc" id="L92">        theGuiFactory = pFactory;</span>
+<span class="nc" id="L93">        theReport = pReport;</span>
+<span class="nc" id="L94">        thePasswordMgr = pPasswordMgr;</span>
+<span class="nc" id="L95">    }</span>
+
+    /**
+     * get report.
+     *
+     * @return the report
+     */
+    protected TethysUIThreadStatusReport getReport() {
+<span class="nc" id="L103">        return theReport;</span>
+    }
+
+    /**
+     * get data.
+     *
+     * @return the data
+     */
+    public PrometheusDataSet getData() {
+<span class="nc" id="L112">        return theData;</span>
+    }
+
+    /**
+     * get workbook.
+     *
+     * @return the workbook
+     */
+    protected PrometheusSheetWorkBook getWorkBook() {
+<span class="nc" id="L121">        return theWorkBook;</span>
+    }
+
+    /**
+     * Add Sheet to list.
+     *
+     * @param pSheet the sheet
+     */
+    protected void addSheet(final PrometheusSheetDataItem&lt;?&gt; pSheet) {
+<span class="nc" id="L130">        theSheets.add(pSheet);</span>
+<span class="nc" id="L131">    }</span>
+
+    /**
+     * Load a Backup Workbook.
+     *
+     * @param pData DataSet to load into
+     * @param pFile the file to load
+     * @throws OceanusException on error
+     */
+    public void loadBackup(final File pFile,
+                           final PrometheusDataSet pData) throws OceanusException {
+        try {
+<span class="nc" id="L143">            loadBackup(new FileInputStream(pFile), pData, pFile.getName());</span>
+<span class="nc" id="L144">        } catch (IOException e) {</span>
+<span class="nc" id="L145">            throw new PrometheusIOException(&quot;Failed to access Backup&quot;, e);</span>
+<span class="nc" id="L146">        }</span>
+<span class="nc" id="L147">    }</span>
+
+    /**
+     * Load a Backup Workbook.
+     *
+     * @param pInStream the zip input stream
+     * @param pData     the data to load into
+     * @param pName     the filename
+     * @throws OceanusException on error
+     */
+    public void loadBackup(final InputStream pInStream,
+                           final PrometheusDataSet pData,
+                           final String pName) throws OceanusException {
+        /* Protect against exceptions */
+        try {
+            /* Start the task */
+<span class="nc" id="L163">            OceanusProfile myTask = theReport.getActiveTask();</span>
+<span class="nc" id="L164">            myTask = myTask.startTask(&quot;Loading&quot;);</span>
+<span class="nc" id="L165">            theData = pData;</span>
+
+            /* Access the zip file */
+<span class="nc" id="L168">            final GordianZipFactory myZips = thePasswordMgr.getSecurityFactory().getZipFactory();</span>
+<span class="nc" id="L169">            final GordianZipReadFile myFile = myZips.openZipFile(pInStream);</span>
+
+            /* Obtain the lock from the file */
+<span class="nc" id="L172">            final GordianZipLock myLock = myFile.getLock();</span>
+
+            /* Resolve the lock */
+<span class="nc" id="L175">            thePasswordMgr.resolveZipLock(myLock, pName);</span>
+
+            /* Access ZipFile contents */
+<span class="nc" id="L178">            final GordianZipFileContents myContents = myFile.getContents();</span>
+
+            /* Loop through the file entries */
+<span class="nc" id="L181">            final Iterator&lt;GordianZipFileEntry&gt; myIterator = myContents.iterator();</span>
+<span class="nc" id="L182">            GordianZipFileEntry myEntry = null;</span>
+<span class="nc bnc" id="L183" title="All 2 branches missed.">            while (myIterator.hasNext()) {</span>
+                /* Access the entry */
+<span class="nc" id="L185">                myEntry = myIterator.next();</span>
+
+                /* Break loop if we have the right entry */
+<span class="nc bnc" id="L188" title="All 2 branches missed.">                if (myEntry.getFileName().startsWith(PrometheusSpreadSheet.FILE_NAME)) {</span>
+<span class="nc" id="L189">                    break;</span>
+                }
+            }
+
+            /* Load the workBook */
+<span class="nc" id="L194">            loadEntry(myFile, myEntry);</span>
+
+            /* Complete the task */
+<span class="nc" id="L197">            myTask.end();</span>
+
+<span class="nc" id="L199">        } catch (GordianException e) {</span>
+<span class="nc" id="L200">            throw new PrometheusSecurityException(e);</span>
+<span class="nc" id="L201">        }</span>
+<span class="nc" id="L202">    }</span>
+
+    /**
+     * Load a Backup Workbook.
+     *
+     * @param pFile  the zip file
+     * @param pEntry the zip file entry
+     * @throws OceanusException on error
+     */
+    public void loadEntry(final GordianZipReadFile pFile,
+                          final GordianZipFileEntry pEntry) throws OceanusException {
+        /* Protect the workbook retrieval */
+<span class="nc" id="L214">        try (InputStream myStream = pFile.createInputStream(pEntry)) {</span>
+            /* Obtain the active profile */
+<span class="nc" id="L216">            final OceanusProfile myTask = theReport.getActiveTask();</span>
+<span class="nc" id="L217">            myTask.startTask(&quot;Parsing&quot;);</span>
+
+            /* Initialise the workbook */
+<span class="nc" id="L220">            initialiseWorkBook(myStream, PrometheusSheetWorkBookType.determineType(pEntry.getFileName()));</span>
+
+            /* Load the workbook */
+<span class="nc" id="L223">            myTask.startTask(&quot;Reading&quot;);</span>
+<span class="nc" id="L224">            loadWorkBook();</span>
+
+            /* Close the Stream to force out errors */
+<span class="nc" id="L227">            myTask.startTask(&quot;Closing&quot;);</span>
+
+<span class="nc" id="L229">        } catch (IOException e) {</span>
+            /* Report the error */
+<span class="nc" id="L231">            throw new PrometheusIOException(&quot;Failed to load Backup Workbook: &quot; + pEntry.getFileName(), e);</span>
+
+<span class="nc" id="L233">        } catch (GordianException e) {</span>
+<span class="nc" id="L234">            throw new PrometheusSecurityException(e);</span>
+<span class="nc" id="L235">        }</span>
+<span class="nc" id="L236">    }</span>
+
+    /**
+     * Register sheets.
+     */
+    protected abstract void registerSheets();
+
+    /**
+     * Create the list of sheets to load.
+     *
+     * @param pStream the input stream
+     * @param pType   the workBookType
+     * @throws OceanusException on error
+     */
+    private void initialiseWorkBook(final InputStream pStream,
+                                    final PrometheusSheetWorkBookType pType) throws OceanusException {
+        /* Initialise the list */
+<span class="nc" id="L253">        theSheets = new ArrayList&lt;&gt;();</span>
+
+        /* Loop through the list types */
+<span class="nc bnc" id="L256" title="All 2 branches missed.">        for (PrometheusCryptographyDataType myType : PrometheusCryptographyDataType.values()) {</span>
+            /* Create the sheet */
+<span class="nc" id="L258">            theSheets.add(newSheet(myType));</span>
+        }
+
+        /* register additional sheets */
+<span class="nc" id="L262">        registerSheets();</span>
+
+        /* Declare the number of stages */
+<span class="nc" id="L265">        theReport.setNumStages(theSheets.size() + 2);</span>
+
+        /* Note the stage */
+<span class="nc" id="L268">        theReport.setNewStage(&quot;Loading&quot;);</span>
+
+        /* Access the workbook from the stream */
+<span class="nc" id="L271">        theWorkBook = PrometheusSheetProvider.loadFromStream(pType, pStream);</span>
+<span class="nc" id="L272">    }</span>
+
+    /**
+     * Create new sheet of required type.
+     *
+     * @param pListType the list type
+     * @return the new sheet
+     */
+    private PrometheusSheetDataItem&lt;?&gt; newSheet(final PrometheusCryptographyDataType pListType) {
+        /* Switch on list Type */
+<span class="nc bnc" id="L282" title="All 5 branches missed.">        switch (pListType) {</span>
+            case CONTROLDATA:
+<span class="nc" id="L284">                return new PrometheusSheetControlData(this);</span>
+            case CONTROLKEY:
+<span class="nc" id="L286">                return new PrometheusSheetControlKey(this);</span>
+            case CONTROLKEYSET:
+<span class="nc" id="L288">                return new PrometheusSheetControlKeySet(this);</span>
+            case DATAKEYSET:
+<span class="nc" id="L290">                return new PrometheusSheetDataKeySet(this);</span>
+            default:
+<span class="nc" id="L292">                throw new IllegalArgumentException(pListType.toString());</span>
+        }
+    }
+
+    /**
+     * Load the WorkBook.
+     *
+     * @throws OceanusException on error
+     */
+    private void loadWorkBook() throws OceanusException {
+        /* Obtain the active profile */
+<span class="nc" id="L303">        final OceanusProfile myTask = theReport.getActiveTask();</span>
+
+        /* Declare the number of stages */
+<span class="nc" id="L306">        theReport.setNumStages(theSheets.size() + 1);</span>
+
+        /* Loop through the sheets */
+<span class="nc bnc" id="L309" title="All 2 branches missed.">        for (PrometheusSheetDataItem&lt;?&gt; mySheet : theSheets) {</span>
+            /* Access the next sheet */
+            /* Load data for the sheet */
+<span class="nc" id="L312">            myTask.startTask(mySheet.toString());</span>
+<span class="nc" id="L313">            mySheet.loadSpreadSheet();</span>
+<span class="nc" id="L314">        }</span>
+<span class="nc" id="L315">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BouncySymKeyAEADCipher.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.impl.bc</a> &gt; <span class="el_source">BouncySymKeyAEADCipher.java</span></div><h1>BouncySymKeyAEADCipher.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.gordianknot.impl.bc;
+
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherParameters;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymAEADCipher;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.cipher.GordianCoreCipher;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
+import org.bouncycastle.crypto.CipherParameters;
+import org.bouncycastle.crypto.DataLengthException;
+import org.bouncycastle.crypto.InvalidCipherTextException;
+import org.bouncycastle.crypto.modes.AEADBlockCipher;
+import org.bouncycastle.crypto.params.AEADParameters;
+import org.bouncycastle.crypto.params.KeyParameter;
+import org.bouncycastle.crypto.params.ParametersWithIV;
+
+import java.util.Arrays;
+
+/**
+ * Cipher for BouncyCastle AAD Symmetric Ciphers.
+ */
+public class BouncySymKeyAEADCipher
+        extends GordianCoreCipher&lt;GordianSymKeySpec&gt;
+        implements GordianSymAEADCipher {
+    /**
+     * Cipher.
+     */
+    private final AEADBlockCipher theCipher;
+
+    /**
+     * is the cipher encrypting?
+     */
+    private boolean isEncrypting;
+
+    /**
+     * Constructor.
+     *
+     * @param pFactory    the Security Factory
+     * @param pCipherSpec the cipherSpec
+     * @param pCipher     the cipher
+     */
+    BouncySymKeyAEADCipher(final GordianBaseFactory pFactory,
+                           final GordianSymCipherSpec pCipherSpec,
+                           final AEADBlockCipher pCipher) {
+<span class="fc" id="L63">        super(pFactory, pCipherSpec);</span>
+<span class="fc" id="L64">        theCipher = pCipher;</span>
+<span class="fc" id="L65">    }</span>
+
+    @Override
+    public BouncyKey&lt;GordianSymKeySpec&gt; getKey() {
+<span class="fc" id="L69">        return (BouncyKey&lt;GordianSymKeySpec&gt;) super.getKey();</span>
+    }
+
+    @Override
+    public void init(final boolean pEncrypt,
+                     final GordianCipherParameters pParams) throws GordianException {
+        /* Process the parameters and access the key */
+<span class="fc" id="L76">        processParameters(pParams);</span>
+<span class="fc" id="L77">        final BouncyKey&lt;GordianSymKeySpec&gt; myKey = BouncyKey.accessKey(getKey());</span>
+
+        /* Initialise the cipher */
+<span class="fc" id="L80">        final KeyParameter myKeyParms = new KeyParameter(myKey.getKey());</span>
+<span class="fc" id="L81">        final byte[] myAEAD = getInitialAEAD();</span>
+<span class="fc bfc" id="L82" title="All 2 branches covered.">        final CipherParameters myParms = myAEAD == null</span>
+<span class="fc" id="L83">                ? new ParametersWithIV(myKeyParms, getInitVector())</span>
+<span class="fc" id="L84">                : new AEADParameters(myKeyParms, getAEADMacSize(), getInitVector(), getInitialAEAD());</span>
+<span class="fc" id="L85">        theCipher.init(pEncrypt, myParms);</span>
+<span class="fc" id="L86">        isEncrypting = pEncrypt;</span>
+<span class="fc" id="L87">    }</span>
+
+    @Override
+    public int getOutputLength(final int pLength) {
+<span class="fc" id="L91">        return theCipher.getOutputSize(pLength);</span>
+    }
+
+    @Override
+    public int doUpdate(final byte[] pBytes,
+                        final int pOffset,
+                        final int pLength,
+                        final byte[] pOutput,
+                        final int pOutOffset) throws GordianException {
+        /* Protect against exceptions */
+        try {
+            /* Process the bytes */
+<span class="fc" id="L103">            return theCipher.processBytes(pBytes, pOffset, pLength, pOutput, pOutOffset);</span>
+
+            /* Handle exceptions */
+<span class="nc" id="L106">        } catch (DataLengthException</span>
+                 | IllegalStateException e) {
+<span class="nc" id="L108">            throw new GordianCryptoException(&quot;Failed to process bytes&quot;, e);</span>
+        }
+    }
+
+    @Override
+    public void updateAAD(final byte[] pBytes,
+                          final int pOffset,
+                          final int pLength) throws GordianException {
+        /* Protect against exceptions */
+        try {
+            /* Process the bytes */
+<span class="fc" id="L119">            theCipher.processAADBytes(pBytes, pOffset, pLength);</span>
+
+            /* Handle exceptions */
+<span class="nc" id="L122">        } catch (DataLengthException</span>
+                 | IllegalStateException e) {
+<span class="nc" id="L124">            throw new GordianCryptoException(&quot;Failed to process AAD bytes&quot;, e);</span>
+<span class="fc" id="L125">        }</span>
+<span class="fc" id="L126">    }</span>
+
+    @Override
+    public int doFinish(final byte[] pOutput,
+                        final int pOutOffset) throws GordianException {
+        /* Protect against exceptions */
+        try {
+            /* Finish the operation */
+<span class="fc" id="L134">            return theCipher.doFinal(pOutput, pOutOffset);</span>
+
+            /* Handle exceptions */
+<span class="nc" id="L137">        } catch (DataLengthException</span>
+                 | IllegalStateException
+                 | InvalidCipherTextException e) {
+<span class="nc" id="L140">            throw new GordianCryptoException(&quot;Failed to finish operation&quot;, e);</span>
+        }
+    }
+
+    @Override
+    public int getBlockSize() {
+<span class="nc" id="L146">        return 0;</span>
+    }
+
+    @Override
+    public boolean equals(final Object pThat) {
+        /* Handle trivial cases */
+<span class="nc bnc" id="L152" title="All 2 branches missed.">        if (this == pThat) {</span>
+<span class="nc" id="L153">            return true;</span>
+        }
+<span class="nc bnc" id="L155" title="All 2 branches missed.">        if (pThat == null) {</span>
+<span class="nc" id="L156">            return false;</span>
+        }
+
+        /* Make sure that the classes are the same */
+<span class="nc bnc" id="L160" title="All 2 branches missed.">        if (!(pThat instanceof BouncySymKeyAEADCipher)) {</span>
+<span class="nc" id="L161">            return false;</span>
+        }
+<span class="nc" id="L163">        final BouncySymKeyAEADCipher myThat = (BouncySymKeyAEADCipher) pThat;</span>
+
+        /* Check that the fields are equal */
+<span class="nc bnc" id="L166" title="All 2 branches missed.">        return isEncrypting == myThat.isEncrypting</span>
+<span class="nc bnc" id="L167" title="All 2 branches missed.">                &amp;&amp; Arrays.equals(getInitialAEAD(), myThat.getInitialAEAD())</span>
+<span class="nc bnc" id="L168" title="All 2 branches missed.">                &amp;&amp; super.equals(myThat);</span>
+    }
+
+    @Override
+    public int hashCode() {
+<span class="nc" id="L173">        return super.hashCode()</span>
+<span class="nc" id="L174">                + Arrays.hashCode(getInitialAEAD())</span>
+<span class="nc bnc" id="L175" title="All 2 branches missed.">                + (isEncrypting ? 1 : 0);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

@@ -1,0 +1,771 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseCategoryBase.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.moneywise.data.basic</a> &gt; <span class="el_source">MoneyWiseCategoryBase.java</span></div><h1>MoneyWiseCategoryBase.java</h1><pre class="source lang-java linenums">/*
+ * MoneyWise: Finance Application
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.moneywise.data.basic;
+
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
+import io.github.tonywasher.joceanus.metis.data.MetisDataDifference;
+import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
+import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataNamedItem;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDataValidator.MoneyWiseDataValidatorParentDefaults;
+import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseCategoryInterface;
+import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataInstanceMap;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataResource;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValues;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusEncryptedDataItem;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusEncryptedFieldSet;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusEncryptedPair;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusStaticDataItem;
+
+import java.util.Iterator;
+
+/**
+ * Category Base class.
+ */
+public abstract class MoneyWiseCategoryBase
+        extends PrometheusEncryptedDataItem
+        implements MetisDataNamedItem {
+    /**
+     * Separator.
+     */
+    public static final String STR_SEP = &quot;:&quot;;
+
+    /**
+     * Local Report fields.
+     */
+<span class="fc" id="L53">    private static final PrometheusEncryptedFieldSet&lt;MoneyWiseCategoryBase&gt; FIELD_DEFS = PrometheusEncryptedFieldSet.newEncryptedFieldSet(MoneyWiseCategoryBase.class);</span>
+
+    /*
+     * FieldIds.
+     */
+    static {
+<span class="fc" id="L59">        FIELD_DEFS.declareEncryptedStringField(PrometheusDataResource.DATAITEM_FIELD_NAME, NAMELEN);</span>
+<span class="fc" id="L60">        FIELD_DEFS.declareEncryptedStringField(PrometheusDataResource.DATAITEM_FIELD_DESC, DESCLEN);</span>
+<span class="fc" id="L61">        FIELD_DEFS.declareLinkField(PrometheusDataResource.DATAGROUP_PARENT);</span>
+<span class="fc" id="L62">        FIELD_DEFS.declareDerivedVersionedField(MoneyWiseBasicResource.CATEGORY_SUBCAT);</span>
+<span class="fc" id="L63">    }</span>
+
+    /**
+     * Copy Constructor.
+     *
+     * @param pList     the list
+     * @param pCategory The Category to copy
+     */
+    protected MoneyWiseCategoryBase(final MoneyWiseCategoryBaseList&lt;?&gt; pList,
+                                    final MoneyWiseCategoryBase pCategory) {
+        /* Set standard values */
+<span class="fc" id="L74">        super(pList, pCategory);</span>
+<span class="fc" id="L75">    }</span>
+
+    /**
+     * Values constructor.
+     *
+     * @param pList   the List to add to
+     * @param pValues the values constructor
+     * @throws OceanusException on error
+     */
+    protected MoneyWiseCategoryBase(final MoneyWiseCategoryBaseList&lt;?&gt; pList,
+                                    final PrometheusDataValues pValues) throws OceanusException {
+        /* Initialise the item */
+<span class="fc" id="L87">        super(pList, pValues);</span>
+
+        /* Protect against exceptions */
+        try {
+            /* Store the Name */
+<span class="fc" id="L92">            Object myValue = pValues.getValue(PrometheusDataResource.DATAITEM_FIELD_NAME);</span>
+<span class="fc bfc" id="L93" title="All 2 branches covered.">            if (myValue instanceof String s) {</span>
+<span class="fc" id="L94">                setValueName(s);</span>
+<span class="pc bpc" id="L95" title="1 of 2 branches missed.">            } else if (myValue instanceof byte[] ba) {</span>
+<span class="fc" id="L96">                setValueName(ba);</span>
+            }
+
+            /* Store the Description */
+<span class="fc" id="L100">            myValue = pValues.getValue(PrometheusDataResource.DATAITEM_FIELD_DESC);</span>
+<span class="pc bpc" id="L101" title="1 of 2 branches missed.">            if (myValue instanceof String s) {</span>
+<span class="nc" id="L102">                setValueDesc(s);</span>
+<span class="pc bpc" id="L103" title="1 of 2 branches missed.">            } else if (myValue instanceof byte[] ba) {</span>
+<span class="nc" id="L104">                setValueDesc(ba);</span>
+            }
+
+            /* Store the Parent */
+<span class="fc" id="L108">            myValue = pValues.getValue(PrometheusDataResource.DATAGROUP_PARENT);</span>
+<span class="fc bfc" id="L109" title="All 2 branches covered.">            if (myValue instanceof Integer i) {</span>
+<span class="fc" id="L110">                setValueParent(i);</span>
+<span class="fc bfc" id="L111" title="All 2 branches covered.">            } else if (myValue instanceof String s) {</span>
+<span class="fc" id="L112">                setValueParent(s);</span>
+            }
+
+            /* Resolve the subCategory */
+<span class="fc" id="L116">            resolveSubCategory();</span>
+
+            /* Catch Exceptions */
+<span class="nc" id="L119">        } catch (OceanusException e) {</span>
+            /* Pass on exception */
+<span class="nc" id="L121">            throw new MoneyWiseDataException(this, ERROR_CREATEITEM, e);</span>
+<span class="fc" id="L122">        }</span>
+<span class="fc" id="L123">    }</span>
+
+    /**
+     * Edit Constructor.
+     *
+     * @param pList the list
+     */
+    protected MoneyWiseCategoryBase(final MoneyWiseCategoryBaseList&lt;?&gt; pList) {
+<span class="fc" id="L131">        super(pList, 0);</span>
+<span class="fc" id="L132">        setNextDataKeySet();</span>
+<span class="fc" id="L133">    }</span>
+
+    @Override
+    public String formatObject(final OceanusDataFormatter pFormatter) {
+<span class="fc" id="L137">        return toString();</span>
+    }
+
+    @Override
+    public String toString() {
+<span class="fc" id="L142">        return getName();</span>
+    }
+
+    @Override
+    public boolean includeXmlField(final MetisDataFieldId pField) {
+        /* Determine whether fields should be included */
+<span class="fc bfc" id="L148" title="All 2 branches covered.">        if (PrometheusDataResource.DATAITEM_FIELD_NAME.equals(pField)) {</span>
+<span class="fc" id="L149">            return true;</span>
+        }
+<span class="fc bfc" id="L151" title="All 2 branches covered.">        if (PrometheusDataResource.DATAITEM_FIELD_DESC.equals(pField)) {</span>
+<span class="pc bpc" id="L152" title="1 of 2 branches missed.">            return getDesc() != null;</span>
+        }
+<span class="fc bfc" id="L154" title="All 2 branches covered.">        if (PrometheusDataResource.DATAGROUP_PARENT.equals(pField)) {</span>
+<span class="fc bfc" id="L155" title="All 2 branches covered.">            return getParentCategory() != null;</span>
+        }
+
+        /* Pass call on */
+<span class="fc" id="L159">        return super.includeXmlField(pField);</span>
+    }
+
+    @Override
+    public String getName() {
+<span class="fc" id="L164">        return getValues().getValue(PrometheusDataResource.DATAITEM_FIELD_NAME, String.class);</span>
+    }
+
+    /**
+     * Obtain Encrypted name.
+     *
+     * @return the bytes
+     */
+    public byte[] getNameBytes() {
+<span class="fc" id="L173">        return getValues().getEncryptedBytes(PrometheusDataResource.DATAITEM_FIELD_NAME);</span>
+    }
+
+    /**
+     * Obtain Encrypted Name Field.
+     *
+     * @return the Field
+     */
+    private PrometheusEncryptedPair getNameField() {
+<span class="nc" id="L182">        return getValues().getEncryptedPair(PrometheusDataResource.DATAITEM_FIELD_NAME);</span>
+    }
+
+    /**
+     * Obtain Description.
+     *
+     * @return the description
+     */
+    public String getDesc() {
+<span class="fc" id="L191">        return getValues().getValue(PrometheusDataResource.DATAITEM_FIELD_DESC, String.class);</span>
+    }
+
+    /**
+     * Obtain Encrypted description.
+     *
+     * @return the bytes
+     */
+    public byte[] getDescBytes() {
+<span class="fc" id="L200">        return getValues().getEncryptedBytes(PrometheusDataResource.DATAITEM_FIELD_DESC);</span>
+    }
+
+    /**
+     * Obtain Encrypted Description Field.
+     *
+     * @return the Field
+     */
+    private PrometheusEncryptedPair getDescField() {
+<span class="nc" id="L209">        return getValues().getEncryptedPair(PrometheusDataResource.DATAITEM_FIELD_DESC);</span>
+    }
+
+    /**
+     * Obtain Category Type.
+     *
+     * @return the type
+     */
+    public abstract PrometheusStaticDataItem getCategoryType();
+
+    /**
+     * Obtain categoryTypeId.
+     *
+     * @return the categoryTypeId
+     */
+    public Integer getCategoryTypeId() {
+<span class="fc" id="L225">        final PrometheusStaticDataItem myType = getCategoryType();</span>
+<span class="pc bpc" id="L226" title="1 of 2 branches missed.">        return (myType == null)</span>
+<span class="nc" id="L227">                ? null</span>
+<span class="fc" id="L228">                : myType.getIndexedId();</span>
+    }
+
+    /**
+     * Obtain CategoryTypeName.
+     *
+     * @return the categoryTypeName
+     */
+    public String getCategoryTypeName() {
+<span class="nc" id="L237">        final PrometheusStaticDataItem myType = getCategoryType();</span>
+<span class="nc bnc" id="L238" title="All 2 branches missed.">        return myType == null</span>
+<span class="nc" id="L239">                ? null</span>
+<span class="nc" id="L240">                : myType.getName();</span>
+    }
+
+    /**
+     * Obtain CategoryTypeClass.
+     *
+     * @return the categoryTypeClass
+     */
+    public abstract MoneyWiseCategoryInterface getCategoryTypeClass();
+
+    /**
+     * Obtain Cash Category Parent.
+     *
+     * @return the parent
+     */
+    public abstract MoneyWiseCategoryBase getParentCategory();
+
+    /**
+     * Obtain parentId.
+     *
+     * @return the parentId
+     */
+    public Integer getParentCategoryId() {
+<span class="fc" id="L263">        final MoneyWiseCategoryBase myParent = getParentCategory();</span>
+<span class="fc bfc" id="L264" title="All 2 branches covered.">        return myParent == null</span>
+<span class="fc" id="L265">                ? null</span>
+<span class="fc" id="L266">                : myParent.getIndexedId();</span>
+    }
+
+    /**
+     * Obtain parentName.
+     *
+     * @return the parentName
+     */
+    public String getParentCategoryName() {
+<span class="nc" id="L275">        final MoneyWiseCategoryBase myParent = getParentCategory();</span>
+<span class="nc bnc" id="L276" title="All 2 branches missed.">        return myParent == null</span>
+<span class="nc" id="L277">                ? null</span>
+<span class="nc" id="L278">                : myParent.getName();</span>
+    }
+
+    /**
+     * Obtain subCategory.
+     *
+     * @return the subCategory
+     */
+    public String getSubCategory() {
+<span class="fc" id="L287">        return getValues().getValue(MoneyWiseBasicResource.CATEGORY_SUBCAT, String.class);</span>
+    }
+
+    /**
+     * Set name value.
+     *
+     * @param pValue the value
+     * @throws OceanusException on error
+     */
+    private void setValueName(final String pValue) throws OceanusException {
+<span class="fc" id="L297">        setEncryptedValue(PrometheusDataResource.DATAITEM_FIELD_NAME, pValue);</span>
+<span class="fc" id="L298">    }</span>
+
+    /**
+     * Set name value.
+     *
+     * @param pBytes the value
+     * @throws OceanusException on error
+     */
+    private void setValueName(final byte[] pBytes) throws OceanusException {
+<span class="fc" id="L307">        setEncryptedValue(PrometheusDataResource.DATAITEM_FIELD_NAME, pBytes, String.class);</span>
+<span class="fc" id="L308">    }</span>
+
+    /**
+     * Set name value.
+     *
+     * @param pValue the value
+     */
+    private void setValueName(final PrometheusEncryptedPair pValue) {
+<span class="nc" id="L316">        getValues().setUncheckedValue(PrometheusDataResource.DATAITEM_FIELD_NAME, pValue);</span>
+<span class="nc" id="L317">    }</span>
+
+    /**
+     * Set description value.
+     *
+     * @param pValue the value
+     * @throws OceanusException on error
+     */
+    private void setValueDesc(final String pValue) throws OceanusException {
+<span class="nc" id="L326">        setEncryptedValue(PrometheusDataResource.DATAITEM_FIELD_DESC, pValue);</span>
+<span class="nc" id="L327">    }</span>
+
+    /**
+     * Set description value.
+     *
+     * @param pBytes the value
+     * @throws OceanusException on error
+     */
+    private void setValueDesc(final byte[] pBytes) throws OceanusException {
+<span class="nc" id="L336">        setEncryptedValue(PrometheusDataResource.DATAITEM_FIELD_DESC, pBytes, String.class);</span>
+<span class="nc" id="L337">    }</span>
+
+    /**
+     * Set description value.
+     *
+     * @param pValue the value
+     */
+    private void setValueDesc(final PrometheusEncryptedPair pValue) {
+<span class="nc" id="L345">        getValues().setUncheckedValue(PrometheusDataResource.DATAITEM_FIELD_DESC, pValue);</span>
+<span class="nc" id="L346">    }</span>
+
+    /**
+     * Set parent value.
+     *
+     * @param pValue the value
+     */
+    private void setValueParent(final MoneyWiseCategoryBase pValue) {
+<span class="fc" id="L354">        getValues().setUncheckedValue(PrometheusDataResource.DATAGROUP_PARENT, pValue);</span>
+<span class="fc" id="L355">    }</span>
+
+    /**
+     * Set parent id.
+     *
+     * @param pValue the value
+     */
+    private void setValueParent(final Integer pValue) {
+<span class="fc" id="L363">        getValues().setUncheckedValue(PrometheusDataResource.DATAGROUP_PARENT, pValue);</span>
+<span class="fc" id="L364">    }</span>
+
+    /**
+     * Set parent name.
+     *
+     * @param pValue the value
+     */
+    private void setValueParent(final String pValue) {
+<span class="fc" id="L372">        getValues().setUncheckedValue(PrometheusDataResource.DATAGROUP_PARENT, pValue);</span>
+<span class="fc" id="L373">    }</span>
+
+    /**
+     * Set subCategory name.
+     *
+     * @param pValue the value
+     */
+    private void setValueSubCategory(final String pValue) {
+<span class="fc" id="L381">        getValues().setUncheckedValue(MoneyWiseBasicResource.CATEGORY_SUBCAT, pValue);</span>
+<span class="fc" id="L382">    }</span>
+
+    @Override
+    public MoneyWiseDataSet getDataSet() {
+<span class="fc" id="L386">        return (MoneyWiseDataSet) super.getDataSet();</span>
+    }
+
+    @Override
+    public MoneyWiseCategoryBaseList&lt;?&gt; getList() {
+<span class="fc" id="L391">        return (MoneyWiseCategoryBaseList&lt;?&gt;) super.getList();</span>
+    }
+
+    @Override
+    public MoneyWiseCategoryBase getBase() {
+<span class="fc" id="L396">        return (MoneyWiseCategoryBase) super.getBase();</span>
+    }
+
+    @Override
+    public int compareValues(final PrometheusDataItem pThat) {
+        /* Check the category and then the name */
+<span class="fc" id="L402">        final MoneyWiseCategoryBase myThat = (MoneyWiseCategoryBase) pThat;</span>
+<span class="fc" id="L403">        int iDiff = MetisDataDifference.compareObject(getCategoryType(), myThat.getCategoryType());</span>
+<span class="fc bfc" id="L404" title="All 2 branches covered.">        if (iDiff == 0) {</span>
+<span class="fc" id="L405">            iDiff = MetisDataDifference.compareObject(getName(), myThat.getName());</span>
+        }
+<span class="fc" id="L407">        return iDiff;</span>
+    }
+
+    @Override
+    public void resolveDataSetLinks() throws OceanusException {
+        /* Update the Encryption details */
+<span class="fc" id="L413">        super.resolveDataSetLinks();</span>
+
+        /* Resolve parent */
+<span class="fc" id="L416">        resolveDataLink(PrometheusDataResource.DATAGROUP_PARENT, getList());</span>
+<span class="fc" id="L417">    }</span>
+
+    /**
+     * Resolve links within an edit set.
+     *
+     * @throws OceanusException on error
+     */
+    protected abstract void resolveEditSetLinks() throws OceanusException;
+
+    /**
+     * Resolve subCategory name.
+     */
+    private void resolveSubCategory() {
+        /* Set to null */
+<span class="fc" id="L431">        setValueSubCategory(null);</span>
+
+        /* Obtain the name */
+<span class="fc" id="L434">        final String myName = getName();</span>
+<span class="pc bpc" id="L435" title="1 of 2 branches missed.">        if (myName != null) {</span>
+            /* Look for separator */
+<span class="fc" id="L437">            final int iIndex = myName.indexOf(STR_SEP);</span>
+<span class="fc bfc" id="L438" title="All 2 branches covered.">            if (iIndex != -1) {</span>
+                /* Access and set subCategory */
+<span class="fc" id="L440">                final String mySub = myName.substring(iIndex + 1);</span>
+<span class="fc" id="L441">                setValueSubCategory(mySub);</span>
+            }
+        }
+<span class="fc" id="L444">    }</span>
+
+    /**
+     * Set a new category name.
+     *
+     * @param pName the new name
+     * @throws OceanusException on error
+     */
+    public void setCategoryName(final String pName) throws OceanusException {
+<span class="fc" id="L453">        setValueName(pName);</span>
+
+        /* Resolve the subCategory */
+<span class="fc" id="L456">        resolveSubCategory();</span>
+<span class="fc" id="L457">    }</span>
+
+    /**
+     * Set a new category name.
+     *
+     * @param pParentName the parent name
+     * @param pSubCatName the subCategory name
+     * @throws OceanusException on error
+     */
+    public void setCategoryName(final String pParentName,
+                                final String pSubCatName) throws OceanusException {
+<span class="fc" id="L468">        setCategoryName(pParentName + STR_SEP + pSubCatName);</span>
+<span class="fc" id="L469">    }</span>
+
+    /**
+     * Set a new category name.
+     *
+     * @param pName the new name
+     * @throws OceanusException on error
+     */
+    public void setSubCategoryName(final String pName) throws OceanusException {
+        /* Obtain parent */
+<span class="fc" id="L479">        final MoneyWiseCategoryBase myParent = getParentCategory();</span>
+<span class="fc" id="L480">        final String myName = getName();</span>
+<span class="fc" id="L481">        boolean updateChildren = false;</span>
+
+        /* Set name appropriately */
+<span class="fc bfc" id="L484" title="All 2 branches covered.">        if (myParent != null) {</span>
+            /* Access class of parent */
+<span class="fc" id="L486">            final MoneyWiseCategoryInterface myClass = myParent.getCategoryTypeClass();</span>
+
+            /* Handle subTotals separately */
+<span class="fc bfc" id="L489" title="All 2 branches covered.">            if (myClass.isTotals()) {</span>
+<span class="fc" id="L490">                setCategoryName(pName);</span>
+<span class="pc bpc" id="L491" title="1 of 2 branches missed.">                updateChildren = !pName.equals(myName);</span>
+            } else {
+<span class="fc" id="L493">                setCategoryName(myParent.getName(), pName);</span>
+            }
+
+            /* else this is a parent */
+<span class="fc" id="L497">        } else {</span>
+<span class="fc" id="L498">            setCategoryName(pName);</span>
+<span class="fc bfc" id="L499" title="All 2 branches covered.">            if (!getCategoryTypeClass().isTotals()) {</span>
+<span class="pc bpc" id="L500" title="1 of 2 branches missed.">                updateChildren = !pName.equals(myName);</span>
+            }
+        }
+
+        /* If we should update the children */
+<span class="fc bfc" id="L505" title="All 2 branches covered.">        if (updateChildren) {</span>
+<span class="fc" id="L506">            final MoneyWiseCategoryBaseList&lt;?&gt; myList = getList();</span>
+<span class="fc" id="L507">            myList.updateChildren(myList.getBaseClass().cast(this));</span>
+        }
+<span class="fc" id="L509">    }</span>
+
+    /**
+     * Set a new category type.
+     *
+     * @param pType the new type
+     */
+    public abstract void setCategoryType(PrometheusStaticDataItem pType);
+
+    /**
+     * Set a new description.
+     *
+     * @param pDesc the description
+     * @throws OceanusException on error
+     */
+    public void setDescription(final String pDesc) throws OceanusException {
+<span class="nc" id="L525">        setValueDesc(pDesc);</span>
+<span class="nc" id="L526">    }</span>
+
+    /**
+     * Set a new parent category.
+     *
+     * @param pParent the new parent
+     * @throws OceanusException on error
+     */
+    public void setParentCategory(final MoneyWiseCategoryBase pParent) throws OceanusException {
+<span class="fc" id="L535">        setValueParent(pParent);</span>
+<span class="fc" id="L536">        final String mySubName = getSubCategory();</span>
+<span class="pc bpc" id="L537" title="1 of 2 branches missed.">        if (mySubName != null) {</span>
+<span class="nc" id="L538">            setSubCategoryName(mySubName);</span>
+        }
+<span class="fc" id="L540">    }</span>
+
+    @Override
+    public void touchUnderlyingItems() {
+        /* touch the category type referred to */
+<span class="fc" id="L545">        getCategoryType().touchItem(this);</span>
+
+        /* Touch parent if it exists */
+<span class="fc" id="L548">        final MoneyWiseCategoryBase myParent = getParentCategory();</span>
+<span class="fc bfc" id="L549" title="All 2 branches covered.">        if (myParent != null) {</span>
+<span class="fc" id="L550">            myParent.touchItem(this);</span>
+        }
+<span class="fc" id="L552">    }</span>
+
+    /**
+     * Update base category from an edited category.
+     *
+     * @param pCategory the edited category
+     */
+    public void applyBasicChanges(final MoneyWiseCategoryBase pCategory) {
+        /* Update the Name if required */
+<span class="nc bnc" id="L561" title="All 2 branches missed.">        if (!MetisDataDifference.isEqual(getName(), pCategory.getName())) {</span>
+<span class="nc" id="L562">            setValueName(pCategory.getNameField());</span>
+        }
+
+        /* Update the description if required */
+<span class="nc bnc" id="L566" title="All 2 branches missed.">        if (!MetisDataDifference.isEqual(getDesc(), pCategory.getDesc())) {</span>
+<span class="nc" id="L567">            setValueDesc(pCategory.getDescField());</span>
+        }
+
+        /* Update the parent category if required */
+<span class="nc bnc" id="L571" title="All 2 branches missed.">        if (!MetisDataDifference.isEqual(getParentCategory(), pCategory.getParentCategory())) {</span>
+            /* Set value */
+<span class="nc" id="L573">            setValueParent(pCategory.getParentCategory());</span>
+        }
+<span class="nc" id="L575">    }</span>
+
+    @Override
+    public void adjustMapForItem() {
+<span class="fc" id="L579">        final MoneyWiseCategoryBaseList&lt;?&gt; myList = getList();</span>
+<span class="fc" id="L580">        final MoneyWiseCategoryDataMap&lt;?&gt; myMap = myList.getDataMap();</span>
+<span class="fc" id="L581">        myMap.adjustForItem(myList.getBaseClass().cast(this));</span>
+<span class="fc" id="L582">    }</span>
+
+    @Override
+    public void touchOnUpdate() {
+        /* Reset self-touches */
+<span class="nc" id="L587">        clearTouches(getItemType());</span>
+
+        /* Touch parent if it exists */
+<span class="nc" id="L590">        final MoneyWiseCategoryBase myParent = getParentCategory();</span>
+<span class="nc bnc" id="L591" title="All 2 branches missed.">        if (myParent != null) {</span>
+<span class="nc" id="L592">            myParent.touchItem(this);</span>
+        }
+<span class="nc" id="L594">    }</span>
+
+    /**
+     * The Category Base List class.
+     *
+     * @param &lt;T&gt; the Category Data type
+     */
+    public abstract static class MoneyWiseCategoryBaseList&lt;T extends MoneyWiseCategoryBase&gt;
+            extends PrometheusEncryptedList&lt;T&gt; {
+        /*
+         * Report fields.
+         */
+        static {
+<span class="fc" id="L607">            MetisFieldSet.newFieldSet(MoneyWiseCategoryBaseList.class);</span>
+<span class="fc" id="L608">        }</span>
+
+        /**
+         * Construct an empty CORE Category list.
+         *
+         * @param pData     the DataSet for the list
+         * @param pClass    the class of the item
+         * @param pItemType the item type
+         */
+        protected MoneyWiseCategoryBaseList(final MoneyWiseDataSet pData,
+                                            final Class&lt;T&gt; pClass,
+                                            final MoneyWiseBasicDataType pItemType) {
+<span class="fc" id="L620">            super(pClass, pData, pItemType, PrometheusListStyle.CORE);</span>
+<span class="fc" id="L621">        }</span>
+
+        /**
+         * Constructor for a cloned List.
+         *
+         * @param pSource the source List
+         */
+        protected MoneyWiseCategoryBaseList(final MoneyWiseCategoryBaseList&lt;T&gt; pSource) {
+<span class="fc" id="L629">            super(pSource);</span>
+<span class="fc" id="L630">        }</span>
+
+        @Override
+        public MoneyWiseDataSet getDataSet() {
+<span class="fc" id="L634">            return (MoneyWiseDataSet) super.getDataSet();</span>
+        }
+
+        @Override
+        @SuppressWarnings(&quot;unchecked&quot;)
+        public MoneyWiseCategoryDataMap&lt;T&gt; getDataMap() {
+<span class="fc" id="L640">            return (MoneyWiseCategoryDataMap&lt;T&gt;) super.getDataMap();</span>
+        }
+
+        @Override
+        @SuppressWarnings(&quot;unchecked&quot;)
+        public MoneyWiseDataValidatorParentDefaults&lt;T&gt; getValidator() {
+<span class="fc" id="L646">            return (MoneyWiseDataValidatorParentDefaults&lt;T&gt;) super.getValidator();</span>
+        }
+
+        @Override
+        public T findItemByName(final String pName) {
+            /* Access the dataMap */
+<span class="fc" id="L652">            final MoneyWiseCategoryDataMap&lt;T&gt; myMap = getDataMap();</span>
+
+            /* Use it if we have it */
+<span class="fc bfc" id="L655" title="All 2 branches covered.">            if (myMap != null) {</span>
+<span class="fc" id="L656">                return myMap.findItemByName(pName);</span>
+            }
+
+            /* No map so we must do a slow lookUp */
+<span class="fc" id="L660">            final Iterator&lt;T&gt; myIterator = iterator();</span>
+<span class="pc bpc" id="L661" title="1 of 2 branches missed.">            while (myIterator.hasNext()) {</span>
+<span class="fc" id="L662">                final T myItem = myIterator.next();</span>
+
+                /* If this is not deleted and matches */
+<span class="pc bpc" id="L665" title="1 of 2 branches missed.">                if (!myItem.isDeleted()</span>
+<span class="fc bfc" id="L666" title="All 2 branches covered.">                        &amp;&amp; MetisDataDifference.isEqual(pName, myItem.getName())) {</span>
+                    /* found it */
+<span class="fc" id="L668">                    return myItem;</span>
+                }
+<span class="fc" id="L670">            }</span>
+
+            /* Not found */
+<span class="nc" id="L673">            return null;</span>
+        }
+
+        /**
+         * Update Children.
+         *
+         * @param pParent the parent item
+         * @throws OceanusException on error
+         */
+        private void updateChildren(final MoneyWiseCategoryBase pParent) throws OceanusException {
+            /* Determine the id */
+<span class="fc" id="L684">            final Integer myId = pParent.getIndexedId();</span>
+<span class="fc" id="L685">            final String myName = pParent.getName();</span>
+
+            /* Loop through the items */
+<span class="fc" id="L688">            final Iterator&lt;T&gt; myIterator = iterator();</span>
+<span class="fc bfc" id="L689" title="All 2 branches covered.">            while (myIterator.hasNext()) {</span>
+<span class="fc" id="L690">                final T myCurr = myIterator.next();</span>
+
+                /* If we have a child of the parent */
+<span class="pc bpc" id="L693" title="1 of 2 branches missed.">                if (myId.equals(myCurr.getParentCategoryId())) {</span>
+                    /* Update name and point to edit parent */
+<span class="nc" id="L695">                    myCurr.pushHistory();</span>
+<span class="nc" id="L696">                    myCurr.setParentCategory(pParent);</span>
+<span class="nc" id="L697">                    myCurr.setCategoryName(myName, myCurr.getSubCategory());</span>
+<span class="nc" id="L698">                    myCurr.checkForHistory();</span>
+                }
+<span class="fc" id="L700">            }</span>
+<span class="fc" id="L701">        }</span>
+
+        /**
+         * Resolve update set links.
+         *
+         * @throws OceanusException on error
+         */
+        public void resolveUpdateSetLinks() throws OceanusException {
+            /* Loop through the items */
+<span class="nc" id="L710">            final Iterator&lt;T&gt; myIterator = iterator();</span>
+<span class="nc bnc" id="L711" title="All 2 branches missed.">            while (myIterator.hasNext()) {</span>
+<span class="nc" id="L712">                final T myCurr = myIterator.next();</span>
+<span class="nc" id="L713">                myCurr.resolveEditSetLinks();</span>
+<span class="nc" id="L714">            }</span>
+<span class="nc" id="L715">        }</span>
+
+        @Override
+        protected MoneyWiseCategoryDataMap&lt;T&gt; allocateDataMap() {
+<span class="fc" id="L719">            return new MoneyWiseCategoryDataMap&lt;&gt;();</span>
+        }
+    }
+
+    /**
+     * The dataMap class.
+     *
+     * @param &lt;T&gt; the Category Data type
+     */
+<span class="fc" id="L728">    public static class MoneyWiseCategoryDataMap&lt;T extends MoneyWiseCategoryBase&gt;</span>
+            extends PrometheusDataInstanceMap&lt;T, String&gt; {
+        @Override
+        @SuppressWarnings(&quot;unchecked&quot;)
+        public void adjustForItem(final PrometheusDataItem pItem) {
+            /* Access item */
+<span class="fc" id="L734">            final T myItem = (T) pItem;</span>
+
+            /* Adjust name count */
+<span class="fc" id="L737">            adjustForItem((T) pItem, myItem.getName());</span>
+<span class="fc" id="L738">        }</span>
+
+        /**
+         * find item by name.
+         *
+         * @param pName the name to look up
+         * @return the matching item
+         */
+        public T findItemByName(final String pName) {
+<span class="fc" id="L747">            return findItemByKey(pName);</span>
+        }
+
+        /**
+         * Check validity of name.
+         *
+         * @param pName the name to look up
+         * @return true/false
+         */
+        public boolean validNameCount(final String pName) {
+<span class="fc" id="L757">            return validKeyCount(pName);</span>
+        }
+
+        /**
+         * Check availability of name.
+         *
+         * @param pName the key to look up
+         * @return true/false
+         */
+        public boolean availableName(final String pName) {
+<span class="nc" id="L767">            return availableKey(pName);</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

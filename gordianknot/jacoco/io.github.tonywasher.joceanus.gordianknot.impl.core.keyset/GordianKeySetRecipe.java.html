@@ -1,0 +1,328 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianKeySetRecipe.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.impl.core.keyset</a> &gt; <span class="el_source">GordianKeySetRecipe.java</span></div><h1>GordianKeySetRecipe.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.gordianknot.impl.core.keyset;
+
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymKeyType;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestType;
+import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySetSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianDataConverter;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianIdManager;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianPersonalisation;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianPersonalisation.GordianPersonalId;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
+
+import java.security.SecureRandom;
+import java.util.Arrays;
+import java.util.Random;
+
+/**
+ * Class for assembling/disassembling data encrypted by a KeySet.
+ */
+public final class GordianKeySetRecipe {
+    /**
+     * Recipe length (Integer).
+     */
+    private static final int RECIPELEN = Integer.BYTES;
+
+    /**
+     * Salt length.
+     */
+<span class="fc" id="L47">    private static final int SALTLEN = GordianLength.LEN_128.getByteLength();</span>
+
+    /**
+     * Salt length.
+     */
+<span class="fc" id="L52">    static final int HDRLEN = SALTLEN + RECIPELEN;</span>
+
+    /**
+     * The Recipe.
+     */
+    private final byte[] theRecipe;
+
+    /**
+     * The KeySet Parameters.
+     */
+    private final GordianKeySetParameters theParams;
+
+    /**
+     * Constructor for new recipe.
+     *
+     * @param pFactory the factory
+     * @param pSpec    the keySetSpec
+     * @param pAEAD    true/false is AEAD in use?
+     */
+    private GordianKeySetRecipe(final GordianBaseFactory pFactory,
+                                final GordianKeySetSpec pSpec,
+<span class="fc" id="L73">                                final boolean pAEAD) {</span>
+        /* Allocate new set of parameters */
+<span class="fc" id="L75">        theParams = new GordianKeySetParameters(pFactory, pSpec, pAEAD);</span>
+<span class="fc" id="L76">        theRecipe = theParams.getRecipe();</span>
+<span class="fc" id="L77">    }</span>
+
+    /**
+     * Constructor for external form parse.
+     *
+     * @param pFactory the factory
+     * @param pSpec    the keySetSpec
+     * @param pHeader  the header
+     * @param pAEAD    true/false is AEAD in use?
+     */
+    private GordianKeySetRecipe(final GordianBaseFactory pFactory,
+                                final GordianKeySetSpec pSpec,
+                                final byte[] pHeader,
+<span class="fc" id="L90">                                final boolean pAEAD) {</span>
+        /* Allocate buffers */
+<span class="fc" id="L92">        theRecipe = new byte[RECIPELEN];</span>
+<span class="fc" id="L93">        final byte[] mySalt = new byte[SALTLEN];</span>
+
+        /* Copy Data into buffers */
+<span class="fc" id="L96">        System.arraycopy(pHeader, 0, theRecipe, 0, RECIPELEN);</span>
+<span class="fc" id="L97">        System.arraycopy(pHeader, RECIPELEN, mySalt, 0, SALTLEN);</span>
+
+        /* Allocate new set of parameters */
+<span class="fc" id="L100">        theParams = new GordianKeySetParameters(pFactory, pSpec, theRecipe, mySalt, pAEAD);</span>
+<span class="fc" id="L101">    }</span>
+
+    /**
+     * Create a new recipe.
+     *
+     * @param pFactory the factory
+     * @param pSpec    the keySetSpec
+     * @param pAEAD    true/false is AEAD in use?
+     * @return the recipe
+     */
+    static GordianKeySetRecipe newRecipe(final GordianBaseFactory pFactory,
+                                         final GordianKeySetSpec pSpec,
+                                         final boolean pAEAD) {
+<span class="fc" id="L114">        return new GordianKeySetRecipe(pFactory, pSpec, pAEAD);</span>
+    }
+
+    /**
+     * parse the encryption recipe.
+     *
+     * @param pFactory the factory
+     * @param pSpec    the keySetSpec
+     * @param pHeader  the header
+     * @param pAEAD    true/false is AEAD in use?
+     * @return the recipe
+     * @throws GordianException on error
+     */
+    static GordianKeySetRecipe parseRecipe(final GordianBaseFactory pFactory,
+                                           final GordianKeySetSpec pSpec,
+                                           final byte[] pHeader,
+                                           final boolean pAEAD) throws GordianException {
+        /* Check that the input data is long enough */
+<span class="pc bpc" id="L132" title="1 of 2 branches missed.">        if (pHeader.length &lt; HDRLEN) {</span>
+<span class="nc" id="L133">            throw new GordianDataException(&quot;Header too short&quot;);</span>
+        }
+
+        /* Process the recipe */
+<span class="fc" id="L137">        return new GordianKeySetRecipe(pFactory, pSpec, pHeader, pAEAD);</span>
+    }
+
+    /**
+     * Obtain the keySet parameters.
+     *
+     * @return the parameters
+     */
+    GordianKeySetParameters getParameters() {
+<span class="fc" id="L146">        return theParams;</span>
+    }
+
+    /**
+     * Build Header.
+     *
+     * @param pHeader the header
+     */
+    void buildHeader(final byte[] pHeader) {
+        /* Copy Data into buffer */
+<span class="fc" id="L156">        System.arraycopy(theRecipe, 0, pHeader, 0, RECIPELEN);</span>
+<span class="fc" id="L157">        System.arraycopy(theParams.getSalt(), 0, pHeader, RECIPELEN, SALTLEN);</span>
+<span class="fc" id="L158">    }</span>
+
+    /**
+     * The parameters class.
+     */
+    public static final class GordianKeySetParameters {
+        /**
+         * The Recipe.
+         */
+        private final byte[] theRecipe;
+
+        /**
+         * The Salt.
+         */
+        private final byte[] theSalt;
+
+        /**
+         * The SymKeySet.
+         */
+        private GordianSymKeyType[] theSymKeyTypes;
+
+        /**
+         * The DigestType.
+         */
+        private GordianDigestType theDigestType;
+
+        /**
+         * The Poly1305 SymKeyType.
+         */
+        private GordianSymKeyType thePoly1305SymKeyType;
+
+        /**
+         * The Initialisation Vector.
+         */
+        private byte[] theInitVector;
+
+        /**
+         * Construct the parameters from random.
+         *
+         * @param pFactory the factory
+         * @param pSpec    the keySetSpec
+         * @param pAEAD    true/false is AEAD in use?
+         */
+        GordianKeySetParameters(final GordianBaseFactory pFactory,
+                                final GordianKeySetSpec pSpec,
+<span class="fc" id="L203">                                final boolean pAEAD) {</span>
+            /* Obtain random */
+<span class="fc" id="L205">            final SecureRandom myRandom = pFactory.getRandomSource().getRandom();</span>
+
+            /* Allocate the initVector */
+<span class="fc" id="L208">            theSalt = new byte[SALTLEN];</span>
+<span class="fc" id="L209">            myRandom.nextBytes(theSalt);</span>
+
+            /* Generate recipe */
+<span class="fc" id="L212">            final int mySeed = myRandom.nextInt();</span>
+<span class="fc" id="L213">            theRecipe = GordianDataConverter.integerToByteArray(mySeed);</span>
+
+            /* Process the recipe */
+<span class="fc" id="L216">            processRecipe(pFactory, pSpec, pAEAD);</span>
+<span class="fc" id="L217">        }</span>
+
+        /**
+         * Construct the parameters from recipe.
+         *
+         * @param pFactory the factory
+         * @param pSpec    the keySetSpec
+         * @param pRecipe  the recipe bytes
+         * @param pSalt    the salt
+         * @param pAEAD    true/false is AEAD in use?
+         */
+        GordianKeySetParameters(final GordianBaseFactory pFactory,
+                                final GordianKeySetSpec pSpec,
+                                final byte[] pRecipe,
+                                final byte[] pSalt,
+<span class="fc" id="L232">                                final boolean pAEAD) {</span>
+            /* Store recipe, salt and Mac */
+<span class="fc" id="L234">            theRecipe = pRecipe;</span>
+<span class="fc" id="L235">            theSalt = pSalt;</span>
+
+            /* Process the recipe */
+<span class="fc" id="L238">            processRecipe(pFactory, pSpec, pAEAD);</span>
+<span class="fc" id="L239">        }</span>
+
+        /**
+         * Process the recipe and salt.
+         *
+         * @param pFactory the factory
+         * @param pSpec    the keySetSpec
+         * @param pAEAD    true/false is AEAD in use?
+         */
+        private void processRecipe(final GordianBaseFactory pFactory,
+                                   final GordianKeySetSpec pSpec,
+                                   final boolean pAEAD) {
+            /* Obtain Id manager and random */
+<span class="fc" id="L252">            final GordianIdManager myManager = pFactory.getIdManager();</span>
+<span class="fc" id="L253">            final GordianPersonalisation myPersonal = pFactory.getPersonalisation();</span>
+
+            /* Calculate the initVector */
+<span class="fc" id="L256">            theInitVector = myPersonal.adjustIV(theSalt);</span>
+
+            /* Generate seededRandom */
+<span class="fc" id="L259">            final Random mySeededRandom = myPersonal.getSeededRandom(GordianPersonalId.KEYSETRANDOM, theRecipe);</span>
+
+            /* Ask for the relevant number of keys */
+<span class="fc bfc" id="L262" title="All 2 branches covered.">            final int myNumKeys = pSpec.getCipherSteps() + (pAEAD ? 1 : 0);</span>
+<span class="fc" id="L263">            theSymKeyTypes = myManager.deriveKeySetSymKeyTypesFromSeed(mySeededRandom, pSpec.getKeyLength(), myNumKeys);</span>
+
+            /* Adjust for AEAD */
+<span class="fc bfc" id="L266" title="All 2 branches covered.">            if (pAEAD) {</span>
+<span class="fc" id="L267">                theDigestType = myManager.deriveExternalDigestTypeFromSeed(mySeededRandom);</span>
+<span class="fc" id="L268">                thePoly1305SymKeyType = theSymKeyTypes[myNumKeys - 1];</span>
+<span class="fc" id="L269">                theSymKeyTypes = Arrays.copyOf(theSymKeyTypes, myNumKeys - 1);</span>
+            }
+<span class="fc" id="L271">        }</span>
+
+        /**
+         * Obtain the salt.
+         *
+         * @return the salt
+         */
+        byte[] getSalt() {
+<span class="fc" id="L279">            return theSalt;</span>
+        }
+
+        /**
+         * Obtain the SymKey Types.
+         *
+         * @return the symKeyTypes
+         */
+        GordianSymKeyType[] getSymKeyTypes() {
+<span class="fc" id="L288">            return theSymKeyTypes;</span>
+        }
+
+        /**
+         * Obtain the digestType.
+         *
+         * @return the digestType
+         */
+        GordianDigestType getDigestType() {
+<span class="fc" id="L297">            return theDigestType;</span>
+        }
+
+        /**
+         * Obtain the Poly1305 symKeyType.
+         *
+         * @return the symKeyType
+         */
+        GordianSymKeyType getPoly1305SymKeyType() {
+<span class="fc" id="L306">            return thePoly1305SymKeyType;</span>
+        }
+
+        /**
+         * Obtain the Initialisation vector.
+         *
+         * @return the initialisation vector
+         */
+        byte[] getInitVector() {
+<span class="fc" id="L315">            return theInitVector;</span>
+        }
+
+        /**
+         * Obtain the Recipe.
+         *
+         * @return the recipe
+         */
+        byte[] getRecipe() {
+<span class="fc" id="L324">            return theRecipe;</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

@@ -1,0 +1,380 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianCoreCipher.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.impl.core.cipher</a> &gt; <span class="el_source">GordianCoreCipher.java</span></div><h1>GordianCoreCipher.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.gordianknot.impl.core.cipher;
+
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherParameters;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianKeyedCipher;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianPBESpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamKeySpec.GordianElephantKey;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamKeySpec.GordianSparkleKey;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKey;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianRandomSource;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianLogicException;
+
+import java.security.SecureRandom;
+import java.util.Arrays;
+import java.util.Objects;
+
+/**
+ * Core Cipher implementation.
+ *
+ * @param &lt;T&gt; the keyType
+ */
+public abstract class GordianCoreCipher&lt;T extends GordianKeySpec&gt;
+        implements GordianKeyedCipher&lt;T&gt; {
+    /**
+     * CipherSpec.
+     */
+    private final GordianCipherSpec&lt;T&gt; theCipherSpec;
+
+    /**
+     * The Random Generator.
+     */
+    private final GordianRandomSource theRandom;
+
+    /**
+     * Parameters.
+     */
+    private final GordianCoreCipherParameters&lt;T&gt; theParameters;
+
+    /**
+     * Constructor.
+     *
+     * @param pFactory    the Security Factory
+     * @param pCipherSpec the cipherSpec
+     */
+    protected GordianCoreCipher(final GordianBaseFactory pFactory,
+<span class="fc" id="L69">                                final GordianCipherSpec&lt;T&gt; pCipherSpec) {</span>
+<span class="fc" id="L70">        theCipherSpec = pCipherSpec;</span>
+<span class="fc" id="L71">        theRandom = pFactory.getRandomSource();</span>
+<span class="fc" id="L72">        theParameters = new GordianCoreCipherParameters&lt;&gt;(pFactory, theCipherSpec);</span>
+<span class="fc" id="L73">    }</span>
+
+    @Override
+    public T getKeyType() {
+<span class="fc" id="L77">        return theCipherSpec.getKeyType();</span>
+    }
+
+    @Override
+    public GordianCipherSpec&lt;T&gt; getCipherSpec() {
+<span class="fc" id="L82">        return theCipherSpec;</span>
+    }
+
+    /**
+     * Obtain random generator.
+     *
+     * @return the generator
+     */
+    public SecureRandom getRandom() {
+<span class="nc" id="L91">        return theRandom.getRandom();</span>
+    }
+
+    /**
+     * Obtain the keyLength.
+     *
+     * @return the keyLength
+     */
+    public GordianLength getKeyLength() {
+<span class="fc" id="L100">        return getKeyType().getKeyLength();</span>
+    }
+
+    /**
+     * Obtain the blockSize.
+     *
+     * @return true/false
+     */
+    public abstract int getBlockSize();
+
+    /**
+     * Obtain the key.
+     *
+     * @return the key
+     */
+    public GordianKey&lt;T&gt; getKey() {
+<span class="fc" id="L116">        return theParameters.getKey();</span>
+    }
+
+    @Override
+    public byte[] getInitVector() {
+<span class="fc" id="L121">        return theParameters.getInitVector();</span>
+    }
+
+    @Override
+    public byte[] getInitialAEAD() {
+<span class="fc" id="L126">        return theParameters.getInitialAEAD();</span>
+    }
+
+    @Override
+    public byte[] getPBESalt() {
+<span class="fc" id="L131">        return theParameters.getPBESalt();</span>
+    }
+
+    @Override
+    public GordianPBESpec getPBESpec() {
+<span class="nc" id="L136">        return theParameters.getPBESpec();</span>
+    }
+
+    @Override
+    public void initForEncrypt(final GordianCipherParameters pParams) throws GordianException {
+<span class="fc" id="L141">        init(true, pParams);</span>
+<span class="fc" id="L142">    }</span>
+
+    @Override
+    public void initForDecrypt(final GordianCipherParameters pParams) throws GordianException {
+<span class="fc" id="L146">        init(false, pParams);</span>
+<span class="fc" id="L147">    }</span>
+
+    /**
+     * Initialise the cipher for encryption or decryption.
+     *
+     * @param pEncrypt true/false
+     * @param pParams  the parameters
+     * @throws GordianException on error
+     */
+    public abstract void init(boolean pEncrypt,
+                              GordianCipherParameters pParams) throws GordianException;
+
+    /**
+     * Init with bytes as key.
+     *
+     * @param pKeyBytes the bytes to use
+     * @throws GordianException on error
+     */
+    public void initKeyBytes(final byte[] pKeyBytes) throws GordianException {
+        /* Check that the key length is correct */
+<span class="pc bpc" id="L167" title="1 of 2 branches missed.">        if (getKeyLength().getByteLength() != pKeyBytes.length) {</span>
+<span class="nc" id="L168">            throw new GordianLogicException(&quot;incorrect keyLength&quot;);</span>
+        }
+
+        /* Create the key and initialise */
+<span class="fc" id="L172">        final GordianKey&lt;T&gt; myKey = theParameters.buildKeyFromBytes(pKeyBytes);</span>
+<span class="fc" id="L173">        initForEncrypt(GordianCipherParameters.key(myKey));</span>
+<span class="fc" id="L174">    }</span>
+
+    /**
+     * Process cipherParameters.
+     *
+     * @param pParams the cipher parameters
+     * @throws GordianException on error
+     */
+    protected void processParameters(final GordianCipherParameters pParams) throws GordianException {
+        /* Process the parameters */
+<span class="fc" id="L184">        theParameters.processParameters(pParams);</span>
+<span class="fc" id="L185">        checkValidKey(getKey());</span>
+<span class="fc" id="L186">    }</span>
+
+    /**
+     * Obtain AEAD MacSize.
+     *
+     * @return the MacSize
+     */
+    protected int getAEADMacSize() {
+        /* SymCipher depends on BlockSize */
+<span class="fc bfc" id="L195" title="All 2 branches covered.">        if (theCipherSpec instanceof GordianSymCipherSpec mySymSpec) {</span>
+<span class="fc" id="L196">            final GordianLength myBlkLen = mySymSpec.getBlockLength();</span>
+
+            /* Switch on cipher Mode */
+<span class="fc bfc" id="L199" title="All 3 branches covered.">            switch (mySymSpec.getCipherMode()) {</span>
+                case CCM:
+                case EAX:
+<span class="fc" id="L202">                    return myBlkLen.getLength() / 2;</span>
+                case KCCM:
+                case KGCM:
+                case GCM:
+                case OCB:
+<span class="fc" id="L207">                    return myBlkLen.getLength();</span>
+                default:
+<span class="fc" id="L209">                    return 0;</span>
+            }
+
+            /* Stream Cipher uses Poly1305 */
+<span class="pc bpc" id="L213" title="1 of 2 branches missed.">        } else if (theCipherSpec instanceof GordianStreamCipherSpec myCipherSpec) {</span>
+<span class="fc" id="L214">            final GordianStreamKeySpec mySpec = myCipherSpec.getKeyType();</span>
+<span class="fc bfc" id="L215" title="All 3 branches covered.">            switch (mySpec.getStreamKeyType()) {</span>
+                case SPARKLE:
+<span class="fc bfc" id="L217" title="All 3 branches covered.">                    switch ((GordianSparkleKey) mySpec.getSubKeyType()) {</span>
+                        case SPARKLE256_256:
+<span class="fc" id="L219">                            return GordianLength.LEN_256.getLength();</span>
+                        case SPARKLE192_192:
+<span class="fc" id="L221">                            return GordianLength.LEN_192.getLength();</span>
+                        default:
+<span class="fc" id="L223">                            return GordianLength.LEN_128.getLength();</span>
+                    }
+                case ELEPHANT:
+<span class="fc bfc" id="L226" title="All 2 branches covered.">                    switch ((GordianElephantKey) mySpec.getSubKeyType()) {</span>
+                        case ELEPHANT160:
+                        case ELEPHANT176:
+<span class="fc" id="L229">                            return GordianLength.LEN_64.getLength();</span>
+                        case ELEPHANT200:
+                        default:
+<span class="fc" id="L232">                            return GordianLength.LEN_128.getLength();</span>
+                    }
+                default:
+                    break;
+            }
+<span class="fc" id="L237">            return GordianLength.LEN_128.getLength();</span>
+        }
+
+        /* No Mac */
+<span class="nc" id="L241">        return 0;</span>
+    }
+
+    @Override
+    public int update(final byte[] pBytes,
+                      final int pOffset,
+                      final int pLength,
+                      final byte[] pOutput,
+                      final int pOutOffset) throws GordianException {
+        /* Make sure that there is no overlap between buffers */
+<span class="fc" id="L251">        byte[] myInput = pBytes;</span>
+<span class="fc" id="L252">        int myOffset = pOffset;</span>
+<span class="fc bfc" id="L253" title="All 2 branches covered.">        if (check4UpdateOverLap(pBytes, pOffset, pLength, pOutput, pOutOffset)) {</span>
+<span class="fc" id="L254">            myInput = new byte[pLength];</span>
+<span class="fc" id="L255">            myOffset = 0;</span>
+<span class="fc" id="L256">            System.arraycopy(pBytes, pOffset, myInput, myOffset, pLength);</span>
+        }
+
+        /* process the bytes */
+<span class="fc" id="L260">        return doUpdate(myInput, myOffset, pLength, pOutput, pOutOffset);</span>
+    }
+
+    /**
+     * Perform update operation.
+     *
+     * @param pBytes     Bytes to update cipher with
+     * @param pOffset    offset within pBytes to read bytes from
+     * @param pLength    length of data to update with
+     * @param pOutput    the output buffer to receive processed data
+     * @param pOutOffset offset within pOutput to write bytes to
+     * @return the number of bytes transferred to the output buffer
+     * @throws GordianException on error
+     */
+    public abstract int doUpdate(byte[] pBytes,
+                                 int pOffset,
+                                 int pLength,
+                                 byte[] pOutput,
+                                 int pOutOffset) throws GordianException;
+
+    /**
+     * Check for buffer overlap in update.
+     *
+     * @param pBytes     Bytes to update cipher with
+     * @param pOffset    offset within pBytes to read bytes from
+     * @param pLength    length of data to update with
+     * @param pOutput    the output buffer to receive processed data
+     * @param pOutOffset offset within pOutput to write bytes to
+     * @return is there overlap between the two buffers? true/false overlap
+     * @throws GordianException on error
+     */
+    public boolean check4UpdateOverLap(final byte[] pBytes,
+                                       final int pOffset,
+                                       final int pLength,
+                                       final byte[] pOutput,
+                                       final int pOutOffset) throws GordianException {
+        /* Check that the buffers are sufficient */
+<span class="pc bpc" id="L297" title="1 of 2 branches missed.">        final int myInBufLen = pBytes == null ? 0 : pBytes.length;</span>
+<span class="pc bpc" id="L298" title="1 of 2 branches missed.">        if (myInBufLen &lt; (pLength + pOffset)) {</span>
+<span class="nc" id="L299">            throw new GordianLogicException(&quot;Input buffer too short.&quot;);</span>
+        }
+<span class="pc bpc" id="L301" title="1 of 2 branches missed.">        final int myOutBufLen = pOutput == null ? 0 : pOutput.length;</span>
+<span class="pc bpc" id="L302" title="1 of 2 branches missed.">        if (myOutBufLen &lt; (getOutputLength(pLength) + pOutOffset)) {</span>
+<span class="nc" id="L303">            throw new GordianLogicException(&quot;Output buffer too short.&quot;);</span>
+        }
+
+        /* Only relevant when the two buffers are the same */
+<span class="fc bfc" id="L307" title="All 2 branches covered.">        if (pBytes != pOutput) {</span>
+<span class="fc" id="L308">            return false;</span>
+        }
+
+        /* Check for overlap */
+<span class="fc bfc" id="L312" title="All 2 branches covered.">        return pOutOffset &lt; pOffset + pLength</span>
+<span class="pc bpc" id="L313" title="1 of 2 branches missed.">                &amp;&amp; pOffset &lt; pOutOffset + getOutputLength(pLength);</span>
+    }
+
+    @Override
+    public int finish(final byte[] pOutput,
+                      final int pOutOffset) throws GordianException {
+        /* Check that the buffers are sufficient */
+<span class="pc bpc" id="L320" title="1 of 2 branches missed.">        final int myOutBufLen = pOutput == null ? 0 : pOutput.length;</span>
+<span class="pc bpc" id="L321" title="1 of 2 branches missed.">        if (myOutBufLen &lt; (getOutputLength(0) + pOutOffset)) {</span>
+<span class="nc" id="L322">            throw new GordianLogicException(&quot;Output buffer too short.&quot;);</span>
+        }
+
+        /* finish the cipher */
+<span class="fc" id="L326">        return doFinish(pOutput, pOutOffset);</span>
+    }
+
+    /**
+     * Complete the Cipher operation and return final results.
+     *
+     * @param pOutput    the output buffer to receive processed data
+     * @param pOutOffset offset within pOutput to write bytes to
+     * @return the number of bytes transferred to the output buffer
+     * @throws GordianException on error
+     */
+    public abstract int doFinish(byte[] pOutput,
+                                 int pOutOffset) throws GordianException;
+
+    /**
+     * Check that the key matches the keyType.
+     *
+     * @param pKey the passed key.
+     * @throws GordianException on error
+     */
+    void checkValidKey(final GordianKey&lt;T&gt; pKey) throws GordianException {
+<span class="pc bpc" id="L347" title="1 of 2 branches missed.">        if (!getKeyType().equals(pKey.getKeyType())) {</span>
+<span class="nc" id="L348">            throw new GordianLogicException(&quot;MisMatch on keyType&quot;);</span>
+        }
+<span class="fc" id="L350">    }</span>
+
+    @Override
+    public boolean equals(final Object pThat) {
+        /* Handle trivial cases */
+<span class="pc bpc" id="L355" title="1 of 2 branches missed.">        if (this == pThat) {</span>
+<span class="nc" id="L356">            return true;</span>
+        }
+<span class="pc bpc" id="L358" title="1 of 2 branches missed.">        if (pThat == null) {</span>
+<span class="nc" id="L359">            return false;</span>
+        }
+
+        /* Make sure that the classes are the same */
+<span class="pc bpc" id="L363" title="1 of 2 branches missed.">        if (!(pThat instanceof GordianCoreCipher)) {</span>
+<span class="nc" id="L364">            return false;</span>
+        }
+<span class="fc" id="L366">        final GordianCoreCipher&lt;?&gt; myThat = (GordianCoreCipher&lt;?&gt;) pThat;</span>
+
+        /* Check that the fields are equal */
+<span class="pc bpc" id="L369" title="1 of 2 branches missed.">        return Objects.equals(theCipherSpec, myThat.getCipherSpec())</span>
+<span class="pc bpc" id="L370" title="1 of 2 branches missed.">                &amp;&amp; Objects.equals(getKey(), myThat.getKey())</span>
+<span class="pc bpc" id="L371" title="1 of 2 branches missed.">                &amp;&amp; Arrays.equals(getInitVector(), myThat.getInitVector());</span>
+    }
+
+    @Override
+    public int hashCode() {
+<span class="nc" id="L376">        return Objects.hash(getKey(), getCipherSpec())</span>
+<span class="nc" id="L377">                + Arrays.hashCode(getInitVector());</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

@@ -1,0 +1,364 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianNTRUPrimeSpec.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.api.keypair</a> &gt; <span class="el_source">GordianNTRUPrimeSpec.java</span></div><h1>GordianNTRUPrimeSpec.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.gordianknot.api.keypair;
+
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.bc.BCObjectIdentifiers;
+import org.bouncycastle.pqc.crypto.ntruprime.NTRULPRimeParameters;
+import org.bouncycastle.pqc.crypto.ntruprime.SNTRUPrimeParameters;
+import org.bouncycastle.pqc.jcajce.spec.NTRULPRimeParameterSpec;
+import org.bouncycastle.pqc.jcajce.spec.SNTRUPrimeParameterSpec;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+
+/**
+ * NTRUPRIME KeySpec.
+ */
+public class GordianNTRUPrimeSpec {
+    /**
+     * The Separator.
+     */
+    private static final String SEP = &quot;-&quot;;
+
+    /**
+     * The type.
+     */
+    private final GordianNTRUPrimeType theType;
+
+    /**
+     * The params.
+     */
+    private final GordianNTRUPrimeParams theParams;
+
+    /**
+     * is the spec valid?.
+     */
+    private final boolean isValid;
+
+    /**
+     * The name.
+     */
+    private String theName;
+
+    /**
+     * Constructor.
+     *
+     * @param pType   the Type
+     * @param pParams the params
+     */
+    public GordianNTRUPrimeSpec(final GordianNTRUPrimeType pType,
+<span class="fc" id="L66">                                final GordianNTRUPrimeParams pParams) {</span>
+        /* Store parameters */
+<span class="fc" id="L68">        theType = pType;</span>
+<span class="fc" id="L69">        theParams = pParams;</span>
+
+        /* Check validity */
+<span class="fc" id="L72">        isValid = checkValidity();</span>
+<span class="fc" id="L73">    }</span>
+
+    /**
+     * Obtain the type.
+     *
+     * @return the type
+     */
+    public GordianNTRUPrimeType getType() {
+<span class="fc" id="L81">        return theType;</span>
+    }
+
+    /**
+     * Obtain the params.
+     *
+     * @return the params
+     */
+    public GordianNTRUPrimeParams getParams() {
+<span class="fc" id="L90">        return theParams;</span>
+    }
+
+    /**
+     * Is the keySpec valid?
+     *
+     * @return true/false.
+     */
+    public boolean isValid() {
+<span class="nc" id="L99">        return isValid;</span>
+    }
+
+    /**
+     * Check spec validity.
+     *
+     * @return valid true/false
+     */
+    private boolean checkValidity() {
+<span class="pc bpc" id="L108" title="2 of 4 branches missed.">        return theType != null &amp;&amp; theParams != null;</span>
+    }
+
+    @Override
+    public String toString() {
+        /* If we have not yet loaded the name */
+<span class="pc bpc" id="L114" title="1 of 2 branches missed.">        if (theName == null) {</span>
+            /* If the keySpec is valid */
+<span class="pc bpc" id="L116" title="1 of 2 branches missed.">            if (isValid) {</span>
+                /* Load the name */
+<span class="fc" id="L118">                theName = theType.toString() + &quot;Prime&quot; + SEP + theParams.toString();</span>
+            } else {
+                /* Report invalid spec */
+<span class="nc" id="L121">                theName = &quot;InvalidLMSKeySpec: &quot; + theType + SEP + theParams;</span>
+            }
+        }
+
+        /* return the name */
+<span class="fc" id="L126">        return theName;</span>
+    }
+
+    @Override
+    public boolean equals(final Object pThat) {
+        /* Handle the trivial cases */
+<span class="pc bpc" id="L132" title="1 of 2 branches missed.">        if (this == pThat) {</span>
+<span class="nc" id="L133">            return true;</span>
+        }
+<span class="pc bpc" id="L135" title="1 of 2 branches missed.">        if (pThat == null) {</span>
+<span class="nc" id="L136">            return false;</span>
+        }
+
+        /* Check values */
+<span class="pc bpc" id="L140" title="2 of 4 branches missed.">        return pThat instanceof GordianNTRUPrimeSpec myThat</span>
+                &amp;&amp; theType == myThat.theType
+<span class="pc bpc" id="L142" title="1 of 2 branches missed.">                &amp;&amp; theParams == myThat.theParams;</span>
+    }
+
+    @Override
+    public int hashCode() {
+<span class="fc" id="L147">        return Objects.hash(theType, theParams);</span>
+    }
+
+    /**
+     * Obtain a list of all possible specs.
+     *
+     * @return the list
+     */
+    public static List&lt;GordianNTRUPrimeSpec&gt; listPossibleKeySpecs() {
+        /* Create the list */
+<span class="fc" id="L157">        final List&lt;GordianNTRUPrimeSpec&gt; mySpecs = new ArrayList&lt;&gt;();</span>
+
+        /* Add the specs */
+<span class="fc bfc" id="L160" title="All 2 branches covered.">        for (final GordianNTRUPrimeType myType : GordianNTRUPrimeType.values()) {</span>
+<span class="fc bfc" id="L161" title="All 2 branches covered.">            for (final GordianNTRUPrimeParams myParams : GordianNTRUPrimeParams.values()) {</span>
+<span class="fc" id="L162">                mySpecs.add(new GordianNTRUPrimeSpec(myType, myParams));</span>
+            }
+        }
+
+        /* Return the list */
+<span class="fc" id="L167">        return mySpecs;</span>
+    }
+
+    /**
+     * NTRUPRIME Type.
+     */
+<span class="fc" id="L173">    public enum GordianNTRUPrimeType {</span>
+        /**
+         * NTRULPrime.
+         */
+<span class="fc" id="L177">        NTRUL,</span>
+
+        /**
+         * SNTRUPrime.
+         */
+<span class="fc" id="L182">        SNTRU;</span>
+    }
+
+    /**
+     * NTRUPRIME Parameters.
+     */
+<span class="fc" id="L188">    public enum GordianNTRUPrimeParams {</span>
+        /**
+         * PR653.
+         */
+<span class="fc" id="L192">        PR653,</span>
+
+        /**
+         * PR761.
+         */
+<span class="fc" id="L197">        PR761,</span>
+
+        /**
+         * PR857.
+         */
+<span class="fc" id="L202">        PR857,</span>
+
+        /**
+         * PR953.
+         */
+<span class="fc" id="L207">        PR953,</span>
+
+        /**
+         * PR1013.
+         */
+<span class="fc" id="L212">        PR1013,</span>
+
+        /**
+         * PR1277.
+         */
+<span class="fc" id="L217">        PR1277;</span>
+
+        /**
+         * Obtain NTRUL Parameters.
+         *
+         * @return the parameters.
+         */
+        public NTRULPRimeParameters getNTRULParameters() {
+<span class="pc bpc" id="L225" title="6 of 7 branches missed.">            switch (this) {</span>
+                case PR653:
+<span class="fc" id="L227">                    return NTRULPRimeParameters.ntrulpr653;</span>
+                case PR761:
+<span class="nc" id="L229">                    return NTRULPRimeParameters.ntrulpr761;</span>
+                case PR857:
+<span class="nc" id="L231">                    return NTRULPRimeParameters.ntrulpr857;</span>
+                case PR953:
+<span class="nc" id="L233">                    return NTRULPRimeParameters.ntrulpr953;</span>
+                case PR1013:
+<span class="nc" id="L235">                    return NTRULPRimeParameters.ntrulpr1013;</span>
+                case PR1277:
+<span class="nc" id="L237">                    return NTRULPRimeParameters.ntrulpr1277;</span>
+                default:
+<span class="nc" id="L239">                    throw new IllegalArgumentException();</span>
+            }
+        }
+
+        /**
+         * Obtain NTRUL ParameterSpec.
+         *
+         * @return the parameters.
+         */
+        public NTRULPRimeParameterSpec getNTRULParameterSpec() {
+<span class="pc bpc" id="L249" title="6 of 7 branches missed.">            switch (this) {</span>
+                case PR653:
+<span class="fc" id="L251">                    return NTRULPRimeParameterSpec.ntrulpr653;</span>
+                case PR761:
+<span class="nc" id="L253">                    return NTRULPRimeParameterSpec.ntrulpr761;</span>
+                case PR857:
+<span class="nc" id="L255">                    return NTRULPRimeParameterSpec.ntrulpr857;</span>
+                case PR953:
+<span class="nc" id="L257">                    return NTRULPRimeParameterSpec.ntrulpr953;</span>
+                case PR1013:
+<span class="nc" id="L259">                    return NTRULPRimeParameterSpec.ntrulpr1013;</span>
+                case PR1277:
+<span class="nc" id="L261">                    return NTRULPRimeParameterSpec.ntrulpr1277;</span>
+                default:
+<span class="nc" id="L263">                    throw new IllegalArgumentException();</span>
+            }
+        }
+
+        /**
+         * Obtain NTRUL algorithm Identifier.
+         *
+         * @return the identifier.
+         */
+        public ASN1ObjectIdentifier getNTRULIdentifier() {
+<span class="pc bpc" id="L273" title="1 of 7 branches missed.">            switch (this) {</span>
+                case PR653:
+<span class="fc" id="L275">                    return BCObjectIdentifiers.ntrulpr653;</span>
+                case PR761:
+<span class="fc" id="L277">                    return BCObjectIdentifiers.ntrulpr761;</span>
+                case PR857:
+<span class="fc" id="L279">                    return BCObjectIdentifiers.ntrulpr857;</span>
+                case PR953:
+<span class="fc" id="L281">                    return BCObjectIdentifiers.ntrulpr953;</span>
+                case PR1013:
+<span class="fc" id="L283">                    return BCObjectIdentifiers.ntrulpr1013;</span>
+                case PR1277:
+<span class="fc" id="L285">                    return BCObjectIdentifiers.ntrulpr1277;</span>
+                default:
+<span class="nc" id="L287">                    throw new IllegalArgumentException();</span>
+            }
+        }
+
+        /**
+         * Obtain NTRUL Parameters.
+         *
+         * @return the parameters.
+         */
+        public SNTRUPrimeParameters getSNTRUParameters() {
+<span class="nc bnc" id="L297" title="All 7 branches missed.">            switch (this) {</span>
+                case PR653:
+<span class="nc" id="L299">                    return SNTRUPrimeParameters.sntrup653;</span>
+                case PR761:
+<span class="nc" id="L301">                    return SNTRUPrimeParameters.sntrup761;</span>
+                case PR857:
+<span class="nc" id="L303">                    return SNTRUPrimeParameters.sntrup857;</span>
+                case PR953:
+<span class="nc" id="L305">                    return SNTRUPrimeParameters.sntrup953;</span>
+                case PR1013:
+<span class="nc" id="L307">                    return SNTRUPrimeParameters.sntrup1013;</span>
+                case PR1277:
+<span class="nc" id="L309">                    return SNTRUPrimeParameters.sntrup1277;</span>
+                default:
+<span class="nc" id="L311">                    throw new IllegalArgumentException();</span>
+            }
+        }
+
+        /**
+         * Obtain NTRUL ParameterSpec.
+         *
+         * @return the parameters.
+         */
+        public SNTRUPrimeParameterSpec getSNTRUParameterSpec() {
+<span class="nc bnc" id="L321" title="All 7 branches missed.">            switch (this) {</span>
+                case PR653:
+<span class="nc" id="L323">                    return SNTRUPrimeParameterSpec.sntrup653;</span>
+                case PR761:
+<span class="nc" id="L325">                    return SNTRUPrimeParameterSpec.sntrup761;</span>
+                case PR857:
+<span class="nc" id="L327">                    return SNTRUPrimeParameterSpec.sntrup857;</span>
+                case PR953:
+<span class="nc" id="L329">                    return SNTRUPrimeParameterSpec.sntrup953;</span>
+                case PR1013:
+<span class="nc" id="L331">                    return SNTRUPrimeParameterSpec.sntrup1013;</span>
+                case PR1277:
+<span class="nc" id="L333">                    return SNTRUPrimeParameterSpec.sntrup1277;</span>
+                default:
+<span class="nc" id="L335">                    throw new IllegalArgumentException();</span>
+            }
+        }
+
+        /**
+         * Obtain SNTRU algorithm Identifier.
+         *
+         * @return the identifier.
+         */
+        public ASN1ObjectIdentifier getSNTRUIdentifier() {
+<span class="pc bpc" id="L345" title="1 of 7 branches missed.">            switch (this) {</span>
+                case PR653:
+<span class="fc" id="L347">                    return BCObjectIdentifiers.sntrup653;</span>
+                case PR761:
+<span class="fc" id="L349">                    return BCObjectIdentifiers.sntrup761;</span>
+                case PR857:
+<span class="fc" id="L351">                    return BCObjectIdentifiers.sntrup857;</span>
+                case PR953:
+<span class="fc" id="L353">                    return BCObjectIdentifiers.sntrup953;</span>
+                case PR1013:
+<span class="fc" id="L355">                    return BCObjectIdentifiers.sntrup1013;</span>
+                case PR1277:
+<span class="fc" id="L357">                    return BCObjectIdentifiers.sntrup1277;</span>
+                default:
+<span class="nc" id="L359">                    throw new IllegalArgumentException();</span>
+            }
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

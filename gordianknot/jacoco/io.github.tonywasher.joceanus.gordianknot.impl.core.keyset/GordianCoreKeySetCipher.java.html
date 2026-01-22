@@ -1,0 +1,401 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianCoreKeySetCipher.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.impl.core.keyset</a> &gt; <span class="el_source">GordianCoreKeySetCipher.java</span></div><h1>GordianCoreKeySetCipher.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.gordianknot.impl.core.keyset;
+
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactory;
+import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySetCipher;
+import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySetSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianLogicException;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.keyset.GordianKeySetRecipe.GordianKeySetParameters;
+
+/**
+ * Core keySetCipher.
+ */
+public class GordianCoreKeySetCipher
+        implements GordianKeySetCipher {
+    /**
+     * The factory.
+     */
+    private final GordianBaseFactory theFactory;
+
+    /**
+     * The keySetSpec.
+     */
+    private final GordianKeySetSpec theSpec;
+
+    /**
+     * The Underlying cipher.
+     */
+    private final GordianMultiCipher theCipher;
+
+    /**
+     * The cached header.
+     */
+    private final byte[] theHeader;
+
+    /**
+     * number of bytes in the header cache.
+     */
+    private int hdrBytes;
+
+    /**
+     * Are we in AEAD mode?
+     */
+    private final boolean aead;
+
+    /**
+     * Are we initialised?
+     */
+    private boolean initialised;
+
+    /**
+     * Are we encrypting?
+     */
+    private boolean encrypting;
+
+    /**
+     * Has the header been processed?
+     */
+    private boolean hdrProcessed;
+
+    /**
+     * Constructor.
+     *
+     * @param pKeySet the keySet.
+     * @param pAead   are we in AEAD mode
+     * @throws GordianException on error
+     */
+    public GordianCoreKeySetCipher(final GordianBaseKeySet pKeySet,
+<span class="fc" id="L86">                                   final boolean pAead) throws GordianException {</span>
+<span class="fc" id="L87">        theFactory = pKeySet.getFactory();</span>
+<span class="fc" id="L88">        aead = pAead;</span>
+<span class="fc" id="L89">        theSpec = pKeySet.getKeySetSpec();</span>
+<span class="fc" id="L90">        theCipher = new GordianMultiCipher(pKeySet);</span>
+<span class="fc" id="L91">        theHeader = new byte[GordianKeySetRecipe.HDRLEN];</span>
+<span class="fc" id="L92">    }</span>
+
+    /**
+     * Obtain the factory.
+     *
+     * @return the factory
+     */
+    protected GordianFactory getFactory() {
+<span class="fc" id="L100">        return theFactory;</span>
+    }
+
+    /**
+     * Is the cipher initialised?
+     *
+     * @return true/false
+     */
+    protected boolean isInitialised() {
+<span class="nc" id="L109">        return initialised;</span>
+    }
+
+    /**
+     * Is the cipher encrypting?
+     *
+     * @return true/false
+     */
+    protected boolean isEncrypting() {
+<span class="fc" id="L118">        return encrypting;</span>
+    }
+
+    /**
+     * Obtain the multi-cipher.
+     *
+     * @return the cipher
+     */
+    protected GordianMultiCipher getMultiCipher() {
+<span class="fc" id="L127">        return theCipher;</span>
+    }
+
+    @Override
+    public void initForEncrypt() throws GordianException {
+<span class="fc" id="L132">        encrypting = true;</span>
+<span class="fc" id="L133">        reset();</span>
+<span class="fc" id="L134">    }</span>
+
+    @Override
+    public void initForDecrypt() throws GordianException {
+<span class="fc" id="L138">        encrypting = false;</span>
+<span class="fc" id="L139">        reset();</span>
+<span class="fc" id="L140">    }</span>
+
+    /**
+     * Reset the cipher.
+     *
+     * @throws GordianException on error
+     */
+    protected void reset() throws GordianException {
+        /* Set flags */
+<span class="fc" id="L149">        hdrBytes = 0;</span>
+<span class="fc" id="L150">        initialised = true;</span>
+<span class="fc" id="L151">        hdrProcessed = false;</span>
+<span class="fc" id="L152">    }</span>
+
+    /**
+     * Initialise the ciphers.
+     *
+     * @param pParams the keySet parameters
+     * @throws GordianException on error
+     */
+    protected void initCiphers(final GordianKeySetParameters pParams) throws GordianException {
+        /* Initialise the ciphers */
+<span class="fc" id="L162">        theCipher.initCiphers(pParams, encrypting);</span>
+<span class="fc" id="L163">    }</span>
+
+    /**
+     * check status.
+     *
+     * @throws GordianException on error
+     */
+    protected void checkStatus() throws GordianException {
+        /* Check we are initialised */
+<span class="pc bpc" id="L172" title="1 of 2 branches missed.">        if (!initialised) {</span>
+<span class="nc" id="L173">            throw new GordianLogicException(&quot;Cipher is not initialised&quot;);</span>
+        }
+<span class="fc" id="L175">    }</span>
+
+    @Override
+    public int getOutputLength(final int pLength) {
+        /* Handle encryption */
+<span class="fc bfc" id="L180" title="All 2 branches covered.">        if (encrypting) {</span>
+<span class="fc bfc" id="L181" title="All 2 branches covered.">            return hdrProcessed ? theCipher.getOutputLength(pLength)</span>
+<span class="fc" id="L182">                    : GordianKeySetData.getEncryptionLength(pLength);</span>
+        }
+
+        /* Allow for cacheSpace */
+<span class="fc" id="L186">        final int cacheSpace = GordianKeySetRecipe.HDRLEN - hdrBytes;</span>
+<span class="fc bfc" id="L187" title="All 2 branches covered.">        return pLength &lt; cacheSpace ? 0 : pLength - cacheSpace;</span>
+    }
+
+    @Override
+    public int update(final byte[] pBytes,
+                      final int pOffset,
+                      final int pLength,
+                      final byte[] pOutput,
+                      final int pOutOffset) throws GordianException {
+        /* Check status */
+<span class="fc" id="L197">        checkStatus();</span>
+
+        /* Make sure that there is no overlap between buffers */
+<span class="fc" id="L200">        byte[] myInput = pBytes;</span>
+<span class="fc" id="L201">        int myOffset = pOffset;</span>
+<span class="pc bpc" id="L202" title="1 of 2 branches missed.">        if (check4UpdateOverLap(pBytes, pOffset, pLength, pOutput, pOutOffset)) {</span>
+<span class="nc" id="L203">            myInput = new byte[pLength];</span>
+<span class="nc" id="L204">            myOffset = 0;</span>
+<span class="nc" id="L205">            System.arraycopy(pBytes, pOffset, myInput, myOffset, pLength);</span>
+        }
+
+        /* process the bytes */
+<span class="fc bfc" id="L209" title="All 2 branches covered.">        return encrypting</span>
+<span class="fc" id="L210">                ? updateEncryption(myInput, myOffset, pLength, pOutput, pOutOffset)</span>
+<span class="fc" id="L211">                : updateDecryption(myInput, myOffset, pLength, pOutput, pOutOffset);</span>
+    }
+
+    /**
+     * Obtain buffer length (allowing for null).
+     *
+     * @param pBuffer the buffere
+     * @return the length
+     */
+    private static int bufLength(final byte[] pBuffer) {
+<span class="pc bpc" id="L221" title="1 of 2 branches missed.">        return pBuffer == null ? 0 : pBuffer.length;</span>
+    }
+
+    /**
+     * Check for buffer overlap in update.
+     *
+     * @param pBytes     Bytes to update cipher with
+     * @param pOffset    offset within pBytes to read bytes from
+     * @param pLength    length of data to update with
+     * @param pOutput    the output buffer to receive processed data
+     * @param pOutOffset offset within pOutput to write bytes to
+     * @return is there overlap between the two buffers? true/false overlap
+     * @throws GordianException on error
+     */
+    private boolean check4UpdateOverLap(final byte[] pBytes,
+                                        final int pOffset,
+                                        final int pLength,
+                                        final byte[] pOutput,
+                                        final int pOutOffset) throws GordianException {
+        /* Check that the buffers are sufficient */
+<span class="pc bpc" id="L241" title="1 of 2 branches missed.">        if (bufLength(pBytes) &lt; (pLength + pOffset)) {</span>
+<span class="nc" id="L242">            throw new GordianLogicException(&quot;Input buffer too short.&quot;);</span>
+        }
+<span class="fc bfc" id="L244" title="All 2 branches covered.">        if (bufLength(pOutput) &lt; (getOutputLength(pLength) + pOutOffset)) {</span>
+<span class="fc" id="L245">            throw new GordianLogicException(&quot;Output buffer too short.&quot;);</span>
+        }
+
+        /* Only relevant when the two buffers are the same */
+<span class="pc bpc" id="L249" title="1 of 2 branches missed.">        if (pBytes != pOutput) {</span>
+<span class="fc" id="L250">            return false;</span>
+        }
+
+        /* Check for overlap */
+<span class="nc bnc" id="L254" title="All 2 branches missed.">        return pOutOffset &lt; pOffset + pLength</span>
+<span class="nc bnc" id="L255" title="All 2 branches missed.">                &amp;&amp; pOffset &lt; pOutOffset + getOutputLength(pLength);</span>
+    }
+
+    /**
+     * Update for encryption.
+     *
+     * @param pBytes     the input buffer
+     * @param pOffset    the offset from which to start processing
+     * @param pLength    the length of data to process
+     * @param pOutput    the output buffer
+     * @param pOutOffset the offset from which to start writing output
+     * @return the length of data written out
+     * @throws GordianException on error
+     */
+    protected int updateEncryption(final byte[] pBytes,
+                                   final int pOffset,
+                                   final int pLength,
+                                   final byte[] pOutput,
+                                   final int pOutOffset) throws GordianException {
+        /* If we have not initialised the ciphers yet */
+<span class="pc bpc" id="L275" title="1 of 2 branches missed.">        if (hdrBytes == 0) {</span>
+            /* Generate a new KeySetRecipe */
+<span class="fc" id="L277">            final GordianKeySetRecipe myRecipe = GordianKeySetRecipe.newRecipe(theFactory, theSpec, aead);</span>
+<span class="fc" id="L278">            final GordianKeySetParameters myParams = myRecipe.getParameters();</span>
+<span class="fc" id="L279">            myRecipe.buildHeader(theHeader);</span>
+<span class="fc" id="L280">            hdrBytes = GordianKeySetRecipe.HDRLEN;</span>
+
+            /* Initialise the ciphers */
+<span class="fc" id="L283">            initCiphers(myParams);</span>
+        }
+
+        /* If we have not processed the header yet */
+<span class="fc" id="L287">        int bytesWritten = 0;</span>
+<span class="pc bpc" id="L288" title="1 of 2 branches missed.">        if (!hdrProcessed) {</span>
+            /* Process the header */
+<span class="fc" id="L290">            System.arraycopy(theHeader, 0, pOutput, pOutOffset, hdrBytes);</span>
+<span class="fc" id="L291">            hdrProcessed = true;</span>
+<span class="fc" id="L292">            bytesWritten = hdrBytes;</span>
+        }
+
+        /* Process the bytes */
+<span class="fc" id="L296">        final int numBytesWritten = theCipher.update(pBytes, pOffset, pLength, pOutput, pOutOffset + bytesWritten);</span>
+<span class="fc" id="L297">        bytesWritten += numBytesWritten;</span>
+
+        /* Return the number of bytes processed */
+<span class="fc" id="L300">        return bytesWritten;</span>
+    }
+
+
+    /**
+     * Process decryption bytes.
+     *
+     * @param pBytes     the input buffer
+     * @param pOffset    the offset from which to start processing
+     * @param pLength    the length of data to process
+     * @param pOutput    the output buffer
+     * @param pOutOffset the offset from which to start writing output
+     * @return the length of data written out
+     * @throws GordianException on error
+     */
+    protected int updateDecryption(final byte[] pBytes,
+                                   final int pOffset,
+                                   final int pLength,
+                                   final byte[] pOutput,
+                                   final int pOutOffset) throws GordianException {
+        /* If we have not yet processed the header*/
+<span class="fc" id="L321">        int numRead = 0;</span>
+<span class="pc bpc" id="L322" title="1 of 2 branches missed.">        if (!hdrProcessed) {</span>
+            /* Work out how many bytes to copy to cache */
+<span class="fc" id="L324">            final int cacheSpace = GordianKeySetRecipe.HDRLEN - hdrBytes;</span>
+<span class="fc" id="L325">            numRead = Math.min(cacheSpace, pLength);</span>
+
+            /* Copy to the header */
+<span class="fc" id="L328">            System.arraycopy(pBytes, 0, theHeader, hdrBytes, numRead);</span>
+<span class="fc" id="L329">            hdrBytes += numRead;</span>
+
+            /* If we have a complete header */
+<span class="fc bfc" id="L332" title="All 2 branches covered.">            if (hdrBytes == GordianKeySetRecipe.HDRLEN) {</span>
+                /* Process the recipe */
+<span class="fc" id="L334">                final GordianKeySetRecipe myRecipe = GordianKeySetRecipe.parseRecipe(theFactory, theSpec, theHeader, aead);</span>
+<span class="fc" id="L335">                final GordianKeySetParameters myParams = myRecipe.getParameters();</span>
+
+                /* Initialise the ciphers */
+<span class="fc" id="L338">                initCiphers(myParams);</span>
+<span class="fc" id="L339">                hdrProcessed = true;</span>
+            }
+        }
+
+        /* Process the bytes */
+<span class="fc" id="L344">        return theCipher.update(pBytes, pOffset + numRead, pLength - numRead, pOutput, pOutOffset);</span>
+    }
+
+    @Override
+    public int finish(final byte[] pOutput,
+                      final int pOutOffset) throws GordianException {
+        /* Check that the buffers are sufficient */
+<span class="pc bpc" id="L351" title="1 of 2 branches missed.">        if (bufLength(pOutput) &lt; (getOutputLength(0) + pOutOffset)) {</span>
+<span class="nc" id="L352">            throw new GordianLogicException(&quot;Output buffer too short.&quot;);</span>
+        }
+
+        /* finish the cipher */
+<span class="fc" id="L356">        return doFinish(pOutput, pOutOffset);</span>
+    }
+
+    /**
+     * Complete the Cipher operation and return final results.
+     *
+     * @param pOutput    the output buffer to receive processed data
+     * @param pOutOffset offset within pOutput to write bytes to
+     * @return the number of bytes transferred to the output buffer
+     * @throws GordianException on error
+     */
+    public int doFinish(final byte[] pOutput,
+                        final int pOutOffset) throws GordianException {
+        /* Finish the cipher */
+<span class="fc" id="L370">        final int myLen = finishCipher(pOutput, pOutOffset);</span>
+
+        /* Reset the cipher */
+<span class="fc" id="L373">        reset();</span>
+
+        /* return the number of bytes processed */
+<span class="fc" id="L376">        return myLen;</span>
+    }
+
+    /**
+     * Finish underlying cipher.
+     *
+     * @param pOutput    the output buffer to receive processed data
+     * @param pOutOffset offset within pOutput to write bytes to
+     * @return the length of data processed
+     * @throws GordianException on error
+     */
+    protected int finishCipher(final byte[] pOutput,
+                               final int pOutOffset) throws GordianException {
+        /* Check status */
+<span class="fc" id="L390">        checkStatus();</span>
+
+        /* Reject if we have not fully processed the header on decrypt */
+<span class="fc bfc" id="L393" title="All 4 branches covered.">        if (!encrypting &amp;&amp; !hdrProcessed) {</span>
+<span class="fc" id="L394">            throw new GordianDataException(&quot;data too short&quot;);</span>
+        }
+
+        /* Finish the cipher */
+<span class="fc" id="L398">        return theCipher.finish(pOutput, pOutOffset);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

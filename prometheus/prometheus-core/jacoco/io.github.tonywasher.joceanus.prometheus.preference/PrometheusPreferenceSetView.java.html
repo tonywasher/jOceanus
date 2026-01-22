@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PrometheusPreferenceSetView.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Prometheus Core Application Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.prometheus.preference</a> &gt; <span class="el_source">PrometheusPreferenceSetView.java</span></div><h1>PrometheusPreferenceSetView.java</h1><pre class="source lang-java linenums">/*
+ * Prometheus: Application Framework
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.prometheus.preference;
+
+import io.github.tonywasher.joceanus.metis.preference.MetisPreferenceSet.MetisPreferenceItem;
+import io.github.tonywasher.joceanus.metis.ui.MetisPreferenceSetView;
+import io.github.tonywasher.joceanus.prometheus.preference.PrometheusPreferenceSet.PrometheusByteArrayPreference;
+import io.github.tonywasher.joceanus.prometheus.preference.PrometheusPreferenceSet.PrometheusCharArrayPreference;
+import io.github.tonywasher.joceanus.tethys.api.base.TethysUIAlignment;
+import io.github.tonywasher.joceanus.tethys.api.control.TethysUILabel;
+import io.github.tonywasher.joceanus.tethys.api.factory.TethysUIFactory;
+import io.github.tonywasher.joceanus.tethys.api.field.TethysUIDataEditField.TethysUICharArrayEditField;
+import io.github.tonywasher.joceanus.tethys.api.field.TethysUIFieldAttribute;
+import io.github.tonywasher.joceanus.tethys.api.pane.TethysUIGridPaneManager;
+
+/**
+ * Panel for editing a preference Set.
+ */
+public class PrometheusPreferenceSetView
+        extends MetisPreferenceSetView {
+    /**
+     * Constructor.
+     *
+     * @param pFactory       the GUI factory
+     * @param pPreferenceSet the preference set
+     */
+    PrometheusPreferenceSetView(final TethysUIFactory&lt;?&gt; pFactory,
+                                final PrometheusPreferenceSet pPreferenceSet) {
+<span class="nc" id="L43">        super(pFactory, pPreferenceSet);</span>
+<span class="nc" id="L44">    }</span>
+
+    @Override
+    protected PreferenceElement allocatePreferenceElement(final MetisPreferenceItem pItem) {
+<span class="nc bnc" id="L48" title="All 2 branches missed.">        if (pItem instanceof PrometheusCharArrayPreference ca) {</span>
+<span class="nc" id="L49">            return new CharArrayPreferenceElement(ca);</span>
+<span class="nc bnc" id="L50" title="All 2 branches missed.">        } else if (pItem instanceof PrometheusByteArrayPreference) {</span>
+<span class="nc" id="L51">            return null;</span>
+        } else {
+<span class="nc" id="L53">            return super.allocatePreferenceElement(pItem);</span>
+        }
+    }
+
+    /**
+     * CharArray preference element.
+     */
+    private final class CharArrayPreferenceElement
+            implements PreferenceElement {
+        /**
+         * The Preference item.
+         */
+        private final PrometheusCharArrayPreference theItem;
+
+        /**
+         * The Field item.
+         */
+        private final TethysUICharArrayEditField theField;
+
+        /**
+         * Constructor.
+         *
+         * @param pItem the item
+         */
+<span class="nc" id="L77">        CharArrayPreferenceElement(final PrometheusCharArrayPreference pItem) {</span>
+            /* Store parameters */
+<span class="nc" id="L79">            theItem = pItem;</span>
+<span class="nc" id="L80">            theField = getFactory().fieldFactory().newCharArrayField();</span>
+<span class="nc" id="L81">            theField.setEditable(true);</span>
+
+            /* Create the label */
+<span class="nc" id="L84">            final TethysUILabel myLabel = getFactory().controlFactory().newLabel(pItem.getDisplay() + STR_COLON);</span>
+<span class="nc" id="L85">            myLabel.setAlignment(TethysUIAlignment.EAST);</span>
+
+            /* Add to the Grid Pane */
+<span class="nc" id="L88">            final TethysUIGridPaneManager myGrid = getGrid();</span>
+<span class="nc" id="L89">            myGrid.addCell(myLabel);</span>
+<span class="nc" id="L90">            myGrid.setCellAlignment(myLabel, TethysUIAlignment.EAST);</span>
+<span class="nc" id="L91">            myGrid.addCell(theField);</span>
+<span class="nc" id="L92">            myGrid.setCellColumnSpan(theField, 2);</span>
+<span class="nc" id="L93">            myGrid.allowCellGrowth(theField);</span>
+<span class="nc" id="L94">            myGrid.newRow();</span>
+
+            /* Create listener */
+<span class="nc" id="L97">            theField.getEventRegistrar().addEventListener(e -&gt; {</span>
+<span class="nc" id="L98">                pItem.setValue(theField.getValue());</span>
+<span class="nc" id="L99">                notifyChanges();</span>
+<span class="nc" id="L100">            });</span>
+<span class="nc" id="L101">        }</span>
+
+        @Override
+        public void updateField() {
+            /* Update the field */
+<span class="nc" id="L106">            theField.setValue(theItem.getValue());</span>
+
+            /* Set changed indication */
+<span class="nc" id="L109">            theField.setTheAttributeState(TethysUIFieldAttribute.CHANGED, theItem.isChanged());</span>
+<span class="nc" id="L110">            theField.adjustField();</span>
+
+            /* Handle hidden state */
+<span class="nc bnc" id="L113" title="All 2 branches missed.">            theField.setEnabled(!theItem.isHidden());</span>
+<span class="nc" id="L114">        }</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

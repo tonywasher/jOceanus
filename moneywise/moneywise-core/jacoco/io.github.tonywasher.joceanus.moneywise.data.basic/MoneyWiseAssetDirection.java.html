@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseAssetDirection.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.moneywise.data.basic</a> &gt; <span class="el_source">MoneyWiseAssetDirection.java</span></div><h1>MoneyWiseAssetDirection.java</h1><pre class="source lang-java linenums">/*
+ * MoneyWise: Finance Application
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.moneywise.data.basic;
+
+/**
+ * Asset Direction.
+ */
+<span class="fc" id="L22">public enum MoneyWiseAssetDirection {</span>
+    /**
+     * To.
+     */
+<span class="fc" id="L26">    TO(1),</span>
+
+    /**
+     * From.
+     */
+<span class="fc" id="L31">    FROM(2);</span>
+
+    /**
+     * The String name.
+     */
+    private String theName;
+
+    /**
+     * Class Id.
+     */
+    private final int theId;
+
+    /**
+     * Constructor.
+     *
+     * @param uId the Id
+     */
+<span class="fc" id="L48">    MoneyWiseAssetDirection(final int uId) {</span>
+<span class="fc" id="L49">        theId = uId;</span>
+<span class="fc" id="L50">    }</span>
+
+    /**
+     * Obtain class Id.
+     *
+     * @return the Id
+     */
+    public int getId() {
+<span class="nc" id="L58">        return theId;</span>
+    }
+
+    @Override
+    public String toString() {
+        /* If we have not yet loaded the name */
+<span class="fc bfc" id="L64" title="All 2 branches covered.">        if (theName == null) {</span>
+            /* Load the name */
+<span class="fc" id="L66">            theName = MoneyWiseBasicResource.getKeyForAssetDirection(this).getValue();</span>
+        }
+
+        /* return the name */
+<span class="fc" id="L70">        return theName;</span>
+    }
+
+    /**
+     * Reverse.
+     *
+     * @return the reversed direction
+     */
+    public MoneyWiseAssetDirection reverse() {
+<span class="nc bnc" id="L79" title="All 2 branches missed.">        return this == TO</span>
+<span class="nc" id="L80">                ? FROM</span>
+<span class="nc" id="L81">                : TO;</span>
+    }
+
+    /**
+     * Is this the from direction?
+     *
+     * @return true/false
+     */
+    public boolean isFrom() {
+<span class="fc bfc" id="L90" title="All 2 branches covered.">        return this == FROM;</span>
+    }
+
+    /**
+     * Is this the to direction?
+     *
+     * @return true/false
+     */
+    public boolean isTo() {
+<span class="pc bpc" id="L99" title="1 of 2 branches missed.">        return this == TO;</span>
+    }
+
+    /**
+     * get value from name.
+     *
+     * @param pName the name value
+     * @return the corresponding enum object
+     */
+    public static MoneyWiseAssetDirection fromName(final String pName) {
+<span class="pc bpc" id="L109" title="1 of 2 branches missed.">        for (MoneyWiseAssetDirection myDir : values()) {</span>
+<span class="fc bfc" id="L110" title="All 2 branches covered.">            if (pName.equals(myDir.toString())) {</span>
+<span class="fc" id="L111">                return myDir;</span>
+            }
+        }
+<span class="nc" id="L114">        return null;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

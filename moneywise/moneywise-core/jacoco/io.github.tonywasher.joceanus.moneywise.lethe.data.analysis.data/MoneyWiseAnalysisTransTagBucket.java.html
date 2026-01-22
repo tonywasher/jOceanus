@@ -1,0 +1,453 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseAnalysisTransTagBucket.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data</a> &gt; <span class="el_source">MoneyWiseAnalysisTransTagBucket.java</span></div><h1>MoneyWiseAnalysisTransTagBucket.java</h1><pre class="source lang-java linenums">/*
+ * MoneyWise: Finance Application
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.moneywise.lethe.data.analysis.data;
+
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
+import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataList;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldItem;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldItem.MetisFieldTableItem;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
+import io.github.tonywasher.joceanus.metis.list.MetisListIndexed;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransTag;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransaction;
+
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * The TransactionTag Bucket class.
+ */
+public final class MoneyWiseAnalysisTransTagBucket
+        implements MetisFieldTableItem {
+    /**
+     * Local Report fields.
+     */
+<span class="nc" id="L44">    private static final MetisFieldSet&lt;MoneyWiseAnalysisTransTagBucket&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseAnalysisTransTagBucket.class);</span>
+
+    /*
+     * Declare Fields.
+     */
+    static {
+<span class="nc" id="L50">        FIELD_DEFS.declareLocalField(MoneyWiseAnalysisDataResource.ANALYSIS_NAME, MoneyWiseAnalysisTransTagBucket::getAnalysis);</span>
+<span class="nc" id="L51">        FIELD_DEFS.declareLocalField(MoneyWiseBasicDataType.TRANSTAG, MoneyWiseAnalysisTransTagBucket::getTransTag);</span>
+<span class="nc" id="L52">        FIELD_DEFS.declareLocalField(MoneyWiseBasicDataType.TRANSACTION.getListId(), MoneyWiseAnalysisTransTagBucket::getHashMap);</span>
+<span class="nc" id="L53">    }</span>
+
+    /**
+     * The analysis.
+     */
+    private final MoneyWiseAnalysis theAnalysis;
+
+    /**
+     * TransactionTag.
+     */
+    private final MoneyWiseTransTag theTransTag;
+
+    /**
+     * HashMap.
+     */
+    private final Map&lt;Integer, MoneyWiseTransaction&gt; theHashMap;
+
+    /**
+     * Constructor.
+     *
+     * @param pAnalysis the analysis
+     * @param pTransTag the tag
+     */
+    private MoneyWiseAnalysisTransTagBucket(final MoneyWiseAnalysis pAnalysis,
+<span class="nc" id="L77">                                            final MoneyWiseTransTag pTransTag) {</span>
+        /* Store the parameters */
+<span class="nc" id="L79">        theTransTag = pTransTag;</span>
+<span class="nc" id="L80">        theAnalysis = pAnalysis;</span>
+
+        /* Allocate the hashMap */
+<span class="nc" id="L83">        theHashMap = new LinkedHashMap&lt;&gt;();</span>
+<span class="nc" id="L84">    }</span>
+
+    /**
+     * Constructor.
+     *
+     * @param pAnalysis the analysis
+     * @param pBase     the underlying bucket
+     * @param pDate     the date for the bucket
+     */
+    private MoneyWiseAnalysisTransTagBucket(final MoneyWiseAnalysis pAnalysis,
+                                            final MoneyWiseAnalysisTransTagBucket pBase,
+                                            final OceanusDate pDate) {
+        /* Copy details from base */
+<span class="nc" id="L97">        this(pAnalysis, pBase.getTransTag());</span>
+
+        /* Loop through the map */
+<span class="nc" id="L100">        final Iterator&lt;MoneyWiseTransaction&gt; myIterator = pBase.iterator();</span>
+<span class="nc bnc" id="L101" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L102">            final MoneyWiseTransaction myTrans = myIterator.next();</span>
+
+            /* If we have passed the Date, break the loop */
+<span class="nc bnc" id="L105" title="All 2 branches missed.">            if (pDate.compareTo(myTrans.getDate()) &lt; 0) {</span>
+<span class="nc" id="L106">                break;</span>
+            }
+
+            /* Process the transaction */
+<span class="nc" id="L110">            processTransaction(myTrans);</span>
+<span class="nc" id="L111">        }</span>
+<span class="nc" id="L112">    }</span>
+
+    /**
+     * Constructor.
+     *
+     * @param pAnalysis the analysis
+     * @param pBase     the underlying bucket
+     * @param pRange    the range for the bucket
+     */
+    private MoneyWiseAnalysisTransTagBucket(final MoneyWiseAnalysis pAnalysis,
+                                            final MoneyWiseAnalysisTransTagBucket pBase,
+                                            final OceanusDateRange pRange) {
+        /* Copy details from base */
+<span class="nc" id="L125">        this(pAnalysis, pBase.getTransTag());</span>
+
+        /* Loop through the map */
+<span class="nc" id="L128">        final Iterator&lt;MoneyWiseTransaction&gt; myIterator = pBase.iterator();</span>
+<span class="nc bnc" id="L129" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L130">            final MoneyWiseTransaction myTrans = myIterator.next();</span>
+
+            /* Check the range */
+<span class="nc" id="L133">            final int iRange = pRange.compareToDate(myTrans.getDate());</span>
+<span class="nc bnc" id="L134" title="All 2 branches missed.">            if (iRange &lt; 0) {</span>
+<span class="nc" id="L135">                break;</span>
+<span class="nc bnc" id="L136" title="All 2 branches missed.">            } else if (iRange == 0) {</span>
+                /* Process the transaction */
+<span class="nc" id="L138">                processTransaction(myTrans);</span>
+            }
+<span class="nc" id="L140">        }</span>
+<span class="nc" id="L141">    }</span>
+
+    @Override
+    public MetisFieldSet&lt;MoneyWiseAnalysisTransTagBucket&gt; getDataFieldSet() {
+<span class="nc" id="L145">        return FIELD_DEFS;</span>
+    }
+
+    @Override
+    public String formatObject(final OceanusDataFormatter pFormatter) {
+<span class="nc" id="L150">        return toString();</span>
+    }
+
+    @Override
+    public String toString() {
+<span class="nc" id="L155">        return getName();</span>
+    }
+
+    @Override
+    public Integer getIndexedId() {
+<span class="nc" id="L160">        return theTransTag.getIndexedId();</span>
+    }
+
+    /**
+     * Obtain name.
+     *
+     * @return the name
+     */
+    public String getName() {
+<span class="nc" id="L169">        return theTransTag.getName();</span>
+    }
+
+    /**
+     * Obtain transactionTag.
+     *
+     * @return the tag
+     */
+    public MoneyWiseTransTag getTransTag() {
+<span class="nc" id="L178">        return theTransTag;</span>
+    }
+
+    /**
+     * Obtain the analysis.
+     *
+     * @return the analysis
+     */
+    MoneyWiseAnalysis getAnalysis() {
+<span class="nc" id="L187">        return theAnalysis;</span>
+    }
+
+    /**
+     * Obtain date range.
+     *
+     * @return the range
+     */
+    public OceanusDateRange getDateRange() {
+<span class="nc" id="L196">        return theAnalysis.getDateRange();</span>
+    }
+
+    /**
+     * Obtain map Iterator.
+     *
+     * @return the iterator
+     */
+    private Map&lt;Integer, MoneyWiseTransaction&gt; getHashMap() {
+<span class="nc" id="L205">        return theHashMap;</span>
+    }
+
+    /**
+     * Obtain map Iterator.
+     *
+     * @return the iterator
+     */
+    private Iterator&lt;MoneyWiseTransaction&gt; iterator() {
+<span class="nc" id="L214">        return theHashMap.values().iterator();</span>
+    }
+
+    /**
+     * is the bucket idle.
+     *
+     * @return true/false
+     */
+    boolean isIdle() {
+<span class="nc" id="L223">        return theHashMap.isEmpty();</span>
+    }
+
+    /**
+     * Process the transaction.
+     *
+     * @param pTrans the transaction
+     */
+    private void processTransaction(final MoneyWiseTransaction pTrans) {
+        /* Add to the map */
+<span class="nc" id="L233">        theHashMap.put(pTrans.getIndexedId(), pTrans);</span>
+<span class="nc" id="L234">    }</span>
+
+    /**
+     * Is this tag marked by the transaction.
+     *
+     * @param pTrans the transaction
+     * @return true/false
+     */
+    public boolean hasTransaction(final MoneyWiseTransaction pTrans) {
+        /* Note whether the transaction is mapped */
+<span class="nc bnc" id="L244" title="All 2 branches missed.">        return theHashMap.get(pTrans.getIndexedId()) != null;</span>
+    }
+
+    /**
+     * TransactionTagBucketList class.
+     */
+    public static final class MoneyWiseAnalysisTransTagBucketList
+            implements MetisFieldItem, MetisDataList&lt;MoneyWiseAnalysisTransTagBucket&gt; {
+        /**
+         * Local Report fields.
+         */
+<span class="fc" id="L255">        private static final MetisFieldSet&lt;MoneyWiseAnalysisTransTagBucketList&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseAnalysisTransTagBucketList.class);</span>
+
+        /*
+         * Declare Fields.
+         */
+        static {
+<span class="fc" id="L261">            FIELD_DEFS.declareLocalField(MoneyWiseAnalysisDataResource.ANALYSIS_NAME, MoneyWiseAnalysisTransTagBucketList::getAnalysis);</span>
+<span class="fc" id="L262">        }</span>
+
+        /**
+         * The analysis.
+         */
+        private final MoneyWiseAnalysis theAnalysis;
+
+        /**
+         * The list.
+         */
+        private final MetisListIndexed&lt;MoneyWiseAnalysisTransTagBucket&gt; theList;
+
+        /**
+         * Construct a top-level List.
+         *
+         * @param pAnalysis the analysis
+         */
+<span class="fc" id="L279">        MoneyWiseAnalysisTransTagBucketList(final MoneyWiseAnalysis pAnalysis) {</span>
+<span class="fc" id="L280">            theAnalysis = pAnalysis;</span>
+<span class="fc" id="L281">            theList = new MetisListIndexed&lt;&gt;();</span>
+<span class="pc" id="L282">            theList.setComparator((l, r) -&gt; l.getTransTag().compareTo(r.getTransTag()));</span>
+<span class="fc" id="L283">        }</span>
+
+        /**
+         * Construct a dated List.
+         *
+         * @param pAnalysis the analysis
+         * @param pBase     the base list
+         * @param pDate     the Date
+         */
+        MoneyWiseAnalysisTransTagBucketList(final MoneyWiseAnalysis pAnalysis,
+                                            final MoneyWiseAnalysisTransTagBucketList pBase,
+                                            final OceanusDate pDate) {
+            /* Initialise class */
+<span class="nc" id="L296">            this(pAnalysis);</span>
+
+            /* Loop through the buckets */
+<span class="nc" id="L299">            final Iterator&lt;MoneyWiseAnalysisTransTagBucket&gt; myIterator = pBase.iterator();</span>
+<span class="nc bnc" id="L300" title="All 2 branches missed.">            while (myIterator.hasNext()) {</span>
+<span class="nc" id="L301">                final MoneyWiseAnalysisTransTagBucket myCurr = myIterator.next();</span>
+
+                /* Access the bucket for this date */
+<span class="nc" id="L304">                final MoneyWiseAnalysisTransTagBucket myBucket = new MoneyWiseAnalysisTransTagBucket(pAnalysis, myCurr, pDate);</span>
+
+                /* If the bucket is non-idle */
+<span class="nc bnc" id="L307" title="All 2 branches missed.">                if (!myBucket.isIdle()) {</span>
+                    /* Add the bucket */
+<span class="nc" id="L309">                    theList.add(myBucket);</span>
+                }
+<span class="nc" id="L311">            }</span>
+<span class="nc" id="L312">        }</span>
+
+        /**
+         * Construct a ranged List.
+         *
+         * @param pAnalysis the analysis
+         * @param pBase     the base list
+         * @param pRange    the Date Range
+         */
+        MoneyWiseAnalysisTransTagBucketList(final MoneyWiseAnalysis pAnalysis,
+                                            final MoneyWiseAnalysisTransTagBucketList pBase,
+                                            final OceanusDateRange pRange) {
+            /* Initialise class */
+<span class="nc" id="L325">            this(pAnalysis);</span>
+
+            /* Loop through the buckets */
+<span class="nc" id="L328">            final Iterator&lt;MoneyWiseAnalysisTransTagBucket&gt; myIterator = pBase.iterator();</span>
+<span class="nc bnc" id="L329" title="All 2 branches missed.">            while (myIterator.hasNext()) {</span>
+<span class="nc" id="L330">                final MoneyWiseAnalysisTransTagBucket myCurr = myIterator.next();</span>
+
+                /* Access the bucket for this range */
+<span class="nc" id="L333">                final MoneyWiseAnalysisTransTagBucket myBucket = new MoneyWiseAnalysisTransTagBucket(pAnalysis, myCurr, pRange);</span>
+
+                /* If the bucket is non-idle */
+<span class="nc bnc" id="L336" title="All 2 branches missed.">                if (!myBucket.isIdle()) {</span>
+                    /* Add the bucket */
+<span class="nc" id="L338">                    theList.add(myBucket);</span>
+                }
+<span class="nc" id="L340">            }</span>
+<span class="nc" id="L341">        }</span>
+
+        @Override
+        public MetisFieldSet&lt;MoneyWiseAnalysisTransTagBucketList&gt; getDataFieldSet() {
+<span class="nc" id="L345">            return FIELD_DEFS;</span>
+        }
+
+        @Override
+        public List&lt;MoneyWiseAnalysisTransTagBucket&gt; getUnderlyingList() {
+<span class="nc" id="L350">            return theList.getUnderlyingList();</span>
+        }
+
+        @Override
+        public String formatObject(final OceanusDataFormatter pFormatter) {
+<span class="nc" id="L355">            return getDataFieldSet().getName();</span>
+        }
+
+        /**
+         * Obtain the analysis.
+         *
+         * @return the analysis
+         */
+        MoneyWiseAnalysis getAnalysis() {
+<span class="nc" id="L364">            return theAnalysis;</span>
+        }
+
+        /**
+         * Obtain item by id.
+         *
+         * @param pId the id to lookup
+         * @return the item (or null if not present)
+         */
+        public MoneyWiseAnalysisTransTagBucket findItemById(final Integer pId) {
+            /* Return results */
+<span class="nc" id="L375">            return theList.getItemById(pId);</span>
+        }
+
+        /**
+         * Obtain the TransTagBucket for a given transaction tag.
+         *
+         * @param pTag the transaction tag
+         * @return the bucket
+         */
+        private MoneyWiseAnalysisTransTagBucket getBucket(final MoneyWiseTransTag pTag) {
+            /* Locate the bucket in the list */
+<span class="nc" id="L386">            MoneyWiseAnalysisTransTagBucket myItem = findItemById(pTag.getIndexedId());</span>
+
+            /* If the item does not yet exist */
+<span class="nc bnc" id="L389" title="All 2 branches missed.">            if (myItem == null) {</span>
+                /* Create the new bucket */
+<span class="nc" id="L391">                myItem = new MoneyWiseAnalysisTransTagBucket(theAnalysis, pTag);</span>
+
+                /* Add to the list */
+<span class="nc" id="L394">                theList.add(myItem);</span>
+            }
+
+            /* Return the bucket */
+<span class="nc" id="L398">            return myItem;</span>
+        }
+
+        /**
+         * Obtain the matching TagBucket.
+         *
+         * @param pTag the tag
+         * @return the matching bucket
+         */
+        public MoneyWiseAnalysisTransTagBucket getMatchingTag(final MoneyWiseTransTag pTag) {
+            /* Return the matching tag if it exists else an orphan bucket */
+<span class="nc" id="L409">            final MoneyWiseAnalysisTransTagBucket myTag = findItemById(pTag.getIndexedId());</span>
+<span class="nc bnc" id="L410" title="All 2 branches missed.">            return myTag != null</span>
+<span class="nc" id="L411">                    ? myTag</span>
+<span class="nc" id="L412">                    : new MoneyWiseAnalysisTransTagBucket(theAnalysis, pTag);</span>
+        }
+
+        /**
+         * Obtain the default TagBucket.
+         *
+         * @return the default bucket
+         */
+        public MoneyWiseAnalysisTransTagBucket getDefaultTag() {
+            /* Return the first payee in the list if it exists */
+<span class="nc bnc" id="L422" title="All 2 branches missed.">            return isEmpty()</span>
+<span class="nc" id="L423">                    ? null</span>
+<span class="nc" id="L424">                    : theList.getUnderlyingList().get(0);</span>
+        }
+
+        /**
+         * SortBuckets.
+         */
+        void sortBuckets() {
+<span class="fc" id="L431">            theList.sortList();</span>
+<span class="fc" id="L432">        }</span>
+
+        /**
+         * Process transaction tags.
+         *
+         * @param pTrans    the transaction
+         * @param pIterator the transaction tag iterator
+         */
+        public void processTransaction(final MoneyWiseTransaction pTrans,
+                                       final Iterator&lt;MoneyWiseTransTag&gt; pIterator) {
+            /* Loop through the tags */
+<span class="nc bnc" id="L443" title="All 2 branches missed.">            while (pIterator.hasNext()) {</span>
+<span class="nc" id="L444">                final MoneyWiseTransTag myTag = pIterator.next();</span>
+
+                /* Obtain the bucket and process the transaction */
+<span class="nc" id="L447">                final MoneyWiseAnalysisTransTagBucket myBucket = getBucket(myTag);</span>
+<span class="nc" id="L448">                myBucket.processTransaction(pTrans);</span>
+<span class="nc" id="L449">            }</span>
+<span class="nc" id="L450">        }</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

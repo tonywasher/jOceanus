@@ -1,0 +1,301 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianCoreAgreementComposite.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.impl.core.agree</a> &gt; <span class="el_source">GordianCoreAgreementComposite.java</span></div><h1>GordianCoreAgreementComposite.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.gordianknot.impl.core.agree;
+
+import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementKDF;
+import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementType;
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.agree.GordianCoreAgreementCalculator.GordianDerivationId;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianDataConverter;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianIOException;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.kdf.GordianHKDFEngine;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.kdf.GordianHKDFParams;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianCompositeKeyPair;
+import org.bouncycastle.asn1.ASN1EncodableVector;
+import org.bouncycastle.asn1.ASN1OctetString;
+import org.bouncycastle.asn1.ASN1Sequence;
+import org.bouncycastle.asn1.DEROctetString;
+import org.bouncycastle.asn1.DERSequence;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Random;
+
+/**
+ * Implementation engine for composite Agreements.
+ */
+public class GordianCoreAgreementComposite extends GordianCoreAgreementEngine {
+    /**
+     * The factory.
+     */
+    private final GordianBaseFactory theFactory;
+
+    /**
+     * List of underlying engines.
+     */
+    private final List&lt;GordianCoreAgreementEngine&gt; theEngines;
+
+    /**
+     * The builder.
+     */
+    private final GordianCoreAgreementBuilder theBuilder;
+
+    /**
+     * The builder.
+     */
+    private final GordianCoreAgreementState theState;
+
+    /**
+     * Constructor.
+     *
+     * @param pSupplier the supplier
+     * @param pSpec     the agreementSpec
+     * @param pEngines  the engines
+     * @throws GordianException on error
+     */
+    GordianCoreAgreementComposite(final GordianCoreAgreementSupplier pSupplier,
+                                  final GordianAgreementSpec pSpec,
+                                  final List&lt;GordianCoreAgreementEngine&gt; pEngines) throws GordianException {
+<span class="fc" id="L82">        super(pSupplier, pSpec);</span>
+<span class="fc" id="L83">        theFactory = pSupplier.getFactory();</span>
+<span class="fc" id="L84">        theEngines = pEngines;</span>
+<span class="fc" id="L85">        theBuilder = getBuilder();</span>
+<span class="fc" id="L86">        theState = theBuilder.getState();</span>
+<span class="fc" id="L87">    }</span>
+
+    /**
+     * Obtain list of subAgreementSpecs.
+     *
+     * @param pSpec the composite agreement Spec
+     * @return the list of subAgreementSpecs
+     */
+    static List&lt;GordianAgreementSpec&gt; getSubAgreements(final GordianAgreementSpec pSpec) {
+        /* Create the list */
+<span class="fc" id="L97">        final List&lt;GordianAgreementSpec&gt; mySpecs = new ArrayList&lt;&gt;();</span>
+
+        /* Switch signed agreements to Basic sub agreements */
+<span class="fc bfc" id="L100" title="All 2 branches covered.">        final GordianAgreementType myType = pSpec.getAgreementType().isSigned()</span>
+<span class="fc" id="L101">                ? GordianAgreementType.BASIC</span>
+<span class="fc" id="L102">                : pSpec.getAgreementType();</span>
+<span class="fc" id="L103">        final GordianAgreementKDF myKDF = pSpec.getKDFType();</span>
+
+        /* Loop through the keyPairs */
+<span class="fc" id="L106">        final GordianKeyPairSpec myKeyPairSpec = pSpec.getKeyPairSpec();</span>
+<span class="fc" id="L107">        final Iterator&lt;GordianKeyPairSpec&gt; myIterator = myKeyPairSpec.keySpecIterator();</span>
+<span class="fc bfc" id="L108" title="All 2 branches covered.">        while (myIterator.hasNext()) {</span>
+<span class="fc" id="L109">            final GordianKeyPairSpec mySpec = myIterator.next();</span>
+            /* Determine the agreementType (note that we have no confirmation) */
+<span class="fc" id="L111">            mySpecs.add(new GordianAgreementSpec(mySpec, myType, myKDF));</span>
+<span class="fc" id="L112">        }</span>
+
+        /* Return the list */
+<span class="fc" id="L115">        return mySpecs;</span>
+    }
+
+    @Override
+    public void buildClientHello() throws GordianException {
+        /* Access the client and server keyPairs */
+<span class="fc" id="L121">        final GordianCoreAgreementParticipant myClient = theState.getClient();</span>
+<span class="fc" id="L122">        final GordianCompositeKeyPair myClientKeyPair = (GordianCompositeKeyPair) myClient.getKeyPair();</span>
+<span class="fc bfc" id="L123" title="All 2 branches covered.">        final Iterator&lt;GordianKeyPair&gt; myClientIterator = myClientKeyPair == null ? null : myClientKeyPair.iterator();</span>
+<span class="fc" id="L124">        final GordianCompositeKeyPair myEphemeralKeyPair = (GordianCompositeKeyPair) myClient.getEphemeralKeyPair();</span>
+<span class="fc bfc" id="L125" title="All 2 branches covered.">        final Iterator&lt;GordianKeyPair&gt; myEphemeralIterator = myEphemeralKeyPair == null ? null : myEphemeralKeyPair.iterator();</span>
+<span class="fc" id="L126">        final GordianCoreAgreementParticipant myServer = theState.getServer();</span>
+<span class="fc" id="L127">        final GordianCompositeKeyPair myServerKeyPair = (GordianCompositeKeyPair) myServer.getKeyPair();</span>
+<span class="fc bfc" id="L128" title="All 2 branches covered.">        final Iterator&lt;GordianKeyPair&gt; myServerIterator = myServerKeyPair == null ? null : myServerKeyPair.iterator();</span>
+
+        /* Protect against exceptions */
+        try {
+            /* Create vector for encapsulated */
+<span class="fc" id="L133">            final ASN1EncodableVector myEncapsulated = new ASN1EncodableVector();</span>
+
+            /* Loop through the engines */
+<span class="fc bfc" id="L136" title="All 2 branches covered.">            for (GordianCoreAgreementEngine myEngine : theEngines) {</span>
+                /* Access engine details */
+<span class="fc" id="L138">                final GordianCoreAgreementState myEngState = myEngine.getBuilder().getState();</span>
+<span class="fc" id="L139">                final GordianCoreAgreementParticipant myEngClient = myEngState.getClient();</span>
+<span class="fc" id="L140">                final GordianCoreAgreementParticipant myEngServer = myEngState.getServer();</span>
+
+                /* Update keyPairs and initVector */
+<span class="fc bfc" id="L143" title="All 2 branches covered.">                myEngClient.setKeyPair(myClientKeyPair == null ? null : myClientIterator.next());</span>
+<span class="fc bfc" id="L144" title="All 2 branches covered.">                myEngClient.setEphemeralKeyPair(myEphemeralKeyPair == null ? null : myEphemeralIterator.next());</span>
+<span class="fc bfc" id="L145" title="All 2 branches covered.">                myEngServer.setKeyPair(myServerKeyPair == null ? null : myServerIterator.next());</span>
+<span class="fc" id="L146">                myEngClient.setInitVector(myClient.getInitVector());</span>
+
+                /* Build clientHello details in the engine */
+<span class="fc" id="L149">                myEngine.buildClientHello();</span>
+
+                /* Add any encapsulated to sequence */
+<span class="fc" id="L152">                final byte[] myEngEncapsulated = myEngState.getEncapsulated();</span>
+<span class="fc bfc" id="L153" title="All 2 branches covered.">                if (myEngEncapsulated != null) {</span>
+<span class="fc" id="L154">                    myEncapsulated.add(new DEROctetString(myEngEncapsulated));</span>
+                }
+<span class="fc" id="L156">            }</span>
+
+            /* Record combined ephemeral and encapsulated */
+<span class="fc bfc" id="L159" title="All 2 branches covered.">            if (myEncapsulated.size() &gt; 0) {</span>
+<span class="fc" id="L160">                theState.setEncapsulated(new DERSequence(myEncapsulated).getEncoded());</span>
+            }
+
+            /* catch exceptions */
+<span class="nc" id="L164">        } catch (IOException e) {</span>
+<span class="nc" id="L165">            throw new GordianIOException(&quot;Failed to build combined clientHello&quot;, e);</span>
+<span class="fc" id="L166">        }</span>
+
+        /* Sort out the result if anonymous */
+<span class="fc bfc" id="L169" title="All 2 branches covered.">        if (theState.getSpec().getAgreementType().isAnonymous()) {</span>
+<span class="fc" id="L170">            mergeResults();</span>
+        }
+<span class="fc" id="L172">    }</span>
+
+    /**
+     * Process the clientHello.
+     *
+     * @throws GordianException on error
+     */
+    public void processClientHello() throws GordianException {
+        /* Access the client and server keyPairs */
+<span class="fc" id="L181">        final GordianCoreAgreementParticipant myClient = theState.getClient();</span>
+<span class="fc" id="L182">        final GordianCompositeKeyPair myClientKeyPair = (GordianCompositeKeyPair) myClient.getKeyPair();</span>
+<span class="fc bfc" id="L183" title="All 2 branches covered.">        final Iterator&lt;GordianKeyPair&gt; myClientIterator = myClientKeyPair == null ? null : myClientKeyPair.iterator();</span>
+<span class="fc" id="L184">        final GordianCoreAgreementParticipant myServer = theState.getServer();</span>
+<span class="fc" id="L185">        final GordianCompositeKeyPair myServerKeyPair = (GordianCompositeKeyPair) myServer.getKeyPair();</span>
+<span class="pc bpc" id="L186" title="1 of 2 branches missed.">        final Iterator&lt;GordianKeyPair&gt; myServerIterator = myServerKeyPair == null ? null : myServerKeyPair.iterator();</span>
+<span class="fc" id="L187">        final GordianCompositeKeyPair myClientEphemeralKeyPair = (GordianCompositeKeyPair) myClient.getEphemeralKeyPair();</span>
+<span class="fc bfc" id="L188" title="All 2 branches covered.">        final Iterator&lt;GordianKeyPair&gt; myClientEphemeralIterator = myClientEphemeralKeyPair == null ? null : myClientEphemeralKeyPair.iterator();</span>
+<span class="fc" id="L189">        final GordianCompositeKeyPair myServerEphemeralKeyPair = (GordianCompositeKeyPair) myServer.getEphemeralKeyPair();</span>
+<span class="fc bfc" id="L190" title="All 2 branches covered.">        final Iterator&lt;GordianKeyPair&gt; myServerEphemeralIterator = myServerEphemeralKeyPair == null ? null : myServerEphemeralKeyPair.iterator();</span>
+
+        /* Access encapsulated sequence */
+<span class="fc" id="L193">        final byte[] myEncapsulated = theState.getEncapsulated();</span>
+<span class="fc bfc" id="L194" title="All 2 branches covered.">        final Enumeration&lt;?&gt; enEnc = myEncapsulated == null ? null : ASN1Sequence.getInstance(myEncapsulated).getObjects();</span>
+
+        /* Loop through the engines */
+<span class="fc bfc" id="L197" title="All 2 branches covered.">        for (GordianCoreAgreementEngine myEngine : theEngines) {</span>
+            /* Access engine details */
+<span class="fc" id="L199">            final GordianCoreAgreementBuilder myEngBuilder = myEngine.getBuilder();</span>
+<span class="fc" id="L200">            final GordianCoreAgreementState myEngState = myEngBuilder.getState();</span>
+<span class="fc" id="L201">            final GordianCoreAgreementParticipant myEngClient = myEngState.getClient();</span>
+<span class="fc" id="L202">            final GordianCoreAgreementParticipant myEngServer = myEngState.getServer();</span>
+
+            /* Update keyPairs and initVector */
+<span class="fc bfc" id="L205" title="All 2 branches covered.">            myEngClient.setKeyPair(myClientKeyPair == null ? null : myClientIterator.next());</span>
+<span class="pc bpc" id="L206" title="1 of 2 branches missed.">            myEngServer.setKeyPair(myServerKeyPair == null ? null : myServerIterator.next());</span>
+<span class="fc" id="L207">            myEngClient.setInitVector(myClient.getInitVector());</span>
+<span class="fc" id="L208">            myEngServer.setInitVector(myServer.getInitVector());</span>
+<span class="fc bfc" id="L209" title="All 2 branches covered.">            myEngClient.setEphemeralKeyPair(myClientEphemeralKeyPair == null ? null : myClientEphemeralIterator.next());</span>
+<span class="fc bfc" id="L210" title="All 2 branches covered.">            myEngServer.setEphemeralKeyPair(myServerEphemeralKeyPair == null ? null : myServerEphemeralIterator.next());</span>
+<span class="fc bfc" id="L211" title="All 2 branches covered.">            myEngBuilder.parseEncapsulated(enEnc == null ? null : ASN1OctetString.getInstance(enEnc.nextElement()).getOctets());</span>
+
+            /* Process clientHello details in the engine */
+<span class="fc" id="L214">            myEngine.processClientHello();</span>
+<span class="fc" id="L215">        }</span>
+
+        /* Sort out the result if no confirm */
+<span class="fc bfc" id="L218" title="All 2 branches covered.">        if (!Boolean.TRUE.equals(theState.getSpec().withConfirm())) {</span>
+<span class="fc" id="L219">            mergeResults();</span>
+        }
+<span class="fc" id="L221">    }</span>
+
+    @Override
+    public void processServerHello() throws GordianException {
+        /* Access the client and server keyPairs */
+<span class="fc" id="L226">        final GordianCoreAgreementParticipant myServer = theState.getServer();</span>
+<span class="fc" id="L227">        final boolean isSigned = theState.getSpec().getAgreementType().isSigned();</span>
+<span class="fc" id="L228">        final GordianCompositeKeyPair myEphemeralKeyPair = (GordianCompositeKeyPair) myServer.getEphemeralKeyPair();</span>
+<span class="fc bfc" id="L229" title="All 2 branches covered.">        final Iterator&lt;GordianKeyPair&gt; myEphemeralIterator = myEphemeralKeyPair == null ? null : myEphemeralKeyPair.iterator();</span>
+
+        /* Loop through the engines */
+<span class="fc bfc" id="L232" title="All 2 branches covered.">        for (GordianCoreAgreementEngine myEngine : theEngines) {</span>
+            /* Access engine details */
+<span class="fc" id="L234">            final GordianCoreAgreementBuilder myEngBuilder = myEngine.getBuilder();</span>
+<span class="fc" id="L235">            final GordianCoreAgreementState myEngState = myEngBuilder.getState();</span>
+<span class="fc" id="L236">            final GordianCoreAgreementParticipant myEngServer = myEngState.getServer();</span>
+
+            /* Store initVector and ephemeral keyPair */
+<span class="fc" id="L239">            myEngServer.setInitVector(myServer.getInitVector());</span>
+<span class="fc bfc" id="L240" title="All 2 branches covered.">            myEngServer.setEphemeralKeyPair(myEphemeralIterator == null ? null : myEphemeralIterator.next());</span>
+<span class="fc bfc" id="L241" title="All 2 branches covered.">            if (isSigned) {</span>
+<span class="fc" id="L242">                myEngBuilder.copyEphemerals();</span>
+            }
+
+            /* Process serverHello details in the engine */
+<span class="fc" id="L246">            myEngine.processServerHello();</span>
+<span class="fc" id="L247">        }</span>
+
+        /* Sort out the result */
+<span class="fc" id="L250">        mergeResults();</span>
+<span class="fc" id="L251">    }</span>
+
+    @Override
+    public void processClientConfirm() throws GordianException {
+        /* Sort out the result */
+<span class="fc" id="L256">        mergeResults();</span>
+<span class="fc" id="L257">    }</span>
+
+    /**
+     * Merge and store the result.
+     *
+     * @throws GordianException on error
+     */
+    private void mergeResults() throws GordianException {
+        /* Protect against exceptions */
+<span class="fc" id="L266">        final GordianHKDFParams myParams = GordianHKDFParams.extractOnly();</span>
+        try {
+            /* Create the HKDF parameters */
+<span class="fc" id="L269">            final GordianDigestSpec myDigestSpec = new GordianDigestSpec(GordianDerivationId.COMPOSITE.getDigestType());</span>
+<span class="fc" id="L270">            Random myRandom = null;</span>
+
+            /* Loop through the engines */
+<span class="fc bfc" id="L273" title="All 2 branches covered.">            for (GordianCoreAgreementEngine myEngine : theEngines) {</span>
+                /* Access the secret result */
+<span class="fc" id="L275">                final byte[] myPart = (byte[]) myEngine.getBuilder().getState().getResult();</span>
+
+                /* Handle random bytes */
+<span class="fc bfc" id="L278" title="All 2 branches covered.">                if (myRandom == null) {</span>
+                    /* Build the 64-bit seed, create the seeded random and populate bytes */
+<span class="fc" id="L280">                    final long mySeed = GordianDataConverter.byteArrayToLong(myPart);</span>
+<span class="fc" id="L281">                    myRandom = new Random(mySeed);</span>
+<span class="fc" id="L282">                    final byte[] myBytes = new byte[Long.BYTES];</span>
+<span class="fc" id="L283">                    myRandom.nextBytes(myBytes);</span>
+<span class="fc" id="L284">                    myParams.withSalt(myBytes);</span>
+                }
+
+                /* Add part to parameters */
+<span class="fc" id="L288">                myParams.withIKM(myPart);</span>
+<span class="fc" id="L289">                Arrays.fill(myPart, (byte) 0);</span>
+<span class="fc" id="L290">            }</span>
+
+            /* Derive the bytes and store as secret */
+<span class="fc" id="L293">            final GordianHKDFEngine myEngine = new GordianHKDFEngine(theFactory, myDigestSpec);</span>
+<span class="fc" id="L294">            theBuilder.storeSecret(myEngine.deriveBytes(myParams));</span>
+
+        } finally {
+<span class="fc" id="L297">            myParams.clearParameters();</span>
+        }
+<span class="fc" id="L299">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianCAStatus.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.impl.core.cert</a> &gt; <span class="el_source">GordianCAStatus.java</span></div><h1>GordianCAStatus.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+package io.github.tonywasher.joceanus.gordianknot.impl.core.cert;
+
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairUsage;
+import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairUse;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianIOException;
+import org.bouncycastle.asn1.x509.BasicConstraints;
+import org.bouncycastle.asn1.x509.Extension;
+import org.bouncycastle.asn1.x509.Extensions;
+import org.bouncycastle.asn1.x509.ExtensionsGenerator;
+
+import java.io.IOException;
+import java.math.BigInteger;
+
+/**
+ * CA Status.
+ */
+public class GordianCAStatus {
+    /**
+     * Is this a CA.
+     */
+    private final boolean isCA;
+
+    /**
+     * The Path Length.
+     */
+    private final BigInteger thePathLen;
+
+    /**
+     * Constructor.
+     *
+     * @param pCA is this a CA?
+     */
+<span class="fc" id="L51">    GordianCAStatus(final boolean pCA) {</span>
+<span class="fc" id="L52">        isCA = pCA;</span>
+<span class="fc" id="L53">        thePathLen = null;</span>
+<span class="fc" id="L54">    }</span>
+
+    /**
+     * Constructor.
+     *
+     * @param pPathLen the path length.
+     */
+<span class="fc" id="L61">    GordianCAStatus(final BigInteger pPathLen) {</span>
+<span class="fc" id="L62">        isCA = true;</span>
+<span class="fc" id="L63">        thePathLen = pPathLen;</span>
+<span class="fc" id="L64">    }</span>
+
+    /**
+     * Constructor.
+     *
+     * @param pUsage        the keyPair usage
+     * @param pSignerStatus the signerStatus.
+     */
+    GordianCAStatus(final GordianKeyPairUsage pUsage,
+<span class="fc" id="L73">                    final GordianCAStatus pSignerStatus) {</span>
+<span class="fc" id="L74">        isCA = pUsage.getUsageSet().contains(GordianKeyPairUse.CERTIFICATE);</span>
+<span class="fc bfc" id="L75" title="All 2 branches covered.">        if (isCA) {</span>
+<span class="fc" id="L76">            final BigInteger mySignerPath = pSignerStatus.getPathLen();</span>
+<span class="pc bpc" id="L77" title="1 of 2 branches missed.">            thePathLen = mySignerPath == null</span>
+<span class="fc" id="L78">                    ? BigInteger.ZERO</span>
+<span class="pc" id="L79">                    : mySignerPath.add(BigInteger.ONE);</span>
+<span class="fc" id="L80">        } else {</span>
+<span class="fc" id="L81">            thePathLen = null;</span>
+        }
+<span class="fc" id="L83">    }</span>
+
+    /**
+     * is this a CA?.
+     *
+     * @return true/false
+     */
+    boolean isCA() {
+<span class="nc" id="L91">        return isCA;</span>
+    }
+
+    /**
+     * Obtain the pathLen.
+     *
+     * @return the pathLen
+     */
+    BigInteger getPathLen() {
+<span class="fc" id="L100">        return thePathLen;</span>
+    }
+
+    /**
+     * Create extensions.
+     *
+     * @param pGenerator the extensions generator
+     * @throws GordianException on error
+     */
+    void createExtensions(final ExtensionsGenerator pGenerator) throws GordianException {
+        /* Protect against exceptions */
+        try {
+<span class="fc bfc" id="L112" title="All 2 branches covered.">            pGenerator.addExtension(Extension.basicConstraints, isCA, thePathLen == null</span>
+<span class="fc" id="L113">                    ? new BasicConstraints(isCA)</span>
+<span class="fc" id="L114">                    : new BasicConstraints(thePathLen.intValue()));</span>
+<span class="nc" id="L115">        } catch (IOException e) {</span>
+<span class="nc" id="L116">            throw new GordianIOException(&quot;Failed to create extensions&quot;, e);</span>
+<span class="fc" id="L117">        }</span>
+<span class="fc" id="L118">    }</span>
+
+    /**
+     * Determine CAStatus.
+     *
+     * @param pExtensions the extensions.
+     * @return the CAStatus
+     */
+    static GordianCAStatus determineStatus(final Extensions pExtensions) {
+        /* Access details */
+<span class="fc" id="L128">        final BasicConstraints myConstraint = BasicConstraints.fromExtensions(pExtensions);</span>
+
+        /* Check for CA */
+<span class="pc bpc" id="L131" title="1 of 4 branches missed.">        if (myConstraint != null &amp;&amp; myConstraint.isCA()) {</span>
+<span class="fc" id="L132">            return new GordianCAStatus(myConstraint.getPathLenConstraint());</span>
+        }
+
+        /* Not CA */
+<span class="fc" id="L136">        return new GordianCAStatus(false);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

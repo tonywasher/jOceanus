@@ -1,0 +1,1624 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianKeyPairAlgId.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.impl.core.keypair</a> &gt; <span class="el_source">GordianKeyPairAlgId.java</span></div><h1>GordianKeyPairAlgId.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.gordianknot.impl.core.keypair;
+
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianBIKESpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianCMCESpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianDHGroup;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianDSAElliptic;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianDSAKeyType;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianDSTU4145Elliptic;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianFRODOSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianFalconSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianGOSTElliptic;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianHQCSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianLMSKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianMLDSASpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianMLKEMSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianMayoSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianNTRUPrimeSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianNTRUPrimeSpec.GordianNTRUPrimeParams;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianNTRUPrimeSpec.GordianNTRUPrimeType;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianNTRUSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianPicnicSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianRSAModulus;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianSABERSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianSLHDSASpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianSM2Elliptic;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianSnovaSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianXMSSKeySpec.GordianXMSSDigestType;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianXMSSKeySpec.GordianXMSSHeight;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianXMSSKeySpec.GordianXMSSMTLayers;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianIOException;
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.ASN1OctetString;
+import org.bouncycastle.asn1.ASN1Sequence;
+import org.bouncycastle.asn1.cryptopro.ECGOST3410NamedCurves;
+import org.bouncycastle.asn1.cryptopro.GOST3410PublicKeyAlgParameters;
+import org.bouncycastle.asn1.edec.EdECObjectIdentifiers;
+import org.bouncycastle.asn1.isara.IsaraObjectIdentifiers;
+import org.bouncycastle.asn1.misc.MiscObjectIdentifiers;
+import org.bouncycastle.asn1.nist.NISTObjectIdentifiers;
+import org.bouncycastle.asn1.oiw.ElGamalParameter;
+import org.bouncycastle.asn1.oiw.OIWObjectIdentifiers;
+import org.bouncycastle.asn1.pkcs.DHParameter;
+import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
+import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
+import org.bouncycastle.asn1.pkcs.RSAPrivateKey;
+import org.bouncycastle.asn1.pkcs.RSAPublicKey;
+import org.bouncycastle.asn1.rosstandart.RosstandartObjectIdentifiers;
+import org.bouncycastle.asn1.ua.DSTU4145NamedCurves;
+import org.bouncycastle.asn1.ua.DSTU4145Params;
+import org.bouncycastle.asn1.ua.UAObjectIdentifiers;
+import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
+import org.bouncycastle.asn1.x509.DSAParameter;
+import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
+import org.bouncycastle.asn1.x9.DomainParameters;
+import org.bouncycastle.asn1.x9.ECNamedCurveTable;
+import org.bouncycastle.asn1.x9.X962Parameters;
+import org.bouncycastle.asn1.x9.X9ObjectIdentifiers;
+import org.bouncycastle.crypto.ec.CustomNamedCurves;
+import org.bouncycastle.crypto.params.DHParameters;
+import org.bouncycastle.crypto.params.ECDomainParameters;
+import org.bouncycastle.pqc.asn1.PQCObjectIdentifiers;
+import org.bouncycastle.pqc.asn1.XMSSKeyParams;
+import org.bouncycastle.pqc.asn1.XMSSMTKeyParams;
+import org.bouncycastle.pqc.crypto.lms.HSSPrivateKeyParameters;
+import org.bouncycastle.pqc.crypto.lms.HSSPublicKeyParameters;
+import org.bouncycastle.pqc.crypto.lms.LMSKeyParameters;
+import org.bouncycastle.pqc.crypto.lms.LMSPrivateKeyParameters;
+import org.bouncycastle.pqc.crypto.lms.LMSPublicKeyParameters;
+import org.bouncycastle.pqc.crypto.util.PrivateKeyFactory;
+import org.bouncycastle.pqc.crypto.util.PublicKeyFactory;
+import org.bouncycastle.pqc.crypto.xmss.XMSSMTParameters;
+import org.bouncycastle.pqc.crypto.xmss.XMSSParameters;
+import org.bouncycastle.util.Pack;
+
+import java.io.IOException;
+import java.math.BigInteger;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
+/**
+ * Mappings from EncodedId to KeyPairSpec.
+ */
+public class GordianKeyPairAlgId {
+    /**
+     * TWO as big integer.
+     */
+<span class="fc" id="L113">    private static final BigInteger TWO = BigInteger.valueOf(2);</span>
+
+    /**
+     * The algorithm error.
+     */
+    private static final String ERROR_ALGO = &quot;Unrecognised algorithm&quot;;
+
+    /**
+     * The parse error.
+     */
+    private static final String ERROR_PARSE = &quot;Failed to parse Key&quot;;
+
+    /**
+     * The namedCurve error.
+     */
+    private static final String ERROR_NAMEDCURVE = &quot;Not a Named Curve&quot;;
+
+    /**
+     * The unsupportedCurve error.
+     */
+    private static final String ERROR_UNSUPCURVE = &quot;Unsupported Curve: &quot;;
+
+    /**
+     * The treeDigest error.
+     */
+    private static final String ERROR_TREEDIGEST = &quot;Unsupported treeDigest: &quot;;
+
+    /**
+     * The parser map.
+     */
+    private final Map&lt;ASN1ObjectIdentifier, GordianEncodedParser&gt; theParserMap;
+
+    /**
+     * Constructor.
+     */
+<span class="fc" id="L148">    public GordianKeyPairAlgId() {</span>
+        /* Create the map */
+<span class="fc" id="L150">        theParserMap = new HashMap&lt;&gt;();</span>
+
+        /* Register the parsers */
+<span class="fc" id="L153">        GordianRSAEncodedParser.register(this);</span>
+<span class="fc" id="L154">        GordianElGamalEncodedParser.register(this);</span>
+<span class="fc" id="L155">        GordianDSAEncodedParser.register(this);</span>
+<span class="fc" id="L156">        GordianDHEncodedParser.register(this);</span>
+<span class="fc" id="L157">        GordianECEncodedParser.register(this);</span>
+<span class="fc" id="L158">        GordianDSTUEncodedParser.register(this);</span>
+<span class="fc" id="L159">        GordianGOSTEncodedParser.register(this);</span>
+<span class="fc" id="L160">        GordianEdwardsEncodedParser.register(this);</span>
+<span class="fc" id="L161">        GordianSLHDSAEncodedParser.register(this);</span>
+<span class="fc" id="L162">        GordianXMSSEncodedParser.register(this);</span>
+<span class="fc" id="L163">        GordianXMSSMTEncodedParser.register(this);</span>
+<span class="fc" id="L164">        GordianLMSEncodedParser.register(this);</span>
+<span class="fc" id="L165">        GordianNewHopeEncodedParser.register(this);</span>
+<span class="fc" id="L166">        GordianCMCEEncodedParser.register(this);</span>
+<span class="fc" id="L167">        GordianFrodoEncodedParser.register(this);</span>
+<span class="fc" id="L168">        GordianSABEREncodedParser.register(this);</span>
+<span class="fc" id="L169">        GordianMLKEMEncodedParser.register(this);</span>
+<span class="fc" id="L170">        GordianMLDSAEncodedParser.register(this);</span>
+<span class="fc" id="L171">        GordianHQCEncodedParser.register(this);</span>
+<span class="fc" id="L172">        GordianBIKEEncodedParser.register(this);</span>
+<span class="fc" id="L173">        GordianNTRUEncodedParser.register(this);</span>
+<span class="fc" id="L174">        GordianNTRUPrimeEncodedParser.register(this);</span>
+<span class="fc" id="L175">        GordianFalconEncodedParser.register(this);</span>
+<span class="fc" id="L176">        GordianMayoEncodedParser.register(this);</span>
+<span class="fc" id="L177">        GordianSnovaEncodedParser.register(this);</span>
+<span class="fc" id="L178">        GordianPicnicEncodedParser.register(this);</span>
+<span class="fc" id="L179">        GordianCompositeEncodedParser.register(this);</span>
+<span class="fc" id="L180">    }</span>
+
+    /**
+     * Obtain KeySpec from X509KeySpec.
+     *
+     * @param pEncoded X509 keySpec
+     * @return the keySpec
+     * @throws GordianException on error
+     */
+    public GordianKeyPairSpec determineKeyPairSpec(final PKCS8EncodedKeySpec pEncoded) throws GordianException {
+        /* Determine the algorithm Id. */
+<span class="fc" id="L191">        final PrivateKeyInfo myInfo = PrivateKeyInfo.getInstance(pEncoded.getEncoded());</span>
+<span class="fc" id="L192">        final AlgorithmIdentifier myId = myInfo.getPrivateKeyAlgorithm();</span>
+<span class="fc" id="L193">        final ASN1ObjectIdentifier myAlgId = myId.getAlgorithm();</span>
+
+        /* Obtain the parser */
+<span class="fc" id="L196">        final GordianEncodedParser myParser = theParserMap.get(myAlgId);</span>
+<span class="pc bpc" id="L197" title="1 of 2 branches missed.">        if (myParser != null) {</span>
+<span class="fc" id="L198">            return myParser.determineKeyPairSpec(myInfo);</span>
+        }
+<span class="nc" id="L200">        throw new GordianDataException(ERROR_ALGO);</span>
+    }
+
+    /**
+     * Obtain KeySpec from X509KeySpec.
+     *
+     * @param pEncoded X509 keySpec
+     * @return the keySpec
+     * @throws GordianException on error
+     */
+    public GordianKeyPairSpec determineKeyPairSpec(final X509EncodedKeySpec pEncoded) throws GordianException {
+        /* Determine the algorithm Id. */
+<span class="fc" id="L212">        final SubjectPublicKeyInfo myInfo = SubjectPublicKeyInfo.getInstance(pEncoded.getEncoded());</span>
+<span class="fc" id="L213">        final AlgorithmIdentifier myId = myInfo.getAlgorithm();</span>
+<span class="fc" id="L214">        final ASN1ObjectIdentifier myAlgId = myId.getAlgorithm();</span>
+
+        /* Obtain the parser */
+<span class="fc" id="L217">        final GordianEncodedParser myParser = theParserMap.get(myAlgId);</span>
+<span class="pc bpc" id="L218" title="1 of 2 branches missed.">        if (myParser != null) {</span>
+<span class="fc" id="L219">            return myParser.determineKeyPairSpec(myInfo);</span>
+        }
+<span class="nc" id="L221">        throw new GordianDataException(ERROR_ALGO);</span>
+    }
+
+    /**
+     * register the parser.
+     *
+     * @param pAlgId  the algorithm Id.
+     * @param pParser the parser
+     */
+    void registerParser(final ASN1ObjectIdentifier pAlgId,
+                        final GordianEncodedParser pParser) {
+<span class="fc" id="L232">        theParserMap.put(pAlgId, pParser);</span>
+<span class="fc" id="L233">    }</span>
+
+    /**
+     * EncodedParser interface.
+     */
+    private interface GordianEncodedParser {
+        /**
+         * Obtain KeySpec from PrivateKeyInfo.
+         *
+         * @param pInfo keySpec
+         * @return the keySpec
+         * @throws GordianException on error
+         */
+        GordianKeyPairSpec determineKeyPairSpec(SubjectPublicKeyInfo pInfo) throws GordianException;
+
+        /**
+         * Obtain KeySpec from SubjectPublicKeyInfo.
+         *
+         * @param pInfo keySpec
+         * @return the keySpec
+         * @throws GordianException on error
+         */
+        GordianKeyPairSpec determineKeyPairSpec(PrivateKeyInfo pInfo) throws GordianException;
+    }
+
+    /**
+     * RSA Encoded parser.
+     */
+    private static final class GordianRSAEncodedParser implements GordianEncodedParser {
+        /**
+         * Registrar.
+         *
+         * @param pIdManager the idManager
+         */
+        static void register(final GordianKeyPairAlgId pIdManager) {
+<span class="fc" id="L268">            pIdManager.registerParser(PKCSObjectIdentifiers.rsaEncryption, new GordianRSAEncodedParser());</span>
+<span class="fc" id="L269">        }</span>
+
+        @Override
+        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws GordianException {
+            /* Protect against exceptions */
+            try {
+                /* Parse the publicKey */
+<span class="fc" id="L276">                final RSAPublicKey myPublic = RSAPublicKey.getInstance(pInfo.parsePublicKey());</span>
+<span class="fc" id="L277">                return determineKeyPairSpec(myPublic.getModulus());</span>
+
+                /* Handle exceptions */
+<span class="nc" id="L280">            } catch (IOException e) {</span>
+<span class="nc" id="L281">                throw new GordianIOException(ERROR_PARSE, e);</span>
+            }
+        }
+
+        @Override
+        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws GordianException {
+            /* Protect against exceptions */
+            try {
+                /* Parse the publicKey */
+<span class="fc" id="L290">                final RSAPrivateKey myPrivate = RSAPrivateKey.getInstance(pInfo.parsePrivateKey());</span>
+<span class="fc" id="L291">                return determineKeyPairSpec(myPrivate.getModulus());</span>
+
+                /* Handle exceptions */
+<span class="nc" id="L294">            } catch (IOException e) {</span>
+<span class="nc" id="L295">                throw new GordianIOException(ERROR_PARSE, e);</span>
+            }
+        }
+
+        /**
+         * Obtain keySpec from Modulus.
+         *
+         * @param pModulus the modulus
+         * @return the keySpec
+         * @throws GordianException on error
+         */
+        private static GordianKeyPairSpec determineKeyPairSpec(final BigInteger pModulus) throws GordianException {
+<span class="fc" id="L307">            final GordianRSAModulus myModulus = GordianRSAModulus.getModulusForInteger(pModulus);</span>
+<span class="pc bpc" id="L308" title="1 of 2 branches missed.">            if (myModulus == null) {</span>
+<span class="nc" id="L309">                throw new GordianDataException(&quot;RSA strength not supported: &quot; + pModulus.bitLength());</span>
+            }
+<span class="fc" id="L311">            return GordianKeyPairSpecBuilder.rsa(myModulus);</span>
+        }
+    }
+
+    /**
+     * DSA Encoded parser.
+     */
+    private static final class GordianDSAEncodedParser implements GordianEncodedParser {
+        /**
+         * Registrar.
+         *
+         * @param pIdManager the idManager
+         */
+        static void register(final GordianKeyPairAlgId pIdManager) {
+<span class="fc" id="L325">            pIdManager.registerParser(X9ObjectIdentifiers.id_dsa, new GordianDSAEncodedParser());</span>
+<span class="fc" id="L326">        }</span>
+
+        @Override
+        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws GordianException {
+<span class="fc" id="L330">            final AlgorithmIdentifier myId = pInfo.getAlgorithm();</span>
+<span class="fc" id="L331">            final DSAParameter myParms = DSAParameter.getInstance(myId.getParameters());</span>
+<span class="fc" id="L332">            return determineKeyPairSpec(myParms);</span>
+        }
+
+        @Override
+        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws GordianException {
+<span class="fc" id="L337">            final AlgorithmIdentifier myId = pInfo.getPrivateKeyAlgorithm();</span>
+<span class="fc" id="L338">            final DSAParameter myParms = DSAParameter.getInstance(myId.getParameters());</span>
+<span class="fc" id="L339">            return determineKeyPairSpec(myParms);</span>
+        }
+
+        /**
+         * Obtain keySpec from Parameters.
+         *
+         * @param pParms the parameters
+         * @return the keySpec
+         * @throws GordianException on error
+         */
+        private static GordianKeyPairSpec determineKeyPairSpec(final DSAParameter pParms) throws GordianException {
+<span class="fc" id="L350">            final GordianDSAKeyType myKeyType = GordianDSAKeyType.getDSATypeForParms(pParms);</span>
+<span class="pc bpc" id="L351" title="1 of 2 branches missed.">            if (myKeyType == null) {</span>
+<span class="nc" id="L352">                throw new GordianDataException(&quot;Unsupported DSA parameters: &quot;</span>
+<span class="nc" id="L353">                        + pParms.getP().bitLength() + &quot;:&quot; + pParms.getQ().bitLength());</span>
+            }
+<span class="fc" id="L355">            return GordianKeyPairSpecBuilder.dsa(myKeyType);</span>
+        }
+    }
+
+    /**
+     * DH Encoded parser.
+     */
+<span class="fc" id="L362">    public static class GordianDHEncodedParser implements GordianEncodedParser {</span>
+        /**
+         * Registrar.
+         *
+         * @param pIdManager the idManager
+         */
+        static void register(final GordianKeyPairAlgId pIdManager) {
+<span class="fc" id="L369">            pIdManager.registerParser(PKCSObjectIdentifiers.dhKeyAgreement, new GordianDHEncodedParser());</span>
+<span class="fc" id="L370">            pIdManager.registerParser(X9ObjectIdentifiers.dhpublicnumber, new GordianDHEncodedParser());</span>
+<span class="fc" id="L371">        }</span>
+
+        @Override
+        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws GordianException {
+<span class="fc" id="L375">            final DHParameters myParms = determineParameters(pInfo.getAlgorithm());</span>
+<span class="fc" id="L376">            return determineKeyPairSpec(myParms);</span>
+        }
+
+        @Override
+        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws GordianException {
+<span class="fc" id="L381">            final DHParameters myParms = determineParameters(pInfo.getPrivateKeyAlgorithm());</span>
+<span class="fc" id="L382">            return determineKeyPairSpec(myParms);</span>
+        }
+
+        /**
+         * Obtain parameters from encoded sequence.
+         *
+         * @param pId the algorithm Identifier
+         * @return the parameters
+         */
+        public static DHParameters determineParameters(final AlgorithmIdentifier pId) {
+            /* Access algorithmId */
+<span class="fc" id="L393">            final ASN1ObjectIdentifier myId = pId.getAlgorithm();</span>
+
+            /* If this is key agreement */
+<span class="pc bpc" id="L396" title="1 of 2 branches missed.">            if (PKCSObjectIdentifiers.dhKeyAgreement.equals(myId)) {</span>
+                /* Access the DHParameter */
+<span class="nc" id="L398">                final DHParameter myParams = DHParameter.getInstance(pId.getParameters());</span>
+
+                /* If we have an L value */
+<span class="nc bnc" id="L401" title="All 2 branches missed.">                return myParams.getL() != null</span>
+<span class="nc" id="L402">                        ? new DHParameters(myParams.getP(), myParams.getG(), null, myParams.getL().intValue())</span>
+<span class="nc" id="L403">                        : new DHParameters(myParams.getP(), myParams.getG());</span>
+
+<span class="pc bpc" id="L405" title="1 of 2 branches missed.">            } else if (X9ObjectIdentifiers.dhpublicnumber.equals(myId)) {</span>
+                /* Access Domain Parameters */
+<span class="fc" id="L407">                final DomainParameters myParams = DomainParameters.getInstance(pId.getParameters());</span>
+
+<span class="fc" id="L409">                return new DHParameters(myParams.getP(), myParams.getG(), myParams.getQ(), myParams.getJ(), null);</span>
+            } else {
+<span class="nc" id="L411">                throw new IllegalArgumentException(&quot;unknown algorithm type: &quot; + myId);</span>
+            }
+        }
+
+        /**
+         * Obtain keySpec from Parameters.
+         *
+         * @param pParms the parameters
+         * @return the keySpec
+         * @throws GordianException on error
+         */
+        private static GordianKeyPairSpec determineKeyPairSpec(final DHParameters pParms) throws GordianException {
+<span class="fc" id="L423">            final GordianDHGroup myGroup = GordianDHGroup.getGroupForParams(pParms);</span>
+<span class="pc bpc" id="L424" title="1 of 2 branches missed.">            if (myGroup == null) {</span>
+<span class="nc" id="L425">                throw new GordianDataException(&quot;Unsupported DH parameters: &quot;</span>
+<span class="nc" id="L426">                        + pParms.getP().bitLength());</span>
+            }
+<span class="fc" id="L428">            return GordianKeyPairSpecBuilder.dh(myGroup);</span>
+        }
+    }
+
+    /**
+     * ElGamal Encoded parser.
+     */
+<span class="fc" id="L435">    public static class GordianElGamalEncodedParser implements GordianEncodedParser {</span>
+        /**
+         * Registrar.
+         *
+         * @param pIdManager the idManager
+         */
+        static void register(final GordianKeyPairAlgId pIdManager) {
+<span class="fc" id="L442">            pIdManager.registerParser(OIWObjectIdentifiers.elGamalAlgorithm, new GordianElGamalEncodedParser());</span>
+<span class="fc" id="L443">        }</span>
+
+        @Override
+        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws GordianException {
+<span class="fc" id="L447">            final DHParameters myParms = determineParameters(pInfo.getAlgorithm());</span>
+<span class="fc" id="L448">            return determineKeyPairSpec(myParms);</span>
+        }
+
+        @Override
+        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws GordianException {
+<span class="fc" id="L453">            final DHParameters myParms = determineParameters(pInfo.getPrivateKeyAlgorithm());</span>
+<span class="fc" id="L454">            return determineKeyPairSpec(myParms);</span>
+        }
+
+        /**
+         * Obtain parameters from encoded sequence.
+         *
+         * @param pId the algorithm Identifier
+         * @return the parameters
+         */
+        public static DHParameters determineParameters(final AlgorithmIdentifier pId) {
+            /* Access the ElGamalParameter */
+<span class="fc" id="L465">            final ElGamalParameter myParams = ElGamalParameter.getInstance(pId.getParameters());</span>
+
+            /* Convert to DH parameters */
+<span class="fc" id="L468">            return new DHParameters(myParams.getP(), TWO, myParams.getG());</span>
+        }
+
+        /**
+         * Obtain keySpec from Parameters.
+         *
+         * @param pParms the parameters
+         * @return the keySpec
+         * @throws GordianException on error
+         */
+        private static GordianKeyPairSpec determineKeyPairSpec(final DHParameters pParms) throws GordianException {
+<span class="fc" id="L479">            final GordianDHGroup myGroup = GordianDHGroup.getGroupForParams(pParms);</span>
+<span class="pc bpc" id="L480" title="1 of 2 branches missed.">            if (myGroup == null) {</span>
+<span class="nc" id="L481">                throw new GordianDataException(&quot;Unsupported DH parameters: &quot;</span>
+<span class="nc" id="L482">                        + pParms.getP().bitLength());</span>
+            }
+<span class="fc" id="L484">            return GordianKeyPairSpecBuilder.elGamal(myGroup);</span>
+        }
+    }
+
+    /**
+     * EC Encoded parser.
+     */
+    private static final class GordianECEncodedParser implements GordianEncodedParser {
+        /**
+         * Registrar.
+         *
+         * @param pIdManager the idManager
+         */
+        static void register(final GordianKeyPairAlgId pIdManager) {
+<span class="fc" id="L498">            pIdManager.registerParser(X9ObjectIdentifiers.id_ecPublicKey, new GordianECEncodedParser());</span>
+<span class="fc" id="L499">        }</span>
+
+        @Override
+        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws GordianException {
+<span class="fc" id="L503">            final AlgorithmIdentifier myId = pInfo.getAlgorithm();</span>
+<span class="fc" id="L504">            final X962Parameters myParms = X962Parameters.getInstance(myId.getParameters());</span>
+<span class="fc" id="L505">            return determineKeyPairSpec(myParms);</span>
+        }
+
+        @Override
+        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws GordianException {
+<span class="fc" id="L510">            final AlgorithmIdentifier myId = pInfo.getPrivateKeyAlgorithm();</span>
+<span class="fc" id="L511">            final X962Parameters myParms = X962Parameters.getInstance(myId.getParameters());</span>
+<span class="fc" id="L512">            return determineKeyPairSpec(myParms);</span>
+        }
+
+        /**
+         * Obtain keySpec from Parameters.
+         *
+         * @param pParms the parameters
+         * @return the keySpec
+         * @throws GordianException on error
+         */
+        private static GordianKeyPairSpec determineKeyPairSpec(final X962Parameters pParms) throws GordianException {
+            /* Reject if not a named curve */
+<span class="pc bpc" id="L524" title="1 of 2 branches missed.">            if (!pParms.isNamedCurve()) {</span>
+<span class="nc" id="L525">                throw new GordianDataException(ERROR_NAMEDCURVE);</span>
+            }
+
+            /* Check for EC named curve */
+<span class="fc" id="L529">            final ASN1ObjectIdentifier myId = (ASN1ObjectIdentifier) pParms.getParameters();</span>
+<span class="fc" id="L530">            String myName = CustomNamedCurves.getName(myId);</span>
+<span class="pc bpc" id="L531" title="1 of 2 branches missed.">            if (myName == null) {</span>
+<span class="nc" id="L532">                myName = ECNamedCurveTable.getName(myId);</span>
+            }
+<span class="pc bpc" id="L534" title="1 of 2 branches missed.">            if (myName != null) {</span>
+<span class="fc" id="L535">                final GordianDSAElliptic myDSACurve = GordianDSAElliptic.getCurveForName(myName);</span>
+<span class="fc bfc" id="L536" title="All 2 branches covered.">                if (myDSACurve != null) {</span>
+<span class="fc" id="L537">                    return GordianKeyPairSpecBuilder.ec(myDSACurve);</span>
+                }
+<span class="fc" id="L539">                final GordianSM2Elliptic mySM2Curve = GordianSM2Elliptic.getCurveForName(myName);</span>
+<span class="pc bpc" id="L540" title="1 of 2 branches missed.">                if (mySM2Curve != null) {</span>
+<span class="fc" id="L541">                    return GordianKeyPairSpecBuilder.sm2(mySM2Curve);</span>
+                }
+<span class="nc" id="L543">                throw new GordianDataException(ERROR_UNSUPCURVE + myName);</span>
+            }
+
+            /* Curve is not supported */
+<span class="nc" id="L547">            throw new GordianDataException(ERROR_UNSUPCURVE + pParms);</span>
+        }
+    }
+
+    /**
+     * DSTU Encoded parser.
+     */
+    private static final class GordianDSTUEncodedParser implements GordianEncodedParser {
+        /**
+         * Registrar.
+         *
+         * @param pIdManager the idManager
+         */
+        static void register(final GordianKeyPairAlgId pIdManager) {
+<span class="fc" id="L561">            pIdManager.registerParser(UAObjectIdentifiers.dstu4145be, new GordianDSTUEncodedParser());</span>
+<span class="fc" id="L562">        }</span>
+
+        @Override
+        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws GordianException {
+<span class="fc" id="L566">            final AlgorithmIdentifier myId = pInfo.getAlgorithm();</span>
+<span class="fc" id="L567">            final DSTU4145Params myParms = DSTU4145Params.getInstance(myId.getParameters());</span>
+<span class="fc" id="L568">            return determineKeyPairSpec(myParms);</span>
+        }
+
+        @Override
+        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws GordianException {
+<span class="fc" id="L573">            final AlgorithmIdentifier myId = pInfo.getPrivateKeyAlgorithm();</span>
+<span class="fc" id="L574">            final X962Parameters myParms = X962Parameters.getInstance(myId.getParameters());</span>
+<span class="fc" id="L575">            return determineKeyPairSpec(myParms);</span>
+        }
+
+        /**
+         * Obtain keySpec from Parameters.
+         *
+         * @param pParms the parameters
+         * @return the keySpec
+         * @throws GordianException on error
+         */
+        private static GordianKeyPairSpec determineKeyPairSpec(final DSTU4145Params pParms) throws GordianException {
+            /* Reject if not a named curve */
+<span class="pc bpc" id="L587" title="1 of 2 branches missed.">            if (!pParms.isNamedCurve()) {</span>
+<span class="nc" id="L588">                throw new GordianDataException(ERROR_NAMEDCURVE);</span>
+            }
+<span class="fc" id="L590">            return determineKeyPairSpec(pParms.getNamedCurve());</span>
+        }
+
+        /**
+         * Obtain keySpec from Parameters.
+         *
+         * @param pParms the parameters
+         * @return the keySpec
+         * @throws GordianException on error
+         */
+        private static GordianKeyPairSpec determineKeyPairSpec(final X962Parameters pParms) throws GordianException {
+            /* Reject if not a named curve */
+<span class="pc bpc" id="L602" title="1 of 2 branches missed.">            if (!pParms.isNamedCurve()) {</span>
+<span class="nc" id="L603">                throw new GordianDataException(ERROR_NAMEDCURVE);</span>
+            }
+<span class="fc" id="L605">            return determineKeyPairSpec((ASN1ObjectIdentifier) pParms.getParameters());</span>
+        }
+
+        /**
+         * Obtain keySpec from curveId.
+         *
+         * @param pId the curveId
+         * @return the keySpec
+         * @throws GordianException on error
+         */
+        private static GordianKeyPairSpec determineKeyPairSpec(final ASN1ObjectIdentifier pId) throws GordianException {
+            /* Check for EC named surve */
+<span class="fc" id="L617">            final String myName = pId.toString();</span>
+<span class="fc" id="L618">            final ECDomainParameters myParms = DSTU4145NamedCurves.getByOID(pId);</span>
+<span class="fc" id="L619">            final GordianDSTU4145Elliptic myCurve = GordianDSTU4145Elliptic.getCurveForName(myName);</span>
+<span class="pc bpc" id="L620" title="2 of 4 branches missed.">            if (myParms == null || myCurve == null) {</span>
+<span class="nc" id="L621">                throw new GordianDataException(ERROR_UNSUPCURVE + myName);</span>
+            }
+<span class="fc" id="L623">            return GordianKeyPairSpecBuilder.dstu4145(myCurve);</span>
+        }
+    }
+
+    /**
+     * GOST Encoded parser.
+     */
+    private static final class GordianGOSTEncodedParser implements GordianEncodedParser {
+        /**
+         * Registrar.
+         *
+         * @param pIdManager the idManager
+         */
+        static void register(final GordianKeyPairAlgId pIdManager) {
+<span class="fc" id="L637">            final GordianGOSTEncodedParser myParser = new GordianGOSTEncodedParser();</span>
+<span class="fc" id="L638">            pIdManager.registerParser(RosstandartObjectIdentifiers.id_tc26_gost_3410_12_256, myParser);</span>
+<span class="fc" id="L639">            pIdManager.registerParser(RosstandartObjectIdentifiers.id_tc26_gost_3410_12_512, myParser);</span>
+<span class="fc" id="L640">        }</span>
+
+        @Override
+        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws GordianException {
+<span class="fc" id="L644">            return determineKeyPairSpec(pInfo.getAlgorithm());</span>
+        }
+
+        @Override
+        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws GordianException {
+<span class="fc" id="L649">            return determineKeyPairSpec(pInfo.getPrivateKeyAlgorithm());</span>
+        }
+
+        /**
+         * Obtain keySpec from Parameters.
+         *
+         * @param pId the algorithmId
+         * @return the keySpec
+         * @throws GordianException on error
+         */
+        private static GordianKeyPairSpec determineKeyPairSpec(final AlgorithmIdentifier pId) throws GordianException {
+            /* Determine the curve name */
+<span class="fc" id="L661">            final GOST3410PublicKeyAlgParameters myParms = GOST3410PublicKeyAlgParameters.getInstance(pId.getParameters());</span>
+<span class="fc" id="L662">            final ASN1ObjectIdentifier myId = myParms.getPublicKeyParamSet();</span>
+<span class="fc" id="L663">            final String myName = ECGOST3410NamedCurves.getName(myId);</span>
+
+            /* Determine curve */
+<span class="pc bpc" id="L666" title="1 of 2 branches missed.">            if (myName != null) {</span>
+<span class="fc" id="L667">                final GordianGOSTElliptic myCurve = GordianGOSTElliptic.getCurveForName(myName);</span>
+<span class="pc bpc" id="L668" title="1 of 2 branches missed.">                if (myCurve == null) {</span>
+<span class="nc" id="L669">                    throw new GordianDataException(ERROR_UNSUPCURVE + myName);</span>
+                }
+<span class="fc" id="L671">                return GordianKeyPairSpecBuilder.gost2012(myCurve);</span>
+            }
+
+            /* Curve is not supported */
+<span class="nc" id="L675">            throw new GordianDataException(ERROR_UNSUPCURVE + myParms);</span>
+        }
+    }
+
+    /**
+     * SLHDSA Encoded parser.
+     */
+    private static class GordianSLHDSAEncodedParser implements GordianEncodedParser {
+        /**
+         * AsymKeySpec.
+         */
+        private final GordianKeyPairSpec theKeySpec;
+
+        /**
+         * Constructor.
+         *
+         * @param pKeySpec the keySpec
+         */
+<span class="fc" id="L693">        GordianSLHDSAEncodedParser(final GordianKeyPairSpec pKeySpec) {</span>
+<span class="fc" id="L694">            theKeySpec = pKeySpec;</span>
+<span class="fc" id="L695">        }</span>
+
+        /**
+         * Registrar.
+         *
+         * @param pIdManager the idManager
+         */
+        static void register(final GordianKeyPairAlgId pIdManager) {
+<span class="fc bfc" id="L703" title="All 2 branches covered.">            for (GordianSLHDSASpec mySpec : GordianSLHDSASpec.values()) {</span>
+<span class="fc" id="L704">                pIdManager.registerParser(mySpec.getIdentifier(), new GordianSLHDSAEncodedParser(GordianKeyPairSpecBuilder.slhdsa(mySpec)));</span>
+            }
+<span class="fc" id="L706">        }</span>
+
+        @Override
+        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws GordianException {
+<span class="fc" id="L710">            return theKeySpec;</span>
+        }
+
+        @Override
+        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws GordianException {
+<span class="fc" id="L715">            return theKeySpec;</span>
+        }
+    }
+
+    /**
+     * CMCE Encoded parser.
+     */
+    private static class GordianCMCEEncodedParser implements GordianEncodedParser {
+        /**
+         * AsymKeySpec.
+         */
+        private final GordianKeyPairSpec theKeySpec;
+
+        /**
+         * Constructor.
+         *
+         * @param pKeySpec the keySpec
+         */
+<span class="fc" id="L733">        GordianCMCEEncodedParser(final GordianKeyPairSpec pKeySpec) {</span>
+<span class="fc" id="L734">            theKeySpec = pKeySpec;</span>
+<span class="fc" id="L735">        }</span>
+
+        /**
+         * Registrar.
+         *
+         * @param pIdManager the idManager
+         */
+        static void register(final GordianKeyPairAlgId pIdManager) {
+<span class="fc bfc" id="L743" title="All 2 branches covered.">            for (GordianCMCESpec mySpec : GordianCMCESpec.values()) {</span>
+<span class="fc" id="L744">                pIdManager.registerParser(mySpec.getIdentifier(), new GordianCMCEEncodedParser(GordianKeyPairSpecBuilder.cmce(mySpec)));</span>
+            }
+<span class="fc" id="L746">        }</span>
+
+        @Override
+        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws GordianException {
+<span class="fc" id="L750">            return theKeySpec;</span>
+        }
+
+        @Override
+        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws GordianException {
+<span class="fc" id="L755">            return theKeySpec;</span>
+        }
+    }
+
+    /**
+     * Frodo Encoded parser.
+     */
+    private static class GordianFrodoEncodedParser implements GordianEncodedParser {
+        /**
+         * AsymKeySpec.
+         */
+        private final GordianKeyPairSpec theKeySpec;
+
+        /**
+         * Constructor.
+         *
+         * @param pKeySpec the keySpec
+         */
+<span class="fc" id="L773">        GordianFrodoEncodedParser(final GordianKeyPairSpec pKeySpec) {</span>
+<span class="fc" id="L774">            theKeySpec = pKeySpec;</span>
+<span class="fc" id="L775">        }</span>
+
+        /**
+         * Registrar.
+         *
+         * @param pIdManager the idManager
+         */
+        static void register(final GordianKeyPairAlgId pIdManager) {
+<span class="fc bfc" id="L783" title="All 2 branches covered.">            for (GordianFRODOSpec mySpec : GordianFRODOSpec.values()) {</span>
+<span class="fc" id="L784">                pIdManager.registerParser(mySpec.getIdentifier(), new GordianFrodoEncodedParser(GordianKeyPairSpecBuilder.frodo(mySpec)));</span>
+            }
+<span class="fc" id="L786">        }</span>
+
+        @Override
+        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws GordianException {
+<span class="fc" id="L790">            return theKeySpec;</span>
+        }
+
+        @Override
+        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws GordianException {
+<span class="fc" id="L795">            return theKeySpec;</span>
+        }
+    }
+
+    /**
+     * SABER Encoded parser.
+     */
+    private static class GordianSABEREncodedParser implements GordianEncodedParser {
+        /**
+         * AsymKeySpec.
+         */
+        private final GordianKeyPairSpec theKeySpec;
+
+        /**
+         * Constructor.
+         *
+         * @param pKeySpec the keySpec
+         */
+<span class="fc" id="L813">        GordianSABEREncodedParser(final GordianKeyPairSpec pKeySpec) {</span>
+<span class="fc" id="L814">            theKeySpec = pKeySpec;</span>
+<span class="fc" id="L815">        }</span>
+
+        /**
+         * Registrar.
+         *
+         * @param pIdManager the idManager
+         */
+        static void register(final GordianKeyPairAlgId pIdManager) {
+<span class="fc bfc" id="L823" title="All 2 branches covered.">            for (GordianSABERSpec mySpec : GordianSABERSpec.values()) {</span>
+<span class="fc" id="L824">                pIdManager.registerParser(mySpec.getIdentifier(), new GordianSABEREncodedParser(GordianKeyPairSpecBuilder.saber(mySpec)));</span>
+            }
+<span class="fc" id="L826">        }</span>
+
+        @Override
+        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws GordianException {
+<span class="fc" id="L830">            return theKeySpec;</span>
+        }
+
+        @Override
+        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws GordianException {
+<span class="fc" id="L835">            return theKeySpec;</span>
+        }
+    }
+
+    /**
+     * MLKEM Encoded parser.
+     */
+    private static class GordianMLKEMEncodedParser implements GordianEncodedParser {
+        /**
+         * AsymKeySpec.
+         */
+        private final GordianKeyPairSpec theKeySpec;
+
+        /**
+         * Constructor.
+         *
+         * @param pKeySpec the keySpec
+         */
+<span class="fc" id="L853">        GordianMLKEMEncodedParser(final GordianKeyPairSpec pKeySpec) {</span>
+<span class="fc" id="L854">            theKeySpec = pKeySpec;</span>
+<span class="fc" id="L855">        }</span>
+
+        /**
+         * Registrar.
+         *
+         * @param pIdManager the idManager
+         */
+        static void register(final GordianKeyPairAlgId pIdManager) {
+<span class="fc bfc" id="L863" title="All 2 branches covered.">            for (GordianMLKEMSpec mySpec : GordianMLKEMSpec.values()) {</span>
+<span class="fc" id="L864">                pIdManager.registerParser(mySpec.getIdentifier(), new GordianMLKEMEncodedParser(GordianKeyPairSpecBuilder.mlkem(mySpec)));</span>
+            }
+<span class="fc" id="L866">        }</span>
+
+        @Override
+        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws GordianException {
+<span class="fc" id="L870">            return theKeySpec;</span>
+        }
+
+        @Override
+        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws GordianException {
+<span class="fc" id="L875">            return theKeySpec;</span>
+        }
+    }
+
+    /**
+     * MLDSA Encoded parser.
+     */
+    private static class GordianMLDSAEncodedParser implements GordianEncodedParser {
+        /**
+         * AsymKeySpec.
+         */
+        private final GordianKeyPairSpec theKeySpec;
+
+        /**
+         * Constructor.
+         *
+         * @param pKeySpec the keySpec
+         */
+<span class="fc" id="L893">        GordianMLDSAEncodedParser(final GordianKeyPairSpec pKeySpec) {</span>
+<span class="fc" id="L894">            theKeySpec = pKeySpec;</span>
+<span class="fc" id="L895">        }</span>
+
+        /**
+         * Registrar.
+         *
+         * @param pIdManager the idManager
+         */
+        static void register(final GordianKeyPairAlgId pIdManager) {
+<span class="fc bfc" id="L903" title="All 2 branches covered.">            for (GordianMLDSASpec mySpec : GordianMLDSASpec.values()) {</span>
+<span class="fc" id="L904">                pIdManager.registerParser(mySpec.getIdentifier(), new GordianMLDSAEncodedParser(GordianKeyPairSpecBuilder.mldsa(mySpec)));</span>
+            }
+<span class="fc" id="L906">        }</span>
+
+        @Override
+        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws GordianException {
+<span class="fc" id="L910">            return theKeySpec;</span>
+        }
+
+        @Override
+        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws GordianException {
+<span class="fc" id="L915">            return theKeySpec;</span>
+        }
+    }
+
+    /**
+     * HQC Encoded parser.
+     */
+    private static class GordianHQCEncodedParser implements GordianEncodedParser {
+        /**
+         * AsymKeySpec.
+         */
+        private final GordianKeyPairSpec theKeySpec;
+
+        /**
+         * Constructor.
+         *
+         * @param pKeySpec the keySpec
+         */
+<span class="fc" id="L933">        GordianHQCEncodedParser(final GordianKeyPairSpec pKeySpec) {</span>
+<span class="fc" id="L934">            theKeySpec = pKeySpec;</span>
+<span class="fc" id="L935">        }</span>
+
+        /**
+         * Registrar.
+         *
+         * @param pIdManager the idManager
+         */
+        static void register(final GordianKeyPairAlgId pIdManager) {
+<span class="fc bfc" id="L943" title="All 2 branches covered.">            for (GordianHQCSpec mySpec : GordianHQCSpec.values()) {</span>
+<span class="fc" id="L944">                pIdManager.registerParser(mySpec.getIdentifier(), new GordianHQCEncodedParser(GordianKeyPairSpecBuilder.hqc(mySpec)));</span>
+            }
+<span class="fc" id="L946">        }</span>
+
+        @Override
+        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws GordianException {
+<span class="fc" id="L950">            return theKeySpec;</span>
+        }
+
+        @Override
+        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws GordianException {
+<span class="fc" id="L955">            return theKeySpec;</span>
+        }
+    }
+
+    /**
+     * BIKE Encoded parser.
+     */
+    private static class GordianBIKEEncodedParser implements GordianEncodedParser {
+        /**
+         * AsymKeySpec.
+         */
+        private final GordianKeyPairSpec theKeySpec;
+
+        /**
+         * Constructor.
+         *
+         * @param pKeySpec the keySpec
+         */
+<span class="fc" id="L973">        GordianBIKEEncodedParser(final GordianKeyPairSpec pKeySpec) {</span>
+<span class="fc" id="L974">            theKeySpec = pKeySpec;</span>
+<span class="fc" id="L975">        }</span>
+
+        /**
+         * Registrar.
+         *
+         * @param pIdManager the idManager
+         */
+        static void register(final GordianKeyPairAlgId pIdManager) {
+<span class="fc bfc" id="L983" title="All 2 branches covered.">            for (GordianBIKESpec mySpec : GordianBIKESpec.values()) {</span>
+<span class="fc" id="L984">                pIdManager.registerParser(mySpec.getIdentifier(), new GordianBIKEEncodedParser(GordianKeyPairSpecBuilder.bike(mySpec)));</span>
+            }
+<span class="fc" id="L986">        }</span>
+
+        @Override
+        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws GordianException {
+<span class="fc" id="L990">            return theKeySpec;</span>
+        }
+
+        @Override
+        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws GordianException {
+<span class="fc" id="L995">            return theKeySpec;</span>
+        }
+    }
+
+    /**
+     * NTRU Encoded parser.
+     */
+    private static class GordianNTRUEncodedParser implements GordianEncodedParser {
+        /**
+         * AsymKeySpec.
+         */
+        private final GordianKeyPairSpec theKeySpec;
+
+        /**
+         * Constructor.
+         *
+         * @param pKeySpec the keySpec
+         */
+<span class="fc" id="L1013">        GordianNTRUEncodedParser(final GordianKeyPairSpec pKeySpec) {</span>
+<span class="fc" id="L1014">            theKeySpec = pKeySpec;</span>
+<span class="fc" id="L1015">        }</span>
+
+        /**
+         * Registrar.
+         *
+         * @param pIdManager the idManager
+         */
+        static void register(final GordianKeyPairAlgId pIdManager) {
+<span class="fc bfc" id="L1023" title="All 2 branches covered.">            for (GordianNTRUSpec mySpec : GordianNTRUSpec.values()) {</span>
+<span class="fc" id="L1024">                pIdManager.registerParser(mySpec.getIdentifier(), new GordianNTRUEncodedParser(GordianKeyPairSpecBuilder.ntru(mySpec)));</span>
+            }
+<span class="fc" id="L1026">        }</span>
+
+        @Override
+        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws GordianException {
+<span class="fc" id="L1030">            return theKeySpec;</span>
+        }
+
+        @Override
+        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws GordianException {
+<span class="fc" id="L1035">            return theKeySpec;</span>
+        }
+    }
+
+    /**
+     * NTRUPrime Encoded parser.
+     */
+    private static class GordianNTRUPrimeEncodedParser implements GordianEncodedParser {
+        /**
+         * AsymKeySpec.
+         */
+        private final GordianKeyPairSpec theKeySpec;
+
+        /**
+         * Constructor.
+         *
+         * @param pKeySpec the keySpec
+         */
+<span class="fc" id="L1053">        GordianNTRUPrimeEncodedParser(final GordianKeyPairSpec pKeySpec) {</span>
+<span class="fc" id="L1054">            theKeySpec = pKeySpec;</span>
+<span class="fc" id="L1055">        }</span>
+
+        /**
+         * Registrar.
+         *
+         * @param pIdManager the idManager
+         */
+        static void register(final GordianKeyPairAlgId pIdManager) {
+<span class="fc bfc" id="L1063" title="All 2 branches covered.">            for (GordianNTRUPrimeParams myParams : GordianNTRUPrimeParams.values()) {</span>
+<span class="fc" id="L1064">                pIdManager.registerParser(myParams.getNTRULIdentifier(),</span>
+<span class="fc" id="L1065">                        new GordianNTRUPrimeEncodedParser(GordianKeyPairSpecBuilder.ntruprime(new GordianNTRUPrimeSpec(GordianNTRUPrimeType.NTRUL, myParams))));</span>
+<span class="fc" id="L1066">                pIdManager.registerParser(myParams.getSNTRUIdentifier(),</span>
+<span class="fc" id="L1067">                        new GordianNTRUPrimeEncodedParser(GordianKeyPairSpecBuilder.ntruprime(new GordianNTRUPrimeSpec(GordianNTRUPrimeType.SNTRU, myParams))));</span>
+            }
+<span class="fc" id="L1069">        }</span>
+
+        @Override
+        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws GordianException {
+<span class="fc" id="L1073">            return theKeySpec;</span>
+        }
+
+        @Override
+        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws GordianException {
+<span class="fc" id="L1078">            return theKeySpec;</span>
+        }
+    }
+
+    /**
+     * Falcon Encoded parser.
+     */
+    private static class GordianFalconEncodedParser implements GordianEncodedParser {
+        /**
+         * AsymKeySpec.
+         */
+        private final GordianKeyPairSpec theKeySpec;
+
+        /**
+         * Constructor.
+         *
+         * @param pKeySpec the keySpec
+         */
+<span class="fc" id="L1096">        GordianFalconEncodedParser(final GordianKeyPairSpec pKeySpec) {</span>
+<span class="fc" id="L1097">            theKeySpec = pKeySpec;</span>
+<span class="fc" id="L1098">        }</span>
+
+        /**
+         * Registrar.
+         *
+         * @param pIdManager the idManager
+         */
+        static void register(final GordianKeyPairAlgId pIdManager) {
+<span class="fc bfc" id="L1106" title="All 2 branches covered.">            for (GordianFalconSpec mySpec : GordianFalconSpec.values()) {</span>
+<span class="fc" id="L1107">                pIdManager.registerParser(mySpec.getIdentifier(), new GordianFalconEncodedParser(GordianKeyPairSpecBuilder.falcon(mySpec)));</span>
+            }
+<span class="fc" id="L1109">        }</span>
+
+        @Override
+        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws GordianException {
+<span class="fc" id="L1113">            return theKeySpec;</span>
+        }
+
+        @Override
+        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws GordianException {
+<span class="fc" id="L1118">            return theKeySpec;</span>
+        }
+    }
+
+    /**
+     * Mayo Encoded parser.
+     */
+    private static class GordianMayoEncodedParser implements GordianEncodedParser {
+        /**
+         * AsymKeySpec.
+         */
+        private final GordianKeyPairSpec theKeySpec;
+
+        /**
+         * Constructor.
+         *
+         * @param pKeySpec the keySpec
+         */
+<span class="fc" id="L1136">        GordianMayoEncodedParser(final GordianKeyPairSpec pKeySpec) {</span>
+<span class="fc" id="L1137">            theKeySpec = pKeySpec;</span>
+<span class="fc" id="L1138">        }</span>
+
+        /**
+         * Registrar.
+         *
+         * @param pIdManager the idManager
+         */
+        static void register(final GordianKeyPairAlgId pIdManager) {
+<span class="fc bfc" id="L1146" title="All 2 branches covered.">            for (GordianMayoSpec mySpec : GordianMayoSpec.values()) {</span>
+<span class="fc" id="L1147">                pIdManager.registerParser(mySpec.getIdentifier(), new GordianMayoEncodedParser(GordianKeyPairSpecBuilder.mayo(mySpec)));</span>
+            }
+<span class="fc" id="L1149">        }</span>
+
+        @Override
+        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws GordianException {
+<span class="fc" id="L1153">            return theKeySpec;</span>
+        }
+
+        @Override
+        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws GordianException {
+<span class="fc" id="L1158">            return theKeySpec;</span>
+        }
+    }
+
+    /**
+     * Snova Encoded parser.
+     */
+    private static class GordianSnovaEncodedParser implements GordianEncodedParser {
+        /**
+         * AsymKeySpec.
+         */
+        private final GordianKeyPairSpec theKeySpec;
+
+        /**
+         * Constructor.
+         *
+         * @param pKeySpec the keySpec
+         */
+<span class="fc" id="L1176">        GordianSnovaEncodedParser(final GordianKeyPairSpec pKeySpec) {</span>
+<span class="fc" id="L1177">            theKeySpec = pKeySpec;</span>
+<span class="fc" id="L1178">        }</span>
+
+        /**
+         * Registrar.
+         *
+         * @param pIdManager the idManager
+         */
+        static void register(final GordianKeyPairAlgId pIdManager) {
+<span class="fc bfc" id="L1186" title="All 2 branches covered.">            for (GordianSnovaSpec mySpec : GordianSnovaSpec.values()) {</span>
+<span class="fc" id="L1187">                pIdManager.registerParser(mySpec.getIdentifier(), new GordianSnovaEncodedParser(GordianKeyPairSpecBuilder.snova(mySpec)));</span>
+            }
+<span class="fc" id="L1189">        }</span>
+
+        @Override
+        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws GordianException {
+<span class="fc" id="L1193">            return theKeySpec;</span>
+        }
+
+        @Override
+        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws GordianException {
+<span class="fc" id="L1198">            return theKeySpec;</span>
+        }
+    }
+
+    /**
+     * Picnic Encoded parser.
+     */
+    private static class GordianPicnicEncodedParser implements GordianEncodedParser {
+        /**
+         * AsymKeySpec.
+         */
+        private final GordianKeyPairSpec theKeySpec;
+
+        /**
+         * Constructor.
+         *
+         * @param pKeySpec the keySpec
+         */
+<span class="fc" id="L1216">        GordianPicnicEncodedParser(final GordianKeyPairSpec pKeySpec) {</span>
+<span class="fc" id="L1217">            theKeySpec = pKeySpec;</span>
+<span class="fc" id="L1218">        }</span>
+
+        /**
+         * Registrar.
+         *
+         * @param pIdManager the idManager
+         */
+        static void register(final GordianKeyPairAlgId pIdManager) {
+<span class="fc bfc" id="L1226" title="All 2 branches covered.">            for (GordianPicnicSpec mySpec : GordianPicnicSpec.values()) {</span>
+<span class="fc" id="L1227">                pIdManager.registerParser(mySpec.getIdentifier(), new GordianPicnicEncodedParser(GordianKeyPairSpecBuilder.picnic(mySpec)));</span>
+            }
+<span class="fc" id="L1229">        }</span>
+
+        @Override
+        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws GordianException {
+<span class="fc" id="L1233">            return theKeySpec;</span>
+        }
+
+        @Override
+        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws GordianException {
+<span class="fc" id="L1238">            return theKeySpec;</span>
+        }
+    }
+
+    /**
+     * NewHope Encoded parser.
+     */
+    private static final class GordianNewHopeEncodedParser implements GordianEncodedParser {
+        /**
+         * Registrar.
+         *
+         * @param pIdManager the idManager
+         */
+        static void register(final GordianKeyPairAlgId pIdManager) {
+<span class="fc" id="L1252">            pIdManager.registerParser(PQCObjectIdentifiers.newHope, new GordianNewHopeEncodedParser());</span>
+<span class="fc" id="L1253">        }</span>
+
+        @Override
+        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) {
+<span class="fc" id="L1257">            return GordianKeyPairSpecBuilder.newHope();</span>
+        }
+
+        @Override
+        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) {
+<span class="fc" id="L1262">            return GordianKeyPairSpecBuilder.newHope();</span>
+        }
+    }
+
+    /**
+     * XMSS Encoded parser.
+     */
+    private static final class GordianXMSSEncodedParser implements GordianEncodedParser {
+        /**
+         * Registrar.
+         *
+         * @param pIdManager the idManager
+         */
+        static void register(final GordianKeyPairAlgId pIdManager) {
+<span class="fc" id="L1276">            pIdManager.registerParser(PQCObjectIdentifiers.xmss, new GordianXMSSEncodedParser());</span>
+<span class="fc" id="L1277">            pIdManager.registerParser(IsaraObjectIdentifiers.id_alg_xmss, new GordianXMSSEncodedParser());</span>
+<span class="fc" id="L1278">        }</span>
+
+
+        @Override
+        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws GordianException {
+<span class="fc" id="L1283">            final AlgorithmIdentifier myId = pInfo.getAlgorithm();</span>
+<span class="fc" id="L1284">            final XMSSKeyParams myParms = XMSSKeyParams.getInstance(myId.getParameters());</span>
+<span class="pc bpc" id="L1285" title="1 of 2 branches missed.">            if (myParms != null) {</span>
+<span class="nc" id="L1286">                return determineKeyPairSpec(myParms);</span>
+            }
+
+            /* Protect against exceptions */
+            try {
+<span class="fc" id="L1291">                final byte[] keyEnc = Objects.requireNonNull(ASN1OctetString.getInstance(pInfo.parsePublicKey())).getOctets();</span>
+<span class="fc" id="L1292">                final int myOID = Pack.bigEndianToInt(keyEnc, 0);</span>
+<span class="fc" id="L1293">                final XMSSParameters myParams = XMSSParameters.lookupByOID(myOID);</span>
+<span class="fc" id="L1294">                return GordianKeyPairSpecBuilder.xmss(determineKeyType(myParams.getTreeDigestOID()),</span>
+<span class="fc" id="L1295">                        determineHeight(myParams.getHeight()));</span>
+<span class="nc" id="L1296">            } catch (IOException e) {</span>
+<span class="nc" id="L1297">                throw new GordianIOException(&quot;Failed to resolve key&quot;, e);</span>
+            }
+        }
+
+        @Override
+        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws GordianException {
+<span class="fc" id="L1303">            final AlgorithmIdentifier myId = pInfo.getPrivateKeyAlgorithm();</span>
+<span class="fc" id="L1304">            final XMSSKeyParams myParms = XMSSKeyParams.getInstance(myId.getParameters());</span>
+<span class="fc" id="L1305">            return determineKeyPairSpec(myParms);</span>
+        }
+
+        /**
+         * Obtain keySpec from Parameters.
+         *
+         * @param pParms the parameters
+         * @return the keySpec
+         * @throws GordianException on error
+         */
+        private static GordianKeyPairSpec determineKeyPairSpec(final XMSSKeyParams pParms) throws GordianException {
+<span class="fc" id="L1316">            final ASN1ObjectIdentifier myDigest = pParms.getTreeDigest().getAlgorithm();</span>
+<span class="fc" id="L1317">            final GordianXMSSHeight myHeight = determineHeight(pParms.getHeight());</span>
+<span class="fc" id="L1318">            return GordianKeyPairSpecBuilder.xmss(determineKeyType(myDigest), myHeight);</span>
+        }
+
+        /**
+         * Obtain keyType from digest.
+         *
+         * @param pDigest the treeDigest
+         * @return the keyType
+         * @throws GordianException on error
+         */
+        static GordianXMSSDigestType determineKeyType(final ASN1ObjectIdentifier pDigest) throws GordianException {
+<span class="fc bfc" id="L1329" title="All 2 branches covered.">            if (pDigest.equals(NISTObjectIdentifiers.id_sha256)) {</span>
+<span class="fc" id="L1330">                return GordianXMSSDigestType.SHA256;</span>
+            }
+<span class="pc bpc" id="L1332" title="1 of 2 branches missed.">            if (pDigest.equals(NISTObjectIdentifiers.id_sha512)) {</span>
+<span class="fc" id="L1333">                return GordianXMSSDigestType.SHA512;</span>
+            }
+<span class="nc bnc" id="L1335" title="All 2 branches missed.">            if (pDigest.equals(NISTObjectIdentifiers.id_shake128)) {</span>
+<span class="nc" id="L1336">                return GordianXMSSDigestType.SHAKE128;</span>
+            }
+<span class="nc bnc" id="L1338" title="All 2 branches missed.">            if (pDigest.equals(NISTObjectIdentifiers.id_shake256)) {</span>
+<span class="nc" id="L1339">                return GordianXMSSDigestType.SHAKE256;</span>
+            }
+
+            /* Tree Digest is not supported */
+<span class="nc" id="L1343">            throw new GordianDataException(ERROR_TREEDIGEST + pDigest);</span>
+        }
+
+        /**
+         * Obtain height.
+         *
+         * @param pHeight the height
+         * @return the xmssHeight
+         * @throws GordianException on error
+         */
+        static GordianXMSSHeight determineHeight(final int pHeight) throws GordianException {
+            /* Loo through the heights */
+<span class="pc bpc" id="L1355" title="1 of 2 branches missed.">            for (GordianXMSSHeight myHeight : GordianXMSSHeight.values()) {</span>
+<span class="pc bpc" id="L1356" title="1 of 2 branches missed.">                if (myHeight.getHeight() == pHeight) {</span>
+<span class="fc" id="L1357">                    return myHeight;</span>
+                }
+            }
+
+            /* Height is not supported */
+<span class="nc" id="L1362">            throw new GordianDataException(&quot;Inavlid height: &quot; + pHeight);</span>
+        }
+    }
+
+    /**
+     * XMSSMT Encoded parser.
+     */
+    private static final class GordianXMSSMTEncodedParser implements GordianEncodedParser {
+        /**
+         * Registrar.
+         *
+         * @param pIdManager the idManager
+         */
+        static void register(final GordianKeyPairAlgId pIdManager) {
+<span class="fc" id="L1376">            pIdManager.registerParser(PQCObjectIdentifiers.xmss_mt, new GordianXMSSMTEncodedParser());</span>
+<span class="fc" id="L1377">            pIdManager.registerParser(IsaraObjectIdentifiers.id_alg_xmssmt, new GordianXMSSMTEncodedParser());</span>
+<span class="fc" id="L1378">        }</span>
+
+        @Override
+        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws GordianException {
+<span class="nc" id="L1382">            final AlgorithmIdentifier myId = pInfo.getAlgorithm();</span>
+<span class="nc" id="L1383">            final XMSSMTKeyParams myParms = XMSSMTKeyParams.getInstance(myId.getParameters());</span>
+<span class="nc bnc" id="L1384" title="All 2 branches missed.">            if (myParms != null) {</span>
+<span class="nc" id="L1385">                return determineKeyPairSpec(myParms);</span>
+            }
+
+            /* Protect against exceptions */
+            try {
+<span class="nc" id="L1390">                final byte[] keyEnc = Objects.requireNonNull(ASN1OctetString.getInstance(pInfo.parsePublicKey())).getOctets();</span>
+<span class="nc" id="L1391">                final int myOID = Pack.bigEndianToInt(keyEnc, 0);</span>
+<span class="nc" id="L1392">                final XMSSMTParameters myParams = XMSSMTParameters.lookupByOID(myOID);</span>
+<span class="nc" id="L1393">                return GordianKeyPairSpecBuilder.xmssmt(GordianXMSSEncodedParser.determineKeyType(myParams.getTreeDigestOID()),</span>
+<span class="nc" id="L1394">                        GordianXMSSEncodedParser.determineHeight(myParams.getHeight()), determineLayers(myParams.getLayers()));</span>
+<span class="nc" id="L1395">            } catch (IOException e) {</span>
+<span class="nc" id="L1396">                throw new GordianIOException(&quot;Failed to resolve key&quot;, e);</span>
+            }
+        }
+
+        @Override
+        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws GordianException {
+<span class="nc" id="L1402">            final AlgorithmIdentifier myId = pInfo.getPrivateKeyAlgorithm();</span>
+<span class="nc" id="L1403">            final XMSSMTKeyParams myParms = XMSSMTKeyParams.getInstance(myId.getParameters());</span>
+<span class="nc" id="L1404">            return determineKeyPairSpec(myParms);</span>
+        }
+
+        /**
+         * Obtain keySpec from Parameters.
+         *
+         * @param pParms the parameters
+         * @return the keySpec
+         * @throws GordianException on error
+         */
+        private static GordianKeyPairSpec determineKeyPairSpec(final XMSSMTKeyParams pParms) throws GordianException {
+<span class="nc" id="L1415">            final ASN1ObjectIdentifier myDigest = pParms.getTreeDigest().getAlgorithm();</span>
+<span class="nc" id="L1416">            final GordianXMSSHeight myHeight = GordianXMSSEncodedParser.determineHeight(pParms.getHeight());</span>
+<span class="nc" id="L1417">            final GordianXMSSMTLayers myLayers = determineLayers(pParms.getLayers());</span>
+<span class="nc" id="L1418">            return GordianKeyPairSpecBuilder.xmssmt(GordianXMSSEncodedParser.determineKeyType(myDigest), myHeight, myLayers);</span>
+        }
+
+        /**
+         * Obtain layers.
+         *
+         * @param pLayers the layers
+         * @return the xmssMTLayers
+         * @throws GordianException on error
+         */
+        static GordianXMSSMTLayers determineLayers(final int pLayers) throws GordianException {
+            /* Loo through the heights */
+<span class="nc bnc" id="L1430" title="All 2 branches missed.">            for (GordianXMSSMTLayers myLayers : GordianXMSSMTLayers.values()) {</span>
+<span class="nc bnc" id="L1431" title="All 2 branches missed.">                if (myLayers.getLayers() == pLayers) {</span>
+<span class="nc" id="L1432">                    return myLayers;</span>
+                }
+            }
+
+            /* Layers is not supported */
+<span class="nc" id="L1437">            throw new GordianDataException(&quot;Invalid layers: &quot; + pLayers);</span>
+        }
+    }
+
+    /**
+     * Edwards Encoded parser.
+     */
+    private static class GordianEdwardsEncodedParser implements GordianEncodedParser {
+        /**
+         * AsymKeySpec.
+         */
+        private final GordianKeyPairSpec theKeySpec;
+
+        /**
+         * Constructor.
+         *
+         * @param pKeySpec the keySpec
+         */
+<span class="fc" id="L1455">        GordianEdwardsEncodedParser(final GordianKeyPairSpec pKeySpec) {</span>
+<span class="fc" id="L1456">            theKeySpec = pKeySpec;</span>
+<span class="fc" id="L1457">        }</span>
+
+        /**
+         * Registrar.
+         *
+         * @param pIdManager the idManager
+         */
+        static void register(final GordianKeyPairAlgId pIdManager) {
+<span class="fc" id="L1465">            pIdManager.registerParser(EdECObjectIdentifiers.id_X25519, new GordianEdwardsEncodedParser(GordianKeyPairSpecBuilder.x25519()));</span>
+<span class="fc" id="L1466">            pIdManager.registerParser(EdECObjectIdentifiers.id_X448, new GordianEdwardsEncodedParser(GordianKeyPairSpecBuilder.x448()));</span>
+<span class="fc" id="L1467">            pIdManager.registerParser(EdECObjectIdentifiers.id_Ed25519, new GordianEdwardsEncodedParser(GordianKeyPairSpecBuilder.ed25519()));</span>
+<span class="fc" id="L1468">            pIdManager.registerParser(EdECObjectIdentifiers.id_Ed448, new GordianEdwardsEncodedParser(GordianKeyPairSpecBuilder.ed448()));</span>
+<span class="fc" id="L1469">        }</span>
+
+        @Override
+        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws GordianException {
+<span class="fc" id="L1473">            return theKeySpec;</span>
+        }
+
+        @Override
+        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws GordianException {
+<span class="fc" id="L1478">            return theKeySpec;</span>
+        }
+    }
+
+    /**
+     * LMS Encoded parser.
+     */
+    private static final class GordianLMSEncodedParser implements GordianEncodedParser {
+        /**
+         * Registrar.
+         *
+         * @param pIdManager the idManager
+         */
+        static void register(final GordianKeyPairAlgId pIdManager) {
+<span class="fc" id="L1492">            pIdManager.registerParser(PKCSObjectIdentifiers.id_alg_hss_lms_hashsig, new GordianLMSEncodedParser());</span>
+<span class="fc" id="L1493">        }</span>
+
+        @Override
+        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws GordianException {
+            /* Protect against exceptions */
+            try {
+                /* Parse public key */
+<span class="fc" id="L1500">                final LMSKeyParameters myParms = (LMSKeyParameters) PublicKeyFactory.createKey(pInfo);</span>
+<span class="pc bpc" id="L1501" title="1 of 2 branches missed.">                if (myParms instanceof HSSPublicKeyParameters myPublic) {</span>
+<span class="fc" id="L1502">                    final int myDepth = myPublic.getL();</span>
+<span class="fc" id="L1503">                    final LMSPublicKeyParameters myLMSPublicKey = myPublic.getLMSPublicKey();</span>
+<span class="fc" id="L1504">                    final GordianLMSKeySpec myKeySpec = determineKeyPairSpec(myLMSPublicKey);</span>
+<span class="fc" id="L1505">                    return GordianKeyPairSpecBuilder.hss(myKeySpec, myDepth);</span>
+
+                } else {
+<span class="nc" id="L1508">                    final LMSPublicKeyParameters myPublic = (LMSPublicKeyParameters) myParms;</span>
+<span class="nc" id="L1509">                    final GordianLMSKeySpec myKeySpec = determineKeyPairSpec(myPublic);</span>
+<span class="nc" id="L1510">                    return GordianKeyPairSpecBuilder.lms(myKeySpec);</span>
+                }
+
+                /* Handle exceptions */
+<span class="nc" id="L1514">            } catch (IOException e) {</span>
+<span class="nc" id="L1515">                throw new GordianIOException(ERROR_PARSE, e);</span>
+            }
+        }
+
+        @Override
+        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws GordianException {
+            /* Protect against exceptions */
+            try {
+                /* Parse public key */
+<span class="fc" id="L1524">                final LMSKeyParameters myParms = (LMSKeyParameters) PrivateKeyFactory.createKey(pInfo);</span>
+<span class="pc bpc" id="L1525" title="1 of 2 branches missed.">                if (myParms instanceof HSSPrivateKeyParameters) {</span>
+<span class="fc" id="L1526">                    final HSSPrivateKeyParameters myPrivate = (HSSPrivateKeyParameters) PrivateKeyFactory.createKey(pInfo);</span>
+<span class="fc" id="L1527">                    final int myDepth = myPrivate.getL();</span>
+<span class="fc" id="L1528">                    final LMSPublicKeyParameters myLMSPublicKey = myPrivate.getPublicKey().getLMSPublicKey();</span>
+<span class="fc" id="L1529">                    final GordianLMSKeySpec myKeySpec = determineKeyPairSpec(myLMSPublicKey);</span>
+<span class="fc" id="L1530">                    return GordianKeyPairSpecBuilder.hss(myKeySpec, myDepth);</span>
+
+                } else {
+<span class="nc" id="L1533">                    final LMSPrivateKeyParameters myPrivate = (LMSPrivateKeyParameters) PrivateKeyFactory.createKey(pInfo);</span>
+<span class="nc" id="L1534">                    return GordianKeyPairSpecBuilder.lms(GordianLMSKeySpec.determineKeySpec(myPrivate.getSigParameters(), myPrivate.getOtsParameters()));</span>
+                }
+
+                /* Handle exceptions */
+<span class="nc" id="L1538">            } catch (IOException e) {</span>
+<span class="nc" id="L1539">                throw new GordianIOException(ERROR_PARSE, e);</span>
+            }
+        }
+
+        /**
+         * Obtain keySpec from public key.
+         *
+         * @param pPublic the publicKeyParams
+         * @return the LMSKeySpec
+         */
+        static GordianLMSKeySpec determineKeyPairSpec(final LMSPublicKeyParameters pPublic) {
+<span class="fc" id="L1550">            return GordianLMSKeySpec.determineKeySpec(pPublic.getSigParameters(), pPublic.getOtsParameters());</span>
+        }
+    }
+
+    /**
+     * Composite Encoded parser.
+     */
+    private static class GordianCompositeEncodedParser implements GordianEncodedParser {
+        /**
+         * The KeyPairFactory.
+         */
+        private final GordianKeyPairAlgId theIdManager;
+
+        /**
+         * Constructor.
+         *
+         * @param pIdManager the idManager
+         */
+<span class="fc" id="L1568">        GordianCompositeEncodedParser(final GordianKeyPairAlgId pIdManager) {</span>
+<span class="fc" id="L1569">            theIdManager = pIdManager;</span>
+<span class="fc" id="L1570">        }</span>
+
+        /**
+         * Registrar.
+         *
+         * @param pIdManager the idManager
+         */
+        static void register(final GordianKeyPairAlgId pIdManager) {
+<span class="fc" id="L1578">            pIdManager.registerParser(MiscObjectIdentifiers.id_alg_composite, new GordianCompositeEncodedParser(pIdManager));</span>
+<span class="fc" id="L1579">        }</span>
+
+        @Override
+        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws GordianException {
+            /* Protect against exceptions */
+            try {
+<span class="fc" id="L1585">                final ASN1Sequence myKeys = ASN1Sequence.getInstance(pInfo.getPublicKeyData().getBytes());</span>
+<span class="fc" id="L1586">                final List&lt;GordianKeyPairSpec&gt; mySpecs = new ArrayList&lt;&gt;();</span>
+
+                /* Build the list from the keys sequence */
+<span class="fc" id="L1589">                final Enumeration&lt;?&gt; en = myKeys.getObjects();</span>
+<span class="fc bfc" id="L1590" title="All 2 branches covered.">                while (en.hasMoreElements()) {</span>
+<span class="fc" id="L1591">                    final SubjectPublicKeyInfo myPKInfo = SubjectPublicKeyInfo.getInstance(en.nextElement());</span>
+<span class="fc" id="L1592">                    mySpecs.add(theIdManager.determineKeyPairSpec(new X509EncodedKeySpec(myPKInfo.getEncoded())));</span>
+<span class="fc" id="L1593">                }</span>
+<span class="fc" id="L1594">                return GordianKeyPairSpecBuilder.composite(mySpecs);</span>
+
+                /* Handle exceptions */
+<span class="nc" id="L1597">            } catch (IOException e) {</span>
+<span class="nc" id="L1598">                throw new GordianIOException(ERROR_PARSE, e);</span>
+            }
+        }
+
+        @Override
+        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws GordianException {
+            /* Protect against exceptions */
+            try {
+<span class="fc" id="L1606">                final ASN1Sequence myKeys = ASN1Sequence.getInstance(pInfo.getPrivateKey().getOctets());</span>
+<span class="fc" id="L1607">                final List&lt;GordianKeyPairSpec&gt; mySpecs = new ArrayList&lt;&gt;();</span>
+
+                /* Build the list from the keys sequence */
+<span class="fc" id="L1610">                final Enumeration&lt;?&gt; en = myKeys.getObjects();</span>
+<span class="fc bfc" id="L1611" title="All 2 branches covered.">                while (en.hasMoreElements()) {</span>
+<span class="fc" id="L1612">                    final PrivateKeyInfo myPKInfo = PrivateKeyInfo.getInstance(en.nextElement());</span>
+<span class="fc" id="L1613">                    mySpecs.add(theIdManager.determineKeyPairSpec(new PKCS8EncodedKeySpec(myPKInfo.getEncoded())));</span>
+<span class="fc" id="L1614">                }</span>
+<span class="fc" id="L1615">                return GordianKeyPairSpecBuilder.composite(mySpecs);</span>
+
+                /* Handle exceptions */
+<span class="nc" id="L1618">            } catch (IOException e) {</span>
+<span class="nc" id="L1619">                throw new GordianIOException(ERROR_PARSE, e);</span>
+            }
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

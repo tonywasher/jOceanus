@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianZuc256Engine.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.impl.ext.engines</a> &gt; <span class="el_source">GordianZuc256Engine.java</span></div><h1>GordianZuc256Engine.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.gordianknot.impl.ext.engines;
+
+import org.bouncycastle.util.Memoable;
+
+/**
+ * Zuc256Mac implementation.
+ * Based on http://www.is.cas.cn/ztzl2016/zouchongzhi/201801/W020180126529970733243.pdf
+ */
+@SuppressWarnings(&quot;checkstyle:MagicNumber&quot;)
+public class GordianZuc256Engine
+        extends GordianZuc128Engine {
+    /**
+     * the constants D.
+     */
+<span class="fc" id="L31">    private static final byte[] EK_D = {</span>
+            0b0100010, 0b0101111, 0b0100100, 0b0101010, 0b1101101, 0b1000000, 0b1000000, 0b1000000,
+            0b1000000, 0b1000000, 0b1000000, 0b1000000, 0b1000000, 0b1010010, 0b0010000, 0b0110000
+    };
+
+    /**
+     * the constants D for 32 bit Mac.
+     */
+<span class="fc" id="L39">    private static final byte[] EK_D32 = {</span>
+            0b0100010, 0b0101111, 0b0100101, 0b0101010, 0b1101101, 0b1000000, 0b1000000, 0b1000000,
+            0b1000000, 0b1000000, 0b1000000, 0b1000000, 0b1000000, 0b1010010, 0b0010000, 0b0110000
+    };
+
+    /**
+     * the constants D for 64 bit Mac.
+     */
+<span class="fc" id="L47">    private static final byte[] EK_D64 = {</span>
+            0b0100011, 0b0101111, 0b0100100, 0b0101010, 0b1101101, 0b1000000, 0b1000000, 0b1000000,
+            0b1000000, 0b1000000, 0b1000000, 0b1000000, 0b1000000, 0b1010010, 0b0010000, 0b0110000
+    };
+
+    /**
+     * the constants D for 128 bit Mac.
+     */
+<span class="fc" id="L55">    private static final byte[] EK_D128 = {</span>
+            0b0100011, 0b0101111, 0b0100101, 0b0101010, 0b1101101, 0b1000000, 0b1000000, 0b1000000,
+            0b1000000, 0b1000000, 0b1000000, 0b1000000, 0b1000000, 0b1010010, 0b0010000, 0b0110000
+    };
+
+    /**
+     * The selected D constants.
+     */
+    private byte[] theD;
+
+    /**
+     * Constructor for streamCipher.
+     */
+<span class="fc" id="L68">    public GordianZuc256Engine() {</span>
+<span class="fc" id="L69">        theD = EK_D;</span>
+<span class="fc" id="L70">    }</span>
+
+    /**
+     * Constructor for Mac.
+     *
+     * @param pLength the Mac length
+     */
+<span class="fc" id="L77">    public GordianZuc256Engine(final int pLength) {</span>
+<span class="pc bpc" id="L78" title="1 of 4 branches missed.">        switch (pLength) {</span>
+            case 32:
+<span class="fc" id="L80">                theD = EK_D32;</span>
+<span class="fc" id="L81">                break;</span>
+            case 64:
+<span class="fc" id="L83">                theD = EK_D64;</span>
+<span class="fc" id="L84">                break;</span>
+            case 128:
+<span class="fc" id="L86">                theD = EK_D128;</span>
+<span class="fc" id="L87">                break;</span>
+            default:
+<span class="nc" id="L89">                throw new IllegalArgumentException(&quot;Unsupported length: &quot; + pLength);</span>
+        }
+<span class="fc" id="L91">    }</span>
+
+    /**
+     * Constructor for Memoable.
+     *
+     * @param pSource the source engine
+     */
+    private GordianZuc256Engine(final GordianZuc256Engine pSource) {
+<span class="fc" id="L99">        super(pSource);</span>
+<span class="fc" id="L100">    }</span>
+
+    @Override
+    protected int getMaxIterations() {
+<span class="fc" id="L104">        return 625;</span>
+    }
+
+    @Override
+    public String getAlgorithmName() {
+<span class="nc" id="L109">        return &quot;Zuc-256&quot;;</span>
+    }
+
+    /**
+     * Build a 31-bit integer from constituent parts.
+     *
+     * @param a part A
+     * @param b part B
+     * @param c part C
+     * @param d part D
+     * @return the built integer
+     */
+    private static int makeU31(final byte a, final byte b, final byte c, final byte d) {
+<span class="fc" id="L122">        return (((a &amp; 0xFF) &lt;&lt; 23) | ((b &amp; 0xFF) &lt;&lt; 16) | ((c &amp; 0xFF) &lt;&lt; 8) | (d &amp; 0xFF));</span>
+    }
+
+    @Override
+    protected void setKeyAndIV(final int[] pLFSR,
+                               final byte[] k,
+                               final byte[] iv) {
+        /* Check lengths */
+<span class="pc bpc" id="L130" title="2 of 4 branches missed.">        if (k == null || k.length != 32) {</span>
+<span class="nc" id="L131">            throw new IllegalArgumentException(&quot;A key of 32 bytes is needed&quot;);</span>
+        }
+<span class="pc bpc" id="L133" title="2 of 4 branches missed.">        if (iv == null || iv.length != 25) {</span>
+<span class="nc" id="L134">            throw new IllegalArgumentException(&quot;An IV of 25 bytes is needed&quot;);</span>
+        }
+
+        /* expand key and IV */
+<span class="fc" id="L138">        pLFSR[0] = makeU31(k[0], theD[0], k[21], k[16]);</span>
+<span class="fc" id="L139">        pLFSR[1] = makeU31(k[1], theD[1], k[22], k[17]);</span>
+<span class="fc" id="L140">        pLFSR[2] = makeU31(k[2], theD[2], k[23], k[18]);</span>
+<span class="fc" id="L141">        pLFSR[3] = makeU31(k[3], theD[3], k[24], k[19]);</span>
+<span class="fc" id="L142">        pLFSR[4] = makeU31(k[4], theD[4], k[25], k[20]);</span>
+<span class="fc" id="L143">        pLFSR[5] = makeU31(iv[0], (byte) (theD[5] | (iv[17] &amp; 0x3F)), k[5], k[26]);</span>
+<span class="fc" id="L144">        pLFSR[6] = makeU31(iv[1], (byte) (theD[6] | (iv[18] &amp; 0x3F)), k[6], k[27]);</span>
+<span class="fc" id="L145">        pLFSR[7] = makeU31(iv[10], (byte) (theD[7] | (iv[19] &amp; 0x3F)), k[7], iv[2]);</span>
+<span class="fc" id="L146">        pLFSR[8] = makeU31(k[8], (byte) (theD[8] | (iv[20] &amp; 0x3F)), iv[3], iv[11]);</span>
+<span class="fc" id="L147">        pLFSR[9] = makeU31(k[9], (byte) (theD[9] | (iv[21] &amp; 0x3F)), iv[12], iv[4]);</span>
+<span class="fc" id="L148">        pLFSR[10] = makeU31(iv[5], (byte) (theD[10] | (iv[22] &amp; 0x3F)), k[10], k[28]);</span>
+<span class="fc" id="L149">        pLFSR[11] = makeU31(k[11], (byte) (theD[11] | (iv[23] &amp; 0x3F)), iv[6], iv[13]);</span>
+<span class="fc" id="L150">        pLFSR[12] = makeU31(k[12], (byte) (theD[12] | (iv[24] &amp; 0x3F)), iv[7], iv[14]);</span>
+<span class="fc" id="L151">        pLFSR[13] = makeU31(k[13], theD[13], iv[15], iv[8]);</span>
+<span class="fc" id="L152">        pLFSR[14] = makeU31(k[14], (byte) (theD[14] | ((k[31] &gt;&gt;&gt; 4) &amp; 0xF)), iv[16], iv[9]);</span>
+<span class="fc" id="L153">        pLFSR[15] = makeU31(k[15], (byte) (theD[15] | (k[31] &amp; 0xF)), k[30], k[29]);</span>
+<span class="fc" id="L154">    }</span>
+
+    @Override
+    public GordianZuc256Engine copy() {
+<span class="fc" id="L158">        return new GordianZuc256Engine(this);</span>
+    }
+
+    @Override
+    public void reset(final Memoable pState) {
+<span class="fc" id="L163">        final GordianZuc256Engine e = (GordianZuc256Engine) pState;</span>
+<span class="fc" id="L164">        super.reset(pState);</span>
+<span class="fc" id="L165">        theD = e.theD;</span>
+<span class="fc" id="L166">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

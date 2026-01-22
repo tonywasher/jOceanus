@@ -1,0 +1,791 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseXAnalysisAccountBucket.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets</a> &gt; <span class="el_source">MoneyWiseXAnalysisAccountBucket.java</span></div><h1>MoneyWiseXAnalysisAccountBucket.java</h1><pre class="source lang-java linenums">/*
+ * MoneyWise: Finance Application
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets;
+
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimal;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRate;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
+import io.github.tonywasher.joceanus.metis.data.MetisDataDifference;
+import io.github.tonywasher.joceanus.metis.data.MetisDataFieldValue;
+import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataList;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldItem;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldItem.MetisFieldTableItem;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
+import io.github.tonywasher.joceanus.metis.list.MetisListIndexed;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.base.MoneyWiseXAnalysisBaseResource;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.base.MoneyWiseXAnalysisEvent;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.base.MoneyWiseXAnalysisHistory;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisInterfaces.MoneyWiseXAnalysisBucketForeign;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisInterfaces.MoneyWiseXAnalysisCursor;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.values.MoneyWiseXAnalysisAccountAttr;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.values.MoneyWiseXAnalysisAccountValues;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseAssetBase;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDeposit;
+import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseCurrency;
+import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
+
+import java.util.Currency;
+import java.util.Iterator;
+import java.util.List;
+
+/**
+ * The Account Bucket class.
+ *
+ * @param &lt;T&gt; the account data type
+ */
+public abstract class MoneyWiseXAnalysisAccountBucket&lt;T extends MoneyWiseAssetBase&gt;
+        implements MetisFieldTableItem, MoneyWiseXAnalysisBucketForeign {
+    /**
+     * Default currency.
+     */
+<span class="fc" id="L60">    protected static final Currency DEFAULT_CURRENCY = OceanusMoney.getDefaultCurrency();</span>
+
+    /**
+     * Report fields.
+     */
+    @SuppressWarnings(&quot;rawtypes&quot;)
+<span class="fc" id="L66">    private static final MetisFieldSet&lt;MoneyWiseXAnalysisAccountBucket&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseXAnalysisAccountBucket.class);</span>
+
+    /*
+     * Declare Fields.
+     */
+    static {
+<span class="fc" id="L72">        FIELD_DEFS.declareLocalField(MoneyWiseXAnalysisBucketResource.ANALYSIS_NAME, MoneyWiseXAnalysisAccountBucket::getAnalysis);</span>
+<span class="fc" id="L73">        FIELD_DEFS.declareLocalField(MoneyWiseXAnalysisBucketResource.BUCKET_ACCOUNT, MoneyWiseXAnalysisAccountBucket::getAccount);</span>
+<span class="fc" id="L74">        FIELD_DEFS.declareLocalField(MoneyWiseXAnalysisBucketResource.BUCKET_BASEVALUES, MoneyWiseXAnalysisAccountBucket::getBaseValues);</span>
+<span class="fc" id="L75">        FIELD_DEFS.declareLocalField(MoneyWiseXAnalysisBaseResource.BUCKET_HISTORY, MoneyWiseXAnalysisAccountBucket::getHistoryMap);</span>
+<span class="fc" id="L76">        FIELD_DEFS.declareLocalFieldsForEnum(MoneyWiseXAnalysisAccountAttr.class, MoneyWiseXAnalysisAccountBucket::getAttributeValue);</span>
+    }
+
+    /**
+     * Totals bucket name.
+     */
+<span class="fc" id="L82">    private static final String NAME_TOTALS = MoneyWiseXAnalysisBucketResource.ANALYSIS_TOTALS.getValue();</span>
+
+    /**
+     * The analysis.
+     */
+    private final MoneyWiseXAnalysis theAnalysis;
+
+    /**
+     * The account.
+     */
+    private final T theAccount;
+
+    /**
+     * Is this a foreign currency?
+     */
+    private final boolean isForeignCurrency;
+
+    /**
+     * Values.
+     */
+    private final MoneyWiseXAnalysisAccountValues theValues;
+
+    /**
+     * The base values.
+     */
+    private final MoneyWiseXAnalysisAccountValues theBaseValues;
+
+    /**
+     * History Map.
+     */
+    private final MoneyWiseXAnalysisHistory&lt;MoneyWiseXAnalysisAccountValues, MoneyWiseXAnalysisAccountAttr&gt; theHistory;
+
+    /**
+     * Constructor.
+     *
+     * @param pAnalysis the analysis
+     * @param pAccount  the account
+     */
+    protected MoneyWiseXAnalysisAccountBucket(final MoneyWiseXAnalysis pAnalysis,
+<span class="fc" id="L121">                                              final T pAccount) {</span>
+        /* Store the details */
+<span class="fc" id="L123">        theAccount = pAccount;</span>
+<span class="fc" id="L124">        theAnalysis = pAnalysis;</span>
+
+        /* Determine currency */
+<span class="fc" id="L127">        final MoneyWiseCurrency myReportingCurrency = pAnalysis.getCurrency();</span>
+<span class="fc bfc" id="L128" title="All 2 branches covered.">        final MoneyWiseCurrency myAccountCurrency = pAccount == null</span>
+<span class="fc" id="L129">                ? myReportingCurrency</span>
+<span class="fc" id="L130">                : pAccount.getAssetCurrency();</span>
+
+        /* Determine whether we are a foreign currency */
+<span class="fc bfc" id="L133" title="All 2 branches covered.">        isForeignCurrency = !MetisDataDifference.isEqual(myReportingCurrency, myAccountCurrency);</span>
+<span class="fc" id="L134">        final Currency myCurrency = deriveCurrency(myAccountCurrency);</span>
+
+        /* Create the history map */
+<span class="fc" id="L137">        final MoneyWiseXAnalysisAccountValues myValues = allocateValues(myCurrency);</span>
+<span class="fc" id="L138">        theHistory = new MoneyWiseXAnalysisHistory&lt;&gt;(myValues);</span>
+
+        /* Access the key value maps */
+<span class="fc" id="L141">        theValues = theHistory.getValues();</span>
+<span class="fc" id="L142">        theBaseValues = theHistory.getBaseValues();</span>
+
+        /* If this is a foreign currency account */
+<span class="fc bfc" id="L145" title="All 2 branches covered.">        if (isForeignCurrency) {</span>
+            /* Register for xchangeRate Updates */
+<span class="fc" id="L147">            theAnalysis.getCursor().registerForXchgRateUpdates(this);</span>
+
+            /* Record the exchangeRate and copy to base */
+<span class="fc" id="L150">            recordExchangeRate();</span>
+<span class="fc" id="L151">            theBaseValues.setValue(MoneyWiseXAnalysisAccountAttr.EXCHANGERATE, getValue(MoneyWiseXAnalysisAccountAttr.EXCHANGERATE));</span>
+
+            /* Create a new reportedValuation */
+<span class="fc" id="L154">            final OceanusMoney myReported = new OceanusMoney(theAnalysis.getCurrency().getCurrency());</span>
+<span class="fc" id="L155">            theValues.setValue(MoneyWiseXAnalysisAccountAttr.VALUATION, myReported);</span>
+<span class="fc" id="L156">            theBaseValues.setValue(MoneyWiseXAnalysisAccountAttr.VALUATION, myReported);</span>
+        }
+<span class="fc" id="L158">    }</span>
+
+    /**
+     * Constructor.
+     *
+     * @param pAnalysis the analysis
+     * @param pBase     the underlying bucket
+     */
+    protected MoneyWiseXAnalysisAccountBucket(final MoneyWiseXAnalysis pAnalysis,
+<span class="nc" id="L167">                                              final MoneyWiseXAnalysisAccountBucket&lt;T&gt; pBase) {</span>
+        /* Copy details from base */
+<span class="nc" id="L169">        theAccount = pBase.getAccount();</span>
+<span class="nc" id="L170">        theAnalysis = pAnalysis;</span>
+<span class="nc" id="L171">        isForeignCurrency = pBase.isForeignCurrency();</span>
+
+        /* Access the relevant history */
+<span class="nc" id="L174">        theHistory = new MoneyWiseXAnalysisHistory&lt;&gt;(pBase.getHistoryMap());</span>
+
+        /* Access the key value maps */
+<span class="nc" id="L177">        theValues = theHistory.getValues();</span>
+<span class="nc" id="L178">        theBaseValues = theHistory.getBaseValues();</span>
+<span class="nc" id="L179">    }</span>
+
+    /**
+     * Constructor.
+     *
+     * @param pAnalysis the analysis
+     * @param pBase     the underlying bucket
+     * @param pDate     the date for the bucket
+     */
+    protected MoneyWiseXAnalysisAccountBucket(final MoneyWiseXAnalysis pAnalysis,
+                                              final MoneyWiseXAnalysisAccountBucket&lt;T&gt; pBase,
+<span class="nc" id="L190">                                              final OceanusDate pDate) {</span>
+        /* Copy details from base */
+<span class="nc" id="L192">        theAccount = pBase.getAccount();</span>
+<span class="nc" id="L193">        theAnalysis = pAnalysis;</span>
+<span class="nc" id="L194">        isForeignCurrency = pBase.isForeignCurrency();</span>
+
+        /* Access the relevant history */
+<span class="nc" id="L197">        theHistory = new MoneyWiseXAnalysisHistory&lt;&gt;(pBase.getHistoryMap(), pDate);</span>
+
+        /* Access the key value maps */
+<span class="nc" id="L200">        theValues = theHistory.getValues();</span>
+<span class="nc" id="L201">        theBaseValues = theHistory.getBaseValues();</span>
+<span class="nc" id="L202">    }</span>
+
+    /**
+     * Constructor.
+     *
+     * @param pAnalysis the analysis
+     * @param pBase     the underlying bucket
+     * @param pRange    the range for the bucket
+     */
+    protected MoneyWiseXAnalysisAccountBucket(final MoneyWiseXAnalysis pAnalysis,
+                                              final MoneyWiseXAnalysisAccountBucket&lt;T&gt; pBase,
+<span class="nc" id="L213">                                              final OceanusDateRange pRange) {</span>
+        /* Copy details from base */
+<span class="nc" id="L215">        theAccount = pBase.getAccount();</span>
+<span class="nc" id="L216">        theAnalysis = pAnalysis;</span>
+<span class="nc" id="L217">        isForeignCurrency = pBase.isForeignCurrency();</span>
+
+        /* Access the relevant history */
+<span class="nc" id="L220">        theHistory = new MoneyWiseXAnalysisHistory&lt;&gt;(pBase.getHistoryMap(), pRange);</span>
+
+        /* Access the key value maps */
+<span class="nc" id="L223">        theValues = theHistory.getValues();</span>
+<span class="nc" id="L224">        theBaseValues = theHistory.getBaseValues();</span>
+<span class="nc" id="L225">    }</span>
+
+    @Override
+    public String formatObject(final OceanusDataFormatter pFormatter) {
+<span class="nc" id="L229">        return toString();</span>
+    }
+
+    @Override
+    public String toString() {
+<span class="nc" id="L234">        return getName() + &quot; &quot; + theValues;</span>
+    }
+
+    /**
+     * derive currency.
+     *
+     * @param pAssetCurrency the asset currency
+     * @return the actual currency to use
+     */
+    protected static Currency deriveCurrency(final MoneyWiseCurrency pAssetCurrency) {
+<span class="pc bpc" id="L244" title="1 of 2 branches missed.">        return pAssetCurrency == null</span>
+<span class="nc" id="L245">                ? DEFAULT_CURRENCY</span>
+<span class="fc" id="L246">                : pAssetCurrency.getCurrency();</span>
+    }
+
+    @Override
+    public MoneyWiseCurrency getCurrency() {
+<span class="pc bpc" id="L251" title="1 of 2 branches missed.">        return theAccount == null</span>
+<span class="nc" id="L252">                ? theAnalysis.getCurrency()</span>
+<span class="fc" id="L253">                : theAccount.getAssetCurrency();</span>
+    }
+
+    /**
+     * allocate standard values.
+     *
+     * @param pCurrency the asset currency
+     * @return the actual currency to use
+     */
+    protected MoneyWiseXAnalysisAccountValues allocateValues(final Currency pCurrency) {
+<span class="fc" id="L263">        return new MoneyWiseXAnalysisAccountValues(pCurrency);</span>
+    }
+
+    /**
+     * Obtain the name.
+     *
+     * @return the name
+     */
+    public String getName() {
+<span class="pc bpc" id="L272" title="1 of 2 branches missed.">        return theAccount == null</span>
+<span class="nc" id="L273">                ? NAME_TOTALS</span>
+<span class="fc" id="L274">                : theAccount.getName();</span>
+    }
+
+    /**
+     * Obtain the account.
+     *
+     * @return the account
+     */
+    public T getAccount() {
+<span class="fc" id="L283">        return theAccount;</span>
+    }
+
+    /**
+     * Is this a foreign currency?
+     *
+     * @return true/false
+     */
+    public boolean isForeignCurrency() {
+<span class="fc" id="L292">        return isForeignCurrency;</span>
+    }
+
+    @Override
+    public Integer getIndexedId() {
+<span class="fc" id="L297">        return theAccount.getIndexedId();</span>
+    }
+
+    /**
+     * Is this bucket idle?
+     *
+     * @return true/false
+     */
+    public boolean isIdle() {
+<span class="fc" id="L306">        return theHistory.isIdle();</span>
+    }
+
+    /**
+     * Obtain the analysis.
+     *
+     * @return the analysis
+     */
+    protected MoneyWiseXAnalysis getAnalysis() {
+<span class="nc" id="L315">        return theAnalysis;</span>
+    }
+
+    /**
+     * Obtain date range.
+     *
+     * @return the range
+     */
+    public OceanusDateRange getDateRange() {
+<span class="nc" id="L324">        return theAnalysis.getDateRange();</span>
+    }
+
+    /**
+     * Obtain the value map.
+     *
+     * @return the value map
+     */
+    public MoneyWiseXAnalysisAccountValues getValues() {
+<span class="fc" id="L333">        return theValues;</span>
+    }
+
+    /**
+     * Obtain the base value map.
+     *
+     * @return the base value map
+     */
+    public MoneyWiseXAnalysisAccountValues getBaseValues() {
+<span class="fc" id="L342">        return theBaseValues;</span>
+    }
+
+    /**
+     * Obtain values for event.
+     *
+     * @param pEvent the event
+     * @return the values (or null)
+     */
+    public MoneyWiseXAnalysisAccountValues getValuesForEvent(final MoneyWiseXAnalysisEvent pEvent) {
+<span class="fc" id="L352">        return theHistory.getValuesForEvent(pEvent);</span>
+    }
+
+    /**
+     * Obtain previous values for event.
+     *
+     * @param pEvent the event
+     * @return the values (or null)
+     */
+    public MoneyWiseXAnalysisAccountValues getPreviousValuesForEvent(final MoneyWiseXAnalysisEvent pEvent) {
+<span class="nc" id="L362">        return theHistory.getPreviousValuesForEvent(pEvent);</span>
+    }
+
+    /**
+     * Obtain delta for event.
+     *
+     * @param pEvent the event
+     * @param pAttr  the attribute
+     * @return the delta (or null)
+     */
+    public OceanusDecimal getDeltaForEvent(final MoneyWiseXAnalysisEvent pEvent,
+                                           final MoneyWiseXAnalysisAccountAttr pAttr) {
+        /* Obtain delta for transaction */
+<span class="nc" id="L375">        return theHistory.getDeltaValue(pEvent, pAttr);</span>
+    }
+
+    /**
+     * Obtain money delta for event.
+     *
+     * @param pEvent the event
+     * @param pAttr  the attribute
+     * @return the delta (or null)
+     */
+    public OceanusMoney getMoneyDeltaForEvent(final MoneyWiseXAnalysisEvent pEvent,
+                                              final MoneyWiseXAnalysisAccountAttr pAttr) {
+        /* Obtain delta for transaction */
+<span class="nc" id="L388">        return theHistory.getDeltaMoneyValue(pEvent, pAttr);</span>
+    }
+
+    /**
+     * Obtain the history map.
+     *
+     * @return the history map
+     */
+    private MoneyWiseXAnalysisHistory&lt;MoneyWiseXAnalysisAccountValues, MoneyWiseXAnalysisAccountAttr&gt; getHistoryMap() {
+<span class="nc" id="L397">        return theHistory;</span>
+    }
+
+    /**
+     * Set Value.
+     *
+     * @param pAttr  the attribute
+     * @param pValue the value of the attribute
+     */
+    protected void setValue(final MoneyWiseXAnalysisAccountAttr pAttr,
+                            final Object pValue) {
+        /* Set the value */
+<span class="fc" id="L409">        theValues.setValue(pAttr, pValue);</span>
+<span class="fc" id="L410">    }</span>
+
+    /**
+     * Get an attribute value.
+     *
+     * @param pAttr the attribute
+     * @return the value to set
+     */
+    private Object getAttributeValue(final MoneyWiseXAnalysisAccountAttr pAttr) {
+        /* Access value of object */
+<span class="nc" id="L420">        final Object myValue = getValue(pAttr);</span>
+
+        /* Return the value */
+<span class="nc bnc" id="L423" title="All 2 branches missed.">        return myValue != null</span>
+<span class="nc" id="L424">                ? myValue</span>
+<span class="nc" id="L425">                : MetisDataFieldValue.SKIP;</span>
+    }
+
+    /**
+     * Obtain an attribute value.
+     *
+     * @param pAttr the attribute
+     * @return the value of the attribute or null
+     */
+    private Object getValue(final MoneyWiseXAnalysisAccountAttr pAttr) {
+        /* Obtain the attribute value */
+<span class="fc" id="L436">        return theValues.getValue(pAttr);</span>
+    }
+
+    /**
+     * Record opening balance.
+     */
+    public void recordOpeningBalance() {
+        /* Obtain the base valuation */
+<span class="fc" id="L444">        final MoneyWiseXAnalysisAccountValues myValues = getBaseValues();</span>
+<span class="fc" id="L445">        final OceanusMoney myBaseValue = myValues.getMoneyValue(MoneyWiseXAnalysisAccountAttr.BALANCE);</span>
+
+        /* Set the base value (this will set the current value as well) */
+<span class="fc" id="L448">        myBaseValue.addAmount(getAccount().getOpeningBalance());</span>
+
+        /* If this is a foreign currency */
+<span class="fc bfc" id="L451" title="All 2 branches covered.">        if (isForeignCurrency) {</span>
+            /* Access the current exchange Rate */
+<span class="fc" id="L453">            final MoneyWiseCurrency myCurrency = theAnalysis.getCurrency();</span>
+<span class="fc" id="L454">            final OceanusRatio myRate = theValues.getRatioValue(MoneyWiseXAnalysisAccountAttr.EXCHANGERATE);</span>
+
+            /* Record the starting reporting balance and copy to base values */
+<span class="fc" id="L457">            final OceanusMoney myReport = myBaseValue.convertCurrency(myCurrency.getCurrency(), myRate);</span>
+<span class="fc" id="L458">            theValues.setValue(MoneyWiseXAnalysisAccountAttr.VALUATION, myReport);</span>
+<span class="fc" id="L459">            myValues.setValue(MoneyWiseXAnalysisAccountAttr.VALUATION, myReport);</span>
+<span class="fc" id="L460">            myValues.setValue(MoneyWiseXAnalysisAccountAttr.EXCHANGERATE, myRate);</span>
+        }
+<span class="fc" id="L462">    }</span>
+
+    /**
+     * Add to balance.
+     *
+     * @param pDelta the delta
+     */
+    public void addToBalance(final OceanusMoney pDelta) {
+<span class="fc" id="L470">        OceanusMoney myValue = theValues.getMoneyValue(MoneyWiseXAnalysisAccountAttr.BALANCE);</span>
+<span class="fc" id="L471">        myValue = new OceanusMoney(myValue);</span>
+<span class="fc" id="L472">        myValue.addAmount(pDelta);</span>
+<span class="fc" id="L473">        setValue(MoneyWiseXAnalysisAccountAttr.BALANCE, myValue);</span>
+<span class="fc" id="L474">    }</span>
+
+    /**
+     * Subtract from balance.
+     *
+     * @param pDelta the delta
+     */
+    public void subtractFromBalance(final OceanusMoney pDelta) {
+<span class="nc" id="L482">        OceanusMoney myValue = theValues.getMoneyValue(MoneyWiseXAnalysisAccountAttr.BALANCE);</span>
+<span class="nc" id="L483">        myValue = new OceanusMoney(myValue);</span>
+<span class="nc" id="L484">        myValue.subtractAmount(pDelta);</span>
+<span class="nc" id="L485">        setValue(MoneyWiseXAnalysisAccountAttr.BALANCE, myValue);</span>
+<span class="nc" id="L486">    }</span>
+
+    /**
+     * Set maturity.
+     */
+    public void recordMaturity() {
+<span class="fc" id="L492">        final OceanusDate myMaturity = ((MoneyWiseDeposit) getAccount()).getMaturity();</span>
+<span class="pc bpc" id="L493" title="1 of 2 branches missed.">        if (myMaturity != null) {</span>
+<span class="nc" id="L494">            theValues.setValue(MoneyWiseXAnalysisAccountAttr.MATURITY, ((MoneyWiseDeposit) getAccount()).getMaturity());</span>
+        }
+<span class="fc" id="L496">    }</span>
+
+    @Override
+    public void recordExchangeRate() {
+<span class="fc" id="L500">        final MoneyWiseXAnalysisCursor myCursor = theAnalysis.getCursor();</span>
+<span class="fc" id="L501">        final OceanusRatio myRate = myCursor.getCurrentXchgRate(getAccount().getAssetCurrency());</span>
+<span class="fc" id="L502">        theValues.setValue(MoneyWiseXAnalysisAccountAttr.EXCHANGERATE, myRate);</span>
+<span class="fc" id="L503">    }</span>
+
+    /**
+     * Record depositRate.
+     */
+    public void recordDepositRate() {
+<span class="nc" id="L509">        final MoneyWiseXAnalysisCursor myCursor = theAnalysis.getCursor();</span>
+<span class="nc" id="L510">        final OceanusRate myRate = myCursor.getCurrentDepositRate((MoneyWiseDeposit) getAccount());</span>
+<span class="nc" id="L511">        theValues.setValue(MoneyWiseXAnalysisAccountAttr.DEPOSITRATE, myRate);</span>
+<span class="nc" id="L512">    }</span>
+
+    @Override
+    public void adjustValuation() {
+        /* Determine reported balance */
+<span class="fc" id="L517">        OceanusMoney myBalance = theValues.getMoneyValue(MoneyWiseXAnalysisAccountAttr.BALANCE);</span>
+<span class="fc bfc" id="L518" title="All 2 branches covered.">        if (isForeignCurrency) {</span>
+<span class="fc" id="L519">            final OceanusRatio myRate = theValues.getRatioValue(MoneyWiseXAnalysisAccountAttr.EXCHANGERATE);</span>
+<span class="fc" id="L520">            myBalance = myBalance.convertCurrency(theAnalysis.getCurrency().getCurrency(), myRate);</span>
+        }
+<span class="fc" id="L522">        theValues.setValue(MoneyWiseXAnalysisAccountAttr.VALUATION, myBalance);</span>
+<span class="fc" id="L523">    }</span>
+
+    @Override
+    public OceanusMoney getDeltaValuation() {
+        /* Determine the delta */
+<span class="fc" id="L528">        final OceanusMoney myDelta = new OceanusMoney(theValues.getMoneyValue(MoneyWiseXAnalysisAccountAttr.VALUATION));</span>
+<span class="fc" id="L529">        myDelta.subtractAmount(theHistory.getLastValues().getMoneyValue(MoneyWiseXAnalysisAccountAttr.VALUATION));</span>
+<span class="fc" id="L530">        return myDelta;</span>
+    }
+
+    @Override
+    public void registerEvent(final MoneyWiseXAnalysisEvent pEvent) {
+        /* Make sure that valuation is correct */
+<span class="fc" id="L536">        adjustValuation();</span>
+
+        /* Register the transaction in the history */
+<span class="fc" id="L539">        theHistory.registerEvent(pEvent, theValues);</span>
+<span class="fc" id="L540">    }</span>
+
+    /**
+     * Calculate delta.
+     */
+    protected void calculateDelta() {
+        /* Obtain a copy of the value */
+<span class="fc" id="L547">        OceanusMoney myDelta = theValues.getMoneyValue(MoneyWiseXAnalysisAccountAttr.VALUATION);</span>
+<span class="fc" id="L548">        myDelta = new OceanusMoney(myDelta);</span>
+
+        /* Subtract any base value */
+<span class="fc" id="L551">        final OceanusMoney myBase = theBaseValues.getMoneyValue(MoneyWiseXAnalysisAccountAttr.VALUATION);</span>
+<span class="fc" id="L552">        myDelta.subtractAmount(myBase);</span>
+
+        /* Set the delta */
+<span class="fc" id="L555">        setValue(MoneyWiseXAnalysisAccountAttr.VALUEDELTA, myDelta);</span>
+
+        /* Adjust to base values */
+<span class="fc" id="L558">        theValues.adjustToBaseValues(theBaseValues);</span>
+<span class="fc" id="L559">        theBaseValues.resetBaseValues();</span>
+<span class="fc" id="L560">    }</span>
+
+    /**
+     * Is the bucket active?
+     *
+     * @return true/false
+     */
+    public boolean isActive() {
+<span class="fc" id="L568">        return theValues.isActive();</span>
+    }
+
+    /**
+     * AccountBucket list class.
+     *
+     * @param &lt;B&gt; the account bucket data type
+     * @param &lt;T&gt; the account data type
+     */
+    public abstract static class MoneyWiseXAnalysisAccountBucketList&lt;B extends MoneyWiseXAnalysisAccountBucket&lt;T&gt;, T extends MoneyWiseAssetBase&gt;
+            implements MetisFieldItem, MetisDataList&lt;B&gt; {
+        /**
+         * Local Report fields.
+         */
+        @SuppressWarnings(&quot;rawtypes&quot;)
+<span class="fc" id="L583">        private static final MetisFieldSet&lt;MoneyWiseXAnalysisAccountBucketList&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseXAnalysisAccountBucketList.class);</span>
+
+        /*
+         * Field IDs.
+         */
+        static {
+<span class="fc" id="L589">            FIELD_DEFS.declareLocalField(MoneyWiseXAnalysisBucketResource.ANALYSIS_NAME, MoneyWiseXAnalysisAccountBucketList::getAnalysis);</span>
+<span class="fc" id="L590">        }</span>
+
+        /**
+         * The analysis.
+         */
+        private final MoneyWiseXAnalysis theAnalysis;
+
+        /**
+         * The list.
+         */
+        private final MetisListIndexed&lt;B&gt; theList;
+
+        /**
+         * Construct a top-level List.
+         *
+         * @param pAnalysis the analysis
+         */
+<span class="fc" id="L607">        protected MoneyWiseXAnalysisAccountBucketList(final MoneyWiseXAnalysis pAnalysis) {</span>
+            /* Initialise class */
+<span class="fc" id="L609">            theAnalysis = pAnalysis;</span>
+<span class="fc" id="L610">            theList = new MetisListIndexed&lt;&gt;();</span>
+<span class="fc" id="L611">            theList.setComparator((l, r) -&gt; l.getAccount().compareTo(r.getAccount()));</span>
+<span class="fc" id="L612">        }</span>
+
+        @Override
+        public List&lt;B&gt; getUnderlyingList() {
+<span class="fc" id="L616">            return theList.getUnderlyingList();</span>
+        }
+
+        @Override
+        public String formatObject(final OceanusDataFormatter pFormatter) {
+<span class="nc" id="L621">            return getDataFieldSet().getName();</span>
+        }
+
+        /**
+         * Obtain the analysis.
+         *
+         * @return the analysis
+         */
+        protected MoneyWiseXAnalysis getAnalysis() {
+<span class="fc" id="L630">            return theAnalysis;</span>
+        }
+
+        /**
+         * Construct a view bucket.
+         *
+         * @param pBase the base bucket
+         * @return the new bucket
+         */
+        protected abstract B newBucket(B pBase);
+
+        /**
+         * Construct a dated List.
+         *
+         * @param pBase the base list
+         * @param pDate the Date
+         */
+        protected void constructFromBase(final MoneyWiseXAnalysisAccountBucketList&lt;B, T&gt; pBase,
+                                         final OceanusDate pDate) {
+            /* Loop through the buckets */
+<span class="nc" id="L650">            final Iterator&lt;B&gt; myIterator = pBase.iterator();</span>
+<span class="nc bnc" id="L651" title="All 2 branches missed.">            while (myIterator.hasNext()) {</span>
+<span class="nc" id="L652">                final B myCurr = myIterator.next();</span>
+
+                /* Access the bucket for this date */
+<span class="nc" id="L655">                final B myBucket = newBucket(myCurr, pDate);</span>
+
+                /* If the bucket is non-idle or active */
+<span class="nc bnc" id="L658" title="All 4 branches missed.">                if (myBucket.isActive() || !myBucket.isIdle()) {</span>
+<span class="nc" id="L659">                    theList.add(myBucket);</span>
+                }
+<span class="nc" id="L661">            }</span>
+<span class="nc" id="L662">        }</span>
+
+        /**
+         * Construct a dated bucket.
+         *
+         * @param pBase the base bucket
+         * @param pDate the Date
+         * @return the new bucket
+         */
+        protected abstract B newBucket(B pBase,
+                                       OceanusDate pDate);
+
+        /**
+         * Construct a ranged List.
+         *
+         * @param pBase  the base list
+         * @param pRange the Date Range
+         */
+        protected void constructFromBase(final MoneyWiseXAnalysisAccountBucketList&lt;B, T&gt; pBase,
+                                         final OceanusDateRange pRange) {
+            /* Loop through the buckets */
+<span class="nc" id="L683">            final Iterator&lt;B&gt; myIterator = pBase.iterator();</span>
+<span class="nc bnc" id="L684" title="All 2 branches missed.">            while (myIterator.hasNext()) {</span>
+<span class="nc" id="L685">                final B myCurr = myIterator.next();</span>
+
+                /* Access the bucket for this range */
+<span class="nc" id="L688">                final B myBucket = newBucket(myCurr, pRange);</span>
+
+                /* If the bucket is non-idle or active */
+<span class="nc bnc" id="L691" title="All 4 branches missed.">                if (myBucket.isActive() || !myBucket.isIdle()) {</span>
+                    /* Add to the list */
+<span class="nc" id="L693">                    theList.add(myBucket);</span>
+                }
+<span class="nc" id="L695">            }</span>
+<span class="nc" id="L696">        }</span>
+
+        /**
+         * Obtain item by id.
+         *
+         * @param pId the id to lookup
+         * @return the item (or null if not present)
+         */
+        public B findItemById(final Integer pId) {
+            /* Return results */
+<span class="fc" id="L706">            return theList.getItemById(pId);</span>
+        }
+
+        /**
+         * Construct a ranged bucket.
+         *
+         * @param pBase  the base bucket
+         * @param pRange the Range
+         * @return the new bucket
+         */
+        protected abstract B newBucket(B pBase,
+                                       OceanusDateRange pRange);
+
+        /**
+         * Obtain the AccountBucket for a given account.
+         *
+         * @param pAccount the account
+         * @return the bucket
+         */
+        public B getBucket(final T pAccount) {
+            /* Locate the bucket in the list */
+<span class="fc" id="L727">            B myItem = findItemById(pAccount.getIndexedId());</span>
+
+            /* If the item does not yet exist */
+<span class="fc bfc" id="L730" title="All 2 branches covered.">            if (myItem == null) {</span>
+                /* Create the new bucket */
+<span class="fc" id="L732">                myItem = newBucket(pAccount);</span>
+
+                /* Add to the list */
+<span class="fc" id="L735">                theList.add(myItem);</span>
+            }
+
+            /* Return the bucket */
+<span class="fc" id="L739">            return myItem;</span>
+        }
+
+        /**
+         * Construct a standard bucket.
+         *
+         * @param pAccount the Account
+         * @return the new bucket
+         */
+        protected abstract B newBucket(T pAccount);
+
+        /**
+         * SortBuckets.
+         */
+        protected void sortBuckets() {
+<span class="fc" id="L754">            theList.sortList();</span>
+<span class="fc" id="L755">        }</span>
+
+        /**
+         * Mark active accounts.
+         *
+         * @throws OceanusException on error
+         */
+        public void markActiveAccounts() throws OceanusException {
+            /* Loop through the buckets */
+<span class="fc" id="L764">            final Iterator&lt;B&gt; myIterator = iterator();</span>
+<span class="fc bfc" id="L765" title="All 2 branches covered.">            while (myIterator.hasNext()) {</span>
+<span class="fc" id="L766">                final B myCurr = myIterator.next();</span>
+<span class="fc" id="L767">                final T myAccount = myCurr.getAccount();</span>
+
+                /* If we are active */
+<span class="pc bpc" id="L770" title="1 of 2 branches missed.">                if (myCurr.isActive()) {</span>
+                    /* Set the account as relevant */
+<span class="fc" id="L772">                    myAccount.setRelevant();</span>
+                }
+
+                /* If we are closed */
+<span class="pc bpc" id="L776" title="1 of 2 branches missed.">                if (Boolean.TRUE.equals(myAccount.isClosed())) {</span>
+                    /* Ensure that we have correct closed/maturity dates */
+<span class="nc" id="L778">                    myAccount.adjustClosed();</span>
+
+                    /* If we are Relevant */
+<span class="nc bnc" id="L781" title="All 2 branches missed.">                    if (myAccount.isRelevant()</span>
+<span class="nc bnc" id="L782" title="All 2 branches missed.">                            &amp;&amp; theAnalysis.getData().checkClosedAccounts()) {</span>
+                        /* throw exception */
+<span class="nc" id="L784">                        throw new MoneyWiseDataException(myCurr, &quot;Illegally closed account&quot;);</span>
+                    }
+                }
+<span class="fc" id="L787">            }</span>
+<span class="fc" id="L788">        }</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

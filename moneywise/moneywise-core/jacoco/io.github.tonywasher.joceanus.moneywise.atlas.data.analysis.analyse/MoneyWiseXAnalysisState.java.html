@@ -1,0 +1,493 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseXAnalysisState.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.analyse</a> &gt; <span class="el_source">MoneyWiseXAnalysisState.java</span></div><h1>MoneyWiseXAnalysisState.java</h1><pre class="source lang-java linenums">/*
+ * MoneyWise: Finance Application
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.analyse;
+
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRate;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.base.MoneyWiseNewDepositRate;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.base.MoneyWiseNewDepositRate.MoneyWiseNewDepositRateList;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.base.MoneyWiseXAnalysisEvent;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.base.MoneyWiseXAnalysisEventList;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.base.MoneyWiseXAnalysisEventType;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisInterfaces.MoneyWiseXAnalysisBucketForeign;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisInterfaces.MoneyWiseXAnalysisBucketPriced;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisInterfaces.MoneyWiseXAnalysisBucketRegister;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisInterfaces.MoneyWiseXAnalysisCursor;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseAssetBase;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseAssetBase.MoneyWiseAssetBaseList;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDataSet;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDeposit;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseExchangeRate;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseExchangeRate.MoneyWiseExchangeRateList;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurity;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurityPrice;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurityPrice.MoneyWiseSecurityPriceList;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransaction;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransaction.MoneyWiseTransactionList;
+import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseCurrency;
+import io.github.tonywasher.joceanus.prometheus.views.PrometheusEditSet;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * Analysis Cursor.
+ */
+public class MoneyWiseXAnalysisState
+        implements MoneyWiseXAnalysisCursor {
+    /**
+     * The securityPrice iterator.
+     */
+    private final Iterator&lt;MoneyWiseSecurityPrice&gt; thePriceIterator;
+
+    /**
+     * The exchangeRate iterator.
+     */
+    private final Iterator&lt;MoneyWiseExchangeRate&gt; theXchgRateIterator;
+
+    /**
+     * The depositRate iterator.
+     */
+    private final Iterator&lt;MoneyWiseNewDepositRate&gt; theDepRateIterator;
+
+    /**
+     * The transaction iterator.
+     */
+    private final Iterator&lt;MoneyWiseTransaction&gt; theTransIterator;
+
+    /**
+     * The price map.
+     */
+    private final Map&lt;MoneyWiseSecurity, OceanusPrice&gt; thePriceMap;
+
+    /**
+     * The xchgRate map.
+     */
+    private final Map&lt;MoneyWiseCurrency, OceanusRatio&gt; theXchgRateMap;
+
+    /**
+     * The depositRate map.
+     */
+    private final Map&lt;MoneyWiseDeposit, OceanusRate&gt; theDepRateMap;
+
+    /**
+     * The pricedBucketMap.
+     */
+    private final Map&lt;MoneyWiseSecurity, List&lt;MoneyWiseXAnalysisBucketPriced&gt;&gt; thePricedBucketsMap;
+
+    /**
+     * The foreignBucketMap.
+     */
+    private final Map&lt;MoneyWiseCurrency, List&lt;MoneyWiseXAnalysisBucketForeign&gt;&gt; theForeignBucketsMap;
+
+    /**
+     * The eventBuckets that are to be registered to the event.
+     */
+    private final Map&lt;Long, MoneyWiseXAnalysisBucketRegister&gt; theEventBuckets;
+
+    /**
+     * The editSet.
+     */
+    private final PrometheusEditSet theEditSet;
+
+    /**
+     * The startDate.
+     */
+    private final OceanusDate theStartDate;
+
+    /**
+     * The editSet.
+     */
+    private final MoneyWiseXAnalysisEventList theEvents;
+
+    /**
+     * Have balances been built?.
+     */
+    private boolean balancesBuilt;
+
+    /**
+     * The next Price.
+     */
+    private MoneyWiseSecurityPrice theNextPrice;
+
+    /**
+     * The next xchgRate.
+     */
+    private MoneyWiseExchangeRate theNextXchgRate;
+
+    /**
+     * The next depRate.
+     */
+    private MoneyWiseNewDepositRate theNextDepRate;
+
+    /**
+     * The next Transaction.
+     */
+    private MoneyWiseTransaction theNextTrans;
+
+    /**
+     * The next Event.
+     */
+    private MoneyWiseXAnalysisEvent theNextEvent;
+
+    /**
+     * Constructor.
+     *
+     * @param pEditSet the editSet
+     */
+<span class="fc" id="L160">    public MoneyWiseXAnalysisState(final PrometheusEditSet pEditSet) {</span>
+        /* Store parameters */
+<span class="fc" id="L162">        theEditSet = pEditSet;</span>
+<span class="fc" id="L163">        theEvents = new MoneyWiseXAnalysisEventList(theEditSet);</span>
+
+<span class="fc" id="L165">        final MoneyWiseSecurityPriceList myPrices = theEditSet.getDataList(MoneyWiseBasicDataType.SECURITYPRICE, MoneyWiseSecurityPriceList.class);</span>
+<span class="fc" id="L166">        thePriceIterator = myPrices.iterator();</span>
+<span class="fc" id="L167">        final MoneyWiseExchangeRateList myXchgRates = theEditSet.getDataList(MoneyWiseBasicDataType.EXCHANGERATE, MoneyWiseExchangeRateList.class);</span>
+<span class="fc" id="L168">        theXchgRateIterator = myXchgRates.iterator();</span>
+<span class="fc" id="L169">        theDepRateIterator = new MoneyWiseNewDepositRateList(theEditSet).iterator();</span>
+<span class="fc" id="L170">        theTransIterator = theEditSet.getDataList(MoneyWiseBasicDataType.TRANSACTION, MoneyWiseTransactionList.class).iterator();</span>
+<span class="fc" id="L171">        theStartDate = ((MoneyWiseDataSet) theEditSet.getDataSet()).getDateRange().getStart();</span>
+<span class="fc" id="L172">        balancesBuilt = false;</span>
+
+        /* Create the maps */
+<span class="fc" id="L175">        thePriceMap = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L176">        theXchgRateMap = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L177">        theDepRateMap = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L178">        thePricedBucketsMap = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L179">        theForeignBucketsMap = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L180">        theEventBuckets = new HashMap&lt;&gt;();</span>
+
+        /* Set up first elements */
+<span class="fc" id="L183">        iteratePrice();</span>
+<span class="fc" id="L184">        iterateXchgRate();</span>
+<span class="fc" id="L185">        iterateDepRate();</span>
+<span class="fc" id="L186">        iterateTrans();</span>
+<span class="fc" id="L187">    }</span>
+
+    /**
+     * Obtain the EventList.
+     *
+     * @return the list
+     */
+    public MoneyWiseXAnalysisEventList getEventList() {
+<span class="fc" id="L195">        return theEvents;</span>
+    }
+
+    /**
+     * Build next event.
+     *
+     * @return the next event (or null)
+     */
+    public MoneyWiseXAnalysisEvent nextEvent() {
+        /* Determine next eventType */
+<span class="fc" id="L205">        final MoneyWiseXAnalysisEventType myType = nextEventType();</span>
+
+        /* Switch on the event Type */
+<span class="fc bfc" id="L208" title="All 2 branches covered.">        if (myType == null) {</span>
+<span class="fc" id="L209">            theNextEvent = null;</span>
+        } else {
+<span class="pc bpc" id="L211" title="1 of 5 branches missed.">            switch (myType) {</span>
+                case SECURITYPRICE:
+<span class="fc" id="L213">                    nextSecurityPrice();</span>
+<span class="fc" id="L214">                    break;</span>
+                case XCHANGERATE:
+<span class="fc" id="L216">                    nextXchgRate();</span>
+<span class="fc" id="L217">                    break;</span>
+                case DEPOSITRATE:
+<span class="nc" id="L219">                    nextDepRate();</span>
+<span class="nc" id="L220">                    break;</span>
+                case OPENINGBALANCE:
+<span class="fc" id="L222">                    buildBalances();</span>
+<span class="fc" id="L223">                    break;</span>
+                case TRANSACTION:
+                default:
+<span class="fc" id="L226">                    nextTransaction();</span>
+                    break;
+            }
+        }
+
+        /* Return the new event */
+<span class="fc" id="L232">        return theNextEvent;</span>
+    }
+
+    /**
+     * determine next eventType.
+     *
+     * @return the next eventTupe (or null)
+     */
+    private MoneyWiseXAnalysisEventType nextEventType() {
+        /* Look for a price event */
+<span class="fc" id="L242">        OceanusDate myDate = null;</span>
+<span class="fc" id="L243">        MoneyWiseXAnalysisEventType myType = null;</span>
+<span class="fc bfc" id="L244" title="All 2 branches covered.">        if (theNextPrice != null) {</span>
+<span class="fc" id="L245">            myDate = theNextPrice.getDate();</span>
+<span class="fc" id="L246">            myType = MoneyWiseXAnalysisEventType.SECURITYPRICE;</span>
+        }
+
+        /* Look for an earlier xchgRate event */
+<span class="fc bfc" id="L250" title="All 4 branches covered.">        if (theNextXchgRate != null</span>
+<span class="fc bfc" id="L251" title="All 2 branches covered.">                &amp;&amp; (myDate == null || myDate.compareTo(theNextXchgRate.getDate()) &gt; 0)) {</span>
+<span class="fc" id="L252">            myDate = theNextXchgRate.getDate();</span>
+<span class="fc" id="L253">            myType = MoneyWiseXAnalysisEventType.XCHANGERATE;</span>
+        }
+
+        /* Look for an earlier depRate event */
+<span class="pc bpc" id="L257" title="3 of 4 branches missed.">        if (theNextDepRate != null</span>
+<span class="nc bnc" id="L258" title="All 2 branches missed.">                &amp;&amp; (myDate == null || myDate.compareTo(theNextDepRate.getDate()) &gt; 0)) {</span>
+<span class="nc" id="L259">            myDate = theNextDepRate.getDate();</span>
+<span class="nc" id="L260">            myType = MoneyWiseXAnalysisEventType.DEPOSITRATE;</span>
+        }
+
+        /* Immediate return for starting prices */
+<span class="fc bfc" id="L264" title="All 2 branches covered.">        if (theStartDate.equals(myDate)) {</span>
+<span class="fc" id="L265">            return myType;</span>
+        }
+
+        /* If we have not yet built opening balances */
+<span class="fc bfc" id="L269" title="All 2 branches covered.">        if (!balancesBuilt) {</span>
+<span class="fc" id="L270">            balancesBuilt = true;</span>
+<span class="fc" id="L271">            return MoneyWiseXAnalysisEventType.OPENINGBALANCE;</span>
+        }
+
+        /* Look for an earlier transaction */
+<span class="fc bfc" id="L275" title="All 4 branches covered.">        if (theNextTrans != null</span>
+<span class="pc bpc" id="L276" title="1 of 2 branches missed.">                &amp;&amp; (myDate == null || myDate.compareTo(theNextTrans.getDate()) &gt; 0)) {</span>
+<span class="fc" id="L277">            return MoneyWiseXAnalysisEventType.TRANSACTION;</span>
+        }
+
+        /* Return the next eventType */
+<span class="fc" id="L281">        return myType;</span>
+    }
+
+    /**
+     * Build next price event.
+     */
+    private void nextSecurityPrice() {
+<span class="fc" id="L288">        final OceanusDate myDate = theNextPrice.getDate();</span>
+<span class="fc" id="L289">        theNextEvent = theEvents.newSecurityPrice(myDate);</span>
+        do {
+<span class="fc" id="L291">            processSecurityPrice();</span>
+<span class="fc bfc" id="L292" title="All 4 branches covered.">        } while (theNextPrice != null &amp;&amp; myDate.equals(theNextPrice.getDate()));</span>
+<span class="fc" id="L293">    }</span>
+
+    /**
+     * Process securityPrice.
+     */
+    private void processSecurityPrice() {
+<span class="fc" id="L299">        theNextEvent.declareSecurityPrice(theNextPrice);</span>
+<span class="fc" id="L300">        thePriceMap.put(theNextPrice.getSecurity(), theNextPrice.getPrice());</span>
+<span class="fc" id="L301">        iteratePrice();</span>
+<span class="fc" id="L302">    }</span>
+
+    /**
+     * Build next xchangeRate event.
+     */
+    private void nextXchgRate() {
+<span class="fc" id="L308">        final OceanusDate myDate = theNextXchgRate.getDate();</span>
+<span class="fc" id="L309">        theNextEvent = theEvents.newXchangeRate(myDate);</span>
+        do {
+<span class="fc" id="L311">            processXchgRate();</span>
+<span class="fc bfc" id="L312" title="All 4 branches covered.">        } while (theNextXchgRate != null &amp;&amp; myDate.equals(theNextXchgRate.getDate()));</span>
+<span class="fc" id="L313">    }</span>
+
+    /**
+     * Process xchangeRate.
+     */
+    private void processXchgRate() {
+<span class="fc" id="L319">        theNextEvent.declareExchangeRate(theNextXchgRate);</span>
+<span class="fc" id="L320">        theXchgRateMap.put(theNextXchgRate.getToCurrency(), theNextXchgRate.getExchangeRate());</span>
+<span class="fc" id="L321">        iterateXchgRate();</span>
+<span class="fc" id="L322">    }</span>
+
+    /**
+     * Build next depositRate event.
+     */
+    private void nextDepRate() {
+<span class="nc" id="L328">        final OceanusDate myDate = theNextDepRate.getDate();</span>
+<span class="nc" id="L329">        theNextEvent = theEvents.newDepositRate(myDate);</span>
+        do {
+<span class="nc" id="L331">            processDepRate();</span>
+<span class="nc bnc" id="L332" title="All 4 branches missed.">        } while (theNextDepRate != null &amp;&amp; myDate.equals(theNextDepRate.getDate()));</span>
+<span class="nc" id="L333">    }</span>
+
+    /**
+     * Process depositRate.
+     */
+    private void processDepRate() {
+<span class="nc" id="L339">        theNextEvent.declareDepositRate(theNextDepRate);</span>
+<span class="nc" id="L340">        theDepRateMap.put(theNextDepRate.getDeposit(), theNextDepRate.getRate());</span>
+<span class="nc" id="L341">        iterateDepRate();</span>
+<span class="nc" id="L342">    }</span>
+
+    /**
+     * Build next transaction event.
+     */
+    private void nextTransaction() {
+<span class="fc" id="L348">        theNextEvent = theEvents.newTransaction(theNextTrans);</span>
+<span class="fc" id="L349">        iterateTrans();</span>
+<span class="fc" id="L350">    }</span>
+
+    @Override
+    public OceanusPrice getCurrentPrice(final MoneyWiseSecurity pSecurity) {
+<span class="fc" id="L354">        final OceanusPrice myPrice = thePriceMap.get(pSecurity);</span>
+<span class="fc bfc" id="L355" title="All 2 branches covered.">        return myPrice == null</span>
+<span class="fc" id="L356">                ? OceanusPrice.getWholeUnits(1, pSecurity.getCurrency())</span>
+<span class="fc" id="L357">                : myPrice;</span>
+    }
+
+    @Override
+    public OceanusRatio getCurrentXchgRate(final MoneyWiseCurrency pCurrency) {
+<span class="fc" id="L362">        final OceanusRatio myRate = theXchgRateMap.get(pCurrency);</span>
+<span class="pc bpc" id="L363" title="1 of 2 branches missed.">        return myRate == null ? OceanusRatio.ONE : myRate;</span>
+    }
+
+    @Override
+    public OceanusRate getCurrentDepositRate(final MoneyWiseDeposit pDeposit) {
+<span class="nc" id="L368">        return theDepRateMap.get(pDeposit);</span>
+    }
+
+    @Override
+    public void registerForPriceUpdates(final MoneyWiseXAnalysisBucketPriced pBucket) {
+        /* Determine the security whose price we are tracking */
+<span class="fc" id="L374">        MoneyWiseSecurity mySecurity = pBucket.getSecurity();</span>
+<span class="pc bpc" id="L375" title="1 of 2 branches missed.">        if (pBucket.isStockOption()) {</span>
+<span class="nc" id="L376">            mySecurity = mySecurity.getUnderlyingStock();</span>
+        }
+
+        /* Add to list */
+<span class="fc" id="L380">        final List&lt;MoneyWiseXAnalysisBucketPriced&gt; myList = thePricedBucketsMap.computeIfAbsent(mySecurity, x -&gt; new ArrayList&lt;&gt;());</span>
+<span class="fc" id="L381">        myList.add(pBucket);</span>
+<span class="fc" id="L382">    }</span>
+
+    @Override
+    public void registerForXchgRateUpdates(final MoneyWiseXAnalysisBucketForeign pBucket) {
+<span class="fc" id="L386">        final List&lt;MoneyWiseXAnalysisBucketForeign&gt; myList = theForeignBucketsMap.computeIfAbsent(pBucket.getCurrency(), x -&gt; new ArrayList&lt;&gt;());</span>
+<span class="fc" id="L387">        myList.add(pBucket);</span>
+<span class="fc" id="L388">    }</span>
+
+    @Override
+    public void registerBucketInterest(final MoneyWiseXAnalysisBucketRegister pBucket) {
+<span class="fc" id="L392">        theEventBuckets.put(pBucket.getBucketId(), pBucket);</span>
+<span class="fc" id="L393">    }</span>
+
+    @Override
+    public void registerInterestedBucketsForEvent(final MoneyWiseXAnalysisEvent pEvent) {
+<span class="fc bfc" id="L397" title="All 2 branches covered.">        for (MoneyWiseXAnalysisBucketRegister myBucket : theEventBuckets.values()) {</span>
+<span class="fc" id="L398">            myBucket.registerEvent(pEvent);</span>
+<span class="fc" id="L399">        }</span>
+<span class="fc" id="L400">        theEventBuckets.clear();</span>
+<span class="fc" id="L401">    }</span>
+
+    /**
+     * Set new price for security as part of a transaction.
+     *
+     * @param pSecurity the security
+     * @param pPrice    the new price
+     */
+    public void setNewPriceViaTransaction(final MoneyWiseSecurity pSecurity,
+                                          final OceanusPrice pPrice) {
+<span class="fc" id="L411">        thePriceMap.put(pSecurity, pPrice);</span>
+<span class="fc" id="L412">    }</span>
+
+    /**
+     * Obtain the pricedBuckets iterator for a security.
+     *
+     * @param pSecurity the security
+     * @return the iterator
+     */
+    public Iterator&lt;MoneyWiseXAnalysisBucketPriced&gt; pricedBucketIterator(final MoneyWiseSecurity pSecurity) {
+<span class="fc" id="L421">        final List&lt;MoneyWiseXAnalysisBucketPriced&gt; myList = thePricedBucketsMap.get(pSecurity);</span>
+<span class="fc bfc" id="L422" title="All 2 branches covered.">        return myList != null ? myList.iterator() : Collections.emptyIterator();</span>
+    }
+
+    /**
+     * Obtain the foreignBuckets iterator for a currency.
+     *
+     * @param pCurrency the currency
+     * @return the iterator
+     */
+    public Iterator&lt;MoneyWiseXAnalysisBucketForeign&gt; foreignBucketIterator(final MoneyWiseCurrency pCurrency) {
+<span class="fc" id="L432">        final List&lt;MoneyWiseXAnalysisBucketForeign&gt; myList = theForeignBucketsMap.get(pCurrency);</span>
+<span class="fc bfc" id="L433" title="All 2 branches covered.">        return myList != null ? myList.iterator() : Collections.emptyIterator();</span>
+    }
+
+    /**
+     * Iterate the SecurityPrices.
+     */
+    private void iteratePrice() {
+<span class="fc bfc" id="L440" title="All 2 branches covered.">        theNextPrice = thePriceIterator.hasNext() ? thePriceIterator.next() : null;</span>
+<span class="fc" id="L441">    }</span>
+
+    /**
+     * Iterate the ExchangeRates.
+     */
+    private void iterateXchgRate() {
+<span class="fc bfc" id="L447" title="All 2 branches covered.">        theNextXchgRate = theXchgRateIterator.hasNext() ? theXchgRateIterator.next() : null;</span>
+<span class="fc" id="L448">    }</span>
+
+    /**
+     * Iterate the ExchangeRates.
+     */
+    private void iterateDepRate() {
+<span class="pc bpc" id="L454" title="1 of 2 branches missed.">        theNextDepRate = theDepRateIterator.hasNext() ? theDepRateIterator.next() : null;</span>
+<span class="fc" id="L455">    }</span>
+
+    /**
+     * Iterate the Transactions.
+     */
+    private void iterateTrans() {
+        do {
+<span class="fc bfc" id="L462" title="All 2 branches covered.">            theNextTrans = theTransIterator.hasNext() ? theTransIterator.next() : null;</span>
+<span class="pc bpc" id="L463" title="1 of 4 branches missed.">        } while (theNextTrans != null &amp;&amp; theNextTrans.isDeleted());</span>
+<span class="fc" id="L464">    }</span>
+
+    /**
+     * Build opening balances.
+     */
+    private void buildBalances() {
+<span class="fc" id="L470">        theNextEvent = theEvents.newOpeningBalance(theStartDate);</span>
+<span class="fc" id="L471">        buildBalances(MoneyWiseBasicDataType.DEPOSIT);</span>
+<span class="fc" id="L472">        buildBalances(MoneyWiseBasicDataType.CASH);</span>
+<span class="fc" id="L473">        buildBalances(MoneyWiseBasicDataType.LOAN);</span>
+<span class="fc" id="L474">    }</span>
+
+    /**
+     * Build opening balances.
+     *
+     * @param pType the data type
+     */
+    private void buildBalances(final MoneyWiseBasicDataType pType) {
+<span class="fc" id="L482">        final MoneyWiseAssetBaseList&lt;?&gt; myList = theEditSet.getDataList(pType, MoneyWiseAssetBaseList.class);</span>
+<span class="fc" id="L483">        final Iterator&lt;? extends MoneyWiseAssetBase&gt; myIterator = myList.iterator();</span>
+<span class="fc bfc" id="L484" title="All 2 branches covered.">        while (myIterator.hasNext()) {</span>
+<span class="fc" id="L485">            final MoneyWiseAssetBase myAsset = myIterator.next();</span>
+<span class="fc" id="L486">            final OceanusMoney myBalance = myAsset.getOpeningBalance();</span>
+<span class="fc bfc" id="L487" title="All 2 branches covered.">            if (myBalance != null) {</span>
+<span class="fc" id="L488">                theNextEvent.declareOpeningBalance(myAsset);</span>
+            }
+<span class="fc" id="L490">        }</span>
+<span class="fc" id="L491">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

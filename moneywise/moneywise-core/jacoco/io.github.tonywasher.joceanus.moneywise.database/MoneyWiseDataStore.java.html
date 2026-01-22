@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseDataStore.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.moneywise.database</a> &gt; <span class="el_source">MoneyWiseDataStore.java</span></div><h1>MoneyWiseDataStore.java</h1><pre class="source lang-java linenums">/*
+ * MoneyWise: Finance Application
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.moneywise.database;
+
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
+import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
+import io.github.tonywasher.joceanus.prometheus.database.PrometheusDBConfig;
+import io.github.tonywasher.joceanus.prometheus.database.PrometheusDataStore;
+import io.github.tonywasher.joceanus.prometheus.database.PrometheusTableDataItem;
+
+/**
+ * Database extension for MoneyWiseData.
+ *
+ * @author Tony Washer
+ */
+public class MoneyWiseDataStore
+        extends PrometheusDataStore {
+    /**
+     * Construct a new Database class for load.
+     *
+     * @param pDatabase the database
+     * @param pConfig   the config
+     * @throws OceanusException on error
+     */
+    public MoneyWiseDataStore(final String pDatabase,
+                              final PrometheusDBConfig pConfig) throws OceanusException {
+        /* Call super-constructor */
+<span class="fc" id="L43">        super(pDatabase, pConfig);</span>
+
+        /* Loop through the static types */
+<span class="fc bfc" id="L46" title="All 2 branches covered.">        for (MoneyWiseStaticDataType myType : MoneyWiseStaticDataType.values()) {</span>
+            /* Create the table */
+<span class="fc" id="L48">            addTable(newTable(myType));</span>
+        }
+
+        /* Loop through the basic types */
+<span class="fc bfc" id="L52" title="All 2 branches covered.">        for (MoneyWiseBasicDataType myType : MoneyWiseBasicDataType.values()) {</span>
+            /* Create the table */
+<span class="fc" id="L54">            addTable(newTbble(myType));</span>
+        }
+<span class="fc" id="L56">    }</span>
+
+    /**
+     * Construct a new Database class for create database.
+     *
+     * @param pConfig the config
+     * @throws OceanusException on error
+     */
+    public MoneyWiseDataStore(final PrometheusDBConfig pConfig) throws OceanusException {
+        /* Call super-constructor */
+<span class="nc" id="L66">        super(pConfig);</span>
+
+        /* Loop through the static types */
+<span class="nc bnc" id="L69" title="All 2 branches missed.">        for (MoneyWiseStaticDataType myType : MoneyWiseStaticDataType.values()) {</span>
+            /* Create the table */
+<span class="nc" id="L71">            addTable(newTable(myType));</span>
+        }
+
+        /* Loop through the basic types */
+<span class="nc bnc" id="L75" title="All 2 branches missed.">        for (MoneyWiseBasicDataType myType : MoneyWiseBasicDataType.values()) {</span>
+            /* Create the table */
+<span class="nc" id="L77">            addTable(newTbble(myType));</span>
+        }
+<span class="nc" id="L79">    }</span>
+
+    /**
+     * Create new table of required type.
+     *
+     * @param pDataType the data type
+     * @return the new table
+     */
+    private PrometheusTableDataItem&lt;?&gt; newTable(final MoneyWiseStaticDataType pDataType) {
+        /* Switch on data Type */
+<span class="pc bpc" id="L89" title="1 of 12 branches missed.">        switch (pDataType) {</span>
+            case DEPOSITTYPE:
+<span class="fc" id="L91">                return new MoneyWiseTableDepositCategoryType(this);</span>
+            case CASHTYPE:
+<span class="fc" id="L93">                return new MoneyWiseTableCashCategoryType(this);</span>
+            case LOANTYPE:
+<span class="fc" id="L95">                return new MoneyWiseTableLoanCategoryType(this);</span>
+            case PORTFOLIOTYPE:
+<span class="fc" id="L97">                return new MoneyWiseTablePortfolioType(this);</span>
+            case PAYEETYPE:
+<span class="fc" id="L99">                return new MoneyWiseTablePayeeType(this);</span>
+            case SECURITYTYPE:
+<span class="fc" id="L101">                return new MoneyWiseTableSecurityType(this);</span>
+            case TRANSTYPE:
+<span class="fc" id="L103">                return new MoneyWiseTableTransCategoryType(this);</span>
+            case ACCOUNTINFOTYPE:
+<span class="fc" id="L105">                return new MoneyWiseTableAccountInfoType(this);</span>
+            case TRANSINFOTYPE:
+<span class="fc" id="L107">                return new MoneyWiseTableTransInfoType(this);</span>
+            case CURRENCY:
+<span class="fc" id="L109">                return new MoneyWiseTableCurrency(this);</span>
+            case TAXBASIS:
+<span class="fc" id="L111">                return new MoneyWiseTableTaxBasis(this);</span>
+            default:
+<span class="nc" id="L113">                throw new IllegalArgumentException(pDataType.toString());</span>
+        }
+    }
+
+    /**
+     * Create new table of required type.
+     *
+     * @param pDataType the data type
+     * @return the new table
+     */
+    private PrometheusTableDataItem&lt;?&gt; newTbble(final MoneyWiseBasicDataType pDataType) {
+        /* Switch on data Type */
+<span class="pc bpc" id="L125" title="1 of 24 branches missed.">        switch (pDataType) {</span>
+            case TRANSTAG:
+<span class="fc" id="L127">                return new MoneyWiseTableTransTag(this);</span>
+            case REGION:
+<span class="fc" id="L129">                return new MoneyWiseTableRegion(this);</span>
+            case DEPOSITCATEGORY:
+<span class="fc" id="L131">                return new MoneyWiseTableDepositCategory(this);</span>
+            case CASHCATEGORY:
+<span class="fc" id="L133">                return new MoneyWiseTableCashCategory(this);</span>
+            case LOANCATEGORY:
+<span class="fc" id="L135">                return new MoneyWiseTableLoanCategory(this);</span>
+            case TRANSCATEGORY:
+<span class="fc" id="L137">                return new MoneyWiseTableTransCategory(this);</span>
+            case EXCHANGERATE:
+<span class="fc" id="L139">                return new MoneyWiseTableExchangeRate(this);</span>
+            case PAYEE:
+<span class="fc" id="L141">                return new MoneyWiseTablePayee(this);</span>
+            case PAYEEINFO:
+<span class="fc" id="L143">                return new MoneyWiseTablePayeeInfo(this);</span>
+            case SECURITY:
+<span class="fc" id="L145">                return new MoneyWiseTableSecurity(this);</span>
+            case SECURITYPRICE:
+<span class="fc" id="L147">                return new MoneyWiseTableSecurityPrice(this);</span>
+            case SECURITYINFO:
+<span class="fc" id="L149">                return new MoneyWiseTableSecurityInfo(this);</span>
+            case DEPOSIT:
+<span class="fc" id="L151">                return new MoneyWiseTableDeposit(this);</span>
+            case DEPOSITRATE:
+<span class="fc" id="L153">                return new MoneyWiseTableDepositRate(this);</span>
+            case DEPOSITINFO:
+<span class="fc" id="L155">                return new MoneyWiseTableDepositInfo(this);</span>
+            case CASH:
+<span class="fc" id="L157">                return new MoneyWiseTableCash(this);</span>
+            case CASHINFO:
+<span class="fc" id="L159">                return new MoneyWiseTableCashInfo(this);</span>
+            case LOAN:
+<span class="fc" id="L161">                return new MoneyWiseTableLoan(this);</span>
+            case LOANINFO:
+<span class="fc" id="L163">                return new MoneyWiseTableLoanInfo(this);</span>
+            case PORTFOLIO:
+<span class="fc" id="L165">                return new MoneyWiseTablePortfolio(this);</span>
+            case PORTFOLIOINFO:
+<span class="fc" id="L167">                return new MoneyWiseTablePortfolioInfo(this);</span>
+            case TRANSACTION:
+<span class="fc" id="L169">                return new MoneyWiseTableTransaction(this);</span>
+            case TRANSACTIONINFO:
+<span class="fc" id="L171">                return new MoneyWiseTableTransInfo(this);</span>
+            default:
+<span class="nc" id="L173">                throw new IllegalArgumentException(pDataType.toString());</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

@@ -1,0 +1,888 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PrometheusDataItem.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Prometheus Core Application Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.prometheus.data</a> &gt; <span class="el_source">PrometheusDataItem.java</span></div><h1>PrometheusDataItem.java</h1><pre class="source lang-java linenums">/*
+ * Prometheus: Application Framework
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.prometheus.data;
+
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.convert.OceanusDataConverter;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
+import io.github.tonywasher.joceanus.metis.data.MetisDataDifference;
+import io.github.tonywasher.joceanus.metis.data.MetisDataEditState;
+import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
+import io.github.tonywasher.joceanus.metis.data.MetisDataResource;
+import io.github.tonywasher.joceanus.metis.data.MetisDataState;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldState;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldVersionValues;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldVersionedItem;
+import io.github.tonywasher.joceanus.metis.list.MetisListKey;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataList.PrometheusListStyle;
+import io.github.tonywasher.joceanus.prometheus.exc.PrometheusDataException;
+
+import java.util.Iterator;
+
+/**
+ * Provides the abstract DataItem class as the basis for data items. The implementation of the
+ * interface means that this object can only be held in one list at a time and is unique within that
+ * list
+ *
+ * @see PrometheusDataList
+ */
+public abstract class PrometheusDataItem
+        extends MetisFieldVersionedItem
+        implements PrometheusTableItem, Comparable&lt;Object&gt; {
+    /**
+     * Report fields.
+     */
+<span class="nc" id="L50">    private static final MetisFieldSet&lt;PrometheusDataItem&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(PrometheusDataItem.class);</span>
+
+    /*
+     * FieldIds.
+     */
+    static {
+<span class="nc" id="L56">        FIELD_DEFS.declareLocalField(PrometheusDataResource.DATALIST_NAME, PrometheusDataItem::getList);</span>
+<span class="nc" id="L57">        FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAITEM_BASE, PrometheusDataItem::getBase);</span>
+<span class="nc" id="L58">        FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAITEM_TOUCH, PrometheusDataItem::getTouchStatus);</span>
+<span class="nc" id="L59">        FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAITEM_HEADER, PrometheusDataItem::isHeader);</span>
+    }
+
+    /**
+     * Validation error.
+     */
+<span class="nc" id="L65">    public static final String ERROR_VALIDATION = PrometheusDataResource.DATAITEM_ERROR_VALIDATION.getValue();</span>
+
+    /**
+     * Resolution error.
+     */
+<span class="nc" id="L70">    public static final String ERROR_RESOLUTION = PrometheusDataResource.DATAITEM_ERROR_RESOLUTION.getValue();</span>
+
+    /**
+     * Duplicate Id error.
+     */
+<span class="nc" id="L75">    public static final String ERROR_DUPLICATE = PrometheusDataResource.DATAITEM_ERROR_DUPLICATE.getValue();</span>
+
+    /**
+     * Unknown Id error.
+     */
+<span class="nc" id="L80">    public static final String ERROR_UNKNOWN = PrometheusDataResource.DATAITEM_ERROR_UNKNOWN.getValue();</span>
+
+    /**
+     * Existing value error.
+     */
+<span class="nc" id="L85">    public static final String ERROR_EXIST = PrometheusDataResource.DATAITEM_ERROR_EXIST.getValue();</span>
+
+    /**
+     * Missing value error.
+     */
+<span class="nc" id="L90">    public static final String ERROR_MISSING = PrometheusDataResource.DATAITEM_ERROR_MISSING.getValue();</span>
+
+    /**
+     * Value too long error.
+     */
+<span class="nc" id="L95">    public static final String ERROR_LENGTH = PrometheusDataResource.DATAITEM_ERROR_LENGTH.getValue();</span>
+
+    /**
+     * Value negative error.
+     */
+<span class="nc" id="L100">    public static final String ERROR_NEGATIVE = PrometheusDataResource.DATAITEM_ERROR_NEGATIVE.getValue();</span>
+
+    /**
+     * Value positive error.
+     */
+<span class="nc" id="L105">    public static final String ERROR_POSITIVE = PrometheusDataResource.DATAITEM_ERROR_POSITIVE.getValue();</span>
+
+    /**
+     * Value zero error.
+     */
+<span class="nc" id="L110">    public static final String ERROR_ZERO = PrometheusDataResource.DATAITEM_ERROR_ZERO.getValue();</span>
+
+    /**
+     * Value outside valid range.
+     */
+<span class="nc" id="L115">    public static final String ERROR_RANGE = PrometheusDataResource.DATAITEM_ERROR_RANGE.getValue();</span>
+
+    /**
+     * Value disabled error.
+     */
+<span class="nc" id="L120">    public static final String ERROR_DISABLED = PrometheusDataResource.DATAITEM_ERROR_DISABLED.getValue();</span>
+
+    /**
+     * Creation failure.
+     */
+<span class="nc" id="L125">    public static final String ERROR_CREATEITEM = PrometheusDataResource.DATAITEM_ERROR_CREATE.getValue();</span>
+
+    /**
+     * Multiple instances Error.
+     */
+<span class="nc" id="L130">    public static final String ERROR_MULT = PrometheusDataResource.DATAITEM_ERROR_MULTIPLE.getValue();</span>
+
+    /**
+     * Reserved name error.
+     */
+<span class="nc" id="L135">    public static final String ERROR_INVALIDCHAR = PrometheusDataResource.DATAITEM_ERROR_INVALIDCHAR.getValue();</span>
+
+    /**
+     * Standard Name length.
+     */
+    public static final int NAMELEN = 30;
+
+    /**
+     * Standard Description length.
+     */
+    public static final int DESCLEN = 50;
+
+    /**
+     * The list to which this item belongs.
+     */
+    private PrometheusDataList&lt;?&gt; theList;
+
+    /**
+     * The item that this DataItem is based upon.
+     */
+    private PrometheusDataItem theBase;
+
+    /**
+     * Is the item a header.
+     */
+    private boolean isHeader;
+
+    /**
+     * Status.
+     */
+    private final PrometheusDataTouch theTouchStatus;
+
+    /**
+     * Construct a new item.
+     *
+     * @param pList the list that this item is associated with
+     * @param uId   the Id of the new item (or 0 if not yet known)
+     */
+    protected PrometheusDataItem(final PrometheusDataList&lt;?&gt; pList,
+<span class="nc" id="L174">                                 final Integer uId) {</span>
+        /* Record list and item references */
+<span class="nc" id="L176">        setIndexedId(uId);</span>
+<span class="nc" id="L177">        theList = pList;</span>
+
+        /* Allocate id */
+<span class="nc" id="L180">        pList.setNewId(this);</span>
+
+        /* Create the touch status */
+<span class="nc" id="L183">        theTouchStatus = new PrometheusDataTouch();</span>
+<span class="nc" id="L184">    }</span>
+
+    /**
+     * Construct a new item.
+     *
+     * @param pList   the list that this item is associated with
+     * @param pValues the data values
+     */
+    protected PrometheusDataItem(final PrometheusDataList&lt;?&gt; pList,
+                                 final PrometheusDataValues pValues) {
+        /* Record list and item references */
+<span class="nc" id="L195">        this(pList, pValues.getValue(MetisDataResource.DATA_ID, Integer.class));</span>
+<span class="nc" id="L196">    }</span>
+
+    /**
+     * Construct a new item based on an old item.
+     *
+     * @param pList the list that this item is associated with
+     * @param pBase the old item
+     */
+    protected PrometheusDataItem(final PrometheusDataList&lt;?&gt; pList,
+                                 final PrometheusDataItem pBase) {
+        /* Initialise using standard constructor */
+<span class="nc" id="L207">        this(pList, pBase.getIndexedId());</span>
+
+        /* Initialise the valueSet */
+<span class="nc" id="L210">        getValues().copyFrom(pBase.getValues());</span>
+
+        /* Access the varying styles and the source state */
+<span class="nc" id="L213">        final PrometheusListStyle myStyle = pList.getStyle();</span>
+<span class="nc" id="L214">        final PrometheusListStyle myBaseStyle = pBase.getList().getStyle();</span>
+<span class="nc" id="L215">        final MetisDataState myState = pBase.getState();</span>
+
+        /* Switch on the styles */
+<span class="nc bnc" id="L218" title="All 5 branches missed.">        switch (myStyle) {</span>
+            /* We are building an update list (from Core) */
+            case UPDATE:
+<span class="nc bnc" id="L221" title="All 4 branches missed.">                switch (myState) {</span>
+                    /* NEW/DELNEW need to be at version 1 */
+                    case DELNEW:
+                    case NEW:
+<span class="nc" id="L225">                        getValues().setVersion(1);</span>
+<span class="nc" id="L226">                        break;</span>
+
+                    case DELETED:
+<span class="nc" id="L229">                        getValuesHistory().pushHistory(1);</span>
+<span class="nc" id="L230">                        break;</span>
+
+                    /*
+                     * Changed items need to have new values at version 1 and originals at version 0
+                     */
+                    case CHANGED:
+<span class="nc" id="L236">                        setHistory(pBase);</span>
+<span class="nc" id="L237">                        break;</span>
+
+                    /* No change for other states */
+                    default:
+                        break;
+                }
+
+                /* Record the base item */
+<span class="nc" id="L245">                theBase = pBase;</span>
+<span class="nc" id="L246">                break;</span>
+
+            /* We are building an edit item (from Core/Edit) */
+            case EDIT:
+                /* Switch on the base style */
+<span class="nc bnc" id="L251" title="All 3 branches missed.">                switch (myBaseStyle) {</span>
+                    /* New item from core we need to link back and copy flags */
+                    case CORE:
+<span class="nc" id="L254">                        theBase = pBase;</span>
+<span class="nc" id="L255">                        copyFlags(pBase);</span>
+<span class="nc" id="L256">                        break;</span>
+                    /* Duplication in edit */
+                    case EDIT:
+                        /* set as a new item */
+<span class="nc" id="L260">                        getValues().setVersion(pList.getVersion() + 1);</span>
+
+                        /* Reset the Id */
+<span class="nc" id="L263">                        setIndexedId(0);</span>
+<span class="nc" id="L264">                        pList.setNewId(this);</span>
+<span class="nc" id="L265">                        break;</span>
+                    default:
+<span class="nc" id="L267">                        break;</span>
+                }
+                break;
+
+            /* We are building a CORE item */
+            case CORE:
+                /* set as a new item */
+<span class="nc" id="L274">                getValues().setVersion(pList.getVersion() + 1);</span>
+
+                /* If we are adding from Edit */
+<span class="nc bnc" id="L277" title="All 2 branches missed.">                if (myBaseStyle == PrometheusListStyle.EDIT) {</span>
+                    /* Reset the Id */
+<span class="nc" id="L279">                    setIndexedId(0);</span>
+<span class="nc" id="L280">                    pList.setNewId(this);</span>
+                }
+                break;
+
+            /* Creation of copy element not allowed */
+            case COPY:
+<span class="nc" id="L286">                throw new IllegalArgumentException(&quot;Illegal creation of COPY element&quot;);</span>
+
+                /* Nothing special for other styles */
+            case CLONE:
+            case DIFFER:
+            default:
+                break;
+        }
+<span class="nc" id="L294">    }</span>
+
+    /**
+     * Obtain valueSet version.
+     *
+     * @return the valueSet version
+     */
+    public int getValueSetVersion() {
+<span class="nc" id="L302">        return getValues().getVersion();</span>
+    }
+
+    @Override
+    public String formatObject(final OceanusDataFormatter pFormatter) {
+<span class="nc" id="L307">        return this.getDataFieldSet().getName();</span>
+    }
+
+    /**
+     * Obtain the list.
+     *
+     * @return the list
+     */
+    public PrometheusDataList&lt;?&gt; getList() {
+<span class="nc" id="L316">        return theList;</span>
+    }
+
+    /**
+     * Obtain the dataSet.
+     *
+     * @return the dataSet
+     */
+    public PrometheusDataSet getDataSet() {
+<span class="nc" id="L325">        return getTheDataSet();</span>
+    }
+
+    /**
+     * Obtain the dataSet.
+     *
+     * @return the dataSet
+     */
+    private PrometheusDataSet getTheDataSet() {
+<span class="nc" id="L334">        return theList.getDataSet();</span>
+    }
+
+    /**
+     * Get the list style for this item.
+     *
+     * @return the list style
+     */
+    public PrometheusListStyle getStyle() {
+<span class="nc" id="L343">        return theList.getStyle();</span>
+    }
+
+    @Override
+    public MetisListKey getItemType() {
+<span class="nc" id="L348">        return theList.getItemType();</span>
+    }
+
+    @Override
+    public boolean isActive() {
+<span class="nc" id="L353">        return theTouchStatus.isActive();</span>
+    }
+
+    /**
+     * Is the item disabled?
+     *
+     * @return true/false
+     */
+    public boolean isDisabled() {
+<span class="nc" id="L362">        return false;</span>
+    }
+
+    /**
+     * Obtain the touchStatus.
+     *
+     * @return the touch status
+     */
+    public PrometheusDataTouch getTouchStatus() {
+<span class="nc" id="L371">        return theTouchStatus;</span>
+    }
+
+    @Override
+    public boolean isEditable() {
+<span class="nc bnc" id="L376" title="All 2 branches missed.">        return !isDeleted();</span>
+    }
+
+    @Override
+    public boolean isHeader() {
+<span class="nc" id="L381">        return isHeader;</span>
+    }
+
+    /**
+     * Set the header indication.
+     *
+     * @param pHeader true/false
+     */
+    protected void setHeader(final boolean pHeader) {
+<span class="nc" id="L390">        isHeader = pHeader;</span>
+<span class="nc" id="L391">    }</span>
+
+    /**
+     * Determine whether the item is locked (overridden if required).
+     *
+     * @return &lt;code&gt;true/false&lt;/code&gt;
+     */
+    public boolean isLocked() {
+<span class="nc" id="L399">        return false;</span>
+    }
+
+    /**
+     * Determine whether the list is locked (overridden if required).
+     *
+     * @return &lt;code&gt;true/false&lt;/code&gt;
+     */
+    public boolean isListLocked() {
+<span class="nc" id="L408">        return false;</span>
+    }
+
+    /**
+     * DeRegister any infoSet links.
+     */
+    public void deRegister() {
+<span class="nc" id="L415">    }</span>
+
+    /**
+     * Clear the touch status flag.
+     */
+    public void clearActive() {
+<span class="nc" id="L421">        theTouchStatus.resetTouches();</span>
+<span class="nc" id="L422">    }</span>
+
+    /**
+     * Clear the item touches.
+     *
+     * @param pItemType the item type
+     */
+    public void clearTouches(final MetisListKey pItemType) {
+<span class="nc" id="L430">        theTouchStatus.resetTouches(pItemType);</span>
+<span class="nc" id="L431">    }</span>
+
+    /**
+     * Touch the item.
+     *
+     * @param pObject object that references the item
+     */
+    public void touchItem(final PrometheusDataItem pObject) {
+<span class="nc" id="L439">        theTouchStatus.touchItem(pObject.getItemType());</span>
+<span class="nc" id="L440">    }</span>
+
+    /**
+     * Touch underlying items that are referenced by this item.
+     */
+    public void touchUnderlyingItems() {
+<span class="nc" id="L446">    }</span>
+
+    /**
+     * Adjust touches on update.
+     */
+    public void touchOnUpdate() {
+<span class="nc" id="L452">    }</span>
+
+    /**
+     * Adjust map for this item.
+     */
+    public void adjustMapForItem() {
+<span class="nc" id="L458">    }</span>
+
+    /**
+     * update Maps.
+     */
+    public void updateMaps() {
+        /* Clear active flag and touch underlying items */
+<span class="nc" id="L465">        clearActive();</span>
+<span class="nc" id="L466">        touchUnderlyingItems();</span>
+
+        /* Adjust the map for this item */
+<span class="nc" id="L469">        adjustMapForItem();</span>
+<span class="nc" id="L470">    }</span>
+
+    /**
+     * Get the base item for this item.
+     *
+     * @return the Base item or &lt;code&gt;null&lt;/code&gt;
+     */
+    public PrometheusDataItem getBase() {
+<span class="nc" id="L478">        return theBase;</span>
+    }
+
+    /**
+     * Set the base item for this item.
+     *
+     * @param pBase the Base item
+     */
+    public void setBase(final PrometheusDataItem pBase) {
+<span class="nc" id="L487">        theBase = pBase;</span>
+<span class="nc" id="L488">    }</span>
+
+    /**
+     * Unlink the item from the list.
+     */
+    public void unLink() {
+<span class="nc" id="L494">        theList.remove(this);</span>
+<span class="nc" id="L495">    }</span>
+
+    /**
+     * Set new version.
+     */
+    public void setNewVersion() {
+<span class="nc" id="L501">        getValues().setVersion(getNextVersion());</span>
+<span class="nc" id="L502">    }</span>
+
+    @Override
+    public int getNextVersion() {
+<span class="nc" id="L506">        return theList.getVersion() + 1;</span>
+    }
+
+    @Override
+    public void popHistory() {
+<span class="nc" id="L511">        rewindToVersion(theList.getVersion());</span>
+<span class="nc" id="L512">    }</span>
+
+    @Override
+    public void rewindToVersion(final int pVersion) {
+        /* If the item was newly created */
+<span class="nc bnc" id="L517" title="All 2 branches missed.">        if (getOriginalValues().getVersion() &gt; pVersion) {</span>
+            /* Remove from list */
+<span class="nc" id="L519">            unLink();</span>
+<span class="nc" id="L520">            deRegister();</span>
+
+            /* Return */
+<span class="nc" id="L523">            return;</span>
+        }
+
+        /* Loop while version is too high */
+<span class="nc bnc" id="L527" title="All 2 branches missed.">        while (getValues().getVersion() &gt; pVersion) {</span>
+            /* Pop history */
+<span class="nc" id="L529">            getValuesHistory().popTheHistory();</span>
+        }
+<span class="nc" id="L531">    }</span>
+
+    /**
+     * Set Change history for an update list so that the first and only entry in the change list is
+     * the original values of the base.
+     *
+     * @param pBase the base item
+     */
+    public final void setHistory(final PrometheusDataItem pBase) {
+<span class="nc" id="L540">        getValuesHistory().setHistory(pBase.getOriginalValues());</span>
+<span class="nc" id="L541">    }</span>
+
+    @Override
+    public MetisDataDifference fieldChanged(final MetisFieldDef pField) {
+<span class="nc bnc" id="L545" title="All 2 branches missed.">        return pField instanceof MetisFieldVersionedDef</span>
+<span class="nc" id="L546">                ? getValuesHistory().fieldChanged(pField)</span>
+<span class="nc" id="L547">                : MetisDataDifference.IDENTICAL;</span>
+    }
+
+    /**
+     * Note that this item has been validated.
+     */
+    public void setValidEdit() {
+<span class="nc" id="L554">        final MetisDataState myState = getState();</span>
+<span class="nc bnc" id="L555" title="All 2 branches missed.">        if (myState == MetisDataState.CLEAN) {</span>
+<span class="nc" id="L556">            setEditState(MetisDataEditState.CLEAN);</span>
+<span class="nc bnc" id="L557" title="All 2 branches missed.">        } else if (theList.getStyle() == PrometheusListStyle.CORE) {</span>
+<span class="nc" id="L558">            setEditState(MetisDataEditState.DIRTY);</span>
+        } else {
+<span class="nc" id="L560">            setEditState(MetisDataEditState.VALID);</span>
+        }
+<span class="nc" id="L562">    }</span>
+
+    @Override
+    public void addError(final String pError,
+                         final MetisDataFieldId pField) {
+        /* Set edit state and add the error */
+<span class="nc" id="L568">        super.addError(pError, pField);</span>
+
+        /* Note that the list has errors */
+<span class="nc" id="L571">        theList.setEditState(MetisDataEditState.ERROR);</span>
+<span class="nc" id="L572">    }</span>
+
+    /**
+     * Copy flags.
+     *
+     * @param pItem the original item
+     */
+    private void copyFlags(final PrometheusDataItem pItem) {
+<span class="nc" id="L580">        theTouchStatus.copyMap(pItem.theTouchStatus);</span>
+<span class="nc" id="L581">    }</span>
+
+    /**
+     * Resolve all references to current dataSet.
+     *
+     * @throws OceanusException on error
+     */
+    public void resolveDataSetLinks() throws OceanusException {
+<span class="nc" id="L589">    }</span>
+
+    /**
+     * Resolve a data link into a list.
+     *
+     * @param pFieldId the fieldId to resolve
+     * @param pList    the list to resolve against
+     * @throws OceanusException on error
+     */
+    protected void resolveDataLink(final MetisDataFieldId pFieldId,
+                                   final PrometheusDataList&lt;?&gt; pList) throws OceanusException {
+        /* Access the values */
+<span class="nc" id="L601">        final MetisFieldVersionValues myValues = getValues();</span>
+
+        /* Access value for field */
+<span class="nc" id="L604">        Object myValue = myValues.getValue(pFieldId);</span>
+
+        /* Convert dataItem reference to Id */
+<span class="nc bnc" id="L607" title="All 2 branches missed.">        if (myValue instanceof PrometheusDataItem myItem) {</span>
+<span class="nc" id="L608">            myValue = myItem.getIndexedId();</span>
+        }
+
+        /* Lookup Id reference */
+<span class="nc bnc" id="L612" title="All 2 branches missed.">        if (myValue instanceof Integer i) {</span>
+<span class="nc" id="L613">            final PrometheusDataItem myItem = pList.findItemById(i);</span>
+<span class="nc bnc" id="L614" title="All 2 branches missed.">            if (myItem == null) {</span>
+<span class="nc" id="L615">                addError(ERROR_UNKNOWN, pFieldId);</span>
+<span class="nc" id="L616">                throw new PrometheusDataException(this, ERROR_RESOLUTION);</span>
+            }
+<span class="nc" id="L618">            myValues.setValue(pFieldId, myItem);</span>
+
+            /* Lookup Name reference */
+<span class="nc bnc" id="L621" title="All 2 branches missed.">        } else if (myValue instanceof String s) {</span>
+<span class="nc" id="L622">            final PrometheusDataItem myItem = pList.findItemByName(s);</span>
+<span class="nc bnc" id="L623" title="All 2 branches missed.">            if (myItem == null) {</span>
+<span class="nc" id="L624">                addError(ERROR_UNKNOWN, pFieldId);</span>
+<span class="nc" id="L625">                throw new PrometheusDataException(this, ERROR_RESOLUTION);</span>
+            }
+<span class="nc" id="L627">            myValues.setValue(pFieldId, myItem);</span>
+        }
+<span class="nc" id="L629">    }</span>
+
+    /**
+     * Is the item to be included in output XML?
+     *
+     * @param pField the field to check
+     * @return true/false
+     */
+    public boolean includeXmlField(final MetisDataFieldId pField) {
+<span class="nc" id="L638">        return false;</span>
+    }
+
+    @Override
+    public boolean equals(final Object pThat) {
+        /* Handle the trivial cases */
+<span class="nc bnc" id="L644" title="All 2 branches missed.">        if (this == pThat) {</span>
+<span class="nc" id="L645">            return true;</span>
+        }
+<span class="nc bnc" id="L647" title="All 2 branches missed.">        if (pThat == null) {</span>
+<span class="nc" id="L648">            return false;</span>
+        }
+
+        /* Make sure that the object is the same class */
+<span class="nc bnc" id="L652" title="All 2 branches missed.">        if (pThat.getClass() != getClass()) {</span>
+<span class="nc" id="L653">            return false;</span>
+        }
+
+        /* Access the object as a DataItem */
+<span class="nc" id="L657">        final PrometheusDataItem myItem = (PrometheusDataItem) pThat;</span>
+
+        /* Check the id */
+<span class="nc bnc" id="L660" title="All 2 branches missed.">        if (compareId(myItem) != 0) {</span>
+<span class="nc" id="L661">            return false;</span>
+        }
+
+        /* Loop through the fields */
+<span class="nc" id="L665">        final Iterator&lt;MetisFieldDef&gt; myIterator = getDataFieldSet().fieldIterator();</span>
+<span class="nc bnc" id="L666" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+            /* Access Field */
+<span class="nc" id="L668">            final MetisFieldDef myField = myIterator.next();</span>
+
+            /* Skip if not used in equality */
+<span class="nc bnc" id="L671" title="All 2 branches missed.">            if (!(myField instanceof MetisFieldVersionedDef myVersioned)</span>
+<span class="nc bnc" id="L672" title="All 2 branches missed.">                    || !myVersioned.isEquality()) {</span>
+<span class="nc" id="L673">                continue;</span>
+            }
+
+            /* Access the values */
+<span class="nc" id="L677">            final Object myValue = myField.getFieldValue(this);</span>
+<span class="nc" id="L678">            final Object myNew = myField.getFieldValue(myItem);</span>
+
+            /* Check the field */
+<span class="nc bnc" id="L681" title="All 2 branches missed.">            if (!MetisDataDifference.isEqual(myValue, myNew)) {</span>
+<span class="nc" id="L682">                return false;</span>
+            }
+<span class="nc" id="L684">        }</span>
+
+        /* Return identical */
+<span class="nc" id="L687">        return true;</span>
+    }
+
+    @Override
+    public int hashCode() {
+        /* hash code is Id for simplicity */
+<span class="nc" id="L693">        return getIndexedId();</span>
+    }
+
+    @Override
+    public int compareTo(final Object pThat) {
+        /* Handle the trivial cases */
+<span class="nc bnc" id="L699" title="All 2 branches missed.">        if (this.equals(pThat)) {</span>
+<span class="nc" id="L700">            return 0;</span>
+        }
+<span class="nc bnc" id="L702" title="All 2 branches missed.">        if (pThat == null) {</span>
+<span class="nc" id="L703">            return -1;</span>
+        }
+
+        /* Non-DataItems are last */
+<span class="nc bnc" id="L707" title="All 2 branches missed.">        if (!(pThat instanceof PrometheusDataItem)) {</span>
+<span class="nc" id="L708">            return -1;</span>
+        }
+
+        /* Check data type */
+<span class="nc" id="L712">        final PrometheusDataItem myThat = (PrometheusDataItem) pThat;</span>
+<span class="nc" id="L713">        int iDiff = getItemType().getItemKey() - myThat.getItemType().getItemKey();</span>
+<span class="nc bnc" id="L714" title="All 2 branches missed.">        if (iDiff != 0) {</span>
+<span class="nc" id="L715">            return iDiff;</span>
+        }
+
+        /* Check values and finally id */
+<span class="nc" id="L719">        iDiff = compareValues(myThat);</span>
+<span class="nc bnc" id="L720" title="All 2 branches missed.">        return iDiff != 0 ? iDiff : compareId(myThat);</span>
+    }
+
+    /**
+     * compareTo another dataItem.
+     *
+     * @param pThat the DataItem to compare
+     * @return the order
+     */
+    protected abstract int compareValues(PrometheusDataItem pThat);
+
+    /**
+     * compareTo another dataItem.
+     *
+     * @param pThat the DataItem to compare
+     * @return the order
+     */
+    protected int compareId(final PrometheusDataItem pThat) {
+<span class="nc" id="L738">        return getIndexedId() - pThat.getIndexedId();</span>
+    }
+
+    /**
+     * Get the state of the underlying record.
+     *
+     * @return the underlying state
+     */
+    protected MetisDataState getBaseState() {
+<span class="nc" id="L747">        final PrometheusDataItem myBase = getBase();</span>
+<span class="nc bnc" id="L748" title="All 2 branches missed.">        return (myBase == null)</span>
+<span class="nc" id="L749">                ? MetisDataState.NOSTATE</span>
+<span class="nc" id="L750">                : myBase.getState();</span>
+    }
+
+    /**
+     * Determine index of element within the list.
+     *
+     * @return The index
+     */
+    public int indexOf() {
+        /* Return index */
+<span class="nc" id="L760">        return theList.indexOf(this);</span>
+    }
+
+    /**
+     * Apply changes to the item from a changed version. Overwritten by objects that have changes
+     *
+     * @param pElement the changed element.
+     * @return were changes made?
+     */
+    public boolean applyChanges(final PrometheusDataItem pElement) {
+<span class="nc" id="L770">        return false;</span>
+    }
+
+    /**
+     * Validate the element
+     * &lt;p&gt;
+     * Dirty items become valid.
+     */
+    public void validate() {
+<span class="nc" id="L779">        getList().getValidator().validate(this);</span>
+<span class="nc" id="L780">    }</span>
+
+    /**
+     * Does the string contain only valid characters (no control chars)?
+     *
+     * @param pString     the string
+     * @param pDisallowed the set of additional disallowed characters
+     * @return true/false
+     */
+    public static boolean validString(final String pString,
+                                      final String pDisallowed) {
+        /* Loop through the string */
+<span class="nc bnc" id="L792" title="All 2 branches missed.">        for (int i = 0; i &lt; pString.length(); i++) {</span>
+<span class="nc" id="L793">            final int myChar = pString.codePointAt(i);</span>
+            /* Check for ISO control */
+<span class="nc bnc" id="L795" title="All 2 branches missed.">            if (Character.isISOControl(myChar)) {</span>
+<span class="nc" id="L796">                return false;</span>
+            }
+
+            /* Check for disallowed value */
+<span class="nc bnc" id="L800" title="All 2 branches missed.">            if (pDisallowed != null</span>
+<span class="nc bnc" id="L801" title="All 2 branches missed.">                    &amp;&amp; pDisallowed.indexOf(myChar) != -1) {</span>
+<span class="nc" id="L802">                return false;</span>
+            }
+        }
+<span class="nc" id="L805">        return true;</span>
+    }
+
+    /**
+     * Obtain the byte length of a string.
+     *
+     * @param pString the string
+     * @return the length
+     */
+    public static int byteLength(final String pString) {
+<span class="nc" id="L815">        return OceanusDataConverter.stringToByteArray(pString).length;</span>
+    }
+
+    /**
+     * Remove the item (and any subitems from the lists).
+     */
+    public void removeItem() {
+<span class="nc" id="L822">        theList.remove(this);</span>
+<span class="nc" id="L823">    }</span>
+
+    /**
+     * Obtain the field state.
+     *
+     * @param pField the field
+     * @return the state
+     */
+    public MetisFieldState getFieldState(final MetisDataFieldId pField) {
+        /* Determine DELETED state */
+<span class="nc bnc" id="L833" title="All 2 branches missed.">        if (isDeleted()) {</span>
+<span class="nc" id="L834">            return MetisFieldState.DELETED;</span>
+
+            /* Determine Error state */
+<span class="nc bnc" id="L837" title="All 4 branches missed.">        } else if (hasErrors() &amp;&amp; hasErrors(pField)) {</span>
+<span class="nc" id="L838">            return MetisFieldState.ERROR;</span>
+
+            /* Determine Changed state */
+<span class="nc bnc" id="L841" title="All 2 branches missed.">        } else if (fieldChanged(pField).isDifferent()) {</span>
+<span class="nc" id="L842">            return MetisFieldState.CHANGED;</span>
+
+            /* Determine standard states */
+        } else {
+<span class="nc bnc" id="L846" title="All 3 branches missed.">            switch (getState()) {</span>
+                case NEW:
+<span class="nc" id="L848">                    return MetisFieldState.NEW;</span>
+                case RECOVERED:
+<span class="nc" id="L850">                    return MetisFieldState.RESTORED;</span>
+                default:
+<span class="nc" id="L852">                    return MetisFieldState.NORMAL;</span>
+            }
+        }
+    }
+
+    /**
+     * Obtain the item State.
+     *
+     * @return the state
+     */
+    public MetisFieldState getItemState() {
+        /* Determine DELETED state */
+<span class="nc bnc" id="L864" title="All 2 branches missed.">        if (isDeleted()) {</span>
+<span class="nc" id="L865">            return MetisFieldState.DELETED;</span>
+
+            /* Determine Error state */
+<span class="nc bnc" id="L868" title="All 2 branches missed.">        } else if (hasErrors()) {</span>
+<span class="nc" id="L869">            return MetisFieldState.ERROR;</span>
+
+            /* Determine Changed state */
+<span class="nc bnc" id="L872" title="All 2 branches missed.">        } else if (hasHistory()) {</span>
+<span class="nc" id="L873">            return MetisFieldState.CHANGED;</span>
+
+            /* Determine standard states */
+        } else {
+<span class="nc bnc" id="L877" title="All 3 branches missed.">            switch (getState()) {</span>
+                case NEW:
+<span class="nc" id="L879">                    return MetisFieldState.NEW;</span>
+                case RECOVERED:
+<span class="nc" id="L881">                    return MetisFieldState.RESTORED;</span>
+                default:
+<span class="nc" id="L883">                    return MetisFieldState.NORMAL;</span>
+            }
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ThemisXAnalysisExprParser.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Themis Core Project Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.themis.xanalysis.parser.expr</a> &gt; <span class="el_source">ThemisXAnalysisExprParser.java</span></div><h1>ThemisXAnalysisExprParser.java</h1><pre class="source lang-java linenums">/*
+ * Themis: Java Project Framework
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.themis.xanalysis.parser.expr;
+
+import com.github.javaparser.ast.expr.Expression;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance.ThemisXAnalysisExpressionInstance;
+import io.github.tonywasher.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisParserDef;
+
+/**
+ * Analysis Expression Parser.
+ */
+public final class ThemisXAnalysisExprParser {
+    /**
+     * Private Constructor.
+     */
+    private ThemisXAnalysisExprParser() {
+    }
+
+    /**
+     * Parse an expression.
+     *
+     * @param pParser the parser
+     * @param pExpr   the expression
+     * @return the parsed expression
+     * @throws OceanusException on error
+     */
+    public static ThemisXAnalysisExpressionInstance parseExpression(final ThemisXAnalysisParserDef pParser,
+                                                                    final Expression pExpr) throws OceanusException {
+        /* Handle null Expression */
+<span class="fc bfc" id="L45" title="All 2 branches covered.">        if (pExpr == null) {</span>
+<span class="fc" id="L46">            return null;</span>
+        }
+
+        /* Allocate correct Expression */
+<span class="pc bpc" id="L50" title="5 of 36 branches missed.">        switch (ThemisXAnalysisExpression.determineExpression(pParser, pExpr)) {</span>
+            case ARRAYACCESS:
+<span class="fc" id="L52">                return new ThemisXAnalysisExprArrayAccess(pParser, pExpr.asArrayAccessExpr());</span>
+            case ARRAYCREATION:
+<span class="fc" id="L54">                return new ThemisXAnalysisExprArrayCreation(pParser, pExpr.asArrayCreationExpr());</span>
+            case ARRAYINIT:
+<span class="fc" id="L56">                return new ThemisXAnalysisExprArrayInit(pParser, pExpr.asArrayInitializerExpr());</span>
+            case ASSIGN:
+<span class="fc" id="L58">                return new ThemisXAnalysisExprAssign(pParser, pExpr.asAssignExpr());</span>
+            case BINARY:
+<span class="fc" id="L60">                return new ThemisXAnalysisExprBinary(pParser, pExpr.asBinaryExpr());</span>
+            case BOOLEAN:
+<span class="fc" id="L62">                return new ThemisXAnalysisExprBooleanLit(pParser, pExpr.asBooleanLiteralExpr());</span>
+            case CAST:
+<span class="fc" id="L64">                return new ThemisXAnalysisExprCast(pParser, pExpr.asCastExpr());</span>
+            case CHAR:
+<span class="fc" id="L66">                return new ThemisXAnalysisExprCharLit(pParser, pExpr.asCharLiteralExpr());</span>
+            case CLASS:
+<span class="fc" id="L68">                return new ThemisXAnalysisExprClass(pParser, pExpr.asClassExpr());</span>
+            case CONDITIONAL:
+<span class="fc" id="L70">                return new ThemisXAnalysisExprConditional(pParser, pExpr.asConditionalExpr());</span>
+            case DOUBLE:
+<span class="fc" id="L72">                return new ThemisXAnalysisExprDoubleLit(pParser, pExpr.asDoubleLiteralExpr());</span>
+            case ENCLOSED:
+<span class="fc" id="L74">                return new ThemisXAnalysisExprEnclosed(pParser, pExpr.asEnclosedExpr());</span>
+            case FIELDACCESS:
+<span class="fc" id="L76">                return new ThemisXAnalysisExprFieldAccess(pParser, pExpr.asFieldAccessExpr());</span>
+            case INSTANCEOF:
+<span class="fc" id="L78">                return new ThemisXAnalysisExprInstanceOf(pParser, pExpr.asInstanceOfExpr());</span>
+            case INTEGER:
+<span class="fc" id="L80">                return new ThemisXAnalysisExprIntegerLit(pParser, pExpr.asIntegerLiteralExpr());</span>
+            case LAMBDA:
+<span class="fc" id="L82">                return new ThemisXAnalysisExprLambda(pParser, pExpr.asLambdaExpr());</span>
+            case LONG:
+<span class="fc" id="L84">                return new ThemisXAnalysisExprLongLit(pParser, pExpr.asLongLiteralExpr());</span>
+            case MARKER:
+<span class="fc" id="L86">                return new ThemisXAnalysisExprMarkerAnnotation(pParser, pExpr.asMarkerAnnotationExpr());</span>
+            case METHODCALL:
+<span class="fc" id="L88">                return new ThemisXAnalysisExprMethodCall(pParser, pExpr.asMethodCallExpr());</span>
+            case METHODREFERENCE:
+<span class="fc" id="L90">                return new ThemisXAnalysisExprMethodRef(pParser, pExpr.asMethodReferenceExpr());</span>
+            case NAME:
+<span class="fc" id="L92">                return new ThemisXAnalysisExprName(pParser, pExpr.asNameExpr());</span>
+            case NORMAL:
+<span class="nc" id="L94">                return new ThemisXAnalysisExprNormalAnnotation(pParser, pExpr.asNormalAnnotationExpr());</span>
+            case NULL:
+<span class="fc" id="L96">                return new ThemisXAnalysisExprNullLit(pParser, pExpr.asNullLiteralExpr());</span>
+            case OBJECTCREATE:
+<span class="fc" id="L98">                return new ThemisXAnalysisExprObjectCreate(pParser, pExpr.asObjectCreationExpr());</span>
+            case RECORDPATTERN:
+<span class="nc" id="L100">                return new ThemisXAnalysisExprRecordPattern(pParser, pExpr.asRecordPatternExpr());</span>
+            case SINGLEMEMBER:
+<span class="fc" id="L102">                return new ThemisXAnalysisExprSingleMemberAnnotation(pParser, pExpr.asSingleMemberAnnotationExpr());</span>
+            case STRING:
+<span class="fc" id="L104">                return new ThemisXAnalysisExprStringLit(pParser, pExpr.asStringLiteralExpr());</span>
+            case SUPER:
+<span class="fc" id="L106">                return new ThemisXAnalysisExprSuper(pParser, pExpr.asSuperExpr());</span>
+            case SWITCH:
+<span class="nc" id="L108">                return new ThemisXAnalysisExprSwitch(pParser, pExpr.asSwitchExpr());</span>
+            case TEXTBLOCK:
+<span class="nc" id="L110">                return new ThemisXAnalysisExprTextBlockLit(pParser, pExpr.asTextBlockLiteralExpr());</span>
+            case THIS:
+<span class="fc" id="L112">                return new ThemisXAnalysisExprThis(pParser, pExpr.asThisExpr());</span>
+            case TYPE:
+<span class="fc" id="L114">                return new ThemisXAnalysisExprType(pParser, pExpr.asTypeExpr());</span>
+            case TYPEPATTERN:
+<span class="fc" id="L116">                return new ThemisXAnalysisExprTypePattern(pParser, pExpr.asTypePatternExpr());</span>
+            case UNARY:
+<span class="fc" id="L118">                return new ThemisXAnalysisExprUnary(pParser, pExpr.asUnaryExpr());</span>
+            case VARIABLE:
+<span class="fc" id="L120">                return new ThemisXAnalysisExprVarDecl(pParser, pExpr.asVariableDeclarationExpr());</span>
+            default:
+<span class="nc" id="L122">                throw pParser.buildException(&quot;Unsupported Expression Type&quot;, pExpr);</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

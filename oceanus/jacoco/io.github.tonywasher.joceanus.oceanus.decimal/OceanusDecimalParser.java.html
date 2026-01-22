@@ -1,0 +1,1013 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>OceanusDecimalParser.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Oceanus Java Core Utilities</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.oceanus.decimal</a> &gt; <span class="el_source">OceanusDecimalParser.java</span></div><h1>OceanusDecimalParser.java</h1><pre class="source lang-java linenums">/*
+ * Oceanus: Java Utilities
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.oceanus.decimal;
+
+import io.github.tonywasher.joceanus.oceanus.base.OceanusLocale;
+
+import java.util.Currency;
+import java.util.Locale;
+
+/**
+ * Parsing methods for decimals in a particular locale.
+ *
+ * @author Tony Washer
+ */
+public class OceanusDecimalParser {
+    /**
+     * Parse Error message.
+     */
+    private static final String ERROR_PARSE = &quot;Non Decimal Numeric Value: &quot;;
+
+    /**
+     * Bounds Error message.
+     */
+    private static final String ERROR_BOUNDS = &quot;Value out of range: &quot;;
+
+    /**
+     * PerCent adjustment.
+     */
+    public static final int ADJUST_PERCENT = 2;
+
+    /**
+     * PerMille adjustment.
+     */
+    public static final int ADJUST_PERMILLE = 3;
+
+    /**
+     * The locale.
+     */
+    private OceanusDecimalLocale theLocale;
+
+    /**
+     * Do we use strict # of decimals?
+     */
+<span class="nc" id="L58">    private boolean useStrictDecimals = true;</span>
+
+    /**
+     * Constructor.
+     */
+    public OceanusDecimalParser() {
+        /* Use default locale */
+<span class="nc" id="L65">        this(OceanusLocale.getDefaultLocale());</span>
+<span class="nc" id="L66">    }</span>
+
+    /**
+     * Constructor.
+     *
+     * @param pLocale the locale
+     */
+<span class="nc" id="L73">    public OceanusDecimalParser(final Locale pLocale) {</span>
+        /* Store locale */
+<span class="nc" id="L75">        setLocale(pLocale);</span>
+<span class="nc" id="L76">    }</span>
+
+    /**
+     * Should we parse to strict decimals.
+     *
+     * @param bStrictDecimals true/false
+     */
+    public void setStrictDecimals(final boolean bStrictDecimals) {
+        /* Set accounting mode on and set the width */
+<span class="nc" id="L85">        useStrictDecimals = bStrictDecimals;</span>
+<span class="nc" id="L86">    }</span>
+
+    /**
+     * Set the locale.
+     *
+     * @param pLocale the locale
+     */
+    public final void setLocale(final Locale pLocale) {
+        /* Store the locale */
+<span class="nc" id="L95">        theLocale = new OceanusDecimalLocale(pLocale);</span>
+<span class="nc" id="L96">    }</span>
+
+    /**
+     * Obtain the default currency.
+     *
+     * @return the default currency
+     */
+    public final Currency getDefaultCurrency() {
+<span class="nc" id="L104">        return theLocale.getDefaultCurrency();</span>
+    }
+
+    /**
+     * Parse a string into a decimal.
+     *
+     * @param pValue  The value to parse.
+     * @param pResult the decimal to hold the result in
+     * @throws IllegalArgumentException on invalid decimal
+     */
+    protected static void parseDecimalValue(final String pValue,
+                                            final OceanusDecimal pResult) {
+<span class="fc" id="L116">        parseDecimalValue(pValue, OceanusDecimalFormatter.LOCALE_DEFAULT, false, pResult);</span>
+<span class="fc" id="L117">    }</span>
+
+    /**
+     * Parse a string into a decimal.
+     *
+     * @param pValue          The value to parse.
+     * @param pLocale         the Decimal locale
+     * @param useMoneyDecimal use money decimal rather than standard decimal true/false
+     * @param pResult         the decimal to hold the result in
+     * @throws IllegalArgumentException on invalid decimal
+     */
+    protected static void parseDecimalValue(final String pValue,
+                                            final OceanusDecimalLocale pLocale,
+                                            final boolean useMoneyDecimal,
+                                            final OceanusDecimal pResult) {
+        /* Handle null value */
+<span class="pc bpc" id="L133" title="1 of 2 branches missed.">        if (pValue == null) {</span>
+<span class="nc" id="L134">            throw new IllegalArgumentException();</span>
+        }
+
+        /* Create a working copy */
+<span class="fc" id="L138">        final StringBuilder myWork = new StringBuilder(pValue.trim());</span>
+
+        /* If the value is negative, strip the leading minus sign */
+<span class="pc bpc" id="L141" title="1 of 2 branches missed.">        final boolean isNegative = !myWork.isEmpty()</span>
+<span class="fc bfc" id="L142" title="All 2 branches covered.">                &amp;&amp; myWork.charAt(0) == pLocale.getMinusSign();</span>
+<span class="fc bfc" id="L143" title="All 2 branches covered.">        if (isNegative) {</span>
+<span class="fc" id="L144">            myWork.deleteCharAt(0);</span>
+        }
+
+        /* Remove any grouping characters from the value */
+<span class="fc" id="L148">        final String myGrouping = pLocale.getGrouping();</span>
+        int myPos;
+        while (true) {
+<span class="fc" id="L151">            myPos = myWork.indexOf(myGrouping);</span>
+<span class="pc bpc" id="L152" title="1 of 2 branches missed.">            if (myPos == -1) {</span>
+<span class="fc" id="L153">                break;</span>
+            }
+<span class="nc" id="L155">            myWork.deleteCharAt(myPos);</span>
+        }
+
+        /* Trim leading and trailing blanks again */
+<span class="fc" id="L159">        trimBuffer(myWork);</span>
+
+        /* Locate the exponent if present */
+<span class="fc" id="L162">        int myExponent = 0;</span>
+<span class="fc" id="L163">        myPos = myWork.indexOf(&quot;e&quot;);</span>
+<span class="pc bpc" id="L164" title="1 of 2 branches missed.">        if (myPos != -1) {</span>
+            /* Obtain the exponent and remove from decimals */
+<span class="nc" id="L166">            final String myExp = myWork.substring(myPos + 1);</span>
+<span class="nc" id="L167">            myWork.setLength(myPos);</span>
+
+            /* Parse the integral part */
+            try {
+<span class="nc" id="L171">                myExponent = Integer.parseInt(myExp);</span>
+<span class="nc" id="L172">            } catch (NumberFormatException e) {</span>
+<span class="nc" id="L173">                throw new IllegalArgumentException(ERROR_PARSE</span>
+                        + pValue, e);
+<span class="nc" id="L175">            }</span>
+        }
+
+        /* Locate the decimal point if present */
+<span class="pc bpc" id="L179" title="1 of 2 branches missed.">        myPos = myWork.indexOf(useMoneyDecimal</span>
+<span class="nc" id="L180">                ? pLocale.getMoneyDecimal()</span>
+<span class="fc" id="L181">                : pLocale.getDecimal());</span>
+
+        /* Assume no decimals */
+<span class="fc" id="L184">        StringBuilder myDecimals = null;</span>
+<span class="fc" id="L185">        int myScale = 0;</span>
+
+        /* If we have a decimal point */
+<span class="fc bfc" id="L188" title="All 2 branches covered.">        if (myPos != -1) {</span>
+            /* Split into the two parts being careful of a trailing decimal point */
+<span class="pc bpc" id="L190" title="1 of 2 branches missed.">            if ((myPos + 1) &lt; myWork.length()) {</span>
+<span class="fc" id="L191">                myDecimals = new StringBuilder(myWork.substring(myPos + 1));</span>
+            }
+<span class="fc" id="L193">            myWork.setLength(myPos);</span>
+        }
+
+        /* If we have a positive exponent */
+<span class="pc bpc" id="L197" title="1 of 2 branches missed.">        if (myExponent &gt; 0) {</span>
+            /* Determine the number of decimals */
+<span class="nc bnc" id="L199" title="All 2 branches missed.">            int myNumDec = myDecimals == null</span>
+<span class="nc" id="L200">                    ? 0</span>
+<span class="nc" id="L201">                    : myDecimals.length();</span>
+
+            /* Shift decimals across */
+<span class="nc bnc" id="L204" title="All 4 branches missed.">            while (myExponent &gt; 0 &amp;&amp; myNumDec &gt; 0) {</span>
+                /* Copy decimal across */
+<span class="nc" id="L206">                final char myChar = myDecimals.charAt(0);</span>
+<span class="nc" id="L207">                myDecimals.deleteCharAt(0);</span>
+<span class="nc" id="L208">                myWork.append(myChar);</span>
+
+                /* Adjust counters */
+<span class="nc" id="L211">                myExponent--;</span>
+<span class="nc" id="L212">                myNumDec--;</span>
+<span class="nc" id="L213">            }</span>
+
+            /* Finish off with zeroes */
+<span class="nc bnc" id="L216" title="All 2 branches missed.">            while (myExponent &gt; 0) {</span>
+<span class="nc" id="L217">                myWork.append(OceanusDecimalFormatter.CHAR_ZERO);</span>
+<span class="nc" id="L218">                myExponent--;</span>
+            }
+
+            /* If we now have no decimals remove decimal indication */
+<span class="nc bnc" id="L222" title="All 2 branches missed.">            if (myNumDec == 0) {</span>
+<span class="nc" id="L223">                myDecimals = null;</span>
+            }
+            /* If we have a negative exponent */
+<span class="pc bpc" id="L226" title="1 of 2 branches missed.">        } else if (myExponent &lt; 0) {</span>
+            /* Determine the number of integer digits */
+<span class="nc" id="L228">            int myNumDigits = myWork.length();</span>
+<span class="nc" id="L229">            final StringBuilder myCopy = new StringBuilder();</span>
+
+            /* Shift decimals across */
+<span class="nc bnc" id="L232" title="All 4 branches missed.">            while (myExponent &lt; 0 &amp;&amp; myNumDigits &gt; 0) {</span>
+                /* Copy digit across */
+<span class="nc" id="L234">                final char myChar = myWork.charAt(myNumDigits - 1);</span>
+<span class="nc" id="L235">                myWork.deleteCharAt(myNumDigits - 1);</span>
+<span class="nc" id="L236">                myCopy.insert(0, myChar);</span>
+
+                /* Adjust counters */
+<span class="nc" id="L239">                myExponent++;</span>
+<span class="nc" id="L240">                myNumDigits--;</span>
+<span class="nc" id="L241">            }</span>
+
+            /* Finish off with zeroes */
+<span class="nc bnc" id="L244" title="All 2 branches missed.">            while (myExponent &lt; 0) {</span>
+<span class="nc" id="L245">                myCopy.insert(0, OceanusDecimalFormatter.CHAR_ZERO);</span>
+<span class="nc" id="L246">                myExponent++;</span>
+            }
+
+            /* If we have decimals already */
+<span class="nc bnc" id="L250" title="All 2 branches missed.">            if (myDecimals != null) {</span>
+<span class="nc" id="L251">                myDecimals.insert(0, myCopy);</span>
+            } else {
+<span class="nc" id="L253">                myDecimals = myCopy;</span>
+            }
+        }
+
+        /* Handle leading decimal point on value */
+<span class="pc bpc" id="L258" title="1 of 2 branches missed.">        if (myWork.isEmpty()) {</span>
+<span class="nc" id="L259">            myWork.append(OceanusDecimalFormatter.CHAR_ZERO);</span>
+        }
+
+        /* Parse the integral part */
+        long myValue;
+        try {
+<span class="fc" id="L265">            myValue = Long.parseLong(myWork.toString());</span>
+<span class="nc" id="L266">        } catch (NumberFormatException e) {</span>
+<span class="nc" id="L267">            throw new IllegalArgumentException(ERROR_PARSE</span>
+                    + pValue, e);
+<span class="fc" id="L269">        }</span>
+
+        /* If we have a decimal part */
+<span class="fc bfc" id="L272" title="All 2 branches covered.">        if (myDecimals != null) {</span>
+            /* If we have too many decimals */
+<span class="fc" id="L274">            char myLastDigit = OceanusDecimalFormatter.CHAR_ZERO;</span>
+<span class="fc" id="L275">            myScale = myDecimals.length();</span>
+<span class="pc bpc" id="L276" title="1 of 2 branches missed.">            if (myScale &gt; OceanusDecimal.MAX_DECIMALS) {</span>
+                /* Extract most significant trailing digit and truncate the value */
+<span class="nc" id="L278">                myLastDigit = myDecimals.charAt(OceanusDecimal.MAX_DECIMALS);</span>
+<span class="nc" id="L279">                myDecimals.setLength(OceanusDecimal.MAX_DECIMALS);</span>
+<span class="nc" id="L280">                myScale = myDecimals.length();</span>
+            }
+
+            /* Adjust the value to make room for the decimals */
+<span class="fc" id="L284">            myValue *= OceanusDecimal.getFactor(myScale);</span>
+
+            /* Parse the decimals */
+            try {
+<span class="fc" id="L288">                myValue += Long.parseLong(myDecimals.toString());</span>
+<span class="nc" id="L289">            } catch (NumberFormatException e) {</span>
+<span class="nc" id="L290">                throw new IllegalArgumentException(ERROR_PARSE</span>
+                        + pValue, e);
+<span class="fc" id="L292">            }</span>
+
+            /* Round value according to most significant discarded decimal digit */
+<span class="pc bpc" id="L295" title="1 of 2 branches missed.">            if (myLastDigit &gt;= Character.forDigit(OceanusDecimal.RADIX_TEN &gt;&gt; 1, OceanusDecimal.RADIX_TEN)) {</span>
+<span class="nc" id="L296">                myValue++;</span>
+            }
+        }
+
+        /* If the value is negative, negate the number */
+<span class="fc bfc" id="L301" title="All 2 branches covered.">        if (isNegative) {</span>
+<span class="fc" id="L302">            myValue = -myValue;</span>
+        }
+
+        /* Store the result into the decimal */
+<span class="fc" id="L306">        pResult.setValue(myValue, myScale);</span>
+<span class="fc" id="L307">    }</span>
+
+    /**
+     * Adjust to desired decimals.
+     *
+     * @param pValue    the value to adjust
+     * @param pDecimals the desired decimals
+     */
+    private void adjustDecimals(final OceanusDecimal pValue,
+                                final int pDecimals) {
+        /* If we are using strict decimals */
+<span class="nc bnc" id="L318" title="All 2 branches missed.">        if (useStrictDecimals) {</span>
+            /* Correct the scale */
+<span class="nc" id="L320">            pValue.adjustToScale(pDecimals);</span>
+
+            /* else we should honour what we can */
+        } else {
+            /* Calculate the standard correction */
+<span class="nc" id="L325">            final int myAdjust = pDecimals</span>
+<span class="nc" id="L326">                    - pValue.scale();</span>
+
+            /* If we have too few decimals */
+<span class="nc bnc" id="L329" title="All 2 branches missed.">            if (myAdjust &gt; 0) {</span>
+                /* Adjust the value appropriately */
+<span class="nc" id="L331">                pValue.movePointLeft(myAdjust);</span>
+
+                /* else if we have too many */
+<span class="nc bnc" id="L334" title="All 2 branches missed.">            } else if (myAdjust &lt; 0) {</span>
+                /* remove redundant decimal places */
+<span class="nc" id="L336">                pValue.reduceScale(pDecimals);</span>
+            }
+        }
+<span class="nc" id="L339">    }</span>
+
+    /**
+     * Parse a string to extract currency information.
+     *
+     * @param pWork           the buffer to parse
+     * @param pDeemedCurrency the assumed currency if no currency identifier
+     * @return the parsed currency
+     * @throws IllegalArgumentException on invalid currency
+     */
+    private Currency parseCurrency(final StringBuilder pWork,
+                                   final Currency pDeemedCurrency) {
+        /* Look for a currency separator */
+<span class="nc" id="L352">        final int iPos = pWork.indexOf(OceanusDecimalFormatter.STR_CURRSEP);</span>
+<span class="nc bnc" id="L353" title="All 2 branches missed.">        if (iPos &gt; -1) {</span>
+            /* Extract currency detail and determine currency */
+<span class="nc" id="L355">            final String myCurr = pWork.substring(0, iPos);</span>
+<span class="nc" id="L356">            pWork.delete(0, iPos + 1);</span>
+<span class="nc" id="L357">            return Currency.getInstance(myCurr);</span>
+        }
+
+        /* Set default currency */
+<span class="nc" id="L361">        Currency myCurrency = pDeemedCurrency;</span>
+<span class="nc" id="L362">        final char myMinus = theLocale.getMinusSign();</span>
+
+        /* If we have a leading minus sign */
+<span class="nc" id="L365">        int iNumChars = pWork.length();</span>
+<span class="nc" id="L366">        boolean isNegative = false;</span>
+<span class="nc bnc" id="L367" title="All 2 branches missed.">        if ((iNumChars &gt; 0)</span>
+<span class="nc bnc" id="L368" title="All 2 branches missed.">                &amp;&amp; (pWork.charAt(0) == myMinus)) {</span>
+            /* Delete it and note the presence */
+<span class="nc" id="L370">            pWork.deleteCharAt(0);</span>
+<span class="nc" id="L371">            iNumChars--;</span>
+<span class="nc" id="L372">            isNegative = true;</span>
+        }
+
+        /* Look for currency symbol as leading non-digits and non-whitespace */
+<span class="nc" id="L376">        int iNumSymbols = 0;</span>
+<span class="nc bnc" id="L377" title="All 2 branches missed.">        while (iNumSymbols &lt; iNumChars) {</span>
+<span class="nc" id="L378">            final char c = pWork.charAt(iNumSymbols);</span>
+<span class="nc bnc" id="L379" title="All 4 branches missed.">            if (Character.isDigit(c)</span>
+                    || (c == OceanusDecimalFormatter.CHAR_MINUS)
+<span class="nc bnc" id="L381" title="All 2 branches missed.">                    || Character.isWhitespace(c)) {</span>
+<span class="nc" id="L382">                break;</span>
+            }
+<span class="nc" id="L384">            iNumSymbols++;</span>
+<span class="nc" id="L385">        }</span>
+
+        /* If we have a symbol */
+<span class="nc bnc" id="L388" title="All 2 branches missed.">        if (iNumSymbols &gt; 0) {</span>
+            /* Extract Symbol from buffer */
+<span class="nc" id="L390">            final String mySymbol = pWork.substring(0, iNumSymbols);</span>
+<span class="nc" id="L391">            pWork.delete(0, iNumSymbols);</span>
+
+            /* Parse the currency symbol */
+<span class="nc" id="L394">            myCurrency = theLocale.parseCurrencySymbol(mySymbol);</span>
+        }
+
+        /* If we were negative */
+<span class="nc bnc" id="L398" title="All 2 branches missed.">        if (isNegative) {</span>
+            /* Reinsert the minus sign */
+<span class="nc" id="L400">            pWork.insert(0, myMinus);</span>
+        }
+
+        /* Return the currency */
+<span class="nc" id="L404">        return myCurrency;</span>
+    }
+
+    /**
+     * Parse a long value.
+     *
+     * @param pValue  The value to parse.
+     * @param pLocale the Decimal locale
+     * @return the long value
+     * @throws IllegalArgumentException on invalid decimal
+     */
+    protected static long parseLongValue(final String pValue,
+                                         final OceanusDecimalLocale pLocale) {
+        /* Handle null value */
+<span class="nc bnc" id="L418" title="All 2 branches missed.">        if (pValue == null) {</span>
+<span class="nc" id="L419">            throw new IllegalArgumentException();</span>
+        }
+
+        /* Create a working copy */
+<span class="nc" id="L423">        final StringBuilder myWork = new StringBuilder(pValue.trim());</span>
+
+        /* If the value is negative, strip the leading minus sign */
+<span class="nc bnc" id="L426" title="All 2 branches missed.">        final boolean isNegative = !myWork.isEmpty()</span>
+<span class="nc bnc" id="L427" title="All 2 branches missed.">                &amp;&amp; myWork.charAt(0) == pLocale.getMinusSign();</span>
+<span class="nc bnc" id="L428" title="All 2 branches missed.">        if (isNegative) {</span>
+<span class="nc" id="L429">            myWork.deleteCharAt(0);</span>
+        }
+
+        /* Remove any grouping characters from the value */
+<span class="nc" id="L433">        final String myGrouping = pLocale.getGrouping();</span>
+        int myPos;
+        while (true) {
+<span class="nc" id="L436">            myPos = myWork.indexOf(myGrouping);</span>
+<span class="nc bnc" id="L437" title="All 2 branches missed.">            if (myPos == -1) {</span>
+<span class="nc" id="L438">                break;</span>
+            }
+<span class="nc" id="L440">            myWork.deleteCharAt(myPos);</span>
+        }
+
+        /* Trim leading and trailing blanks again */
+<span class="nc" id="L444">        trimBuffer(myWork);</span>
+
+        /* Parse the long value */
+        long myValue;
+        try {
+<span class="nc" id="L449">            myValue = Long.parseLong(myWork.toString());</span>
+<span class="nc" id="L450">        } catch (NumberFormatException e) {</span>
+<span class="nc" id="L451">            throw new IllegalArgumentException(ERROR_PARSE</span>
+                    + pValue, e);
+<span class="nc" id="L453">        }</span>
+
+        /* If the value is negative, negate the number */
+<span class="nc bnc" id="L456" title="All 2 branches missed.">        if (isNegative) {</span>
+<span class="nc" id="L457">            myValue = -myValue;</span>
+        }
+
+        /* return the result */
+<span class="nc" id="L461">        return myValue;</span>
+    }
+
+    /**
+     * Obtain a new zero money value for the default currency.
+     *
+     * @return the new money
+     */
+    public OceanusMoney zeroMoney() {
+<span class="nc" id="L470">        return new OceanusMoney(theLocale.getDefaultCurrency());</span>
+    }
+
+    /**
+     * Obtain a new zero money value for the currency.
+     *
+     * @param pCurrency the currency
+     * @return the new money
+     */
+    public OceanusMoney zeroMoney(final Currency pCurrency) {
+<span class="nc" id="L480">        return new OceanusMoney(pCurrency);</span>
+    }
+
+    /**
+     * Parse Money value.
+     *
+     * @param pValue the string value to parse.
+     * @return the parsed money
+     * @throws IllegalArgumentException on invalid money value
+     */
+    public OceanusMoney parseMoneyValue(final String pValue) {
+<span class="nc" id="L491">        return parseMoneyValue(pValue, null);</span>
+    }
+
+    /**
+     * Parse Money value.
+     *
+     * @param pValue          the string value to parse.
+     * @param pDeemedCurrency the assumed currency if no currency identifier
+     * @return the parsed money
+     * @throws IllegalArgumentException on invalid money value
+     */
+    public OceanusMoney parseMoneyValue(final String pValue,
+                                        final Currency pDeemedCurrency) {
+        /* Handle null value */
+<span class="nc bnc" id="L505" title="All 2 branches missed.">        if (pValue == null) {</span>
+<span class="nc" id="L506">            return null;</span>
+        }
+
+        /* Create a working trimmed copy */
+<span class="nc" id="L510">        final StringBuilder myWork = new StringBuilder(pValue.trim());</span>
+
+        /* Determine currency */
+<span class="nc bnc" id="L513" title="All 2 branches missed.">        final Currency myCurrency = parseCurrency(myWork, pDeemedCurrency == null</span>
+<span class="nc" id="L514">                ? getDefaultCurrency()</span>
+<span class="nc" id="L515">                : pDeemedCurrency);</span>
+<span class="nc" id="L516">        final char myMinus = theLocale.getMinusSign();</span>
+
+        /* If we have a leading minus sign */
+<span class="nc bnc" id="L519" title="All 2 branches missed.">        if (!myWork.isEmpty()</span>
+<span class="nc bnc" id="L520" title="All 2 branches missed.">                &amp;&amp; myWork.charAt(0) == myMinus) {</span>
+            /* Ensure there is no whitespace between minus sign and number */
+<span class="nc" id="L522">            myWork.deleteCharAt(0);</span>
+<span class="nc" id="L523">            trimBuffer(myWork);</span>
+<span class="nc" id="L524">            myWork.insert(0, myMinus);</span>
+        }
+
+        /* Create the new Money object */
+<span class="nc" id="L528">        final OceanusMoney myMoney = new OceanusMoney(myCurrency);</span>
+
+        /* Parse the remaining string */
+<span class="nc" id="L531">        parseDecimalValue(myWork.toString(), theLocale, true, myMoney);</span>
+
+        /* Correct the scale */
+<span class="nc" id="L534">        adjustDecimals(myMoney, myCurrency.getDefaultFractionDigits());</span>
+
+        /* return the parsed money object */
+<span class="nc" id="L537">        return myMoney;</span>
+    }
+
+    /**
+     * Obtain a new zero price value for the default currency.
+     *
+     * @return the new price
+     */
+    public OceanusPrice zeroPrice() {
+<span class="nc" id="L546">        return new OceanusPrice(theLocale.getDefaultCurrency());</span>
+    }
+
+    /**
+     * Obtain a new zero price value for the currency.
+     *
+     * @param pCurrency the currency
+     * @return the new price
+     */
+    public OceanusPrice zeroPrice(final Currency pCurrency) {
+<span class="nc" id="L556">        return new OceanusPrice(pCurrency);</span>
+    }
+
+    /**
+     * Parse Price value.
+     *
+     * @param pValue the string value to parse.
+     * @return the parsed price
+     * @throws IllegalArgumentException on invalid price value
+     */
+    public OceanusPrice parsePriceValue(final String pValue) {
+<span class="nc" id="L567">        return parsePriceValue(pValue, null);</span>
+    }
+
+    /**
+     * Parse Price value.
+     *
+     * @param pValue          the string value to parse.
+     * @param pDeemedCurrency the assumed currency if no currency identifier
+     * @return the parsed price
+     * @throws IllegalArgumentException on invalid price value
+     */
+    public OceanusPrice parsePriceValue(final String pValue,
+                                        final Currency pDeemedCurrency) {
+        /* Handle null value */
+<span class="nc bnc" id="L581" title="All 2 branches missed.">        if (pValue == null) {</span>
+<span class="nc" id="L582">            return null;</span>
+        }
+
+        /* Create a working trimmed copy */
+<span class="nc" id="L586">        final StringBuilder myWork = new StringBuilder(pValue.trim());</span>
+
+        /* Look for explicit currency */
+<span class="nc bnc" id="L589" title="All 2 branches missed.">        final Currency myCurrency = parseCurrency(myWork, pDeemedCurrency == null</span>
+<span class="nc" id="L590">                ? getDefaultCurrency()</span>
+<span class="nc" id="L591">                : pDeemedCurrency);</span>
+<span class="nc" id="L592">        final char myMinus = theLocale.getMinusSign();</span>
+
+        /* If we have a leading minus sign */
+<span class="nc bnc" id="L595" title="All 2 branches missed.">        if (myWork.charAt(0) == myMinus) {</span>
+            /* Ensure there is no whitespace between minus sign and number */
+<span class="nc" id="L597">            myWork.deleteCharAt(0);</span>
+<span class="nc" id="L598">            trimBuffer(myWork);</span>
+<span class="nc" id="L599">            myWork.insert(0, myMinus);</span>
+        }
+
+        /* Create the new Price object */
+<span class="nc" id="L603">        final OceanusPrice myPrice = new OceanusPrice(myCurrency);</span>
+
+        /* Parse the remaining string */
+<span class="nc" id="L606">        parseDecimalValue(myWork.toString(), theLocale, true, myPrice);</span>
+
+        /* Correct the scale */
+<span class="nc" id="L609">        adjustDecimals(myPrice, myCurrency.getDefaultFractionDigits()</span>
+                + OceanusPrice.XTRA_DECIMALS);
+
+        /* return the parsed price object */
+<span class="nc" id="L613">        return myPrice;</span>
+    }
+
+    /**
+     * Parse Rate value.
+     *
+     * @param pValue the string value to parse.
+     * @return the parsed rate
+     * @throws IllegalArgumentException on invalid rate value
+     */
+    public OceanusRate parseRateValue(final String pValue) {
+        /* Handle null value */
+<span class="nc bnc" id="L625" title="All 2 branches missed.">        if (pValue == null) {</span>
+<span class="nc" id="L626">            return null;</span>
+        }
+
+        /* Create a working trimmed copy */
+<span class="nc" id="L630">        final StringBuilder myWork = new StringBuilder(pValue.trim());</span>
+<span class="nc" id="L631">        int myXtraDecimals = 0;</span>
+
+        /* If there is a trailing perCent, remove any percent sign from the end of the string */
+<span class="nc" id="L634">        final int myLast = myWork.length() - 1;</span>
+<span class="nc bnc" id="L635" title="All 2 branches missed.">        if (myWork.charAt(myLast) == theLocale.getPerCent()) {</span>
+<span class="nc" id="L636">            myWork.deleteCharAt(myLast);</span>
+<span class="nc" id="L637">            myXtraDecimals = ADJUST_PERCENT;</span>
+
+            /*
+             * If there is a trailing perMille, remove any percent sign from the end of the string
+             */
+<span class="nc bnc" id="L642" title="All 2 branches missed.">        } else if (myWork.charAt(myLast) == theLocale.getPerMille()) {</span>
+<span class="nc" id="L643">            myWork.deleteCharAt(myLast);</span>
+<span class="nc" id="L644">            myXtraDecimals = ADJUST_PERMILLE;</span>
+        }
+
+        /* Create the new Rate object */
+<span class="nc" id="L648">        final OceanusRate myRate = new OceanusRate();</span>
+
+        /* Parse the remaining string */
+<span class="nc" id="L651">        parseDecimalValue(myWork.toString(), theLocale, false, myRate);</span>
+
+        /* If we have extra Decimals to add */
+<span class="nc bnc" id="L654" title="All 2 branches missed.">        if (myXtraDecimals &gt; 0) {</span>
+            /* Adjust the value appropriately */
+<span class="nc" id="L656">            myRate.recordScale(myXtraDecimals</span>
+<span class="nc" id="L657">                    + myRate.scale());</span>
+        }
+
+        /* Correct the scale */
+<span class="nc" id="L661">        adjustDecimals(myRate, OceanusRate.NUM_DECIMALS);</span>
+
+        /* return the parsed rate object */
+<span class="nc" id="L664">        return myRate;</span>
+    }
+
+    /**
+     * Parse Units value.
+     *
+     * @param pValue the string value to parse.
+     * @return the parsed units
+     * @throws IllegalArgumentException on invalid units value
+     */
+    public OceanusUnits parseUnitsValue(final String pValue) {
+        /* Handle null value */
+<span class="nc bnc" id="L676" title="All 2 branches missed.">        if (pValue == null) {</span>
+<span class="nc" id="L677">            return null;</span>
+        }
+
+        /* Create the new Units object */
+<span class="nc" id="L681">        final OceanusUnits myUnits = new OceanusUnits();</span>
+
+        /* Parse the remaining string */
+<span class="nc" id="L684">        parseDecimalValue(pValue.trim(), theLocale, false, myUnits);</span>
+
+        /* Correct the scale */
+<span class="nc" id="L687">        adjustDecimals(myUnits, OceanusUnits.NUM_DECIMALS);</span>
+
+        /* return the parsed units object */
+<span class="nc" id="L690">        return myUnits;</span>
+    }
+
+    /**
+     * Parse Ratio value.
+     *
+     * @param pValue the string value to parse.
+     * @return the parsed ratio
+     * @throws IllegalArgumentException on invalid ratio value
+     */
+    public OceanusRatio parseRatioValue(final String pValue) {
+        /* Handle null value */
+<span class="nc bnc" id="L702" title="All 2 branches missed.">        if (pValue == null) {</span>
+<span class="nc" id="L703">            return null;</span>
+        }
+
+        /* Create the new Ratio object */
+<span class="nc" id="L707">        final OceanusRatio myRatio = new OceanusRatio();</span>
+
+        /* Parse the remaining string */
+<span class="nc" id="L710">        parseDecimalValue(pValue.trim(), theLocale, false, myRatio);</span>
+
+        /* Correct the scale */
+<span class="nc" id="L713">        adjustDecimals(myRatio, OceanusRatio.NUM_DECIMALS);</span>
+
+        /* return the parsed ratio object */
+<span class="nc" id="L716">        return myRatio;</span>
+    }
+
+    /**
+     * Parse Decimal value.
+     *
+     * @param pValue the string value to parse.
+     * @param pScale the scale of the resulting decimal
+     * @return the parsed decimal
+     * @throws IllegalArgumentException on invalid decimal value
+     */
+    public OceanusDecimal parseDecimalValue(final String pValue,
+                                            final int pScale) {
+        /* Handle null value */
+<span class="nc bnc" id="L730" title="All 2 branches missed.">        if (pValue == null) {</span>
+<span class="nc" id="L731">            return null;</span>
+        }
+
+        /* Create the new Decimal object */
+<span class="nc" id="L735">        final OceanusDecimal myDecimal = new OceanusDecimal();</span>
+
+        /* Parse the remaining string */
+<span class="nc" id="L738">        parseDecimalValue(pValue.trim(), theLocale, false, myDecimal);</span>
+<span class="nc" id="L739">        adjustDecimals(myDecimal, pScale);</span>
+
+        /* return the parsed decimal object */
+<span class="nc" id="L742">        return myDecimal;</span>
+    }
+
+    /**
+     * Parse Long value.
+     *
+     * @param pValue the string value to parse.
+     * @return the parsed value
+     * @throws IllegalArgumentException on invalid value
+     */
+    public Long parseLongValue(final String pValue) {
+        /* Handle null value */
+<span class="nc bnc" id="L754" title="All 2 branches missed.">        if (pValue == null) {</span>
+<span class="nc" id="L755">            return null;</span>
+        }
+
+        /* Parse the value */
+<span class="nc" id="L759">        return parseLongValue(pValue, theLocale);</span>
+    }
+
+    /**
+     * Parse Integer value.
+     *
+     * @param pValue the string value to parse.
+     * @return the parsed value
+     * @throws IllegalArgumentException on invalid value
+     */
+    public Integer parseIntegerValue(final String pValue) {
+        /* Handle null value */
+<span class="nc bnc" id="L771" title="All 2 branches missed.">        if (pValue == null) {</span>
+<span class="nc" id="L772">            return null;</span>
+        }
+
+        /* Parse the value */
+<span class="nc" id="L776">        final long myValue = parseLongValue(pValue, theLocale);</span>
+
+        /* Check bounds */
+<span class="nc bnc" id="L779" title="All 4 branches missed.">        if (myValue &gt; Integer.MAX_VALUE || myValue &lt; Integer.MIN_VALUE) {</span>
+<span class="nc" id="L780">            throw new IllegalArgumentException(ERROR_BOUNDS</span>
+                    + pValue);
+        }
+
+        /* Return value */
+<span class="nc" id="L785">        return (int) myValue;</span>
+    }
+
+    /**
+     * Parse Short value.
+     *
+     * @param pValue the string value to parse.
+     * @return the parsed value
+     * @throws IllegalArgumentException on invalid value
+     */
+    public Short parseShortValue(final String pValue) {
+        /* Handle null value */
+<span class="nc bnc" id="L797" title="All 2 branches missed.">        if (pValue == null) {</span>
+<span class="nc" id="L798">            return null;</span>
+        }
+
+        /* Parse the value */
+<span class="nc" id="L802">        final long myValue = parseLongValue(pValue, theLocale);</span>
+
+        /* Check bounds */
+<span class="nc bnc" id="L805" title="All 4 branches missed.">        if ((myValue &gt; Short.MAX_VALUE) || (myValue &lt; Short.MIN_VALUE)) {</span>
+<span class="nc" id="L806">            throw new IllegalArgumentException(ERROR_BOUNDS</span>
+                    + pValue);
+        }
+
+        /* Return value */
+<span class="nc" id="L811">        return (short) myValue;</span>
+    }
+
+    /**
+     * Trim parsing buffer.
+     *
+     * @param pBuffer the buffer to trim
+     */
+    private static void trimBuffer(final StringBuilder pBuffer) {
+        /* Remove leading blanks */
+<span class="pc bpc" id="L821" title="1 of 2 branches missed.">        while (!pBuffer.isEmpty()</span>
+<span class="pc bpc" id="L822" title="1 of 2 branches missed.">                &amp;&amp; Character.isWhitespace(pBuffer.charAt(0))) {</span>
+<span class="nc" id="L823">            pBuffer.deleteCharAt(0);</span>
+        }
+
+        /* Remove trailing blanks */
+<span class="fc" id="L827">        int myLen = pBuffer.length();</span>
+<span class="pc bpc" id="L828" title="1 of 2 branches missed.">        while (myLen-- &gt; 0) {</span>
+<span class="pc bpc" id="L829" title="1 of 2 branches missed.">            if (!Character.isWhitespace(pBuffer.charAt(myLen))) {</span>
+<span class="fc" id="L830">                break;</span>
+            }
+<span class="nc" id="L832">            pBuffer.deleteCharAt(myLen);</span>
+        }
+<span class="fc" id="L834">    }</span>
+
+    /**
+     * create Money from double.
+     *
+     * @param pValue the double value.
+     * @return the parsed money
+     * @throws IllegalArgumentException on invalid money value
+     */
+    public OceanusMoney createMoneyFromDouble(final Double pValue) {
+        /* Handle null value */
+<span class="nc bnc" id="L845" title="All 2 branches missed.">        if (pValue == null) {</span>
+<span class="nc" id="L846">            return null;</span>
+        }
+
+        /* Use default currency */
+<span class="nc" id="L850">        final Currency myCurrency = theLocale.getDefaultCurrency();</span>
+<span class="nc" id="L851">        return createMoneyFromDouble(pValue, myCurrency.getCurrencyCode());</span>
+    }
+
+    /**
+     * create Money from double.
+     *
+     * @param pValue    the double value.
+     * @param pCurrCode the currency code
+     * @return the parsed money
+     * @throws IllegalArgumentException on invalid money value
+     */
+    public OceanusMoney createMoneyFromDouble(final Double pValue,
+                                              final String pCurrCode) {
+        /* Handle null value */
+<span class="nc bnc" id="L865" title="All 2 branches missed.">        if (pValue == null) {</span>
+<span class="nc" id="L866">            return null;</span>
+        }
+
+        /* Determine currency */
+<span class="nc" id="L870">        final Currency myCurrency = Currency.getInstance(pCurrCode);</span>
+
+        /* Create the new Money object */
+<span class="nc" id="L873">        final OceanusMoney myMoney = new OceanusMoney(myCurrency);</span>
+
+        /* Parse the remaining string */
+<span class="nc" id="L876">        parseDecimalValue(pValue.toString(), theLocale, true, myMoney);</span>
+
+        /* Correct the scale */
+<span class="nc" id="L879">        adjustDecimals(myMoney, myCurrency.getDefaultFractionDigits());</span>
+
+        /* return the parsed money object */
+<span class="nc" id="L882">        return myMoney;</span>
+    }
+
+    /**
+     * create Price from double.
+     *
+     * @param pValue the double value.
+     * @return the parsed price
+     * @throws IllegalArgumentException on invalid price value
+     */
+    public OceanusPrice createPriceFromDouble(final Double pValue) {
+        /* Handle null value */
+<span class="nc bnc" id="L894" title="All 2 branches missed.">        if (pValue == null) {</span>
+<span class="nc" id="L895">            return null;</span>
+        }
+
+        /* Use default currency */
+<span class="nc" id="L899">        final Currency myCurrency = theLocale.getDefaultCurrency();</span>
+<span class="nc" id="L900">        return createPriceFromDouble(pValue, myCurrency.getCurrencyCode());</span>
+    }
+
+    /**
+     * create Price from double.
+     *
+     * @param pValue    the double value.
+     * @param pCurrCode the currency code
+     * @return the parsed price
+     * @throws IllegalArgumentException on invalid price value
+     */
+    public OceanusPrice createPriceFromDouble(final Double pValue,
+                                              final String pCurrCode) {
+        /* Handle null value */
+<span class="nc bnc" id="L914" title="All 2 branches missed.">        if (pValue == null) {</span>
+<span class="nc" id="L915">            return null;</span>
+        }
+
+        /* Determine currency */
+<span class="nc" id="L919">        final Currency myCurrency = Currency.getInstance(pCurrCode);</span>
+
+        /* Create the new Price object */
+<span class="nc" id="L922">        final OceanusPrice myPrice = new OceanusPrice(myCurrency);</span>
+
+        /* Parse the remaining string */
+<span class="nc" id="L925">        parseDecimalValue(pValue.toString(), theLocale, false, myPrice);</span>
+
+        /* Correct the scale */
+<span class="nc" id="L928">        adjustDecimals(myPrice, myCurrency.getDefaultFractionDigits()</span>
+                + OceanusPrice.XTRA_DECIMALS);
+
+        /* return the parsed price object */
+<span class="nc" id="L932">        return myPrice;</span>
+    }
+
+    /**
+     * create Rate from double.
+     *
+     * @param pValue the double value.
+     * @return the parsed rate
+     * @throws IllegalArgumentException on invalid rate value
+     */
+    public OceanusRate createRateFromDouble(final Double pValue) {
+        /* Handle null value */
+<span class="nc bnc" id="L944" title="All 2 branches missed.">        if (pValue == null) {</span>
+<span class="nc" id="L945">            return null;</span>
+        }
+
+        /* Create the new Rate object */
+<span class="nc" id="L949">        final OceanusRate myRate = new OceanusRate();</span>
+
+        /* Parse the remaining string */
+<span class="nc" id="L952">        parseDecimalValue(pValue.toString(), theLocale, false, myRate);</span>
+
+        /* Correct the scale */
+<span class="nc" id="L955">        adjustDecimals(myRate, OceanusRate.NUM_DECIMALS);</span>
+
+        /* return the parsed rate object */
+<span class="nc" id="L958">        return myRate;</span>
+    }
+
+    /**
+     * create Units from double.
+     *
+     * @param pValue the double value.
+     * @return the parsed units
+     * @throws IllegalArgumentException on invalid units value
+     */
+    public OceanusUnits createUnitsFromDouble(final Double pValue) {
+        /* Handle null value */
+<span class="nc bnc" id="L970" title="All 2 branches missed.">        if (pValue == null) {</span>
+<span class="nc" id="L971">            return null;</span>
+        }
+
+        /* Create the new Units object */
+<span class="nc" id="L975">        final OceanusUnits myUnits = new OceanusUnits();</span>
+
+        /* Parse the remaining string */
+<span class="nc" id="L978">        parseDecimalValue(pValue.toString(), theLocale, false, myUnits);</span>
+
+        /* Correct the scale */
+<span class="nc" id="L981">        adjustDecimals(myUnits, OceanusUnits.NUM_DECIMALS);</span>
+
+        /* return the parsed units object */
+<span class="nc" id="L984">        return myUnits;</span>
+    }
+
+    /**
+     * create Ratio from double.
+     *
+     * @param pValue the double value.
+     * @return the parsed ratio
+     * @throws IllegalArgumentException on invalid ratio value
+     */
+    public OceanusRatio createRatioFromDouble(final Double pValue) {
+        /* Handle null value */
+<span class="nc bnc" id="L996" title="All 2 branches missed.">        if (pValue == null) {</span>
+<span class="nc" id="L997">            return null;</span>
+        }
+
+        /* Create the new Ratio object */
+<span class="nc" id="L1001">        final OceanusRatio myRatio = new OceanusRatio();</span>
+
+        /* Parse the remaining string */
+<span class="nc" id="L1004">        parseDecimalValue(pValue.toString(), theLocale, false, myRatio);</span>
+
+        /* Correct the scale */
+<span class="nc" id="L1007">        adjustDecimals(myRatio, OceanusRatio.NUM_DECIMALS);</span>
+
+        /* return the parsed ratio object */
+<span class="nc" id="L1010">        return myRatio;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

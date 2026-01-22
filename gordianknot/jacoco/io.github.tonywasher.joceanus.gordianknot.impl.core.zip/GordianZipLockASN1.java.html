@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianZipLockASN1.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.impl.core.zip</a> &gt; <span class="el_source">GordianZipLockASN1.java</span></div><h1>GordianZipLockASN1.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.gordianknot.impl.core.zip;
+
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactory.GordianFactoryLock;
+import io.github.tonywasher.joceanus.gordianknot.api.lock.GordianKeyPairLock;
+import io.github.tonywasher.joceanus.gordianknot.api.lock.GordianKeySetLock;
+import io.github.tonywasher.joceanus.gordianknot.api.zip.GordianZipLockType;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianASN1Util;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianASN1Util.GordianASN1Object;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianIOException;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.lock.GordianKeyPairLockASN1;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.lock.GordianPasswordLockASN1;
+import org.bouncycastle.asn1.ASN1EncodableVector;
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.ASN1Primitive;
+import org.bouncycastle.asn1.ASN1Sequence;
+import org.bouncycastle.asn1.ASN1TaggedObject;
+import org.bouncycastle.asn1.DERSequence;
+import org.bouncycastle.asn1.DERTaggedObject;
+import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
+
+import java.util.Enumeration;
+import java.util.Objects;
+
+/**
+ * ASN1 Encoding of Lock.
+ * &lt;pre&gt;
+ * GordianZipLockASN1 ::= SEQUENCE  {*
+ *      lockType CHOICE {
+ *          password    [0] GordianPasswordLockASN1
+ *          factory     [1] GordianPasswordLockASN1
+ *          keyPair     [2] GordianKeyPairLockASN1
+ *      }
+ * }
+ * &lt;/pre&gt;
+ */
+public class GordianZipLockASN1
+        extends GordianASN1Object {
+    /**
+     * LockOID branch.
+     */
+<span class="fc" id="L59">    public static final ASN1ObjectIdentifier LOCKOID = GordianASN1Util.EXTOID.branch(&quot;3&quot;);</span>
+
+    /**
+     * KeySet and Password.
+     */
+    private static final int TAG_KEYSET = 0;
+
+    /**
+     * Factory and Password.
+     */
+    private static final int TAG_FACTORY = 1;
+
+    /**
+     * KeyPair and Password.
+     */
+    private static final int TAG_KEYPAIR = 2;
+
+    /**
+     * The zipLockType.
+     */
+    private final GordianZipLockType theLockType;
+
+    /**
+     * The passwordLockASN1.
+     */
+    private final GordianPasswordLockASN1 thePasswordLock;
+
+    /**
+     * The keyPairLockASN1.
+     */
+    private final GordianKeyPairLockASN1 theKeyPairLock;
+
+    /**
+     * Create the ASN1 sequence.
+     *
+     * @param pLock the lock
+     */
+<span class="fc" id="L96">    public GordianZipLockASN1(final GordianKeySetLock pLock) {</span>
+        /* Store the Details */
+<span class="fc" id="L98">        theLockType = GordianZipLockType.KEYSET_PASSWORD;</span>
+<span class="fc" id="L99">        thePasswordLock = (GordianPasswordLockASN1) pLock.getLockASN1();</span>
+<span class="fc" id="L100">        theKeyPairLock = null;</span>
+<span class="fc" id="L101">    }</span>
+
+    /**
+     * Create the ASN1 sequence.
+     *
+     * @param pLock the lock
+     */
+<span class="fc" id="L108">    public GordianZipLockASN1(final GordianFactoryLock pLock) {</span>
+        /* Store the Details */
+<span class="fc" id="L110">        theLockType = GordianZipLockType.FACTORY_PASSWORD;</span>
+<span class="fc" id="L111">        thePasswordLock = (GordianPasswordLockASN1) pLock.getLockASN1();</span>
+<span class="fc" id="L112">        theKeyPairLock = null;</span>
+<span class="fc" id="L113">    }</span>
+
+    /**
+     * Create the ASN1 sequence.
+     *
+     * @param pLock the lock
+     */
+<span class="fc" id="L120">    public GordianZipLockASN1(final GordianKeyPairLock pLock) {</span>
+        /* Store the Details */
+<span class="fc" id="L122">        theLockType = GordianZipLockType.KEYPAIR_PASSWORD;</span>
+<span class="fc" id="L123">        thePasswordLock = null;</span>
+<span class="fc" id="L124">        theKeyPairLock = (GordianKeyPairLockASN1) pLock.getLockASN1();</span>
+<span class="fc" id="L125">    }</span>
+
+    /**
+     * Constructor.
+     *
+     * @param pSequence the Sequence
+     * @throws GordianException on error
+     */
+<span class="fc" id="L133">    private GordianZipLockASN1(final ASN1Sequence pSequence) throws GordianException {</span>
+        /* Protect against exceptions */
+        try {
+            /* Access the sequence */
+<span class="fc" id="L137">            final ASN1Sequence mySequence = ASN1Sequence.getInstance(pSequence);</span>
+<span class="fc" id="L138">            final Enumeration&lt;?&gt; en = mySequence.getObjects();</span>
+
+            /* Access message parts */
+<span class="fc" id="L141">            final ASN1TaggedObject myTagged = ASN1TaggedObject.getInstance(en.nextElement());</span>
+<span class="pc bpc" id="L142" title="1 of 4 branches missed.">            switch (myTagged.getTagNo()) {</span>
+                case TAG_KEYSET:
+<span class="fc" id="L144">                    theLockType = GordianZipLockType.KEYSET_PASSWORD;</span>
+<span class="fc" id="L145">                    thePasswordLock = GordianPasswordLockASN1.getInstance(myTagged.getBaseObject());</span>
+<span class="fc" id="L146">                    theKeyPairLock = null;</span>
+<span class="fc" id="L147">                    break;</span>
+                case TAG_FACTORY:
+<span class="fc" id="L149">                    theLockType = GordianZipLockType.FACTORY_PASSWORD;</span>
+<span class="fc" id="L150">                    thePasswordLock = GordianPasswordLockASN1.getInstance(myTagged.getBaseObject());</span>
+<span class="fc" id="L151">                    theKeyPairLock = null;</span>
+<span class="fc" id="L152">                    break;</span>
+                case TAG_KEYPAIR:
+<span class="fc" id="L154">                    theLockType = GordianZipLockType.KEYPAIR_PASSWORD;</span>
+<span class="fc" id="L155">                    thePasswordLock = null;</span>
+<span class="fc" id="L156">                    theKeyPairLock = GordianKeyPairLockASN1.getInstance(ASN1Sequence.getInstance(myTagged.getBaseObject()));</span>
+<span class="fc" id="L157">                    break;</span>
+                default:
+<span class="nc" id="L159">                    throw new GordianDataException(&quot;Unexpected tag# in ASN1 sequence&quot;);</span>
+            }
+
+            /* Make sure that we have completed the sequence */
+<span class="pc bpc" id="L163" title="1 of 2 branches missed.">            if (en.hasMoreElements()) {</span>
+<span class="nc" id="L164">                throw new GordianDataException(&quot;Unexpected additional values in ASN1 sequence&quot;);</span>
+            }
+
+            /* handle exceptions */
+<span class="nc" id="L168">        } catch (IllegalArgumentException e) {</span>
+<span class="nc" id="L169">            throw new GordianIOException(&quot;Unable to parse ASN1 sequence&quot;, e);</span>
+<span class="fc" id="L170">        }</span>
+<span class="fc" id="L171">    }</span>
+
+    /**
+     * Parse the ASN1 object.
+     *
+     * @param pObject the object to parse
+     * @return the parsed object
+     * @throws GordianException on error
+     */
+    public static GordianZipLockASN1 getInstance(final Object pObject) throws GordianException {
+<span class="pc bpc" id="L181" title="1 of 2 branches missed.">        if (pObject instanceof GordianZipLockASN1 myASN1) {</span>
+<span class="nc" id="L182">            return myASN1;</span>
+<span class="pc bpc" id="L183" title="1 of 2 branches missed.">        } else if (pObject != null) {</span>
+<span class="fc" id="L184">            return new GordianZipLockASN1(ASN1Sequence.getInstance(pObject));</span>
+        }
+<span class="nc" id="L186">        throw new GordianDataException(&quot;Null sequence&quot;);</span>
+    }
+
+    /**
+     * Obtain the lockType.
+     *
+     * @return the lockType
+     */
+    public GordianZipLockType getLockType() {
+<span class="fc" id="L195">        return theLockType;</span>
+    }
+
+    /**
+     * Obtain the passwordLock.
+     *
+     * @return the passwordLock
+     */
+    public GordianPasswordLockASN1 getPasswordLockASN1() {
+<span class="fc" id="L204">        return thePasswordLock;</span>
+    }
+
+    /**
+     * Obtain the keyPairLock.
+     *
+     * @return the keyPairLock
+     */
+    public GordianKeyPairLockASN1 getKeyPairLockASN1() {
+<span class="fc" id="L213">        return theKeyPairLock;</span>
+    }
+
+    /**
+     * Obtain the algorithmId.
+     *
+     * @return the algorithmId
+     */
+    public AlgorithmIdentifier getAlgorithmId() {
+<span class="fc" id="L222">        return new AlgorithmIdentifier(LOCKOID, toASN1Primitive());</span>
+    }
+
+    @Override
+    public ASN1Primitive toASN1Primitive() {
+<span class="fc" id="L227">        final ASN1EncodableVector v = new ASN1EncodableVector();</span>
+<span class="fc bfc" id="L228" title="All 3 branches covered.">        switch (theLockType) {</span>
+            case KEYSET_PASSWORD:
+<span class="fc" id="L230">                v.add(new DERTaggedObject(false, TAG_KEYSET, thePasswordLock));</span>
+<span class="fc" id="L231">                break;</span>
+            case FACTORY_PASSWORD:
+<span class="fc" id="L233">                v.add(new DERTaggedObject(false, TAG_FACTORY, thePasswordLock));</span>
+<span class="fc" id="L234">                break;</span>
+            case KEYPAIR_PASSWORD:
+            default:
+<span class="fc" id="L237">                v.add(new DERTaggedObject(false, TAG_KEYPAIR, theKeyPairLock));</span>
+                break;
+        }
+<span class="fc" id="L240">        return new DERSequence(v);</span>
+    }
+
+    @Override
+    public boolean equals(final Object pThat) {
+        /* Handle trivial cases */
+<span class="nc bnc" id="L246" title="All 2 branches missed.">        if (this == pThat) {</span>
+<span class="nc" id="L247">            return true;</span>
+        }
+<span class="nc bnc" id="L249" title="All 2 branches missed.">        if (pThat == null) {</span>
+<span class="nc" id="L250">            return false;</span>
+        }
+
+        /* Check that the fields are equal */
+<span class="nc" id="L254">        return pThat instanceof GordianZipLockASN1 myThat</span>
+<span class="nc bnc" id="L255" title="All 2 branches missed.">                &amp;&amp; theLockType.equals(myThat.getLockType())</span>
+<span class="nc bnc" id="L256" title="All 2 branches missed.">                &amp;&amp; Objects.equals(thePasswordLock, myThat.getPasswordLockASN1())</span>
+<span class="nc bnc" id="L257" title="All 4 branches missed.">                &amp;&amp; Objects.equals(theKeyPairLock, myThat.getKeyPairLockASN1());</span>
+    }
+
+    @Override
+    public int hashCode() {
+<span class="nc" id="L262">        return Objects.hash(theLockType, thePasswordLock, theKeyPairLock);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

@@ -1,0 +1,899 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseXAnalysisEvent.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.base</a> &gt; <span class="el_source">MoneyWiseXAnalysisEvent.java</span></div><h1>MoneyWiseXAnalysisEvent.java</h1><pre class="source lang-java linenums">/*
+ * MoneyWise: Finance Application
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.base;
+
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseAssetBase;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseAssetDirection;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseExchangeRate;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurityPrice;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransAsset;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransCategory;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransTag;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransaction;
+import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTransInfoClass;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Objects;
+
+/**
+ * Analysis Event.
+ */
+public class MoneyWiseXAnalysisEvent
+        extends PrometheusDataItem {
+    /**
+     * Local Report fields.
+     */
+<span class="fc" id="L51">    static final MetisFieldSet&lt;MoneyWiseXAnalysisEvent&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseXAnalysisEvent.class);</span>
+
+    /*
+     * FieldIds.
+     */
+    static {
+<span class="fc" id="L57">        FIELD_DEFS.declareLocalField(MoneyWiseXAnalysisBaseResource.EVENT_DATE, MoneyWiseXAnalysisEvent::getDate);</span>
+<span class="fc" id="L58">        FIELD_DEFS.declareLocalField(MoneyWiseXAnalysisBaseResource.EVENT_TYPE, MoneyWiseXAnalysisEvent::getEventType);</span>
+<span class="fc" id="L59">        FIELD_DEFS.declareLocalField(MoneyWiseBasicResource.TRANSACTION_NAME, MoneyWiseXAnalysisEvent::getTransaction);</span>
+<span class="fc" id="L60">        FIELD_DEFS.declareLocalField(MoneyWiseXAnalysisBaseResource.EVENT_PRICES, MoneyWiseXAnalysisEvent::getPrices);</span>
+<span class="fc" id="L61">        FIELD_DEFS.declareLocalField(MoneyWiseXAnalysisBaseResource.EVENT_XCHGRATES, MoneyWiseXAnalysisEvent::getXchgRates);</span>
+<span class="fc" id="L62">        FIELD_DEFS.declareLocalField(MoneyWiseXAnalysisBaseResource.EVENT_DEPRATES, MoneyWiseXAnalysisEvent::getDepRates);</span>
+<span class="fc" id="L63">        FIELD_DEFS.declareLocalField(MoneyWiseXAnalysisBaseResource.EVENT_BALANCES, MoneyWiseXAnalysisEvent::getBalances);</span>
+<span class="fc" id="L64">    }</span>
+
+    /**
+     * Non-transaction indicator.
+     */
+    private static final int NONTRANS = 0x40000000;
+
+    /**
+     * EventType.
+     */
+    private final MoneyWiseXAnalysisEventType theEventType;
+
+    /**
+     * Transaction.
+     */
+    private final MoneyWiseTransaction theTransaction;
+
+    /**
+     * The Date.
+     */
+    private final OceanusDate theDate;
+
+    /**
+     * The securityPrice List.
+     */
+    private final List&lt;MoneyWiseSecurityPrice&gt; thePrices;
+
+    /**
+     * The exchangeRate List.
+     */
+    private final List&lt;MoneyWiseExchangeRate&gt; theXchgRates;
+
+    /**
+     * The depositRate List.
+     */
+    private final List&lt;MoneyWiseNewDepositRate&gt; theDepRates;
+
+    /**
+     * The opening balance list.
+     */
+    private final List&lt;MoneyWiseAssetBase&gt; theBalances;
+
+    /**
+     * Transaction constructor.
+     *
+     * @param pList  the owning list
+     * @param pTrans the transaction.
+     */
+    public MoneyWiseXAnalysisEvent(final MoneyWiseXAnalysisEventList pList,
+                                   final MoneyWiseTransaction pTrans) {
+<span class="fc" id="L114">        super(pList, pTrans.getIndexedId());</span>
+<span class="fc" id="L115">        theEventType = MoneyWiseXAnalysisEventType.TRANSACTION;</span>
+<span class="fc" id="L116">        theTransaction = pTrans;</span>
+<span class="fc" id="L117">        theDate = pTrans.getDate();</span>
+<span class="fc" id="L118">        thePrices = null;</span>
+<span class="fc" id="L119">        theXchgRates = null;</span>
+<span class="fc" id="L120">        theDepRates = null;</span>
+<span class="fc" id="L121">        theBalances = null;</span>
+<span class="fc" id="L122">    }</span>
+
+    /**
+     * Event constructor.
+     *
+     * @param pList      the owning list
+     * @param pEventType the eventType.
+     * @param pDate      the date
+     */
+    public MoneyWiseXAnalysisEvent(final MoneyWiseXAnalysisEventList pList,
+                                   final MoneyWiseXAnalysisEventType pEventType,
+                                   final OceanusDate pDate) {
+<span class="fc" id="L134">        super(pList, determineId(pEventType, pDate));</span>
+<span class="fc" id="L135">        theEventType = pEventType;</span>
+<span class="fc" id="L136">        theTransaction = null;</span>
+<span class="fc" id="L137">        theDate = pDate;</span>
+<span class="fc bfc" id="L138" title="All 2 branches covered.">        thePrices = MoneyWiseXAnalysisEventType.SECURITYPRICE == theEventType ? new ArrayList&lt;&gt;() : null;</span>
+<span class="fc bfc" id="L139" title="All 2 branches covered.">        theXchgRates = MoneyWiseXAnalysisEventType.XCHANGERATE == theEventType ? new ArrayList&lt;&gt;() : null;</span>
+<span class="pc bpc" id="L140" title="1 of 2 branches missed.">        theDepRates = MoneyWiseXAnalysisEventType.DEPOSITRATE == theEventType ? new ArrayList&lt;&gt;() : null;</span>
+<span class="fc bfc" id="L141" title="All 2 branches covered.">        theBalances = MoneyWiseXAnalysisEventType.OPENINGBALANCE == theEventType ? new ArrayList&lt;&gt;() : null;</span>
+<span class="fc" id="L142">    }</span>
+
+    @Override
+    public MetisFieldSetDef getDataFieldSet() {
+<span class="fc" id="L146">        return FIELD_DEFS;</span>
+    }
+
+    /**
+     * Determine the id of a non-transaction event.
+     *
+     * @param pEventType the eventType
+     * @param pDate      the date
+     * @return the id
+     */
+    private static Integer determineId(final MoneyWiseXAnalysisEventType pEventType,
+                                       final OceanusDate pDate) {
+<span class="fc" id="L158">        final int myId = NONTRANS + (pDate.getId() &lt;&lt; 2);</span>
+<span class="pc bpc" id="L159" title="1 of 4 branches missed.">        switch (pEventType) {</span>
+            case SECURITYPRICE:
+<span class="fc" id="L161">                return myId - 1;</span>
+            case XCHANGERATE:
+<span class="fc" id="L163">                return myId;</span>
+            case DEPOSITRATE:
+<span class="nc" id="L165">                return myId + 1;</span>
+            case OPENINGBALANCE:
+            default:
+<span class="fc" id="L168">                return myId + 2;</span>
+        }
+    }
+
+    /**
+     * Obtain the event type.
+     *
+     * @return the eventType
+     */
+    public MoneyWiseXAnalysisEventType getEventType() {
+<span class="fc" id="L178">        return theEventType;</span>
+    }
+
+    /**
+     * Obtain the transaction.
+     *
+     * @return the transaction
+     */
+    public MoneyWiseTransaction getTransaction() {
+<span class="fc" id="L187">        return theTransaction;</span>
+    }
+
+    /**
+     * Obtain the priceList.
+     *
+     * @return the priceList
+     */
+    private List&lt;MoneyWiseSecurityPrice&gt; getPrices() {
+<span class="nc" id="L196">        return thePrices;</span>
+    }
+
+    /**
+     * Obtain the xchgRateList.
+     *
+     * @return the xchgRateList
+     */
+    private List&lt;MoneyWiseExchangeRate&gt; getXchgRates() {
+<span class="nc" id="L205">        return theXchgRates;</span>
+    }
+
+    /**
+     * Obtain the depositRateList.
+     *
+     * @return the depositRateList
+     */
+    private List&lt;MoneyWiseNewDepositRate&gt; getDepRates() {
+<span class="nc" id="L214">        return theDepRates;</span>
+    }
+
+    /**
+     * Obtain the openingBalanceList.
+     *
+     * @return the openingBalanceList
+     */
+    private List&lt;MoneyWiseAssetBase&gt; getBalances() {
+<span class="nc" id="L223">        return theBalances;</span>
+    }
+
+    @Override
+    public int compareTo(final Object pThat) {
+        /* Handle the trivial cases */
+<span class="nc bnc" id="L229" title="All 2 branches missed.">        if (this.equals(pThat)) {</span>
+<span class="nc" id="L230">            return 0;</span>
+        }
+<span class="nc bnc" id="L232" title="All 2 branches missed.">        if (pThat == null) {</span>
+<span class="nc" id="L233">            return -1;</span>
+        }
+
+        /* Non-DataItems are last */
+<span class="nc bnc" id="L237" title="All 2 branches missed.">        if (!(pThat instanceof MoneyWiseXAnalysisEvent)) {</span>
+<span class="nc" id="L238">            return -1;</span>
+        }
+
+        /* Check date and then data type */
+<span class="nc" id="L242">        final MoneyWiseXAnalysisEvent myThat = (MoneyWiseXAnalysisEvent) pThat;</span>
+<span class="nc" id="L243">        final int iDiff = theDate.compareTo(myThat.getDate());</span>
+<span class="nc bnc" id="L244" title="All 2 branches missed.">        if (iDiff != 0) {</span>
+<span class="nc" id="L245">            return iDiff;</span>
+        }
+<span class="nc bnc" id="L247" title="All 2 branches missed.">        if (theEventType != myThat.getEventType()) {</span>
+<span class="nc" id="L248">            return theEventType.compareTo(myThat.getEventType());</span>
+        }
+
+        /* Only event types with same date are transactions */
+<span class="nc bnc" id="L252" title="All 2 branches missed.">        return theTransaction == null ? 0 : theTransaction.compareTo(myThat.getTransaction());</span>
+    }
+
+    @Override
+    protected int compareValues(final PrometheusDataItem pThat) {
+        /* Check date and then data type */
+<span class="nc" id="L258">        final MoneyWiseXAnalysisEvent myThat = (MoneyWiseXAnalysisEvent) pThat;</span>
+<span class="nc" id="L259">        final int iDiff = theDate.compareTo(myThat.getDate());</span>
+<span class="nc bnc" id="L260" title="All 2 branches missed.">        if (iDiff != 0) {</span>
+<span class="nc" id="L261">            return iDiff;</span>
+        }
+<span class="nc bnc" id="L263" title="All 2 branches missed.">        if (theEventType != myThat.getEventType()) {</span>
+<span class="nc" id="L264">            return theEventType.compareTo(myThat.getEventType());</span>
+        }
+
+        /* Only event types with same date are transactions */
+<span class="nc bnc" id="L268" title="All 2 branches missed.">        return theTransaction == null ? 0 : theTransaction.compareTo(myThat.getTransaction());</span>
+    }
+
+    @Override
+    public boolean equals(final Object pThat) {
+        /* Handle trivial cases */
+<span class="nc bnc" id="L274" title="All 2 branches missed.">        if (this == pThat) {</span>
+<span class="nc" id="L275">            return true;</span>
+<span class="nc bnc" id="L276" title="All 2 branches missed.">        } else if (!(pThat instanceof MoneyWiseXAnalysisEvent)) {</span>
+<span class="nc" id="L277">            return false;</span>
+        }
+
+        /* Access object correctly */
+<span class="nc" id="L281">        final MoneyWiseXAnalysisEvent myThat = (MoneyWiseXAnalysisEvent) pThat;</span>
+
+        /* Ensure date is identical */
+<span class="nc bnc" id="L284" title="All 2 branches missed.">        if (!theDate.equals(myThat.getDate())) {</span>
+<span class="nc" id="L285">            return false;</span>
+        }
+
+        /* Ensure eventType is identical */
+<span class="nc bnc" id="L289" title="All 2 branches missed.">        if (theEventType != myThat.getEventType()) {</span>
+<span class="nc" id="L290">            return false;</span>
+        }
+
+        /* Check transaction */
+<span class="nc" id="L294">        return Objects.equals(theTransaction, myThat.getTransaction());</span>
+    }
+
+    @Override
+    public int hashCode() {
+<span class="nc" id="L299">        return Objects.hash(theDate, theEventType, theTransaction);</span>
+    }
+
+    /**
+     * declare securityPrice.
+     *
+     * @param pPrice the security Price.
+     */
+    public void declareSecurityPrice(final MoneyWiseSecurityPrice pPrice) {
+<span class="pc bpc" id="L308" title="1 of 2 branches missed.">        if (thePrices != null) {</span>
+<span class="fc" id="L309">            thePrices.add(pPrice);</span>
+        }
+<span class="fc" id="L311">    }</span>
+
+    /**
+     * declare exchangeRate.
+     *
+     * @param pRate the exchangeRate.
+     */
+    public void declareExchangeRate(final MoneyWiseExchangeRate pRate) {
+<span class="pc bpc" id="L319" title="1 of 2 branches missed.">        if (theXchgRates != null) {</span>
+<span class="fc" id="L320">            theXchgRates.add(pRate);</span>
+        }
+<span class="fc" id="L322">    }</span>
+
+    /**
+     * declare depositRate.
+     *
+     * @param pRate the depositRate.
+     */
+    public void declareDepositRate(final MoneyWiseNewDepositRate pRate) {
+<span class="nc bnc" id="L330" title="All 2 branches missed.">        if (theDepRates != null) {</span>
+<span class="nc" id="L331">            theDepRates.add(pRate);</span>
+        }
+<span class="nc" id="L333">    }</span>
+
+    /**
+     * declare opening balance.
+     *
+     * @param pAsset the asset.
+     */
+    public void declareOpeningBalance(final MoneyWiseAssetBase pAsset) {
+<span class="pc bpc" id="L341" title="1 of 2 branches missed.">        if (theBalances != null) {</span>
+<span class="fc" id="L342">            theBalances.add(pAsset);</span>
+        }
+<span class="fc" id="L344">    }</span>
+
+    /**
+     * obtain the securityPrice iterator.
+     *
+     * @return the iterator.
+     */
+    public Iterator&lt;MoneyWiseSecurityPrice&gt; priceIterator() {
+<span class="pc bpc" id="L352" title="1 of 2 branches missed.">        return thePrices != null ? thePrices.iterator() : Collections.emptyIterator();</span>
+    }
+
+    /**
+     * obtain the exchangeRate iterator.
+     *
+     * @return the iterator.
+     */
+    public Iterator&lt;MoneyWiseExchangeRate&gt; xchgRateIterator() {
+<span class="pc bpc" id="L361" title="1 of 2 branches missed.">        return theXchgRates != null ? theXchgRates.iterator() : Collections.emptyIterator();</span>
+    }
+
+    /**
+     * obtain the depositRate iterator.
+     *
+     * @return the iterator.
+     */
+    public Iterator&lt;MoneyWiseNewDepositRate&gt; depRateIterator() {
+<span class="nc bnc" id="L370" title="All 2 branches missed.">        return theDepRates != null ? theDepRates.iterator() : Collections.emptyIterator();</span>
+    }
+
+    /**
+     * obtain the openingBalance iterator.
+     *
+     * @return the iterator.
+     */
+    public Iterator&lt;MoneyWiseAssetBase&gt; balanceIterator() {
+<span class="pc bpc" id="L379" title="1 of 2 branches missed.">        return theBalances != null ? theBalances.iterator() : Collections.emptyIterator();</span>
+    }
+
+    /**
+     * Obtain the date.
+     *
+     * @return the date
+     */
+    public OceanusDate getDate() {
+<span class="fc" id="L388">        return theDate;</span>
+    }
+
+    /**
+     * Set the date.
+     *
+     * @param pDate the date
+     */
+    public void setDate(final OceanusDate pDate) {
+<span class="nc bnc" id="L397" title="All 2 branches missed.">        if (theTransaction != null) {</span>
+<span class="nc" id="L398">            theTransaction.setDate(pDate);</span>
+        }
+<span class="nc" id="L400">    }</span>
+
+    @Override
+    public boolean isHeader() {
+<span class="nc bnc" id="L404" title="All 4 branches missed.">        return theTransaction != null &amp;&amp; theTransaction.isHeader();</span>
+    }
+
+    /**
+     * Obtain the account.
+     *
+     * @return the account
+     */
+    public MoneyWiseTransAsset getAccount() {
+<span class="pc bpc" id="L413" title="1 of 2 branches missed.">        return theTransaction == null ? null : theTransaction.getAccount();</span>
+    }
+
+    /**
+     * Set the account.
+     *
+     * @param pAccount the account
+     */
+    public void setAccount(final MoneyWiseTransAsset pAccount) {
+<span class="nc bnc" id="L422" title="All 2 branches missed.">        if (theTransaction != null) {</span>
+<span class="nc" id="L423">            theTransaction.setAccount(pAccount);</span>
+        }
+<span class="nc" id="L425">    }</span>
+
+    /**
+     * Obtain the category.
+     *
+     * @return the category
+     */
+    public MoneyWiseTransCategory getCategory() {
+<span class="pc bpc" id="L433" title="1 of 2 branches missed.">        return theTransaction == null ? null : theTransaction.getCategory();</span>
+    }
+
+    /**
+     * Set the category.
+     *
+     * @param pCategory the category
+     */
+    public void setCategory(final MoneyWiseTransCategory pCategory) {
+<span class="nc bnc" id="L442" title="All 2 branches missed.">        if (theTransaction != null) {</span>
+<span class="nc" id="L443">            theTransaction.setCategory(pCategory);</span>
+        }
+<span class="nc" id="L445">    }</span>
+
+    /**
+     * Obtain the direction.
+     *
+     * @return the direction
+     */
+    public MoneyWiseAssetDirection getDirection() {
+<span class="pc bpc" id="L453" title="1 of 2 branches missed.">        return theTransaction == null ? null : theTransaction.getDirection();</span>
+    }
+
+    /**
+     * Set the direction.
+     *
+     * @param pDirection the direction
+     */
+    public void setDirection(final MoneyWiseAssetDirection pDirection) {
+<span class="nc bnc" id="L462" title="All 2 branches missed.">        if (theTransaction != null) {</span>
+<span class="nc" id="L463">            theTransaction.setDirection(pDirection);</span>
+        }
+<span class="nc" id="L465">    }</span>
+
+    /**
+     * Obtain the partner.
+     *
+     * @return the partner
+     */
+    public MoneyWiseTransAsset getPartner() {
+<span class="pc bpc" id="L473" title="1 of 2 branches missed.">        return theTransaction == null ? null : theTransaction.getPartner();</span>
+    }
+
+    /**
+     * Set the partner.
+     *
+     * @param pPartner the partner
+     */
+    public void setPartner(final MoneyWiseTransAsset pPartner) {
+<span class="nc bnc" id="L482" title="All 2 branches missed.">        if (theTransaction != null) {</span>
+<span class="nc" id="L483">            theTransaction.setPartner(pPartner);</span>
+        }
+<span class="nc" id="L485">    }</span>
+
+    /**
+     * Obtain the amount.
+     *
+     * @return the amount
+     */
+    public OceanusMoney getAmount() {
+<span class="pc bpc" id="L493" title="1 of 2 branches missed.">        return theTransaction == null ? null : theTransaction.getAmount();</span>
+    }
+
+    /**
+     * Set the amount.
+     *
+     * @param pAmount the amount
+     * @throws OceanusException on error
+     */
+    public void setAmount(final OceanusMoney pAmount) throws OceanusException {
+<span class="nc bnc" id="L503" title="All 2 branches missed.">        if (theTransaction != null) {</span>
+<span class="nc" id="L504">            theTransaction.setAmount(pAmount);</span>
+        }
+<span class="nc" id="L506">    }</span>
+
+    /**
+     * is the event reconciled?
+     *
+     * @return true/false
+     */
+    public Boolean isReconciled() {
+<span class="nc bnc" id="L514" title="All 2 branches missed.">        return theTransaction == null ? Boolean.TRUE : theTransaction.isReconciled();</span>
+    }
+
+    /**
+     * Set the reconciled.
+     *
+     * @param pReconciled the reconciled flag
+     */
+    public void setReconciled(final Boolean pReconciled) {
+<span class="nc bnc" id="L523" title="All 2 branches missed.">        if (theTransaction != null) {</span>
+<span class="nc" id="L524">            theTransaction.setReconciled(pReconciled);</span>
+        }
+<span class="nc" id="L526">    }</span>
+
+    /**
+     * Obtain the comment.
+     *
+     * @return the comment
+     */
+    public String getComments() {
+<span class="nc bnc" id="L534" title="All 2 branches missed.">        return theTransaction == null ? null : theTransaction.getComments();</span>
+    }
+
+    /**
+     * Set the comment.
+     *
+     * @param pComment the comment
+     * @throws OceanusException on error
+     */
+    public void setComments(final String pComment) throws OceanusException {
+<span class="nc bnc" id="L544" title="All 2 branches missed.">        if (theTransaction != null) {</span>
+<span class="nc" id="L545">            theTransaction.setComments(pComment);</span>
+        }
+<span class="nc" id="L547">    }</span>
+
+    /**
+     * Obtain the reference.
+     *
+     * @return the reference
+     */
+    public String getReference() {
+<span class="nc bnc" id="L555" title="All 2 branches missed.">        return theTransaction == null ? null : theTransaction.getReference();</span>
+    }
+
+    /**
+     * Set the reference.
+     *
+     * @param pReference the reference
+     * @throws OceanusException on error
+     */
+    public void setReference(final String pReference) throws OceanusException {
+<span class="nc bnc" id="L565" title="All 2 branches missed.">        if (theTransaction != null) {</span>
+<span class="nc" id="L566">            theTransaction.setReference(pReference);</span>
+        }
+<span class="nc" id="L568">    }</span>
+
+    /**
+     * Obtain the taxCredit.
+     *
+     * @return the taxCredit
+     */
+    public OceanusMoney getTaxCredit() {
+<span class="nc bnc" id="L576" title="All 2 branches missed.">        return theTransaction == null ? null : theTransaction.getTaxCredit();</span>
+    }
+
+    /**
+     * Set the taxCredit.
+     *
+     * @param pCredit the taxCredit
+     * @throws OceanusException on error
+     */
+    public void setTaxCredit(final OceanusMoney pCredit) throws OceanusException {
+<span class="nc bnc" id="L586" title="All 2 branches missed.">        if (theTransaction != null) {</span>
+<span class="nc" id="L587">            theTransaction.setTaxCredit(pCredit);</span>
+        }
+<span class="nc" id="L589">    }</span>
+
+    /**
+     * Obtain the employeesNI.
+     *
+     * @return the employeesNI
+     */
+    public OceanusMoney getEmployeeNatIns() {
+<span class="nc bnc" id="L597" title="All 2 branches missed.">        return theTransaction == null ? null : theTransaction.getEmployeeNatIns();</span>
+    }
+
+    /**
+     * Set the employeeNI.
+     *
+     * @param pNatIns the employeeNI
+     * @throws OceanusException on error
+     */
+    public void setEmployeeNatIns(final OceanusMoney pNatIns) throws OceanusException {
+<span class="nc bnc" id="L607" title="All 2 branches missed.">        if (theTransaction != null) {</span>
+<span class="nc" id="L608">            theTransaction.setEmployeeNatIns(pNatIns);</span>
+        }
+<span class="nc" id="L610">    }</span>
+
+    /**
+     * Obtain the employerNI.
+     *
+     * @return the employerNI
+     */
+    public OceanusMoney getEmployerNatIns() {
+<span class="nc bnc" id="L618" title="All 2 branches missed.">        return theTransaction == null ? null : theTransaction.getEmployerNatIns();</span>
+    }
+
+    /**
+     * Set the employerNI.
+     *
+     * @param pNatIns the employerNI
+     * @throws OceanusException on error
+     */
+    public void setEmployerNatIns(final OceanusMoney pNatIns) throws OceanusException {
+<span class="nc bnc" id="L628" title="All 2 branches missed.">        if (theTransaction != null) {</span>
+<span class="nc" id="L629">            theTransaction.setEmployerNatIns(pNatIns);</span>
+        }
+<span class="nc" id="L631">    }</span>
+
+    /**
+     * Obtain the deemedBenefit.
+     *
+     * @return the deemedBenefit
+     */
+    public OceanusMoney getDeemedBenefit() {
+<span class="nc bnc" id="L639" title="All 2 branches missed.">        return theTransaction == null ? null : theTransaction.getDeemedBenefit();</span>
+    }
+
+    /**
+     * Set the deemedBenefit.
+     *
+     * @param pBenefit the benefit
+     * @throws OceanusException on error
+     */
+    public void setDeemedBenefit(final OceanusMoney pBenefit) throws OceanusException {
+<span class="nc bnc" id="L649" title="All 2 branches missed.">        if (theTransaction != null) {</span>
+<span class="nc" id="L650">            theTransaction.setDeemedBenefit(pBenefit);</span>
+        }
+<span class="nc" id="L652">    }</span>
+
+    /**
+     * Obtain the withheld.
+     *
+     * @return the withheld
+     */
+    public OceanusMoney getWithheld() {
+<span class="nc bnc" id="L660" title="All 2 branches missed.">        return theTransaction == null ? null : theTransaction.getWithheld();</span>
+    }
+
+    /**
+     * Set the withheld.
+     *
+     * @param pWithheld the withheld
+     * @throws OceanusException on error
+     */
+    public void setWithheld(final OceanusMoney pWithheld) throws OceanusException {
+<span class="nc bnc" id="L670" title="All 2 branches missed.">        if (theTransaction != null) {</span>
+<span class="nc" id="L671">            theTransaction.setWithheld(pWithheld);</span>
+        }
+<span class="nc" id="L673">    }</span>
+
+    /**
+     * Obtain the partnerAmount.
+     *
+     * @return the partnerAmount
+     */
+    public OceanusMoney getPartnerAmount() {
+<span class="nc bnc" id="L681" title="All 2 branches missed.">        return theTransaction == null ? null : theTransaction.getPartnerAmount();</span>
+    }
+
+    /**
+     * Set the partnerAmount.
+     *
+     * @param pAmount the amount
+     * @throws OceanusException on error
+     */
+    public void setPartnerAmount(final OceanusMoney pAmount) throws OceanusException {
+<span class="nc bnc" id="L691" title="All 2 branches missed.">        if (theTransaction != null) {</span>
+<span class="nc" id="L692">            theTransaction.setEmployeeNatIns(pAmount);</span>
+        }
+<span class="nc" id="L694">    }</span>
+
+    /**
+     * Obtain the returnedCashAccount.
+     *
+     * @return the returnedCashAccount
+     */
+    public MoneyWiseTransAsset getReturnedCashAccount() {
+<span class="nc bnc" id="L702" title="All 2 branches missed.">        return theTransaction == null ? null : theTransaction.getReturnedCashAccount();</span>
+    }
+
+    /**
+     * Set the returnedCashAccount.
+     *
+     * @param pAccount the returnedCashAccount
+     * @throws OceanusException on error
+     */
+    public void setReturnedCashAccount(final MoneyWiseTransAsset pAccount) throws OceanusException {
+<span class="nc bnc" id="L712" title="All 2 branches missed.">        if (theTransaction != null) {</span>
+<span class="nc" id="L713">            theTransaction.setReturnedCashAccount(pAccount);</span>
+        }
+<span class="nc" id="L715">    }</span>
+
+    /**
+     * Obtain the returnedCash.
+     *
+     * @return the returnedCash
+     */
+    public OceanusMoney getReturnedCash() {
+<span class="nc bnc" id="L723" title="All 2 branches missed.">        return theTransaction == null ? null : theTransaction.getReturnedCash();</span>
+    }
+
+    /**
+     * Set the returnedCash.
+     *
+     * @param pAmount the amount
+     * @throws OceanusException on error
+     */
+    public void setReturnedCash(final OceanusMoney pAmount) throws OceanusException {
+<span class="nc bnc" id="L733" title="All 2 branches missed.">        if (theTransaction != null) {</span>
+<span class="nc" id="L734">            theTransaction.setReturnedCash(pAmount);</span>
+        }
+<span class="nc" id="L736">    }</span>
+
+    /**
+     * Obtain the accountDeltaUnits.
+     *
+     * @return the accountDeltaUnits
+     */
+    public OceanusUnits getAccountDeltaUnits() {
+<span class="nc bnc" id="L744" title="All 2 branches missed.">        return theTransaction == null ? null : theTransaction.getAccountDeltaUnits();</span>
+    }
+
+    /**
+     * Set the accountDeltaUnits.
+     *
+     * @param pDelta the deltaUnits
+     * @throws OceanusException on error
+     */
+    public void setAccountDeltaUnits(final OceanusUnits pDelta) throws OceanusException {
+<span class="nc bnc" id="L754" title="All 2 branches missed.">        if (theTransaction != null) {</span>
+<span class="nc" id="L755">            theTransaction.setAccountDeltaUnits(pDelta);</span>
+        }
+<span class="nc" id="L757">    }</span>
+
+    /**
+     * Obtain the partnerDeltaUnits.
+     *
+     * @return the partnerDeltaUnits
+     */
+    public OceanusUnits getPartnerDeltaUnits() {
+<span class="nc bnc" id="L765" title="All 2 branches missed.">        return theTransaction == null ? null : theTransaction.getPartnerDeltaUnits();</span>
+    }
+
+    /**
+     * Set the partnerDeltaUnits.
+     *
+     * @param pDelta the deltaUnits
+     * @throws OceanusException on error
+     */
+    public void setPartnerDeltaUnits(final OceanusUnits pDelta) throws OceanusException {
+<span class="nc bnc" id="L775" title="All 2 branches missed.">        if (theTransaction != null) {</span>
+<span class="nc" id="L776">            theTransaction.setPartnerDeltaUnits(pDelta);</span>
+        }
+<span class="nc" id="L778">    }</span>
+
+    /**
+     * Obtain the dilution.
+     *
+     * @return the dilution
+     */
+    public OceanusRatio getDilution() {
+<span class="nc bnc" id="L786" title="All 2 branches missed.">        return theTransaction == null ? null : theTransaction.getDilution();</span>
+    }
+
+    /**
+     * Set the dilution.
+     *
+     * @param pDilution the dilution
+     * @throws OceanusException on error
+     */
+    public void setDilution(final OceanusRatio pDilution) throws OceanusException {
+<span class="nc bnc" id="L796" title="All 2 branches missed.">        if (theTransaction != null) {</span>
+<span class="nc" id="L797">            theTransaction.setDilution(pDilution);</span>
+        }
+<span class="nc" id="L799">    }</span>
+
+    /**
+     * Obtain the transactionTags.
+     *
+     * @return the transactionTags
+     */
+    public List&lt;MoneyWiseTransTag&gt; getTransactionTags() {
+<span class="nc bnc" id="L807" title="All 2 branches missed.">        return theTransaction == null ? null : theTransaction.getTransactionTags();</span>
+    }
+
+    /**
+     * Set the transactionTags.
+     *
+     * @param pTags the tags
+     * @throws OceanusException on error
+     */
+    public void setTransactionTags(final List&lt;MoneyWiseTransTag&gt; pTags) throws OceanusException {
+<span class="nc bnc" id="L817" title="All 2 branches missed.">        if (theTransaction != null) {</span>
+<span class="nc" id="L818">            theTransaction.setTransactionTags(pTags);</span>
+        }
+<span class="nc" id="L820">    }</span>
+
+    /**
+     * Switch direction.
+     */
+    public void switchDirection() {
+<span class="nc bnc" id="L826" title="All 2 branches missed.">        if (theTransaction != null) {</span>
+<span class="nc" id="L827">            theTransaction.switchDirection();</span>
+        }
+<span class="nc" id="L829">    }</span>
+
+    @Override
+    public int getNextVersion() {
+<span class="nc" id="L833">        return 0;</span>
+    }
+
+    @Override
+    public boolean isLocked() {
+<span class="nc bnc" id="L838" title="All 4 branches missed.">        return theTransaction == null || theTransaction.isLocked();</span>
+    }
+
+    /**
+     * Determines whether we can switch direction.
+     *
+     * @return true/false
+     */
+    public boolean canSwitchDirection() {
+<span class="nc bnc" id="L847" title="All 4 branches missed.">        return theTransaction != null &amp;&amp; theTransaction.canSwitchDirection();</span>
+    }
+
+    /**
+     * Obtain EventInfo.
+     *
+     * @param pInfoClass the infoClass
+     * @return the Info
+     */
+    public Object getEventInfo(final MoneyWiseTransInfoClass pInfoClass) {
+        /* No info unless this is a transaction */
+<span class="pc bpc" id="L858" title="1 of 2 branches missed.">        if (theTransaction == null) {</span>
+<span class="nc" id="L859">            return null;</span>
+        }
+
+        /* Obtain the relevant info */
+<span class="pc bpc" id="L863" title="9 of 16 branches missed.">        switch (pInfoClass) {</span>
+            case TAXCREDIT:
+<span class="fc" id="L865">                return theTransaction.getTaxCredit();</span>
+            case EMPLOYEENATINS:
+<span class="nc" id="L867">                return theTransaction.getEmployeeNatIns();</span>
+            case EMPLOYERNATINS:
+<span class="nc" id="L869">                return theTransaction.getEmployerNatIns();</span>
+            case DEEMEDBENEFIT:
+<span class="fc" id="L871">                return theTransaction.getDeemedBenefit();</span>
+            case WITHHELD:
+<span class="fc" id="L873">                return theTransaction.getWithheld();</span>
+            case ACCOUNTDELTAUNITS:
+<span class="fc" id="L875">                return theTransaction.getAccountDeltaUnits();</span>
+            case PARTNERDELTAUNITS:
+<span class="fc" id="L877">                return theTransaction.getPartnerDeltaUnits();</span>
+            case DILUTION:
+<span class="nc" id="L879">                return theTransaction.getDilution();</span>
+            case PRICE:
+<span class="fc" id="L881">                return theTransaction.getPrice();</span>
+            case RETURNEDCASH:
+<span class="nc" id="L883">                return theTransaction.getReturnedCash();</span>
+            case RETURNEDCASHACCOUNT:
+<span class="nc" id="L885">                return theTransaction.getReturnedCashAccount();</span>
+            case PARTNERAMOUNT:
+<span class="fc" id="L887">                return theTransaction.getPartnerAmount();</span>
+            case REFERENCE:
+<span class="nc" id="L889">                return theTransaction.getReference();</span>
+            case COMMENTS:
+<span class="nc" id="L891">                return theTransaction.getComments();</span>
+            case TRANSTAG:
+<span class="nc" id="L893">                return theTransaction.getTransactionTags();</span>
+            default:
+<span class="nc" id="L895">                return null;</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

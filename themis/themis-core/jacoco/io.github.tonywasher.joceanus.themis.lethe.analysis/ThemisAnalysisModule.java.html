@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ThemisAnalysisModule.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Themis Core Project Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.themis.lethe.analysis</a> &gt; <span class="el_source">ThemisAnalysisModule.java</span></div><h1>ThemisAnalysisModule.java</h1><pre class="source lang-java linenums">/*
+ * Themis: Java Project Framework
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.themis.lethe.analysis;
+
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+
+/**
+ * Module.
+ */
+public class ThemisAnalysisModule
+        implements ThemisAnalysisElement {
+    /**
+     * The path xtra.
+     */
+    static final String PATH_XTRA = &quot;/src/main/java&quot;;
+
+    /**
+     * The module-info file.
+     */
+    private static final String MODULE_INFO = &quot;module-info&quot; + ThemisAnalysisPackage.SFX_JAVA;
+
+    /**
+     * The module name.
+     */
+    private final String theName;
+
+    /**
+     * The location.
+     */
+    private final File theLocation;
+
+    /**
+     * The package list.
+     */
+    private final List&lt;ThemisAnalysisPackage&gt; thePackages;
+
+    /**
+     * The initial dataMap.
+     */
+    private final ThemisAnalysisDataMap theDataMap;
+
+    /**
+     * Constructor.
+     *
+     * @param pProject  the project
+     * @param pLocation the module location
+     * @throws OceanusException on error
+     */
+    ThemisAnalysisModule(final ThemisAnalysisProject pProject,
+                         final File pLocation) throws OceanusException {
+        /* Initialise class */
+<span class="nc" id="L71">        this(pLocation, new ThemisAnalysisDataMap(pProject.getDataMap()));</span>
+<span class="nc" id="L72">    }</span>
+
+    /**
+     * Constructor.
+     *
+     * @param pLocation the module location
+     * @throws OceanusException on error
+     */
+    ThemisAnalysisModule(final File pLocation) throws OceanusException {
+        /* Initialise class */
+<span class="nc" id="L82">        this(pLocation, new ThemisAnalysisDataMap());</span>
+
+        /* initialPass */
+<span class="nc" id="L85">        performInitialPass();</span>
+
+        /* consolidationPass */
+<span class="nc" id="L88">        performConsolidationPass();</span>
+
+        /* finalPass */
+<span class="nc" id="L91">        performFinalPass();</span>
+<span class="nc" id="L92">    }</span>
+
+    /**
+     * Constructor.
+     *
+     * @param pLocation the module location
+     * @param pDataMap  the dataMap
+     * @throws OceanusException on error
+     */
+    private ThemisAnalysisModule(final File pLocation,
+<span class="nc" id="L102">                                 final ThemisAnalysisDataMap pDataMap) throws OceanusException {</span>
+        /* Store the name and location */
+<span class="nc" id="L104">        theLocation = new File(pLocation, PATH_XTRA);</span>
+<span class="nc" id="L105">        theName = pLocation.getName();</span>
+<span class="nc" id="L106">        theDataMap = pDataMap;</span>
+
+        /* Create the list */
+<span class="nc" id="L109">        thePackages = new ArrayList&lt;&gt;();</span>
+
+        /* Initiate search for packages */
+<span class="nc" id="L112">        checkForPackage(null);</span>
+<span class="nc" id="L113">    }</span>
+
+    /**
+     * Obtain the name.
+     *
+     * @return the name
+     */
+    public String getName() {
+<span class="nc" id="L121">        return theName;</span>
+    }
+
+    @Override
+    public String toString() {
+<span class="nc" id="L126">        return getName();</span>
+    }
+
+    /**
+     * Obtain the location.
+     *
+     * @return the location
+     */
+    File getLocation() {
+<span class="nc" id="L135">        return theLocation;</span>
+    }
+
+    /**
+     * Obtain the packages.
+     *
+     * @return the packages
+     */
+    public List&lt;ThemisAnalysisPackage&gt; getPackages() {
+<span class="nc" id="L144">        return thePackages;</span>
+    }
+
+    /**
+     * Obtain the dataMap.
+     *
+     * @return the map
+     */
+    ThemisAnalysisDataMap getDataMap() {
+<span class="nc" id="L153">        return theDataMap;</span>
+    }
+
+    /**
+     * Check for package.
+     *
+     * @param pPackage the package name
+     * @throws OceanusException on error
+     */
+    void checkForPackage(final String pPackage) throws OceanusException {
+        /* Assume not a package */
+<span class="nc" id="L164">        boolean isPackage = false;</span>
+
+        /* Determine the location to search */
+<span class="nc bnc" id="L167" title="All 2 branches missed.">        final File myLocation = pPackage == null</span>
+<span class="nc" id="L168">                ? theLocation</span>
+<span class="nc" id="L169">                : new File(theLocation, pPackage.replace(ThemisAnalysisChar.PERIOD, ThemisAnalysisChar.COMMENT));</span>
+
+        /* Look for java files or further packages */
+<span class="nc bnc" id="L172" title="All 2 branches missed.">        for (File myFile : Objects.requireNonNull(myLocation.listFiles())) {</span>
+            /* Access file name */
+<span class="nc" id="L174">            final String myName = myFile.getName();</span>
+
+            /* If this is a directory */
+<span class="nc bnc" id="L177" title="All 2 branches missed.">            if (myFile.isDirectory()) {</span>
+<span class="nc bnc" id="L178" title="All 2 branches missed.">                final String myPackage = pPackage == null</span>
+<span class="nc" id="L179">                        ? myName</span>
+<span class="nc" id="L180">                        : pPackage + ThemisAnalysisChar.PERIOD + myName;</span>
+<span class="nc" id="L181">                checkForPackage(myPackage);</span>
+            }
+
+            /* If this is aAccess file name */
+<span class="nc bnc" id="L185" title="All 2 branches missed.">            if (myName.endsWith(ThemisAnalysisPackage.SFX_JAVA)</span>
+<span class="nc bnc" id="L186" title="All 2 branches missed.">                    &amp;&amp; !MODULE_INFO.equals(myName)) {</span>
+<span class="nc bnc" id="L187" title="All 2 branches missed.">                isPackage = pPackage != null;</span>
+            }
+        }
+
+        /* If this is a package */
+<span class="nc bnc" id="L192" title="All 2 branches missed.">        if (isPackage) {</span>
+            /* Add the package to the list */
+<span class="nc" id="L194">            thePackages.add(new ThemisAnalysisPackage(this, pPackage));</span>
+        }
+<span class="nc" id="L196">    }</span>
+
+    /**
+     * initialPass.
+     *
+     * @throws OceanusException on error
+     */
+    void performInitialPass() throws OceanusException {
+        /* Loop through the packages */
+<span class="nc bnc" id="L205" title="All 2 branches missed.">        for (ThemisAnalysisPackage myPackage : thePackages) {</span>
+            /* Process the package */
+<span class="nc" id="L207">            myPackage.performInitialPass();</span>
+<span class="nc" id="L208">        }</span>
+<span class="nc" id="L209">    }</span>
+
+    /**
+     * consolidationPass.
+     *
+     * @throws OceanusException on error
+     */
+    void performConsolidationPass() throws OceanusException {
+        /* Loop through the packages */
+<span class="nc bnc" id="L218" title="All 2 branches missed.">        for (ThemisAnalysisPackage myPackage : thePackages) {</span>
+            /* Process the package */
+<span class="nc" id="L220">            myPackage.performConsolidationPass();</span>
+<span class="nc" id="L221">        }</span>
+<span class="nc" id="L222">    }</span>
+
+    /**
+     * finalPass.
+     *
+     * @throws OceanusException on error
+     */
+    void performFinalPass() throws OceanusException {
+        /* Loop through the packages */
+<span class="nc bnc" id="L231" title="All 2 branches missed.">        for (ThemisAnalysisPackage myPackage : thePackages) {</span>
+            /* Process the package */
+<span class="nc" id="L233">            myPackage.performFinalPass();</span>
+<span class="nc" id="L234">        }</span>
+<span class="nc" id="L235">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PrometheusBatchControl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Prometheus Core Application Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.prometheus.database</a> &gt; <span class="el_source">PrometheusBatchControl.java</span></div><h1>PrometheusBatchControl.java</h1><pre class="source lang-java linenums">/*
+ * Prometheus: Application Framework
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.prometheus.database;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
+
+import io.github.tonywasher.joceanus.metis.data.MetisDataState;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataList;
+
+/**
+ * Batch control class. This controls updating data lists after the commit of the batch.
+ */
+public class PrometheusBatchControl {
+    /**
+     * Capacity of Batch Control (0=Unlimited).
+     */
+    private final int theCapacity;
+
+    /**
+     * Number of items in this batch.
+     */
+    private int theItems;
+
+    /**
+     * The List of tables associated with this batch.
+     */
+    private List&lt;PrometheusBatchTable&gt; theList;
+
+    /**
+     * The Currently active Database table.
+     */
+    private PrometheusTableDataItem&lt;?&gt; theCurrTable;
+
+    /**
+     * The Currently active Mode.
+     */
+    private MetisDataState theCurrMode;
+
+    /**
+     * Is the current table in use.
+     */
+    private boolean isTableActive;
+
+    /**
+     * Constructor.
+     *
+     * @param pBatchSize the batch size
+     */
+<span class="nc" id="L67">    protected PrometheusBatchControl(final Integer pBatchSize) {</span>
+        /* Create the batch table list */
+<span class="nc" id="L69">        theList = new ArrayList&lt;&gt;();</span>
+
+        /* Store capacity and capacity */
+<span class="nc" id="L72">        theCapacity = pBatchSize;</span>
+<span class="nc" id="L73">    }</span>
+
+    /**
+     * Is the batch full.
+     *
+     * @return true/false is the batch full
+     */
+    protected boolean isFull() {
+<span class="nc bnc" id="L81" title="All 4 branches missed.">        return theCapacity != 0</span>
+                &amp;&amp; theItems &gt;= theCapacity;
+    }
+
+    /**
+     * Is the batch active.
+     *
+     * @return true/false is the batch active
+     */
+    protected boolean isActive() {
+<span class="nc bnc" id="L91" title="All 2 branches missed.">        return theItems &gt;= 0;</span>
+    }
+
+    /**
+     * Set the currently active state.
+     *
+     * @param pTable the Table being operated on
+     * @param pMode  the Mode that is in operation
+     */
+    protected void setCurrentTable(final PrometheusTableDataItem&lt;?&gt; pTable,
+                                   final MetisDataState pMode) {
+        /* Store details */
+<span class="nc" id="L103">        theCurrTable = pTable;</span>
+<span class="nc" id="L104">        theCurrMode = pMode;</span>
+<span class="nc" id="L105">        isTableActive = false;</span>
+<span class="nc" id="L106">    }</span>
+
+    /**
+     * Add item to the batch.
+     */
+    protected void addBatchItem() {
+        /* Increment batch count */
+<span class="nc" id="L113">        theItems++;</span>
+
+        /* If the current table is not active */
+<span class="nc bnc" id="L116" title="All 2 branches missed.">        if (!isTableActive) {</span>
+            /* Create the batch entry */
+<span class="nc" id="L118">            final PrometheusBatchTable myTable = new PrometheusBatchTable();</span>
+
+            /* Add to the batch list */
+<span class="nc" id="L121">            theList.add(myTable);</span>
+<span class="nc" id="L122">            isTableActive = true;</span>
+        }
+<span class="nc" id="L124">    }</span>
+
+    /**
+     * Commit the batch.
+     */
+    protected void commitItems() {
+        /* Access iterator for the list */
+<span class="nc" id="L131">        final Iterator&lt;PrometheusBatchTable&gt; myIterator = theList.iterator();</span>
+
+        /* Loop through the items */
+<span class="nc bnc" id="L134" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+            /* Access the next entry */
+<span class="nc" id="L136">            final PrometheusBatchTable myTable = myIterator.next();</span>
+
+            /* Commit batch items in the table */
+<span class="nc bnc" id="L139" title="All 2 branches missed.">            switch (myTable.theState) {</span>
+                case DELETED:
+<span class="nc" id="L141">                    myTable.commitDeleteBatch();</span>
+<span class="nc" id="L142">                    break;</span>
+                default:
+<span class="nc" id="L144">                    myTable.commitBatch();</span>
+                    break;
+            }
+<span class="nc" id="L147">        }</span>
+
+        /* Clear the list */
+<span class="nc" id="L150">        theList.clear();</span>
+<span class="nc" id="L151">        isTableActive = false;</span>
+<span class="nc" id="L152">        theItems = 0;</span>
+<span class="nc" id="L153">    }</span>
+
+    /**
+     * Table step.
+     */
+    private final class PrometheusBatchTable {
+        /**
+         * The table that is being controlled.
+         */
+        private final PrometheusTableDataItem&lt;?&gt; theTable;
+
+        /**
+         * The State of the table.
+         */
+        private final MetisDataState theState;
+
+        /**
+         * Constructor.
+         */
+<span class="nc" id="L172">        private PrometheusBatchTable() {</span>
+            /* Store the details */
+<span class="nc" id="L174">            theTable = theCurrTable;</span>
+<span class="nc" id="L175">            theState = theCurrMode;</span>
+<span class="nc" id="L176">        }</span>
+
+        /**
+         * Mark updates in the table as committed for insert/change.
+         */
+        private void commitBatch() {
+            /* Access the iterator */
+<span class="nc" id="L183">            final Iterator&lt;?&gt; myIterator = theTable.getList().iterator();</span>
+
+            /* Loop through the list */
+<span class="nc bnc" id="L186" title="All 2 branches missed.">            while (myIterator.hasNext()) {</span>
+<span class="nc" id="L187">                final PrometheusDataItem myCurr = (PrometheusDataItem) myIterator.next();</span>
+
+                /* Ignore items that are not this type */
+<span class="nc bnc" id="L190" title="All 2 branches missed.">                if (myCurr.getState() != theState) {</span>
+<span class="nc" id="L191">                    continue;</span>
+                }
+
+                /* Commit the item and break loop if required */
+<span class="nc bnc" id="L195" title="All 2 branches missed.">                if (commitItem(myCurr)) {</span>
+<span class="nc" id="L196">                    break;</span>
+                }
+<span class="nc" id="L198">            }</span>
+<span class="nc" id="L199">        }</span>
+
+        /**
+         * Mark updates in the table as committed for delete.
+         */
+        private void commitDeleteBatch() {
+            /* Access the iterator */
+<span class="nc" id="L206">            final PrometheusDataList&lt;?&gt; myList = theTable.getList();</span>
+<span class="nc" id="L207">            final ListIterator&lt;?&gt; myIterator = myList.listIterator(myList.size());</span>
+
+            /* Loop through the list */
+<span class="nc bnc" id="L210" title="All 2 branches missed.">            while (myIterator.hasPrevious()) {</span>
+<span class="nc" id="L211">                final PrometheusDataItem myCurr = (PrometheusDataItem) myIterator.previous();</span>
+
+                /* Ignore items that are not this type */
+<span class="nc" id="L214">                final MetisDataState myState = myCurr.getState();</span>
+<span class="nc bnc" id="L215" title="All 4 branches missed.">                if ((myState != MetisDataState.DELETED)</span>
+                        &amp;&amp; (myState != MetisDataState.DELNEW)) {
+<span class="nc" id="L217">                    continue;</span>
+                }
+
+                /* Commit the item and break loop if required */
+<span class="nc bnc" id="L221" title="All 2 branches missed.">                if (commitItem(myCurr)) {</span>
+<span class="nc" id="L222">                    break;</span>
+                }
+<span class="nc" id="L224">            }</span>
+<span class="nc" id="L225">        }</span>
+
+        /**
+         * Mark an item in the table as committed.
+         *
+         * @param pItem the item to commit
+         * @return have we reached the end of the batch?
+         */
+        private boolean commitItem(final PrometheusDataItem pItem) {
+            /* Access the underlying element */
+<span class="nc" id="L235">            final PrometheusDataItem myBase = pItem.getBase();</span>
+
+            /* If we are handling deletions */
+<span class="nc bnc" id="L238" title="All 2 branches missed.">            if (theState == MetisDataState.DELETED) {</span>
+                /* Unlink the underlying item */
+<span class="nc" id="L240">                myBase.unLink();</span>
+
+                /* Remove any registration */
+<span class="nc" id="L243">                myBase.deRegister();</span>
+
+                /* else we are handling new/changed items */
+            } else {
+                /* Clear the history */
+<span class="nc" id="L248">                myBase.clearHistory();</span>
+            }
+
+            /* Mark this item as clean */
+<span class="nc" id="L252">            pItem.clearHistory();</span>
+
+            /* If we have to worry about batch space */
+            /* Adjust batch and note if we are finished */
+<span class="nc bnc" id="L256" title="All 4 branches missed.">            return theCapacity &gt; 0</span>
+                    &amp;&amp; --theItems == 0;
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

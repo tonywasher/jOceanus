@@ -1,0 +1,138 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="" lang="">
+<head><meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+<title>ThemisXAnalysisExprParser xref</title>
+<link type="text/css" rel="stylesheet" href="../../../../../../../../stylesheet.css" />
+</head>
+<body>
+<div id="overview"><a href="../../../../../../../../../apidocs/io/github/tonywasher/joceanus/themis/xanalysis/parser/expr/ThemisXAnalysisExprParser.html">View Javadoc</a></div><pre>
+<a class="jxr_linenumber" name="L1" href="#L1">1</a>   <em class="jxr_comment">/*</em>
+<a class="jxr_linenumber" name="L2" href="#L2">2</a>   <em class="jxr_comment"> * Themis: Java Project Framework</em>
+<a class="jxr_linenumber" name="L3" href="#L3">3</a>   <em class="jxr_comment"> * Copyright 2012-2026. Tony Washer</em>
+<a class="jxr_linenumber" name="L4" href="#L4">4</a>   <em class="jxr_comment"> *</em>
+<a class="jxr_linenumber" name="L5" href="#L5">5</a>   <em class="jxr_comment"> * Licensed under the Apache License, Version 2.0 (the "License"); you may not</em>
+<a class="jxr_linenumber" name="L6" href="#L6">6</a>   <em class="jxr_comment"> * use this file except in compliance with the License.  You may obtain a copy</em>
+<a class="jxr_linenumber" name="L7" href="#L7">7</a>   <em class="jxr_comment"> * of the License at</em>
+<a class="jxr_linenumber" name="L8" href="#L8">8</a>   <em class="jxr_comment"> *</em>
+<a class="jxr_linenumber" name="L9" href="#L9">9</a>   <em class="jxr_comment"> *   <a href="http://www.apache.org/licenses/LICENSE-2.0" target="alexandria_uri">http://www.apache.org/licenses/LICENSE-2.0</a></em>
+<a class="jxr_linenumber" name="L10" href="#L10">10</a>  <em class="jxr_comment"> *</em>
+<a class="jxr_linenumber" name="L11" href="#L11">11</a>  <em class="jxr_comment"> * Unless required by applicable law or agreed to in writing, software</em>
+<a class="jxr_linenumber" name="L12" href="#L12">12</a>  <em class="jxr_comment"> * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT</em>
+<a class="jxr_linenumber" name="L13" href="#L13">13</a>  <em class="jxr_comment"> * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the</em>
+<a class="jxr_linenumber" name="L14" href="#L14">14</a>  <em class="jxr_comment"> * License for the specific language governing permissions and limitations under</em>
+<a class="jxr_linenumber" name="L15" href="#L15">15</a>  <em class="jxr_comment"> * the License.</em>
+<a class="jxr_linenumber" name="L16" href="#L16">16</a>  <em class="jxr_comment"> */</em>
+<a class="jxr_linenumber" name="L17" href="#L17">17</a>  <strong class="jxr_keyword">package</strong> io.github.tonywasher.joceanus.themis.xanalysis.parser.expr;
+<a class="jxr_linenumber" name="L18" href="#L18">18</a>  
+<a class="jxr_linenumber" name="L19" href="#L19">19</a>  <strong class="jxr_keyword">import</strong> com.github.javaparser.ast.expr.Expression;
+<a class="jxr_linenumber" name="L20" href="#L20">20</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+<a class="jxr_linenumber" name="L21" href="#L21">21</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance.ThemisXAnalysisExpressionInstance;
+<a class="jxr_linenumber" name="L22" href="#L22">22</a>  <strong class="jxr_keyword">import</strong> io.github.tonywasher.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisParserDef;
+<a class="jxr_linenumber" name="L23" href="#L23">23</a>  
+<a class="jxr_linenumber" name="L24" href="#L24">24</a>  <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L25" href="#L25">25</a>  <em class="jxr_javadoccomment"> * Analysis Expression Parser.</em>
+<a class="jxr_linenumber" name="L26" href="#L26">26</a>  <em class="jxr_javadoccomment"> */</em>
+<a class="jxr_linenumber" name="L27" href="#L27">27</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">class</strong> <a name="ThemisXAnalysisExprParser" href="../../../../../../../../io/github/tonywasher/joceanus/themis/xanalysis/parser/expr/ThemisXAnalysisExprParser.html#ThemisXAnalysisExprParser">ThemisXAnalysisExprParser</a> {
+<a class="jxr_linenumber" name="L28" href="#L28">28</a>      <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L29" href="#L29">29</a>  <em class="jxr_javadoccomment">     * Private Constructor.</em>
+<a class="jxr_linenumber" name="L30" href="#L30">30</a>  <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L31" href="#L31">31</a>      <strong class="jxr_keyword">private</strong> <a name="ThemisXAnalysisExprParser" href="../../../../../../../../io/github/tonywasher/joceanus/themis/xanalysis/parser/expr/ThemisXAnalysisExprParser.html#ThemisXAnalysisExprParser">ThemisXAnalysisExprParser</a>() {
+<a class="jxr_linenumber" name="L32" href="#L32">32</a>      }
+<a class="jxr_linenumber" name="L33" href="#L33">33</a>  
+<a class="jxr_linenumber" name="L34" href="#L34">34</a>      <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L35" href="#L35">35</a>  <em class="jxr_javadoccomment">     * Parse an expression.</em>
+<a class="jxr_linenumber" name="L36" href="#L36">36</a>  <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="L37" href="#L37">37</a>  <em class="jxr_javadoccomment">     * @param pParser the parser</em>
+<a class="jxr_linenumber" name="L38" href="#L38">38</a>  <em class="jxr_javadoccomment">     * @param pExpr   the expression</em>
+<a class="jxr_linenumber" name="L39" href="#L39">39</a>  <em class="jxr_javadoccomment">     * @return the parsed expression</em>
+<a class="jxr_linenumber" name="L40" href="#L40">40</a>  <em class="jxr_javadoccomment">     * @throws OceanusException on error</em>
+<a class="jxr_linenumber" name="L41" href="#L41">41</a>  <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L42" href="#L42">42</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> ThemisXAnalysisExpressionInstance parseExpression(<strong class="jxr_keyword">final</strong> <a name="ThemisXAnalysisParserDef" href="../../../../../../../../io/github/tonywasher/joceanus/themis/xanalysis/parser/base/ThemisXAnalysisParserDef.html#ThemisXAnalysisParserDef">ThemisXAnalysisParserDef</a> pParser,
+<a class="jxr_linenumber" name="L43" href="#L43">43</a>                                                                      <strong class="jxr_keyword">final</strong> Expression pExpr) <strong class="jxr_keyword">throws</strong> <a name="OceanusException" href="../../../../../../../../io/github/tonywasher/joceanus/oceanus/base/OceanusException.html#OceanusException">OceanusException</a> {
+<a class="jxr_linenumber" name="L44" href="#L44">44</a>          <em class="jxr_comment">/* Handle null Expression */</em>
+<a class="jxr_linenumber" name="L45" href="#L45">45</a>          <strong class="jxr_keyword">if</strong> (pExpr == <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L46" href="#L46">46</a>              <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L47" href="#L47">47</a>          }
+<a class="jxr_linenumber" name="L48" href="#L48">48</a>  
+<a class="jxr_linenumber" name="L49" href="#L49">49</a>          <em class="jxr_comment">/* Allocate correct Expression */</em>
+<a class="jxr_linenumber" name="L50" href="#L50">50</a>          <strong class="jxr_keyword">switch</strong> (ThemisXAnalysisExpression.determineExpression(pParser, pExpr)) {
+<a class="jxr_linenumber" name="L51" href="#L51">51</a>              <strong class="jxr_keyword">case</strong> ARRAYACCESS:
+<a class="jxr_linenumber" name="L52" href="#L52">52</a>                  <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a name="ThemisXAnalysisExprArrayAccess" href="../../../../../../../../io/github/tonywasher/joceanus/themis/xanalysis/parser/expr/ThemisXAnalysisExprArrayAccess.html#ThemisXAnalysisExprArrayAccess">ThemisXAnalysisExprArrayAccess</a>(pParser, pExpr.asArrayAccessExpr());
+<a class="jxr_linenumber" name="L53" href="#L53">53</a>              <strong class="jxr_keyword">case</strong> ARRAYCREATION:
+<a class="jxr_linenumber" name="L54" href="#L54">54</a>                  <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a name="ThemisXAnalysisExprArrayCreation" href="../../../../../../../../io/github/tonywasher/joceanus/themis/xanalysis/parser/expr/ThemisXAnalysisExprArrayCreation.html#ThemisXAnalysisExprArrayCreation">ThemisXAnalysisExprArrayCreation</a>(pParser, pExpr.asArrayCreationExpr());
+<a class="jxr_linenumber" name="L55" href="#L55">55</a>              <strong class="jxr_keyword">case</strong> ARRAYINIT:
+<a class="jxr_linenumber" name="L56" href="#L56">56</a>                  <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a name="ThemisXAnalysisExprArrayInit" href="../../../../../../../../io/github/tonywasher/joceanus/themis/xanalysis/parser/expr/ThemisXAnalysisExprArrayInit.html#ThemisXAnalysisExprArrayInit">ThemisXAnalysisExprArrayInit</a>(pParser, pExpr.asArrayInitializerExpr());
+<a class="jxr_linenumber" name="L57" href="#L57">57</a>              <strong class="jxr_keyword">case</strong> ASSIGN:
+<a class="jxr_linenumber" name="L58" href="#L58">58</a>                  <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a name="ThemisXAnalysisExprAssign" href="../../../../../../../../io/github/tonywasher/joceanus/themis/xanalysis/parser/expr/ThemisXAnalysisExprAssign.html#ThemisXAnalysisExprAssign">ThemisXAnalysisExprAssign</a>(pParser, pExpr.asAssignExpr());
+<a class="jxr_linenumber" name="L59" href="#L59">59</a>              <strong class="jxr_keyword">case</strong> BINARY:
+<a class="jxr_linenumber" name="L60" href="#L60">60</a>                  <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a name="ThemisXAnalysisExprBinary" href="../../../../../../../../io/github/tonywasher/joceanus/themis/xanalysis/parser/expr/ThemisXAnalysisExprBinary.html#ThemisXAnalysisExprBinary">ThemisXAnalysisExprBinary</a>(pParser, pExpr.asBinaryExpr());
+<a class="jxr_linenumber" name="L61" href="#L61">61</a>              <strong class="jxr_keyword">case</strong> BOOLEAN:
+<a class="jxr_linenumber" name="L62" href="#L62">62</a>                  <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a name="ThemisXAnalysisExprBooleanLit" href="../../../../../../../../io/github/tonywasher/joceanus/themis/xanalysis/parser/expr/ThemisXAnalysisExprBooleanLit.html#ThemisXAnalysisExprBooleanLit">ThemisXAnalysisExprBooleanLit</a>(pParser, pExpr.asBooleanLiteralExpr());
+<a class="jxr_linenumber" name="L63" href="#L63">63</a>              <strong class="jxr_keyword">case</strong> CAST:
+<a class="jxr_linenumber" name="L64" href="#L64">64</a>                  <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a name="ThemisXAnalysisExprCast" href="../../../../../../../../io/github/tonywasher/joceanus/themis/xanalysis/parser/expr/ThemisXAnalysisExprCast.html#ThemisXAnalysisExprCast">ThemisXAnalysisExprCast</a>(pParser, pExpr.asCastExpr());
+<a class="jxr_linenumber" name="L65" href="#L65">65</a>              <strong class="jxr_keyword">case</strong> CHAR:
+<a class="jxr_linenumber" name="L66" href="#L66">66</a>                  <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a name="ThemisXAnalysisExprCharLit" href="../../../../../../../../io/github/tonywasher/joceanus/themis/xanalysis/parser/expr/ThemisXAnalysisExprCharLit.html#ThemisXAnalysisExprCharLit">ThemisXAnalysisExprCharLit</a>(pParser, pExpr.asCharLiteralExpr());
+<a class="jxr_linenumber" name="L67" href="#L67">67</a>              <strong class="jxr_keyword">case</strong> CLASS:
+<a class="jxr_linenumber" name="L68" href="#L68">68</a>                  <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a name="ThemisXAnalysisExprClass" href="../../../../../../../../io/github/tonywasher/joceanus/themis/xanalysis/parser/expr/ThemisXAnalysisExprClass.html#ThemisXAnalysisExprClass">ThemisXAnalysisExprClass</a>(pParser, pExpr.asClassExpr());
+<a class="jxr_linenumber" name="L69" href="#L69">69</a>              <strong class="jxr_keyword">case</strong> CONDITIONAL:
+<a class="jxr_linenumber" name="L70" href="#L70">70</a>                  <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a name="ThemisXAnalysisExprConditional" href="../../../../../../../../io/github/tonywasher/joceanus/themis/xanalysis/parser/expr/ThemisXAnalysisExprConditional.html#ThemisXAnalysisExprConditional">ThemisXAnalysisExprConditional</a>(pParser, pExpr.asConditionalExpr());
+<a class="jxr_linenumber" name="L71" href="#L71">71</a>              <strong class="jxr_keyword">case</strong> DOUBLE:
+<a class="jxr_linenumber" name="L72" href="#L72">72</a>                  <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a name="ThemisXAnalysisExprDoubleLit" href="../../../../../../../../io/github/tonywasher/joceanus/themis/xanalysis/parser/expr/ThemisXAnalysisExprDoubleLit.html#ThemisXAnalysisExprDoubleLit">ThemisXAnalysisExprDoubleLit</a>(pParser, pExpr.asDoubleLiteralExpr());
+<a class="jxr_linenumber" name="L73" href="#L73">73</a>              <strong class="jxr_keyword">case</strong> ENCLOSED:
+<a class="jxr_linenumber" name="L74" href="#L74">74</a>                  <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a name="ThemisXAnalysisExprEnclosed" href="../../../../../../../../io/github/tonywasher/joceanus/themis/xanalysis/parser/expr/ThemisXAnalysisExprEnclosed.html#ThemisXAnalysisExprEnclosed">ThemisXAnalysisExprEnclosed</a>(pParser, pExpr.asEnclosedExpr());
+<a class="jxr_linenumber" name="L75" href="#L75">75</a>              <strong class="jxr_keyword">case</strong> FIELDACCESS:
+<a class="jxr_linenumber" name="L76" href="#L76">76</a>                  <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a name="ThemisXAnalysisExprFieldAccess" href="../../../../../../../../io/github/tonywasher/joceanus/themis/xanalysis/parser/expr/ThemisXAnalysisExprFieldAccess.html#ThemisXAnalysisExprFieldAccess">ThemisXAnalysisExprFieldAccess</a>(pParser, pExpr.asFieldAccessExpr());
+<a class="jxr_linenumber" name="L77" href="#L77">77</a>              <strong class="jxr_keyword">case</strong> INSTANCEOF:
+<a class="jxr_linenumber" name="L78" href="#L78">78</a>                  <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a name="ThemisXAnalysisExprInstanceOf" href="../../../../../../../../io/github/tonywasher/joceanus/themis/xanalysis/parser/expr/ThemisXAnalysisExprInstanceOf.html#ThemisXAnalysisExprInstanceOf">ThemisXAnalysisExprInstanceOf</a>(pParser, pExpr.asInstanceOfExpr());
+<a class="jxr_linenumber" name="L79" href="#L79">79</a>              <strong class="jxr_keyword">case</strong> INTEGER:
+<a class="jxr_linenumber" name="L80" href="#L80">80</a>                  <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a name="ThemisXAnalysisExprIntegerLit" href="../../../../../../../../io/github/tonywasher/joceanus/themis/xanalysis/parser/expr/ThemisXAnalysisExprIntegerLit.html#ThemisXAnalysisExprIntegerLit">ThemisXAnalysisExprIntegerLit</a>(pParser, pExpr.asIntegerLiteralExpr());
+<a class="jxr_linenumber" name="L81" href="#L81">81</a>              <strong class="jxr_keyword">case</strong> LAMBDA:
+<a class="jxr_linenumber" name="L82" href="#L82">82</a>                  <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a name="ThemisXAnalysisExprLambda" href="../../../../../../../../io/github/tonywasher/joceanus/themis/xanalysis/parser/expr/ThemisXAnalysisExprLambda.html#ThemisXAnalysisExprLambda">ThemisXAnalysisExprLambda</a>(pParser, pExpr.asLambdaExpr());
+<a class="jxr_linenumber" name="L83" href="#L83">83</a>              <strong class="jxr_keyword">case</strong> LONG:
+<a class="jxr_linenumber" name="L84" href="#L84">84</a>                  <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a name="ThemisXAnalysisExprLongLit" href="../../../../../../../../io/github/tonywasher/joceanus/themis/xanalysis/parser/expr/ThemisXAnalysisExprLongLit.html#ThemisXAnalysisExprLongLit">ThemisXAnalysisExprLongLit</a>(pParser, pExpr.asLongLiteralExpr());
+<a class="jxr_linenumber" name="L85" href="#L85">85</a>              <strong class="jxr_keyword">case</strong> MARKER:
+<a class="jxr_linenumber" name="L86" href="#L86">86</a>                  <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a name="ThemisXAnalysisExprMarkerAnnotation" href="../../../../../../../../io/github/tonywasher/joceanus/themis/xanalysis/parser/expr/ThemisXAnalysisExprMarkerAnnotation.html#ThemisXAnalysisExprMarkerAnnotation">ThemisXAnalysisExprMarkerAnnotation</a>(pParser, pExpr.asMarkerAnnotationExpr());
+<a class="jxr_linenumber" name="L87" href="#L87">87</a>              <strong class="jxr_keyword">case</strong> METHODCALL:
+<a class="jxr_linenumber" name="L88" href="#L88">88</a>                  <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a name="ThemisXAnalysisExprMethodCall" href="../../../../../../../../io/github/tonywasher/joceanus/themis/xanalysis/parser/expr/ThemisXAnalysisExprMethodCall.html#ThemisXAnalysisExprMethodCall">ThemisXAnalysisExprMethodCall</a>(pParser, pExpr.asMethodCallExpr());
+<a class="jxr_linenumber" name="L89" href="#L89">89</a>              <strong class="jxr_keyword">case</strong> METHODREFERENCE:
+<a class="jxr_linenumber" name="L90" href="#L90">90</a>                  <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a name="ThemisXAnalysisExprMethodRef" href="../../../../../../../../io/github/tonywasher/joceanus/themis/xanalysis/parser/expr/ThemisXAnalysisExprMethodRef.html#ThemisXAnalysisExprMethodRef">ThemisXAnalysisExprMethodRef</a>(pParser, pExpr.asMethodReferenceExpr());
+<a class="jxr_linenumber" name="L91" href="#L91">91</a>              <strong class="jxr_keyword">case</strong> NAME:
+<a class="jxr_linenumber" name="L92" href="#L92">92</a>                  <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a name="ThemisXAnalysisExprName" href="../../../../../../../../io/github/tonywasher/joceanus/themis/xanalysis/parser/expr/ThemisXAnalysisExprName.html#ThemisXAnalysisExprName">ThemisXAnalysisExprName</a>(pParser, pExpr.asNameExpr());
+<a class="jxr_linenumber" name="L93" href="#L93">93</a>              <strong class="jxr_keyword">case</strong> NORMAL:
+<a class="jxr_linenumber" name="L94" href="#L94">94</a>                  <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a name="ThemisXAnalysisExprNormalAnnotation" href="../../../../../../../../io/github/tonywasher/joceanus/themis/xanalysis/parser/expr/ThemisXAnalysisExprNormalAnnotation.html#ThemisXAnalysisExprNormalAnnotation">ThemisXAnalysisExprNormalAnnotation</a>(pParser, pExpr.asNormalAnnotationExpr());
+<a class="jxr_linenumber" name="L95" href="#L95">95</a>              <strong class="jxr_keyword">case</strong> NULL:
+<a class="jxr_linenumber" name="L96" href="#L96">96</a>                  <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a name="ThemisXAnalysisExprNullLit" href="../../../../../../../../io/github/tonywasher/joceanus/themis/xanalysis/parser/expr/ThemisXAnalysisExprNullLit.html#ThemisXAnalysisExprNullLit">ThemisXAnalysisExprNullLit</a>(pParser, pExpr.asNullLiteralExpr());
+<a class="jxr_linenumber" name="L97" href="#L97">97</a>              <strong class="jxr_keyword">case</strong> OBJECTCREATE:
+<a class="jxr_linenumber" name="L98" href="#L98">98</a>                  <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a name="ThemisXAnalysisExprObjectCreate" href="../../../../../../../../io/github/tonywasher/joceanus/themis/xanalysis/parser/expr/ThemisXAnalysisExprObjectCreate.html#ThemisXAnalysisExprObjectCreate">ThemisXAnalysisExprObjectCreate</a>(pParser, pExpr.asObjectCreationExpr());
+<a class="jxr_linenumber" name="L99" href="#L99">99</a>              <strong class="jxr_keyword">case</strong> RECORDPATTERN:
+<a class="jxr_linenumber" name="L100" href="#L100">100</a>                 <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a name="ThemisXAnalysisExprRecordPattern" href="../../../../../../../../io/github/tonywasher/joceanus/themis/xanalysis/parser/expr/ThemisXAnalysisExprRecordPattern.html#ThemisXAnalysisExprRecordPattern">ThemisXAnalysisExprRecordPattern</a>(pParser, pExpr.asRecordPatternExpr());
+<a class="jxr_linenumber" name="L101" href="#L101">101</a>             <strong class="jxr_keyword">case</strong> SINGLEMEMBER:
+<a class="jxr_linenumber" name="L102" href="#L102">102</a>                 <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a name="ThemisXAnalysisExprSingleMemberAnnotation" href="../../../../../../../../io/github/tonywasher/joceanus/themis/xanalysis/parser/expr/ThemisXAnalysisExprSingleMemberAnnotation.html#ThemisXAnalysisExprSingleMemberAnnotation">ThemisXAnalysisExprSingleMemberAnnotation</a>(pParser, pExpr.asSingleMemberAnnotationExpr());
+<a class="jxr_linenumber" name="L103" href="#L103">103</a>             <strong class="jxr_keyword">case</strong> STRING:
+<a class="jxr_linenumber" name="L104" href="#L104">104</a>                 <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a name="ThemisXAnalysisExprStringLit" href="../../../../../../../../io/github/tonywasher/joceanus/themis/xanalysis/parser/expr/ThemisXAnalysisExprStringLit.html#ThemisXAnalysisExprStringLit">ThemisXAnalysisExprStringLit</a>(pParser, pExpr.asStringLiteralExpr());
+<a class="jxr_linenumber" name="L105" href="#L105">105</a>             <strong class="jxr_keyword">case</strong> SUPER:
+<a class="jxr_linenumber" name="L106" href="#L106">106</a>                 <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a name="ThemisXAnalysisExprSuper" href="../../../../../../../../io/github/tonywasher/joceanus/themis/xanalysis/parser/expr/ThemisXAnalysisExprSuper.html#ThemisXAnalysisExprSuper">ThemisXAnalysisExprSuper</a>(pParser, pExpr.asSuperExpr());
+<a class="jxr_linenumber" name="L107" href="#L107">107</a>             <strong class="jxr_keyword">case</strong> SWITCH:
+<a class="jxr_linenumber" name="L108" href="#L108">108</a>                 <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a name="ThemisXAnalysisExprSwitch" href="../../../../../../../../io/github/tonywasher/joceanus/themis/xanalysis/parser/expr/ThemisXAnalysisExprSwitch.html#ThemisXAnalysisExprSwitch">ThemisXAnalysisExprSwitch</a>(pParser, pExpr.asSwitchExpr());
+<a class="jxr_linenumber" name="L109" href="#L109">109</a>             <strong class="jxr_keyword">case</strong> TEXTBLOCK:
+<a class="jxr_linenumber" name="L110" href="#L110">110</a>                 <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a name="ThemisXAnalysisExprTextBlockLit" href="../../../../../../../../io/github/tonywasher/joceanus/themis/xanalysis/parser/expr/ThemisXAnalysisExprTextBlockLit.html#ThemisXAnalysisExprTextBlockLit">ThemisXAnalysisExprTextBlockLit</a>(pParser, pExpr.asTextBlockLiteralExpr());
+<a class="jxr_linenumber" name="L111" href="#L111">111</a>             <strong class="jxr_keyword">case</strong> THIS:
+<a class="jxr_linenumber" name="L112" href="#L112">112</a>                 <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a name="ThemisXAnalysisExprThis" href="../../../../../../../../io/github/tonywasher/joceanus/themis/xanalysis/parser/expr/ThemisXAnalysisExprThis.html#ThemisXAnalysisExprThis">ThemisXAnalysisExprThis</a>(pParser, pExpr.asThisExpr());
+<a class="jxr_linenumber" name="L113" href="#L113">113</a>             <strong class="jxr_keyword">case</strong> TYPE:
+<a class="jxr_linenumber" name="L114" href="#L114">114</a>                 <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a name="ThemisXAnalysisExprType" href="../../../../../../../../io/github/tonywasher/joceanus/themis/xanalysis/parser/expr/ThemisXAnalysisExprType.html#ThemisXAnalysisExprType">ThemisXAnalysisExprType</a>(pParser, pExpr.asTypeExpr());
+<a class="jxr_linenumber" name="L115" href="#L115">115</a>             <strong class="jxr_keyword">case</strong> TYPEPATTERN:
+<a class="jxr_linenumber" name="L116" href="#L116">116</a>                 <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a name="ThemisXAnalysisExprTypePattern" href="../../../../../../../../io/github/tonywasher/joceanus/themis/xanalysis/parser/expr/ThemisXAnalysisExprTypePattern.html#ThemisXAnalysisExprTypePattern">ThemisXAnalysisExprTypePattern</a>(pParser, pExpr.asTypePatternExpr());
+<a class="jxr_linenumber" name="L117" href="#L117">117</a>             <strong class="jxr_keyword">case</strong> UNARY:
+<a class="jxr_linenumber" name="L118" href="#L118">118</a>                 <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a name="ThemisXAnalysisExprUnary" href="../../../../../../../../io/github/tonywasher/joceanus/themis/xanalysis/parser/expr/ThemisXAnalysisExprUnary.html#ThemisXAnalysisExprUnary">ThemisXAnalysisExprUnary</a>(pParser, pExpr.asUnaryExpr());
+<a class="jxr_linenumber" name="L119" href="#L119">119</a>             <strong class="jxr_keyword">case</strong> VARIABLE:
+<a class="jxr_linenumber" name="L120" href="#L120">120</a>                 <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a name="ThemisXAnalysisExprVarDecl" href="../../../../../../../../io/github/tonywasher/joceanus/themis/xanalysis/parser/expr/ThemisXAnalysisExprVarDecl.html#ThemisXAnalysisExprVarDecl">ThemisXAnalysisExprVarDecl</a>(pParser, pExpr.asVariableDeclarationExpr());
+<a class="jxr_linenumber" name="L121" href="#L121">121</a>             <strong class="jxr_keyword">default</strong>:
+<a class="jxr_linenumber" name="L122" href="#L122">122</a>                 <strong class="jxr_keyword">throw</strong> pParser.buildException(<span class="jxr_string">"Unsupported Expression Type"</span>, pExpr);
+<a class="jxr_linenumber" name="L123" href="#L123">123</a>         }
+<a class="jxr_linenumber" name="L124" href="#L124">124</a>     }
+<a class="jxr_linenumber" name="L125" href="#L125">125</a> }
+</pre>
+<hr/>
+<div id="footer">© 2012–2026</div>
+</body>
+</html>

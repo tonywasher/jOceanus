@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianCoreDigest.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.impl.core.digest</a> &gt; <span class="el_source">GordianCoreDigest.java</span></div><h1>GordianCoreDigest.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.gordianknot.impl.core.digest;
+
+
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigest;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestSpec;
+
+/**
+ * Core Digest implementation.
+ */
+public abstract class GordianCoreDigest
+        implements GordianDigest {
+    /**
+     * DigestSpec.
+     */
+    private final GordianDigestSpec theDigestSpec;
+
+    /**
+     * Constructor.
+     *
+     * @param pDigestSpec the digestSpec
+     */
+<span class="fc" id="L39">    protected GordianCoreDigest(final GordianDigestSpec pDigestSpec) {</span>
+<span class="fc" id="L40">        theDigestSpec = pDigestSpec;</span>
+<span class="fc" id="L41">    }</span>
+
+    @Override
+    public GordianDigestSpec getDigestSpec() {
+<span class="fc" id="L45">        return theDigestSpec;</span>
+    }
+
+    @Override
+    public int getDigestSize() {
+<span class="fc" id="L50">        return theDigestSpec.getDigestLength().getByteLength();</span>
+    }
+
+    @Override
+    public void update(final byte[] pBytes,
+                       final int pOffset,
+                       final int pLength) {
+        /* Check that the buffers are sufficient */
+<span class="pc bpc" id="L58" title="1 of 2 branches missed.">        final int myInBufLen = pBytes == null ? 0 : pBytes.length;</span>
+<span class="pc bpc" id="L59" title="1 of 2 branches missed.">        if (myInBufLen &lt; (pLength + pOffset)) {</span>
+<span class="nc" id="L60">            throw new IllegalArgumentException(&quot;Input buffer too short.&quot;);</span>
+        }
+
+        /* Process the bytes */
+<span class="fc bfc" id="L64" title="All 2 branches covered.">        if (pLength != 0) {</span>
+<span class="fc" id="L65">            doUpdate(pBytes, pOffset, pLength);</span>
+        }
+<span class="fc" id="L67">    }</span>
+
+    /**
+     * Update the digest with a portion of a byte array.
+     *
+     * @param pBytes  the bytes to update with.
+     * @param pOffset the offset of the data within the byte array
+     * @param pLength the length of the data to use
+     */
+    public abstract void doUpdate(byte[] pBytes,
+                                  int pOffset,
+                                  int pLength);
+
+    @Override
+    public int finish(final byte[] pBuffer,
+                      final int pOffset) throws GordianException {
+        /* Check that the buffers are sufficient */
+<span class="pc bpc" id="L84" title="1 of 2 branches missed.">        if (pBuffer.length &lt; (getDigestSize() + pOffset)) {</span>
+<span class="nc" id="L85">            throw new IllegalArgumentException(&quot;Output buffer too short.&quot;);</span>
+        }
+
+        /* Finish the digest */
+<span class="fc" id="L89">        return doFinish(pBuffer, pOffset);</span>
+    }
+
+    /**
+     * Calculate the Digest, and return it in the buffer provided.
+     *
+     * @param pBuffer the buffer to return the digest in.
+     * @param pOffset the offset in the buffer to store the digest.
+     * @return the number of bytes placed into buffer
+     * @throws GordianException on error
+     */
+    public abstract int doFinish(byte[] pBuffer,
+                                 int pOffset) throws GordianException;
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

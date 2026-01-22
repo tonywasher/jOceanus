@@ -1,0 +1,932 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianSkeinBase.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.impl.ext.digests</a> &gt; <span class="el_source">GordianSkeinBase.java</span></div><h1>GordianSkeinBase.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+package io.github.tonywasher.joceanus.gordianknot.impl.ext.digests;
+
+import io.github.tonywasher.joceanus.gordianknot.impl.ext.params.GordianSkeinParameters;
+import org.bouncycastle.crypto.OutputLengthException;
+import org.bouncycastle.crypto.engines.ThreefishEngine;
+import org.bouncycastle.crypto.macs.SkeinMac;
+import org.bouncycastle.crypto.params.SkeinParameters;
+import org.bouncycastle.util.Arrays;
+import org.bouncycastle.util.Integers;
+import org.bouncycastle.util.Memoable;
+import org.bouncycastle.util.Pack;
+
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Map;
+import java.util.Vector;
+
+/**
+ * Implementation of the Skein family of parameterised hash functions in 256, 512 and 1024 bit block
+ * sizes, based on the {@link ThreefishEngine Threefish} tweakable block cipher.
+ * &lt;p&gt;
+ * This is the 1.3 version of Skein defined in the Skein hash function submission to the NIST SHA-3
+ * competition in October 2010.
+ * &lt;p&gt;
+ * Skein was designed by Niels Ferguson - Stefan Lucks - Bruce Schneier - Doug Whiting - Mihir
+ * Bellare - Tadayoshi Kohno - Jon Callas - Jesse Walker.
+ * &lt;p&gt;
+ * This implementation is the basis for SkeinDigest and {@link SkeinMac}, implementing the
+ * parameter based configuration system that allows Skein to be adapted to multiple applications. &lt;br&gt;
+ * Initialising the engine with {@link GordianSkeinParameters} allows standard and arbitrary parameters to
+ * be applied during the Skein hash function.
+ * &lt;p&gt;
+ * Implemented:
+ * &lt;ul&gt;
+ * &lt;li&gt;256, 512 and 1024 bit internal states.&lt;/li&gt;
+ * &lt;li&gt;Full 96 bit input length.&lt;/li&gt;
+ * &lt;li&gt;Parameters defined in the Skein specification, and arbitrary other pre and post message
+ * parameters.&lt;/li&gt;
+ * &lt;li&gt;Arbitrary output size in 1 byte intervals.&lt;/li&gt;
+ * &lt;/ul&gt;
+ * &lt;p&gt;
+ * Not implemented:
+ * &lt;ul&gt;
+ * &lt;li&gt;Sub-byte length input (bit padding).&lt;/li&gt;
+ * &lt;li&gt;Tree hashing.&lt;/li&gt;
+ * &lt;/ul&gt;
+ *
+ * @see GordianSkeinParameters
+ */
+@SuppressWarnings(&quot;checkstyle:MagicNumber&quot;)
+public class GordianSkeinBase
+        implements Memoable {
+    /**
+     * 256 bit block size - Skein 256.
+     */
+    public static final int SKEIN_256 = ThreefishEngine.BLOCKSIZE_256;
+    /**
+     * 512 bit block size - Skein 512.
+     */
+    public static final int SKEIN_512 = ThreefishEngine.BLOCKSIZE_512;
+
+    /**
+     * 1024 bit block size - Skein 1024.
+     */
+    public static final int SKEIN_1024 = ThreefishEngine.BLOCKSIZE_1024;
+
+    /**
+     * Configuration. Minimal at present, but more complex when tree hashing is implemented
+     */
+    static class Configuration {
+        /**
+         * Configuration bytes.
+         */
+<span class="fc" id="L92">        private byte[] bytes = new byte[32];</span>
+
+        /**
+         * Constructor.
+         *
+         * @param outputSizeBits the output size in bits
+         */
+<span class="fc" id="L99">        Configuration(final long outputSizeBits) {</span>
+            // 0..3 = ASCII SHA3
+<span class="fc" id="L101">            bytes[0] = (byte) 'S';</span>
+<span class="fc" id="L102">            bytes[1] = (byte) 'H';</span>
+<span class="fc" id="L103">            bytes[2] = (byte) 'A';</span>
+<span class="fc" id="L104">            bytes[3] = (byte) '3';</span>
+
+            // 4..5 = version number in LSB order
+<span class="fc" id="L107">            bytes[4] = 1;</span>
+<span class="fc" id="L108">            bytes[5] = 0;</span>
+
+            // 8..15 = output length
+<span class="fc" id="L111">            Pack.longToLittleEndian(outputSizeBits, bytes, 8);</span>
+<span class="fc" id="L112">        }</span>
+
+        /**
+         * Obtain bytes.
+         *
+         * @return the bytes.
+         */
+        public byte[] getBytes() {
+<span class="fc" id="L120">            return bytes;</span>
+        }
+    }
+
+    /**
+     * Parameter class.
+     */
+    public static class Parameter {
+        /**
+         * The type.
+         */
+        private final int type;
+
+        /**
+         * The value.
+         */
+        private final byte[] value;
+
+        /**
+         * Constructor.
+         *
+         * @param pType  the type
+         * @param pValue the value
+         */
+<span class="fc" id="L144">        public Parameter(final int pType, final byte[] pValue) {</span>
+<span class="fc" id="L145">            this.type = pType;</span>
+<span class="fc" id="L146">            this.value = pValue;</span>
+<span class="fc" id="L147">        }</span>
+
+        /**
+         * Obtain the type.
+         *
+         * @return the type
+         */
+        public int getType() {
+<span class="fc" id="L155">            return type;</span>
+        }
+
+        /**
+         * Obtain the value.
+         *
+         * @return the value
+         */
+        public byte[] getValue() {
+<span class="fc" id="L164">            return value;</span>
+        }
+    }
+
+    /**
+     * The parameter type for the Skein key.
+     */
+    private static final int PARAM_TYPE_KEY = 0;
+
+    /**
+     * The parameter type for the Skein configuration block.
+     */
+    private static final int PARAM_TYPE_CONFIG = 4;
+
+    /**
+     * The parameter type for the message.
+     */
+    private static final int PARAM_TYPE_MESSAGE = 48;
+
+    /**
+     * The parameter type for the output transformation.
+     */
+    private static final int PARAM_TYPE_OUTPUT = 63;
+
+    /**
+     * Precalculated UBI(CFG) states for common state/output combinations without key or other
+     * pre-message params.
+     */
+<span class="fc" id="L192">    private static final Map&lt;Integer, long[]&gt; INITIAL_STATES = new HashMap&lt;&gt;();</span>
+
+    static {
+        // From Appendix C of the Skein 1.3 NIST submission
+<span class="fc" id="L196">        final long[] skein256o128 = {</span>
+                0xe1111906964d7260L,
+                0x883daaa77c8d811cL,
+                0x10080df491960f7aL,
+                0xccf7dde5b45bc1c2L
+        };
+<span class="fc" id="L202">        initialState(SKEIN_256, 128, skein256o128);</span>
+
+<span class="fc" id="L204">        final long[] skein256o160 = {</span>
+                0x1420231472825e98L,
+                0x2ac4e9a25a77e590L,
+                0xd47a58568838d63eL,
+                0x2dd2e4968586ab7dL
+        };
+<span class="fc" id="L210">        initialState(SKEIN_256, 160, skein256o160);</span>
+
+<span class="fc" id="L212">        final long[] skein256o224 = {</span>
+                0xc6098a8c9ae5ea0bL,
+                0x876d568608c5191cL,
+                0x99cb88d7d7f53884L,
+                0x384bddb1aeddb5deL
+        };
+<span class="fc" id="L218">        initialState(SKEIN_256, 224, skein256o224);</span>
+
+<span class="fc" id="L220">        final long[] skein256o256 = {</span>
+                0xfc9da860d048b449L,
+                0x2fca66479fa7d833L,
+                0xb33bc3896656840fL,
+                0x6a54e920fde8da69L
+        };
+<span class="fc" id="L226">        initialState(SKEIN_256, 256, skein256o256);</span>
+
+<span class="fc" id="L228">        final long[] skein512o128 = {</span>
+                0xa8bc7bf36fbf9f52L,
+                0x1e9872cebd1af0aaL,
+                0x309b1790b32190d3L,
+                0xbcfbb8543f94805cL,
+                0x0da61bcd6e31b11bL,
+                0x1a18ebead46a32e3L,
+                0xa2cc5b18ce84aa82L,
+                0x6982ab289d46982dL
+        };
+<span class="fc" id="L238">        initialState(SKEIN_512, 128, skein512o128);</span>
+
+<span class="fc" id="L240">        final long[] skein512o160 = {</span>
+                0x28b81a2ae013bd91L,
+                0xc2f11668b5bdf78fL,
+                0x1760d8f3f6a56f12L,
+                0x4fb747588239904fL,
+                0x21ede07f7eaf5056L,
+                0xd908922e63ed70b8L,
+                0xb8ec76ffeccb52faL,
+                0x01a47bb8a3f27a6eL
+        };
+<span class="fc" id="L250">        initialState(SKEIN_512, 160, skein512o160);</span>
+
+<span class="fc" id="L252">        final long[] skein512o224 = {</span>
+                0xccd0616248677224L,
+                0xcba65cf3a92339efL,
+                0x8ccd69d652ff4b64L,
+                0x398aed7b3ab890b4L,
+                0x0f59d1b1457d2bd0L,
+                0x6776fe6575d4eb3dL,
+                0x99fbc70e997413e9L,
+                0x9e2cfccfe1c41ef7L
+        };
+<span class="fc" id="L262">        initialState(SKEIN_512, 224, skein512o224);</span>
+
+<span class="fc" id="L264">        final long[] skein512o384 = {</span>
+                0xa3f6c6bf3a75ef5fL,
+                0xb0fef9ccfd84faa4L,
+                0x9d77dd663d770cfeL,
+                0xd798cbf3b468fddaL,
+                0x1bc4a6668a0e4465L,
+                0x7ed7d434e5807407L,
+                0x548fc1acd4ec44d6L,
+                0x266e17546aa18ff8L
+        };
+<span class="fc" id="L274">        initialState(SKEIN_512, 384, skein512o384);</span>
+
+<span class="fc" id="L276">        final long[] skein512o512 = {</span>
+                0x4903adff749c51ceL,
+                0x0d95de399746df03L,
+                0x8fd1934127c79bceL,
+                0x9a255629ff352cb1L,
+                0x5db62599df6ca7b0L,
+                0xeabe394ca9d5c3f4L,
+                0x991112c71a75b523L,
+                0xae18a40b660fcc33L
+        };
+<span class="fc" id="L286">        initialState(SKEIN_512, 512, skein512o512);</span>
+<span class="fc" id="L287">    }</span>
+
+    private static void initialState(final int blockSize, final int outputSize, final long[] state) {
+<span class="fc" id="L290">        INITIAL_STATES.put(variantIdentifier(blockSize / 8, outputSize / 8), state);</span>
+<span class="fc" id="L291">    }</span>
+
+    private static Integer variantIdentifier(final int blockSizeBytes, final int outputSizeBytes) {
+<span class="fc" id="L294">        return Integers.valueOf((outputSizeBytes &lt;&lt; 16) | blockSizeBytes);</span>
+    }
+
+    /**
+     * Ubi Tweak class.
+     */
+    private static class UbiTweak {
+        /**
+         * Point at which position might overflow long, so switch to add with carry logic.
+         */
+        private static final long LOW_RANGE = Long.MAX_VALUE - Integer.MAX_VALUE;
+
+        /**
+         * Bit 127 = final.
+         */
+        private static final long T1_FINAL = 1L &lt;&lt; 63;
+
+        /**
+         * Bit 126 = first.
+         */
+        private static final long T1_FIRST = 1L &lt;&lt; 62;
+
+        /**
+         * UBI uses a 128 bit tweak.
+         */
+<span class="fc" id="L319">        private long[] tweak = new long[2];</span>
+
+        /**
+         * Whether 64 bit position exceeded.
+         */
+        private boolean extendedPosition;
+
+        /**
+         * Constructor.
+         */
+<span class="fc" id="L329">        UbiTweak() {</span>
+<span class="fc" id="L330">            reset();</span>
+<span class="fc" id="L331">        }</span>
+
+        /**
+         * Reset according to source.
+         *
+         * @param pTweak the source
+         */
+        public void reset(final UbiTweak pTweak) {
+<span class="fc" id="L339">            this.tweak = Arrays.clone(pTweak.tweak, this.tweak);</span>
+<span class="fc" id="L340">            this.extendedPosition = pTweak.extendedPosition;</span>
+<span class="fc" id="L341">        }</span>
+
+        /**
+         * Reset.
+         */
+        public void reset() {
+<span class="fc" id="L347">            tweak[0] = 0;</span>
+<span class="fc" id="L348">            tweak[1] = 0;</span>
+<span class="fc" id="L349">            extendedPosition = false;</span>
+<span class="fc" id="L350">            setFirst(true);</span>
+<span class="fc" id="L351">        }</span>
+
+        public void setType(final int type) {
+            // Bits 120..125 = type
+<span class="fc" id="L355">            tweak[1] = (tweak[1] &amp; 0xFFFFFFC000000000L) | ((type &amp; 0x3FL) &lt;&lt; 56);</span>
+<span class="fc" id="L356">        }</span>
+
+        public int getType() {
+<span class="nc" id="L359">            return (int) ((tweak[1] &gt;&gt;&gt; 56) &amp; 0x3FL);</span>
+        }
+
+        public void setTreeLocation(final int level, final int hiOffset, final long loOffset) {
+            // Bits 112..119 = level
+<span class="fc" id="L364">            tweak[1] = (tweak[1] &amp; 0xFF00FFC000000000L) | ((level &amp; 0xFFL) &lt;&lt; 48);</span>
+
+            /* Calculate high and lo parts of offset */
+<span class="fc" id="L367">            tweak[0] = loOffset;</span>
+<span class="fc" id="L368">            tweak[1] |= hiOffset;</span>
+
+            /* Determine whether we have an extended position */
+<span class="pc bpc" id="L371" title="3 of 6 branches missed.">            extendedPosition = loOffset &lt; 0 || loOffset &gt; LOW_RANGE || hiOffset != 0;</span>
+<span class="fc" id="L372">        }</span>
+
+        public int getLevel() {
+<span class="nc" id="L375">            return (int) ((tweak[1] &gt;&gt;&gt; 48) &amp; 0xFFL);</span>
+        }
+
+        public void setFirst(final boolean first) {
+<span class="fc bfc" id="L379" title="All 2 branches covered.">            if (first) {</span>
+<span class="fc" id="L380">                tweak[1] |= T1_FIRST;</span>
+            } else {
+<span class="fc" id="L382">                tweak[1] &amp;= ~T1_FIRST;</span>
+            }
+<span class="fc" id="L384">        }</span>
+
+        public boolean isFirst() {
+<span class="nc bnc" id="L387" title="All 2 branches missed.">            return ((tweak[1] &amp; T1_FIRST) != 0);</span>
+        }
+
+        public void setFinal(final boolean last) {
+<span class="pc bpc" id="L391" title="1 of 2 branches missed.">            if (last) {</span>
+<span class="fc" id="L392">                tweak[1] |= T1_FINAL;</span>
+            } else {
+<span class="nc" id="L394">                tweak[1] &amp;= ~T1_FINAL;</span>
+            }
+<span class="fc" id="L396">        }</span>
+
+        public boolean isFinal() {
+<span class="nc bnc" id="L399" title="All 2 branches missed.">            return ((tweak[1] &amp; T1_FINAL) != 0);</span>
+        }
+
+        /**
+         * Advances the position in the tweak by the specified value.
+         *
+         * @param advance the advance count
+         */
+        public void advancePosition(final int advance) {
+            // Bits 0..95 = position
+<span class="pc bpc" id="L409" title="1 of 2 branches missed.">            if (extendedPosition) {</span>
+<span class="nc" id="L410">                final long[] parts = new long[3];</span>
+<span class="nc" id="L411">                parts[0] = tweak[0] &amp; 0xFFFFFFFFL;</span>
+<span class="nc" id="L412">                parts[1] = (tweak[0] &gt;&gt;&gt; 32) &amp; 0xFFFFFFFFL;</span>
+<span class="nc" id="L413">                parts[2] = tweak[1] &amp; 0xFFFFFFFFL;</span>
+
+<span class="nc" id="L415">                long carry = advance;</span>
+<span class="nc bnc" id="L416" title="All 2 branches missed.">                for (int i = 0; i &lt; parts.length; i++) {</span>
+<span class="nc" id="L417">                    carry += parts[i];</span>
+<span class="nc" id="L418">                    parts[i] = carry;</span>
+<span class="nc" id="L419">                    carry &gt;&gt;&gt;= 32;</span>
+                }
+<span class="nc" id="L421">                tweak[0] = ((parts[1] &amp; 0xFFFFFFFFL) &lt;&lt; 32) | (parts[0] &amp; 0xFFFFFFFFL);</span>
+<span class="nc" id="L422">                tweak[1] = (tweak[1] &amp; 0xFFFFFFFF00000000L) | (parts[2] &amp; 0xFFFFFFFFL);</span>
+<span class="nc" id="L423">            } else {</span>
+<span class="fc" id="L424">                long position = tweak[0];</span>
+<span class="fc" id="L425">                position += advance;</span>
+<span class="fc" id="L426">                tweak[0] = position;</span>
+<span class="pc bpc" id="L427" title="1 of 2 branches missed.">                if (position &gt; LOW_RANGE) {</span>
+<span class="nc" id="L428">                    extendedPosition = true;</span>
+                }
+            }
+<span class="fc" id="L431">        }</span>
+
+        public long[] getWords() {
+<span class="fc" id="L434">            return tweak;</span>
+        }
+
+        public String toString() {
+<span class="nc" id="L438">            return getType() + &quot; first: &quot; + isFirst() + &quot;, final: &quot; + isFinal();</span>
+        }
+
+    }
+
+    /**
+     * The Unique Block Iteration chaining mode.
+     */
+    private class UBI {
+        /**
+         * The tweak.
+         */
+<span class="fc" id="L450">        private final UbiTweak tweak = new UbiTweak();</span>
+
+        /**
+         * Buffer for the current block of message data.
+         */
+        private byte[] currentBlock;
+
+        /**
+         * Offset into the current message block.
+         */
+        private int currentOffset;
+
+        /**
+         * Buffer for message words for feedback into encrypted block.
+         */
+        private long[] message;
+
+<span class="fc" id="L467">        UBI(final int blockSize) {</span>
+<span class="fc" id="L468">            currentBlock = new byte[blockSize];</span>
+<span class="fc" id="L469">            message = new long[currentBlock.length / 8];</span>
+<span class="fc" id="L470">        }</span>
+
+        public void reset(final UBI pUbi) {
+<span class="fc" id="L473">            currentBlock = Arrays.clone(pUbi.currentBlock, currentBlock);</span>
+<span class="fc" id="L474">            currentOffset = pUbi.currentOffset;</span>
+<span class="fc" id="L475">            message = Arrays.clone(pUbi.message, this.message);</span>
+<span class="fc" id="L476">            tweak.reset(pUbi.tweak);</span>
+<span class="fc" id="L477">        }</span>
+
+        public void reset(final int type) {
+<span class="fc" id="L480">            tweak.reset();</span>
+<span class="fc" id="L481">            tweak.setType(type);</span>
+<span class="fc" id="L482">            currentOffset = 0;</span>
+<span class="fc" id="L483">        }</span>
+
+        public void setTreeLocation(final int level, final long offSet, final int pShift) {
+<span class="fc" id="L486">            int shift = getBlockSize() &lt;&lt; 3;</span>
+<span class="fc" id="L487">            shift += pShift; //level == 0 ? leafLen : fanOut;</span>
+<span class="fc" id="L488">            final int hiOffset = (int) offSet &gt;&gt;&gt; 64 - shift;</span>
+<span class="fc" id="L489">            final long loOffset = offSet &lt;&lt; shift;</span>
+<span class="fc" id="L490">            tweak.setTreeLocation(level, hiOffset, loOffset);</span>
+<span class="fc" id="L491">        }</span>
+
+        public void update(final byte[] value, final int offset, final int len, final long[] output) {
+            /*
+             * Buffer complete blocks for the underlying Threefish cipher, only flushing when there
+             * are subsequent bytes (last block must be processed in doFinal() with final=true set).
+             */
+<span class="fc" id="L498">            int copied = 0;</span>
+<span class="fc bfc" id="L499" title="All 2 branches covered.">            while (len &gt; copied) {</span>
+<span class="fc bfc" id="L500" title="All 2 branches covered.">                if (currentOffset == currentBlock.length) {</span>
+<span class="fc" id="L501">                    processBlock(output);</span>
+<span class="fc" id="L502">                    tweak.setFirst(false);</span>
+<span class="fc" id="L503">                    currentOffset = 0;</span>
+                }
+
+<span class="fc" id="L506">                final int toCopy = Math.min((len - copied), currentBlock.length - currentOffset);</span>
+<span class="fc" id="L507">                System.arraycopy(value, offset + copied, currentBlock, currentOffset, toCopy);</span>
+<span class="fc" id="L508">                copied += toCopy;</span>
+<span class="fc" id="L509">                currentOffset += toCopy;</span>
+<span class="fc" id="L510">                tweak.advancePosition(toCopy);</span>
+<span class="fc" id="L511">            }</span>
+<span class="fc" id="L512">        }</span>
+
+        private void processBlock(final long[] output) {
+<span class="fc" id="L515">            threefish.init(true, chain, tweak.getWords());</span>
+<span class="fc bfc" id="L516" title="All 2 branches covered.">            for (int i = 0; i &lt; message.length; i++) {</span>
+<span class="fc" id="L517">                message[i] = Pack.littleEndianToLong(currentBlock, i * 8);</span>
+            }
+
+<span class="fc" id="L520">            threefish.processBlock(message, output);</span>
+
+<span class="fc bfc" id="L522" title="All 2 branches covered.">            for (int i = 0; i &lt; output.length; i++) {</span>
+<span class="fc" id="L523">                output[i] ^= message[i];</span>
+            }
+<span class="fc" id="L525">        }</span>
+
+        public void doFinal(final long[] output) {
+            // Pad remainder of current block with zeroes
+<span class="fc bfc" id="L529" title="All 2 branches covered.">            for (int i = currentOffset; i &lt; currentBlock.length; i++) {</span>
+<span class="fc" id="L530">                currentBlock[i] = 0;</span>
+            }
+
+<span class="fc" id="L533">            tweak.setFinal(true);</span>
+<span class="fc" id="L534">            processBlock(output);</span>
+<span class="fc" id="L535">        }</span>
+    }
+
+    /**
+     * Underlying Threefish tweakable block cipher.
+     */
+    private final ThreefishEngine threefish;
+
+    /**
+     * Size of the digest output, in bytes.
+     */
+    private final int outputSizeBytes;
+
+    /**
+     * The current chaining/state value.
+     */
+    private long[] chain;
+
+    /**
+     * The initial state value.
+     */
+    private long[] initialState;
+
+    /**
+     * The (optional) key parameter.
+     */
+    private byte[] key;
+
+    /**
+     * Parameters to apply prior to the message.
+     */
+    private Parameter[] preMessageParameters;
+
+    /**
+     * Parameters to apply after the message, but prior to output.
+     */
+    private Parameter[] postMessageParameters;
+
+    /**
+     * The current UBI operation.
+     */
+    private final UBI ubi;
+
+    /**
+     * Buffer for single byte update method.
+     */
+<span class="fc" id="L581">    private final byte[] singleByte = new byte[1];</span>
+
+    /**
+     * The explicit configuration.
+     */
+    private Configuration theConfig;
+
+    /**
+     * Constructs a Skein engine.
+     *
+     * @param blockSizeBits  the internal state size in bits - one of {@link #SKEIN_256}, {@link #SKEIN_512} or
+     *                       {@link #SKEIN_1024}.
+     * @param outputSizeBits the output/digest size to produce in bits, which must be an integral number of
+     *                       bytes.
+     */
+<span class="fc" id="L596">    public GordianSkeinBase(final int blockSizeBits, final int outputSizeBits) {</span>
+<span class="pc bpc" id="L597" title="1 of 2 branches missed.">        if (outputSizeBits % 8 != 0) {</span>
+<span class="nc" id="L598">            throw new IllegalArgumentException(&quot;Output size must be a multiple of 8 bits. :&quot; + outputSizeBits);</span>
+        }
+<span class="fc" id="L600">        this.outputSizeBytes = outputSizeBits / Byte.SIZE;</span>
+
+<span class="fc" id="L602">        this.threefish = new ThreefishEngine(blockSizeBits);</span>
+<span class="fc" id="L603">        this.ubi = new UBI(threefish.getBlockSize());</span>
+<span class="fc" id="L604">    }</span>
+
+    /**
+     * Creates a SkeinEngine as an exact copy of an existing instance.
+     *
+     * @param engine the base engine
+     */
+    public GordianSkeinBase(final GordianSkeinBase engine) {
+<span class="fc" id="L612">        this(engine.getBlockSize() * 8, engine.getOutputSize() * 8);</span>
+<span class="fc" id="L613">        copyIn(engine);</span>
+<span class="fc" id="L614">    }</span>
+
+    private void copyIn(final GordianSkeinBase engine) {
+<span class="fc" id="L617">        this.ubi.reset(engine.ubi);</span>
+<span class="fc" id="L618">        this.chain = Arrays.clone(engine.chain, this.chain);</span>
+<span class="fc" id="L619">        this.initialState = Arrays.clone(engine.initialState, this.initialState);</span>
+<span class="fc" id="L620">        this.key = Arrays.clone(engine.key, this.key);</span>
+<span class="fc" id="L621">        this.preMessageParameters = clone(engine.preMessageParameters, this.preMessageParameters);</span>
+<span class="fc" id="L622">        this.postMessageParameters = clone(engine.postMessageParameters, this.postMessageParameters);</span>
+<span class="fc" id="L623">    }</span>
+
+    private static Parameter[] clone(final Parameter[] data, final Parameter[] existing) {
+<span class="fc bfc" id="L626" title="All 2 branches covered.">        if (data == null) {</span>
+<span class="fc" id="L627">            return null;</span>
+        }
+<span class="fc" id="L629">        Parameter[] myExisting = existing;</span>
+<span class="pc bpc" id="L630" title="3 of 4 branches missed.">        if ((myExisting == null) || (myExisting.length != data.length)) {</span>
+<span class="fc" id="L631">            myExisting = new Parameter[data.length];</span>
+        }
+<span class="fc" id="L633">        System.arraycopy(data, 0, myExisting, 0, myExisting.length);</span>
+<span class="fc" id="L634">        return existing;</span>
+    }
+
+    @Override
+    public Memoable copy() {
+<span class="fc" id="L639">        return new GordianSkeinBase(this);</span>
+    }
+
+    @Override
+    public void reset(final Memoable other) {
+<span class="fc" id="L644">        final GordianSkeinBase s = (GordianSkeinBase) other;</span>
+<span class="pc bpc" id="L645" title="2 of 4 branches missed.">        if ((getBlockSize() != s.getBlockSize()) || (outputSizeBytes != s.outputSizeBytes)) {</span>
+<span class="nc" id="L646">            throw new IllegalArgumentException(&quot;Incompatible parameters in provided SkeinEngine.&quot;);</span>
+        }
+<span class="fc" id="L648">        copyIn(s);</span>
+<span class="fc" id="L649">    }</span>
+
+    /**
+     * Get output size.
+     *
+     * @return the output size
+     */
+    public int getOutputSize() {
+<span class="fc" id="L657">        return outputSizeBytes;</span>
+    }
+
+    /**
+     * Obtain the block size.
+     *
+     * @return the block size
+     */
+    public int getBlockSize() {
+<span class="fc" id="L666">        return threefish.getBlockSize();</span>
+    }
+
+    /**
+     * Set the extended configuration.
+     *
+     * @param pConfig the extended configuration
+     */
+    void setConfiguration(final Configuration pConfig) {
+<span class="fc" id="L675">        theConfig = pConfig;</span>
+<span class="fc" id="L676">    }</span>
+
+    /**
+     * Initialises the Skein engine with the provided parameters. See {@link GordianSkeinParameters} for
+     * details on the parameterisation of the Skein hash function.
+     *
+     * @param params the parameters to apply to this engine, or &lt;code&gt;null&lt;/code&gt; to use no parameters.
+     */
+    @SuppressWarnings(&quot;unchecked&quot;)
+    public void init(final GordianSkeinParameters params) {
+<span class="fc" id="L686">        this.chain = null;</span>
+<span class="fc" id="L687">        this.key = null;</span>
+<span class="fc" id="L688">        this.preMessageParameters = null;</span>
+<span class="fc" id="L689">        this.postMessageParameters = null;</span>
+
+<span class="fc bfc" id="L691" title="All 2 branches covered.">        if (params != null) {</span>
+<span class="fc" id="L692">            final byte[] theKey = params.getKey();</span>
+<span class="pc bpc" id="L693" title="1 of 4 branches missed.">            if (theKey != null &amp;&amp; theKey.length &lt; 16) {</span>
+<span class="nc" id="L694">                throw new IllegalArgumentException(&quot;Skein key must be at least 128 bits.&quot;);</span>
+            }
+<span class="fc" id="L696">            initParams(params.getParameters());</span>
+        }
+<span class="fc" id="L698">        createInitialState();</span>
+
+        // Initialise message block
+<span class="fc" id="L701">        ubiInit(PARAM_TYPE_MESSAGE);</span>
+<span class="fc" id="L702">    }</span>
+
+    private void initParams(final Hashtable&lt;Integer, byte[]&gt; parameters) {
+<span class="fc" id="L705">        final Enumeration&lt;Integer&gt; keys = parameters.keys();</span>
+<span class="fc" id="L706">        final Vector&lt;Parameter&gt; pre = new Vector&lt;&gt;();</span>
+<span class="fc" id="L707">        final Vector&lt;Parameter&gt; post = new Vector&lt;&gt;();</span>
+
+<span class="fc bfc" id="L709" title="All 2 branches covered.">        while (keys.hasMoreElements()) {</span>
+<span class="fc" id="L710">            final Integer type = keys.nextElement();</span>
+<span class="fc" id="L711">            final byte[] value = parameters.get(type);</span>
+
+<span class="fc bfc" id="L713" title="All 2 branches covered.">            if (type == PARAM_TYPE_KEY) {</span>
+<span class="fc" id="L714">                this.key = value;</span>
+<span class="pc bpc" id="L715" title="1 of 2 branches missed.">            } else if (type &lt; PARAM_TYPE_MESSAGE) {</span>
+<span class="fc" id="L716">                pre.addElement(new Parameter(type, value));</span>
+            } else {
+<span class="nc" id="L718">                post.addElement(new Parameter(type, value));</span>
+            }
+<span class="fc" id="L720">        }</span>
+<span class="fc" id="L721">        preMessageParameters = new Parameter[pre.size()];</span>
+<span class="fc" id="L722">        pre.copyInto(preMessageParameters);</span>
+<span class="fc" id="L723">        sort(preMessageParameters);</span>
+
+<span class="fc" id="L725">        postMessageParameters = new Parameter[post.size()];</span>
+<span class="fc" id="L726">        post.copyInto(postMessageParameters);</span>
+<span class="fc" id="L727">        sort(postMessageParameters);</span>
+<span class="fc" id="L728">    }</span>
+
+    private static void sort(final Parameter[] params) {
+<span class="pc bpc" id="L731" title="1 of 2 branches missed.">        if (params == null) {</span>
+<span class="nc" id="L732">            return;</span>
+        }
+
+        // Insertion sort, for Java 1.1 compatibility
+<span class="pc bpc" id="L736" title="1 of 2 branches missed.">        for (int i = 1; i &lt; params.length; i++) {</span>
+<span class="nc" id="L737">            final Parameter param = params[i];</span>
+<span class="nc" id="L738">            int hole = i;</span>
+<span class="nc bnc" id="L739" title="All 4 branches missed.">            while (hole &gt; 0 &amp;&amp; param.getType() &lt; params[hole - 1].getType()) {</span>
+<span class="nc" id="L740">                params[hole] = params[hole - 1];</span>
+<span class="nc" id="L741">                hole = hole - 1;</span>
+            }
+<span class="nc" id="L743">            params[hole] = param;</span>
+        }
+<span class="fc" id="L745">    }</span>
+
+    /**
+     * Calculate the initial (pre message block) chaining state.
+     */
+    private void createInitialState() {
+<span class="fc bfc" id="L751" title="All 2 branches covered.">        final boolean xtendedConfig = theConfig != null;</span>
+<span class="fc bfc" id="L752" title="All 2 branches covered.">        final long[] precalc = xtendedConfig ? null : INITIAL_STATES.get(variantIdentifier(getBlockSize(), getOutputSize()));</span>
+<span class="fc bfc" id="L753" title="All 4 branches covered.">        if ((key == null) &amp;&amp; (precalc != null)) {</span>
+            // Precalculated UBI(CFG)
+<span class="fc" id="L755">            chain = Arrays.clone(precalc);</span>
+        } else {
+            // Blank initial state
+<span class="fc" id="L758">            chain = new long[getBlockSize() / 8];</span>
+
+            // Process key block
+<span class="fc bfc" id="L761" title="All 2 branches covered.">            if (key != null) {</span>
+<span class="fc" id="L762">                ubiComplete(SkeinParameters.PARAM_TYPE_KEY, key);</span>
+            }
+
+            // Process configuration block
+<span class="fc bfc" id="L766" title="All 2 branches covered.">            final Configuration myConfig = xtendedConfig ? theConfig : new Configuration(outputSizeBytes * 8L);</span>
+<span class="fc" id="L767">            ubiComplete(PARAM_TYPE_CONFIG, myConfig.getBytes());</span>
+        }
+
+        // Process additional pre-message parameters
+<span class="fc bfc" id="L771" title="All 2 branches covered.">        if (preMessageParameters != null) {</span>
+<span class="fc bfc" id="L772" title="All 2 branches covered.">            for (int i = 0; i &lt; preMessageParameters.length; i++) {</span>
+<span class="fc" id="L773">                final Parameter param = preMessageParameters[i];</span>
+<span class="fc" id="L774">                ubiComplete(param.getType(), param.getValue());</span>
+            }
+        }
+<span class="fc" id="L777">        initialState = Arrays.clone(chain);</span>
+<span class="fc" id="L778">    }</span>
+
+    /**
+     * Reset the engine to the initial state (with the key and any pre-message parameters , ready to
+     * accept message input.
+     */
+    public void reset() {
+<span class="fc" id="L785">        System.arraycopy(initialState, 0, chain, 0, chain.length);</span>
+
+<span class="fc" id="L787">        ubiInit(PARAM_TYPE_MESSAGE);</span>
+<span class="fc" id="L788">    }</span>
+
+    void initTreeNode(final int level, final long offset, final int shift) {
+<span class="fc" id="L791">        reset();</span>
+<span class="fc" id="L792">        ubi.setTreeLocation(level, offset, shift);</span>
+<span class="fc" id="L793">    }</span>
+
+    private void ubiComplete(final int type, final byte[] value) {
+<span class="fc" id="L796">        ubiInit(type);</span>
+<span class="fc" id="L797">        this.ubi.update(value, 0, value.length, chain);</span>
+<span class="fc" id="L798">        ubiFinal();</span>
+<span class="fc" id="L799">    }</span>
+
+    private void ubiInit(final int type) {
+<span class="fc" id="L802">        this.ubi.reset(type);</span>
+<span class="fc" id="L803">    }</span>
+
+    private void ubiFinal() {
+<span class="fc" id="L806">        ubi.doFinal(chain);</span>
+<span class="fc" id="L807">    }</span>
+
+    private void checkInitialised() {
+<span class="pc bpc" id="L810" title="1 of 2 branches missed.">        if (this.ubi == null) {</span>
+<span class="nc" id="L811">            throw new IllegalArgumentException(&quot;Skein engine is not initialised.&quot;);</span>
+        }
+<span class="fc" id="L813">    }</span>
+
+    /**
+     * Update the digest.
+     *
+     * @param in the byte to update with
+     */
+    public void update(final byte in) {
+<span class="fc" id="L821">        singleByte[0] = in;</span>
+<span class="fc" id="L822">        update(singleByte, 0, 1);</span>
+<span class="fc" id="L823">    }</span>
+
+    /**
+     * Update the digest.
+     *
+     * @param in    the input buffer
+     * @param inOff the input offset
+     * @param len   the input length
+     */
+    public void update(final byte[] in, final int inOff, final int len) {
+<span class="fc" id="L833">        checkInitialised();</span>
+<span class="fc" id="L834">        ubi.update(in, inOff, len, chain);</span>
+<span class="fc" id="L835">    }</span>
+
+    void calculateNode(final byte[] out, final int outOff) {
+<span class="fc" id="L838">        checkInitialised();</span>
+<span class="pc bpc" id="L839" title="1 of 2 branches missed.">        if (out.length &lt; (outOff + outputSizeBytes)) {</span>
+<span class="nc" id="L840">            throw new OutputLengthException(&quot;Output buffer is too short to hold output&quot;);</span>
+        }
+
+        // Finalise message block
+<span class="fc" id="L844">        ubiFinal();</span>
+
+        /* Output the state */
+<span class="fc bfc" id="L847" title="All 2 branches covered.">        for (int i = 0; i &lt; chain.length; i++) {</span>
+<span class="fc" id="L848">            Pack.longToLittleEndian(chain[i], out, outOff + (i * 8));</span>
+        }
+<span class="fc" id="L850">    }</span>
+
+    /**
+     * Finalise the digest.
+     *
+     * @param out    the output buffer
+     * @param outOff the output offset
+     * @return the number of bytes returned
+     */
+    public int doFinal(final byte[] out, final int outOff) {
+<span class="fc" id="L860">        checkInitialised();</span>
+<span class="pc bpc" id="L861" title="1 of 2 branches missed.">        if (out.length &lt; (outOff + outputSizeBytes)) {</span>
+<span class="nc" id="L862">            throw new OutputLengthException(&quot;Output buffer is too short to hold output&quot;);</span>
+        }
+
+        // Initiate output
+<span class="fc" id="L866">        initiateOutput();</span>
+
+        // Perform the output transform
+<span class="fc" id="L869">        final int blockSize = getBlockSize();</span>
+<span class="fc" id="L870">        final int blocksRequired = ((outputSizeBytes + blockSize - 1) / blockSize);</span>
+<span class="fc bfc" id="L871" title="All 2 branches covered.">        for (int i = 0; i &lt; blocksRequired; i++) {</span>
+<span class="fc" id="L872">            final int toWrite = Math.min(blockSize, outputSizeBytes - (i * blockSize));</span>
+<span class="fc" id="L873">            output(i, out, outOff + (i * blockSize), toWrite);</span>
+        }
+
+<span class="fc" id="L876">        reset();</span>
+
+<span class="fc" id="L878">        return outputSizeBytes;</span>
+    }
+
+    void postProcessMessage() {
+        // Process additional post-message parameters
+<span class="fc bfc" id="L883" title="All 2 branches covered.">        if (postMessageParameters != null) {</span>
+<span class="pc bpc" id="L884" title="1 of 2 branches missed.">            for (int i = 0; i &lt; postMessageParameters.length; i++) {</span>
+<span class="nc" id="L885">                final Parameter param = postMessageParameters[i];</span>
+<span class="nc" id="L886">                ubiComplete(param.getType(), param.getValue());</span>
+            }
+        }
+<span class="fc" id="L889">    }</span>
+
+    void initiateOutput() {
+        // Finalise message block
+<span class="fc" id="L893">        ubiFinal();</span>
+
+        // Process additional post-message parameters
+<span class="fc" id="L896">        postProcessMessage();</span>
+<span class="fc" id="L897">    }</span>
+
+    void restoreForOutput(final byte[] pState) {
+        /* Restore the state */
+<span class="fc bfc" id="L901" title="All 2 branches covered.">        for (int i = 0; i &lt; chain.length; i++) {</span>
+<span class="fc" id="L902">            chain[i] = Pack.littleEndianToLong(pState, i * 8);</span>
+        }
+
+        // Initiate output
+<span class="fc" id="L906">        initiateOutput();</span>
+<span class="fc" id="L907">    }</span>
+
+    void output(final long outputSequence, final byte[] out, final int outOff, final int outputBytes) {
+<span class="fc" id="L910">        final byte[] currentBytes = new byte[8];</span>
+<span class="fc" id="L911">        Pack.longToLittleEndian(outputSequence, currentBytes, 0);</span>
+
+        // Output is a sequence of UBI invocations all of which use and preserve the pre-output
+        // state
+<span class="fc" id="L915">        final long[] outputWords = new long[chain.length];</span>
+<span class="fc" id="L916">        ubiInit(PARAM_TYPE_OUTPUT);</span>
+<span class="fc" id="L917">        this.ubi.update(currentBytes, 0, currentBytes.length, outputWords);</span>
+<span class="fc" id="L918">        ubi.doFinal(outputWords);</span>
+
+<span class="fc" id="L920">        final int wordsRequired = ((outputBytes + 8 - 1) / 8);</span>
+<span class="fc bfc" id="L921" title="All 2 branches covered.">        for (int i = 0; i &lt; wordsRequired; i++) {</span>
+<span class="fc" id="L922">            final int toWrite = Math.min(8, outputBytes - (i * 8));</span>
+<span class="fc bfc" id="L923" title="All 2 branches covered.">            if (toWrite == 8) {</span>
+<span class="fc" id="L924">                Pack.longToLittleEndian(outputWords[i], out, outOff + (i * 8));</span>
+            } else {
+<span class="fc" id="L926">                Pack.longToLittleEndian(outputWords[i], currentBytes, 0);</span>
+<span class="fc" id="L927">                System.arraycopy(currentBytes, 0, out, outOff + (i * 8), toWrite);</span>
+            }
+        }
+<span class="fc" id="L930">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

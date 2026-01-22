@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ThemisAnalysisMavenId.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Themis Core Project Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.themis.lethe.analysis</a> &gt; <span class="el_source">ThemisAnalysisMavenId.java</span></div><h1>ThemisAnalysisMavenId.java</h1><pre class="source lang-java linenums">/*
+ * Themis: Java Project Framework
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.themis.lethe.analysis;
+
+import org.w3c.dom.Element;
+
+/**
+ * Maven Module Id.
+ */
+public class ThemisAnalysisMavenId {
+    /**
+     * GroupId element.
+     */
+    private static final String EL_GROUPID = &quot;groupId&quot;;
+
+    /**
+     * ArtifactId element.
+     */
+    private static final String EL_ARTIFACTID = &quot;artifactId&quot;;
+
+    /**
+     * Version element.
+     */
+    private static final String EL_VERSION = &quot;version&quot;;
+
+    /**
+     * Parent groupId indication.
+     */
+    private static final String PARENT_GROUP = &quot;${project.groupId}&quot;;
+
+    /**
+     * Parent version indication.
+     */
+    private static final String PARENT_VERSION = &quot;${project.version}&quot;;
+
+    /**
+     * The groupId.
+     */
+    private String theGroupId;
+
+    /**
+     * The artifactId.
+     */
+    private String theArtifactId;
+
+    /**
+     * The version.
+     */
+    private String theVersion;
+
+    /**
+     * Constructor.
+     *
+     * @param pElement the element containing the values
+     */
+<span class="nc" id="L70">    ThemisAnalysisMavenId(final Element pElement) {</span>
+        /* Access the values */
+<span class="nc" id="L72">        theGroupId = ThemisAnalysisMaven.getElementValue(pElement, EL_GROUPID);</span>
+<span class="nc" id="L73">        theArtifactId = ThemisAnalysisMaven.getElementValue(pElement, EL_ARTIFACTID);</span>
+<span class="nc" id="L74">        theVersion = ThemisAnalysisMaven.getElementValue(pElement, EL_VERSION);</span>
+<span class="nc" id="L75">    }</span>
+
+    /**
+     * Constructor.
+     *
+     * @param pElement the element containing the values
+     * @param pParent  the parent Id
+     */
+    ThemisAnalysisMavenId(final Element pElement,
+                          final ThemisAnalysisMavenId pParent) {
+        /* Process as much as we can */
+<span class="nc" id="L86">        this(pElement);</span>
+
+        /* Handle missing groupId/version */
+<span class="nc bnc" id="L89" title="All 4 branches missed.">        if (theGroupId == null || PARENT_GROUP.equals(theGroupId)) {</span>
+<span class="nc" id="L90">            theGroupId = pParent.getGroupId();</span>
+        }
+<span class="nc bnc" id="L92" title="All 4 branches missed.">        if (theVersion == null || PARENT_VERSION.equals(theVersion)) {</span>
+<span class="nc" id="L93">            theVersion = pParent.getVersion();</span>
+        }
+<span class="nc" id="L95">    }</span>
+
+    /**
+     * Obtain the groupId.
+     *
+     * @return the groupId
+     */
+    public String getGroupId() {
+<span class="nc" id="L103">        return theGroupId;</span>
+    }
+
+    /**
+     * Obtain the artifactId.
+     *
+     * @return the artifactId
+     */
+    public String getArtifactId() {
+<span class="nc" id="L112">        return theArtifactId;</span>
+    }
+
+    /**
+     * Obtain the version.
+     *
+     * @return the version
+     */
+    public String getVersion() {
+<span class="nc" id="L121">        return theVersion;</span>
+    }
+
+    @Override
+    public String toString() {
+<span class="nc" id="L126">        return theGroupId + &quot;:&quot; + theArtifactId + &quot;:&quot; + theVersion;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

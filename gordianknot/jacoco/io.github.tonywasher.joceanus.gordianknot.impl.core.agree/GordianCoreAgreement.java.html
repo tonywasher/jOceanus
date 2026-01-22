@@ -1,0 +1,546 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianCoreAgreement.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.impl.core.agree</a> &gt; <span class="el_source">GordianCoreAgreement.java</span></div><h1>GordianCoreAgreement.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.gordianknot.impl.core.agree;
+
+import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreement;
+import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementParams;
+import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementStatus;
+import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementType;
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianCertificate;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamCipher;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymCipher;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactory;
+import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactoryType;
+import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySet;
+import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySetSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignatureSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianLogicException;
+
+import java.util.Objects;
+
+/**
+ * Key Agreement.
+ */
+public class GordianCoreAgreement
+        implements GordianAgreement {
+    /**
+     * The Engine.
+     */
+    private final GordianCoreAgreementEngine theEngine;
+
+    /**
+     * The supplier.
+     */
+    private final GordianCoreAgreementSupplier theSupplier;
+
+    /**
+     * The Builder.
+     */
+    private final GordianCoreAgreementBuilder theBuilder;
+
+    /**
+     * The State.
+     */
+    private final GordianCoreAgreementState theState;
+
+    /**
+     * The Agreement Spec.
+     */
+    private final GordianAgreementSpec theSpec;
+
+    /**
+     * The Parameters.
+     */
+    private GordianCoreAgreementParams theParams;
+
+    /**
+     * The Next Message.
+     */
+    private byte[] theNextMsg;
+
+    /**
+     * Constructor.
+     *
+     * @param pEngine the engine
+     * @throws GordianException on error
+     */
+<span class="fc" id="L86">    public GordianCoreAgreement(final GordianCoreAgreementEngine pEngine) throws GordianException {</span>
+        /* Store details */
+<span class="fc" id="L88">        theEngine = pEngine;</span>
+<span class="fc" id="L89">        theSupplier = theEngine.getSupplier();</span>
+<span class="fc" id="L90">        theBuilder = theEngine.getBuilder();</span>
+<span class="fc" id="L91">        theState = theBuilder.getState();</span>
+<span class="fc" id="L92">        theSpec = theState.getSpec();</span>
+<span class="fc" id="L93">    }</span>
+
+    @Override
+    public GordianAgreementParams getAgreementParams() {
+<span class="fc" id="L97">        return new GordianCoreAgreementParams(theParams);</span>
+    }
+
+    /**
+     * Obtain the spec.
+     *
+     * @return the spec
+     */
+    GordianAgreementSpec getAgreementSpec() {
+<span class="fc" id="L106">        return theSpec;</span>
+    }
+
+    /**
+     * Set the status.
+     *
+     * @param pStatus the status
+     */
+    void setStatus(final GordianAgreementStatus pStatus) {
+<span class="nc" id="L115">        theState.setStatus(pStatus);</span>
+<span class="nc" id="L116">    }</span>
+
+    @Override
+    public GordianAgreementStatus getStatus() {
+<span class="fc" id="L120">        return theState.getStatus();</span>
+    }
+
+    /**
+     * Set the resultType.
+     *
+     * @param pResultType the resultType
+     * @throws GordianException on error
+     */
+    void setResultType(final Object pResultType) throws GordianException {
+<span class="fc" id="L130">        theBuilder.setResultType(pResultType);</span>
+<span class="fc" id="L131">    }</span>
+
+    @Override
+    public Object getResult() throws GordianException {
+<span class="fc" id="L135">        checkStatus(GordianAgreementStatus.RESULT_AVAILABLE);</span>
+<span class="fc" id="L136">        return theState.getResult();</span>
+    }
+
+    @Override
+    public GordianFactory getFactoryResult() {
+<span class="pc bpc" id="L141" title="1 of 2 branches missed.">        return GordianAgreementStatus.RESULT_AVAILABLE.equals(theState.getStatus())</span>
+<span class="pc bpc" id="L142" title="1 of 2 branches missed.">                &amp;&amp; theState.getResultType() instanceof GordianFactoryType</span>
+<span class="pc" id="L143">                ? (GordianFactory) theState.getResult() : null;</span>
+    }
+
+    @Override
+    public GordianKeySet getKeySetResult() {
+<span class="pc bpc" id="L148" title="1 of 2 branches missed.">        return GordianAgreementStatus.RESULT_AVAILABLE.equals(theState.getStatus())</span>
+<span class="pc bpc" id="L149" title="1 of 2 branches missed.">                &amp;&amp; theState.getResultType() instanceof GordianKeySetSpec</span>
+<span class="pc" id="L150">                ? (GordianKeySet) theState.getResult() : null;</span>
+    }
+
+    @Override
+    public GordianSymCipher[] getSymCipherPairResult() {
+<span class="nc bnc" id="L155" title="All 2 branches missed.">        return GordianAgreementStatus.RESULT_AVAILABLE.equals(theState.getStatus())</span>
+<span class="nc bnc" id="L156" title="All 2 branches missed.">                &amp;&amp; theState.getResultType() instanceof GordianSymCipherSpec</span>
+<span class="nc" id="L157">                ? (GordianSymCipher[]) theState.getResult() : null;</span>
+    }
+
+    @Override
+    public GordianStreamCipher[] getStreamCipherPairResult() {
+<span class="nc bnc" id="L162" title="All 2 branches missed.">        return GordianAgreementStatus.RESULT_AVAILABLE.equals(theState.getStatus())</span>
+<span class="nc bnc" id="L163" title="All 2 branches missed.">                &amp;&amp; theState.getResultType() instanceof GordianStreamCipherSpec</span>
+<span class="nc" id="L164">                ? (GordianStreamCipher[]) theState.getResult() : null;</span>
+    }
+
+    @Override
+    public byte[] getByteArrayResult() {
+<span class="nc bnc" id="L169" title="All 2 branches missed.">        return GordianAgreementStatus.RESULT_AVAILABLE.equals(theState.getStatus())</span>
+<span class="nc bnc" id="L170" title="All 2 branches missed.">                &amp;&amp; theState.getResultType() instanceof Integer</span>
+<span class="nc" id="L171">                ? (byte[]) theState.getResult() : null;</span>
+    }
+
+    @Override
+    public GordianException getRejectionResult() {
+<span class="nc bnc" id="L176" title="All 2 branches missed.">        return GordianAgreementStatus.RESULT_AVAILABLE.equals(theState.getStatus())</span>
+<span class="nc bnc" id="L177" title="All 2 branches missed.">                &amp;&amp; theState.getResultType() instanceof String</span>
+<span class="nc" id="L178">                ? (GordianException) theState.getResult() : null;</span>
+    }
+
+    /**
+     * Check status.
+     *
+     * @param pStatus the required status
+     * @throws GordianException on error
+     */
+    protected void checkStatus(final GordianAgreementStatus pStatus) throws GordianException {
+        /* If we are in the wrong state */
+<span class="fc" id="L189">        final GordianAgreementStatus myStatus = theState.getStatus();</span>
+<span class="pc bpc" id="L190" title="1 of 2 branches missed.">        if (myStatus != pStatus) {</span>
+<span class="nc" id="L191">            throw new GordianLogicException(&quot;Invalid State: &quot; + myStatus);</span>
+        }
+<span class="fc" id="L193">    }</span>
+
+    /**
+     * Ask to fail signature during testing.
+     */
+    public void failSignature() {
+<span class="fc" id="L199">        theBuilder.failSignature();</span>
+<span class="fc" id="L200">    }</span>
+
+    /**
+     * Ask to fail confirmation during testing.
+     */
+    public void failConfirmation() {
+<span class="fc" id="L206">        theBuilder.failConfirmation();</span>
+<span class="fc" id="L207">    }</span>
+
+    /**
+     * Set the client certificate.
+     *
+     * @param pClient the client certificate
+     * @throws GordianException on error
+     */
+    void setClientCertificate(final GordianCertificate pClient) throws GordianException {
+        /* Handle null client certificate */
+<span class="fc bfc" id="L217" title="All 2 branches covered.">        if (pClient == null) {</span>
+<span class="fc" id="L218">            final GordianAgreementType myType = theSpec.getAgreementType();</span>
+<span class="pc bpc" id="L219" title="1 of 4 branches missed.">            if (!myType.isAnonymous() &amp;&amp; !myType.isSigned()) {</span>
+<span class="nc" id="L220">                throw new GordianDataException(&quot;Client Certificate must be provided&quot;);</span>
+            }
+<span class="fc" id="L222">            return;</span>
+        }
+
+        /* Store the certificate */
+<span class="fc" id="L226">        theBuilder.setClientCertificate(pClient);</span>
+<span class="fc" id="L227">    }</span>
+
+    /**
+     * Set the server certificate.
+     *
+     * @param pServer the server certificate
+     * @throws GordianException on error
+     */
+    void setServerCertificate(final GordianCertificate pServer) throws GordianException {
+        /* Check that we have a certificate */
+<span class="fc bfc" id="L237" title="All 2 branches covered.">        if (pServer == null) {</span>
+<span class="fc" id="L238">            final GordianAgreementType myType = theSpec.getAgreementType();</span>
+<span class="pc bpc" id="L239" title="1 of 2 branches missed.">            if (!myType.isSigned()) {</span>
+<span class="nc" id="L240">                throw new GordianDataException(&quot;Server Certificate must be provided&quot;);</span>
+            }
+        }
+
+        /* Store the certificate */
+<span class="fc" id="L245">        theBuilder.setServerCertificate(pServer);</span>
+<span class="fc" id="L246">    }</span>
+
+    /**
+     * Set the signer details.
+     *
+     * @param pSignSpec the signature spec
+     * @param pSigner   the signer certificate
+     * @throws GordianException on error
+     */
+    void setSignerCertificate(final GordianSignatureSpec pSignSpec,
+                              final GordianCertificate pSigner) throws GordianException {
+<span class="fc" id="L257">        theBuilder.setSignSpec(pSignSpec)</span>
+<span class="fc" id="L258">                .setSignerCertificate(pSigner);</span>
+<span class="fc" id="L259">    }</span>
+
+    @Override
+    public void updateParams(final GordianAgreementParams pParams) throws GordianException {
+        /* Must be looking for serverPrivate */
+<span class="fc" id="L264">        checkStatus(GordianAgreementStatus.AWAITING_SERVERPRIVATE);</span>
+
+        /* Ensure that we are updating from correct parameters */
+<span class="pc bpc" id="L267" title="1 of 2 branches missed.">        if (!Objects.equals(theParams.getId(), ((GordianCoreAgreementParams) pParams).getId())) {</span>
+<span class="nc" id="L268">            throw new GordianDataException(&quot;Invalid parameters provided&quot;);</span>
+        }
+
+        /* Determine agreement type */
+<span class="fc" id="L272">        final GordianAgreementSpec mySpec = theState.getSpec();</span>
+<span class="fc" id="L273">        final boolean isSigned = mySpec.getAgreementType().isSigned();</span>
+
+        /* If this is a signed agreement */
+<span class="fc bfc" id="L276" title="All 2 branches covered.">        if (isSigned) {</span>
+            /* Handle no signer certificate */
+<span class="fc" id="L278">            final GordianCertificate mySignerCert = pParams.getSignerCertificate();</span>
+<span class="pc bpc" id="L279" title="1 of 2 branches missed.">            if (mySignerCert == null) {</span>
+<span class="nc" id="L280">                throw new GordianLogicException(&quot;No signer declared for Signed agreement&quot;);</span>
+            }
+
+            /* Declare the signer */
+<span class="fc" id="L284">            setSignerCertificate(pParams.getSignatureSpec(), mySignerCert);</span>
+
+<span class="fc" id="L286">        } else {</span>
+            /* Ensure that the server has a private key */
+<span class="fc" id="L288">            final GordianCertificate myServerCert = pParams.getServerCertificate();</span>
+<span class="pc bpc" id="L289" title="1 of 2 branches missed.">            if (myServerCert.getKeyPair().isPublicOnly()) {</span>
+<span class="nc" id="L290">                throw new GordianDataException(&quot;Server Certificate is Public Only&quot;);</span>
+            }
+
+            /* Update the server certificate */
+<span class="fc" id="L294">            setServerCertificate(myServerCert);</span>
+        }
+
+        /* Store additional data */
+<span class="fc" id="L298">        theState.setAdditionalData(pParams.getAdditionalData());</span>
+
+        /* Update the parameters */
+<span class="fc" id="L301">        theParams = new GordianCoreAgreementParams((GordianCoreAgreementParams) pParams);</span>
+
+        /* Process the augmented clientHello and return the agreement */
+<span class="fc" id="L304">        processClientHello();</span>
+<span class="fc" id="L305">    }</span>
+
+    @Override
+    public void setError(final String pError) throws GordianException {
+        /* Only allowed while awaiting ServerPrivate */
+<span class="fc" id="L310">        checkStatus(GordianAgreementStatus.AWAITING_SERVERPRIVATE);</span>
+<span class="fc" id="L311">        theBuilder.setError(pError);</span>
+
+        /* If we are not anonymous */
+<span class="pc bpc" id="L314" title="1 of 2 branches missed.">        if (!theSpec.getAgreementType().isAnonymous()) {</span>
+            /* Create the rejection serverHello */
+<span class="fc" id="L316">            setNextMessage(theBuilder.newServerHello());</span>
+        }
+
+        /* Set result available */
+<span class="fc" id="L320">        theBuilder.setStatus(GordianAgreementStatus.RESULT_AVAILABLE);</span>
+<span class="fc" id="L321">    }</span>
+
+    @Override
+    public boolean isRejected() {
+<span class="fc" id="L325">        return theBuilder.isRejected();</span>
+    }
+
+    /**
+     * Set the next message (or null).
+     *
+     * @param pMessage the next message
+     * @throws GordianException on error
+     */
+    void setNextMessage(final GordianCoreAgreementMessageASN1 pMessage) throws GordianException {
+<span class="fc bfc" id="L335" title="All 2 branches covered.">        theNextMsg = pMessage == null ? null : pMessage.getEncodedBytes();</span>
+<span class="fc" id="L336">    }</span>
+
+    @Override
+    public byte[] nextMessage() {
+<span class="fc" id="L340">        return theNextMsg;</span>
+    }
+
+    /**
+     * Set additionalData.
+     *
+     * @param pData the additional data
+     */
+    void setAdditionalData(final byte[] pData) {
+<span class="fc" id="L349">        theState.setAdditionalData(pData);</span>
+<span class="fc" id="L350">    }</span>
+
+    /**
+     * Build the clientHello.
+     *
+     * @throws GordianException on error
+     */
+    void buildClientHello() throws GordianException {
+        /* Take a snapshot of the parameters */
+<span class="fc" id="L359">        theParams = new GordianCoreAgreementParams(theBuilder);</span>
+
+        /* Create ClientId and InitVector */
+<span class="fc bfc" id="L362" title="All 2 branches covered.">        if (!theSpec.getAgreementType().isAnonymous()) {</span>
+<span class="fc" id="L363">            theBuilder.newClientId();</span>
+        }
+<span class="fc" id="L365">        theBuilder.newClientIV();</span>
+
+        /* Create clientEphemeral if needed */
+<span class="fc bfc" id="L368" title="All 2 branches covered.">        if (needClientEphemeral()) {</span>
+<span class="fc" id="L369">            theBuilder.newClientEphemeral();</span>
+        }
+
+        /* Create the new ClientHello */
+<span class="fc" id="L373">        theEngine.buildClientHello();</span>
+<span class="fc" id="L374">        final GordianCoreAgreementMessageASN1 myMsg = theBuilder.newClientHello();</span>
+
+        /* Set next message and status */
+<span class="fc" id="L377">        setNextMessage(myMsg);</span>
+<span class="fc bfc" id="L378" title="All 2 branches covered.">        theBuilder.setStatus(theSpec.getAgreementType().isAnonymous()</span>
+<span class="fc" id="L379">                ? GordianAgreementStatus.RESULT_AVAILABLE</span>
+<span class="fc" id="L380">                : GordianAgreementStatus.AWAITING_SERVERHELLO);</span>
+
+        /* Store into cache if required */
+<span class="fc bfc" id="L383" title="All 2 branches covered.">        if (!theSpec.getAgreementType().isAnonymous()) {</span>
+<span class="fc" id="L384">            theSupplier.storeAgreement(myMsg.getClientId(), this);</span>
+        }
+<span class="fc" id="L386">    }</span>
+
+    /**
+     * Process the clientHello.
+     *
+     * @param pClientHello the clientHello
+     * @throws GordianException on error
+     */
+    void parseClientHello(final GordianCoreAgreementMessageASN1 pClientHello) throws GordianException {
+        /* Parse the clientHello */
+<span class="fc" id="L396">        theBuilder.parseClientHello(pClientHello);</span>
+<span class="fc" id="L397">        theParams = new GordianCoreAgreementParams(theBuilder);</span>
+<span class="fc" id="L398">        theBuilder.setStatus(GordianAgreementStatus.AWAITING_SERVERPRIVATE);</span>
+<span class="fc" id="L399">    }</span>
+
+    /**
+     * Process the clientHello.
+     *
+     * @throws GordianException on error
+     */
+    void processClientHello() throws GordianException {
+        /* Create ServerId and InitVector */
+<span class="fc bfc" id="L408" title="All 2 branches covered.">        if (!theSpec.getAgreementType().isAnonymous()) {</span>
+<span class="fc" id="L409">            theBuilder.newServerId();</span>
+<span class="fc" id="L410">            theBuilder.newServerIV();</span>
+        }
+
+        /* Create serverEphemeral if needed */
+<span class="fc bfc" id="L414" title="All 2 branches covered.">        if (needServerEphemeral()) {</span>
+<span class="fc" id="L415">            theBuilder.newServerEphemeral();</span>
+        }
+
+        /* Copy ephemerals to keyPairs for signed */
+<span class="fc bfc" id="L419" title="All 2 branches covered.">        if (theSpec.getAgreementType().isSigned()) {</span>
+<span class="fc" id="L420">            theBuilder.copyEphemerals();</span>
+        }
+
+        /* Process the clientHello */
+<span class="fc" id="L424">        theEngine.processClientHello();</span>
+
+        /* If we are anonymous */
+<span class="fc bfc" id="L427" title="All 2 branches covered.">        if (theSpec.getAgreementType().isAnonymous()) {</span>
+            /* Set that the result is available */
+<span class="fc" id="L429">            theBuilder.setStatus(GordianAgreementStatus.RESULT_AVAILABLE);</span>
+
+            /* Else we need to build a serverHello */
+        } else {
+            /* Build the new serverHello */
+<span class="fc" id="L434">            final GordianCoreAgreementMessageASN1 myMsg = theBuilder.newServerHello();</span>
+<span class="fc" id="L435">            setNextMessage(myMsg);</span>
+<span class="fc bfc" id="L436" title="All 2 branches covered.">            theBuilder.setStatus(Boolean.TRUE.equals(theSpec.withConfirm())</span>
+<span class="fc" id="L437">                    ? GordianAgreementStatus.AWAITING_CLIENTCONFIRM</span>
+<span class="fc" id="L438">                    : GordianAgreementStatus.RESULT_AVAILABLE);</span>
+
+            /* Store into cache if required */
+<span class="fc bfc" id="L441" title="All 2 branches covered.">            if (Boolean.TRUE.equals(theSpec.withConfirm())) {</span>
+<span class="fc" id="L442">                theSupplier.storeAgreement(myMsg.getServerId(), this);</span>
+            }
+        }
+<span class="fc" id="L445">    }</span>
+
+    /**
+     * Process the serverHello.
+     *
+     * @param pServerHello the serverHello
+     * @throws GordianException on error
+     */
+    public void processServerHello(final GordianCoreAgreementMessageASN1 pServerHello) throws GordianException {
+        /* Check that we are expecting a serverHello */
+<span class="fc" id="L455">        checkStatus(GordianAgreementStatus.AWAITING_SERVERHELLO);</span>
+
+        /* Parse the serverHello */
+<span class="fc" id="L458">        final boolean bSuccess = theBuilder.parseServerHello(pServerHello);</span>
+<span class="fc bfc" id="L459" title="All 2 branches covered.">        if (bSuccess) {</span>
+            /* Copy ephemerals to keyPairs for signed */
+<span class="fc bfc" id="L461" title="All 2 branches covered.">            if (theSpec.getAgreementType().isSigned()) {</span>
+<span class="fc" id="L462">                theBuilder.copyEphemerals();</span>
+            }
+
+            /* Process the serverHello */
+<span class="fc" id="L466">            theEngine.processServerHello();</span>
+        }
+
+        /* If we need to send confirm */
+<span class="fc bfc" id="L470" title="All 4 branches covered.">        if (bSuccess &amp;&amp; Boolean.TRUE.equals(theSpec.withConfirm())) {</span>
+            /* Build the new clientConfirm */
+<span class="fc" id="L472">            setNextMessage(theBuilder.newClientConfirm());</span>
+        } else {
+<span class="fc" id="L474">            setNextMessage(null);</span>
+        }
+<span class="fc" id="L476">        theBuilder.setStatus(GordianAgreementStatus.RESULT_AVAILABLE);</span>
+
+        /* remove from cache */
+<span class="fc" id="L479">        theSupplier.removeAgreement(pServerHello.getClientId());</span>
+<span class="fc" id="L480">    }</span>
+
+    /**
+     * Process the clientConfirm.
+     *
+     * @param pClientConfirm the clientConfirm
+     * @throws GordianException on error
+     */
+    public void processClientConfirm(final GordianCoreAgreementMessageASN1 pClientConfirm) throws GordianException {
+        /* Check that we are expecting a confirmation */
+<span class="fc" id="L490">        checkStatus(GordianAgreementStatus.AWAITING_CLIENTCONFIRM);</span>
+
+        /* Parse the clientConfirm */
+<span class="fc bfc" id="L493" title="All 2 branches covered.">        if (theBuilder.parseClientConfirm(pClientConfirm)) {</span>
+            /* Process if we have no error */
+<span class="fc" id="L495">            theEngine.processClientConfirm();</span>
+        }
+
+        /* Update status */
+<span class="fc" id="L499">        setNextMessage(null);</span>
+<span class="fc" id="L500">        theBuilder.setStatus(GordianAgreementStatus.RESULT_AVAILABLE);</span>
+
+        /* remove from cache */
+<span class="fc" id="L503">        theSupplier.removeAgreement(pClientConfirm.getServerId());</span>
+<span class="fc" id="L504">    }</span>
+
+    /**
+     * Do we need a client ephemeral?
+     *
+     * @return true/false
+     */
+    private boolean needClientEphemeral() {
+<span class="fc bfc" id="L512" title="All 2 branches covered.">        switch (theSpec.getAgreementType()) {</span>
+            case ANON:
+            case SIGNED:
+            case SM2:
+            case MQV:
+            case UNIFIED:
+<span class="fc" id="L518">                return true;</span>
+            case KEM:
+            case BASIC:
+            default:
+<span class="fc" id="L522">                return false;</span>
+        }
+    }
+
+    /**
+     * Do we need a server ephemeral?
+     *
+     * @return true/false
+     */
+    private boolean needServerEphemeral() {
+<span class="fc bfc" id="L532" title="All 2 branches covered.">        switch (theSpec.getAgreementType()) {</span>
+            case SIGNED:
+            case SM2:
+            case MQV:
+            case UNIFIED:
+<span class="fc" id="L537">                return true;</span>
+            case ANON:
+            case KEM:
+            case BASIC:
+            default:
+<span class="fc" id="L542">                return false;</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

@@ -1,0 +1,884 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianBlake3Digest.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.impl.ext.digests</a> &gt; <span class="el_source">GordianBlake3Digest.java</span></div><h1>GordianBlake3Digest.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.gordianknot.impl.ext.digests;
+
+import io.github.tonywasher.joceanus.gordianknot.impl.ext.params.GordianBlake3Parameters;
+import org.bouncycastle.crypto.ExtendedDigest;
+import org.bouncycastle.crypto.Xof;
+import org.bouncycastle.util.Memoable;
+import org.bouncycastle.util.Pack;
+
+import java.util.ArrayDeque;
+import java.util.Arrays;
+import java.util.Deque;
+
+/**
+ * Blake3 implementation. Donated to BouncyCastle.
+ */
+public class GordianBlake3Digest
+        implements ExtendedDigest, Memoable, Xof {
+    /**
+     * Already outputting error.
+     */
+    private static final String ERR_OUTPUTTING = &quot;Already outputting&quot;;
+
+    /**
+     * Number of Words.
+     */
+    private static final int NUMWORDS = 8;
+
+    /**
+     * Number of Rounds.
+     */
+    private static final int ROUNDS = 7;
+
+    /**
+     * Buffer length.
+     */
+    private static final int BLOCKLEN = NUMWORDS * Integer.BYTES * 2;
+
+    /**
+     * Chunk length.
+     */
+    private static final int CHUNKLEN = 1024;
+
+    /**
+     * ChunkStart Flag.
+     */
+    private static final int CHUNKSTART = 0b00000001;
+
+    /**
+     * ChunkEnd Flag.
+     */
+    private static final int CHUNKEND = 0b00000010;
+
+    /**
+     * Parent Flag.
+     */
+    private static final int PARENT = 0b00000100;
+
+    /**
+     * Root Flag.
+     */
+    private static final int ROOT = 0b00001000;
+
+    /**
+     * KeyedHash Flag.
+     */
+    private static final int KEYEDHASH = 0b00010000;
+
+    /**
+     * DeriveContext Flag.
+     */
+    private static final int DERIVECONTEXT = 0b00100000;
+
+    /**
+     * DeriveKey Flag.
+     */
+    private static final int DERIVEKEY = 0b01000000;
+
+    /**
+     * Chaining0 State Locations.
+     */
+    private static final int CHAINING0 = 0;
+
+    /**
+     * Chaining1 State Location.
+     */
+    private static final int CHAINING1 = 1;
+
+    /**
+     * Chaining2 State Location.
+     */
+    private static final int CHAINING2 = 2;
+
+    /**
+     * Chaining3 State Location.
+     */
+    private static final int CHAINING3 = 3;
+
+    /**
+     * Chaining4 State Location.
+     */
+    private static final int CHAINING4 = 4;
+
+    /**
+     * Chaining5 State Location.
+     */
+    private static final int CHAINING5 = 5;
+
+    /**
+     * Chaining6 State Location.
+     */
+    private static final int CHAINING6 = 6;
+
+    /**
+     * Chaining7 State Location.
+     */
+    private static final int CHAINING7 = 7;
+
+    /**
+     * IV0 State Locations.
+     */
+    private static final int IV0 = 8;
+
+    /**
+     * IV1 State Location.
+     */
+    private static final int IV1 = 9;
+
+    /**
+     * IV2 State Location.
+     */
+    private static final int IV2 = 10;
+
+    /**
+     * IV3 State Location.
+     */
+    private static final int IV3 = 11;
+
+    /**
+     * Count0 State Location.
+     */
+    private static final int COUNT0 = 12;
+
+    /**
+     * Count1 State Location.
+     */
+    private static final int COUNT1 = 13;
+
+    /**
+     * DataLen State Location.
+     */
+    private static final int DATALEN = 14;
+
+    /**
+     * Flags State Location.
+     */
+    private static final int FLAGS = 15;
+
+    /**
+     * Message word permutations.
+     */
+<span class="fc" id="L177">    private static final byte[] SIGMA = {2, 6, 3, 10, 7, 0, 4, 13, 1, 11, 12, 5, 9, 14, 15, 8};</span>
+
+    /**
+     * Rotation constants.
+     */
+<span class="fc" id="L182">    private static final byte[] ROTATE = {16, 12, 8, 7};</span>
+
+    /**
+     * Blake3 Initialization Vector.
+     */
+<span class="fc" id="L187">    private static final int[] IV = {</span>
+            0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a, 0x510e527f, 0x9b05688c, 0x1f83d9ab, 0x5be0cd19
+    };
+
+    /**
+     * The byte input/output buffer.
+     */
+<span class="fc" id="L194">    private final byte[] theBuffer = new byte[BLOCKLEN];</span>
+
+    /**
+     * The key.
+     */
+<span class="fc" id="L199">    private final int[] theK = new int[NUMWORDS];</span>
+
+    /**
+     * The chaining value.
+     */
+<span class="fc" id="L204">    private final int[] theChaining = new int[NUMWORDS];</span>
+
+    /**
+     * The state.
+     */
+<span class="fc" id="L209">    private final int[] theV = new int[NUMWORDS &lt;&lt; 1];</span>
+
+    /**
+     * The message Buffer.
+     */
+<span class="fc" id="L214">    private final int[] theM = new int[NUMWORDS &lt;&lt; 1];</span>
+
+    /**
+     * The indices.
+     */
+<span class="fc" id="L219">    private final byte[] theIndices = new byte[NUMWORDS &lt;&lt; 1];</span>
+
+    /**
+     * The chainingStack.
+     */
+<span class="fc" id="L224">    private final Deque&lt;int[]&gt; theStack = new ArrayDeque&lt;&gt;();</span>
+
+    /**
+     * The default digestLength.
+     */
+    private final int theDigestLen;
+
+    /**
+     * Are we outputting?
+     */
+    private boolean outputting;
+
+    /**
+     * How many more bytes can we output?
+     */
+    private long outputAvailable;
+
+    /**
+     * The current mode.
+     */
+    private int theMode;
+
+    /**
+     * The output mode.
+     */
+    private int theOutputMode;
+
+    /**
+     * The output dataLen.
+     */
+    private int theOutputDataLen;
+
+    /**
+     * The block counter.
+     */
+    private long theCounter;
+
+    /**
+     * The # of bytes in the current block.
+     */
+    private int theCurrBytes;
+
+    /**
+     * The position of the next byte in the buffer.
+     */
+    private int thePos;
+
+    /**
+     * Constructor.
+     */
+    public GordianBlake3Digest() {
+<span class="fc" id="L275">        this(BLOCKLEN &gt;&gt; 1);</span>
+<span class="fc" id="L276">    }</span>
+
+    /**
+     * Constructor.
+     *
+     * @param pDigestLen the default digestLength
+     */
+<span class="fc" id="L283">    public GordianBlake3Digest(final int pDigestLen) {</span>
+<span class="fc" id="L284">        theDigestLen = pDigestLen;</span>
+<span class="fc" id="L285">        init(null);</span>
+<span class="fc" id="L286">    }</span>
+
+    /**
+     * Constructor.
+     *
+     * @param pSource the source digest.
+     */
+<span class="fc" id="L293">    private GordianBlake3Digest(final GordianBlake3Digest pSource) {</span>
+        /* Copy default digest length */
+<span class="fc" id="L295">        theDigestLen = pSource.theDigestLen;</span>
+
+        /* Initialise from source */
+<span class="fc" id="L298">        reset(pSource);</span>
+<span class="fc" id="L299">    }</span>
+
+    @Override
+    public int getByteLength() {
+<span class="fc" id="L303">        return BLOCKLEN;</span>
+    }
+
+    @Override
+    public String getAlgorithmName() {
+<span class="fc" id="L308">        return &quot;BLAKE3&quot;;</span>
+    }
+
+    @Override
+    public int getDigestSize() {
+<span class="fc" id="L313">        return theDigestLen;</span>
+    }
+
+    /**
+     * Initialise.
+     *
+     * @param pParams the parameters.
+     */
+    public void init(final GordianBlake3Parameters pParams) {
+        /* Access key/context */
+<span class="fc bfc" id="L323" title="All 2 branches covered.">        final byte[] myKey = pParams == null ? null : pParams.getKey();</span>
+<span class="fc bfc" id="L324" title="All 2 branches covered.">        final byte[] myContext = pParams == null ? null : pParams.getContext();</span>
+
+        /* Reset the digest */
+<span class="fc" id="L327">        reset();</span>
+
+        /* If we have a key  */
+<span class="fc bfc" id="L330" title="All 2 branches covered.">        if (myKey != null) {</span>
+            /* Initialise with the key */
+<span class="fc" id="L332">            initKey(myKey);</span>
+<span class="fc" id="L333">            Arrays.fill(myKey, (byte) 0);</span>
+
+            /* else if we have a context */
+<span class="fc bfc" id="L336" title="All 2 branches covered.">        } else if (myContext != null) {</span>
+            /* Initialise for deriving context */
+<span class="fc" id="L338">            initNullKey();</span>
+<span class="fc" id="L339">            theMode = DERIVECONTEXT;</span>
+
+            /* Derive key from context */
+<span class="fc" id="L342">            update(myContext, 0, myContext.length);</span>
+<span class="fc" id="L343">            doFinal(theBuffer, 0);</span>
+<span class="fc" id="L344">            initKeyFromContext();</span>
+<span class="fc" id="L345">            reset();</span>
+
+            /* Else init null key and reset mode */
+        } else {
+<span class="fc" id="L349">            initNullKey();</span>
+<span class="fc" id="L350">            theMode = 0;</span>
+        }
+<span class="fc" id="L352">    }</span>
+
+    @Override
+    public void update(final byte b) {
+        /* Check that we are not outputting */
+<span class="pc bpc" id="L357" title="1 of 2 branches missed.">        if (outputting) {</span>
+<span class="nc" id="L358">            throw new IllegalStateException(ERR_OUTPUTTING);</span>
+        }
+
+        /* If the buffer is full */
+<span class="fc" id="L362">        final int blockLen = theBuffer.length;</span>
+<span class="fc" id="L363">        final int remainingLength = blockLen - thePos;</span>
+<span class="pc bpc" id="L364" title="1 of 2 branches missed.">        if (remainingLength == 0) {</span>
+            /* Process the buffer */
+<span class="nc" id="L366">            compressBlock(theBuffer, 0);</span>
+
+            /* Reset the buffer */
+<span class="nc" id="L369">            Arrays.fill(theBuffer, (byte) 0);</span>
+<span class="nc" id="L370">            thePos = 0;</span>
+        }
+
+        /* Store the byte */
+<span class="fc" id="L374">        theBuffer[thePos] = b;</span>
+<span class="fc" id="L375">        thePos++;</span>
+<span class="fc" id="L376">    }</span>
+
+    @Override
+    public void update(final byte[] pMessage,
+                       final int pOffset,
+                       final int pLen) {
+        /* Ignore null operation */
+<span class="pc bpc" id="L383" title="1 of 4 branches missed.">        if (pMessage == null || pLen == 0) {</span>
+<span class="fc" id="L384">            return;</span>
+        }
+
+        /* Check that we are not outputting */
+<span class="pc bpc" id="L388" title="1 of 2 branches missed.">        if (outputting) {</span>
+<span class="nc" id="L389">            throw new IllegalStateException(ERR_OUTPUTTING);</span>
+        }
+
+        /* Process any bytes currently in the buffer */
+<span class="fc" id="L393">        int remainingLen = 0; // left bytes of buffer</span>
+<span class="fc bfc" id="L394" title="All 2 branches covered.">        if (thePos != 0) {</span>
+            /* Calculate space remaining in the buffer */
+<span class="fc" id="L396">            remainingLen = BLOCKLEN - thePos;</span>
+
+            /* If there is sufficient space in the buffer */
+<span class="fc bfc" id="L399" title="All 2 branches covered.">            if (remainingLen &gt;= pLen) {</span>
+                /* Copy data into byffer and return */
+<span class="fc" id="L401">                System.arraycopy(pMessage, pOffset, theBuffer, thePos, pLen);</span>
+<span class="fc" id="L402">                thePos += pLen;</span>
+<span class="fc" id="L403">                return;</span>
+            }
+
+            /* Fill the buffer */
+<span class="fc" id="L407">            System.arraycopy(pMessage, pOffset, theBuffer, thePos, remainingLen);</span>
+
+            /* Process the buffer */
+<span class="fc" id="L410">            compressBlock(theBuffer, 0);</span>
+
+            /* Reset the buffer */
+<span class="fc" id="L413">            thePos = 0;</span>
+<span class="fc" id="L414">            Arrays.fill(theBuffer, (byte) 0);</span>
+        }
+
+        /* process all blocks except the last one */
+        int messagePos;
+<span class="fc" id="L419">        final int blockWiseLastPos = pOffset + pLen - BLOCKLEN;</span>
+<span class="fc bfc" id="L420" title="All 2 branches covered.">        for (messagePos = pOffset + remainingLen; messagePos &lt; blockWiseLastPos; messagePos += BLOCKLEN) {</span>
+            /* Process the buffer */
+<span class="fc" id="L422">            compressBlock(pMessage, messagePos);</span>
+        }
+
+        /* Fill the buffer with the remaining bytes of the message */
+<span class="fc" id="L426">        final int len = pLen - messagePos;</span>
+<span class="fc" id="L427">        System.arraycopy(pMessage, messagePos, theBuffer, 0, pOffset + len);</span>
+<span class="fc" id="L428">        thePos += pOffset + len;</span>
+<span class="fc" id="L429">    }</span>
+
+    @Override
+    public int doFinal(final byte[] pOutput,
+                       final int pOutOffset) {
+<span class="fc" id="L434">        return doFinal(pOutput, pOutOffset, getDigestSize());</span>
+    }
+
+    @Override
+    public int doFinal(final byte[] pOut,
+                       final int pOutOffset,
+                       final int pOutLen) {
+        /* Build the required output */
+<span class="fc" id="L442">        final int length = doOutput(pOut, pOutOffset, pOutLen);</span>
+
+        /* reset the underlying digest and return the length */
+<span class="fc" id="L445">        reset();</span>
+<span class="fc" id="L446">        return length;</span>
+    }
+
+    @Override
+    public int doOutput(final byte[] pOut,
+                        final int pOutOffset,
+                        final int pOutLen) {
+        /* If we have not started outputting yet */
+<span class="fc bfc" id="L454" title="All 2 branches covered.">        if (!outputting) {</span>
+            /* Process the buffer */
+<span class="fc" id="L456">            compressFinalBlock(thePos);</span>
+        }
+
+        /* Reject if there is insufficient Xof remaining */
+<span class="pc bpc" id="L460" title="4 of 6 branches missed.">        if (pOutLen &lt; 0</span>
+                || (outputAvailable &gt;= 0 &amp;&amp; pOutLen &gt; outputAvailable)) {
+<span class="nc" id="L462">            throw new IllegalArgumentException(&quot;Insufficient bytes remaining&quot;);</span>
+        }
+
+        /* If we have some remaining data in the current buffer */
+<span class="fc" id="L466">        int dataLeft = pOutLen;</span>
+<span class="fc" id="L467">        int outPos = pOutOffset;</span>
+<span class="fc bfc" id="L468" title="All 2 branches covered.">        if (thePos &lt; BLOCKLEN) {</span>
+            /* Copy data from current hash */
+<span class="fc" id="L470">            final int dataToCopy = Math.min(dataLeft, BLOCKLEN - thePos);</span>
+<span class="fc" id="L471">            System.arraycopy(theBuffer, thePos, pOut, outPos, dataToCopy);</span>
+
+            /* Adjust counters */
+<span class="fc" id="L474">            thePos += dataToCopy;</span>
+<span class="fc" id="L475">            outPos += dataToCopy;</span>
+<span class="fc" id="L476">            dataLeft -= dataToCopy;</span>
+        }
+
+        /* Loop until we have completed the request */
+<span class="fc bfc" id="L480" title="All 2 branches covered.">        while (dataLeft &gt; 0) {</span>
+            /* Calculate the next block */
+<span class="fc" id="L482">            nextOutputBlock();</span>
+
+            /* Copy data from current hash */
+<span class="fc" id="L485">            final int dataToCopy = Math.min(dataLeft, BLOCKLEN);</span>
+<span class="fc" id="L486">            System.arraycopy(theBuffer, 0, pOut, outPos, dataToCopy);</span>
+
+            /* Adjust counters */
+<span class="fc" id="L489">            thePos += dataToCopy;</span>
+<span class="fc" id="L490">            outPos += dataToCopy;</span>
+<span class="fc" id="L491">            dataLeft -= dataToCopy;</span>
+<span class="fc" id="L492">        }</span>
+
+        /* Adjust outputAvailable */
+<span class="fc" id="L495">        outputAvailable -= pOutLen;</span>
+
+        /* Return the number of bytes transferred */
+<span class="fc" id="L498">        return pOutLen;</span>
+    }
+
+    @Override
+    public void reset() {
+<span class="fc" id="L503">        resetBlockCount();</span>
+<span class="fc" id="L504">        thePos = 0;</span>
+<span class="fc" id="L505">        outputting = false;</span>
+<span class="fc" id="L506">        Arrays.fill(theBuffer, (byte) 0);</span>
+<span class="fc" id="L507">    }</span>
+
+    @Override
+    public void reset(final Memoable pSource) {
+        /* Access source */
+<span class="fc" id="L512">        final GordianBlake3Digest mySource = (GordianBlake3Digest) pSource;</span>
+
+        /*  Reset counter */
+<span class="fc" id="L515">        theCounter = mySource.theCounter;</span>
+<span class="fc" id="L516">        theCurrBytes = mySource.theCurrBytes;</span>
+<span class="fc" id="L517">        theMode = mySource.theMode;</span>
+
+        /* Reset output state */
+<span class="fc" id="L520">        outputting = mySource.outputting;</span>
+<span class="fc" id="L521">        outputAvailable = mySource.outputAvailable;</span>
+<span class="fc" id="L522">        theOutputMode = mySource.theOutputMode;</span>
+<span class="fc" id="L523">        theOutputDataLen = mySource.theOutputDataLen;</span>
+
+        /* Copy state */
+<span class="fc" id="L526">        System.arraycopy(mySource.theChaining, 0, theChaining, 0, theChaining.length);</span>
+<span class="fc" id="L527">        System.arraycopy(mySource.theK, 0, theK, 0, theK.length);</span>
+<span class="fc" id="L528">        System.arraycopy(mySource.theM, 0, theM, 0, theM.length);</span>
+
+        /* Copy stack */
+<span class="fc" id="L531">        theStack.clear();</span>
+<span class="fc bfc" id="L532" title="All 2 branches covered.">        for (int[] myEntry : mySource.theStack) {</span>
+<span class="fc" id="L533">            theStack.push(myEntry.clone());</span>
+<span class="fc" id="L534">        }</span>
+
+        /* Copy buffer */
+<span class="fc" id="L537">        System.arraycopy(mySource.theBuffer, 0, theBuffer, 0, theBuffer.length);</span>
+<span class="fc" id="L538">        thePos = mySource.thePos;</span>
+<span class="fc" id="L539">    }</span>
+
+    @Override
+    public GordianBlake3Digest copy() {
+<span class="fc" id="L543">        return new GordianBlake3Digest(this);</span>
+    }
+
+    /**
+     * Compress next block of the message.
+     *
+     * @param pMessage the message buffer
+     * @param pMsgPos  the position within the message buffer
+     */
+    private void compressBlock(final byte[] pMessage,
+                               final int pMsgPos) {
+        /* Initialise state and compress message */
+<span class="fc" id="L555">        initChunkBlock(BLOCKLEN, false);</span>
+<span class="fc" id="L556">        initM(pMessage, pMsgPos);</span>
+<span class="fc" id="L557">        compress();</span>
+
+        /* Adjust stack if we have completed a block */
+<span class="fc bfc" id="L560" title="All 2 branches covered.">        if (theCurrBytes == 0) {</span>
+<span class="fc" id="L561">            adjustStack();</span>
+        }
+<span class="fc" id="L563">    }</span>
+
+    /**
+     * Adjust the stack.
+     */
+    private void adjustStack() {
+        /* Loop to combine blocks */
+<span class="fc" id="L570">        long myCount = theCounter;</span>
+<span class="pc bpc" id="L571" title="1 of 2 branches missed.">        while (myCount &gt; 0) {</span>
+            /* Break loop if we are not combining */
+<span class="fc bfc" id="L573" title="All 2 branches covered.">            if ((myCount &amp; 1) == 1) {</span>
+<span class="fc" id="L574">                break;</span>
+            }
+
+            /* Build the message to be hashed */
+<span class="fc" id="L578">            final int[] myLeft = theStack.pop();</span>
+<span class="fc" id="L579">            System.arraycopy(myLeft, 0, theM, 0, NUMWORDS);</span>
+<span class="fc" id="L580">            System.arraycopy(theChaining, 0, theM, NUMWORDS, NUMWORDS);</span>
+
+            /* Create parent block */
+<span class="fc" id="L583">            initParentBlock();</span>
+<span class="fc" id="L584">            compress();</span>
+
+            /* Next block */
+<span class="fc" id="L587">            myCount &gt;&gt;= 1;</span>
+<span class="fc" id="L588">        }</span>
+
+        /* Add back to the stack */
+<span class="fc" id="L591">        theStack.push(Arrays.copyOf(theChaining, NUMWORDS));</span>
+<span class="fc" id="L592">    }</span>
+
+    /**
+     * Compress final block.
+     *
+     * @param pDataLen the data length
+     */
+    private void compressFinalBlock(final int pDataLen) {
+        /* Initialise state and compress message */
+<span class="fc" id="L601">        initChunkBlock(pDataLen, true);</span>
+<span class="fc" id="L602">        initM(theBuffer, 0);</span>
+<span class="fc" id="L603">        compress();</span>
+
+        /* Finalise stack */
+<span class="fc" id="L606">        processStack();</span>
+<span class="fc" id="L607">    }</span>
+
+    /**
+     * Process the stack.
+     */
+    private void processStack() {
+        /* Finalise stack */
+<span class="fc bfc" id="L614" title="All 2 branches covered.">        while (!theStack.isEmpty()) {</span>
+            /* Build the message to be hashed */
+<span class="fc" id="L616">            final int[] myLeft = theStack.pop();</span>
+<span class="fc" id="L617">            System.arraycopy(myLeft, 0, theM, 0, NUMWORDS);</span>
+<span class="fc" id="L618">            System.arraycopy(theChaining, 0, theM, NUMWORDS, NUMWORDS);</span>
+
+            /* Create parent block */
+<span class="fc" id="L621">            initParentBlock();</span>
+<span class="fc bfc" id="L622" title="All 2 branches covered.">            if (theStack.isEmpty()) {</span>
+<span class="fc" id="L623">                setRoot();</span>
+            }
+<span class="fc" id="L625">            compress();</span>
+<span class="fc" id="L626">        }</span>
+<span class="fc" id="L627">    }</span>
+
+    /**
+     * Perform compression.
+     */
+    private void compress() {
+        /* Initialise the buffers */
+<span class="fc" id="L634">        initIndices();</span>
+
+        /* Loop through the rounds */
+<span class="fc bfc" id="L637" title="All 2 branches covered.">        for (int round = 0; round &lt; ROUNDS - 1; round++) {</span>
+            /* Perform the round and permuteM */
+<span class="fc" id="L639">            performRound();</span>
+<span class="fc" id="L640">            permuteIndices();</span>
+        }
+<span class="fc" id="L642">        performRound();</span>
+<span class="fc" id="L643">        adjustChaining();</span>
+<span class="fc" id="L644">    }</span>
+
+    /**
+     * Perform a round.
+     */
+    private void performRound() {
+        /* Apply to columns of V */
+<span class="fc" id="L651">        int idx = 0;</span>
+<span class="fc" id="L652">        mixG(idx++, CHAINING0, CHAINING4, IV0, COUNT0);</span>
+<span class="fc" id="L653">        mixG(idx++, CHAINING1, CHAINING5, IV1, COUNT1);</span>
+<span class="fc" id="L654">        mixG(idx++, CHAINING2, CHAINING6, IV2, DATALEN);</span>
+<span class="fc" id="L655">        mixG(idx++, CHAINING3, CHAINING7, IV3, FLAGS);</span>
+
+        /* Apply to diagonals of V */
+<span class="fc" id="L658">        mixG(idx++, CHAINING0, CHAINING5, IV2, FLAGS);</span>
+<span class="fc" id="L659">        mixG(idx++, CHAINING1, CHAINING6, IV3, COUNT0);</span>
+<span class="fc" id="L660">        mixG(idx++, CHAINING2, CHAINING7, IV0, COUNT1);</span>
+<span class="fc" id="L661">        mixG(idx, CHAINING3, CHAINING4, IV1, DATALEN);</span>
+<span class="fc" id="L662">    }</span>
+
+    /**
+     * Initialise M from message.
+     *
+     * @param pMessage the source message
+     * @param pMsgPos  the message position
+     */
+    private void initM(final byte[] pMessage,
+                       final int pMsgPos) {
+        /* Copy message bytes into word array */
+<span class="fc bfc" id="L673" title="All 2 branches covered.">        for (int i = 0; i &lt; NUMWORDS &lt;&lt; 1; i++) {</span>
+<span class="fc" id="L674">            theM[i] = Pack.littleEndianToInt(pMessage, pMsgPos + i * Integer.BYTES);</span>
+        }
+<span class="fc" id="L676">    }</span>
+
+    /**
+     * Adjust Chaining after compression.
+     */
+    private void adjustChaining() {
+        /* If we are outputting */
+<span class="fc bfc" id="L683" title="All 2 branches covered.">        if (outputting) {</span>
+            /* Adjust full state */
+<span class="fc bfc" id="L685" title="All 2 branches covered.">            for (int i = 0; i &lt; NUMWORDS; i++) {</span>
+<span class="fc" id="L686">                theV[i] ^= theV[i + NUMWORDS];</span>
+<span class="fc" id="L687">                theV[i + NUMWORDS] ^= theChaining[i];</span>
+            }
+
+            /* Output state to buffer */
+<span class="fc bfc" id="L691" title="All 2 branches covered.">            for (int i = 0; i &lt; NUMWORDS &lt;&lt; 1; i++) {</span>
+<span class="fc" id="L692">                Pack.intToLittleEndian(theV[i], theBuffer, i * Integer.BYTES);</span>
+            }
+<span class="fc" id="L694">            thePos = 0;</span>
+
+            /* Else just build chain value */
+        } else {
+            /* Combine V into Chaining */
+<span class="fc bfc" id="L699" title="All 2 branches covered.">            for (int i = 0; i &lt; NUMWORDS; i++) {</span>
+<span class="fc" id="L700">                theChaining[i] = theV[i] ^ theV[i + NUMWORDS];</span>
+            }
+        }
+<span class="fc" id="L703">    }</span>
+
+    /**
+     * Mix function G.
+     *
+     * @param msgIdx the message index
+     * @param posA   position A in V
+     * @param posB   position B in V
+     * @param posC   position C in V
+     * @param posD   poistion D in V
+     */
+    private void mixG(final int msgIdx,
+                      final int posA,
+                      final int posB,
+                      final int posC,
+                      final int posD) {
+        /* Determine indices */
+<span class="fc" id="L720">        int msg = msgIdx &lt;&lt; 1;</span>
+<span class="fc" id="L721">        int rot = 0;</span>
+
+        /* Perform the Round */
+<span class="fc" id="L724">        theV[posA] += theV[posB] + theM[theIndices[msg++]];</span>
+<span class="fc" id="L725">        theV[posD] = rotr32(theV[posD] ^ theV[posA], ROTATE[rot++]);</span>
+<span class="fc" id="L726">        theV[posC] += theV[posD];</span>
+<span class="fc" id="L727">        theV[posB] = rotr32(theV[posB] ^ theV[posC], ROTATE[rot++]);</span>
+<span class="fc" id="L728">        theV[posA] += theV[posB] + theM[theIndices[msg]];</span>
+<span class="fc" id="L729">        theV[posD] = rotr32(theV[posD] ^ theV[posA], ROTATE[rot++]);</span>
+<span class="fc" id="L730">        theV[posC] += theV[posD];</span>
+<span class="fc" id="L731">        theV[posB] = rotr32(theV[posB] ^ theV[posC], ROTATE[rot]);</span>
+<span class="fc" id="L732">    }</span>
+
+    /**
+     * initialise the indices.
+     */
+    private void initIndices() {
+<span class="fc bfc" id="L738" title="All 2 branches covered.">        for (byte i = 0; i &lt; theIndices.length; i++) {</span>
+<span class="fc" id="L739">            theIndices[i] = i;</span>
+        }
+<span class="fc" id="L741">    }</span>
+
+    /**
+     * PermuteIndices.
+     */
+    private void permuteIndices() {
+<span class="fc bfc" id="L747" title="All 2 branches covered.">        for (byte i = 0; i &lt; theIndices.length; i++) {</span>
+<span class="fc" id="L748">            theIndices[i] = SIGMA[theIndices[i]];</span>
+        }
+<span class="fc" id="L750">    }</span>
+
+    /**
+     * Rotate an int right.
+     *
+     * @param x   the value to rotate
+     * @param rot the number of bits to rotate
+     * @return the result
+     */
+    private static int rotr32(final int x,
+                              final int rot) {
+<span class="fc" id="L761">        return x &gt;&gt;&gt; rot | (x &lt;&lt; (Integer.SIZE - rot));</span>
+    }
+
+    /**
+     * Initialise null key.
+     */
+    private void initNullKey() {
+<span class="fc" id="L768">        System.arraycopy(IV, 0, theK, 0, NUMWORDS);</span>
+<span class="fc" id="L769">    }</span>
+
+    /**
+     * Initialise key.
+     *
+     * @param pKey the keyBytes
+     */
+    private void initKey(final byte[] pKey) {
+        /* Copy message bytes into word array */
+<span class="fc bfc" id="L778" title="All 2 branches covered.">        for (int i = 0; i &lt; NUMWORDS; i++) {</span>
+<span class="fc" id="L779">            theK[i] = Pack.littleEndianToInt(pKey, i * Integer.BYTES);</span>
+        }
+<span class="fc" id="L781">        theMode = KEYEDHASH;</span>
+<span class="fc" id="L782">    }</span>
+
+    /**
+     * Initialise key from context.
+     */
+    private void initKeyFromContext() {
+<span class="fc" id="L788">        System.arraycopy(theV, 0, theK, 0, NUMWORDS);</span>
+<span class="fc" id="L789">        theMode = DERIVEKEY;</span>
+<span class="fc" id="L790">    }</span>
+
+    /**
+     * Initialise chunk block.
+     *
+     * @param pDataLen the dataLength
+     * @param pFinal   is this the final chunk?
+     */
+    private void initChunkBlock(final int pDataLen,
+                                final boolean pFinal) {
+        /* Initialise the block */
+<span class="fc bfc" id="L801" title="All 2 branches covered.">        System.arraycopy(theCurrBytes == 0 ? theK : theChaining, 0, theV, 0, NUMWORDS);</span>
+<span class="fc" id="L802">        System.arraycopy(IV, 0, theV, NUMWORDS, NUMWORDS &gt;&gt; 1);</span>
+<span class="fc" id="L803">        theV[COUNT0] = (int) theCounter;</span>
+<span class="fc" id="L804">        theV[COUNT1] = (int) (theCounter &gt;&gt; Integer.SIZE);</span>
+<span class="fc" id="L805">        theV[DATALEN] = pDataLen;</span>
+<span class="fc" id="L806">        theV[FLAGS] = theMode</span>
+<span class="fc bfc" id="L807" title="All 2 branches covered.">                + (theCurrBytes == 0 ? CHUNKSTART : 0)</span>
+<span class="fc bfc" id="L808" title="All 2 branches covered.">                + (pFinal ? CHUNKEND : 0);</span>
+
+        /* * Adjust block count */
+<span class="fc" id="L811">        theCurrBytes += pDataLen;</span>
+<span class="fc bfc" id="L812" title="All 2 branches covered.">        if (theCurrBytes &gt;= CHUNKLEN) {</span>
+<span class="fc" id="L813">            incrementBlockCount();</span>
+<span class="fc" id="L814">            theV[FLAGS] |= CHUNKEND;</span>
+        }
+
+        /* If we are single chunk */
+<span class="fc bfc" id="L818" title="All 4 branches covered.">        if (pFinal &amp;&amp; theStack.isEmpty()) {</span>
+<span class="fc" id="L819">            setRoot();</span>
+        }
+<span class="fc" id="L821">    }</span>
+
+    /**
+     * Initialise parent block.
+     */
+    private void initParentBlock() {
+        /* Initialise the block */
+<span class="fc" id="L828">        System.arraycopy(theK, 0, theV, 0, NUMWORDS);</span>
+<span class="fc" id="L829">        System.arraycopy(IV, 0, theV, NUMWORDS, NUMWORDS &gt;&gt; 1);</span>
+<span class="fc" id="L830">        theV[COUNT0] = 0;</span>
+<span class="fc" id="L831">        theV[COUNT1] = 0;</span>
+<span class="fc" id="L832">        theV[DATALEN] = BLOCKLEN;</span>
+<span class="fc" id="L833">        theV[FLAGS] = theMode | PARENT;</span>
+<span class="fc" id="L834">    }</span>
+
+    /**
+     * Initialise output block.
+     */
+    private void nextOutputBlock() {
+        /* Increment the counter */
+<span class="fc" id="L841">        theCounter++;</span>
+
+        /* Initialise the block */
+<span class="fc" id="L844">        System.arraycopy(theChaining, 0, theV, 0, NUMWORDS);</span>
+<span class="fc" id="L845">        System.arraycopy(IV, 0, theV, NUMWORDS, NUMWORDS &gt;&gt; 1);</span>
+<span class="fc" id="L846">        theV[COUNT0] = (int) theCounter;</span>
+<span class="fc" id="L847">        theV[COUNT1] = (int) (theCounter &gt;&gt; Integer.SIZE);</span>
+<span class="fc" id="L848">        theV[DATALEN] = theOutputDataLen;</span>
+<span class="fc" id="L849">        theV[FLAGS] = theOutputMode;</span>
+
+        /* Generate output */
+<span class="fc" id="L852">        compress();</span>
+<span class="fc" id="L853">    }</span>
+
+    /**
+     * IncrementBlockCount.
+     */
+    private void incrementBlockCount() {
+<span class="fc" id="L859">        theCounter++;</span>
+<span class="fc" id="L860">        theCurrBytes = 0;</span>
+<span class="fc" id="L861">    }</span>
+
+    /**
+     * ResetBlockCount.
+     */
+    private void resetBlockCount() {
+<span class="fc" id="L867">        theCounter = 0;</span>
+<span class="fc" id="L868">        theCurrBytes = 0;</span>
+<span class="fc" id="L869">    }</span>
+
+    /**
+     * Set root indication.
+     */
+    private void setRoot() {
+<span class="fc" id="L875">        theV[FLAGS] |= ROOT;</span>
+<span class="fc" id="L876">        theOutputMode = theV[FLAGS];</span>
+<span class="fc" id="L877">        theOutputDataLen = theV[DATALEN];</span>
+<span class="fc" id="L878">        theCounter = 0;</span>
+<span class="fc" id="L879">        outputting = true;</span>
+<span class="fc" id="L880">        outputAvailable = -1;</span>
+<span class="fc" id="L881">        System.arraycopy(theV, 0, theChaining, 0, NUMWORDS);</span>
+<span class="fc" id="L882">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

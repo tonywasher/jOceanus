@@ -1,0 +1,847 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PrometheusSheetDataItem.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Prometheus Core Application Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.prometheus.sheets</a> &gt; <span class="el_source">PrometheusSheetDataItem.java</span></div><h1>PrometheusSheetDataItem.java</h1><pre class="source lang-java linenums">/*
+ * Prometheus: Application Framework
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.prometheus.sheets;
+
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimal;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRate;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
+import io.github.tonywasher.joceanus.metis.data.MetisDataResource;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataList;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValues;
+import io.github.tonywasher.joceanus.prometheus.exc.PrometheusIOException;
+import io.github.tonywasher.joceanus.prometheus.service.sheet.PrometheusSheetCell;
+import io.github.tonywasher.joceanus.prometheus.service.sheet.PrometheusSheetCellPosition;
+import io.github.tonywasher.joceanus.prometheus.service.sheet.PrometheusSheetCellStyleType;
+import io.github.tonywasher.joceanus.prometheus.service.sheet.PrometheusSheetRow;
+import io.github.tonywasher.joceanus.prometheus.service.sheet.PrometheusSheetSheet;
+import io.github.tonywasher.joceanus.prometheus.service.sheet.PrometheusSheetView;
+import io.github.tonywasher.joceanus.prometheus.service.sheet.PrometheusSheetWorkBook;
+import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadStatusReport;
+
+import java.util.Iterator;
+
+/**
+ * SheetDataItem class for accessing a sheet that is related to a data type.
+ *
+ * @param &lt;T&gt; the data type
+ * @author Tony Washer
+ */
+public abstract class PrometheusSheetDataItem&lt;T extends PrometheusDataItem&gt; {
+    /**
+     * ID column.
+     */
+    protected static final int COL_ID = 0;
+
+    /**
+     * The report.
+     */
+    private final TethysUIThreadStatusReport theReport;
+
+    /**
+     * The input sheet.
+     */
+    private PrometheusSheetReader theReader;
+
+    /**
+     * The workbook.
+     */
+    private PrometheusSheetWorkBook theWorkBook;
+
+    /**
+     * The DataList.
+     */
+    private PrometheusDataList&lt;T&gt; theList;
+
+    /**
+     * The name of the related range.
+     */
+    private final String theRangeName;
+
+    /**
+     * The WorkSheet of the range.
+     */
+    private PrometheusSheetSheet theWorkSheet;
+
+    /**
+     * The Active row.
+     */
+    private PrometheusSheetRow theActiveRow;
+
+    /**
+     * The Active view.
+     */
+    private PrometheusSheetView theActiveView;
+
+    /**
+     * The last loaded item.
+     */
+    private T theLastItem;
+
+    /**
+     * The Row number of the current row.
+     */
+    private int theCurrRow;
+
+    /**
+     * The Row number of the base row.
+     */
+    private int theBaseRow;
+
+    /**
+     * Constructor for a load operation.
+     *
+     * @param pReader the spreadsheet reader
+     * @param pRange  the range to load
+     */
+    protected PrometheusSheetDataItem(final PrometheusSheetReader pReader,
+<span class="nc" id="L117">                                      final String pRange) {</span>
+        /* Store parameters */
+<span class="nc" id="L119">        theReport = pReader.getReport();</span>
+<span class="nc" id="L120">        theReader = pReader;</span>
+<span class="nc" id="L121">        theRangeName = pRange;</span>
+<span class="nc" id="L122">    }</span>
+
+    /**
+     * Constructor for a write operation.
+     *
+     * @param pWriter the spreadsheet writer
+     * @param pRange  the range to create
+     */
+    protected PrometheusSheetDataItem(final PrometheusSheetWriter pWriter,
+<span class="nc" id="L131">                                      final String pRange) {</span>
+        /* Store parameters */
+<span class="nc" id="L133">        theReport = pWriter.getReport();</span>
+<span class="nc" id="L134">        theWorkBook = pWriter.getWorkBook();</span>
+<span class="nc" id="L135">        theRangeName = pRange;</span>
+<span class="nc" id="L136">    }</span>
+
+    /**
+     * Obtain the last loaded item.
+     *
+     * @return the item
+     */
+    protected T getLastItem() {
+<span class="nc" id="L144">        return theLastItem;</span>
+    }
+
+    @Override
+    public String toString() {
+<span class="nc" id="L149">        return theRangeName;</span>
+    }
+
+    /**
+     * Set the DataList.
+     *
+     * @param pList the Data list
+     */
+    protected void setDataList(final PrometheusDataList&lt;T&gt; pList) {
+        /* Store parameters */
+<span class="nc" id="L159">        theList = pList;</span>
+<span class="nc" id="L160">    }</span>
+
+    /**
+     * Load the DataItems from a spreadsheet.
+     *
+     * @throws OceanusException on error
+     */
+    public void loadSpreadSheet() throws OceanusException {
+        /* Protect against exceptions */
+        try {
+            /* Access the workbook */
+<span class="nc" id="L171">            theWorkBook = theReader.getWorkBook();</span>
+
+            /* Access the view of the range */
+<span class="nc" id="L174">            theActiveView = theWorkBook.getRangeView(theRangeName);</span>
+<span class="nc bnc" id="L175" title="All 2 branches missed.">            if (theActiveView != null) {</span>
+<span class="nc" id="L176">                final Iterator&lt;PrometheusSheetRow&gt; myIterator = theActiveView.rowIterator();</span>
+
+                /* Declare the new stage */
+<span class="nc" id="L179">                theReport.setNewStage(theRangeName);</span>
+
+                /* Determine count of rows */
+<span class="nc" id="L182">                final int myTotal = theActiveView.getRowCount();</span>
+
+                /* Declare the number of steps */
+<span class="nc" id="L185">                theReport.setNumSteps(myTotal);</span>
+
+                /* Loop through the rows of the range */
+<span class="nc" id="L188">                theCurrRow = 0;</span>
+<span class="nc bnc" id="L189" title="All 2 branches missed.">                while (myIterator.hasNext()) {</span>
+                    /* Access the row */
+<span class="nc" id="L191">                    theActiveRow = myIterator.next();</span>
+
+                    /* load the item */
+<span class="nc" id="L194">                    final PrometheusDataValues myValues = loadSecureValues();</span>
+<span class="nc" id="L195">                    theLastItem = theList.addValuesItem(myValues);</span>
+
+                    /* Report the progress */
+<span class="nc" id="L198">                    theReport.setNextStep();</span>
+<span class="nc" id="L199">                    theCurrRow++;</span>
+<span class="nc" id="L200">                }</span>
+            }
+
+            /* Post process the load */
+<span class="nc" id="L204">            postProcessOnLoad();</span>
+
+            /* Handle exceptions */
+<span class="nc" id="L207">        } catch (OceanusException e) {</span>
+<span class="nc" id="L208">            throw new PrometheusIOException(&quot;Failed to Load &quot; + theRangeName, e);</span>
+<span class="nc" id="L209">        }</span>
+<span class="nc" id="L210">    }</span>
+
+    /**
+     * Write the DataItems to a spreadsheet.
+     *
+     * @throws OceanusException on error
+     */
+    protected void writeSpreadSheet() throws OceanusException {
+        /* Protect against exceptions */
+        try {
+            /* Declare the new stage */
+<span class="nc" id="L221">            theReport.setNewStage(theRangeName);</span>
+
+            /* Count the number of items */
+<span class="nc" id="L224">            final int myTotal = theList.size();</span>
+
+            /* Declare the number of steps */
+<span class="nc" id="L227">            theReport.setNumSteps(myTotal);</span>
+
+            /* Determine size of sheet */
+<span class="nc" id="L230">            final int myNumRows = myTotal;</span>
+<span class="nc" id="L231">            final int myNumCols = getLastColumn() + 1;</span>
+
+            /* Create the sheet */
+<span class="nc" id="L234">            theWorkSheet = theWorkBook.newSheet(theRangeName, myNumRows, myNumCols);</span>
+
+            /* Initialise counts */
+<span class="nc" id="L237">            theBaseRow = 0;</span>
+<span class="nc" id="L238">            theCurrRow = theBaseRow;</span>
+
+            /* Access the iterator */
+<span class="nc" id="L241">            final Iterator&lt;T&gt; myItemIterator = theList.iterator();</span>
+
+            /* Loop through the data items */
+<span class="nc bnc" id="L244" title="All 2 branches missed.">            while (myItemIterator.hasNext()) {</span>
+<span class="nc" id="L245">                final T myCurr = myItemIterator.next();</span>
+
+                /* Create the new row */
+<span class="nc" id="L248">                newRow();</span>
+
+                /* insert the item */
+<span class="nc" id="L251">                insertSecureItem(myCurr);</span>
+
+                /* Report the progress */
+<span class="nc" id="L254">                theCurrRow++;</span>
+<span class="nc" id="L255">                theReport.setNextStep();</span>
+<span class="nc" id="L256">            }</span>
+
+            /* If data was written then name the range */
+<span class="nc bnc" id="L259" title="All 2 branches missed.">            if (theCurrRow &gt; theBaseRow) {</span>
+<span class="nc" id="L260">                nameRange();</span>
+            }
+<span class="nc" id="L262">        } catch (OceanusException e) {</span>
+<span class="nc" id="L263">            throw new PrometheusIOException(&quot;Failed to create &quot; + theRangeName, e);</span>
+<span class="nc" id="L264">        }</span>
+<span class="nc" id="L265">    }</span>
+
+    /**
+     * Load secure item from spreadsheet.
+     *
+     * @return the secure values
+     * @throws OceanusException on error
+     */
+    protected abstract PrometheusDataValues loadSecureValues() throws OceanusException;
+
+    /**
+     * Insert secure item into spreadsheet.
+     *
+     * @param pItem the item
+     * @throws OceanusException on error
+     */
+    protected void insertSecureItem(final T pItem) throws OceanusException {
+        /* Write the id */
+<span class="nc" id="L283">        writeInteger(COL_ID, pItem.getIndexedId());</span>
+<span class="nc" id="L284">    }</span>
+
+    /**
+     * PostProcess on load.
+     *
+     * @throws OceanusException on error
+     */
+    protected void postProcessOnLoad() throws OceanusException {
+        /* postProcess the list */
+<span class="nc" id="L293">        theList.postProcessOnLoad();</span>
+<span class="nc" id="L294">    }</span>
+
+    /**
+     * Determine last active column.
+     *
+     * @return the last active column
+     */
+    protected abstract int getLastColumn();
+
+    /**
+     * Create a new row.
+     */
+    protected void newRow() {
+        /* Create the new row */
+<span class="nc" id="L308">        theActiveRow = theWorkSheet.getMutableRowByIndex(theCurrRow);</span>
+<span class="nc" id="L309">    }</span>
+
+    /**
+     * Name the basic range.
+     *
+     * @throws OceanusException on error
+     */
+    protected void nameRange() throws OceanusException {
+        /* Adjust column if necessary */
+<span class="nc" id="L318">        final int myCol = getLastColumn();</span>
+
+        /* Name the range */
+<span class="nc" id="L321">        final PrometheusSheetCellPosition myFirst = new PrometheusSheetCellPosition(0, theBaseRow);</span>
+<span class="nc" id="L322">        final PrometheusSheetCellPosition myLast = new PrometheusSheetCellPosition(myCol, theCurrRow - 1);</span>
+<span class="nc" id="L323">        theWorkSheet.declareRange(theRangeName, myFirst, myLast);</span>
+<span class="nc" id="L324">    }</span>
+
+    /**
+     * Name the column range.
+     *
+     * @param pOffset offset of column
+     * @param pName   name of range
+     * @throws OceanusException on error
+     */
+    protected void nameColumnRange(final int pOffset,
+                                   final String pName) throws OceanusException {
+        /* Name the range */
+<span class="nc" id="L336">        final PrometheusSheetCellPosition myFirst = new PrometheusSheetCellPosition(pOffset, theBaseRow);</span>
+<span class="nc" id="L337">        final PrometheusSheetCellPosition myLast = new PrometheusSheetCellPosition(pOffset, theCurrRow - 1);</span>
+<span class="nc" id="L338">        theWorkSheet.declareRange(pName, myFirst, myLast);</span>
+<span class="nc" id="L339">    }</span>
+
+    /**
+     * Apply Data Validation.
+     *
+     * @param pOffset offset of column
+     * @param pList   name of validation range
+     * @throws OceanusException on error
+     */
+    public void applyDataValidation(final int pOffset,
+                                    final String pList) throws OceanusException {
+        /* Name the range */
+<span class="nc" id="L351">        final PrometheusSheetCellPosition myFirst = new PrometheusSheetCellPosition(pOffset, theBaseRow);</span>
+<span class="nc" id="L352">        final PrometheusSheetCellPosition myLast = new PrometheusSheetCellPosition(pOffset, theCurrRow - 1);</span>
+<span class="nc" id="L353">        theWorkSheet.applyDataValidation(myFirst, myLast, pList);</span>
+<span class="nc" id="L354">    }</span>
+
+    /**
+     * Freeze titles.
+     */
+    protected void freezeTitles() {
+        /* Freeze the top row */
+<span class="nc" id="L361">        final PrometheusSheetCellPosition myPoint = new PrometheusSheetCellPosition(2, theBaseRow);</span>
+<span class="nc" id="L362">        theWorkSheet.createFreezePane(myPoint);</span>
+<span class="nc" id="L363">    }</span>
+
+    /**
+     * Freeze titles.
+     *
+     * @param pOffset column offset to freeze at
+     * @throws OceanusException on error
+     */
+    protected void applyDataFilter(final int pOffset) throws OceanusException {
+        /* Freeze the top row */
+<span class="nc" id="L373">        final PrometheusSheetCellPosition myPoint = new PrometheusSheetCellPosition(pOffset, 0);</span>
+<span class="nc" id="L374">        theWorkSheet.applyDataFilter(myPoint, theCurrRow);</span>
+<span class="nc" id="L375">    }</span>
+
+    /**
+     * Set Hidden column.
+     *
+     * @param pOffset the offset of the column
+     */
+    protected void setHiddenColumn(final int pOffset) {
+        /* Apply to the sheet */
+<span class="nc" id="L384">        theWorkSheet.getMutableColumnByIndex(pOffset).setHidden(true);</span>
+<span class="nc" id="L385">    }</span>
+
+    /**
+     * Set Date column.
+     *
+     * @param pOffset the offset of the column
+     */
+    protected void setDateColumn(final int pOffset) {
+        /* Apply the style to the sheet */
+<span class="nc" id="L394">        theWorkSheet.getMutableColumnByIndex(pOffset).setDefaultCellStyle(PrometheusSheetCellStyleType.DATE);</span>
+<span class="nc" id="L395">    }</span>
+
+    /**
+     * Set String column.
+     *
+     * @param pOffset the offset of the column
+     */
+    protected void setStringColumn(final int pOffset) {
+        /* Apply the style to the sheet */
+<span class="nc" id="L404">        theWorkSheet.getMutableColumnByIndex(pOffset).setDefaultCellStyle(PrometheusSheetCellStyleType.STRING);</span>
+<span class="nc" id="L405">    }</span>
+
+    /**
+     * Set Money column.
+     *
+     * @param pOffset the offset of the column
+     */
+    protected void setMoneyColumn(final int pOffset) {
+        /* Apply the style to the sheet */
+<span class="nc" id="L414">        theWorkSheet.getMutableColumnByIndex(pOffset).setDefaultCellStyle(PrometheusSheetCellStyleType.MONEY);</span>
+<span class="nc" id="L415">    }</span>
+
+    /**
+     * Set Price column.
+     *
+     * @param pOffset the offset of the column
+     */
+    protected void setPriceColumn(final int pOffset) {
+        /* Apply the style to the sheet */
+<span class="nc" id="L424">        theWorkSheet.getMutableColumnByIndex(pOffset).setDefaultCellStyle(PrometheusSheetCellStyleType.PRICE);</span>
+<span class="nc" id="L425">    }</span>
+
+    /**
+     * Set Units column.
+     *
+     * @param pOffset the offset of the column
+     */
+    protected void setUnitsColumn(final int pOffset) {
+        /* Apply the style to the sheet */
+<span class="nc" id="L434">        theWorkSheet.getMutableColumnByIndex(pOffset).setDefaultCellStyle(PrometheusSheetCellStyleType.UNITS);</span>
+<span class="nc" id="L435">    }</span>
+
+    /**
+     * Set Rate column.
+     *
+     * @param pOffset the offset of the column
+     */
+    protected void setRateColumn(final int pOffset) {
+        /* Apply the style to the sheet */
+<span class="nc" id="L444">        theWorkSheet.getMutableColumnByIndex(pOffset).setDefaultCellStyle(PrometheusSheetCellStyleType.RATE);</span>
+<span class="nc" id="L445">    }</span>
+
+    /**
+     * Set Ratio column.
+     *
+     * @param pOffset the offset of the column
+     */
+    protected void setRatioColumn(final int pOffset) {
+        /* Apply the style to the sheet */
+<span class="nc" id="L454">        theWorkSheet.getMutableColumnByIndex(pOffset).setDefaultCellStyle(PrometheusSheetCellStyleType.RATIO);</span>
+<span class="nc" id="L455">    }</span>
+
+    /**
+     * Set Boolean column.
+     *
+     * @param pOffset the offset of the column
+     */
+    protected void setBooleanColumn(final int pOffset) {
+        /* Apply the style to the sheet */
+<span class="nc" id="L464">        theWorkSheet.getMutableColumnByIndex(pOffset).setDefaultCellStyle(PrometheusSheetCellStyleType.BOOLEAN);</span>
+<span class="nc" id="L465">    }</span>
+
+    /**
+     * Set Integer column.
+     *
+     * @param pOffset the offset of the column
+     */
+    protected void setIntegerColumn(final int pOffset) {
+        /* Apply the style to the sheet */
+<span class="nc" id="L474">        theWorkSheet.getMutableColumnByIndex(pOffset).setDefaultCellStyle(PrometheusSheetCellStyleType.INTEGER);</span>
+<span class="nc" id="L475">    }</span>
+
+    /**
+     * Access an integer from the WorkSheet.
+     *
+     * @param pOffset the column offset
+     * @return the integer
+     * @throws OceanusException on error
+     */
+    protected Integer loadInteger(final int pOffset) throws OceanusException {
+        /* Access the cells by reference */
+<span class="nc" id="L486">        final PrometheusSheetCell myCell = theActiveView.getRowCellByIndex(theActiveRow, pOffset);</span>
+
+        /* Return the value */
+<span class="nc bnc" id="L489" title="All 2 branches missed.">        return myCell != null</span>
+<span class="nc" id="L490">                ? myCell.getInteger()</span>
+<span class="nc" id="L491">                : null;</span>
+    }
+
+    /**
+     * Access a long from the WorkSheet.
+     *
+     * @param pOffset the column offset
+     * @return the long
+     * @throws OceanusException on error
+     */
+    protected Long loadLong(final int pOffset) throws OceanusException {
+        /* Access the cells by reference */
+<span class="nc" id="L503">        final PrometheusSheetCell myCell = theActiveView.getRowCellByIndex(theActiveRow, pOffset);</span>
+
+        /* Return the value */
+<span class="nc bnc" id="L506" title="All 2 branches missed.">        return myCell != null</span>
+<span class="nc" id="L507">                ? myCell.getLongFromString()</span>
+<span class="nc" id="L508">                : null;</span>
+    }
+
+    /**
+     * Access a boolean from the WorkSheet.
+     *
+     * @param pOffset the column offset
+     * @return the date
+     */
+    protected Boolean loadBoolean(final int pOffset) {
+        /* Access the cells by reference */
+<span class="nc" id="L519">        final PrometheusSheetCell myCell = theActiveView.getRowCellByIndex(theActiveRow, pOffset);</span>
+
+        /* Return the value */
+<span class="nc bnc" id="L522" title="All 2 branches missed.">        return myCell != null</span>
+<span class="nc" id="L523">                ? myCell.getBoolean()</span>
+<span class="nc" id="L524">                : null;</span>
+    }
+
+    /**
+     * Access a date from the WorkSheet.
+     *
+     * @param pOffset the column offset
+     * @return the date
+     * @throws OceanusException on error
+     */
+    protected OceanusDate loadDate(final int pOffset) throws OceanusException {
+        /* Access the cells by reference */
+<span class="nc" id="L536">        final PrometheusSheetCell myCell = theActiveView.getRowCellByIndex(theActiveRow, pOffset);</span>
+
+        /* Return the value */
+<span class="nc bnc" id="L539" title="All 2 branches missed.">        return myCell != null</span>
+<span class="nc" id="L540">                ? myCell.getDate()</span>
+<span class="nc" id="L541">                : null;</span>
+    }
+
+    /**
+     * Access a money value from the WorkSheet.
+     *
+     * @param pOffset the column offset
+     * @return the money
+     * @throws OceanusException on error
+     */
+    protected OceanusMoney loadMoney(final int pOffset) throws OceanusException {
+        /* Access the cells by reference */
+<span class="nc" id="L553">        final PrometheusSheetCell myCell = theActiveView.getRowCellByIndex(theActiveRow, pOffset);</span>
+
+        /* Return the value */
+<span class="nc bnc" id="L556" title="All 2 branches missed.">        return myCell != null</span>
+<span class="nc" id="L557">                ? myCell.getMoney()</span>
+<span class="nc" id="L558">                : null;</span>
+    }
+
+    /**
+     * Access a price value from the WorkSheet.
+     *
+     * @param pOffset the column offset
+     * @return the price
+     * @throws OceanusException on error
+     */
+    protected OceanusPrice loadPrice(final int pOffset) throws OceanusException {
+        /* Access the cells by reference */
+<span class="nc" id="L570">        final PrometheusSheetCell myCell = theActiveView.getRowCellByIndex(theActiveRow, pOffset);</span>
+
+        /* Return the value */
+<span class="nc bnc" id="L573" title="All 2 branches missed.">        return myCell != null</span>
+<span class="nc" id="L574">                ? myCell.getPrice()</span>
+<span class="nc" id="L575">                : null;</span>
+    }
+
+    /**
+     * Access a rate value from the WorkSheet.
+     *
+     * @param pOffset the column offset
+     * @return the rate
+     * @throws OceanusException on error
+     */
+    protected OceanusRate loadRate(final int pOffset) throws OceanusException {
+        /* Access the cells by reference */
+<span class="nc" id="L587">        final PrometheusSheetCell myCell = theActiveView.getRowCellByIndex(theActiveRow, pOffset);</span>
+
+        /* Return the value */
+<span class="nc bnc" id="L590" title="All 2 branches missed.">        return myCell != null</span>
+<span class="nc" id="L591">                ? myCell.getRate()</span>
+<span class="nc" id="L592">                : null;</span>
+    }
+
+    /**
+     * Access a units value from the WorkSheet.
+     *
+     * @param pOffset the column offset
+     * @return the units
+     * @throws OceanusException on error
+     */
+    protected OceanusUnits loadUnits(final int pOffset) throws OceanusException {
+        /* Access the cells by reference */
+<span class="nc" id="L604">        final PrometheusSheetCell myCell = theActiveView.getRowCellByIndex(theActiveRow, pOffset);</span>
+
+        /* Return the value */
+<span class="nc bnc" id="L607" title="All 2 branches missed.">        return myCell != null</span>
+<span class="nc" id="L608">                ? myCell.getUnits()</span>
+<span class="nc" id="L609">                : null;</span>
+    }
+
+    /**
+     * Access a ratio value from the WorkSheet.
+     *
+     * @param pOffset the column offset
+     * @return the ratio
+     * @throws OceanusException on error
+     */
+    protected OceanusRatio loadRatio(final int pOffset) throws OceanusException {
+        /* Access the cells by reference */
+<span class="nc" id="L621">        final PrometheusSheetCell myCell = theActiveView.getRowCellByIndex(theActiveRow, pOffset);</span>
+
+        /* Return the value */
+<span class="nc bnc" id="L624" title="All 2 branches missed.">        return myCell != null</span>
+<span class="nc" id="L625">                ? myCell.getRatio()</span>
+<span class="nc" id="L626">                : null;</span>
+    }
+
+    /**
+     * Access a string from the WorkSheet.
+     *
+     * @param pOffset the column offset
+     * @return the string
+     */
+    protected String loadString(final int pOffset) {
+        /* Access the cells by reference */
+<span class="nc" id="L637">        final PrometheusSheetCell myCell = theActiveView.getRowCellByIndex(theActiveRow, pOffset);</span>
+
+        /* Return the value */
+<span class="nc bnc" id="L640" title="All 2 branches missed.">        return myCell != null</span>
+<span class="nc" id="L641">                ? myCell.getString()</span>
+<span class="nc" id="L642">                : null;</span>
+    }
+
+    /**
+     * Access a byte array from the WorkSheet.
+     *
+     * @param pOffset the column offset
+     * @return the byte array
+     */
+    protected byte[] loadBytes(final int pOffset) {
+        /* Access the cells by reference */
+<span class="nc" id="L653">        final PrometheusSheetCell myCell = theActiveView.getRowCellByIndex(theActiveRow, pOffset);</span>
+
+        /* Return the value */
+<span class="nc bnc" id="L656" title="All 2 branches missed.">        return myCell != null</span>
+<span class="nc" id="L657">                ? myCell.getBytes()</span>
+<span class="nc" id="L658">                : null;</span>
+    }
+
+    /**
+     * Access a char array from the WorkSheet.
+     *
+     * @param pOffset the column offset
+     * @return the char array
+     * @throws OceanusException on error
+     */
+    protected char[] loadChars(final int pOffset) throws OceanusException {
+        /* Access the cells by reference */
+<span class="nc" id="L670">        final PrometheusSheetCell myCell = theActiveView.getRowCellByIndex(theActiveRow, pOffset);</span>
+
+        /* Return the value */
+<span class="nc bnc" id="L673" title="All 2 branches missed.">        return myCell != null</span>
+<span class="nc" id="L674">                ? myCell.getCharArray()</span>
+<span class="nc" id="L675">                : null;</span>
+    }
+
+    /**
+     * Write an integer to the WorkSheet.
+     *
+     * @param pOffset the column offset
+     * @param pValue  the integer
+     * @throws OceanusException on error
+     */
+    protected void writeInteger(final int pOffset,
+                                final Integer pValue) throws OceanusException {
+        /* If we have non-null value */
+<span class="nc bnc" id="L688" title="All 2 branches missed.">        if (pValue != null) {</span>
+            /* Create the cell and set its value */
+<span class="nc" id="L690">            final PrometheusSheetCell myCell = theActiveRow.getMutableCellByIndex(pOffset);</span>
+<span class="nc" id="L691">            myCell.setInteger(pValue);</span>
+        }
+<span class="nc" id="L693">    }</span>
+
+    /**
+     * Write an integer to the WorkSheet.
+     *
+     * @param pOffset the column offset
+     * @param pValue  the integer
+     * @throws OceanusException on error
+     */
+    protected void writeLong(final int pOffset,
+                             final Long pValue) throws OceanusException {
+        /* If we have non-null value */
+<span class="nc bnc" id="L705" title="All 2 branches missed.">        if (pValue != null) {</span>
+            /* Create the cell and set its value */
+<span class="nc" id="L707">            final PrometheusSheetCell myCell = theActiveRow.getMutableCellByIndex(pOffset);</span>
+<span class="nc" id="L708">            myCell.setLongAsString(pValue);</span>
+        }
+<span class="nc" id="L710">    }</span>
+
+    /**
+     * Write a boolean to the WorkSheet.
+     *
+     * @param pOffset the column offset
+     * @param pValue  the boolean
+     * @throws OceanusException on error
+     */
+    protected void writeBoolean(final int pOffset,
+                                final Boolean pValue) throws OceanusException {
+        /* If we have non-null value */
+<span class="nc bnc" id="L722" title="All 2 branches missed.">        if (pValue != null) {</span>
+            /* Create the cell and set its value */
+<span class="nc" id="L724">            final PrometheusSheetCell myCell = theActiveRow.getMutableCellByIndex(pOffset);</span>
+<span class="nc" id="L725">            myCell.setBoolean(pValue);</span>
+        }
+<span class="nc" id="L727">    }</span>
+
+    /**
+     * Write a date to the WorkSheet.
+     *
+     * @param pOffset the column offset
+     * @param pValue  the date
+     * @throws OceanusException on error
+     */
+    protected void writeDate(final int pOffset,
+                             final OceanusDate pValue) throws OceanusException {
+        /* If we have non-null value */
+<span class="nc bnc" id="L739" title="All 2 branches missed.">        if (pValue != null) {</span>
+            /* Create the cell and set its value */
+<span class="nc" id="L741">            final PrometheusSheetCell myCell = theActiveRow.getMutableCellByIndex(pOffset);</span>
+<span class="nc" id="L742">            myCell.setDate(pValue);</span>
+        }
+<span class="nc" id="L744">    }</span>
+
+    /**
+     * Write a decimal to the WorkSheet.
+     *
+     * @param pOffset the column offset
+     * @param pValue  the number
+     * @throws OceanusException on error
+     */
+    protected void writeDecimal(final int pOffset,
+                                final OceanusDecimal pValue) throws OceanusException {
+        /* If we have non-null value */
+<span class="nc bnc" id="L756" title="All 2 branches missed.">        if (pValue != null) {</span>
+            /* Create the cell and set its value */
+<span class="nc" id="L758">            final PrometheusSheetCell myCell = theActiveRow.getMutableCellByIndex(pOffset);</span>
+<span class="nc" id="L759">            myCell.setDecimal(pValue);</span>
+        }
+<span class="nc" id="L761">    }</span>
+
+    /**
+     * Write a Header to the WorkSheet.
+     *
+     * @param pOffset the column offset
+     * @param pHeader the header text
+     * @throws OceanusException on error
+     */
+    protected void writeHeader(final int pOffset,
+                               final String pHeader) throws OceanusException {
+        /* If we have non-null value */
+<span class="nc bnc" id="L773" title="All 2 branches missed.">        if (pHeader != null) {</span>
+            /* Create the cell and set its value */
+<span class="nc" id="L775">            final PrometheusSheetCell myCell = theActiveRow.getMutableCellByIndex(pOffset);</span>
+<span class="nc" id="L776">            myCell.setHeader(pHeader);</span>
+        }
+<span class="nc" id="L778">    }</span>
+
+    /**
+     * Write a string to the WorkSheet.
+     *
+     * @param pOffset the column offset
+     * @param pValue  the string
+     * @throws OceanusException on error
+     */
+    protected void writeString(final int pOffset,
+                               final String pValue) throws OceanusException {
+        /* If we have non-null value */
+<span class="nc bnc" id="L790" title="All 2 branches missed.">        if (pValue != null) {</span>
+            /* Create the cell and set its value */
+<span class="nc" id="L792">            final PrometheusSheetCell myCell = theActiveRow.getMutableCellByIndex(pOffset);</span>
+<span class="nc" id="L793">            myCell.setString(pValue);</span>
+        }
+<span class="nc" id="L795">    }</span>
+
+    /**
+     * Write a byte array to the WorkSheet.
+     *
+     * @param pOffset the column offset
+     * @param pBytes  the byte array
+     * @throws OceanusException on error
+     */
+    protected void writeBytes(final int pOffset,
+                              final byte[] pBytes) throws OceanusException {
+        /* If we have non-null bytes */
+<span class="nc bnc" id="L807" title="All 2 branches missed.">        if (pBytes != null) {</span>
+            /* Create the cell and set its value */
+<span class="nc" id="L809">            final PrometheusSheetCell myCell = theActiveRow.getMutableCellByIndex(pOffset);</span>
+<span class="nc" id="L810">            myCell.setBytes(pBytes);</span>
+        }
+<span class="nc" id="L812">    }</span>
+
+    /**
+     * Write a char array to the WorkSheet.
+     *
+     * @param pOffset the column offset
+     * @param pChars  the char array
+     * @throws OceanusException on error
+     */
+    protected void writeChars(final int pOffset,
+                              final char[] pChars) throws OceanusException {
+        /* If we have non-null chars */
+<span class="nc bnc" id="L824" title="All 2 branches missed.">        if (pChars != null) {</span>
+            /* Create the cell and set its value */
+<span class="nc" id="L826">            final PrometheusSheetCell myCell = theActiveRow.getMutableCellByIndex(pOffset);</span>
+<span class="nc" id="L827">            myCell.setCharArray(pChars);</span>
+        }
+<span class="nc" id="L829">    }</span>
+
+    /**
+     * Obtain row values.
+     *
+     * @param pName the name of the item
+     * @return the row values.
+     * @throws OceanusException on error
+     */
+    protected PrometheusDataValues getRowValues(final String pName) throws OceanusException {
+        /* Allocate the values */
+<span class="nc" id="L840">        final PrometheusDataValues myValues = new PrometheusDataValues(pName);</span>
+
+        /* Add the id and return the new values */
+<span class="nc" id="L843">        myValues.addValue(MetisDataResource.DATA_ID, loadInteger(COL_ID));</span>
+<span class="nc" id="L844">        return myValues;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianCoreMac.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.impl.core.mac</a> &gt; <span class="el_source">GordianCoreMac.java</span></div><h1>GordianCoreMac.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.gordianknot.impl.core.mac;
+
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKey;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMac;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacParameters;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianLogicException;
+
+/**
+ * GordianKnot interface for Message Authentication Codes.
+ */
+public abstract class GordianCoreMac
+        implements GordianMac {
+    /**
+     * MacSpec.
+     */
+    private final GordianMacSpec theMacSpec;
+
+    /**
+     * Parameters.
+     */
+    private GordianCoreMacParameters theParameters;
+
+    /**
+     * Constructor.
+     *
+     * @param pFactory the Security Factory
+     * @param pMacSpec the macSpec
+     */
+    protected GordianCoreMac(final GordianBaseFactory pFactory,
+<span class="fc" id="L49">                             final GordianMacSpec pMacSpec) {</span>
+<span class="fc" id="L50">        theMacSpec = pMacSpec;</span>
+<span class="fc" id="L51">        theParameters = new GordianCoreMacParameters(pFactory, theMacSpec);</span>
+<span class="fc" id="L52">    }</span>
+
+    @Override
+    public GordianMacSpec getMacSpec() {
+<span class="fc" id="L56">        return theMacSpec;</span>
+    }
+
+    @Override
+    public GordianKey&lt;GordianMacSpec&gt; getKey() {
+<span class="fc" id="L61">        return theParameters.getKey();</span>
+    }
+
+    @Override
+    public byte[] getInitVector() {
+<span class="fc" id="L66">        return theParameters.getInitVector();</span>
+    }
+
+    /**
+     * Check that the key matches the keyType.
+     *
+     * @param pKey the passed key.
+     * @throws GordianException on error
+     */
+    private void checkValidKey(final GordianKey&lt;GordianMacSpec&gt; pKey) throws GordianException {
+<span class="pc bpc" id="L76" title="1 of 2 branches missed.">        if (!theMacSpec.equals(pKey.getKeyType())) {</span>
+<span class="nc" id="L77">            throw new GordianLogicException(&quot;MisMatch on macSpec&quot;);</span>
+        }
+<span class="fc" id="L79">    }</span>
+
+    @Override
+    public void initKeyBytes(final byte[] pKeyBytes) throws GordianException {
+        /* Create the key and initialise */
+<span class="fc" id="L84">        final GordianKey&lt;GordianMacSpec&gt; myKey = theParameters.buildKeyFromBytes(pKeyBytes);</span>
+<span class="fc" id="L85">        init(GordianMacParameters.key(myKey));</span>
+<span class="fc" id="L86">    }</span>
+
+    /**
+     * Process macParameters.
+     *
+     * @param pParams the mac parameters
+     * @throws GordianException on error
+     */
+    protected void processParameters(final GordianMacParameters pParams) throws GordianException {
+        /* Process the parameters */
+<span class="fc" id="L96">        theParameters.processParameters(pParams);</span>
+<span class="fc" id="L97">        checkValidKey(getKey());</span>
+<span class="fc" id="L98">    }</span>
+
+    @Override
+    public void update(final byte[] pBytes,
+                       final int pOffset,
+                       final int pLength) {
+        /* Check that the buffers are sufficient */
+<span class="pc bpc" id="L105" title="1 of 2 branches missed.">        final int myInBufLen = pBytes == null ? 0 : pBytes.length;</span>
+<span class="pc bpc" id="L106" title="1 of 2 branches missed.">        if (myInBufLen &lt; (pLength + pOffset)) {</span>
+<span class="nc" id="L107">            throw new IllegalArgumentException(&quot;Input buffer too short.&quot;);</span>
+        }
+
+        /* Process the bytes */
+<span class="fc bfc" id="L111" title="All 2 branches covered.">        if (pLength != 0) {</span>
+<span class="fc" id="L112">            doUpdate(pBytes, pOffset, pLength);</span>
+        }
+<span class="fc" id="L114">    }</span>
+
+    /**
+     * Update the mac with a portion of a byte array.
+     *
+     * @param pBytes  the bytes to update with.
+     * @param pOffset the offset of the data within the byte array
+     * @param pLength the length of the data to use
+     */
+    public abstract void doUpdate(byte[] pBytes,
+                                  int pOffset,
+                                  int pLength);
+
+    @Override
+    public int finish(final byte[] pBuffer,
+                      final int pOffset) throws GordianException {
+        /* Check that the buffers are sufficient */
+<span class="pc bpc" id="L131" title="1 of 2 branches missed.">        if (pBuffer.length &lt; (getMacSize() + pOffset)) {</span>
+<span class="nc" id="L132">            throw new IllegalArgumentException(&quot;Output buffer too short.&quot;);</span>
+        }
+
+        /* Finish the digest */
+<span class="fc" id="L136">        return doFinish(pBuffer, pOffset);</span>
+    }
+
+    /**
+     * Calculate the Mac, and return it in the buffer provided.
+     *
+     * @param pBuffer the buffer to return the digest in.
+     * @param pOffset the offset in the buffer to store the digest.
+     * @return the number of bytes placed into buffer
+     * @throws GordianException on error
+     */
+    public abstract int doFinish(byte[] pBuffer,
+                                 int pOffset) throws GordianException;
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseRegionTable.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.moneywise.ui.panel</a> &gt; <span class="el_source">MoneyWiseRegionTable.java</span></div><h1>MoneyWiseRegionTable.java</h1><pre class="source lang-java linenums">/*
+ * MoneyWise: Finance Application
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.moneywise.ui.panel;
+
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.profile.OceanusProfile;
+import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
+import io.github.tonywasher.joceanus.metis.ui.MetisAction;
+import io.github.tonywasher.joceanus.metis.ui.MetisErrorPanel;
+import io.github.tonywasher.joceanus.metis.ui.MetisIcon;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDataSet;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseRegion;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseRegion.MoneyWiseRegionList;
+import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
+import io.github.tonywasher.joceanus.moneywise.ui.MoneyWiseUIResource;
+import io.github.tonywasher.joceanus.moneywise.ui.base.MoneyWiseBaseTable;
+import io.github.tonywasher.joceanus.moneywise.ui.dialog.MoneyWiseRegionDialog;
+import io.github.tonywasher.joceanus.moneywise.views.MoneyWiseView;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataResource;
+import io.github.tonywasher.joceanus.prometheus.views.PrometheusDataEvent;
+import io.github.tonywasher.joceanus.prometheus.views.PrometheusEditSet;
+import io.github.tonywasher.joceanus.tethys.api.button.TethysUIButton;
+import io.github.tonywasher.joceanus.tethys.api.control.TethysUIControl.TethysUIIconMapSet;
+import io.github.tonywasher.joceanus.tethys.api.factory.TethysUIFactory;
+import io.github.tonywasher.joceanus.tethys.api.pane.TethysUIBoxPaneManager;
+import io.github.tonywasher.joceanus.tethys.api.table.TethysUITableManager;
+
+/**
+ * MoneyWise Region Table.
+ */
+public class MoneyWiseRegionTable
+        extends MoneyWiseBaseTable&lt;MoneyWiseRegion&gt; {
+    /**
+     * The filter panel.
+     */
+    private final TethysUIBoxPaneManager theFilterPanel;
+
+    /**
+     * The Region dialog.
+     */
+    private final MoneyWiseRegionDialog theActiveRegion;
+
+    /**
+     * The edit list.
+     */
+    private MoneyWiseRegionList theRegions;
+
+    /**
+     * Constructor.
+     *
+     * @param pView    the view
+     * @param pEditSet the editSet
+     * @param pError   the error panel
+     */
+    MoneyWiseRegionTable(final MoneyWiseView pView,
+                         final PrometheusEditSet pEditSet,
+                         final MetisErrorPanel pError) {
+        /* Store parameters */
+<span class="nc" id="L74">        super(pView, pEditSet, pError, MoneyWiseBasicDataType.REGION);</span>
+
+        /* Access the GUI factory */
+<span class="nc" id="L77">        final TethysUIFactory&lt;?&gt; myGuiFactory = pView.getGuiFactory();</span>
+<span class="nc" id="L78">        final TethysUITableManager&lt;MetisDataFieldId, MoneyWiseRegion&gt; myTable = getTable();</span>
+
+        /* Create new button */
+<span class="nc" id="L81">        final TethysUIButton myNewButton = myGuiFactory.buttonFactory().newButton();</span>
+<span class="nc" id="L82">        MetisIcon.configureNewIconButton(myNewButton);</span>
+
+        /* Create a filter panel */
+<span class="nc" id="L85">        theFilterPanel = myGuiFactory.paneFactory().newHBoxPane();</span>
+<span class="nc" id="L86">        theFilterPanel.addSpacer();</span>
+<span class="nc" id="L87">        theFilterPanel.addNode(myNewButton);</span>
+
+        /* Create a region panel */
+<span class="nc" id="L90">        theActiveRegion = new MoneyWiseRegionDialog(myGuiFactory, pEditSet, this);</span>
+<span class="nc" id="L91">        declareItemPanel(theActiveRegion);</span>
+
+        /* Set table configuration */
+<span class="nc" id="L94">        myTable.setDisabled(MoneyWiseRegion::isDisabled)</span>
+<span class="nc" id="L95">                .setComparator(MoneyWiseRegion::compareTo);</span>
+
+        /* Create the name column */
+<span class="nc" id="L98">        myTable.declareStringColumn(PrometheusDataResource.DATAITEM_FIELD_NAME)</span>
+<span class="nc" id="L99">                .setValidator(this::isValidName)</span>
+<span class="nc" id="L100">                .setCellValueFactory(MoneyWiseRegion::getName)</span>
+<span class="nc" id="L101">                .setEditable(true)</span>
+<span class="nc" id="L102">                .setColumnWidth(WIDTH_NAME)</span>
+<span class="nc" id="L103">                .setOnCommit((r, v) -&gt; updateField(MoneyWiseRegion::setName, r, v));</span>
+
+        /* Create the description column */
+<span class="nc" id="L106">        myTable.declareStringColumn(PrometheusDataResource.DATAITEM_FIELD_DESC)</span>
+<span class="nc" id="L107">                .setValidator(this::isValidDesc)</span>
+<span class="nc" id="L108">                .setCellValueFactory(MoneyWiseRegion::getDesc)</span>
+<span class="nc" id="L109">                .setEditable(true)</span>
+<span class="nc" id="L110">                .setColumnWidth(WIDTH_DESC)</span>
+<span class="nc" id="L111">                .setOnCommit((r, v) -&gt; updateField(MoneyWiseRegion::setDescription, r, v));</span>
+
+        /* Create the Active column */
+<span class="nc" id="L114">        final TethysUIIconMapSet&lt;MetisAction&gt; myActionMapSet = MetisIcon.configureStatusIconButton(pView.getGuiFactory());</span>
+<span class="nc" id="L115">        myTable.declareIconColumn(PrometheusDataResource.DATAITEM_TOUCH, MetisAction.class)</span>
+<span class="nc" id="L116">                .setIconMapSet(r -&gt; myActionMapSet)</span>
+<span class="nc bnc" id="L117" title="All 2 branches missed.">                .setCellValueFactory(r -&gt; r.isActive() ? MetisAction.ACTIVE : MetisAction.DELETE)</span>
+<span class="nc" id="L118">                .setName(MoneyWiseUIResource.STATICDATA_ACTIVE.getValue())</span>
+<span class="nc" id="L119">                .setEditable(true)</span>
+<span class="nc bnc" id="L120" title="All 2 branches missed.">                .setCellEditable(r -&gt; !r.isActive())</span>
+<span class="nc" id="L121">                .setColumnWidth(WIDTH_ICON)</span>
+<span class="nc" id="L122">                .setOnCommit((r, v) -&gt; updateField(this::deleteRow, r, v));</span>
+
+        /* Add listeners */
+<span class="nc" id="L125">        myNewButton.getEventRegistrar().addEventListener(e -&gt; addNewItem());</span>
+<span class="nc" id="L126">        theActiveRegion.getEventRegistrar().addEventListener(PrometheusDataEvent.ADJUSTVISIBILITY, e -&gt; handlePanelState());</span>
+<span class="nc" id="L127">    }</span>
+
+    @Override
+    protected boolean isItemEditing() {
+<span class="nc" id="L131">        return theActiveRegion.isEditing();</span>
+    }
+
+    /**
+     * Obtain the filter panel.
+     *
+     * @return the filter panel
+     */
+    protected TethysUIBoxPaneManager getFilterPanel() {
+<span class="nc" id="L140">        return theFilterPanel;</span>
+    }
+
+    @Override
+    protected void refreshData() throws OceanusException {
+        /* Obtain the active profile */
+<span class="nc" id="L146">        OceanusProfile myTask = getView().getActiveTask();</span>
+<span class="nc" id="L147">        myTask = myTask.startTask(&quot;Regions&quot;);</span>
+
+        /* Access list */
+<span class="nc" id="L150">        final MoneyWiseDataSet myData = getView().getData();</span>
+<span class="nc" id="L151">        final MoneyWiseRegionList myBase = myData.getRegions();</span>
+<span class="nc" id="L152">        theRegions = myBase.deriveEditList(getEditSet());</span>
+<span class="nc" id="L153">        getTable().setItems(theRegions.getUnderlyingList());</span>
+
+        /* Notify panel of refresh */
+<span class="nc" id="L156">        theActiveRegion.refreshData();</span>
+<span class="nc" id="L157">        restoreSelected();</span>
+
+        /* Complete the task */
+<span class="nc" id="L160">        myTask.end();</span>
+<span class="nc" id="L161">    }</span>
+
+    @Override
+    public void cancelEditing() {
+<span class="nc" id="L165">        super.cancelEditing();</span>
+<span class="nc" id="L166">        theActiveRegion.setEditable(false);</span>
+<span class="nc" id="L167">    }</span>
+
+    /**
+     * Select region.
+     *
+     * @param pRegion the region to select
+     */
+    void selectRegion(final MoneyWiseRegion pRegion) {
+        /* Select the row and ensure that it is visible */
+<span class="nc" id="L176">        getTable().selectRow(pRegion);</span>
+<span class="nc" id="L177">    }</span>
+
+    @Override
+    protected void handleRewind() {
+        /* Only action if we are not editing */
+<span class="nc bnc" id="L182" title="All 2 branches missed.">        if (!theActiveRegion.isEditing()) {</span>
+            /* Handle the reWind */
+<span class="nc" id="L184">            setEnabled(true);</span>
+<span class="nc" id="L185">            super.handleRewind();</span>
+        }
+
+        /* Adjust for changes */
+<span class="nc" id="L189">        notifyChanges();</span>
+<span class="nc" id="L190">    }</span>
+
+    /**
+     * Handle panel state.
+     */
+    private void handlePanelState() {
+        /* Only action if we are not editing */
+<span class="nc bnc" id="L197" title="All 2 branches missed.">        if (!theActiveRegion.isEditing()) {</span>
+            /* handle the edit transition */
+<span class="nc" id="L199">            setEnabled(true);</span>
+<span class="nc" id="L200">            final MoneyWiseRegion myRegion = theActiveRegion.getSelectedItem();</span>
+<span class="nc" id="L201">            updateTableData();</span>
+<span class="nc bnc" id="L202" title="All 2 branches missed.">            if (myRegion != null) {</span>
+<span class="nc" id="L203">                getTable().selectRow(myRegion);</span>
+            } else {
+<span class="nc" id="L205">                restoreSelected();</span>
+            }
+<span class="nc" id="L207">        } else {</span>
+<span class="nc" id="L208">            getTable().cancelEditing();</span>
+        }
+
+        /* Note changes */
+<span class="nc" id="L212">        notifyChanges();</span>
+<span class="nc" id="L213">    }</span>
+
+    /**
+     * New item.
+     */
+    private void addNewItem() {
+        /* Protect against Exceptions */
+        try {
+            /* Make sure that we have finished editing */
+<span class="nc" id="L222">            cancelEditing();</span>
+
+            /* Create a new profile */
+<span class="nc" id="L225">            final OceanusProfile myTask = getView().getNewProfile(&quot;addNewItem&quot;);</span>
+
+            /* Create the new region */
+<span class="nc" id="L228">            myTask.startTask(&quot;buildItem&quot;);</span>
+<span class="nc" id="L229">            final MoneyWiseRegion myRegion = theRegions.addNewItem();</span>
+<span class="nc" id="L230">            myRegion.setDefaults();</span>
+
+            /* Set as new and adjust map */
+<span class="nc" id="L233">            myTask.startTask(&quot;incrementVersion&quot;);</span>
+<span class="nc" id="L234">            myRegion.setNewVersion();</span>
+<span class="nc" id="L235">            myRegion.adjustMapForItem();</span>
+<span class="nc" id="L236">            getEditSet().incrementVersion();</span>
+
+            /* Validate the new item */
+<span class="nc" id="L239">            myTask.startTask(&quot;validate&quot;);</span>
+<span class="nc" id="L240">            myRegion.validate();</span>
+
+            /* update panel */
+<span class="nc" id="L243">            myTask.startTask(&quot;setItem&quot;);</span>
+<span class="nc" id="L244">            theActiveRegion.setNewItem(myRegion);</span>
+
+            /* Lock the table */
+<span class="nc" id="L247">            setTableEnabled(false);</span>
+<span class="nc" id="L248">            myTask.end();</span>
+
+            /* Handle Exceptions */
+<span class="nc" id="L251">        } catch (OceanusException e) {</span>
+            /* Build the error */
+<span class="nc" id="L253">            final OceanusException myError = new MoneyWiseDataException(&quot;Failed to create new region&quot;, e);</span>
+
+            /* Show the error */
+<span class="nc" id="L256">            setError(myError);</span>
+<span class="nc" id="L257">        }</span>
+<span class="nc" id="L258">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

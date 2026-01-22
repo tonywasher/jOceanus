@@ -1,0 +1,733 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseTransactionBuilder.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.moneywise.data.builder</a> &gt; <span class="el_source">MoneyWiseTransactionBuilder.java</span></div><h1>MoneyWiseTransactionBuilder.java</h1><pre class="source lang-java linenums">/*
+ * MoneyWise: Finance Application
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.moneywise.data.builder;
+
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseAssetDirection;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDataSet;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePortfolio;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurity;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransAsset;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransCategory;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransTag;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransaction;
+import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Transaction Builder.
+ */
+public class MoneyWiseTransactionBuilder {
+    /**
+     * DataSet.
+     */
+    private final MoneyWiseDataSet theDataSet;
+
+    /**
+     * The Tags.
+     */
+    private final List&lt;MoneyWiseTransTag&gt; theTags;
+
+    /**
+     * The Date.
+     */
+    private OceanusDate theDate;
+
+    /**
+     * The Account.
+     */
+    private MoneyWiseTransAsset theAccount;
+
+    /**
+     * The Partner.
+     */
+    private MoneyWiseTransAsset thePartner;
+
+    /**
+     * The direction.
+     */
+    private MoneyWiseAssetDirection theDirection;
+
+    /**
+     * The Transaction Category.
+     */
+    private MoneyWiseTransCategory theCategory;
+
+    /**
+     * The Amount.
+     */
+    private OceanusMoney theAmount;
+
+    /**
+     * The Reconciled.
+     */
+    private Boolean theReconciled;
+
+    /**
+     * The TaxCredit.
+     */
+    private OceanusMoney theTaxCredit;
+
+    /**
+     * The Employers NI.
+     */
+    private OceanusMoney theErNI;
+
+    /**
+     * The Employees NI.
+     */
+    private OceanusMoney theEeNI;
+
+    /**
+     * The Benefit.
+     */
+    private OceanusMoney theBenefit;
+
+    /**
+     * The Withheld.
+     */
+    private OceanusMoney theWithheld;
+
+    /**
+     * The Account Units.
+     */
+    private OceanusUnits theAccountUnits;
+
+    /**
+     * The PartnerUnits.
+     */
+    private OceanusUnits thePartnerUnits;
+
+    /**
+     * The Dilution.
+     */
+    private OceanusRatio theDilution;
+
+    /**
+     * The QualifyYears.
+     */
+    private Integer theQualifyYears;
+
+    /**
+     * The ReturnedCash.
+     */
+    private OceanusMoney theReturnedCash;
+
+    /**
+     * The ReturnedCashAccount.
+     */
+    private MoneyWiseTransAsset theReturnedCashAccount;
+
+    /**
+     * The PartnerAmount.
+     */
+    private OceanusMoney thePartnerAmount;
+
+    /**
+     * The Price.
+     */
+    private OceanusPrice thePrice;
+
+    /**
+     * The Reference.
+     */
+    private String theReference;
+
+    /**
+     * The Comment.
+     */
+    private String theComment;
+
+    /**
+     * Constructor.
+     *
+     * @param pDataSet the dataSet
+     */
+<span class="fc" id="L167">    public MoneyWiseTransactionBuilder(final MoneyWiseDataSet pDataSet) {</span>
+<span class="fc" id="L168">        theDataSet = pDataSet;</span>
+<span class="fc" id="L169">        theReconciled = Boolean.FALSE;</span>
+<span class="fc" id="L170">        theTags = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L171">    }</span>
+
+    /**
+     * Set Date.
+     *
+     * @param pDate the date of the transaction.
+     * @return the builder
+     */
+    public MoneyWiseTransactionBuilder date(final OceanusDate pDate) {
+<span class="fc" id="L180">        theDate = pDate;</span>
+<span class="fc" id="L181">        return this;</span>
+    }
+
+    /**
+     * Set the date.
+     *
+     * @param pDate the Date of the rate.
+     * @return the builder
+     */
+    public MoneyWiseTransactionBuilder date(final String pDate) {
+<span class="fc" id="L191">        return date(new OceanusDate(pDate));</span>
+    }
+
+    /**
+     * Set Account.
+     *
+     * @param pAccount the account.
+     * @return the builder
+     */
+    public MoneyWiseTransactionBuilder account(final MoneyWiseTransAsset pAccount) {
+<span class="nc" id="L201">        theAccount = pAccount;</span>
+<span class="nc" id="L202">        return this;</span>
+    }
+
+    /**
+     * Set Account.
+     *
+     * @param pAccount the account.
+     * @return the builder
+     */
+    public MoneyWiseTransactionBuilder account(final String pAccount) {
+<span class="fc" id="L212">        theAccount = resolveTransactionAsset(pAccount);</span>
+<span class="fc" id="L213">        return this;</span>
+    }
+
+    /**
+     * Set Partner.
+     *
+     * @param pPartner the partner.
+     * @return the builder
+     */
+    public MoneyWiseTransactionBuilder partner(final MoneyWiseTransAsset pPartner) {
+<span class="nc" id="L223">        thePartner = pPartner;</span>
+<span class="nc" id="L224">        return this;</span>
+    }
+
+    /**
+     * Set Partner.
+     *
+     * @param pPartner the partner.
+     * @return the builder
+     */
+    public MoneyWiseTransactionBuilder partner(final String pPartner) {
+<span class="fc" id="L234">        thePartner = resolveTransactionAsset(pPartner);</span>
+<span class="fc" id="L235">        return this;</span>
+    }
+
+    /**
+     * Set To.
+     *
+     * @return the builder
+     */
+    public MoneyWiseTransactionBuilder to() {
+<span class="fc" id="L244">        theDirection = MoneyWiseAssetDirection.TO;</span>
+<span class="fc" id="L245">        return this;</span>
+    }
+
+    /**
+     * Set From.
+     *
+     * @return the builder
+     */
+    public MoneyWiseTransactionBuilder from() {
+<span class="fc" id="L254">        theDirection = MoneyWiseAssetDirection.FROM;</span>
+<span class="fc" id="L255">        return this;</span>
+    }
+
+    /**
+     * Set category.
+     *
+     * @param pCategory the category.
+     * @return the builder
+     */
+    public MoneyWiseTransactionBuilder category(final MoneyWiseTransCategory pCategory) {
+<span class="fc" id="L265">        theCategory = pCategory;</span>
+<span class="fc" id="L266">        return this;</span>
+    }
+
+    /**
+     * Set category.
+     *
+     * @param pCategory the category.
+     * @return the builder
+     */
+    public MoneyWiseTransactionBuilder category(final String pCategory) {
+<span class="fc" id="L276">        return category(theDataSet.getTransCategories().findItemByName(pCategory));</span>
+    }
+
+    /**
+     * Set the amount.
+     *
+     * @param pAmount the amount of the transaction.
+     * @return the builder
+     */
+    public MoneyWiseTransactionBuilder amount(final OceanusMoney pAmount) {
+<span class="fc" id="L286">        theAmount = pAmount;</span>
+<span class="fc" id="L287">        return this;</span>
+    }
+
+    /**
+     * Set the amount.
+     *
+     * @param pAmount the amount of the transaction.
+     * @return the builder
+     */
+    public MoneyWiseTransactionBuilder amount(final String pAmount) {
+<span class="fc" id="L297">        return amount(new OceanusMoney(pAmount, theAccount.getCurrency()));</span>
+    }
+
+    /**
+     * Set the taxCredit.
+     *
+     * @param pTaxCredit the taxCredit of the transaction.
+     * @return the builder
+     */
+    public MoneyWiseTransactionBuilder taxCredit(final OceanusMoney pTaxCredit) {
+<span class="fc" id="L307">        theTaxCredit = pTaxCredit;</span>
+<span class="fc" id="L308">        return this;</span>
+    }
+
+    /**
+     * Set the taxCredit.
+     *
+     * @param pTaxCredit the taxCredit of the transaction.
+     * @return the builder
+     */
+    public MoneyWiseTransactionBuilder taxCredit(final String pTaxCredit) {
+<span class="fc" id="L318">        return taxCredit(new OceanusMoney(pTaxCredit, theAccount.getCurrency()));</span>
+    }
+
+    /**
+     * Set the EmployersNI.
+     *
+     * @param pNI the EmployersNI of the transaction.
+     * @return the builder
+     */
+    public MoneyWiseTransactionBuilder employersNI(final OceanusMoney pNI) {
+<span class="nc" id="L328">        theErNI = pNI;</span>
+<span class="nc" id="L329">        return this;</span>
+    }
+
+    /**
+     * Set the EmployersNI.
+     *
+     * @param pNI the EmployersNI of the transaction.
+     * @return the builder
+     */
+    public MoneyWiseTransactionBuilder employersNI(final String pNI) {
+<span class="nc" id="L339">        return employersNI(new OceanusMoney(pNI, theAccount.getCurrency()));</span>
+    }
+
+    /**
+     * Set the EmployeesNI.
+     *
+     * @param pNI the EmployeesNI of the transaction.
+     * @return the builder
+     */
+    public MoneyWiseTransactionBuilder employeesNI(final OceanusMoney pNI) {
+<span class="nc" id="L349">        theEeNI = pNI;</span>
+<span class="nc" id="L350">        return this;</span>
+    }
+
+    /**
+     * Set the EmployeesNI.
+     *
+     * @param pNI the EmployeesNI of the transaction.
+     * @return the builder
+     */
+    public MoneyWiseTransactionBuilder employeesNI(final String pNI) {
+<span class="nc" id="L360">        return employeesNI(new OceanusMoney(pNI, theAccount.getCurrency()));</span>
+    }
+
+    /**
+     * Set the benefit.
+     *
+     * @param pBenefit the benefit of the transaction.
+     * @return the builder
+     */
+    public MoneyWiseTransactionBuilder benefit(final OceanusMoney pBenefit) {
+<span class="fc" id="L370">        theBenefit = pBenefit;</span>
+<span class="fc" id="L371">        return this;</span>
+    }
+
+    /**
+     * Set the benefit.
+     *
+     * @param pBenefit the benefit of the transaction.
+     * @return the builder
+     */
+    public MoneyWiseTransactionBuilder benefit(final String pBenefit) {
+<span class="fc" id="L381">        return benefit(new OceanusMoney(pBenefit, theDataSet.getReportingCurrency().getCurrency()));</span>
+    }
+
+    /**
+     * Set the withheld.
+     *
+     * @param pWithheld the withheld of the transaction.
+     * @return the builder
+     */
+    public MoneyWiseTransactionBuilder withheld(final OceanusMoney pWithheld) {
+<span class="fc" id="L391">        theWithheld = pWithheld;</span>
+<span class="fc" id="L392">        return this;</span>
+    }
+
+    /**
+     * Set the withheld.
+     *
+     * @param pWithheld the withheld of the transaction.
+     * @return the builder
+     */
+    public MoneyWiseTransactionBuilder withheld(final String pWithheld) {
+<span class="fc" id="L402">        return withheld(new OceanusMoney(pWithheld, theAccount.getCurrency()));</span>
+    }
+
+    /**
+     * Set the partner amount.
+     *
+     * @param pAmount the partner amount of the transaction.
+     * @return the builder
+     */
+    public MoneyWiseTransactionBuilder partnerAmount(final OceanusMoney pAmount) {
+<span class="fc" id="L412">        thePartnerAmount = pAmount;</span>
+<span class="fc" id="L413">        return this;</span>
+    }
+
+    /**
+     * Set the partner amount.
+     *
+     * @param pAmount the partner amount of the transaction.
+     * @return the builder
+     */
+    public MoneyWiseTransactionBuilder partnerAmount(final String pAmount) {
+<span class="fc" id="L423">        return partnerAmount(new OceanusMoney(pAmount, thePartner.getCurrency()));</span>
+    }
+
+    /**
+     * Set the account units.
+     *
+     * @param pUnits the account units.
+     * @return the builder
+     */
+    public MoneyWiseTransactionBuilder accountUnits(final OceanusUnits pUnits) {
+<span class="fc" id="L433">        theAccountUnits = pUnits;</span>
+<span class="fc" id="L434">        return this;</span>
+    }
+
+    /**
+     * Set the account units.
+     *
+     * @param pUnits the account units.
+     * @return the builder
+     */
+    public MoneyWiseTransactionBuilder accountUnits(final String pUnits) {
+<span class="fc" id="L444">        return accountUnits(new OceanusUnits(pUnits));</span>
+    }
+
+    /**
+     * Set the partner units.
+     *
+     * @param pUnits the partner units.
+     * @return the builder
+     */
+    public MoneyWiseTransactionBuilder partnerUnits(final OceanusUnits pUnits) {
+<span class="fc" id="L454">        thePartnerUnits = pUnits;</span>
+<span class="fc" id="L455">        return this;</span>
+    }
+
+    /**
+     * Set the partner units.
+     *
+     * @param pUnits the partner units.
+     * @return the builder
+     */
+    public MoneyWiseTransactionBuilder partnerUnits(final String pUnits) {
+<span class="fc" id="L465">        return partnerUnits(new OceanusUnits(pUnits));</span>
+    }
+
+    /**
+     * Set the dilution.
+     *
+     * @param pDilution the dilution of the transaction.
+     * @return the builder
+     */
+    public MoneyWiseTransactionBuilder dilution(final OceanusRatio pDilution) {
+<span class="nc" id="L475">        theDilution = pDilution;</span>
+<span class="nc" id="L476">        return this;</span>
+    }
+
+    /**
+     * Set the dilution.
+     *
+     * @param pDilution the dilution of the transaction.
+     * @return the builder
+     */
+    public MoneyWiseTransactionBuilder dilution(final String pDilution) {
+<span class="nc" id="L486">        return dilution(new OceanusRatio(pDilution));</span>
+    }
+
+    /**
+     * Set the qualifyYears.
+     *
+     * @param pYears the qualifyYears of the transaction.
+     * @return the builder
+     */
+    public MoneyWiseTransactionBuilder qualifyYears(final Integer pYears) {
+<span class="nc" id="L496">        theQualifyYears = pYears;</span>
+<span class="nc" id="L497">        return this;</span>
+    }
+
+    /**
+     * Set the returnedCash.
+     *
+     * @param pCash    the returnedCash.
+     * @param pAccount the account to which the cash was returned
+     * @return the builder
+     */
+    public MoneyWiseTransactionBuilder returnedCash(final OceanusMoney pCash,
+                                                    final MoneyWiseTransAsset pAccount) {
+<span class="nc" id="L509">        theReturnedCash = pCash;</span>
+<span class="nc" id="L510">        theReturnedCashAccount = pAccount;</span>
+<span class="nc" id="L511">        return this;</span>
+    }
+
+    /**
+     * Set the returnedCash.
+     *
+     * @param pCash    the returnedCash.
+     * @param pAccount the account to which the cash was returned
+     * @return the builder
+     */
+    public MoneyWiseTransactionBuilder returnedCash(final String pCash,
+                                                    final String pAccount) {
+<span class="nc" id="L523">        final MoneyWiseTransAsset myAsset = resolveTransactionAsset(pAccount);</span>
+<span class="nc bnc" id="L524" title="All 2 branches missed.">        return returnedCash(new OceanusMoney(pCash, myAsset == null ? null : myAsset.getCurrency()), myAsset);</span>
+    }
+
+    /**
+     * Set the price.
+     *
+     * @param pPrice the price of the transaction.
+     * @return the builder
+     */
+    public MoneyWiseTransactionBuilder price(final OceanusPrice pPrice) {
+<span class="fc" id="L534">        thePrice = pPrice;</span>
+<span class="fc" id="L535">        return this;</span>
+    }
+
+    /**
+     * Set the price.
+     *
+     * @param pPrice the price of the transaction.
+     * @return the builder
+     */
+    public MoneyWiseTransactionBuilder price(final String pPrice) {
+<span class="fc" id="L545">        return price(new OceanusPrice(pPrice, theAccount.getCurrency()));</span>
+    }
+
+    /**
+     * Set a tag.
+     *
+     * @param pTag the tag for the transaction.
+     * @return the builder
+     */
+    public MoneyWiseTransactionBuilder tag(final MoneyWiseTransTag pTag) {
+<span class="nc bnc" id="L555" title="All 2 branches missed.">        if (!theTags.contains(pTag)) {</span>
+<span class="nc" id="L556">            theTags.add(pTag);</span>
+        }
+<span class="nc" id="L558">        return this;</span>
+    }
+
+    /**
+     * Set a tag.
+     *
+     * @param pTag the tag for the transaction.
+     * @return the builder
+     */
+    public MoneyWiseTransactionBuilder tag(final String pTag) {
+<span class="nc" id="L568">        return tag(theDataSet.getTransactionTags().findItemByName(pTag));</span>
+    }
+
+    /**
+     * Set reconciled.
+     *
+     * @return the builder
+     */
+    public MoneyWiseTransactionBuilder reconciled() {
+<span class="nc" id="L577">        theReconciled = Boolean.TRUE;</span>
+<span class="nc" id="L578">        return this;</span>
+    }
+
+    /**
+     * Set reference.
+     *
+     * @param pRef the reference
+     * @return the builder
+     */
+    public MoneyWiseTransactionBuilder reference(final String pRef) {
+<span class="nc" id="L588">        theReference = pRef;</span>
+<span class="nc" id="L589">        return this;</span>
+    }
+
+    /**
+     * Set comment.
+     *
+     * @param pComment the comment
+     * @return the builder
+     */
+    public MoneyWiseTransactionBuilder comment(final String pComment) {
+<span class="nc" id="L599">        theComment = pComment;</span>
+<span class="nc" id="L600">        return this;</span>
+    }
+
+    /**
+     * Build the transaction.
+     *
+     * @return the new Transaction
+     * @throws OceanusException on error
+     */
+    public MoneyWiseTransaction build() throws OceanusException {
+        /* Create the transaction */
+<span class="fc" id="L611">        final MoneyWiseTransaction myTrans = theDataSet.getTransactions().addNewItem();</span>
+<span class="fc" id="L612">        myTrans.setDate(theDate);</span>
+<span class="fc" id="L613">        myTrans.setAccount(theAccount);</span>
+<span class="fc" id="L614">        myTrans.setPartner(thePartner);</span>
+<span class="fc" id="L615">        myTrans.setDirection(theDirection);</span>
+<span class="fc" id="L616">        myTrans.setCategory(theCategory);</span>
+<span class="fc" id="L617">        myTrans.setAmount(theAmount);</span>
+<span class="fc" id="L618">        myTrans.setReconciled(theReconciled);</span>
+
+        /* Add details */
+<span class="fc" id="L621">        myTrans.setComments(theComment);</span>
+<span class="fc" id="L622">        myTrans.setReference(theReference);</span>
+<span class="fc" id="L623">        myTrans.setTaxCredit(theTaxCredit);</span>
+<span class="fc" id="L624">        myTrans.setEmployerNatIns(theErNI);</span>
+<span class="fc" id="L625">        myTrans.setEmployeeNatIns(theEeNI);</span>
+<span class="fc" id="L626">        myTrans.setDeemedBenefit(theBenefit);</span>
+<span class="fc" id="L627">        myTrans.setWithheld(theWithheld);</span>
+<span class="fc" id="L628">        myTrans.setPartnerAmount(thePartnerAmount);</span>
+<span class="fc" id="L629">        myTrans.setAccountDeltaUnits(theAccountUnits);</span>
+<span class="fc" id="L630">        myTrans.setPartnerDeltaUnits(thePartnerUnits);</span>
+<span class="fc" id="L631">        myTrans.setDilution(theDilution);</span>
+<span class="fc" id="L632">        myTrans.setYears(theQualifyYears);</span>
+<span class="fc" id="L633">        myTrans.setReturnedCash(theReturnedCash);</span>
+<span class="fc" id="L634">        myTrans.setReturnedCashAccount(theReturnedCashAccount);</span>
+<span class="fc" id="L635">        myTrans.setPrice(thePrice);</span>
+<span class="fc" id="L636">        myTrans.setTransactionTags(theTags);</span>
+
+        /* Reset the values */
+<span class="fc" id="L639">        reset();</span>
+
+        /* Check for errors */
+<span class="fc" id="L642">        myTrans.validate();</span>
+<span class="fc bfc" id="L643" title="All 2 branches covered.">        if (myTrans.hasErrors()) {</span>
+<span class="fc" id="L644">            myTrans.removeItem();</span>
+<span class="fc" id="L645">            throw new MoneyWiseDataException(myTrans, &quot;Failed validation&quot;);</span>
+        }
+
+        /* Return the transaction */
+<span class="fc" id="L649">        return myTrans;</span>
+    }
+
+    /**
+     * Reset the builder.
+     */
+    public void reset() {
+        /* Reset values */
+<span class="fc" id="L657">        theDate = null;</span>
+<span class="fc" id="L658">        theAccount = null;</span>
+<span class="fc" id="L659">        thePartner = null;</span>
+<span class="fc" id="L660">        theDirection = null;</span>
+<span class="fc" id="L661">        theCategory = null;</span>
+<span class="fc" id="L662">        theAmount = null;</span>
+<span class="fc" id="L663">        theComment = null;</span>
+<span class="fc" id="L664">        theReference = null;</span>
+<span class="fc" id="L665">        theTaxCredit = null;</span>
+<span class="fc" id="L666">        theErNI = null;</span>
+<span class="fc" id="L667">        theEeNI = null;</span>
+<span class="fc" id="L668">        theBenefit = null;</span>
+<span class="fc" id="L669">        theWithheld = null;</span>
+<span class="fc" id="L670">        thePartnerAmount = null;</span>
+<span class="fc" id="L671">        theAccountUnits = null;</span>
+<span class="fc" id="L672">        thePartnerUnits = null;</span>
+<span class="fc" id="L673">        theDilution = null;</span>
+<span class="fc" id="L674">        theQualifyYears = null;</span>
+<span class="fc" id="L675">        theReturnedCash = null;</span>
+<span class="fc" id="L676">        theReturnedCashAccount = null;</span>
+<span class="fc" id="L677">        thePrice = null;</span>
+<span class="fc" id="L678">        theTags.clear();</span>
+<span class="fc" id="L679">        theReconciled = Boolean.FALSE;</span>
+<span class="fc" id="L680">    }</span>
+
+    /**
+     * Resolve transactionAsset.
+     *
+     * @param pAsset the asset name
+     * @return the asset
+     */
+    public MoneyWiseTransAsset resolveTransactionAsset(final String pAsset) {
+        /* Look fot security holding */
+<span class="fc" id="L690">        final int myIndex = pAsset.lastIndexOf(':');</span>
+<span class="fc bfc" id="L691" title="All 2 branches covered.">        if (myIndex != -1) {</span>
+            /* Split into portfolio and security */
+<span class="fc" id="L693">            final MoneyWiseSecurity mySec = theDataSet.getSecurities().findItemByName(pAsset.substring(myIndex + 1));</span>
+<span class="fc" id="L694">            final MoneyWisePortfolio myPort = theDataSet.getPortfolios().findItemByName(pAsset.substring(0, myIndex));</span>
+
+            /* Build security holding */
+<span class="pc bpc" id="L697" title="2 of 4 branches missed.">            if (mySec != null &amp;&amp; myPort != null) {</span>
+<span class="fc" id="L698">                return theDataSet.getPortfolios().getSecurityHoldingsMap().declareHolding(myPort, mySec);</span>
+            } else {
+<span class="nc" id="L700">                return null;</span>
+            }
+
+        } else {
+            /* Look for Payee */
+<span class="fc" id="L705">            MoneyWiseTransAsset myAsset = theDataSet.getPayees().findItemByName(pAsset);</span>
+<span class="fc bfc" id="L706" title="All 2 branches covered.">            if (myAsset != null) {</span>
+<span class="fc" id="L707">                return myAsset;</span>
+            }
+
+            /* Look for Deposit */
+<span class="fc" id="L711">            myAsset = theDataSet.getDeposits().findItemByName(pAsset);</span>
+<span class="fc bfc" id="L712" title="All 2 branches covered.">            if (myAsset != null) {</span>
+<span class="fc" id="L713">                return myAsset;</span>
+            }
+
+            /* Look for Cash */
+<span class="fc" id="L717">            myAsset = theDataSet.getCash().findItemByName(pAsset);</span>
+<span class="fc bfc" id="L718" title="All 2 branches covered.">            if (myAsset != null) {</span>
+<span class="fc" id="L719">                return myAsset;</span>
+            }
+
+            /* Look for Loan */
+<span class="fc" id="L723">            myAsset = theDataSet.getLoans().findItemByName(pAsset);</span>
+<span class="pc bpc" id="L724" title="1 of 2 branches missed.">            if (myAsset != null) {</span>
+<span class="fc" id="L725">                return myAsset;</span>
+            }
+
+            /* Look for Portfolio */
+<span class="nc" id="L729">            return theDataSet.getPortfolios().findItemByName(pAsset);</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

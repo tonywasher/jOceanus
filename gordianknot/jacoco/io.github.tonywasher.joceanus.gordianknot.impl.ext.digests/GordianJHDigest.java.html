@@ -1,0 +1,751 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianJHDigest.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.impl.ext.digests</a> &gt; <span class="el_source">GordianJHDigest.java</span></div><h1>GordianJHDigest.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.gordianknot.impl.ext.digests;
+
+import org.bouncycastle.crypto.ExtendedDigest;
+import org.bouncycastle.util.Memoable;
+
+import java.util.Arrays;
+
+/**
+ * JH Digest.
+ * &lt;p&gt;
+ * The embedded JHFastDigest is ported from the C implementation in jh_bitslice_ref64.h in the Round
+ * 3 submission package at http://www3.ntu.edu.sg with tweaks to interface to the BouncyCastle
+ * libraries
+ */
+@SuppressWarnings({&quot;checkstyle:MagicNumber&quot;, &quot;checkstyle:JavadocVariable&quot;})
+public class GordianJHDigest
+        implements ExtendedDigest, Memoable {
+    /**
+     * The underlying digest.
+     */
+    private final GordianJHFastDigest theDigest;
+
+    /**
+     * The digest length.
+     */
+    private final int theDigestLen;
+
+    /**
+     * Constructor.
+     *
+     * @param pHashBitLen the hash bit length
+     */
+<span class="fc" id="L49">    public GordianJHDigest(final int pHashBitLen) {</span>
+<span class="fc" id="L50">        theDigest = new GordianJHFastDigest(pHashBitLen);</span>
+<span class="fc" id="L51">        theDigestLen = pHashBitLen / Byte.SIZE;</span>
+<span class="fc" id="L52">    }</span>
+
+    /**
+     * Constructor.
+     *
+     * @param pDigest the digest to copy
+     */
+<span class="fc" id="L59">    public GordianJHDigest(final GordianJHDigest pDigest) {</span>
+<span class="fc" id="L60">        theDigestLen = pDigest.theDigestLen;</span>
+<span class="fc" id="L61">        theDigest = new GordianJHFastDigest(theDigestLen * Byte.SIZE);</span>
+<span class="fc" id="L62">        theDigest.copyIn(pDigest.theDigest);</span>
+<span class="fc" id="L63">    }</span>
+
+    @Override
+    public int doFinal(final byte[] pHash, final int pOffset) {
+<span class="fc" id="L67">        theDigest.finalise(pHash, pOffset);</span>
+<span class="fc" id="L68">        return getDigestSize();</span>
+    }
+
+    @Override
+    public String getAlgorithmName() {
+<span class="fc" id="L73">        return &quot;JH&quot;;</span>
+    }
+
+    @Override
+    public int getDigestSize() {
+<span class="fc" id="L78">        return theDigestLen;</span>
+    }
+
+    @Override
+    public void reset() {
+<span class="fc" id="L83">        theDigest.reset();</span>
+<span class="fc" id="L84">    }</span>
+
+    @Override
+    public void update(final byte arg0) {
+<span class="fc" id="L88">        final byte[] myByte = new byte[]</span>
+                {arg0};
+<span class="fc" id="L90">        update(myByte, 0, 1);</span>
+<span class="fc" id="L91">    }</span>
+
+    @Override
+    public void update(final byte[] pData, final int pOffset, final int pLength) {
+<span class="fc" id="L95">        theDigest.update(pData, pOffset, ((long) pLength) * Byte.SIZE);</span>
+<span class="fc" id="L96">    }</span>
+
+    @Override
+    public int getByteLength() {
+<span class="fc" id="L100">        return theDigest.getBufferSize();</span>
+    }
+
+    @Override
+    public GordianJHDigest copy() {
+<span class="fc" id="L105">        return new GordianJHDigest(this);</span>
+    }
+
+    @Override
+    public void reset(final Memoable pState) {
+<span class="fc" id="L110">        final GordianJHDigest d = (GordianJHDigest) pState;</span>
+<span class="fc" id="L111">        theDigest.copyIn(d.theDigest);</span>
+<span class="fc" id="L112">    }</span>
+
+    /**
+     * JH Digest Fast version.
+     * &lt;p&gt;
+     * Ported from the C implementation in jh_bitslice_ref64.h in the Round 3 submission package at
+     * http://www3.ntu.edu.sg with tweaks to interface to the BouncyCastle libraries
+     */
+    private static class GordianJHFastDigest {
+        /**
+         * The state.
+         */
+        private int hashbitlen; /* the message digest size */
+        private boolean initialised;
+        private long databitlen; /* the message size in bits */
+        private long datasizeInBuffer; /* the size of the message remained in buffer; */
+        /* assumed to be multiple of 8bits except for the last partial block at the end of the message */
+
+<span class="fc" id="L130">        private long[][] x = new long[8][2]; // the 1024-bit state, ( x[i][0] || x[i][1] ) is the ith row of the state in the pseudocode */</span>
+<span class="fc" id="L131">        private byte[] buffer = new byte[64]; // the 512-bit message block to be hashed; */</span>
+
+        /* The initial hash value H(0) */
+<span class="fc" id="L134">        private static final byte[] JH224_H0 = {</span>
+                (byte) 0x2d, (byte) 0xfe, (byte) 0xdd, (byte) 0x62, (byte) 0xf9, (byte) 0x9a, (byte) 0x98, (byte) 0xac, (byte) 0xae, (byte) 0x7c, (byte) 0xac, (byte) 0xd6, (byte) 0x19, (byte) 0xd6,
+                (byte) 0x34, (byte) 0xe7, (byte) 0xa4, (byte) 0x83, (byte) 0x10, (byte) 0x5, (byte) 0xbc, (byte) 0x30, (byte) 0x12, (byte) 0x16, (byte) 0xb8, (byte) 0x60, (byte) 0x38, (byte) 0xc6,
+                (byte) 0xc9, (byte) 0x66, (byte) 0x14, (byte) 0x94, (byte) 0x66, (byte) 0xd9, (byte) 0x89, (byte) 0x9f, (byte) 0x25, (byte) 0x80, (byte) 0x70, (byte) 0x6f, (byte) 0xce, (byte) 0x9e,
+                (byte) 0xa3, (byte) 0x1b, (byte) 0x1d, (byte) 0x9b, (byte) 0x1a, (byte) 0xdc, (byte) 0x11, (byte) 0xe8, (byte) 0x32, (byte) 0x5f, (byte) 0x7b, (byte) 0x36, (byte) 0x6e, (byte) 0x10,
+                (byte) 0xf9, (byte) 0x94, (byte) 0x85, (byte) 0x7f, (byte) 0x2, (byte) 0xfa, (byte) 0x6, (byte) 0xc1, (byte) 0x1b, (byte) 0x4f, (byte) 0x1b, (byte) 0x5c, (byte) 0xd8, (byte) 0xc8,
+                (byte) 0x40, (byte) 0xb3, (byte) 0x97, (byte) 0xf6, (byte) 0xa1, (byte) 0x7f, (byte) 0x6e, (byte) 0x73, (byte) 0x80, (byte) 0x99, (byte) 0xdc, (byte) 0xdf, (byte) 0x93, (byte) 0xa5,
+                (byte) 0xad, (byte) 0xea, (byte) 0xa3, (byte) 0xd3, (byte) 0xa4, (byte) 0x31, (byte) 0xe8, (byte) 0xde, (byte) 0xc9, (byte) 0x53, (byte) 0x9a, (byte) 0x68, (byte) 0x22, (byte) 0xb4,
+                (byte) 0xa9, (byte) 0x8a, (byte) 0xec, (byte) 0x86, (byte) 0xa1, (byte) 0xe4, (byte) 0xd5, (byte) 0x74, (byte) 0xac, (byte) 0x95, (byte) 0x9c, (byte) 0xe5, (byte) 0x6c, (byte) 0xf0,
+                (byte) 0x15, (byte) 0x96, (byte) 0xd, (byte) 0xea, (byte) 0xb5, (byte) 0xab, (byte) 0x2b, (byte) 0xbf, (byte) 0x96, (byte) 0x11, (byte) 0xdc, (byte) 0xf0, (byte) 0xdd, (byte) 0x64,
+                (byte) 0xea, (byte) 0x6e
+        };
+<span class="fc" id="L146">        private static final byte[] JH256_H0 = {</span>
+                (byte) 0xeb, (byte) 0x98, (byte) 0xa3, (byte) 0x41, (byte) 0x2c, (byte) 0x20, (byte) 0xd3, (byte) 0xeb, (byte) 0x92, (byte) 0xcd, (byte) 0xbe, (byte) 0x7b, (byte) 0x9c, (byte) 0xb2,
+                (byte) 0x45, (byte) 0xc1, (byte) 0x1c, (byte) 0x93, (byte) 0x51, (byte) 0x91, (byte) 0x60, (byte) 0xd4, (byte) 0xc7, (byte) 0xfa, (byte) 0x26, (byte) 0x0, (byte) 0x82, (byte) 0xd6,
+                (byte) 0x7e, (byte) 0x50, (byte) 0x8a, (byte) 0x3, (byte) 0xa4, (byte) 0x23, (byte) 0x9e, (byte) 0x26, (byte) 0x77, (byte) 0x26, (byte) 0xb9, (byte) 0x45, (byte) 0xe0, (byte) 0xfb,
+                (byte) 0x1a, (byte) 0x48, (byte) 0xd4, (byte) 0x1a, (byte) 0x94, (byte) 0x77, (byte) 0xcd, (byte) 0xb5, (byte) 0xab, (byte) 0x26, (byte) 0x2, (byte) 0x6b, (byte) 0x17, (byte) 0x7a,
+                (byte) 0x56, (byte) 0xf0, (byte) 0x24, (byte) 0x42, (byte) 0xf, (byte) 0xff, (byte) 0x2f, (byte) 0xa8, (byte) 0x71, (byte) 0xa3, (byte) 0x96, (byte) 0x89, (byte) 0x7f, (byte) 0x2e,
+                (byte) 0x4d, (byte) 0x75, (byte) 0x1d, (byte) 0x14, (byte) 0x49, (byte) 0x8, (byte) 0xf7, (byte) 0x7d, (byte) 0xe2, (byte) 0x62, (byte) 0x27, (byte) 0x76, (byte) 0x95, (byte) 0xf7,
+                (byte) 0x76, (byte) 0x24, (byte) 0x8f, (byte) 0x94, (byte) 0x87, (byte) 0xd5, (byte) 0xb6, (byte) 0x57, (byte) 0x47, (byte) 0x80, (byte) 0x29, (byte) 0x6c, (byte) 0x5c, (byte) 0x5e,
+                (byte) 0x27, (byte) 0x2d, (byte) 0xac, (byte) 0x8e, (byte) 0xd, (byte) 0x6c, (byte) 0x51, (byte) 0x84, (byte) 0x50, (byte) 0xc6, (byte) 0x57, (byte) 0x5, (byte) 0x7a, (byte) 0xf,
+                (byte) 0x7b, (byte) 0xe4, (byte) 0xd3, (byte) 0x67, (byte) 0x70, (byte) 0x24, (byte) 0x12, (byte) 0xea, (byte) 0x89, (byte) 0xe3, (byte) 0xab, (byte) 0x13, (byte) 0xd3, (byte) 0x1c,
+                (byte) 0xd7, (byte) 0x69
+        };
+<span class="fc" id="L158">        private static final byte[] JH384_H0 = {</span>
+                (byte) 0x48, (byte) 0x1e, (byte) 0x3b, (byte) 0xc6, (byte) 0xd8, (byte) 0x13, (byte) 0x39, (byte) 0x8a, (byte) 0x6d, (byte) 0x3b, (byte) 0x5e, (byte) 0x89, (byte) 0x4a, (byte) 0xde,
+                (byte) 0x87, (byte) 0x9b, (byte) 0x63, (byte) 0xfa, (byte) 0xea, (byte) 0x68, (byte) 0xd4, (byte) 0x80, (byte) 0xad, (byte) 0x2e, (byte) 0x33, (byte) 0x2c, (byte) 0xcb, (byte) 0x21,
+                (byte) 0x48, (byte) 0xf, (byte) 0x82, (byte) 0x67, (byte) 0x98, (byte) 0xae, (byte) 0xc8, (byte) 0x4d, (byte) 0x90, (byte) 0x82, (byte) 0xb9, (byte) 0x28, (byte) 0xd4, (byte) 0x55,
+                (byte) 0xea, (byte) 0x30, (byte) 0x41, (byte) 0x11, (byte) 0x42, (byte) 0x49, (byte) 0x36, (byte) 0xf5, (byte) 0x55, (byte) 0xb2, (byte) 0x92, (byte) 0x48, (byte) 0x47, (byte) 0xec,
+                (byte) 0xc7, (byte) 0x25, (byte) 0xa, (byte) 0x93, (byte) 0xba, (byte) 0xf4, (byte) 0x3c, (byte) 0xe1, (byte) 0x56, (byte) 0x9b, (byte) 0x7f, (byte) 0x8a, (byte) 0x27, (byte) 0xdb,
+                (byte) 0x45, (byte) 0x4c, (byte) 0x9e, (byte) 0xfc, (byte) 0xbd, (byte) 0x49, (byte) 0x63, (byte) 0x97, (byte) 0xaf, (byte) 0xe, (byte) 0x58, (byte) 0x9f, (byte) 0xc2, (byte) 0x7d,
+                (byte) 0x26, (byte) 0xaa, (byte) 0x80, (byte) 0xcd, (byte) 0x80, (byte) 0xc0, (byte) 0x8b, (byte) 0x8c, (byte) 0x9d, (byte) 0xeb, (byte) 0x2e, (byte) 0xda, (byte) 0x8a, (byte) 0x79,
+                (byte) 0x81, (byte) 0xe8, (byte) 0xf8, (byte) 0xd5, (byte) 0x37, (byte) 0x3a, (byte) 0xf4, (byte) 0x39, (byte) 0x67, (byte) 0xad, (byte) 0xdd, (byte) 0xd1, (byte) 0x7a, (byte) 0x71,
+                (byte) 0xa9, (byte) 0xb4, (byte) 0xd3, (byte) 0xbd, (byte) 0xa4, (byte) 0x75, (byte) 0xd3, (byte) 0x94, (byte) 0x97, (byte) 0x6c, (byte) 0x3f, (byte) 0xba, (byte) 0x98, (byte) 0x42,
+                (byte) 0x73, (byte) 0x7f
+        };
+<span class="fc" id="L170">        private static final byte[] JH512_H0 = {</span>
+                (byte) 0x6f, (byte) 0xd1, (byte) 0x4b, (byte) 0x96, (byte) 0x3e, (byte) 0x0, (byte) 0xaa, (byte) 0x17, (byte) 0x63, (byte) 0x6a, (byte) 0x2e, (byte) 0x5, (byte) 0x7a, (byte) 0x15,
+                (byte) 0xd5, (byte) 0x43, (byte) 0x8a, (byte) 0x22, (byte) 0x5e, (byte) 0x8d, (byte) 0xc, (byte) 0x97, (byte) 0xef, (byte) 0xb, (byte) 0xe9, (byte) 0x34, (byte) 0x12, (byte) 0x59,
+                (byte) 0xf2, (byte) 0xb3, (byte) 0xc3, (byte) 0x61, (byte) 0x89, (byte) 0x1d, (byte) 0xa0, (byte) 0xc1, (byte) 0x53, (byte) 0x6f, (byte) 0x80, (byte) 0x1e, (byte) 0x2a, (byte) 0xa9,
+                (byte) 0x5, (byte) 0x6b, (byte) 0xea, (byte) 0x2b, (byte) 0x6d, (byte) 0x80, (byte) 0x58, (byte) 0x8e, (byte) 0xcc, (byte) 0xdb, (byte) 0x20, (byte) 0x75, (byte) 0xba, (byte) 0xa6,
+                (byte) 0xa9, (byte) 0xf, (byte) 0x3a, (byte) 0x76, (byte) 0xba, (byte) 0xf8, (byte) 0x3b, (byte) 0xf7, (byte) 0x1, (byte) 0x69, (byte) 0xe6, (byte) 0x5, (byte) 0x41, (byte) 0xe3,
+                (byte) 0x4a, (byte) 0x69, (byte) 0x46, (byte) 0xb5, (byte) 0x8a, (byte) 0x8e, (byte) 0x2e, (byte) 0x6f, (byte) 0xe6, (byte) 0x5a, (byte) 0x10, (byte) 0x47, (byte) 0xa7, (byte) 0xd0,
+                (byte) 0xc1, (byte) 0x84, (byte) 0x3c, (byte) 0x24, (byte) 0x3b, (byte) 0x6e, (byte) 0x71, (byte) 0xb1, (byte) 0x2d, (byte) 0x5a, (byte) 0xc1, (byte) 0x99, (byte) 0xcf, (byte) 0x57,
+                (byte) 0xf6, (byte) 0xec, (byte) 0x9d, (byte) 0xb1, (byte) 0xf8, (byte) 0x56, (byte) 0xa7, (byte) 0x6, (byte) 0x88, (byte) 0x7c, (byte) 0x57, (byte) 0x16, (byte) 0xb1, (byte) 0x56,
+                (byte) 0xe3, (byte) 0xc2, (byte) 0xfc, (byte) 0xdf, (byte) 0xe6, (byte) 0x85, (byte) 0x17, (byte) 0xfb, (byte) 0x54, (byte) 0x5a, (byte) 0x46, (byte) 0x78, (byte) 0xcc, (byte) 0x8c,
+                (byte) 0xdd, (byte) 0x4b
+        };
+
+        /* 42 round constants, each round constant is 32-byte (256-bit) */
+<span class="fc" id="L184">        private static final byte[][] E_8_BITSLICE_ROUNDCONSTANT = {</span>
+                {(byte) 0x72, (byte) 0xd5, (byte) 0xde, (byte) 0xa2, (byte) 0xdf, (byte) 0x15, (byte) 0xf8, (byte) 0x67, (byte) 0x7b, (byte) 0x84, (byte) 0x15, (byte) 0xa, (byte) 0xb7, (byte) 0x23,
+                        (byte) 0x15, (byte) 0x57, (byte) 0x81, (byte) 0xab, (byte) 0xd6, (byte) 0x90, (byte) 0x4d, (byte) 0x5a, (byte) 0x87, (byte) 0xf6, (byte) 0x4e, (byte) 0x9f, (byte) 0x4f,
+                        (byte) 0xc5, (byte) 0xc3, (byte) 0xd1, (byte) 0x2b, (byte) 0x40},
+                {(byte) 0xea, (byte) 0x98, (byte) 0x3a, (byte) 0xe0, (byte) 0x5c, (byte) 0x45, (byte) 0xfa, (byte) 0x9c, (byte) 0x3, (byte) 0xc5, (byte) 0xd2, (byte) 0x99, (byte) 0x66, (byte) 0xb2,
+                        (byte) 0x99, (byte) 0x9a, (byte) 0x66, (byte) 0x2, (byte) 0x96, (byte) 0xb4, (byte) 0xf2, (byte) 0xbb, (byte) 0x53, (byte) 0x8a, (byte) 0xb5, (byte) 0x56, (byte) 0x14,
+                        (byte) 0x1a, (byte) 0x88, (byte) 0xdb, (byte) 0xa2, (byte) 0x31},
+                {(byte) 0x3, (byte) 0xa3, (byte) 0x5a, (byte) 0x5c, (byte) 0x9a, (byte) 0x19, (byte) 0xe, (byte) 0xdb, (byte) 0x40, (byte) 0x3f, (byte) 0xb2, (byte) 0xa, (byte) 0x87, (byte) 0xc1,
+                        (byte) 0x44, (byte) 0x10, (byte) 0x1c, (byte) 0x5, (byte) 0x19, (byte) 0x80, (byte) 0x84, (byte) 0x9e, (byte) 0x95, (byte) 0x1d, (byte) 0x6f, (byte) 0x33, (byte) 0xeb,
+                        (byte) 0xad, (byte) 0x5e, (byte) 0xe7, (byte) 0xcd, (byte) 0xdc},
+                {(byte) 0x10, (byte) 0xba, (byte) 0x13, (byte) 0x92, (byte) 0x2, (byte) 0xbf, (byte) 0x6b, (byte) 0x41, (byte) 0xdc, (byte) 0x78, (byte) 0x65, (byte) 0x15, (byte) 0xf7, (byte) 0xbb,
+                        (byte) 0x27, (byte) 0xd0, (byte) 0xa, (byte) 0x2c, (byte) 0x81, (byte) 0x39, (byte) 0x37, (byte) 0xaa, (byte) 0x78, (byte) 0x50, (byte) 0x3f, (byte) 0x1a, (byte) 0xbf,
+                        (byte) 0xd2, (byte) 0x41, (byte) 0x0, (byte) 0x91, (byte) 0xd3},
+                {(byte) 0x42, (byte) 0x2d, (byte) 0x5a, (byte) 0xd, (byte) 0xf6, (byte) 0xcc, (byte) 0x7e, (byte) 0x90, (byte) 0xdd, (byte) 0x62, (byte) 0x9f, (byte) 0x9c, (byte) 0x92, (byte) 0xc0,
+                        (byte) 0x97, (byte) 0xce, (byte) 0x18, (byte) 0x5c, (byte) 0xa7, (byte) 0xb, (byte) 0xc7, (byte) 0x2b, (byte) 0x44, (byte) 0xac, (byte) 0xd1, (byte) 0xdf, (byte) 0x65,
+                        (byte) 0xd6, (byte) 0x63, (byte) 0xc6, (byte) 0xfc, (byte) 0x23},
+                {(byte) 0x97, (byte) 0x6e, (byte) 0x6c, (byte) 0x3, (byte) 0x9e, (byte) 0xe0, (byte) 0xb8, (byte) 0x1a, (byte) 0x21, (byte) 0x5, (byte) 0x45, (byte) 0x7e, (byte) 0x44, (byte) 0x6c,
+                        (byte) 0xec, (byte) 0xa8, (byte) 0xee, (byte) 0xf1, (byte) 0x3, (byte) 0xbb, (byte) 0x5d, (byte) 0x8e, (byte) 0x61, (byte) 0xfa, (byte) 0xfd, (byte) 0x96, (byte) 0x97,
+                        (byte) 0xb2, (byte) 0x94, (byte) 0x83, (byte) 0x81, (byte) 0x97},
+                {(byte) 0x4a, (byte) 0x8e, (byte) 0x85, (byte) 0x37, (byte) 0xdb, (byte) 0x3, (byte) 0x30, (byte) 0x2f, (byte) 0x2a, (byte) 0x67, (byte) 0x8d, (byte) 0x2d, (byte) 0xfb, (byte) 0x9f,
+                        (byte) 0x6a, (byte) 0x95, (byte) 0x8a, (byte) 0xfe, (byte) 0x73, (byte) 0x81, (byte) 0xf8, (byte) 0xb8, (byte) 0x69, (byte) 0x6c, (byte) 0x8a, (byte) 0xc7, (byte) 0x72,
+                        (byte) 0x46, (byte) 0xc0, (byte) 0x7f, (byte) 0x42, (byte) 0x14},
+                {(byte) 0xc5, (byte) 0xf4, (byte) 0x15, (byte) 0x8f, (byte) 0xbd, (byte) 0xc7, (byte) 0x5e, (byte) 0xc4, (byte) 0x75, (byte) 0x44, (byte) 0x6f, (byte) 0xa7, (byte) 0x8f, (byte) 0x11,
+                        (byte) 0xbb, (byte) 0x80, (byte) 0x52, (byte) 0xde, (byte) 0x75, (byte) 0xb7, (byte) 0xae, (byte) 0xe4, (byte) 0x88, (byte) 0xbc, (byte) 0x82, (byte) 0xb8, (byte) 0x0,
+                        (byte) 0x1e, (byte) 0x98, (byte) 0xa6, (byte) 0xa3, (byte) 0xf4},
+                {(byte) 0x8e, (byte) 0xf4, (byte) 0x8f, (byte) 0x33, (byte) 0xa9, (byte) 0xa3, (byte) 0x63, (byte) 0x15, (byte) 0xaa, (byte) 0x5f, (byte) 0x56, (byte) 0x24, (byte) 0xd5, (byte) 0xb7,
+                        (byte) 0xf9, (byte) 0x89, (byte) 0xb6, (byte) 0xf1, (byte) 0xed, (byte) 0x20, (byte) 0x7c, (byte) 0x5a, (byte) 0xe0, (byte) 0xfd, (byte) 0x36, (byte) 0xca, (byte) 0xe9,
+                        (byte) 0x5a, (byte) 0x6, (byte) 0x42, (byte) 0x2c, (byte) 0x36},
+                {(byte) 0xce, (byte) 0x29, (byte) 0x35, (byte) 0x43, (byte) 0x4e, (byte) 0xfe, (byte) 0x98, (byte) 0x3d, (byte) 0x53, (byte) 0x3a, (byte) 0xf9, (byte) 0x74, (byte) 0x73, (byte) 0x9a,
+                        (byte) 0x4b, (byte) 0xa7, (byte) 0xd0, (byte) 0xf5, (byte) 0x1f, (byte) 0x59, (byte) 0x6f, (byte) 0x4e, (byte) 0x81, (byte) 0x86, (byte) 0xe, (byte) 0x9d, (byte) 0xad,
+                        (byte) 0x81, (byte) 0xaf, (byte) 0xd8, (byte) 0x5a, (byte) 0x9f},
+                {(byte) 0xa7, (byte) 0x5, (byte) 0x6, (byte) 0x67, (byte) 0xee, (byte) 0x34, (byte) 0x62, (byte) 0x6a, (byte) 0x8b, (byte) 0xb, (byte) 0x28, (byte) 0xbe, (byte) 0x6e, (byte) 0xb9,
+                        (byte) 0x17, (byte) 0x27, (byte) 0x47, (byte) 0x74, (byte) 0x7, (byte) 0x26, (byte) 0xc6, (byte) 0x80, (byte) 0x10, (byte) 0x3f, (byte) 0xe0, (byte) 0xa0, (byte) 0x7e,
+                        (byte) 0x6f, (byte) 0xc6, (byte) 0x7e, (byte) 0x48, (byte) 0x7b},
+                {(byte) 0xd, (byte) 0x55, (byte) 0xa, (byte) 0xa5, (byte) 0x4a, (byte) 0xf8, (byte) 0xa4, (byte) 0xc0, (byte) 0x91, (byte) 0xe3, (byte) 0xe7, (byte) 0x9f, (byte) 0x97, (byte) 0x8e,
+                        (byte) 0xf1, (byte) 0x9e, (byte) 0x86, (byte) 0x76, (byte) 0x72, (byte) 0x81, (byte) 0x50, (byte) 0x60, (byte) 0x8d, (byte) 0xd4, (byte) 0x7e, (byte) 0x9e, (byte) 0x5a,
+                        (byte) 0x41, (byte) 0xf3, (byte) 0xe5, (byte) 0xb0, (byte) 0x62},
+                {(byte) 0xfc, (byte) 0x9f, (byte) 0x1f, (byte) 0xec, (byte) 0x40, (byte) 0x54, (byte) 0x20, (byte) 0x7a, (byte) 0xe3, (byte) 0xe4, (byte) 0x1a, (byte) 0x0, (byte) 0xce, (byte) 0xf4,
+                        (byte) 0xc9, (byte) 0x84, (byte) 0x4f, (byte) 0xd7, (byte) 0x94, (byte) 0xf5, (byte) 0x9d, (byte) 0xfa, (byte) 0x95, (byte) 0xd8, (byte) 0x55, (byte) 0x2e, (byte) 0x7e,
+                        (byte) 0x11, (byte) 0x24, (byte) 0xc3, (byte) 0x54, (byte) 0xa5},
+                {(byte) 0x5b, (byte) 0xdf, (byte) 0x72, (byte) 0x28, (byte) 0xbd, (byte) 0xfe, (byte) 0x6e, (byte) 0x28, (byte) 0x78, (byte) 0xf5, (byte) 0x7f, (byte) 0xe2, (byte) 0xf, (byte) 0xa5,
+                        (byte) 0xc4, (byte) 0xb2, (byte) 0x5, (byte) 0x89, (byte) 0x7c, (byte) 0xef, (byte) 0xee, (byte) 0x49, (byte) 0xd3, (byte) 0x2e, (byte) 0x44, (byte) 0x7e, (byte) 0x93,
+                        (byte) 0x85, (byte) 0xeb, (byte) 0x28, (byte) 0x59, (byte) 0x7f},
+                {(byte) 0x70, (byte) 0x5f, (byte) 0x69, (byte) 0x37, (byte) 0xb3, (byte) 0x24, (byte) 0x31, (byte) 0x4a, (byte) 0x5e, (byte) 0x86, (byte) 0x28, (byte) 0xf1, (byte) 0x1d, (byte) 0xd6,
+                        (byte) 0xe4, (byte) 0x65, (byte) 0xc7, (byte) 0x1b, (byte) 0x77, (byte) 0x4, (byte) 0x51, (byte) 0xb9, (byte) 0x20, (byte) 0xe7, (byte) 0x74, (byte) 0xfe, (byte) 0x43,
+                        (byte) 0xe8, (byte) 0x23, (byte) 0xd4, (byte) 0x87, (byte) 0x8a},
+                {(byte) 0x7d, (byte) 0x29, (byte) 0xe8, (byte) 0xa3, (byte) 0x92, (byte) 0x76, (byte) 0x94, (byte) 0xf2, (byte) 0xdd, (byte) 0xcb, (byte) 0x7a, (byte) 0x9, (byte) 0x9b, (byte) 0x30,
+                        (byte) 0xd9, (byte) 0xc1, (byte) 0x1d, (byte) 0x1b, (byte) 0x30, (byte) 0xfb, (byte) 0x5b, (byte) 0xdc, (byte) 0x1b, (byte) 0xe0, (byte) 0xda, (byte) 0x24, (byte) 0x49,
+                        (byte) 0x4f, (byte) 0xf2, (byte) 0x9c, (byte) 0x82, (byte) 0xbf},
+                {(byte) 0xa4, (byte) 0xe7, (byte) 0xba, (byte) 0x31, (byte) 0xb4, (byte) 0x70, (byte) 0xbf, (byte) 0xff, (byte) 0xd, (byte) 0x32, (byte) 0x44, (byte) 0x5, (byte) 0xde, (byte) 0xf8,
+                        (byte) 0xbc, (byte) 0x48, (byte) 0x3b, (byte) 0xae, (byte) 0xfc, (byte) 0x32, (byte) 0x53, (byte) 0xbb, (byte) 0xd3, (byte) 0x39, (byte) 0x45, (byte) 0x9f, (byte) 0xc3,
+                        (byte) 0xc1, (byte) 0xe0, (byte) 0x29, (byte) 0x8b, (byte) 0xa0},
+                {(byte) 0xe5, (byte) 0xc9, (byte) 0x5, (byte) 0xfd, (byte) 0xf7, (byte) 0xae, (byte) 0x9, (byte) 0xf, (byte) 0x94, (byte) 0x70, (byte) 0x34, (byte) 0x12, (byte) 0x42, (byte) 0x90,
+                        (byte) 0xf1, (byte) 0x34, (byte) 0xa2, (byte) 0x71, (byte) 0xb7, (byte) 0x1, (byte) 0xe3, (byte) 0x44, (byte) 0xed, (byte) 0x95, (byte) 0xe9, (byte) 0x3b, (byte) 0x8e,
+                        (byte) 0x36, (byte) 0x4f, (byte) 0x2f, (byte) 0x98, (byte) 0x4a},
+                {(byte) 0x88, (byte) 0x40, (byte) 0x1d, (byte) 0x63, (byte) 0xa0, (byte) 0x6c, (byte) 0xf6, (byte) 0x15, (byte) 0x47, (byte) 0xc1, (byte) 0x44, (byte) 0x4b, (byte) 0x87, (byte) 0x52,
+                        (byte) 0xaf, (byte) 0xff, (byte) 0x7e, (byte) 0xbb, (byte) 0x4a, (byte) 0xf1, (byte) 0xe2, (byte) 0xa, (byte) 0xc6, (byte) 0x30, (byte) 0x46, (byte) 0x70, (byte) 0xb6,
+                        (byte) 0xc5, (byte) 0xcc, (byte) 0x6e, (byte) 0x8c, (byte) 0xe6},
+                {(byte) 0xa4, (byte) 0xd5, (byte) 0xa4, (byte) 0x56, (byte) 0xbd, (byte) 0x4f, (byte) 0xca, (byte) 0x0, (byte) 0xda, (byte) 0x9d, (byte) 0x84, (byte) 0x4b, (byte) 0xc8, (byte) 0x3e,
+                        (byte) 0x18, (byte) 0xae, (byte) 0x73, (byte) 0x57, (byte) 0xce, (byte) 0x45, (byte) 0x30, (byte) 0x64, (byte) 0xd1, (byte) 0xad, (byte) 0xe8, (byte) 0xa6, (byte) 0xce,
+                        (byte) 0x68, (byte) 0x14, (byte) 0x5c, (byte) 0x25, (byte) 0x67},
+                {(byte) 0xa3, (byte) 0xda, (byte) 0x8c, (byte) 0xf2, (byte) 0xcb, (byte) 0xe, (byte) 0xe1, (byte) 0x16, (byte) 0x33, (byte) 0xe9, (byte) 0x6, (byte) 0x58, (byte) 0x9a, (byte) 0x94,
+                        (byte) 0x99, (byte) 0x9a, (byte) 0x1f, (byte) 0x60, (byte) 0xb2, (byte) 0x20, (byte) 0xc2, (byte) 0x6f, (byte) 0x84, (byte) 0x7b, (byte) 0xd1, (byte) 0xce, (byte) 0xac,
+                        (byte) 0x7f, (byte) 0xa0, (byte) 0xd1, (byte) 0x85, (byte) 0x18},
+                {(byte) 0x32, (byte) 0x59, (byte) 0x5b, (byte) 0xa1, (byte) 0x8d, (byte) 0xdd, (byte) 0x19, (byte) 0xd3, (byte) 0x50, (byte) 0x9a, (byte) 0x1c, (byte) 0xc0, (byte) 0xaa, (byte) 0xa5,
+                        (byte) 0xb4, (byte) 0x46, (byte) 0x9f, (byte) 0x3d, (byte) 0x63, (byte) 0x67, (byte) 0xe4, (byte) 0x4, (byte) 0x6b, (byte) 0xba, (byte) 0xf6, (byte) 0xca, (byte) 0x19,
+                        (byte) 0xab, (byte) 0xb, (byte) 0x56, (byte) 0xee, (byte) 0x7e},
+                {(byte) 0x1f, (byte) 0xb1, (byte) 0x79, (byte) 0xea, (byte) 0xa9, (byte) 0x28, (byte) 0x21, (byte) 0x74, (byte) 0xe9, (byte) 0xbd, (byte) 0xf7, (byte) 0x35, (byte) 0x3b, (byte) 0x36,
+                        (byte) 0x51, (byte) 0xee, (byte) 0x1d, (byte) 0x57, (byte) 0xac, (byte) 0x5a, (byte) 0x75, (byte) 0x50, (byte) 0xd3, (byte) 0x76, (byte) 0x3a, (byte) 0x46, (byte) 0xc2,
+                        (byte) 0xfe, (byte) 0xa3, (byte) 0x7d, (byte) 0x70, (byte) 0x1},
+                {(byte) 0xf7, (byte) 0x35, (byte) 0xc1, (byte) 0xaf, (byte) 0x98, (byte) 0xa4, (byte) 0xd8, (byte) 0x42, (byte) 0x78, (byte) 0xed, (byte) 0xec, (byte) 0x20, (byte) 0x9e, (byte) 0x6b,
+                        (byte) 0x67, (byte) 0x79, (byte) 0x41, (byte) 0x83, (byte) 0x63, (byte) 0x15, (byte) 0xea, (byte) 0x3a, (byte) 0xdb, (byte) 0xa8, (byte) 0xfa, (byte) 0xc3, (byte) 0x3b,
+                        (byte) 0x4d, (byte) 0x32, (byte) 0x83, (byte) 0x2c, (byte) 0x83},
+                {(byte) 0xa7, (byte) 0x40, (byte) 0x3b, (byte) 0x1f, (byte) 0x1c, (byte) 0x27, (byte) 0x47, (byte) 0xf3, (byte) 0x59, (byte) 0x40, (byte) 0xf0, (byte) 0x34, (byte) 0xb7, (byte) 0x2d,
+                        (byte) 0x76, (byte) 0x9a, (byte) 0xe7, (byte) 0x3e, (byte) 0x4e, (byte) 0x6c, (byte) 0xd2, (byte) 0x21, (byte) 0x4f, (byte) 0xfd, (byte) 0xb8, (byte) 0xfd, (byte) 0x8d,
+                        (byte) 0x39, (byte) 0xdc, (byte) 0x57, (byte) 0x59, (byte) 0xef},
+                {(byte) 0x8d, (byte) 0x9b, (byte) 0xc, (byte) 0x49, (byte) 0x2b, (byte) 0x49, (byte) 0xeb, (byte) 0xda, (byte) 0x5b, (byte) 0xa2, (byte) 0xd7, (byte) 0x49, (byte) 0x68, (byte) 0xf3,
+                        (byte) 0x70, (byte) 0xd, (byte) 0x7d, (byte) 0x3b, (byte) 0xae, (byte) 0xd0, (byte) 0x7a, (byte) 0x8d, (byte) 0x55, (byte) 0x84, (byte) 0xf5, (byte) 0xa5, (byte) 0xe9,
+                        (byte) 0xf0, (byte) 0xe4, (byte) 0xf8, (byte) 0x8e, (byte) 0x65},
+                {(byte) 0xa0, (byte) 0xb8, (byte) 0xa2, (byte) 0xf4, (byte) 0x36, (byte) 0x10, (byte) 0x3b, (byte) 0x53, (byte) 0xc, (byte) 0xa8, (byte) 0x7, (byte) 0x9e, (byte) 0x75, (byte) 0x3e,
+                        (byte) 0xec, (byte) 0x5a, (byte) 0x91, (byte) 0x68, (byte) 0x94, (byte) 0x92, (byte) 0x56, (byte) 0xe8, (byte) 0x88, (byte) 0x4f, (byte) 0x5b, (byte) 0xb0, (byte) 0x5c,
+                        (byte) 0x55, (byte) 0xf8, (byte) 0xba, (byte) 0xbc, (byte) 0x4c},
+                {(byte) 0xe3, (byte) 0xbb, (byte) 0x3b, (byte) 0x99, (byte) 0xf3, (byte) 0x87, (byte) 0x94, (byte) 0x7b, (byte) 0x75, (byte) 0xda, (byte) 0xf4, (byte) 0xd6, (byte) 0x72, (byte) 0x6b,
+                        (byte) 0x1c, (byte) 0x5d, (byte) 0x64, (byte) 0xae, (byte) 0xac, (byte) 0x28, (byte) 0xdc, (byte) 0x34, (byte) 0xb3, (byte) 0x6d, (byte) 0x6c, (byte) 0x34, (byte) 0xa5,
+                        (byte) 0x50, (byte) 0xb8, (byte) 0x28, (byte) 0xdb, (byte) 0x71},
+                {(byte) 0xf8, (byte) 0x61, (byte) 0xe2, (byte) 0xf2, (byte) 0x10, (byte) 0x8d, (byte) 0x51, (byte) 0x2a, (byte) 0xe3, (byte) 0xdb, (byte) 0x64, (byte) 0x33, (byte) 0x59, (byte) 0xdd,
+                        (byte) 0x75, (byte) 0xfc, (byte) 0x1c, (byte) 0xac, (byte) 0xbc, (byte) 0xf1, (byte) 0x43, (byte) 0xce, (byte) 0x3f, (byte) 0xa2, (byte) 0x67, (byte) 0xbb, (byte) 0xd1,
+                        (byte) 0x3c, (byte) 0x2, (byte) 0xe8, (byte) 0x43, (byte) 0xb0},
+                {(byte) 0x33, (byte) 0xa, (byte) 0x5b, (byte) 0xca, (byte) 0x88, (byte) 0x29, (byte) 0xa1, (byte) 0x75, (byte) 0x7f, (byte) 0x34, (byte) 0x19, (byte) 0x4d, (byte) 0xb4, (byte) 0x16,
+                        (byte) 0x53, (byte) 0x5c, (byte) 0x92, (byte) 0x3b, (byte) 0x94, (byte) 0xc3, (byte) 0xe, (byte) 0x79, (byte) 0x4d, (byte) 0x1e, (byte) 0x79, (byte) 0x74, (byte) 0x75,
+                        (byte) 0xd7, (byte) 0xb6, (byte) 0xee, (byte) 0xaf, (byte) 0x3f},
+                {(byte) 0xea, (byte) 0xa8, (byte) 0xd4, (byte) 0xf7, (byte) 0xbe, (byte) 0x1a, (byte) 0x39, (byte) 0x21, (byte) 0x5c, (byte) 0xf4, (byte) 0x7e, (byte) 0x9, (byte) 0x4c, (byte) 0x23,
+                        (byte) 0x27, (byte) 0x51, (byte) 0x26, (byte) 0xa3, (byte) 0x24, (byte) 0x53, (byte) 0xba, (byte) 0x32, (byte) 0x3c, (byte) 0xd2, (byte) 0x44, (byte) 0xa3, (byte) 0x17,
+                        (byte) 0x4a, (byte) 0x6d, (byte) 0xa6, (byte) 0xd5, (byte) 0xad},
+                {(byte) 0xb5, (byte) 0x1d, (byte) 0x3e, (byte) 0xa6, (byte) 0xaf, (byte) 0xf2, (byte) 0xc9, (byte) 0x8, (byte) 0x83, (byte) 0x59, (byte) 0x3d, (byte) 0x98, (byte) 0x91, (byte) 0x6b,
+                        (byte) 0x3c, (byte) 0x56, (byte) 0x4c, (byte) 0xf8, (byte) 0x7c, (byte) 0xa1, (byte) 0x72, (byte) 0x86, (byte) 0x60, (byte) 0x4d, (byte) 0x46, (byte) 0xe2, (byte) 0x3e,
+                        (byte) 0xcc, (byte) 0x8, (byte) 0x6e, (byte) 0xc7, (byte) 0xf6},
+                {(byte) 0x2f, (byte) 0x98, (byte) 0x33, (byte) 0xb3, (byte) 0xb1, (byte) 0xbc, (byte) 0x76, (byte) 0x5e, (byte) 0x2b, (byte) 0xd6, (byte) 0x66, (byte) 0xa5, (byte) 0xef, (byte) 0xc4,
+                        (byte) 0xe6, (byte) 0x2a, (byte) 0x6, (byte) 0xf4, (byte) 0xb6, (byte) 0xe8, (byte) 0xbe, (byte) 0xc1, (byte) 0xd4, (byte) 0x36, (byte) 0x74, (byte) 0xee, (byte) 0x82,
+                        (byte) 0x15, (byte) 0xbc, (byte) 0xef, (byte) 0x21, (byte) 0x63},
+                {(byte) 0xfd, (byte) 0xc1, (byte) 0x4e, (byte) 0xd, (byte) 0xf4, (byte) 0x53, (byte) 0xc9, (byte) 0x69, (byte) 0xa7, (byte) 0x7d, (byte) 0x5a, (byte) 0xc4, (byte) 0x6, (byte) 0x58,
+                        (byte) 0x58, (byte) 0x26, (byte) 0x7e, (byte) 0xc1, (byte) 0x14, (byte) 0x16, (byte) 0x6, (byte) 0xe0, (byte) 0xfa, (byte) 0x16, (byte) 0x7e, (byte) 0x90, (byte) 0xaf,
+                        (byte) 0x3d, (byte) 0x28, (byte) 0x63, (byte) 0x9d, (byte) 0x3f},
+                {(byte) 0xd2, (byte) 0xc9, (byte) 0xf2, (byte) 0xe3, (byte) 0x0, (byte) 0x9b, (byte) 0xd2, (byte) 0xc, (byte) 0x5f, (byte) 0xaa, (byte) 0xce, (byte) 0x30, (byte) 0xb7, (byte) 0xd4,
+                        (byte) 0xc, (byte) 0x30, (byte) 0x74, (byte) 0x2a, (byte) 0x51, (byte) 0x16, (byte) 0xf2, (byte) 0xe0, (byte) 0x32, (byte) 0x98, (byte) 0xd, (byte) 0xeb, (byte) 0x30,
+                        (byte) 0xd8, (byte) 0xe3, (byte) 0xce, (byte) 0xf8, (byte) 0x9a},
+                {(byte) 0x4b, (byte) 0xc5, (byte) 0x9e, (byte) 0x7b, (byte) 0xb5, (byte) 0xf1, (byte) 0x79, (byte) 0x92, (byte) 0xff, (byte) 0x51, (byte) 0xe6, (byte) 0x6e, (byte) 0x4, (byte) 0x86,
+                        (byte) 0x68, (byte) 0xd3, (byte) 0x9b, (byte) 0x23, (byte) 0x4d, (byte) 0x57, (byte) 0xe6, (byte) 0x96, (byte) 0x67, (byte) 0x31, (byte) 0xcc, (byte) 0xe6, (byte) 0xa6,
+                        (byte) 0xf3, (byte) 0x17, (byte) 0xa, (byte) 0x75, (byte) 0x5},
+                {(byte) 0xb1, (byte) 0x76, (byte) 0x81, (byte) 0xd9, (byte) 0x13, (byte) 0x32, (byte) 0x6c, (byte) 0xce, (byte) 0x3c, (byte) 0x17, (byte) 0x52, (byte) 0x84, (byte) 0xf8, (byte) 0x5,
+                        (byte) 0xa2, (byte) 0x62, (byte) 0xf4, (byte) 0x2b, (byte) 0xcb, (byte) 0xb3, (byte) 0x78, (byte) 0x47, (byte) 0x15, (byte) 0x47, (byte) 0xff, (byte) 0x46, (byte) 0x54,
+                        (byte) 0x82, (byte) 0x23, (byte) 0x93, (byte) 0x6a, (byte) 0x48},
+                {(byte) 0x38, (byte) 0xdf, (byte) 0x58, (byte) 0x7, (byte) 0x4e, (byte) 0x5e, (byte) 0x65, (byte) 0x65, (byte) 0xf2, (byte) 0xfc, (byte) 0x7c, (byte) 0x89, (byte) 0xfc, (byte) 0x86,
+                        (byte) 0x50, (byte) 0x8e, (byte) 0x31, (byte) 0x70, (byte) 0x2e, (byte) 0x44, (byte) 0xd0, (byte) 0xb, (byte) 0xca, (byte) 0x86, (byte) 0xf0, (byte) 0x40, (byte) 0x9,
+                        (byte) 0xa2, (byte) 0x30, (byte) 0x78, (byte) 0x47, (byte) 0x4e},
+                {(byte) 0x65, (byte) 0xa0, (byte) 0xee, (byte) 0x39, (byte) 0xd1, (byte) 0xf7, (byte) 0x38, (byte) 0x83, (byte) 0xf7, (byte) 0x5e, (byte) 0xe9, (byte) 0x37, (byte) 0xe4, (byte) 0x2c,
+                        (byte) 0x3a, (byte) 0xbd, (byte) 0x21, (byte) 0x97, (byte) 0xb2, (byte) 0x26, (byte) 0x1, (byte) 0x13, (byte) 0xf8, (byte) 0x6f, (byte) 0xa3, (byte) 0x44, (byte) 0xed,
+                        (byte) 0xd1, (byte) 0xef, (byte) 0x9f, (byte) 0xde, (byte) 0xe7},
+                {(byte) 0x8b, (byte) 0xa0, (byte) 0xdf, (byte) 0x15, (byte) 0x76, (byte) 0x25, (byte) 0x92, (byte) 0xd9, (byte) 0x3c, (byte) 0x85, (byte) 0xf7, (byte) 0xf6, (byte) 0x12, (byte) 0xdc,
+                        (byte) 0x42, (byte) 0xbe, (byte) 0xd8, (byte) 0xa7, (byte) 0xec, (byte) 0x7c, (byte) 0xab, (byte) 0x27, (byte) 0xb0, (byte) 0x7e, (byte) 0x53, (byte) 0x8d, (byte) 0x7d,
+                        (byte) 0xda, (byte) 0xaa, (byte) 0x3e, (byte) 0xa8, (byte) 0xde},
+                {(byte) 0xaa, (byte) 0x25, (byte) 0xce, (byte) 0x93, (byte) 0xbd, (byte) 0x2, (byte) 0x69, (byte) 0xd8, (byte) 0x5a, (byte) 0xf6, (byte) 0x43, (byte) 0xfd, (byte) 0x1a, (byte) 0x73,
+                        (byte) 0x8, (byte) 0xf9, (byte) 0xc0, (byte) 0x5f, (byte) 0xef, (byte) 0xda, (byte) 0x17, (byte) 0x4a, (byte) 0x19, (byte) 0xa5, (byte) 0x97, (byte) 0x4d, (byte) 0x66,
+                        (byte) 0x33, (byte) 0x4c, (byte) 0xfd, (byte) 0x21, (byte) 0x6a},
+                {(byte) 0x35, (byte) 0xb4, (byte) 0x98, (byte) 0x31, (byte) 0xdb, (byte) 0x41, (byte) 0x15, (byte) 0x70, (byte) 0xea, (byte) 0x1e, (byte) 0xf, (byte) 0xbb, (byte) 0xed, (byte) 0xcd,
+                        (byte) 0x54, (byte) 0x9b, (byte) 0x9a, (byte) 0xd0, (byte) 0x63, (byte) 0xa1, (byte) 0x51, (byte) 0x97, (byte) 0x40, (byte) 0x72, (byte) 0xf6, (byte) 0x75, (byte) 0x9d,
+                        (byte) 0xbf, (byte) 0x91, (byte) 0x47, (byte) 0x6f, (byte) 0xe2}
+        };
+
+        /**
+         * Constructor.
+         *
+         * @param pHashBitLen the hash bit length
+         */
+<span class="fc" id="L318">        GordianJHFastDigest(final int pHashBitLen) {</span>
+            /* Check the hashBitLength */
+<span class="pc bpc" id="L320" title="1 of 2 branches missed.">            switch (pHashBitLen) {</span>
+                case 224:
+                case 256:
+                case 384:
+                case 512:
+<span class="fc" id="L325">                    break;</span>
+                default:
+<span class="nc" id="L327">                    throw new IllegalArgumentException(&quot;JH digest restricted to one of [224, 256, 384, 512]&quot;);</span>
+            }
+
+            /* Store value and initialise */
+<span class="fc" id="L331">            hashbitlen = pHashBitLen;</span>
+<span class="fc" id="L332">        }</span>
+
+        /**
+         * Ensure that the digest is initialised.
+         */
+        private void ensureInitialised() {
+<span class="fc bfc" id="L338" title="All 2 branches covered.">            if (!initialised) {</span>
+<span class="fc" id="L339">                init();</span>
+<span class="fc" id="L340">                initialised = true;</span>
+            }
+<span class="fc" id="L342">        }</span>
+
+        /**
+         * Obtain the buffer size.
+         *
+         * @return the bufferSize
+         */
+        int getBufferSize() {
+<span class="fc" id="L350">            return buffer.length;</span>
+        }
+
+        /* swapping bit 2i with bit 2i+1 of 64-bit x */
+        private static long swap1(final long x) {
+<span class="fc" id="L355">            return (((x &amp; 0x5555555555555555L) &lt;&lt; 1) | ((x &amp; 0xaaaaaaaaaaaaaaaaL) &gt;&gt;&gt; 1));</span>
+        }
+
+        /* swapping bits 4i||4i+1 with bits 4i+2||4i+3 of 64-bit x */
+        private static long swap2(final long x) {
+<span class="fc" id="L360">            return (((x &amp; 0x3333333333333333L) &lt;&lt; 2) | ((x &amp; 0xccccccccccccccccL) &gt;&gt;&gt; 2));</span>
+        }
+
+        /* swapping bits 8i||8i+1||8i+2||8i+3 with bits 8i+4||8i+5||8i+6||8i+7 of 64-bit x */
+        private static long swap4(final long x) {
+<span class="fc" id="L365">            return (((x &amp; 0x0f0f0f0f0f0f0f0fL) &lt;&lt; 4) | ((x &amp; 0xf0f0f0f0f0f0f0f0L) &gt;&gt;&gt; 4));</span>
+        }
+
+        /*
+         * swapping bits 16i||16i+1||......||16i+7 with bits 16i+8||16i+9||......||16i+15 of 64-bit
+         * x
+         */
+        private static long swap8(final long x) {
+<span class="fc" id="L373">            return (((x &amp; 0x00ff00ff00ff00ffL) &lt;&lt; 8) | ((x &amp; 0xff00ff00ff00ff00L) &gt;&gt;&gt; 8));</span>
+        }
+
+        /*
+         * swapping bits 32i||32i+1||......||32i+15 with bits 32i+16||32i+17||......||32i+31 of
+         * 64-bit x
+         */
+        private static long swap16(final long x) {
+<span class="fc" id="L381">            return (((x &amp; 0x0000ffff0000ffffL) &lt;&lt; 16) | ((x &amp; 0xffff0000ffff0000L) &gt;&gt;&gt; 16));</span>
+        }
+
+        /*
+         * swapping bits 64i||64i+1||......||64i+31 with bits 64i+32||64i+33||......||64i+63 of
+         * 64-bit x
+         */
+        private static long swap32(final long x) {
+<span class="fc" id="L389">            return ((x &lt;&lt; 32) | (x &gt;&gt;&gt; 32));</span>
+        }
+
+        /* The MDS transform */
+        private void l(final int i) {
+<span class="fc" id="L394">            x[1][i] ^= x[2][i];</span>
+<span class="fc" id="L395">            x[3][i] ^= x[4][i];</span>
+<span class="fc" id="L396">            x[5][i] ^= x[0][i] ^ x[6][i];</span>
+<span class="fc" id="L397">            x[7][i] ^= x[0][i];</span>
+<span class="fc" id="L398">            x[0][i] ^= x[3][i];</span>
+<span class="fc" id="L399">            x[2][i] ^= x[5][i];</span>
+<span class="fc" id="L400">            x[4][i] ^= x[1][i] ^ x[7][i];</span>
+<span class="fc" id="L401">            x[6][i] ^= x[1][i];</span>
+<span class="fc" id="L402">        }</span>
+
+        /* littleEndianBytes to long */
+        private static long leBytesToLong(final byte[] pBuffer, final int pIndex) {
+<span class="fc" id="L406">            int myIndex = pIndex;</span>
+<span class="fc" id="L407">            myIndex *= 8;</span>
+<span class="fc" id="L408">            long value = 0;</span>
+<span class="fc" id="L409">            int i = 7;</span>
+<span class="fc bfc" id="L410" title="All 2 branches covered.">            while (i &gt; 0) {</span>
+<span class="fc" id="L411">                value += pBuffer[myIndex + i--] &amp; 0xff;</span>
+<span class="fc" id="L412">                value &lt;&lt;= 8;</span>
+            }
+<span class="fc" id="L414">            value += pBuffer[myIndex] &amp; 0xff;</span>
+<span class="fc" id="L415">            return value;</span>
+        }
+
+        /* long to littleEndianBytes */
+        private static void longToLeBytes(final long pValue, final byte[] pBuffer, final int pOffset, final int pLength) {
+<span class="fc" id="L420">            long myValue = pValue;</span>
+<span class="fc" id="L421">            int i = 8;</span>
+<span class="fc bfc" id="L422" title="All 2 branches covered.">            while (i &gt; pLength) {</span>
+<span class="fc" id="L423">                myValue &gt;&gt;= 8;</span>
+<span class="fc" id="L424">                i--;</span>
+            }
+
+<span class="fc" id="L427">            int pos = pOffset + pLength - i;</span>
+<span class="fc bfc" id="L428" title="All 2 branches covered.">            while (i-- &gt; 0) {</span>
+<span class="fc" id="L429">                pBuffer[pos++] = (byte) (myValue &amp; 0xff);</span>
+<span class="fc" id="L430">                myValue &gt;&gt;= 8;</span>
+            }
+<span class="fc" id="L432">        }</span>
+
+        /* The Sbox */
+        private void sBox(final int i, final int j, final int roundnumber) {
+<span class="fc" id="L436">            final byte[] round = E_8_BITSLICE_ROUNDCONSTANT[roundnumber];</span>
+<span class="fc" id="L437">            final int index = i + (j * 2);</span>
+<span class="fc" id="L438">            final long cc = leBytesToLong(round, index);</span>
+<span class="fc" id="L439">            x[6 + j][i] = ~x[6 + j][i];</span>
+<span class="fc" id="L440">            x[0 + j][i] ^= ((~x[4 + j][i]) &amp; (cc));</span>
+<span class="fc" id="L441">            final long temp0 = (cc) ^ (x[0 + j][i] &amp; x[2 + j][i]);</span>
+<span class="fc" id="L442">            x[0 + j][i] ^= (x[4 + j][i] &amp; x[6 + j][i]);</span>
+<span class="fc" id="L443">            x[6 + j][i] ^= ((~x[2 + j][i]) &amp; x[4 + j][i]);</span>
+<span class="fc" id="L444">            x[2 + j][i] ^= (x[0 + j][i] &amp; x[4 + j][i]);</span>
+<span class="fc" id="L445">            x[4 + j][i] ^= (x[0 + j][i] &amp; (~x[6 + j][i]));</span>
+<span class="fc" id="L446">            x[0 + j][i] ^= (x[2 + j][i] | x[6 + j][i]);</span>
+<span class="fc" id="L447">            x[6 + j][i] ^= (x[2 + j][i] &amp; x[4 + j][i]);</span>
+<span class="fc" id="L448">            x[2 + j][i] ^= (temp0 &amp; x[0 + j][i]);</span>
+<span class="fc" id="L449">            x[4 + j][i] ^= temp0;</span>
+<span class="fc" id="L450">        }</span>
+
+        /* The round function of E8, in bitslice form */
+        private void roundFunction(final int roundnumber) {
+            long temp0;
+
+            /* Sbox and MDS layer */
+<span class="fc bfc" id="L457" title="All 2 branches covered.">            for (int i = 0; i &lt; 2; i++) {</span>
+<span class="fc" id="L458">                sBox(i, 0, roundnumber);</span>
+<span class="fc" id="L459">                sBox(i, 1, roundnumber);</span>
+<span class="fc" id="L460">                l(i);</span>
+            }
+
+            /* swapping layer */
+<span class="pc bpc" id="L464" title="1 of 8 branches missed.">            switch (roundnumber % 7) {</span>
+                case 0:
+<span class="fc bfc" id="L466" title="All 2 branches covered.">                    for (int j = 1; j &lt; 8; j = j + 2) {</span>
+<span class="fc bfc" id="L467" title="All 2 branches covered.">                        for (int i = 0; i &lt; 2; i++) {</span>
+<span class="fc" id="L468">                            x[j][i] = swap1(x[j][i]);</span>
+                        }
+                    }
+<span class="fc" id="L471">                    break;</span>
+                case 1:
+<span class="fc bfc" id="L473" title="All 2 branches covered.">                    for (int j = 1; j &lt; 8; j = j + 2) {</span>
+<span class="fc bfc" id="L474" title="All 2 branches covered.">                        for (int i = 0; i &lt; 2; i++) {</span>
+<span class="fc" id="L475">                            x[j][i] = swap2(x[j][i]);</span>
+                        }
+                    }
+<span class="fc" id="L478">                    break;</span>
+                case 2:
+<span class="fc bfc" id="L480" title="All 2 branches covered.">                    for (int j = 1; j &lt; 8; j = j + 2) {</span>
+<span class="fc bfc" id="L481" title="All 2 branches covered.">                        for (int i = 0; i &lt; 2; i++) {</span>
+<span class="fc" id="L482">                            x[j][i] = swap4(x[j][i]);</span>
+                        }
+                    }
+<span class="fc" id="L485">                    break;</span>
+                case 3:
+<span class="fc bfc" id="L487" title="All 2 branches covered.">                    for (int j = 1; j &lt; 8; j = j + 2) {</span>
+<span class="fc bfc" id="L488" title="All 2 branches covered.">                        for (int i = 0; i &lt; 2; i++) {</span>
+<span class="fc" id="L489">                            x[j][i] = swap8(x[j][i]);</span>
+                        }
+                    }
+<span class="fc" id="L492">                    break;</span>
+                case 4:
+<span class="fc bfc" id="L494" title="All 2 branches covered.">                    for (int j = 1; j &lt; 8; j = j + 2) {</span>
+<span class="fc bfc" id="L495" title="All 2 branches covered.">                        for (int i = 0; i &lt; 2; i++) {</span>
+<span class="fc" id="L496">                            x[j][i] = swap16(x[j][i]);</span>
+                        }
+                    }
+<span class="fc" id="L499">                    break;</span>
+                case 5:
+<span class="fc bfc" id="L501" title="All 2 branches covered.">                    for (int j = 1; j &lt; 8; j = j + 2) {</span>
+<span class="fc bfc" id="L502" title="All 2 branches covered.">                        for (int i = 0; i &lt; 2; i++) {</span>
+<span class="fc" id="L503">                            x[j][i] = swap32(x[j][i]);</span>
+                        }
+                    }
+<span class="fc" id="L506">                    break;</span>
+                case 6:
+<span class="fc bfc" id="L508" title="All 2 branches covered.">                    for (int j = 1; j &lt; 8; j = j + 2) {</span>
+<span class="fc" id="L509">                        temp0 = x[j][0];</span>
+<span class="fc" id="L510">                        x[j][0] = x[j][1];</span>
+<span class="fc" id="L511">                        x[j][1] = temp0;</span>
+                    }
+<span class="fc" id="L513">                    break;</span>
+                default:
+                    break;
+            }
+<span class="fc" id="L517">        }</span>
+
+        /* The bijective function E8, in bitslice form */
+        private void e8() {
+            /* perform 42 rounds */
+<span class="fc bfc" id="L522" title="All 2 branches covered.">            for (int i = 0; i &lt; 42; i++) {</span>
+<span class="fc" id="L523">                roundFunction(i);</span>
+            }
+<span class="fc" id="L525">        }</span>
+
+        /* The compression function F8 */
+        private void f8() {
+            /* xor the 512-bit message with the first half of the 1024-bit hash state */
+<span class="fc bfc" id="L530" title="All 2 branches covered.">            for (int i = 0; i &lt; 8; i++) {</span>
+<span class="fc" id="L531">                x[i &gt;&gt; 1][i &amp; 1] ^= leBytesToLong(buffer, i);</span>
+            }
+
+            /* the bijective function E8 */
+<span class="fc" id="L535">            e8();</span>
+
+            /* xor the 512-bit message with the second half of the 1024-bit hash state */
+<span class="fc bfc" id="L538" title="All 2 branches covered.">            for (int i = 0; i &lt; 8; i++) {</span>
+<span class="fc" id="L539">                x[(8 + i) &gt;&gt; 1][(8 + i) &amp; 1] ^= leBytesToLong(buffer, i);</span>
+            }
+<span class="fc" id="L541">        }</span>
+
+        /* Build state from byte buffer */
+        private void buildStateFromBytes(final byte[] pBytes) {
+<span class="fc" id="L545">            int index = 0;</span>
+<span class="fc bfc" id="L546" title="All 2 branches covered.">            for (int i = 0; i &lt; 8; i++) {</span>
+<span class="fc bfc" id="L547" title="All 2 branches covered.">                for (int j = 0; j &lt; 2; j++) {</span>
+<span class="fc" id="L548">                    x[i][j] = leBytesToLong(pBytes, index++);</span>
+                }
+            }
+<span class="fc" id="L551">        }</span>
+
+        /* before hashing a message, initialize the hash state as H0 */
+        private void init() {
+<span class="fc" id="L555">            databitlen = 0;</span>
+<span class="fc" id="L556">            datasizeInBuffer = 0;</span>
+
+            /* load the initial hash value into state */
+<span class="pc bpc" id="L559" title="1 of 5 branches missed.">            switch (hashbitlen) {</span>
+                case 224:
+<span class="fc" id="L561">                    buildStateFromBytes(JH224_H0);</span>
+<span class="fc" id="L562">                    break;</span>
+                case 256:
+<span class="fc" id="L564">                    buildStateFromBytes(JH256_H0);</span>
+<span class="fc" id="L565">                    break;</span>
+                case 384:
+<span class="fc" id="L567">                    buildStateFromBytes(JH384_H0);</span>
+<span class="fc" id="L568">                    break;</span>
+                case 512:
+<span class="fc" id="L570">                    buildStateFromBytes(JH512_H0);</span>
+<span class="fc" id="L571">                    break;</span>
+                default:
+                    break;
+            }
+<span class="fc" id="L575">        }</span>
+
+        /* CopyIn a state */
+        void copyIn(final GordianJHFastDigest pState) {
+            /* Ensure that we are copying similar digest */
+<span class="pc bpc" id="L580" title="1 of 2 branches missed.">            if (this.hashbitlen != pState.hashbitlen) {</span>
+<span class="nc" id="L581">                throw new IllegalArgumentException();</span>
+            }
+
+            /* Copy state */
+<span class="fc" id="L585">            initialised = pState.initialised;</span>
+<span class="fc" id="L586">            databitlen = pState.databitlen;</span>
+<span class="fc" id="L587">            datasizeInBuffer = pState.datasizeInBuffer;</span>
+<span class="fc" id="L588">            System.arraycopy(pState.buffer, 0, buffer, 0, buffer.length);</span>
+<span class="fc bfc" id="L589" title="All 2 branches covered.">            for (int i = 0; i &lt; 8; i++) {</span>
+<span class="fc bfc" id="L590" title="All 2 branches covered.">                for (int j = 0; j &lt; 2; j++) {</span>
+<span class="fc" id="L591">                    x[i][j] = pState.x[i][j];</span>
+                }
+            }
+<span class="fc" id="L594">        }</span>
+
+        /**
+         * Reset the digest.
+         */
+        void reset() {
+            /* Clear the initialised flag */
+<span class="fc" id="L601">            initialised = false;</span>
+<span class="fc" id="L602">        }</span>
+
+        /* hash each 512-bit message block, except the last partial block */
+        void update(final byte[] data, final int pOffset, final long pDatabitlen) {
+            int index; /* the starting address of the data to be compressed */
+<span class="fc" id="L607">            long myDatabitlen = pDatabitlen;</span>
+
+            /* Ensure that we are initialised */
+<span class="fc" id="L610">            ensureInitialised();</span>
+
+<span class="fc" id="L612">            databitlen += myDatabitlen;</span>
+<span class="fc" id="L613">            index = 0;</span>
+
+            /* if there is remaining data in the buffer, fill it to a full message block first */
+            /*
+             * we assume that the size of the data in the buffer is the multiple of 8 bits if it is
+             * not at the end of a message
+             */
+
+            /*
+             * There is data in the buffer, but the incoming data is insufficient for a full block
+             */
+<span class="fc bfc" id="L624" title="All 4 branches covered.">            if ((datasizeInBuffer &gt; 0) &amp;&amp; ((datasizeInBuffer + myDatabitlen) &lt; 512)) {</span>
+<span class="fc" id="L625">                int copyDataLen = (int) (myDatabitlen &gt;&gt; 3);</span>
+<span class="pc bpc" id="L626" title="1 of 2 branches missed.">                if ((myDatabitlen &amp; 7) != 0) {</span>
+<span class="nc" id="L627">                    copyDataLen++;</span>
+                }
+<span class="fc" id="L629">                System.arraycopy(data, pOffset, buffer, (int) (datasizeInBuffer &gt;&gt; 3), copyDataLen);</span>
+<span class="fc" id="L630">                datasizeInBuffer += myDatabitlen;</span>
+<span class="fc" id="L631">                myDatabitlen = 0;</span>
+            }
+
+            /* There is data in the buffer, and the incoming data is sufficient for a full block */
+<span class="fc bfc" id="L635" title="All 4 branches covered.">            if ((datasizeInBuffer &gt; 0) &amp;&amp; ((datasizeInBuffer + myDatabitlen) &gt;= 512)) {</span>
+<span class="fc" id="L636">                System.arraycopy(data, pOffset, buffer, (int) (datasizeInBuffer &gt;&gt; 3), (int) (64 - (datasizeInBuffer &gt;&gt; 3)));</span>
+<span class="fc" id="L637">                index = (int) (64 - (datasizeInBuffer &gt;&gt; 3));</span>
+<span class="fc" id="L638">                myDatabitlen = myDatabitlen - (512 - (int) datasizeInBuffer);</span>
+<span class="fc" id="L639">                f8();</span>
+<span class="fc" id="L640">                datasizeInBuffer = 0;</span>
+            }
+
+            /* hash the remaining full message blocks */
+<span class="fc bfc" id="L644" title="All 2 branches covered.">            for (; myDatabitlen &gt;= 512; index = index + 64, myDatabitlen = myDatabitlen - 512) {</span>
+<span class="fc" id="L645">                System.arraycopy(data, pOffset + index, buffer, 0, 64);</span>
+<span class="fc" id="L646">                f8();</span>
+            }
+
+            /*
+             * store the partial block into buffer, assume that -- if part of the last byte is not
+             * part of the message, then that part consists of 0 bits
+             */
+<span class="fc bfc" id="L653" title="All 2 branches covered.">            if (myDatabitlen &gt; 0) {</span>
+<span class="pc bpc" id="L654" title="1 of 2 branches missed.">                if ((myDatabitlen &amp; 7) == 0) {</span>
+<span class="fc" id="L655">                    System.arraycopy(data, pOffset + index, buffer, 0, (int) ((databitlen &amp; 0x1ff) &gt;&gt; 3));</span>
+                } else {
+<span class="nc" id="L657">                    System.arraycopy(data, pOffset + index, buffer, 0, (int) (((databitlen &amp; 0x1ff) &gt;&gt; 3) + 1));</span>
+                }
+<span class="fc" id="L659">                datasizeInBuffer = myDatabitlen;</span>
+            }
+<span class="fc" id="L661">        }</span>
+
+        /* Build hash from state buffer */
+        private void buildHashFromState(final byte[] pHashVal, final int pOffset, final int pLength) {
+<span class="fc" id="L665">            int myLength = pLength;</span>
+<span class="pc bpc" id="L666" title="1 of 4 branches missed.">            for (int i = 7; i &gt;= 0 &amp;&amp; myLength &gt; 0; i--) {</span>
+<span class="pc bpc" id="L667" title="1 of 4 branches missed.">                for (int j = 1; j &gt;= 0 &amp;&amp; myLength &gt; 0; j--) {</span>
+<span class="fc" id="L668">                    longToLeBytes(x[i][j], pHashVal, pOffset, myLength);</span>
+<span class="fc" id="L669">                    myLength -= 8;</span>
+                }
+            }
+<span class="fc" id="L672">        }</span>
+
+        /*
+         * pad the message, process the padded block(s), truncate the hash value H to obtain the
+         * message digest
+         */
+        void finalise(final byte[] hashval, final int pOffset) {
+            /* Ensure that we are initialised */
+<span class="fc" id="L680">            ensureInitialised();</span>
+
+<span class="fc bfc" id="L682" title="All 2 branches covered.">            if ((databitlen &amp; 0x1ff) == 0) {</span>
+                /*
+                 * pad the message when databitlen is multiple of 512 bits, then process the padded
+                 * block
+                 */
+<span class="fc" id="L687">                Arrays.fill(buffer, (byte) 0);</span>
+<span class="fc" id="L688">                buffer[0] = (byte) 0x80;</span>
+<span class="fc" id="L689">                buffer[63] = (byte) (databitlen &amp; 0xff);</span>
+<span class="fc" id="L690">                buffer[62] = (byte) ((databitlen &gt;&gt; 8) &amp; 0xff);</span>
+<span class="fc" id="L691">                buffer[61] = (byte) ((databitlen &gt;&gt; 16) &amp; 0xff);</span>
+<span class="fc" id="L692">                buffer[60] = (byte) ((databitlen &gt;&gt; 24) &amp; 0xff);</span>
+<span class="fc" id="L693">                buffer[59] = (byte) ((databitlen &gt;&gt; 32) &amp; 0xff);</span>
+<span class="fc" id="L694">                buffer[58] = (byte) ((databitlen &gt;&gt; 40) &amp; 0xff);</span>
+<span class="fc" id="L695">                buffer[57] = (byte) ((databitlen &gt;&gt; 48) &amp; 0xff);</span>
+<span class="fc" id="L696">                buffer[56] = (byte) ((databitlen &gt;&gt; 56) &amp; 0xff);</span>
+<span class="fc" id="L697">                f8();</span>
+            } else {
+                /* set the rest of the bytes in the buffer to 0 */
+<span class="pc bpc" id="L700" title="1 of 2 branches missed.">                if ((datasizeInBuffer &amp; 7) == 0) {</span>
+<span class="fc bfc" id="L701" title="All 2 branches covered.">                    for (int i = (int) (databitlen &amp; 0x1ff) &gt;&gt; 3; i &lt; 64; i++) {</span>
+<span class="fc" id="L702">                        buffer[i] = 0;</span>
+                    }
+                } else {
+<span class="nc bnc" id="L705" title="All 2 branches missed.">                    for (int i = (int) ((databitlen &amp; 0x1ff) &gt;&gt; 3) + 1; i &lt; 64; i++) {</span>
+<span class="nc" id="L706">                        buffer[i] = 0;</span>
+                    }
+                }
+
+                /*
+                 * pad and process the partial block when databitlen is not multiple of 512 bits,
+                 * then hash the padded blocks
+                 */
+<span class="fc" id="L714">                buffer[(int) ((databitlen &amp; 0x1ff) &gt;&gt; 3)] |= 1 &lt;&lt; (7 - (databitlen &amp; 7));</span>
+<span class="fc" id="L715">                f8();</span>
+<span class="fc" id="L716">                Arrays.fill(buffer, (byte) 0);</span>
+<span class="fc" id="L717">                buffer[63] = (byte) (databitlen &amp; 0xff);</span>
+<span class="fc" id="L718">                buffer[62] = (byte) ((databitlen &gt;&gt; 8) &amp; 0xff);</span>
+<span class="fc" id="L719">                buffer[61] = (byte) ((databitlen &gt;&gt; 16) &amp; 0xff);</span>
+<span class="fc" id="L720">                buffer[60] = (byte) ((databitlen &gt;&gt; 24) &amp; 0xff);</span>
+<span class="fc" id="L721">                buffer[59] = (byte) ((databitlen &gt;&gt; 32) &amp; 0xff);</span>
+<span class="fc" id="L722">                buffer[58] = (byte) ((databitlen &gt;&gt; 40) &amp; 0xff);</span>
+<span class="fc" id="L723">                buffer[57] = (byte) ((databitlen &gt;&gt; 48) &amp; 0xff);</span>
+<span class="fc" id="L724">                buffer[56] = (byte) ((databitlen &gt;&gt; 56) &amp; 0xff);</span>
+<span class="fc" id="L725">                f8();</span>
+            }
+
+            /* truncating the final hash value to generate the message digest */
+<span class="pc bpc" id="L729" title="1 of 5 branches missed.">            switch (hashbitlen) {</span>
+                case 224:
+<span class="fc" id="L731">                    buildHashFromState(hashval, pOffset, 28);</span>
+<span class="fc" id="L732">                    break;</span>
+                case 256:
+<span class="fc" id="L734">                    buildHashFromState(hashval, pOffset, 32);</span>
+<span class="fc" id="L735">                    break;</span>
+                case 384:
+<span class="fc" id="L737">                    buildHashFromState(hashval, pOffset, 48);</span>
+<span class="fc" id="L738">                    break;</span>
+                case 512:
+<span class="fc" id="L740">                    buildHashFromState(hashval, pOffset, 64);</span>
+<span class="fc" id="L741">                    break;</span>
+                default:
+                    break;
+            }
+
+            /* Reset the digest */
+<span class="fc" id="L747">            reset();</span>
+<span class="fc" id="L748">        }</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

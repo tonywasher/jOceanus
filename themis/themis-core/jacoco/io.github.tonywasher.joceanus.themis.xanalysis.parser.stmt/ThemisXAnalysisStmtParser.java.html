@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ThemisXAnalysisStmtParser.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Themis Core Project Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.themis.xanalysis.parser.stmt</a> &gt; <span class="el_source">ThemisXAnalysisStmtParser.java</span></div><h1>ThemisXAnalysisStmtParser.java</h1><pre class="source lang-java linenums">/*
+ * Themis: Java Project Framework
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.themis.xanalysis.parser.stmt;
+
+import com.github.javaparser.ast.stmt.Statement;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance.ThemisXAnalysisStatementInstance;
+import io.github.tonywasher.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisParserDef;
+
+/**
+ * Analysis Statement Parser.
+ */
+public final class ThemisXAnalysisStmtParser {
+    /**
+     * Private Constructor.
+     */
+    private ThemisXAnalysisStmtParser() {
+    }
+
+    /**
+     * Parse a statement.
+     *
+     * @param pParser    the parser
+     * @param pStatement the statement
+     * @return the parsed statement
+     * @throws OceanusException on error
+     */
+    public static ThemisXAnalysisStatementInstance parseStatement(final ThemisXAnalysisParserDef pParser,
+                                                                  final Statement pStatement) throws OceanusException {
+        /* Handle null Statement */
+<span class="fc bfc" id="L45" title="All 2 branches covered.">        if (pStatement == null) {</span>
+<span class="fc" id="L46">            return null;</span>
+        }
+
+        /* Allocate correct Statement */
+<span class="pc bpc" id="L50" title="6 of 22 branches missed.">        switch (ThemisXAnalysisStatement.determineStatement(pParser, pStatement)) {</span>
+            case ASSERT:
+<span class="nc" id="L52">                return new ThemisXAnalysisStmtAssert(pParser, pStatement.asAssertStmt());</span>
+            case BLOCK:
+<span class="fc" id="L54">                return new ThemisXAnalysisStmtBlock(pParser, pStatement.asBlockStmt());</span>
+            case BREAK:
+<span class="fc" id="L56">                return new ThemisXAnalysisStmtBreak(pParser, pStatement.asBreakStmt());</span>
+            case CONSTRUCTOR:
+<span class="fc" id="L58">                return new ThemisXAnalysisStmtConstructor(pParser, pStatement.asExplicitConstructorInvocationStmt());</span>
+            case CONTINUE:
+<span class="fc" id="L60">                return new ThemisXAnalysisStmtContinue(pParser, pStatement.asContinueStmt());</span>
+            case DO:
+<span class="fc" id="L62">                return new ThemisXAnalysisStmtDo(pParser, pStatement.asDoStmt());</span>
+            case EMPTY:
+<span class="fc" id="L64">                return new ThemisXAnalysisStmtEmpty(pParser, pStatement.asEmptyStmt());</span>
+            case EXPRESSION:
+<span class="fc" id="L66">                return new ThemisXAnalysisStmtExpression(pParser, pStatement.asExpressionStmt());</span>
+            case FOR:
+<span class="fc" id="L68">                return new ThemisXAnalysisStmtFor(pParser, pStatement.asForStmt());</span>
+            case FOREACH:
+<span class="fc" id="L70">                return new ThemisXAnalysisStmtForEach(pParser, pStatement.asForEachStmt());</span>
+            case IF:
+<span class="fc" id="L72">                return new ThemisXAnalysisStmtIf(pParser, pStatement.asIfStmt());</span>
+            case LABELED:
+<span class="nc" id="L74">                return new ThemisXAnalysisStmtLabeled(pParser, pStatement.asLabeledStmt());</span>
+            case LOCALCLASS:
+<span class="nc" id="L76">                return new ThemisXAnalysisStmtClass(pParser, pStatement.asLocalClassDeclarationStmt());</span>
+            case LOCALRECORD:
+<span class="nc" id="L78">                return new ThemisXAnalysisStmtRecord(pParser, pStatement.asLocalRecordDeclarationStmt());</span>
+            case RETURN:
+<span class="fc" id="L80">                return new ThemisXAnalysisStmtReturn(pParser, pStatement.asReturnStmt());</span>
+            case SWITCH:
+<span class="fc" id="L82">                return new ThemisXAnalysisStmtSwitch(pParser, pStatement.asSwitchStmt());</span>
+            case SYNCHRONIZED:
+<span class="fc" id="L84">                return new ThemisXAnalysisStmtSynch(pParser, pStatement.asSynchronizedStmt());</span>
+            case THROW:
+<span class="fc" id="L86">                return new ThemisXAnalysisStmtThrow(pParser, pStatement.asThrowStmt());</span>
+            case TRY:
+<span class="fc" id="L88">                return new ThemisXAnalysisStmtTry(pParser, pStatement.asTryStmt());</span>
+            case WHILE:
+<span class="fc" id="L90">                return new ThemisXAnalysisStmtWhile(pParser, pStatement.asWhileStmt());</span>
+            case YIELD:
+<span class="nc" id="L92">                return new ThemisXAnalysisStmtYield(pParser, pStatement.asYieldStmt());</span>
+            default:
+<span class="nc" id="L94">                throw pParser.buildException(&quot;Unsupported Statement Type&quot;, pStatement);</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

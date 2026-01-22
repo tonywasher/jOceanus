@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>JcaKeyPairFactory.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.impl.jca</a> &gt; <span class="el_source">JcaKeyPairFactory.java</span></div><h1>JcaKeyPairFactory.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.gordianknot.impl.jca;
+
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairGenerator;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairType;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianNTRUPrimeSpec.GordianNTRUPrimeType;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseData;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianCoreKeyPairFactory;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaBIKEKeyPairGenerator;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaCMCEKeyPairGenerator;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaDHKeyPairGenerator;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaDSAKeyPairGenerator;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaECKeyPairGenerator;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaEdKeyPairGenerator;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaElGamalKeyPairGenerator;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaFalconKeyPairGenerator;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaFrodoKeyPairGenerator;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaHQCKeyPairGenerator;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaLMSKeyPairGenerator;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaMLDSAKeyPairGenerator;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaMLKEMKeyPairGenerator;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaMayoKeyPairGenerator;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaNTRUKeyPairGenerator;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaNTRULPrimeKeyPairGenerator;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaNewHopeKeyPairGenerator;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaPicnicKeyPairGenerator;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaRSAKeyPairGenerator;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaSABERKeyPairGenerator;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaSLHDSAKeyPairGenerator;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaSNTRUPrimeKeyPairGenerator;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaSnovaKeyPairGenerator;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaXMSSKeyPairGenerator;
+
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * Jca KeyPair Factory.
+ */
+public class JcaKeyPairFactory
+        extends GordianCoreKeyPairFactory {
+    /**
+     * Factory.
+     */
+    private final GordianBaseFactory theFactory;
+
+    /**
+     * KeyPairGenerator Cache.
+     */
+    private final Map&lt;GordianKeyPairSpec, JcaKeyPairGenerator&gt; theCache;
+
+    /**
+     * Constructor.
+     *
+     * @param pFactory the factory
+     */
+    JcaKeyPairFactory(final GordianBaseFactory pFactory) {
+        /* Initialize underlying class */
+<span class="fc" id="L78">        super(pFactory);</span>
+<span class="fc" id="L79">        theFactory = pFactory;</span>
+
+        /* Create the cache */
+<span class="fc" id="L82">        theCache = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L83">    }</span>
+
+    @Override
+    public GordianKeyPairGenerator getKeyPairGenerator(final GordianKeyPairSpec pKeySpec) throws GordianException {
+        /* Handle composite keyPairGenerator */
+<span class="fc bfc" id="L88" title="All 2 branches covered.">        if (GordianKeyPairType.COMPOSITE.equals(pKeySpec.getKeyPairType())) {</span>
+<span class="fc" id="L89">            return super.getKeyPairGenerator(pKeySpec);</span>
+        }
+
+        /* Look up in the cache */
+<span class="fc" id="L93">        JcaKeyPairGenerator myGenerator = theCache.get(pKeySpec);</span>
+<span class="fc bfc" id="L94" title="All 2 branches covered.">        if (myGenerator == null) {</span>
+            /* Check the keySpec */
+<span class="fc" id="L96">            checkAsymKeySpec(pKeySpec);</span>
+
+            /* Create the new generator */
+<span class="fc" id="L99">            myGenerator = getJcaKeyPairGenerator(pKeySpec);</span>
+
+            /* Add to cache */
+<span class="fc" id="L102">            theCache.put(pKeySpec, myGenerator);</span>
+        }
+<span class="fc" id="L104">        return myGenerator;</span>
+    }
+
+    /**
+     * Create the Jca KeyPairGenerator.
+     *
+     * @param pKeySpec the keySpec
+     * @return the KeyGenerator
+     * @throws GordianException on error
+     */
+    private JcaKeyPairGenerator getJcaKeyPairGenerator(final GordianKeyPairSpec pKeySpec) throws GordianException {
+<span class="pc bpc" id="L115" title="1 of 24 branches missed.">        switch (pKeySpec.getKeyPairType()) {</span>
+            case RSA:
+<span class="fc" id="L117">                return new JcaRSAKeyPairGenerator(theFactory, pKeySpec);</span>
+            case ELGAMAL:
+<span class="fc" id="L119">                return new JcaElGamalKeyPairGenerator(theFactory, pKeySpec);</span>
+            case EC:
+            case SM2:
+            case DSTU4145:
+            case GOST2012:
+<span class="fc" id="L124">                return new JcaECKeyPairGenerator(theFactory, pKeySpec);</span>
+            case DSA:
+<span class="fc" id="L126">                return new JcaDSAKeyPairGenerator(theFactory, pKeySpec);</span>
+            case XDH:
+            case EDDSA:
+<span class="fc" id="L129">                return new JcaEdKeyPairGenerator(theFactory, pKeySpec);</span>
+            case DH:
+<span class="fc" id="L131">                return new JcaDHKeyPairGenerator(theFactory, pKeySpec);</span>
+            case NEWHOPE:
+<span class="fc" id="L133">                return new JcaNewHopeKeyPairGenerator(theFactory, pKeySpec);</span>
+            case SLHDSA:
+<span class="fc" id="L135">                return new JcaSLHDSAKeyPairGenerator(theFactory, pKeySpec);</span>
+            case CMCE:
+<span class="fc" id="L137">                return new JcaCMCEKeyPairGenerator(theFactory, pKeySpec);</span>
+            case FRODO:
+<span class="fc" id="L139">                return new JcaFrodoKeyPairGenerator(theFactory, pKeySpec);</span>
+            case SABER:
+<span class="fc" id="L141">                return new JcaSABERKeyPairGenerator(theFactory, pKeySpec);</span>
+            case MLKEM:
+<span class="fc" id="L143">                return new JcaMLKEMKeyPairGenerator(theFactory, pKeySpec);</span>
+            case MLDSA:
+<span class="fc" id="L145">                return new JcaMLDSAKeyPairGenerator(theFactory, pKeySpec);</span>
+            case HQC:
+<span class="fc" id="L147">                return new JcaHQCKeyPairGenerator(theFactory, pKeySpec);</span>
+            case BIKE:
+<span class="fc" id="L149">                return new JcaBIKEKeyPairGenerator(theFactory, pKeySpec);</span>
+            case NTRU:
+<span class="fc" id="L151">                return new JcaNTRUKeyPairGenerator(theFactory, pKeySpec);</span>
+            case NTRUPRIME:
+<span class="pc bpc" id="L153" title="1 of 2 branches missed.">                return pKeySpec.getNTRUPrimeKeySpec().getType() == GordianNTRUPrimeType.NTRUL</span>
+<span class="fc" id="L154">                        ? new JcaNTRULPrimeKeyPairGenerator(theFactory, pKeySpec)</span>
+<span class="nc" id="L155">                        : new JcaSNTRUPrimeKeyPairGenerator(theFactory, pKeySpec);</span>
+            case FALCON:
+<span class="fc" id="L157">                return new JcaFalconKeyPairGenerator(theFactory, pKeySpec);</span>
+            case MAYO:
+<span class="fc" id="L159">                return new JcaMayoKeyPairGenerator(theFactory, pKeySpec);</span>
+            case SNOVA:
+<span class="fc" id="L161">                return new JcaSnovaKeyPairGenerator(theFactory, pKeySpec);</span>
+            case PICNIC:
+<span class="fc" id="L163">                return new JcaPicnicKeyPairGenerator(theFactory, pKeySpec);</span>
+            case XMSS:
+<span class="fc" id="L165">                return new JcaXMSSKeyPairGenerator(theFactory, pKeySpec);</span>
+            case LMS:
+<span class="fc" id="L167">                return new JcaLMSKeyPairGenerator(theFactory, pKeySpec);</span>
+            default:
+<span class="nc" id="L169">                throw new GordianDataException(GordianBaseData.getInvalidText(pKeySpec.getKeyPairType()));</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

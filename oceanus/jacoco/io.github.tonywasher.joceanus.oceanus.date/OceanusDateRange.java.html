@@ -1,0 +1,301 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>OceanusDateRange.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Oceanus Java Core Utilities</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.oceanus.date</a> &gt; <span class="el_source">OceanusDateRange.java</span></div><h1>OceanusDateRange.java</h1><pre class="source lang-java linenums">/*
+ * Oceanus: Java Utilities
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.oceanus.date;
+
+import java.time.temporal.ChronoUnit;
+import java.util.Locale;
+import java.util.Objects;
+
+/**
+ * Represents a contiguous Range of dates.
+ */
+public class OceanusDateRange
+        implements Comparable&lt;OceanusDateRange&gt; {
+    /**
+     * Unbounded range description.
+     */
+<span class="nc" id="L31">    protected static final String DESC_UNBOUNDED = OceanusDateResource.RANGE_UNBOUNDED.getValue();</span>
+
+    /**
+     * link range description.
+     */
+<span class="nc" id="L36">    protected static final String DESC_LINK = OceanusDateResource.RANGE_TO.getValue();</span>
+
+    /**
+     * link range description.
+     */
+    protected static final char CHAR_BLANK = ' ';
+
+    /**
+     * The Start Date for the range.
+     */
+    private OceanusDate theStart;
+
+    /**
+     * The End Date for the range.
+     */
+    private OceanusDate theEnd;
+
+    /**
+     * Construct a Range from a Start Date and an End Date.
+     *
+     * @param pStart the start date
+     * @param pEnd   the end date
+     */
+    public OceanusDateRange(final OceanusDate pStart,
+<span class="nc" id="L60">                            final OceanusDate pEnd) {</span>
+<span class="nc bnc" id="L61" title="All 2 branches missed.">        if (pStart != null) {</span>
+<span class="nc" id="L62">            theStart = new OceanusDate(pStart);</span>
+        }
+<span class="nc bnc" id="L64" title="All 2 branches missed.">        if (pEnd != null) {</span>
+<span class="nc" id="L65">            theEnd = new OceanusDate(pEnd);</span>
+        }
+<span class="nc" id="L67">    }</span>
+
+    /**
+     * Construct a range from another range.
+     *
+     * @param pRange the range to copy from
+     */
+    public OceanusDateRange(final OceanusDateRange pRange) {
+<span class="nc" id="L75">        this(pRange.getStart(), pRange.getEnd());</span>
+<span class="nc" id="L76">    }</span>
+
+    /**
+     * Construct an unbounded Range.
+     */
+    public OceanusDateRange() {
+<span class="nc" id="L82">        this(null, null);</span>
+<span class="nc" id="L83">    }</span>
+
+    /**
+     * Get the start date for the range.
+     *
+     * @return the Start date
+     */
+    public OceanusDate getStart() {
+<span class="nc" id="L91">        return theStart;</span>
+    }
+
+    /**
+     * Get the end date for the range.
+     *
+     * @return the End date
+     */
+    public OceanusDate getEnd() {
+<span class="nc" id="L100">        return theEnd;</span>
+    }
+
+    /**
+     * Determine whether a Date is within this range.
+     *
+     * @param pDate the date to test
+     * @return -1 if the date is after the range, 0 if the date is within the range, 1 if the date
+     * is before the range
+     */
+    public int compareToDate(final OceanusDate pDate) {
+        /* Check start date */
+<span class="nc bnc" id="L112" title="All 2 branches missed.">        if (theStart != null</span>
+<span class="nc bnc" id="L113" title="All 2 branches missed.">                &amp;&amp; theStart.compareTo(pDate) &gt; 0) {</span>
+<span class="nc" id="L114">            return 1;</span>
+        }
+
+        /* Check end date */
+<span class="nc bnc" id="L118" title="All 2 branches missed.">        if (theEnd != null</span>
+<span class="nc bnc" id="L119" title="All 2 branches missed.">                &amp;&amp; theEnd.compareTo(pDate) &lt; 0) {</span>
+<span class="nc" id="L120">            return -1;</span>
+        }
+
+        /* Date must be within range */
+<span class="nc" id="L124">        return 0;</span>
+    }
+
+    @Override
+    public int compareTo(final OceanusDateRange pThat) {
+        /* Handle the trivial cases */
+<span class="nc bnc" id="L130" title="All 2 branches missed.">        if (this.equals(pThat)) {</span>
+<span class="nc" id="L131">            return 0;</span>
+        }
+<span class="nc bnc" id="L133" title="All 2 branches missed.">        if (pThat == null) {</span>
+<span class="nc" id="L134">            return -1;</span>
+        }
+
+        /* Access target start date */
+<span class="nc" id="L138">        final OceanusDate myStart = pThat.getStart();</span>
+
+        /* If our start is null */
+<span class="nc bnc" id="L141" title="All 2 branches missed.">        if (theStart == null) {</span>
+            /* Handle non-null target start */
+<span class="nc bnc" id="L143" title="All 2 branches missed.">            if (myStart != null) {</span>
+<span class="nc" id="L144">                return 1;</span>
+            }
+
+            /* else start is non-null */
+        } else {
+            /* Handle null target start */
+<span class="nc bnc" id="L150" title="All 2 branches missed.">            if (myStart == null) {</span>
+<span class="nc" id="L151">                return -1;</span>
+            }
+
+            /* Compare the start dates */
+<span class="nc" id="L155">            final int result = theStart.compareTo(myStart);</span>
+<span class="nc bnc" id="L156" title="All 2 branches missed.">            if (result != 0) {</span>
+<span class="nc" id="L157">                return result;</span>
+            }
+        }
+
+        /* Access target end date */
+<span class="nc" id="L162">        final OceanusDate myEnd = pThat.getEnd();</span>
+
+        /* If our end is null */
+<span class="nc bnc" id="L165" title="All 2 branches missed.">        if (theEnd == null) {</span>
+            /* Handle non-null target end */
+<span class="nc bnc" id="L167" title="All 2 branches missed.">            if (myEnd != null) {</span>
+<span class="nc" id="L168">                return 1;</span>
+            }
+
+            /* else start is non-null */
+        } else {
+            /* Handle null target end */
+<span class="nc bnc" id="L174" title="All 2 branches missed.">            if (myStart == null) {</span>
+<span class="nc" id="L175">                return -1;</span>
+            }
+
+            /* Compare the end dates */
+<span class="nc" id="L179">            final int result = theEnd.compareTo(myEnd);</span>
+<span class="nc bnc" id="L180" title="All 2 branches missed.">            if (result != 0) {</span>
+<span class="nc" id="L181">                return result;</span>
+            }
+        }
+
+        /* Ranges are identical */
+<span class="nc" id="L186">        return 0;</span>
+    }
+
+    @Override
+    public String toString() {
+        /* Build range description */
+<span class="nc" id="L192">        final StringBuilder myBuilder = new StringBuilder();</span>
+<span class="nc bnc" id="L193" title="All 2 branches missed.">        myBuilder.append(theStart == null</span>
+<span class="nc" id="L194">                ? DESC_UNBOUNDED</span>
+<span class="nc" id="L195">                : theStart.toString());</span>
+<span class="nc" id="L196">        myBuilder.append(CHAR_BLANK);</span>
+<span class="nc" id="L197">        myBuilder.append(DESC_LINK);</span>
+<span class="nc" id="L198">        myBuilder.append(CHAR_BLANK);</span>
+<span class="nc bnc" id="L199" title="All 2 branches missed.">        myBuilder.append(theEnd == null</span>
+<span class="nc" id="L200">                ? DESC_UNBOUNDED</span>
+<span class="nc" id="L201">                : theEnd.toString());</span>
+
+        /* return the format */
+<span class="nc" id="L204">        return myBuilder.toString();</span>
+    }
+
+    @Override
+    public boolean equals(final Object pThat) {
+        /* Handle the trivial cases */
+<span class="nc bnc" id="L210" title="All 2 branches missed.">        if (this == pThat) {</span>
+<span class="nc" id="L211">            return true;</span>
+        }
+<span class="nc bnc" id="L213" title="All 2 branches missed.">        if (pThat == null) {</span>
+<span class="nc" id="L214">            return false;</span>
+        }
+
+        /* Make sure that the object is a JDateDayRange */
+<span class="nc bnc" id="L218" title="All 2 branches missed.">        if (pThat.getClass() != this.getClass()) {</span>
+<span class="nc" id="L219">            return false;</span>
+        }
+
+        /* Access the object as a DateRange */
+<span class="nc" id="L223">        final OceanusDateRange myThat = (OceanusDateRange) pThat;</span>
+
+        /* Check components */
+<span class="nc bnc" id="L226" title="All 2 branches missed.">        if (theStart == null) {</span>
+<span class="nc bnc" id="L227" title="All 2 branches missed.">            if (myThat.getStart() != null) {</span>
+<span class="nc" id="L228">                return false;</span>
+            }
+<span class="nc bnc" id="L230" title="All 2 branches missed.">        } else if (!theStart.equals(myThat.getStart())) {</span>
+<span class="nc" id="L231">            return false;</span>
+        }
+<span class="nc bnc" id="L233" title="All 2 branches missed.">        if (theEnd == null) {</span>
+<span class="nc bnc" id="L234" title="All 2 branches missed.">            if (myThat.getEnd() != null) {</span>
+<span class="nc" id="L235">                return false;</span>
+            }
+<span class="nc bnc" id="L237" title="All 2 branches missed.">        } else if (!theEnd.equals(myThat.getEnd())) {</span>
+<span class="nc" id="L238">            return false;</span>
+        }
+<span class="nc" id="L240">        return true;</span>
+
+    }
+
+    @Override
+    public int hashCode() {
+<span class="nc" id="L246">        return Objects.hash(theStart, theEnd);</span>
+    }
+
+    /**
+     * Set the locale.
+     *
+     * @param pLocale the locale
+     */
+    public void setLocale(final Locale pLocale) {
+<span class="nc bnc" id="L255" title="All 2 branches missed.">        if (theStart != null) {</span>
+<span class="nc" id="L256">            theStart.setLocale(pLocale);</span>
+        }
+<span class="nc bnc" id="L258" title="All 2 branches missed.">        if (theEnd != null) {</span>
+<span class="nc" id="L259">            theEnd.setLocale(pLocale);</span>
+        }
+<span class="nc" id="L261">    }</span>
+
+    /**
+     * Determine whether two DateDay objects differ.
+     *
+     * @param pCurr The current Date
+     * @param pNew  The new Date
+     * @return &lt;code&gt;true&lt;/code&gt; if the objects differ, &lt;code&gt;false&lt;/code&gt; otherwise
+     */
+    public static boolean isDifferent(final OceanusDateRange pCurr,
+                                      final OceanusDateRange pNew) {
+        /* Handle case where current value is null */
+<span class="nc bnc" id="L273" title="All 2 branches missed.">        if (pCurr == null) {</span>
+<span class="nc bnc" id="L274" title="All 2 branches missed.">            return pNew != null;</span>
+        }
+
+        /* Handle case where new value is null */
+<span class="nc bnc" id="L278" title="All 2 branches missed.">        if (pNew == null) {</span>
+<span class="nc" id="L279">            return true;</span>
+        }
+
+        /* Handle Standard cases */
+<span class="nc bnc" id="L283" title="All 2 branches missed.">        return !pCurr.equals(pNew);</span>
+    }
+
+    /**
+     * Obtain the number of days in the range.
+     *
+     * @return the number of days (or -1 if unbounded)
+     */
+    public long getNumDays() {
+        /* Handle unbounded */
+<span class="nc bnc" id="L293" title="All 4 branches missed.">        if (theStart == null || theEnd == null) {</span>
+<span class="nc" id="L294">            return -1;</span>
+        }
+
+        /* Calculate the number of days */
+<span class="nc" id="L298">        return 1 + ChronoUnit.DAYS.between(theStart.getDate(), theEnd.getDate());</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

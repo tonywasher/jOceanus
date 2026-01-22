@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseArchiveLoader.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.moneywise.archive</a> &gt; <span class="el_source">MoneyWiseArchiveLoader.java</span></div><h1>MoneyWiseArchiveLoader.java</h1><pre class="source lang-java linenums">/*
+ * MoneyWise: Finance Application
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.moneywise.archive;
+
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.profile.OceanusProfile;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDataSet;
+import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseIOException;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusControlData.PrometheusControlDataList;
+import io.github.tonywasher.joceanus.prometheus.preference.PrometheusBackup.PrometheusBackupPreferenceKey;
+import io.github.tonywasher.joceanus.prometheus.preference.PrometheusBackup.PrometheusBackupPreferences;
+import io.github.tonywasher.joceanus.prometheus.service.sheet.PrometheusSheetCell;
+import io.github.tonywasher.joceanus.prometheus.service.sheet.PrometheusSheetProvider;
+import io.github.tonywasher.joceanus.prometheus.service.sheet.PrometheusSheetView;
+import io.github.tonywasher.joceanus.prometheus.service.sheet.PrometheusSheetWorkBook;
+import io.github.tonywasher.joceanus.prometheus.service.sheet.PrometheusSheetWorkBookType;
+import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadStatusReport;
+
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+
+/**
+ * Class to load an archive SpreadSheet.
+ */
+public final class MoneyWiseArchiveLoader {
+    /**
+     * Number of base archive load areas.
+     * 11xStatic,TransactionTags,Regions,2*Category,XchgRate,Rate,Price,Account.
+     */
+    private static final int NUM_ARCHIVE_AREAS = 19;
+
+    /**
+     * NamedRange for Static.
+     */
+    private static final String AREA_YEARRANGE = &quot;AssetsYears&quot;;
+
+    /**
+     * The Data.
+     */
+    private final MoneyWiseDataSet theData;
+
+    /**
+     * The Cache.
+     */
+    private final MoneyWiseArchiveCache theCache;
+
+    /**
+     * Constructor.
+     *
+     * @param pData the data to load into
+     */
+<span class="nc" id="L70">    public MoneyWiseArchiveLoader(final MoneyWiseDataSet pData) {</span>
+<span class="nc" id="L71">        theData = pData;</span>
+<span class="nc" id="L72">        theCache = new MoneyWiseArchiveCache(theData);</span>
+<span class="nc" id="L73">    }</span>
+
+    /**
+     * Enable filtering.
+     */
+    public void enableFiltering() {
+<span class="nc" id="L79">        theCache.enableFiltering();</span>
+<span class="nc" id="L80">    }</span>
+
+    /**
+     * Set lastEvent.
+     *
+     * @param pLastEvent the last event date
+     */
+    public void setLastEvent(final OceanusDate pLastEvent) {
+<span class="nc" id="L88">        theCache.setLastEvent(pLastEvent);</span>
+<span class="nc" id="L89">    }</span>
+
+    /**
+     * Load an Archive Workbook.
+     *
+     * @param pReport      the report
+     * @param pPreferences the backup preferences
+     * @throws OceanusException on error
+     */
+    public void loadArchive(final TethysUIThreadStatusReport pReport,
+                            final PrometheusBackupPreferences pPreferences) throws OceanusException {
+        /* Determine the archive name */
+<span class="nc" id="L101">        final String myName = pPreferences.getStringValue(PrometheusBackupPreferenceKey.ARCHIVE);</span>
+<span class="nc" id="L102">        final File myArchive = new File(myName);</span>
+
+        /* Protect the workbook retrieval */
+<span class="nc" id="L105">        try (FileInputStream myInFile = new FileInputStream(myArchive);</span>
+<span class="nc" id="L106">             InputStream myStream = new BufferedInputStream(myInFile)) {</span>
+            /* Determine the WorkBookType */
+<span class="nc" id="L108">            final PrometheusSheetWorkBookType myType = PrometheusSheetWorkBookType.determineType(myName);</span>
+
+            /* Load the data from the stream */
+<span class="nc" id="L111">            loadArchiveStream(pReport, myStream, myType);</span>
+
+<span class="nc" id="L113">        } catch (IOException e) {</span>
+            /* Report the error */
+<span class="nc" id="L115">            throw new MoneyWiseIOException(&quot;Failed to load Workbook: &quot; + myArchive.getName(), e);</span>
+<span class="nc" id="L116">        }</span>
+<span class="nc" id="L117">    }</span>
+
+    /**
+     * Load the Static from an archive.
+     *
+     * @param pReport   the report
+     * @param pWorkBook the workbook
+     * @throws OceanusException on error
+     */
+    private void loadArchive(final TethysUIThreadStatusReport pReport,
+                             final PrometheusSheetWorkBook pWorkBook) throws OceanusException {
+        /* Find the range of cells */
+<span class="nc" id="L129">        final PrometheusSheetView myView = pWorkBook.getRangeView(AREA_YEARRANGE);</span>
+
+        /* Loop through the cells */
+<span class="nc bnc" id="L132" title="All 2 branches missed.">        for (int myIndex = 0; myIndex &lt; myView.getColumnCount(); myIndex++) {</span>
+            /* Access the cell and add year to the list */
+<span class="nc" id="L134">            final PrometheusSheetCell myCell = myView.getCellByPosition(myIndex, 0);</span>
+<span class="nc" id="L135">            theCache.addYear(myCell.getString());</span>
+        }
+
+        /* Access the static */
+<span class="nc" id="L139">        final PrometheusControlDataList myStatic = theData.getControlData();</span>
+
+        /* Add the value into the finance tables (with no security as yet) */
+<span class="nc" id="L142">        myStatic.addNewControl(0);</span>
+
+        /* Calculate the number of stages */
+<span class="nc" id="L145">        final int myStages = NUM_ARCHIVE_AREAS + theCache.getNumYears();</span>
+
+        /* Declare the number of stages */
+<span class="nc" id="L148">        pReport.setNumStages(myStages);</span>
+<span class="nc" id="L149">    }</span>
+
+    /**
+     * Load an Archive Workbook from a stream.
+     *
+     * @param pReport the report
+     * @param pStream Input stream to load from
+     * @param pType   the workBookType
+     * @throws OceanusException on error
+     */
+    public void loadArchiveStream(final TethysUIThreadStatusReport pReport,
+                                  final InputStream pStream,
+                                  final PrometheusSheetWorkBookType pType) throws OceanusException {
+        /* Protect the workbook retrieval */
+        try {
+            /* Access current profile */
+<span class="nc" id="L165">            OceanusProfile myTask = pReport.getActiveTask();</span>
+<span class="nc" id="L166">            myTask = myTask.startTask(&quot;LoadArchive&quot;);</span>
+<span class="nc" id="L167">            myTask.startTask(&quot;ParseWorkBook&quot;);</span>
+
+            /* Access the workbook from the stream */
+<span class="nc" id="L170">            final PrometheusSheetWorkBook myWorkbook = PrometheusSheetProvider.loadFromStream(pType, pStream);</span>
+<span class="nc" id="L171">            pReport.checkForCancellation();</span>
+
+            /* Determine Year Range */
+<span class="nc" id="L174">            final OceanusProfile myStage = myTask.startTask(&quot;LoadSheets&quot;);</span>
+<span class="nc" id="L175">            myStage.startTask(&quot;Range&quot;);</span>
+<span class="nc" id="L176">            loadArchive(pReport, myWorkbook);</span>
+
+            /* Load Static Tables */
+<span class="nc" id="L179">            new MoneyWiseArchiveDepositCategoryType(pReport, myWorkbook, theData).loadArchive(myStage);</span>
+<span class="nc" id="L180">            new MoneyWiseArchiveCashCategoryType(pReport, myWorkbook, theData).loadArchive(myStage);</span>
+<span class="nc" id="L181">            new MoneyWiseArchiveLoanCategoryType(pReport, myWorkbook, theData).loadArchive(myStage);</span>
+<span class="nc" id="L182">            new MoneyWiseArchivePortfolioType(pReport, myWorkbook, theData).loadArchive(myStage);</span>
+<span class="nc" id="L183">            new MoneyWiseArchiveSecurityType(pReport, myWorkbook, theData).loadArchive(myStage);</span>
+<span class="nc" id="L184">            new MoneyWiseArchivePayeeType(pReport, myWorkbook, theData).loadArchive(myStage);</span>
+<span class="nc" id="L185">            new MoneyWiseArchiveTransCategoryType(pReport, myWorkbook, theData).loadArchive(myStage);</span>
+<span class="nc" id="L186">            new MoneyWiseArchiveTaxBasis(pReport, myWorkbook, theData).loadArchive(myStage);</span>
+<span class="nc" id="L187">            new MoneyWiseArchiveCurrency(pReport, myWorkbook, theData).loadArchive(myStage);</span>
+<span class="nc" id="L188">            new MoneyWiseArchiveAccountInfoType(pReport, myWorkbook, theData).loadArchive(myStage);</span>
+<span class="nc" id="L189">            new MoneyWiseArchiveTransInfoType(pReport, myWorkbook, theData).loadArchive(myStage);</span>
+
+            /* Load Tags and Regions */
+<span class="nc" id="L192">            new MoneyWiseArchiveTransTag(pReport, myWorkbook, theData).loadArchive(myStage);</span>
+<span class="nc" id="L193">            new MoneyWiseArchiveRegion(pReport, myWorkbook, theData).loadArchive(myStage);</span>
+
+            /* Load Categories */
+<span class="nc" id="L196">            new MoneyWiseArchiveAccountCategory(pReport, myWorkbook, theData).loadArchive(myStage);</span>
+<span class="nc" id="L197">            new MoneyWiseArchiveTransCategory(pReport, myWorkbook, theData, theCache).loadArchive(myStage);</span>
+
+            /* Load ExchangeRates */
+<span class="nc" id="L200">            new MoneyWiseArchiveExchangeRate(pReport, myWorkbook, theData, theCache).loadArchive(myStage);</span>
+
+            /* Load Accounts */
+<span class="nc" id="L203">            new MoneyWiseArchiveAccount(pReport, myWorkbook, theData, theCache).loadArchive(myStage);</span>
+<span class="nc" id="L204">            new MoneyWiseArchiveSecurityPrice(pReport, myWorkbook, theData, theCache).loadArchive(myStage);</span>
+<span class="nc" id="L205">            new MoneyWiseArchiveDepositRate(pReport, myWorkbook, theData).loadArchive(myStage);</span>
+
+            /* Load Transactions */
+<span class="nc" id="L208">            new MoneyWiseArchiveTransaction(pReport, myWorkbook, theData, theCache).loadArchive(myStage);</span>
+
+            /* If we hit the lastEvent limit */
+<span class="nc bnc" id="L211" title="All 2 branches missed.">            if (theCache.hitEventLimit()) {</span>
+                /* Note the fact in the data */
+<span class="nc" id="L213">                theData.hitEventLimit();</span>
+            }
+
+            /* Close the stream */
+<span class="nc" id="L217">            pStream.close();</span>
+
+            /* Complete task */
+<span class="nc" id="L220">            myTask.end();</span>
+
+<span class="nc" id="L222">        } catch (IOException e) {</span>
+            /* Report the error */
+<span class="nc" id="L224">            throw new MoneyWiseIOException(&quot;Failed to load Workbook&quot;, e);</span>
+<span class="nc" id="L225">        }</span>
+<span class="nc" id="L226">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

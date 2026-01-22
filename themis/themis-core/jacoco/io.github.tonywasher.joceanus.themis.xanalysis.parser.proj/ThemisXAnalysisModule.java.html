@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ThemisXAnalysisModule.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Themis Core Project Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.themis.xanalysis.parser.proj</a> &gt; <span class="el_source">ThemisXAnalysisModule.java</span></div><h1>ThemisXAnalysisModule.java</h1><pre class="source lang-java linenums">/*
+ * Themis: Java Project Framework
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.themis.xanalysis.parser.proj;
+
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisChar;
+import io.github.tonywasher.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisParserDef;
+import io.github.tonywasher.joceanus.themis.xanalysis.parser.mod.ThemisXAnalysisModModule;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+
+/**
+ * Module.
+ */
+public class ThemisXAnalysisModule {
+    /**
+     * The path xtra.
+     */
+<span class="fc" id="L36">    static final String PATH_XTRA = &quot;.src.main.java&quot;.replace(ThemisXAnalysisChar.PERIOD, ThemisXAnalysisChar.COMMENT);</span>
+
+    /**
+     * The module-info file.
+     */
+    private static final String MODULE_INFO = &quot;module-info&quot; + ThemisXAnalysisFile.SFX_JAVA;
+
+    /**
+     * The module name.
+     */
+    private final String theName;
+
+    /**
+     * The locations.
+     */
+    private final File theLocation;
+
+    /**
+     * The package list.
+     */
+    private final List&lt;ThemisXAnalysisPackage&gt; thePackages;
+
+    /**
+     * The module-info declaration.
+     */
+    private ThemisXAnalysisModModule theModuleInfo;
+
+    /**
+     * Constructor.
+     *
+     * @param pLocation the location of the module
+     * @param pPom      the module Pom
+     * @throws OceanusException on error
+     */
+    ThemisXAnalysisModule(final File pLocation,
+<span class="fc" id="L71">                          final ThemisXAnalysisMaven pPom) throws OceanusException {</span>
+        /* Create the list */
+<span class="fc" id="L73">        thePackages = new ArrayList&lt;&gt;();</span>
+
+        /* Store the name and location */
+<span class="fc" id="L76">        theLocation = new File(pLocation, PATH_XTRA);</span>
+<span class="fc" id="L77">        theName = pLocation.getName();</span>
+
+        /* Initiate search for packages */
+<span class="fc" id="L80">        checkForPackage(theLocation, null);</span>
+
+        /* Add any extraDirs */
+<span class="fc bfc" id="L83" title="All 2 branches covered.">        for (String myXtra : pPom.getXtraDirs()) {</span>
+<span class="fc" id="L84">            final File myXtraDir = new File(pLocation, myXtra);</span>
+<span class="fc" id="L85">            checkForPackage(myXtraDir, null);</span>
+<span class="fc" id="L86">        }</span>
+<span class="fc" id="L87">    }</span>
+
+    /**
+     * Obtain the name.
+     *
+     * @return the name
+     */
+    public String getName() {
+<span class="nc" id="L95">        return theName;</span>
+    }
+
+    @Override
+    public String toString() {
+<span class="nc" id="L100">        return getName();</span>
+    }
+
+    /**
+     * Obtain the packages.
+     *
+     * @return the packages
+     */
+    public List&lt;ThemisXAnalysisPackage&gt; getPackages() {
+<span class="fc" id="L109">        return thePackages;</span>
+    }
+
+    /**
+     * Obtain the module-info.
+     *
+     * @return the module-info
+     */
+    public ThemisXAnalysisModModule getModuleInfo() {
+<span class="nc" id="L118">        return theModuleInfo;</span>
+    }
+
+    /**
+     * Check for package.
+     *
+     * @param pLocation the location to search
+     * @param pPackage  the package name
+     * @throws OceanusException on error
+     */
+    void checkForPackage(final File pLocation,
+                         final String pPackage) throws OceanusException {
+        /* Assume not a package */
+<span class="fc" id="L131">        boolean isPackage = false;</span>
+
+        /* Determine the location to search */
+<span class="fc bfc" id="L134" title="All 2 branches covered.">        final File myLocation = pPackage == null</span>
+<span class="fc" id="L135">                ? pLocation</span>
+<span class="fc" id="L136">                : new File(pLocation, pPackage.replace(ThemisXAnalysisChar.PERIOD, ThemisXAnalysisChar.COMMENT));</span>
+
+        /* Look for java files or further packages */
+<span class="fc bfc" id="L139" title="All 2 branches covered.">        for (File myFile : Objects.requireNonNull(myLocation.listFiles())) {</span>
+            /* Access file name */
+<span class="fc" id="L141">            final String myName = myFile.getName();</span>
+
+            /* If this is a directory */
+<span class="fc bfc" id="L144" title="All 2 branches covered.">            if (myFile.isDirectory()) {</span>
+<span class="fc bfc" id="L145" title="All 2 branches covered.">                final String myPackage = pPackage == null</span>
+<span class="fc" id="L146">                        ? myName</span>
+<span class="fc" id="L147">                        : pPackage + ThemisXAnalysisChar.PERIOD + myName;</span>
+<span class="fc" id="L148">                checkForPackage(pLocation, myPackage);</span>
+            }
+
+            /* If this is a Java file name */
+<span class="fc bfc" id="L152" title="All 2 branches covered.">            if (myName.endsWith(ThemisXAnalysisFile.SFX_JAVA)</span>
+<span class="fc bfc" id="L153" title="All 2 branches covered.">                    &amp;&amp; !MODULE_INFO.equals(myName)) {</span>
+<span class="pc bpc" id="L154" title="1 of 2 branches missed.">                isPackage = pPackage != null;</span>
+            }
+        }
+
+        /* If this is a package */
+<span class="fc bfc" id="L159" title="All 2 branches covered.">        if (isPackage) {</span>
+            /* Add the package to the list */
+<span class="fc" id="L161">            thePackages.add(new ThemisXAnalysisPackage(pLocation, pPackage));</span>
+        }
+<span class="fc" id="L163">    }</span>
+
+    /**
+     * Parse java code.
+     *
+     * @param pParser the parser
+     * @throws OceanusException on error
+     */
+    void parseJavaCode(final ThemisXAnalysisParserDef pParser) throws OceanusException {
+        /* Loop through the packages */
+<span class="fc bfc" id="L173" title="All 2 branches covered.">        for (ThemisXAnalysisPackage myPackage : thePackages) {</span>
+            /* Process the package */
+<span class="fc" id="L175">            myPackage.parseJavaCode(pParser);</span>
+<span class="fc" id="L176">        }</span>
+
+        /* Check for and load the module-info file if found */
+<span class="fc" id="L179">        final File myModuleInfo = new File(theLocation, MODULE_INFO);</span>
+<span class="pc bpc" id="L180" title="1 of 2 branches missed.">        if (myModuleInfo.exists()) {</span>
+<span class="fc" id="L181">            theModuleInfo = (ThemisXAnalysisModModule) pParser.parseModuleInfo(myModuleInfo);</span>
+        }
+<span class="fc" id="L183">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

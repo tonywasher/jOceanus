@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseTaxYearCache.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.moneywise.tax</a> &gt; <span class="el_source">MoneyWiseTaxYearCache.java</span></div><h1>MoneyWiseTaxYearCache.java</h1><pre class="source lang-java linenums">/*
+ * MoneyWise: Finance Application
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.moneywise.tax;
+
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusFiscalYear;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTax.MoneyWiseTaxFactory;
+
+/**
+ * Tax Year cache.
+ */
+public abstract class MoneyWiseTaxYearCache
+        implements MoneyWiseTaxFactory {
+    /**
+     * The Fiscal Year.
+     */
+    private final OceanusFiscalYear theFiscalYear;
+
+    /**
+     * Constructor.
+     *
+     * @param pYear the fiscal year
+     */
+<span class="fc" id="L39">    protected MoneyWiseTaxYearCache(final OceanusFiscalYear pYear) {</span>
+<span class="fc" id="L40">        theFiscalYear = pYear;</span>
+<span class="fc" id="L41">    }</span>
+
+    /**
+     * Obtain the taxYear date.
+     *
+     * @param pDate the date
+     * @return the date
+     */
+    protected OceanusDate getTaxYearDate(final OceanusDate pDate) {
+<span class="fc" id="L50">        return theFiscalYear.endOfYear(pDate);</span>
+    }
+
+    /**
+     * Check whether the range matches a taxYear.
+     *
+     * @param pRange the range
+     * @return true/false
+     */
+    protected boolean checkTaxYearRange(final OceanusDateRange pRange) {
+        /* Check that the range ends of a tax year boundary */
+<span class="nc" id="L61">        final OceanusDate myEnd = pRange.getEnd();</span>
+<span class="nc bnc" id="L62" title="All 2 branches missed.">        if ((myEnd == null)</span>
+<span class="nc bnc" id="L63" title="All 2 branches missed.">                || !myEnd.equals(getTaxYearDate(myEnd))) {</span>
+<span class="nc" id="L64">            return false;</span>
+        }
+
+        /* Check that the range starts on the correct taxYear boundary */
+<span class="nc" id="L68">        final OceanusDate myStart = new OceanusDate(myEnd);</span>
+<span class="nc" id="L69">        myStart.adjustYear(-1);</span>
+<span class="nc" id="L70">        myStart.adjustDay(1);</span>
+<span class="nc" id="L71">        return myStart.equals(pRange.getStart());</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

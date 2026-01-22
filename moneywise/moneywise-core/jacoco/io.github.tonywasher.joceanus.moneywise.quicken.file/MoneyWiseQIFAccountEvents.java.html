@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseQIFAccountEvents.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.moneywise.quicken.file</a> &gt; <span class="el_source">MoneyWiseQIFAccountEvents.java</span></div><h1>MoneyWiseQIFAccountEvents.java</h1><pre class="source lang-java linenums">/*
+ * MoneyWise: Finance Application
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.moneywise.quicken.file;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransAsset;
+
+/**
+ * Class representing an account and its events.
+ */
+public class MoneyWiseQIFAccountEvents
+        implements Comparable&lt;MoneyWiseQIFAccountEvents&gt; {
+    /**
+     * Account.
+     */
+    private final MoneyWiseQIFAccount theAccount;
+
+    /**
+     * Events.
+     */
+    private final List&lt;MoneyWiseQIFEventRecord&lt;?&gt;&gt; theEvents;
+
+    /**
+     * Constructor.
+     *
+     * @param pFile    the QIF file.
+     * @param pAccount the account.
+     */
+    protected MoneyWiseQIFAccountEvents(final MoneyWiseQIFFile pFile,
+<span class="nc" id="L48">                                        final MoneyWiseTransAsset pAccount) {</span>
+        /* Store parameters */
+<span class="nc" id="L50">        theAccount = new MoneyWiseQIFAccount(pFile, pAccount);</span>
+
+        /* Create the list */
+<span class="nc" id="L53">        theEvents = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L54">    }</span>
+
+    /**
+     * Constructor.
+     *
+     * @param pFile    the QIF file.
+     * @param pAccount the account name.
+     */
+    protected MoneyWiseQIFAccountEvents(final MoneyWiseQIFFile pFile,
+<span class="nc" id="L63">                                        final String pAccount) {</span>
+        /* Store parameters */
+<span class="nc" id="L65">        theAccount = new MoneyWiseQIFAccount(pFile, pAccount);</span>
+
+        /* Create the list */
+<span class="nc" id="L68">        theEvents = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L69">    }</span>
+
+    /**
+     * Constructor.
+     *
+     * @param pAccount the account.
+     */
+<span class="nc" id="L76">    protected MoneyWiseQIFAccountEvents(final MoneyWiseQIFAccount pAccount) {</span>
+        /* Store parameters */
+<span class="nc" id="L78">        theAccount = pAccount;</span>
+
+        /* Create the list */
+<span class="nc" id="L81">        theEvents = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L82">    }</span>
+
+    /**
+     * Obtain the account.
+     *
+     * @return the account
+     */
+    public MoneyWiseQIFAccount getAccount() {
+<span class="nc" id="L90">        return theAccount;</span>
+    }
+
+    /**
+     * Obtain the events.
+     *
+     * @return the events
+     */
+    public List&lt;MoneyWiseQIFEventRecord&lt;?&gt;&gt; getEvents() {
+<span class="nc" id="L99">        return theEvents;</span>
+    }
+
+    /**
+     * Event iterator.
+     *
+     * @return the iterator
+     */
+    public Iterator&lt;MoneyWiseQIFEventRecord&lt;?&gt;&gt; eventIterator() {
+<span class="nc" id="L108">        return theEvents.iterator();</span>
+    }
+
+    /**
+     * Add event.
+     *
+     * @param pEvent the event record set
+     */
+    protected void addEvent(final MoneyWiseQIFEventRecord&lt;?&gt; pEvent) {
+        /* Add the event */
+<span class="nc" id="L118">        theEvents.add(pEvent);</span>
+<span class="nc" id="L119">    }</span>
+
+    /**
+     * Sort the events.
+     */
+    protected void sortEvents() {
+<span class="nc" id="L125">        Collections.sort(theEvents);</span>
+<span class="nc" id="L126">    }</span>
+
+    @Override
+    public boolean equals(final Object pThat) {
+        /* Handle trivial cases */
+<span class="nc bnc" id="L131" title="All 2 branches missed.">        if (this == pThat) {</span>
+<span class="nc" id="L132">            return true;</span>
+        }
+<span class="nc bnc" id="L134" title="All 2 branches missed.">        if (pThat == null) {</span>
+<span class="nc" id="L135">            return false;</span>
+        }
+
+        /* Check class */
+<span class="nc bnc" id="L139" title="All 2 branches missed.">        if (!getClass().equals(pThat.getClass())) {</span>
+<span class="nc" id="L140">            return false;</span>
+        }
+
+        /* Cast correctly */
+<span class="nc" id="L144">        final MoneyWiseQIFAccountEvents myEvents = (MoneyWiseQIFAccountEvents) pThat;</span>
+
+        /* Check account */
+<span class="nc bnc" id="L147" title="All 2 branches missed.">        if (!theAccount.equals(myEvents.getAccount())) {</span>
+<span class="nc" id="L148">            return false;</span>
+        }
+
+        /* Check events */
+<span class="nc" id="L152">        return theEvents.equals(myEvents.getEvents());</span>
+    }
+
+    @Override
+    public int hashCode() {
+<span class="nc" id="L157">        final int myResult = MoneyWiseQIFFile.HASH_BASE * theAccount.hashCode();</span>
+<span class="nc" id="L158">        return myResult + theEvents.hashCode();</span>
+    }
+
+    @Override
+    public int compareTo(final MoneyWiseQIFAccountEvents pThat) {
+<span class="nc" id="L163">        return theAccount.compareTo(pThat.getAccount());</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

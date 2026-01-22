@@ -1,0 +1,827 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseXAnalysisTransCategoryBucket.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets</a> &gt; <span class="el_source">MoneyWiseXAnalysisTransCategoryBucket.java</span></div><h1>MoneyWiseXAnalysisTransCategoryBucket.java</h1><pre class="source lang-java linenums">/*
+ * MoneyWise: Finance Application
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets;
+
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimal;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
+import io.github.tonywasher.joceanus.metis.data.MetisDataFieldValue;
+import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
+import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataList;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldItem;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldItem.MetisFieldTableItem;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
+import io.github.tonywasher.joceanus.metis.list.MetisListIndexed;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.base.MoneyWiseXAnalysisEvent;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.base.MoneyWiseXAnalysisHistory;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisInterfaces.MoneyWiseXAnalysisBucketRegister;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.values.MoneyWiseXAnalysisTransAttr;
+import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.values.MoneyWiseXAnalysisTransValues;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseAssetType;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransCategory;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransCategory.MoneyWiseTransCategoryList;
+import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseCurrency;
+import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
+import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTransCategoryClass;
+import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTransCategoryType;
+import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTransInfoClass;
+import io.github.tonywasher.joceanus.prometheus.views.PrometheusEditSet;
+
+import java.util.Comparator;
+import java.util.Currency;
+import java.util.Iterator;
+import java.util.List;
+
+/**
+ * Transaction Category Bucket.
+ */
+public final class MoneyWiseXAnalysisTransCategoryBucket
+        implements MetisFieldTableItem, MoneyWiseXAnalysisBucketRegister {
+    /**
+     * Local Report fields.
+     */
+<span class="fc" id="L60">    private static final MetisFieldSet&lt;MoneyWiseXAnalysisTransCategoryBucket&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseXAnalysisTransCategoryBucket.class);</span>
+
+    /*
+     * Declare Fields.
+     */
+    static {
+<span class="fc" id="L66">        FIELD_DEFS.declareLocalField(MoneyWiseXAnalysisBucketResource.ANALYSIS_NAME, MoneyWiseXAnalysisTransCategoryBucket::getAnalysis);</span>
+<span class="fc" id="L67">        FIELD_DEFS.declareLocalField(MoneyWiseBasicDataType.TRANSCATEGORY, MoneyWiseXAnalysisTransCategoryBucket::getTransactionCategory);</span>
+<span class="fc" id="L68">        FIELD_DEFS.declareLocalField(MoneyWiseStaticDataType.TRANSTYPE, MoneyWiseXAnalysisTransCategoryBucket::getTransactionCategoryType);</span>
+<span class="fc" id="L69">        FIELD_DEFS.declareLocalField(MoneyWiseXAnalysisBucketResource.BUCKET_BASEVALUES, MoneyWiseXAnalysisTransCategoryBucket::getBaseValues);</span>
+<span class="fc" id="L70">        FIELD_DEFS.declareLocalField(MoneyWiseXAnalysisBucketResource.BUCKET_HISTORY, MoneyWiseXAnalysisTransCategoryBucket::getHistoryMap);</span>
+<span class="fc" id="L71">        FIELD_DEFS.declareLocalFieldsForEnum(MoneyWiseXAnalysisTransAttr.class, MoneyWiseXAnalysisTransCategoryBucket::getAttributeValue);</span>
+    }
+
+    /**
+     * Totals bucket name.
+     */
+<span class="fc" id="L77">    private static final MetisDataFieldId NAME_TOTALS = MoneyWiseXAnalysisBucketResource.ANALYSIS_TOTALS;</span>
+
+    /**
+     * The analysis.
+     */
+    private final MoneyWiseXAnalysis theAnalysis;
+
+    /**
+     * The transaction category.
+     */
+    private final MoneyWiseTransCategory theCategory;
+
+    /**
+     * The transaction category type.
+     */
+    private final MoneyWiseTransCategoryType theType;
+
+    /**
+     * Values.
+     */
+    private final MoneyWiseXAnalysisTransValues theValues;
+
+    /**
+     * The base values.
+     */
+    private final MoneyWiseXAnalysisTransValues theBaseValues;
+
+    /**
+     * History Map.
+     */
+    private final MoneyWiseXAnalysisHistory&lt;MoneyWiseXAnalysisTransValues, MoneyWiseXAnalysisTransAttr&gt; theHistory;
+
+    /**
+     * Constructor.
+     *
+     * @param pAnalysis the analysis
+     * @param pCategory the transaction category
+     */
+    private MoneyWiseXAnalysisTransCategoryBucket(final MoneyWiseXAnalysis pAnalysis,
+<span class="fc" id="L116">                                                  final MoneyWiseTransCategory pCategory) {</span>
+        /* Store the parameters */
+<span class="fc" id="L118">        theAnalysis = pAnalysis;</span>
+<span class="fc" id="L119">        theCategory = pCategory;</span>
+<span class="fc bfc" id="L120" title="All 2 branches covered.">        theType = pCategory == null</span>
+<span class="fc" id="L121">                ? null</span>
+<span class="fc" id="L122">                : pCategory.getCategoryType();</span>
+
+        /* Create the history map */
+<span class="fc" id="L125">        final MoneyWiseCurrency myDefault = theAnalysis.getCurrency();</span>
+<span class="pc bpc" id="L126" title="1 of 2 branches missed.">        final Currency myCurrency = myDefault == null</span>
+<span class="nc" id="L127">                ? MoneyWiseXAnalysisAccountBucket.DEFAULT_CURRENCY</span>
+<span class="fc" id="L128">                : myDefault.getCurrency();</span>
+<span class="fc" id="L129">        final MoneyWiseXAnalysisTransValues myValues = new MoneyWiseXAnalysisTransValues(myCurrency);</span>
+<span class="fc" id="L130">        theHistory = new MoneyWiseXAnalysisHistory&lt;&gt;(myValues);</span>
+
+        /* Access the key value maps */
+<span class="fc" id="L133">        theValues = theHistory.getValues();</span>
+<span class="fc" id="L134">        theBaseValues = theHistory.getBaseValues();</span>
+<span class="fc" id="L135">    }</span>
+
+    /**
+     * Constructor.
+     *
+     * @param pAnalysis the analysis
+     * @param pBase     the underlying bucket
+     * @param pDate     the date for the bucket
+     */
+    private MoneyWiseXAnalysisTransCategoryBucket(final MoneyWiseXAnalysis pAnalysis,
+                                                  final MoneyWiseXAnalysisTransCategoryBucket pBase,
+<span class="nc" id="L146">                                                  final OceanusDate pDate) {</span>
+        /* Copy details from base */
+<span class="nc" id="L148">        theCategory = pBase.getTransactionCategory();</span>
+<span class="nc" id="L149">        theType = pBase.getTransactionCategoryType();</span>
+<span class="nc" id="L150">        theAnalysis = pAnalysis;</span>
+
+        /* Access the relevant history */
+<span class="nc" id="L153">        theHistory = new MoneyWiseXAnalysisHistory&lt;&gt;(pBase.getHistoryMap(), pDate);</span>
+
+        /* Access the key value maps */
+<span class="nc" id="L156">        theValues = theHistory.getValues();</span>
+<span class="nc" id="L157">        theBaseValues = theHistory.getBaseValues();</span>
+<span class="nc" id="L158">    }</span>
+
+    /**
+     * Constructor.
+     *
+     * @param pAnalysis the analysis
+     * @param pBase     the underlying bucket
+     * @param pRange    the range for the bucket
+     */
+    private MoneyWiseXAnalysisTransCategoryBucket(final MoneyWiseXAnalysis pAnalysis,
+                                                  final MoneyWiseXAnalysisTransCategoryBucket pBase,
+<span class="nc" id="L169">                                                  final OceanusDateRange pRange) {</span>
+        /* Copy details from base */
+<span class="nc" id="L171">        theCategory = pBase.getTransactionCategory();</span>
+<span class="nc" id="L172">        theType = pBase.getTransactionCategoryType();</span>
+<span class="nc" id="L173">        theAnalysis = pAnalysis;</span>
+
+        /* Access the relevant history */
+<span class="nc" id="L176">        theHistory = new MoneyWiseXAnalysisHistory&lt;&gt;(pBase.getHistoryMap(), pRange);</span>
+
+        /* Access the key value maps */
+<span class="nc" id="L179">        theValues = theHistory.getValues();</span>
+<span class="nc" id="L180">        theBaseValues = theHistory.getBaseValues();</span>
+<span class="nc" id="L181">    }</span>
+
+    @Override
+    public MetisFieldSet&lt;MoneyWiseXAnalysisTransCategoryBucket&gt; getDataFieldSet() {
+<span class="nc" id="L185">        return FIELD_DEFS;</span>
+    }
+
+    @Override
+    public String formatObject(final OceanusDataFormatter pFormatter) {
+<span class="nc" id="L190">        return toString();</span>
+    }
+
+    @Override
+    public String toString() {
+<span class="nc" id="L195">        return getName() + &quot; &quot; + theValues;</span>
+    }
+
+    @Override
+    public Long getBucketId() {
+<span class="fc" id="L200">        return MoneyWiseAssetType.createExternalId(MoneyWiseAssetType.TRANSACTIONCATEGORY, getIndexedId());</span>
+    }
+
+    /**
+     * Obtain the name.
+     *
+     * @return the name
+     */
+    public String getName() {
+<span class="pc bpc" id="L209" title="1 of 2 branches missed.">        return theCategory == null</span>
+<span class="nc" id="L210">                ? NAME_TOTALS.getId()</span>
+<span class="fc" id="L211">                : theCategory.getName();</span>
+    }
+
+    @Override
+    public Integer getIndexedId() {
+<span class="fc" id="L216">        return theCategory.getIndexedId();</span>
+    }
+
+    /**
+     * Obtain the transaction category.
+     *
+     * @return the transaction category
+     */
+    public MoneyWiseTransCategory getTransactionCategory() {
+<span class="fc" id="L225">        return theCategory;</span>
+    }
+
+    /**
+     * Obtain the transaction category type.
+     *
+     * @return the transaction category type
+     */
+    public MoneyWiseTransCategoryType getTransactionCategoryType() {
+<span class="fc" id="L234">        return theType;</span>
+    }
+
+    /**
+     * Is this bucket idle?
+     *
+     * @return true/false
+     */
+    public boolean isIdle() {
+<span class="fc" id="L243">        return theHistory.isIdle();</span>
+    }
+
+    /**
+     * Obtain the value map.
+     *
+     * @return the value map
+     */
+    public MoneyWiseXAnalysisTransValues getValues() {
+<span class="fc" id="L252">        return theValues;</span>
+    }
+
+    /**
+     * Obtain the base value map.
+     *
+     * @return the base value map
+     */
+    public MoneyWiseXAnalysisTransValues getBaseValues() {
+<span class="nc" id="L261">        return theBaseValues;</span>
+    }
+
+    /**
+     * Obtain values for event.
+     *
+     * @param pEvent the event
+     * @return the values (or null)
+     */
+    public MoneyWiseXAnalysisTransValues getValuesForEvent(final MoneyWiseXAnalysisEvent pEvent) {
+        /* Obtain values for event */
+<span class="fc" id="L272">        return theHistory.getValuesForEvent(pEvent);</span>
+    }
+
+    /**
+     * Obtain previous values for event.
+     *
+     * @param pEvent the event
+     * @return the values (or null)
+     */
+    public MoneyWiseXAnalysisTransValues getPreviousValuesForEvent(final MoneyWiseXAnalysisEvent pEvent) {
+<span class="nc" id="L282">        return theHistory.getPreviousValuesForEvent(pEvent);</span>
+    }
+
+    /**
+     * Obtain delta for event.
+     *
+     * @param pEvent the event
+     * @param pAttr  the attribute
+     * @return the delta (or null)
+     */
+    public OceanusDecimal getDeltaForEvent(final MoneyWiseXAnalysisEvent pEvent,
+                                           final MoneyWiseXAnalysisTransAttr pAttr) {
+        /* Obtain delta for event */
+<span class="nc" id="L295">        return theHistory.getDeltaValue(pEvent, pAttr);</span>
+    }
+
+    /**
+     * Obtain the history map.
+     *
+     * @return the history map
+     */
+    private MoneyWiseXAnalysisHistory&lt;MoneyWiseXAnalysisTransValues, MoneyWiseXAnalysisTransAttr&gt; getHistoryMap() {
+<span class="nc" id="L304">        return theHistory;</span>
+    }
+
+    /**
+     * Obtain the analysis.
+     *
+     * @return the analysis
+     */
+    MoneyWiseXAnalysis getAnalysis() {
+<span class="nc" id="L313">        return theAnalysis;</span>
+    }
+
+    /**
+     * Obtain date range.
+     *
+     * @return the range
+     */
+    public OceanusDateRange getDateRange() {
+<span class="nc" id="L322">        return theAnalysis.getDateRange();</span>
+    }
+
+    /**
+     * Set Attribute.
+     *
+     * @param pAttr  the attribute
+     * @param pValue the value of the attribute
+     */
+    void setValue(final MoneyWiseXAnalysisTransAttr pAttr,
+                  final OceanusMoney pValue) {
+        /* Set the value */
+<span class="fc" id="L334">        theValues.setValue(pAttr, pValue);</span>
+<span class="fc" id="L335">    }</span>
+
+    /**
+     * Get an attribute value.
+     *
+     * @param pAttr the attribute
+     * @return the value to set
+     */
+    private Object getAttributeValue(final MoneyWiseXAnalysisTransAttr pAttr) {
+        /* Access value of object */
+<span class="nc" id="L345">        final Object myValue = getValue(pAttr);</span>
+
+        /* Return the value */
+<span class="nc bnc" id="L348" title="All 2 branches missed.">        return myValue != null</span>
+<span class="nc" id="L349">                ? myValue</span>
+<span class="nc" id="L350">                : MetisDataFieldValue.SKIP;</span>
+    }
+
+    /**
+     * Obtain an attribute value.
+     *
+     * @param pAttr the attribute
+     * @return the value of the attribute or null
+     */
+    private Object getValue(final MoneyWiseXAnalysisTransAttr pAttr) {
+        /* Obtain the value */
+<span class="nc" id="L361">        return theValues.getValue(pAttr);</span>
+    }
+
+    /**
+     * Adjust counter.
+     *
+     * @param pAttr  the attribute
+     * @param pDelta the delta
+     */
+    void adjustCounter(final MoneyWiseXAnalysisTransAttr pAttr,
+                       final OceanusMoney pDelta) {
+<span class="fc" id="L372">        OceanusMoney myValue = theValues.getMoneyValue(pAttr);</span>
+<span class="fc" id="L373">        myValue = new OceanusMoney(myValue);</span>
+<span class="fc" id="L374">        myValue.addAmount(pDelta);</span>
+<span class="fc" id="L375">        setValue(pAttr, myValue);</span>
+<span class="fc" id="L376">    }</span>
+
+    /**
+     * Add income value.
+     *
+     * @param pValue the value to add
+     */
+    public void addIncome(final OceanusMoney pValue) {
+        /* Only adjust on non-zero */
+<span class="fc bfc" id="L385" title="All 2 branches covered.">        if (pValue.isNonZero()) {</span>
+<span class="fc" id="L386">            adjustCounter(MoneyWiseXAnalysisTransAttr.INCOME, pValue);</span>
+        }
+<span class="fc" id="L388">    }</span>
+
+    /**
+     * Subtract income value.
+     *
+     * @param pValue the value to subtract
+     */
+    public void subtractIncome(final OceanusMoney pValue) {
+        /* Only adjust on non-zero */
+<span class="pc bpc" id="L397" title="1 of 2 branches missed.">        if (pValue.isNonZero()) {</span>
+<span class="fc" id="L398">            final OceanusMoney myIncome = new OceanusMoney(pValue);</span>
+<span class="fc" id="L399">            myIncome.negate();</span>
+<span class="fc" id="L400">            adjustCounter(MoneyWiseXAnalysisTransAttr.INCOME, myIncome);</span>
+        }
+<span class="fc" id="L402">    }</span>
+
+    /**
+     * Adjust account for delta.
+     *
+     * @param pDelta the delta
+     */
+    public void adjustForDelta(final OceanusMoney pDelta) {
+<span class="fc bfc" id="L410" title="All 2 branches covered.">        if (pDelta.isPositive()) {</span>
+<span class="fc" id="L411">            addIncome(pDelta);</span>
+        } else {
+<span class="fc" id="L413">            subtractExpense(pDelta);</span>
+        }
+<span class="fc" id="L415">    }</span>
+
+    /**
+     * Add expense value.
+     *
+     * @param pValue the value to add
+     */
+    public void addExpense(final OceanusMoney pValue) {
+        /* Only adjust on non-zero */
+<span class="pc bpc" id="L424" title="1 of 2 branches missed.">        if (pValue.isNonZero()) {</span>
+<span class="fc" id="L425">            adjustCounter(MoneyWiseXAnalysisTransAttr.EXPENSE, pValue);</span>
+        }
+<span class="fc" id="L427">    }</span>
+
+    /**
+     * Subtract expense value.
+     *
+     * @param pValue the value to subtract
+     */
+    public void subtractExpense(final OceanusMoney pValue) {
+        /* Only adjust on non-zero */
+<span class="pc bpc" id="L436" title="1 of 2 branches missed.">        if (pValue.isNonZero()) {</span>
+<span class="fc" id="L437">            final OceanusMoney myExpense = new OceanusMoney(pValue);</span>
+<span class="fc" id="L438">            myExpense.negate();</span>
+<span class="fc" id="L439">            adjustCounter(MoneyWiseXAnalysisTransAttr.EXPENSE, myExpense);</span>
+        }
+<span class="fc" id="L441">    }</span>
+
+    /**
+     * Calculate Income delta.
+     */
+    void calculateDelta() {
+        /* Calculate delta for the values */
+<span class="fc" id="L448">        theValues.calculateDelta();</span>
+<span class="fc" id="L449">    }</span>
+
+    /**
+     * Adjust to base.
+     */
+    void adjustToBase() {
+        /* Adjust to base values */
+<span class="nc" id="L456">        theValues.adjustToBaseValues(theBaseValues);</span>
+<span class="nc" id="L457">        theBaseValues.resetBaseValues();</span>
+<span class="nc" id="L458">    }</span>
+
+    /**
+     * Add bucket to totals.
+     *
+     * @param pSource the bucket to add
+     */
+    void addValues(final MoneyWiseXAnalysisTransCategoryBucket pSource) {
+        /* Access source values */
+<span class="fc" id="L467">        final MoneyWiseXAnalysisTransValues mySource = pSource.getValues();</span>
+
+        /* Add income values */
+<span class="fc" id="L470">        OceanusMoney myValue = theValues.getMoneyValue(MoneyWiseXAnalysisTransAttr.INCOME);</span>
+<span class="fc" id="L471">        OceanusMoney mySrcValue = mySource.getMoneyValue(MoneyWiseXAnalysisTransAttr.INCOME);</span>
+<span class="fc" id="L472">        myValue.addAmount(mySrcValue);</span>
+
+        /* Add expense values */
+<span class="fc" id="L475">        myValue = theValues.getMoneyValue(MoneyWiseXAnalysisTransAttr.EXPENSE);</span>
+<span class="fc" id="L476">        mySrcValue = mySource.getMoneyValue(MoneyWiseXAnalysisTransAttr.EXPENSE);</span>
+<span class="fc" id="L477">        myValue.addAmount(mySrcValue);</span>
+<span class="fc" id="L478">    }</span>
+
+    @Override
+    public void registerEvent(final MoneyWiseXAnalysisEvent pEvent) {
+        /* Register the event in the history */
+<span class="fc" id="L483">        theHistory.registerEvent(pEvent, theValues);</span>
+<span class="fc" id="L484">    }</span>
+
+    /**
+     * TransactionCategoryBucket list class.
+     */
+    public static final class MoneyWiseXAnalysisTransCategoryBucketList
+            implements MetisFieldItem, MetisDataList&lt;MoneyWiseXAnalysisTransCategoryBucket&gt; {
+        /**
+         * Local Report fields.
+         */
+<span class="fc" id="L494">        private static final MetisFieldSet&lt;MoneyWiseXAnalysisTransCategoryBucketList&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseXAnalysisTransCategoryBucketList.class);</span>
+
+        /*
+         * Declare Fields.
+         */
+        static {
+<span class="fc" id="L500">            FIELD_DEFS.declareLocalField(MoneyWiseXAnalysisBucketResource.ANALYSIS_NAME, MoneyWiseXAnalysisTransCategoryBucketList::getAnalysis);</span>
+<span class="fc" id="L501">            FIELD_DEFS.declareLocalField(MoneyWiseXAnalysisBucketResource.ANALYSIS_TOTALS, MoneyWiseXAnalysisTransCategoryBucketList::getTotals);</span>
+<span class="fc" id="L502">        }</span>
+
+        /**
+         * The analysis.
+         */
+        private final MoneyWiseXAnalysis theAnalysis;
+
+        /**
+         * The list.
+         */
+        private final MetisListIndexed&lt;MoneyWiseXAnalysisTransCategoryBucket&gt; theList;
+
+        /**
+         * The editSet.
+         */
+        private final PrometheusEditSet theEditSet;
+
+        /**
+         * The totals.
+         */
+        private final MoneyWiseXAnalysisTransCategoryBucket theTotals;
+
+        /**
+         * Construct a top-level List.
+         *
+         * @param pAnalysis the analysis
+         */
+<span class="fc" id="L529">        MoneyWiseXAnalysisTransCategoryBucketList(final MoneyWiseXAnalysis pAnalysis) {</span>
+            /* Initialise class */
+<span class="fc" id="L531">            theAnalysis = pAnalysis;</span>
+<span class="fc" id="L532">            theEditSet = theAnalysis.getEditSet();</span>
+<span class="fc" id="L533">            theTotals = allocateTotalsBucket();</span>
+<span class="fc" id="L534">            theList = new MetisListIndexed&lt;&gt;();</span>
+<span class="fc" id="L535">        }</span>
+
+        /**
+         * Construct a dated List.
+         *
+         * @param pAnalysis the analysis
+         * @param pBase     the base list
+         * @param pDate     the Date
+         */
+        MoneyWiseXAnalysisTransCategoryBucketList(final MoneyWiseXAnalysis pAnalysis,
+                                                  final MoneyWiseXAnalysisTransCategoryBucketList pBase,
+<span class="nc" id="L546">                                                  final OceanusDate pDate) {</span>
+            /* Initialise class */
+<span class="nc" id="L548">            theAnalysis = pAnalysis;</span>
+<span class="nc" id="L549">            theEditSet = theAnalysis.getEditSet();</span>
+<span class="nc" id="L550">            theTotals = allocateTotalsBucket();</span>
+<span class="nc" id="L551">            theList = new MetisListIndexed&lt;&gt;();</span>
+
+            /* Loop through the buckets */
+<span class="nc" id="L554">            final Iterator&lt;MoneyWiseXAnalysisTransCategoryBucket&gt; myIterator = pBase.iterator();</span>
+<span class="nc bnc" id="L555" title="All 2 branches missed.">            while (myIterator.hasNext()) {</span>
+<span class="nc" id="L556">                final MoneyWiseXAnalysisTransCategoryBucket myCurr = myIterator.next();</span>
+
+                /* Access the bucket for this date */
+<span class="nc" id="L559">                final MoneyWiseXAnalysisTransCategoryBucket myBucket = new MoneyWiseXAnalysisTransCategoryBucket(pAnalysis, myCurr, pDate);</span>
+
+                /* If the bucket is non-idle */
+<span class="nc bnc" id="L562" title="All 2 branches missed.">                if (!myBucket.isIdle()) {</span>
+                    /* Calculate the delta and add to the list */
+<span class="nc" id="L564">                    theList.add(myBucket);</span>
+                }
+<span class="nc" id="L566">            }</span>
+<span class="nc" id="L567">        }</span>
+
+        /**
+         * Construct a ranged List.
+         *
+         * @param pAnalysis the analysis
+         * @param pBase     the base list
+         * @param pRange    the Date Range
+         */
+        MoneyWiseXAnalysisTransCategoryBucketList(final MoneyWiseXAnalysis pAnalysis,
+                                                  final MoneyWiseXAnalysisTransCategoryBucketList pBase,
+<span class="nc" id="L578">                                                  final OceanusDateRange pRange) {</span>
+            /* Initialise class */
+<span class="nc" id="L580">            theAnalysis = pAnalysis;</span>
+<span class="nc" id="L581">            theEditSet = theAnalysis.getEditSet();</span>
+<span class="nc" id="L582">            theTotals = allocateTotalsBucket();</span>
+<span class="nc" id="L583">            theList = new MetisListIndexed&lt;&gt;();</span>
+
+            /* Loop through the buckets */
+<span class="nc" id="L586">            final Iterator&lt;MoneyWiseXAnalysisTransCategoryBucket&gt; myIterator = pBase.iterator();</span>
+<span class="nc bnc" id="L587" title="All 2 branches missed.">            while (myIterator.hasNext()) {</span>
+<span class="nc" id="L588">                final MoneyWiseXAnalysisTransCategoryBucket myCurr = myIterator.next();</span>
+
+                /* Access the bucket for this range */
+<span class="nc" id="L591">                final MoneyWiseXAnalysisTransCategoryBucket myBucket = new MoneyWiseXAnalysisTransCategoryBucket(pAnalysis, myCurr, pRange);</span>
+
+                /* If the bucket is non-idle */
+<span class="nc bnc" id="L594" title="All 2 branches missed.">                if (!myBucket.isIdle()) {</span>
+                    /* Adjust to the base */
+<span class="nc" id="L596">                    myBucket.adjustToBase();</span>
+<span class="nc" id="L597">                    theList.add(myBucket);</span>
+                }
+<span class="nc" id="L599">            }</span>
+<span class="nc" id="L600">        }</span>
+
+        @Override
+        public MetisFieldSet&lt;MoneyWiseXAnalysisTransCategoryBucketList&gt; getDataFieldSet() {
+<span class="nc" id="L604">            return FIELD_DEFS;</span>
+        }
+
+        @Override
+        public List&lt;MoneyWiseXAnalysisTransCategoryBucket&gt; getUnderlyingList() {
+<span class="fc" id="L609">            return theList.getUnderlyingList();</span>
+        }
+
+        @Override
+        public String formatObject(final OceanusDataFormatter pFormatter) {
+<span class="nc" id="L614">            return getDataFieldSet().getName();</span>
+        }
+
+        /**
+         * Obtain the analysis.
+         *
+         * @return the analysis
+         */
+        MoneyWiseXAnalysis getAnalysis() {
+<span class="nc" id="L623">            return theAnalysis;</span>
+        }
+
+        /**
+         * Obtain item by id.
+         *
+         * @param pId the id to lookup
+         * @return the item (or null if not present)
+         */
+        public MoneyWiseXAnalysisTransCategoryBucket findItemById(final Integer pId) {
+            /* Return results */
+<span class="fc" id="L634">            return theList.getItemById(pId);</span>
+        }
+
+        /**
+         * Obtain the Totals.
+         *
+         * @return the totals bucket
+         */
+        public MoneyWiseXAnalysisTransCategoryBucket getTotals() {
+<span class="fc" id="L643">            return theTotals;</span>
+        }
+
+        /**
+         * Allocate the Totals TransactionCategoryBucket.
+         *
+         * @return the bucket
+         */
+        private MoneyWiseXAnalysisTransCategoryBucket allocateTotalsBucket() {
+            /* Obtain the totals category */
+<span class="fc" id="L653">            return new MoneyWiseXAnalysisTransCategoryBucket(theAnalysis, null);</span>
+        }
+
+        /**
+         * Obtain the TransactionCategoryBucket for a given transaction infoClass.
+         *
+         * @param pClass the transaction infoClass
+         * @return the bucket
+         */
+        public MoneyWiseXAnalysisTransCategoryBucket getEventInfoBucket(final MoneyWiseTransInfoClass pClass) {
+            /* Determine category */
+<span class="fc" id="L664">            final MoneyWiseTransCategoryList myList = theEditSet.getDataList(MoneyWiseBasicDataType.TRANSCATEGORY, MoneyWiseTransCategoryList.class);</span>
+<span class="fc" id="L665">            final MoneyWiseTransCategory myCategory = myList.getEventInfoCategory(pClass);</span>
+
+            /* Access bucket */
+<span class="pc bpc" id="L668" title="1 of 2 branches missed.">            return myCategory == null</span>
+<span class="nc" id="L669">                    ? null</span>
+<span class="fc" id="L670">                    : getBucket(myCategory);</span>
+        }
+
+        /**
+         * Obtain the TransactionCategoryBucket for a given transactionClass.
+         *
+         * @param pClass the transaction infoClass
+         * @return the bucket
+         */
+        public MoneyWiseXAnalysisTransCategoryBucket getEventSingularBucket(final MoneyWiseTransCategoryClass pClass) {
+            /* Determine category */
+<span class="fc" id="L681">            final MoneyWiseTransCategoryList myList = theEditSet.getDataList(MoneyWiseBasicDataType.TRANSCATEGORY, MoneyWiseTransCategoryList.class);</span>
+<span class="fc" id="L682">            final MoneyWiseTransCategory myCategory = myList.getSingularClass(pClass);</span>
+
+            /* Access bucket */
+<span class="pc bpc" id="L685" title="1 of 2 branches missed.">            return myCategory == null</span>
+<span class="nc" id="L686">                    ? null</span>
+<span class="fc" id="L687">                    : getBucket(myCategory);</span>
+        }
+
+        /**
+         * Obtain the TransactionCategoryBucket for a given transaction category.
+         *
+         * @param pCategory the transaction category
+         * @return the bucket
+         */
+        public MoneyWiseXAnalysisTransCategoryBucket getBucket(final MoneyWiseTransCategory pCategory) {
+            /* Handle null category */
+<span class="pc bpc" id="L698" title="1 of 2 branches missed.">            if (pCategory == null) {</span>
+<span class="nc" id="L699">                throw new IllegalArgumentException();</span>
+            }
+
+            /* Locate the bucket in the list */
+<span class="fc" id="L703">            MoneyWiseXAnalysisTransCategoryBucket myItem = findItemById(pCategory.getIndexedId());</span>
+
+            /* If the item does not yet exist */
+<span class="fc bfc" id="L706" title="All 2 branches covered.">            if (myItem == null) {</span>
+                /* Create the new bucket */
+<span class="fc" id="L708">                myItem = new MoneyWiseXAnalysisTransCategoryBucket(theAnalysis, pCategory);</span>
+
+                /* Add to the list */
+<span class="fc" id="L711">                theList.add(myItem);</span>
+            }
+
+            /* Return the bucket */
+<span class="fc" id="L715">            return myItem;</span>
+        }
+
+        /**
+         * Obtain the TransactionCategoryBucket for a given transaction category class.
+         *
+         * @param pClass the transaction category class
+         * @return the bucket
+         */
+        public MoneyWiseXAnalysisTransCategoryBucket getBucket(final MoneyWiseTransCategoryClass pClass) {
+            /* Determine required category */
+<span class="fc" id="L726">            final MoneyWiseTransCategory myCategory = theEditSet.getDataList(MoneyWiseBasicDataType.TRANSCATEGORY, MoneyWiseTransCategoryList.class)</span>
+<span class="fc" id="L727">                    .getSingularClass(pClass);</span>
+
+            /* Return the bucket */
+<span class="fc" id="L730">            return getBucket(myCategory);</span>
+        }
+
+        /**
+         * Obtain the matching CategoryBucket.
+         *
+         * @param pCategory the category
+         * @return the matching bucket
+         */
+        public MoneyWiseXAnalysisTransCategoryBucket getMatchingCategory(final MoneyWiseTransCategory pCategory) {
+            /* Return the matching category if it exists else an orphan bucket */
+<span class="nc" id="L741">            final MoneyWiseXAnalysisTransCategoryBucket myCategory = findItemById(pCategory.getIndexedId());</span>
+<span class="nc bnc" id="L742" title="All 2 branches missed.">            return myCategory != null</span>
+<span class="nc" id="L743">                    ? myCategory</span>
+<span class="nc" id="L744">                    : new MoneyWiseXAnalysisTransCategoryBucket(theAnalysis, pCategory);</span>
+        }
+
+        /**
+         * Obtain the default CategoryBucket.
+         *
+         * @return the default bucket
+         */
+        public MoneyWiseXAnalysisTransCategoryBucket getDefaultCategory() {
+            /* Return the first category in the list if it exists */
+<span class="nc bnc" id="L754" title="All 2 branches missed.">            return isEmpty()</span>
+<span class="nc" id="L755">                    ? null</span>
+<span class="nc" id="L756">                    : theList.getUnderlyingList().get(0);</span>
+        }
+
+        /**
+         * Produce totals for the TransactionCategories.
+         */
+        public void produceTotals() {
+            /* Create a list of new buckets */
+<span class="fc" id="L764">            final MetisListIndexed&lt;MoneyWiseXAnalysisTransCategoryBucket&gt; myTotals = new MetisListIndexed&lt;&gt;();</span>
+
+            /* Loop through the buckets */
+<span class="fc" id="L767">            Iterator&lt;MoneyWiseXAnalysisTransCategoryBucket&gt; myIterator = iterator();</span>
+<span class="fc bfc" id="L768" title="All 2 branches covered.">            while (myIterator.hasNext()) {</span>
+<span class="fc" id="L769">                final MoneyWiseXAnalysisTransCategoryBucket myCurr = myIterator.next();</span>
+
+                /* Remove idle items */
+<span class="fc bfc" id="L772" title="All 2 branches covered.">                if (myCurr.isIdle()) {</span>
+<span class="fc" id="L773">                    myIterator.remove();</span>
+<span class="fc" id="L774">                    continue;</span>
+                }
+
+                /* Obtain category and parent category */
+<span class="fc" id="L778">                final MoneyWiseTransCategory myCategory = myCurr.getTransactionCategory();</span>
+<span class="fc" id="L779">                final MoneyWiseTransCategory myParent = myCategory.getParentCategory();</span>
+
+                /* Access parent bucket */
+<span class="fc" id="L782">                MoneyWiseXAnalysisTransCategoryBucket myTotal = findItemById(myParent.getIndexedId());</span>
+
+                /* Calculate the delta */
+<span class="fc" id="L785">                myCurr.calculateDelta();</span>
+
+                /* If the bucket does not exist */
+<span class="pc bpc" id="L788" title="1 of 2 branches missed.">                if (myTotal == null) {</span>
+                    /* Look for bucket in the new list */
+<span class="fc" id="L790">                    myTotal = myTotals.getItemById(myParent.getIndexedId());</span>
+
+                    /* If the bucket is completely new */
+<span class="fc bfc" id="L793" title="All 2 branches covered.">                    if (myTotal == null) {</span>
+                        /* Create the new bucket and add to new list */
+<span class="fc" id="L795">                        myTotal = new MoneyWiseXAnalysisTransCategoryBucket(theAnalysis, myParent);</span>
+<span class="fc" id="L796">                        myTotals.add(myTotal);</span>
+                    }
+                }
+
+                /* Add to totals bucket */
+<span class="fc" id="L801">                myTotal.addValues(myCurr);</span>
+<span class="fc" id="L802">                theTotals.addValues(myCurr);</span>
+<span class="fc" id="L803">            }</span>
+
+            /* Loop through the new totals */
+<span class="fc" id="L806">            myIterator = myTotals.listIterator();</span>
+<span class="fc bfc" id="L807" title="All 2 branches covered.">            while (myIterator.hasNext()) {</span>
+<span class="fc" id="L808">                final MoneyWiseXAnalysisTransCategoryBucket myCurr = myIterator.next();</span>
+
+                /* Calculate delta for the category total */
+<span class="fc" id="L811">                myCurr.calculateDelta();</span>
+
+                /* Add it to the list */
+<span class="fc" id="L814">                theList.add(myCurr);</span>
+<span class="fc" id="L815">            }</span>
+
+            /* Sort the list */
+<span class="fc" id="L818">            theList.getUnderlyingList().sort(Comparator.comparing(MoneyWiseXAnalysisTransCategoryBucket::getTransactionCategory));</span>
+
+            /* Calculate delta for the totals */
+<span class="pc bpc" id="L821" title="1 of 2 branches missed.">            if (theTotals != null) {</span>
+<span class="fc" id="L822">                theTotals.calculateDelta();</span>
+            }
+<span class="fc" id="L824">        }</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

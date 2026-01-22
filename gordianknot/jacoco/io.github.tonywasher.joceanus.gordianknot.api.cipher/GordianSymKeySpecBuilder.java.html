@@ -1,0 +1,304 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianSymKeySpecBuilder.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.gordianknot.api.cipher</a> &gt; <span class="el_source">GordianSymKeySpecBuilder.java</span></div><h1>GordianSymKeySpecBuilder.java</h1><pre class="source lang-java linenums">/*
+ * GordianKnot: Security Suite
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.gordianknot.api.cipher;
+
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
+
+/**
+ * SymKey specification Builder.
+ */
+public final class GordianSymKeySpecBuilder {
+    /**
+     * Private constructor.
+     */
+    private GordianSymKeySpecBuilder() {
+    }
+
+    /**
+     * Create aesKeySpec.
+     *
+     * @param pKeyLength the keyLength
+     * @return the keySpec
+     */
+    public static GordianSymKeySpec aes(final GordianLength pKeyLength) {
+<span class="fc" id="L38">        return new GordianSymKeySpec(GordianSymKeyType.AES, pKeyLength);</span>
+    }
+
+    /**
+     * Create serpentKeySpec.
+     *
+     * @param pKeyLength the keyLength
+     * @return the keySpec
+     */
+    public static GordianSymKeySpec serpent(final GordianLength pKeyLength) {
+<span class="nc" id="L48">        return new GordianSymKeySpec(GordianSymKeyType.SERPENT, pKeyLength);</span>
+    }
+
+    /**
+     * Create twoFishKeySpec.
+     *
+     * @param pKeyLength the keyLength
+     * @return the keySpec
+     */
+    public static GordianSymKeySpec twoFish(final GordianLength pKeyLength) {
+<span class="nc" id="L58">        return new GordianSymKeySpec(GordianSymKeyType.TWOFISH, pKeyLength);</span>
+    }
+
+    /**
+     * Create threeFishKeySpec.
+     *
+     * @param pKeyLength the keyLength
+     * @return the keySpec
+     */
+    public static GordianSymKeySpec threeFish(final GordianLength pKeyLength) {
+<span class="nc" id="L68">        return new GordianSymKeySpec(GordianSymKeyType.THREEFISH, pKeyLength);</span>
+    }
+
+    /**
+     * Create camelliaKeySpec.
+     *
+     * @param pKeyLength the keyLength
+     * @return the keySpec
+     */
+    public static GordianSymKeySpec camellia(final GordianLength pKeyLength) {
+<span class="fc" id="L78">        return new GordianSymKeySpec(GordianSymKeyType.CAMELLIA, pKeyLength);</span>
+    }
+
+    /**
+     * Create rc2KeySpec.
+     *
+     * @param pKeyLength the keyLength
+     * @return the keySpec
+     */
+    public static GordianSymKeySpec rc2(final GordianLength pKeyLength) {
+<span class="nc" id="L88">        return new GordianSymKeySpec(GordianSymKeyType.RC2, pKeyLength);</span>
+    }
+
+    /**
+     * Create rc5KeySpec.
+     *
+     * @return the keySpec
+     */
+    public static GordianSymKeySpec rc5() {
+<span class="nc" id="L97">        return new GordianSymKeySpec(GordianSymKeyType.RC5, GordianLength.LEN_128);</span>
+    }
+
+    /**
+     * Create rc5KeySpec.
+     *
+     * @param pBlockLength the blockLength
+     * @return the keySpec
+     */
+    public static GordianSymKeySpec rc5(final GordianLength pBlockLength) {
+<span class="nc" id="L107">        return new GordianSymKeySpec(GordianSymKeyType.RC5, pBlockLength, GordianLength.LEN_128);</span>
+    }
+
+    /**
+     * Create rc6KeySpec.
+     *
+     * @param pKeyLength the keyLength
+     * @return the keySpec
+     */
+    public static GordianSymKeySpec rc6(final GordianLength pKeyLength) {
+<span class="nc" id="L117">        return new GordianSymKeySpec(GordianSymKeyType.RC6, pKeyLength);</span>
+    }
+
+    /**
+     * Create cast5KeySpec.
+     *
+     * @return the keySpec
+     */
+    public static GordianSymKeySpec cast5() {
+<span class="nc" id="L126">        return new GordianSymKeySpec(GordianSymKeyType.CAST5, GordianLength.LEN_128);</span>
+    }
+
+    /**
+     * Create cast6KeySpec.
+     *
+     * @param pKeyLength the keyLength
+     * @return the keySpec
+     */
+    public static GordianSymKeySpec cast6(final GordianLength pKeyLength) {
+<span class="nc" id="L136">        return new GordianSymKeySpec(GordianSymKeyType.CAST6, pKeyLength);</span>
+    }
+
+    /**
+     * Create ariaKeySpec.
+     *
+     * @param pKeyLength the keyLength
+     * @return the keySpec
+     */
+    public static GordianSymKeySpec aria(final GordianLength pKeyLength) {
+<span class="fc" id="L146">        return new GordianSymKeySpec(GordianSymKeyType.ARIA, pKeyLength);</span>
+    }
+
+    /**
+     * Create sm4KeySpec.
+     *
+     * @return the keySpec
+     */
+    public static GordianSymKeySpec sm4() {
+<span class="fc" id="L155">        return new GordianSymKeySpec(GordianSymKeyType.SM4, GordianLength.LEN_128);</span>
+    }
+
+    /**
+     * Create noeKeonKeySpec.
+     *
+     * @return the keySpec
+     */
+    public static GordianSymKeySpec noekeon() {
+<span class="nc" id="L164">        return new GordianSymKeySpec(GordianSymKeyType.NOEKEON, GordianLength.LEN_128);</span>
+    }
+
+    /**
+     * Create seedKeySpec.
+     *
+     * @return the keySpec
+     */
+    public static GordianSymKeySpec seed() {
+<span class="nc" id="L173">        return new GordianSymKeySpec(GordianSymKeyType.SEED, GordianLength.LEN_128);</span>
+    }
+
+    /**
+     * Create teaKeySpec.
+     *
+     * @return the keySpec
+     */
+    public static GordianSymKeySpec tea() {
+<span class="nc" id="L182">        return new GordianSymKeySpec(GordianSymKeyType.TEA, GordianLength.LEN_128);</span>
+    }
+
+    /**
+     * Create xteaKeySpec.
+     *
+     * @return the keySpec
+     */
+    public static GordianSymKeySpec xtea() {
+<span class="nc" id="L191">        return new GordianSymKeySpec(GordianSymKeyType.XTEA, GordianLength.LEN_128);</span>
+    }
+
+    /**
+     * Create ideaKeySpec.
+     *
+     * @return the keySpec
+     */
+    public static GordianSymKeySpec idea() {
+<span class="nc" id="L200">        return new GordianSymKeySpec(GordianSymKeyType.IDEA, GordianLength.LEN_128);</span>
+    }
+
+    /**
+     * Create skipjackKeySpec.
+     *
+     * @return the keySpec
+     */
+    public static GordianSymKeySpec skipjack() {
+<span class="nc" id="L209">        return new GordianSymKeySpec(GordianSymKeyType.SKIPJACK, GordianLength.LEN_128);</span>
+    }
+
+    /**
+     * Create desedeKeySpec.
+     *
+     * @param pKeyLength the keyLength
+     * @return the keySpec
+     */
+    public static GordianSymKeySpec desede(final GordianLength pKeyLength) {
+<span class="nc" id="L219">        return new GordianSymKeySpec(GordianSymKeyType.DESEDE, pKeyLength);</span>
+    }
+
+    /**
+     * Create blowfishKeySpec.
+     *
+     * @param pKeyLength the keyLength
+     * @return the keySpec
+     */
+    public static GordianSymKeySpec blowfish(final GordianLength pKeyLength) {
+<span class="nc" id="L229">        return new GordianSymKeySpec(GordianSymKeyType.BLOWFISH, pKeyLength);</span>
+    }
+
+    /**
+     * Create kalynaKeySpec.
+     *
+     * @param pKeyLength the keyLength
+     * @return the keySpec
+     */
+    public static GordianSymKeySpec kalyna(final GordianLength pKeyLength) {
+<span class="fc" id="L239">        return new GordianSymKeySpec(GordianSymKeyType.KALYNA, pKeyLength);</span>
+    }
+
+    /**
+     * Create kalynaKeySpec.
+     *
+     * @param pBlockLength the block length
+     * @param pKeyLength   the keyLength
+     * @return the keySpec
+     */
+    public static GordianSymKeySpec kalyna(final GordianLength pBlockLength,
+                                           final GordianLength pKeyLength) {
+<span class="fc" id="L251">        return new GordianSymKeySpec(GordianSymKeyType.KALYNA, pBlockLength, pKeyLength);</span>
+    }
+
+    /**
+     * Create speckKeySpec.
+     *
+     * @param pKeyLength the keyLength
+     * @return the keySpec
+     */
+    public static GordianSymKeySpec speck(final GordianLength pKeyLength) {
+<span class="nc" id="L261">        return new GordianSymKeySpec(GordianSymKeyType.SPECK, pKeyLength);</span>
+    }
+
+    /**
+     * Create simonKeySpec.
+     *
+     * @param pKeyLength the keyLength
+     * @return the keySpec
+     */
+    public static GordianSymKeySpec simon(final GordianLength pKeyLength) {
+<span class="nc" id="L271">        return new GordianSymKeySpec(GordianSymKeyType.SIMON, pKeyLength);</span>
+    }
+
+    /**
+     * Create marsKeySpec.
+     *
+     * @param pKeyLength the keyLength
+     * @return the keySpec
+     */
+    public static GordianSymKeySpec mars(final GordianLength pKeyLength) {
+<span class="nc" id="L281">        return new GordianSymKeySpec(GordianSymKeyType.MARS, pKeyLength);</span>
+    }
+
+    /**
+     * Create anubisKeySpec.
+     *
+     * @param pKeyLength the keyLength
+     * @return the keySpec
+     */
+    public static GordianSymKeySpec anubis(final GordianLength pKeyLength) {
+<span class="nc" id="L291">        return new GordianSymKeySpec(GordianSymKeyType.ANUBIS, pKeyLength);</span>
+    }
+
+    /**
+     * Create leaKeySpec.
+     *
+     * @param pKeyLength the keyLength
+     * @return the keySpec
+     */
+    public static GordianSymKeySpec lea(final GordianLength pKeyLength) {
+<span class="nc" id="L301">        return new GordianSymKeySpec(GordianSymKeyType.LEA, pKeyLength);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

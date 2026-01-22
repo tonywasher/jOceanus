@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWisePortfolioBuilder.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.moneywise.data.builder</a> &gt; <span class="el_source">MoneyWisePortfolioBuilder.java</span></div><h1>MoneyWisePortfolioBuilder.java</h1><pre class="source lang-java linenums">/*
+ * MoneyWise: Finance Application
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.moneywise.data.builder;
+
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDataSet;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePayee;
+import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePortfolio;
+import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseCurrency;
+import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseCurrencyClass;
+import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWisePortfolioClass;
+import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWisePortfolioType;
+import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
+
+/**
+ * Portfolio Builder.
+ */
+public class MoneyWisePortfolioBuilder {
+    /**
+     * DataSet.
+     */
+    private final MoneyWiseDataSet theDataSet;
+
+    /**
+     * The PortfolioName.
+     */
+    private String theName;
+
+    /**
+     * The Parent.
+     */
+    private MoneyWisePayee theParent;
+
+    /**
+     * The PortfolioType.
+     */
+    private MoneyWisePortfolioType theType;
+
+    /**
+     * The Currency.
+     */
+    private MoneyWiseCurrency theCurrency;
+
+    /**
+     * Constructor.
+     *
+     * @param pDataSet the dataSet
+     */
+<span class="fc" id="L63">    public MoneyWisePortfolioBuilder(final MoneyWiseDataSet pDataSet) {</span>
+<span class="fc" id="L64">        theDataSet = pDataSet;</span>
+<span class="fc" id="L65">        theDataSet.getPortfolios().ensureMap();</span>
+<span class="fc" id="L66">        reportingCurrency();</span>
+<span class="fc" id="L67">    }</span>
+
+    /**
+     * Set Name.
+     *
+     * @param pName the name of the portfolio.
+     * @return the builder
+     */
+    public MoneyWisePortfolioBuilder name(final String pName) {
+<span class="fc" id="L76">        theName = pName;</span>
+<span class="fc" id="L77">        return this;</span>
+    }
+
+    /**
+     * Set Parent.
+     *
+     * @param pParent the parent.
+     * @return the builder
+     */
+    public MoneyWisePortfolioBuilder parent(final MoneyWisePayee pParent) {
+<span class="fc" id="L87">        theParent = pParent;</span>
+<span class="fc" id="L88">        return this;</span>
+    }
+
+    /**
+     * Set Parent.
+     *
+     * @param pParent the parent.
+     * @return the builder
+     */
+    public MoneyWisePortfolioBuilder parent(final String pParent) {
+<span class="fc" id="L98">        return parent(theDataSet.getPayees().findItemByName(pParent));</span>
+    }
+
+    /**
+     * Set the portfolioType.
+     *
+     * @param pType the type of the portfolio.
+     * @return the builder
+     */
+    public MoneyWisePortfolioBuilder type(final MoneyWisePortfolioType pType) {
+<span class="fc" id="L108">        theType = pType;</span>
+<span class="fc" id="L109">        return this;</span>
+    }
+
+    /**
+     * Set the portfolioType.
+     *
+     * @param pType the type of the portfolio.
+     * @return the builder
+     */
+    public MoneyWisePortfolioBuilder type(final MoneyWisePortfolioClass pType) {
+<span class="fc" id="L119">        return type(theDataSet.getPortfolioTypes().findItemByClass(pType));</span>
+    }
+
+    /**
+     * Set the currency.
+     *
+     * @param pCurrency the currency of the loan.
+     * @return the builder
+     */
+    public MoneyWisePortfolioBuilder currency(final MoneyWiseCurrency pCurrency) {
+<span class="fc" id="L129">        theCurrency = pCurrency;</span>
+<span class="fc" id="L130">        return this;</span>
+    }
+
+    /**
+     * Set the currency.
+     *
+     * @param pCurrency the currency of the cash.
+     * @return the builder
+     */
+    public MoneyWisePortfolioBuilder currency(final MoneyWiseCurrencyClass pCurrency) {
+<span class="nc" id="L140">        return currency(theDataSet.getAccountCurrencies().findItemByClass(pCurrency));</span>
+    }
+
+    /**
+     * Set the reporting currency.
+     */
+    private void reportingCurrency() {
+<span class="fc" id="L147">        currency(lookupReportingCurrency());</span>
+<span class="fc" id="L148">    }</span>
+
+    /**
+     * Obtain the reporting currency.
+     *
+     * @return the currency
+     */
+    private MoneyWiseCurrency lookupReportingCurrency() {
+<span class="fc" id="L156">        return theDataSet.getReportingCurrency();</span>
+    }
+
+    /**
+     * Build the portfolio.
+     *
+     * @return the new Portfolio
+     * @throws OceanusException on error
+     */
+    public MoneyWisePortfolio build() throws OceanusException {
+        /* Create the payee */
+<span class="fc" id="L167">        final MoneyWisePortfolio myPortfolio = theDataSet.getPortfolios().addNewItem();</span>
+<span class="fc" id="L168">        myPortfolio.setName(theName);</span>
+<span class="fc" id="L169">        myPortfolio.setParent(theParent);</span>
+<span class="fc" id="L170">        myPortfolio.setCategory(theType);</span>
+<span class="fc" id="L171">        myPortfolio.setAssetCurrency(theCurrency);</span>
+<span class="fc" id="L172">        myPortfolio.setClosed(Boolean.FALSE);</span>
+
+        /* Reset the values */
+<span class="fc" id="L175">        reset();</span>
+
+        /* Check for errors */
+<span class="fc" id="L178">        myPortfolio.adjustMapForItem();</span>
+<span class="fc" id="L179">        myPortfolio.validate();</span>
+<span class="pc bpc" id="L180" title="1 of 2 branches missed.">        if (myPortfolio.hasErrors()) {</span>
+<span class="nc" id="L181">            myPortfolio.removeItem();</span>
+<span class="nc" id="L182">            throw new MoneyWiseDataException(myPortfolio, &quot;Failed validation&quot;);</span>
+        }
+
+        /* Return the portfolio */
+<span class="fc" id="L186">        return myPortfolio;</span>
+    }
+
+    /**
+     * Reset the builder.
+     */
+    public void reset() {
+        /* Reset values */
+<span class="fc" id="L194">        theName = null;</span>
+<span class="fc" id="L195">        theParent = null;</span>
+<span class="fc" id="L196">        theType = null;</span>
+<span class="fc" id="L197">        reportingCurrency();</span>
+<span class="fc" id="L198">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

@@ -1,0 +1,438 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>OceanusMoney.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Oceanus Java Core Utilities</a> &gt; <a href="index.source.html" class="el_package">io.github.tonywasher.joceanus.oceanus.decimal</a> &gt; <span class="el_source">OceanusMoney.java</span></div><h1>OceanusMoney.java</h1><pre class="source lang-java linenums">/*
+ * Oceanus: Java Utilities
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.oceanus.decimal;
+
+import java.nio.charset.StandardCharsets;
+import java.text.DecimalFormatSymbols;
+import java.util.Arrays;
+import java.util.Currency;
+import java.util.Locale;
+import java.util.Objects;
+
+/**
+ * Represents a Money object.
+ */
+public class OceanusMoney
+        extends OceanusDecimal {
+    /**
+     * Money Byte length.
+     */
+    public static final int BYTE_LEN = Long.BYTES + 4;
+
+    /**
+     * Currency code length.
+     */
+    private static final int CURRCODE_LEN = 2;
+
+    /**
+     * Invalid Currency error text.
+     */
+    static final String ERROR_DIFFER = &quot;Cannot add together two different currencies&quot;;
+
+    /**
+     * Default currency.
+     */
+<span class="fc" id="L49">    static final Currency DEFAULT_CURRENCY = determineDefaultCurrency();</span>
+
+    /**
+     * Currency for money.
+     */
+    private final Currency theCurrency;
+
+    /**
+     * Constructor for money of value zero in the default currency.
+     */
+    public OceanusMoney() {
+<span class="fc" id="L60">        this(DEFAULT_CURRENCY);</span>
+<span class="fc" id="L61">    }</span>
+
+    /**
+     * Constructor for money of value zero.
+     *
+     * @param pCurrency the currency
+     */
+<span class="fc" id="L68">    public OceanusMoney(final Currency pCurrency) {</span>
+<span class="fc" id="L69">        theCurrency = pCurrency;</span>
+<span class="fc" id="L70">        recordScale(theCurrency.getDefaultFractionDigits());</span>
+<span class="fc" id="L71">    }</span>
+
+    /**
+     * Construct a new OceanusMoney by copying another money.
+     *
+     * @param pMoney the Money to copy
+     */
+    public OceanusMoney(final OceanusMoney pMoney) {
+<span class="nc" id="L79">        super(pMoney.unscaledValue(), pMoney.scale());</span>
+<span class="nc" id="L80">        theCurrency = pMoney.getCurrency();</span>
+<span class="nc" id="L81">    }</span>
+
+    /**
+     * Constructor for money from a decimal string.
+     *
+     * @param pSource The source decimal string
+     * @throws IllegalArgumentException on invalidly formatted argument
+     */
+    public OceanusMoney(final String pSource) {
+        /* Use default constructor */
+<span class="fc" id="L91">        this();</span>
+
+        /* Parse the string and correct the scale */
+<span class="fc" id="L94">        OceanusDecimalParser.parseDecimalValue(pSource, this);</span>
+<span class="fc" id="L95">        adjustToScale(theCurrency.getDefaultFractionDigits());</span>
+<span class="fc" id="L96">    }</span>
+
+    /**
+     * Constructor for money from a decimal string.
+     *
+     * @param pSource   The source decimal string
+     * @param pCurrency the currency
+     * @throws IllegalArgumentException on invalidly formatted argument
+     */
+    public OceanusMoney(final String pSource,
+                        final Currency pCurrency) {
+        /* Use currency constructor */
+<span class="nc" id="L108">        this(pCurrency);</span>
+
+        /* Parse the string and correct the scale */
+<span class="nc" id="L111">        OceanusDecimalParser.parseDecimalValue(pSource, this);</span>
+<span class="nc" id="L112">        adjustToScale(theCurrency.getDefaultFractionDigits());</span>
+<span class="nc" id="L113">    }</span>
+
+    /**
+     * Construct a new OceanusMoney by combining units and price.
+     *
+     * @param pUnits the number of units
+     * @param pPrice the price of each unit
+     */
+    protected OceanusMoney(final OceanusUnits pUnits,
+                           final OceanusPrice pPrice) {
+<span class="nc" id="L123">        this(pPrice.getCurrency());</span>
+<span class="nc" id="L124">        calculateProduct(pUnits, pPrice);</span>
+<span class="nc" id="L125">    }</span>
+
+    /**
+     * Construct a new OceanusMoney by combining money and rate.
+     *
+     * @param pMoney the Money to apply rate to
+     * @param pRate  the Rate to apply
+     */
+    private OceanusMoney(final OceanusMoney pMoney,
+                         final OceanusRate pRate) {
+<span class="nc" id="L135">        this(pMoney.getCurrency());</span>
+<span class="nc" id="L136">        calculateProduct(pMoney, pRate);</span>
+<span class="nc" id="L137">    }</span>
+
+    /**
+     * Construct a new Money by combining money and ratio.
+     *
+     * @param pMoney the Money to apply ratio to
+     * @param pRatio the Ratio to apply
+     */
+    private OceanusMoney(final OceanusMoney pMoney,
+                         final OceanusRatio pRatio) {
+<span class="nc" id="L147">        this(pMoney.getCurrency());</span>
+<span class="nc" id="L148">        calculateProduct(pMoney, pRatio);</span>
+<span class="nc" id="L149">    }</span>
+
+    /**
+     * Create the decimal from a byte array.
+     *
+     * @param pBuffer the buffer
+     */
+    public OceanusMoney(final byte[] pBuffer) {
+<span class="fc" id="L157">        super(pBuffer);</span>
+<span class="pc bpc" id="L158" title="1 of 2 branches missed.">        if (pBuffer.length &lt; Long.BYTES + 1 + CURRCODE_LEN) {</span>
+<span class="nc" id="L159">            throw new IllegalArgumentException();</span>
+        }
+<span class="fc" id="L161">        final byte[] myCurr = Arrays.copyOfRange(pBuffer, Long.BYTES + 1, pBuffer.length);</span>
+<span class="fc" id="L162">        final String myCurrCode = new String(myCurr);</span>
+<span class="fc" id="L163">        theCurrency = Currency.getInstance(myCurrCode);</span>
+<span class="fc" id="L164">    }</span>
+
+    /**
+     * Access the currency.
+     *
+     * @return the currency
+     */
+    public Currency getCurrency() {
+<span class="fc" id="L172">        return theCurrency;</span>
+    }
+
+    /**
+     * Factory method for generating whole monetary units for a currency (e.g. £)
+     *
+     * @param pUnits    the number of whole monetary units
+     * @param pCurrency the currency
+     * @return the allocated money
+     */
+    public static OceanusMoney getWholeUnits(final long pUnits,
+                                             final Currency pCurrency) {
+        /* Allocate the money */
+<span class="nc" id="L185">        final OceanusMoney myResult = new OceanusMoney(pCurrency);</span>
+<span class="nc" id="L186">        final int myScale = myResult.scale();</span>
+<span class="nc" id="L187">        myResult.setValue(adjustDecimals(pUnits, myScale), myScale);</span>
+<span class="nc" id="L188">        return myResult;</span>
+    }
+
+    /**
+     * Factory method for generating whole monetary units (e.g. £)
+     *
+     * @param pUnits the number of whole monetary units
+     * @return the allocated money
+     */
+    public static OceanusMoney getWholeUnits(final long pUnits) {
+        /* Allocate the money */
+<span class="nc" id="L199">        final OceanusMoney myResult = new OceanusMoney();</span>
+<span class="nc" id="L200">        final int myScale = myResult.scale();</span>
+<span class="nc" id="L201">        myResult.setValue(adjustDecimals(pUnits, myScale), myScale);</span>
+<span class="nc" id="L202">        return myResult;</span>
+    }
+
+    /**
+     * Add a monetary amount to the value.
+     *
+     * @param pValue The money to add to this one.
+     */
+    public void addAmount(final OceanusMoney pValue) {
+        /* Currency must be identical */
+<span class="nc bnc" id="L212" title="All 2 branches missed.">        if (!theCurrency.equals(pValue.getCurrency())) {</span>
+<span class="nc" id="L213">            throw new IllegalArgumentException(ERROR_DIFFER);</span>
+        }
+
+        /* Add the value */
+<span class="nc" id="L217">        super.addValue(pValue);</span>
+<span class="nc" id="L218">    }</span>
+
+    /**
+     * Subtract a monetary amount from the value.
+     *
+     * @param pValue The money to subtract from this one.
+     */
+    public void subtractAmount(final OceanusMoney pValue) {
+        /* Currency must be identical */
+<span class="nc bnc" id="L227" title="All 2 branches missed.">        if (!theCurrency.equals(pValue.getCurrency())) {</span>
+<span class="nc" id="L228">            throw new IllegalArgumentException(ERROR_DIFFER);</span>
+        }
+
+        /* Subtract the value */
+<span class="nc" id="L232">        super.subtractValue(pValue);</span>
+<span class="nc" id="L233">    }</span>
+
+    @Override
+    public void addValue(final OceanusDecimal pValue) {
+<span class="nc" id="L237">        throw new UnsupportedOperationException();</span>
+    }
+
+    @Override
+    public void subtractValue(final OceanusDecimal pValue) {
+<span class="nc" id="L242">        throw new UnsupportedOperationException();</span>
+    }
+
+    /**
+     * Obtain value in different currency.
+     *
+     * @param pCurrency the currency to convert to
+     * @return the converted money in the new currency
+     */
+    public OceanusMoney changeCurrency(final Currency pCurrency) {
+        /* Convert currency with an exchange rate of one */
+<span class="nc" id="L253">        return convertCurrency(pCurrency, OceanusRatio.ONE);</span>
+    }
+
+    /**
+     * Obtain converted money.
+     *
+     * @param pCurrency the currency to convert to
+     * @param pRate     the conversion rate
+     * @return the converted money in the new currency
+     */
+    public OceanusMoney convertCurrency(final Currency pCurrency,
+                                        final OceanusRatio pRate) {
+        /* If this is the same currency then no conversion */
+<span class="nc bnc" id="L266" title="All 2 branches missed.">        if (theCurrency.equals(pCurrency)) {</span>
+<span class="nc" id="L267">            return new OceanusMoney(this);</span>
+        }
+
+        /* Create the new Money */
+<span class="nc" id="L271">        final OceanusMoney myResult = new OceanusMoney(pCurrency);</span>
+<span class="nc" id="L272">        myResult.calculateProduct(this, pRate);</span>
+<span class="nc" id="L273">        return myResult;</span>
+    }
+
+    /**
+     * obtain a Diluted money.
+     *
+     * @param pDilution the dilution factor
+     * @return the calculated value
+     */
+    public OceanusMoney getDilutedMoney(final OceanusRatio pDilution) {
+        /* Calculate diluted value */
+<span class="nc" id="L284">        return new OceanusMoney(this, pDilution);</span>
+    }
+
+    /**
+     * calculate the value of this money at a given rate.
+     *
+     * @param pRate the rate to calculate at
+     * @return the calculated value
+     */
+    public OceanusMoney valueAtRate(final OceanusRate pRate) {
+        /* Calculate the money at this rate */
+<span class="nc" id="L295">        return new OceanusMoney(this, pRate);</span>
+    }
+
+    /**
+     * calculate the value of this money at a given ratio.
+     *
+     * @param pRatio the ratio to multiply by
+     * @return the calculated value
+     */
+    public OceanusMoney valueAtRatio(final OceanusRatio pRatio) {
+        /* Calculate the money at this rate */
+<span class="nc" id="L306">        return new OceanusMoney(this, pRatio);</span>
+    }
+
+    /**
+     * calculate the gross value of this money at a given rate used to convert from net to gross
+     * values form interest and dividends.
+     *
+     * @param pRate the rate to calculate at
+     * @return the calculated value
+     */
+    public OceanusMoney grossValueAtRate(final OceanusRate pRate) {
+        /* Calculate the Gross corresponding to this net value at the rate */
+<span class="nc" id="L318">        final OceanusRatio myRatio = pRate.getRemainingRate().getInverseRatio();</span>
+<span class="nc" id="L319">        return new OceanusMoney(this, myRatio);</span>
+    }
+
+    /**
+     * calculate the TaxCredit value of this money at a given rate used to convert from net to
+     * gross. values form interest and dividends
+     *
+     * @param pRate the rate to calculate at
+     * @return the calculated value
+     */
+    public OceanusMoney taxCreditAtRate(final OceanusRate pRate) {
+        /* Calculate the Tax Credit corresponding to this net value at the rate */
+<span class="nc" id="L331">        final OceanusRatio myRatio = new OceanusRatio(pRate, pRate.getRemainingRate());</span>
+<span class="nc" id="L332">        return new OceanusMoney(this, myRatio);</span>
+    }
+
+    /**
+     * calculate the value of this money at a given proportion (i.e. weight/total).
+     *
+     * @param pWeight the weight of this item
+     * @param pTotal  the total weight of all the items
+     * @return the calculated value
+     */
+    public OceanusMoney valueAtWeight(final OceanusMoney pWeight,
+                                      final OceanusMoney pTotal) {
+        /* Handle zero total */
+<span class="nc bnc" id="L345" title="All 2 branches missed.">        if (!pTotal.isNonZero()) {</span>
+<span class="nc" id="L346">            return new OceanusMoney(theCurrency);</span>
+        }
+
+        /* Calculate the defined ratio of this value */
+<span class="nc" id="L350">        final OceanusRatio myRatio = new OceanusRatio(pWeight, pTotal);</span>
+<span class="nc" id="L351">        return new OceanusMoney(this, myRatio);</span>
+    }
+
+    /**
+     * calculate the value of this money at a given proportion (i.e. weight/total).
+     *
+     * @param pWeight the weight of this item
+     * @param pTotal  the total weight of all the items
+     * @return the calculated value
+     */
+    public OceanusMoney valueAtWeight(final OceanusUnits pWeight,
+                                      final OceanusUnits pTotal) {
+        /* Handle zero total */
+<span class="nc bnc" id="L364" title="All 2 branches missed.">        if (!pTotal.isNonZero()) {</span>
+<span class="nc" id="L365">            return new OceanusMoney(theCurrency);</span>
+        }
+
+        /* Calculate the defined ratio of this value */
+<span class="nc" id="L369">        final OceanusRatio myRatio = new OceanusRatio(pWeight, pTotal);</span>
+<span class="nc" id="L370">        return new OceanusMoney(this, myRatio);</span>
+    }
+
+    /**
+     * Determine default currency.
+     *
+     * @return the default currency
+     */
+    private static Currency determineDefaultCurrency() {
+        /* Obtain the default currency */
+<span class="fc" id="L380">        final Currency myCurrency = DecimalFormatSymbols.getInstance().getCurrency();</span>
+
+        /* If the default is a pseudo-currency then default to GBP */
+<span class="pc bpc" id="L383" title="1 of 2 branches missed.">        return myCurrency.getDefaultFractionDigits() &lt; 0</span>
+<span class="nc" id="L384">                ? Currency.getInstance(Locale.UK)</span>
+<span class="fc" id="L385">                : myCurrency;</span>
+    }
+
+    /**
+     * Obtain default currency.
+     *
+     * @return the default currency
+     */
+    public static Currency getDefaultCurrency() {
+<span class="nc" id="L394">        return DEFAULT_CURRENCY;</span>
+    }
+
+    @Override
+    public boolean equals(final Object pThat) {
+        /* Handle trivial cases */
+<span class="pc bpc" id="L400" title="1 of 2 branches missed.">        if (this == pThat) {</span>
+<span class="nc" id="L401">            return true;</span>
+        }
+<span class="pc bpc" id="L403" title="1 of 2 branches missed.">        if (pThat == null) {</span>
+<span class="nc" id="L404">            return false;</span>
+        }
+
+        /* Make sure that the object is the same class */
+<span class="pc bpc" id="L408" title="1 of 2 branches missed.">        if (getClass() != pThat.getClass()) {</span>
+<span class="nc" id="L409">            return false;</span>
+        }
+
+        /* Cast as money */
+<span class="fc" id="L413">        final OceanusMoney myThat = (OceanusMoney) pThat;</span>
+
+        /* Check currency */
+<span class="pc bpc" id="L416" title="1 of 2 branches missed.">        if (!theCurrency.equals(myThat.getCurrency())) {</span>
+<span class="nc" id="L417">            return false;</span>
+        }
+
+        /* Check value and scale */
+<span class="fc" id="L421">        return super.equals(pThat);</span>
+    }
+
+    @Override
+    public int hashCode() {
+<span class="nc" id="L426">        return Objects.hash(theCurrency, super.hashCode());</span>
+    }
+
+    @Override
+    public byte[] toBytes() {
+<span class="fc" id="L431">        final byte[] myBase = super.toBytes();</span>
+<span class="fc" id="L432">        final byte[] myCurr = theCurrency.getCurrencyCode().getBytes(StandardCharsets.UTF_8);</span>
+<span class="fc" id="L433">        final byte[] myResult = Arrays.copyOf(myBase, myBase.length + myCurr.length);</span>
+<span class="fc" id="L434">        System.arraycopy(myCurr, 0, myResult, myBase.length, myCurr.length);</span>
+<span class="fc" id="L435">        return myResult;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
