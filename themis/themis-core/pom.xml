@@ -3,25 +3,25 @@
   <parent>
     <groupId>io.github.tonywasher.joceanus</groupId>
     <artifactId>themis</artifactId>
-    <version>1.6.3-SNAPSHOT</version>
+    <version>1.6.3-b6</version>
   </parent>
-  <groupId>${parent.groupId}.themis</groupId>
+  <groupId>io.github.tonywasher.joceanus.themis</groupId>
   <artifactId>themis-core</artifactId>
   <name>Themis Core Project Framework</name>
   <description>Java Core Project Framework</description>
   <dependencies>
     <dependency>
-      <groupId>${parent.groupId}</groupId>
+      <groupId>${jOceanusGroup}</groupId>
       <artifactId>metis</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>${parent.groupId}.tethys</groupId>
+      <groupId>${TethysGroup}</groupId>
       <artifactId>tethys-core</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>${parent.groupId}</groupId>
+      <groupId>${jOceanusGroup}</groupId>
       <artifactId>oceanus</artifactId>
       <version>${project.version}</version>
     </dependency>

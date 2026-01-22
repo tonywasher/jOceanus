@@ -6,9 +6,9 @@
     <parent>
         <groupId>io.github.tonywasher.joceanus.prometheus</groupId>
         <artifactId>sheet</artifactId>
-        <version>1.6.3-SNAPSHOT</version>
+        <version>1.6.3-b6</version>
     </parent>
-    <groupId>${parent.groupId}.services</groupId>
+    <groupId>io.github.tonywasher.joceanus.prometheus.sheet</groupId>
     <artifactId>prometheus-sheet-odf</artifactId>
     <name>Prometheus Sheet ODF Service</name>
     <description>Prometheus Sheet ODF Service</description>
@@ -19,7 +19,7 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>${packageKey}</groupId>
+            <groupId>${jOceanusGroup}</groupId>
             <artifactId>oceanus</artifactId>
             <version>${project.version}</version>
         </dependency>

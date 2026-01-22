@@ -179,7 +179,7 @@ public final class PrometheusOdfLoader {
             final DocumentBuilder myBuilder = myFactory.newDocumentBuilder();
 
             /* Loop through the Zip file entries */
-            for (; ; ) {
+            while (true) {
                 /* Read next entry */
                 final ZipEntry myEntry = myZipStream.getNextEntry();
 
@@ -248,7 +248,7 @@ public final class PrometheusOdfLoader {
             final Transformer myXformer = myXformFactory.newTransformer();
 
             /* Loop through the Zip file entries */
-            for (; ; ) {
+            while (true) {
                 /* Read next entry */
                 final ZipEntry myEntry = myInStream.getNextEntry();
 

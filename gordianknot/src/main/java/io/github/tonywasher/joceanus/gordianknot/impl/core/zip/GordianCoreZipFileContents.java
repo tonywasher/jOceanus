@@ -78,7 +78,7 @@ public class GordianCoreZipFileContents
         final String myFileSep = Character.toString(SEPARATOR_FILE);
 
         /* while we have separators in the string */
-        for (; ; ) {
+        while (true) {
             /* Locate End of entry and break loop if not found */
             final int myLoc = myString.indexOf(myFileSep);
             if (myLoc == -1) {

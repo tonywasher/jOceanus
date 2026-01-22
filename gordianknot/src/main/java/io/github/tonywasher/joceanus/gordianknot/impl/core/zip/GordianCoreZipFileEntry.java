@@ -365,7 +365,7 @@ public class GordianCoreZipFileEntry
 
         /* Loop through the streamProperties */
         int myIndex = 1;
-        for (; ; ) {
+        while (true) {
             /* Check for property and break loop if not found */
             final Long myType = theProperties.getLongProperty(PROP_TYPE
                     + myIndex);

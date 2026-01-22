@@ -3,9 +3,9 @@
   <parent>
     <groupId>io.github.tonywasher.joceanus</groupId>
     <artifactId>themis</artifactId>
-    <version>1.6.3-SNAPSHOT</version>
+    <version>1.6.3-b6</version>
   </parent>
-  <groupId>${parent.groupId}.themis</groupId>
+  <groupId>io.github.tonywasher.joceanus.themis</groupId>
   <artifactId>themis-javafx</artifactId>
   <name>Themis JavaFX Project Framework</name>
   <description>Java JavaFX Project Framework</description>
@@ -16,7 +16,7 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>${parent.groupId}.tethys</groupId>
+      <groupId>${TethysGroup}</groupId>
       <artifactId>tethys-javafx</artifactId>
       <version>${project.version}</version>
     </dependency>

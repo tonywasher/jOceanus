@@ -16,8 +16,8 @@
  */
 package io.github.tonywasher.joceanus.moneywise.quicken.file;
 
-import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.moneywise.quicken.definitions.MoneyWiseQIFType;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.tethys.api.factory.TethysUIFactory;
 
 import java.io.BufferedReader;
@@ -91,7 +91,7 @@ public class MoneyWiseQIFParser {
         final List<String> myLines = new ArrayList<>();
 
         /* Loop through the file */
-        for (; ; ) {
+        while (true) {
             /* Read the next line and break on EOF */
             final String myLine = pStream.readLine();
             if (myLine == null) {

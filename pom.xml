@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>io.github.tonywasher</groupId>
     <artifactId>joceanus</artifactId>
-    <version>1.6.3-SNAPSHOT</version>
+    <version>1.6.3-b6</version>
     <packaging>pom</packaging>
     <name>Java Oceanus package</name>
     <description>Parent project for jOceanus</description>
@@ -121,6 +121,12 @@
         <sonar.projectKey>jOceanus</sonar.projectKey>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <sonar.exclusions>**/embedded/**,**/patch/**,**/test/**</sonar.exclusions>
+        <jOceanusGroup>io.github.tonywasher.joceanus</jOceanusGroup>
+        <MoneyWiseGroup>io.github.tonywasher.joceanus.moneywise</MoneyWiseGroup>
+        <PrometheusGroup>io.github.tonywasher.joceanus.prometheus</PrometheusGroup>
+        <PrometheusSheetGroup>io.github.tonywasher.joceanus.prometheus.sheet</PrometheusSheetGroup>
+        <TethysGroup>io.github.tonywasher.joceanus.tethys</TethysGroup>
+        <ThemisGroup>io.github.tonywasher.joceanus.themis</ThemisGroup>
     </properties>
     <build>
         <resources>

@@ -74,7 +74,7 @@ public interface ThemisAnalysisContainer
     default String determineFullChildName(final String pChildName) {
         /* Loop */
         ThemisAnalysisContainer myContainer = this;
-        for (; ; ) {
+        while (true) {
             if (myContainer instanceof ThemisAnalysisObject myObject) {
                 return myObject.getFullName() + ThemisAnalysisChar.PERIOD + pChildName;
             }

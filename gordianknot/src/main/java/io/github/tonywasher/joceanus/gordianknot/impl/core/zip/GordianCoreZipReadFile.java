@@ -108,7 +108,7 @@ public class GordianCoreZipReadFile
 
             /* Loop through the Zip file entries */
             ZipEntry myEntry;
-            for (; ; ) {
+            while (true) {
                 /* Read next entry */
                 myEntry = myHdrStream.getNextEntry();
 
@@ -190,7 +190,7 @@ public class GordianCoreZipReadFile
         byte[] myBuffer = new byte[BUFFERSIZE];
 
         /* Loop */
-        for (; ; ) {
+        while (true) {
             /* Read the header entry */
             final int myRead = pHdrStream.read(myBuffer, myLen, mySpace);
             if (myRead == -1) {

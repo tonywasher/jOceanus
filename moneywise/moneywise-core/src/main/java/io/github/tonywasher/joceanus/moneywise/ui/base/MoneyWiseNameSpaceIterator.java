@@ -73,7 +73,7 @@ public class MoneyWiseNameSpaceIterator
         }
 
         /* Loop to get an iterator that has an item */
-        for (; ; ) {
+        while (true) {
             /* No more items if the keys are empty */
             if (theKeys.isEmpty()) {
                 return false;

@@ -150,7 +150,7 @@ public abstract class MoneyWiseValidateAccount<T extends MoneyWiseAssetBase>
 
         /* Loop until we found a name */
         String myName = pBase;
-        for (; ; ) {
+        while (true) {
             /* try out the name */
             if (pList.checkAvailableName(myName)) {
                 return myName;

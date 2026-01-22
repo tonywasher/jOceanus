@@ -84,7 +84,7 @@ public final class OceanusResourceLoader {
              BufferedReader myReader = new BufferedReader(myInputReader)) {
 
             /* Read the header entry */
-            for (; ; ) {
+            while (true) {
                 /* Read next line */
                 final String myLine = myReader.readLine();
                 if (myLine == null) {

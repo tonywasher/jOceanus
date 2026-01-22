@@ -3,9 +3,9 @@
   <parent>
     <groupId>io.github.tonywasher</groupId>
     <artifactId>joceanus</artifactId>
-    <version>1.6.3-SNAPSHOT</version>
+    <version>1.6.3-b6</version>
   </parent>
-  <groupId>${parent.groupId}.joceanus</groupId>
+  <groupId>io.github.tonywasher.joceanus</groupId>
   <artifactId>astraeus</artifactId>
   <name>jOceanus Post Processing</name>
   <description>Post-processing framework for joceanus</description>
@@ -16,19 +16,19 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>${project.groupId}.moneywise</groupId>
+      <groupId>${MoneyWiseGroup}</groupId>
       <artifactId>moneywise-swing</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>${project.groupId}.moneywise</groupId>
+      <groupId>${MoneyWiseGroup}</groupId>
       <artifactId>moneywise-javafx</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>${project.groupId}.themis</groupId>
+      <groupId>${ThemisGroup}</groupId>
       <artifactId>themis-javafx</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>

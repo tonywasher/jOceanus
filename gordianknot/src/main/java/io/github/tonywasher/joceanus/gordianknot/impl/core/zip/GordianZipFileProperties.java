@@ -82,7 +82,7 @@ public class GordianZipFileProperties {
         final String myPropSep = Character.toString(SEP_PROPERTY);
 
         /* while we have separators in the string */
-        for (; ; ) {
+        while (true) {
             /* Locate next separator and break if not found */
             final int myLoc = myString.indexOf(myPropSep);
             if (myLoc == -1) {

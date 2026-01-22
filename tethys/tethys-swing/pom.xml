@@ -3,9 +3,9 @@
   <parent>
     <groupId>io.github.tonywasher.joceanus</groupId>
     <artifactId>tethys</artifactId>
-    <version>1.6.3-SNAPSHOT</version>
+    <version>1.6.3-b6</version>
   </parent>
-  <groupId>${parent.groupId}.tethys</groupId>
+  <groupId>io.github.tonywasher.joceanus.tethys</groupId>
   <artifactId>tethys-swing</artifactId>
   <name>Tethys Java Swing Utilities</name>
   <description>Java Swing Utilities</description>
@@ -16,7 +16,7 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>${parent.groupId}</groupId>
+      <groupId>${jOceanusGroup}</groupId>
       <artifactId>oceanus</artifactId>
       <version>${project.version}</version>
     </dependency>

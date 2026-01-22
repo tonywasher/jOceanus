@@ -170,7 +170,7 @@ public final class AstraeusLauncher {
              BufferedInputStream myInBuffer = new BufferedInputStream(myInStream);
              ZipInputStream myZipStream = new ZipInputStream(myInBuffer)) {
             /* Loop through the Zip file entries */
-            for (; ; ) {
+            while (true) {
                 /* Read next entry */
                 final ZipEntry myEntry = myZipStream.getNextEntry();
 
@@ -204,7 +204,7 @@ public final class AstraeusLauncher {
              BufferedInputStream myInBuffer = new BufferedInputStream(myInStream);
              ZipInputStream myZipStream = new ZipInputStream(myInBuffer)) {
             /* Loop through the Zip file entries */
-            for (; ; ) {
+            while (true) {
                 /* Read next entry */
                 final ZipEntry myEntry = myZipStream.getNextEntry();
 

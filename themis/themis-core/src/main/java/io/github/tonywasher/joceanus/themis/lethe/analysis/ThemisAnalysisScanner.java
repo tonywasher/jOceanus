@@ -106,7 +106,7 @@ public class ThemisAnalysisScanner {
         initialiseScan(pLine);
 
         /* Loop through the line */
-        for (; ; ) {
+        while (true) {
             /* If we have finished the line */
             if (theCurPos == theLength) {
                 /* Shift to the next line */
@@ -144,7 +144,7 @@ public class ThemisAnalysisScanner {
         initialiseScan((ThemisAnalysisLine) theSource.popNextLine());
 
         /* Loop through the line */
-        for (; ; ) {
+        while (true) {
             /* If we have finished the line */
             if (theCurPos == theLength) {
                 /* Shift to the next line */
@@ -184,7 +184,7 @@ public class ThemisAnalysisScanner {
         initialiseScan((ThemisAnalysisLine) theSource.popNextLine());
 
         /* Loop through the line */
-        for (; ; ) {
+        while (true) {
             /* If we have finished the line */
             if (theCurPos == theLength) {
                 /* Shift to the next line */

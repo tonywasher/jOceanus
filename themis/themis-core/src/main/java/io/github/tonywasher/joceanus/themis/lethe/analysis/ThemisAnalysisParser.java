@@ -778,7 +778,7 @@ public class ThemisAnalysisParser
         final ThemisAnalysisLine myHeader = new ThemisAnalysisLine(pHeaders);
 
         /* Loop through the line */
-        for (; ; ) {
+        while (true) {
             /* Strip leading comma */
             if (myHeader.startsWithChar(ThemisAnalysisChar.COMMA)) {
                 myHeader.stripStartChar(ThemisAnalysisChar.COMMA);
@@ -814,8 +814,8 @@ public class ThemisAnalysisParser
         /* Create the list */
         final Map<String, ThemisAnalysisReference> myParams = new LinkedHashMap<>();
 
-        /* Loop through the line */
-        for (; ; ) {
+        /* Loop through the lines */
+        while (true) {
             /* Strip leading comma */
             if (pParams.startsWithChar(ThemisAnalysisChar.COMMA)) {
                 pParams.stripStartChar(ThemisAnalysisChar.COMMA);

@@ -80,7 +80,7 @@ public final class GordianStreamManager {
 
         /* Loop through the streams */
         OutputStream myStream = pStream;
-        for (; ; ) {
+        while (true) {
             /* If this is a Digest Output Stream */
             if (myStream instanceof GordianDigestOutputStream myDigest) {
                 /* Process stream */

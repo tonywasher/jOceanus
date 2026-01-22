@@ -102,12 +102,12 @@ public class ThemisXAnalysisMaven {
     /**
      * Parent groupId indication.
      */
-    private static final String PARENT_GROUP = "${parent.groupId}";
+    private static final String PARENT_GROUP = "${parent.project.groupId}";
 
     /**
      * Parent version indication.
      */
-    private static final String PARENT_VERSION = "${parent.version}";
+    private static final String PARENT_VERSION = "${parent.parent.version}";
 
     /**
      * Project groupId indication.
@@ -158,11 +158,6 @@ public class ThemisXAnalysisMaven {
      * The properties.
      */
     private final Map<String, String> theProperties;
-
-    /**
-     * Has the id been found?
-     */
-    //private boolean idFound;
 
     /**
      * Constructor.
@@ -275,7 +270,6 @@ public class ThemisXAnalysisMaven {
         /* Obtain our mavenId */
         final ThemisXAnalysisMavenId myId = new ThemisXAnalysisMavenId(myDoc, myParent);
         storeProjectProperties(myId);
-        //idFound = true;
 
         /* Process modules */
         processModules();
@@ -354,6 +348,8 @@ public class ThemisXAnalysisMaven {
 
     /**
      * Store parent properties.
+     *
+     * @param pParent the parent
      */
     private void storeParentProperties(final ThemisXAnalysisMavenId pParent) {
         /* Store parent groupId */
@@ -363,6 +359,8 @@ public class ThemisXAnalysisMaven {
 
     /**
      * Store parent properties.
+     *
+     * @param pProject the project
      */
     private void storeProjectProperties(final ThemisXAnalysisMavenId pProject) {
         /* Determine project groupId */

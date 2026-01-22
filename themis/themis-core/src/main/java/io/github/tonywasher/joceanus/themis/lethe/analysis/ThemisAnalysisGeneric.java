@@ -138,7 +138,7 @@ public interface ThemisAnalysisGeneric {
             final ThemisAnalysisLine myLine = new ThemisAnalysisLine(theBase.getLine());
 
             /* Loop through the line */
-            for (; ; ) {
+            while (true) {
                 /* Strip leading comma */
                 if (myLine.startsWithChar(ThemisAnalysisChar.COMMA)) {
                     myLine.stripStartChar(ThemisAnalysisChar.COMMA);
@@ -146,7 +146,7 @@ public interface ThemisAnalysisGeneric {
 
                 /* Access first token */
                 final String myToken = myLine.peekNextToken();
-                if (myToken.length() == 0) {
+                if (myToken.isEmpty()) {
                     return;
                 }
 
@@ -234,8 +234,8 @@ public interface ThemisAnalysisGeneric {
             /* Take a copy of the buffer */
             final ThemisAnalysisLine myLine = new ThemisAnalysisLine(theBase.getLine());
 
-            /* Loop through the line */
-            for (; ; ) {
+            /* Loop through the lines */
+            while (true) {
                 /* Strip leading comma */
                 if (myLine.startsWithChar(ThemisAnalysisChar.COMMA)) {
                     myLine.stripStartChar(ThemisAnalysisChar.COMMA);

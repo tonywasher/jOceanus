@@ -162,7 +162,7 @@ public class ThemisAnalysisFile
              BufferedReader myReader = new BufferedReader(myInputReader)) {
 
             /* Read the header entry */
-            for (; ; ) {
+            while (true) {
                 /* Read some characters into the buffer */
                 final int myChars = myReader.read(myBuffer, myOffset, BUFLEN - myOffset);
                 if (myChars == -1 && myOffset == 0) {

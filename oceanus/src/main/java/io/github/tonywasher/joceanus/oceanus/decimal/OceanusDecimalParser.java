@@ -147,7 +147,7 @@ public class OceanusDecimalParser {
         /* Remove any grouping characters from the value */
         final String myGrouping = pLocale.getGrouping();
         int myPos;
-        for (; ; ) {
+        while (true) {
             myPos = myWork.indexOf(myGrouping);
             if (myPos == -1) {
                 break;
@@ -432,7 +432,7 @@ public class OceanusDecimalParser {
         /* Remove any grouping characters from the value */
         final String myGrouping = pLocale.getGrouping();
         int myPos;
-        for (; ; ) {
+        while (true) {
             myPos = myWork.indexOf(myGrouping);
             if (myPos == -1) {
                 break;

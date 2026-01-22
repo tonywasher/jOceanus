@@ -3,9 +3,9 @@
   <parent>
     <groupId>io.github.tonywasher</groupId>
     <artifactId>joceanus</artifactId>
-    <version>1.6.3-SNAPSHOT</version>
+    <version>1.6.3-b6</version>
   </parent>
-  <groupId>${parent.groupId}.joceanus</groupId>
+  <groupId>io.github.tonywasher.joceanus</groupId>
   <artifactId>metis</artifactId>
   <name>Metis Data Framework</name>
   <description>Metis Data Framework</description>

@@ -3,15 +3,15 @@
   <parent>
     <groupId>io.github.tonywasher.joceanus.prometheus</groupId>
     <artifactId>sheet</artifactId>
-    <version>1.6.3-SNAPSHOT</version>
+    <version>1.6.3-b6</version>
   </parent>
-  <groupId>${parent.groupId}.services</groupId>
+  <groupId>io.github.tonywasher.joceanus.prometheus.sheet</groupId>
   <artifactId>prometheus-sheet-hssf</artifactId>
   <name>Prometheus Sheet HSSF Service</name>
   <description>Prometheus Sheet HSSF Service</description>
   <dependencies>
     <dependency>
-      <groupId>${packageKey}</groupId>
+      <groupId>${jOceanusGroup}</groupId>
       <artifactId>oceanus</artifactId>
       <version>${project.version}</version>
     </dependency>

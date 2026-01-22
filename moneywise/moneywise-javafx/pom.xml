@@ -3,7 +3,7 @@
     <parent>
         <groupId>io.github.tonywasher.joceanus</groupId>
         <artifactId>moneywise</artifactId>
-        <version>1.6.3-SNAPSHOT</version>
+        <version>1.6.3-b6</version>
     </parent>
     <groupId>io.github.tonywasher.joceanus.moneywise</groupId>
     <artifactId>moneywise-javafx</artifactId>
@@ -16,7 +16,7 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>${parent.groupId}.tethys</groupId>
+            <groupId>${TethysGroup}</groupId>
             <artifactId>tethys-javafx</artifactId>
             <version>${project.version}</version>
         </dependency>

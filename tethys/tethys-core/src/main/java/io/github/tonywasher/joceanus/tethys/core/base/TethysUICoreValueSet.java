@@ -122,7 +122,7 @@ public class TethysUICoreValueSet
         final int iTrlLen = VAR_TRL.length();
 
         /* Loop forever */
-        for (; ; ) {
+        while (true) {
             /* Search for variable and break loop if none found */
             final int iStart = myBuilder.indexOf(VAR_HDR);
             final int iEnd = iStart == -1

@@ -16,6 +16,7 @@
  */
 package io.github.tonywasher.joceanus.metis.parser;
 
+import io.github.tonywasher.joceanus.metis.exc.MetisDataException;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
 import io.github.tonywasher.joceanus.oceanus.date.OceanusDateFormatter;
@@ -24,7 +25,6 @@ import io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimalParser;
 import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
 import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRate;
 import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
-import io.github.tonywasher.joceanus.metis.exc.MetisDataException;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -191,7 +191,7 @@ public abstract class MetisCSVParser {
         /* Protect against exceptions */
         try (BufferedReader myReader = Files.newBufferedReader(pInput, StandardCharsets.UTF_8)) {
             /* Loop through the file */
-            for (; ; ) {
+            while (true) {
                 /* Read next line and exit on EOF */
                 final String myLine = myReader.readLine();
                 if (myLine == null) {

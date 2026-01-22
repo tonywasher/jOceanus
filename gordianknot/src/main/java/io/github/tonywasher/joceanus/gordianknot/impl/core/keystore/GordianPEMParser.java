@@ -169,7 +169,7 @@ public class GordianPEMParser {
             final StringBuilder myCurrent = new StringBuilder();
 
             /* Read the lines */
-            for (; ; ) {
+            while (true) {
                 /* Read next line */
                 String myLine = pReader.readLine();
                 if (myLine == null) {

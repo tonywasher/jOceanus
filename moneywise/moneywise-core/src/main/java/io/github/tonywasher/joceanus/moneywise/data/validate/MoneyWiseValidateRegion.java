@@ -16,12 +16,12 @@
  */
 package io.github.tonywasher.joceanus.moneywise.data.validate;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDataValidator.MoneyWiseDataValidatorDefaults;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseRegion;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseRegion.MoneyWiseRegionDataMap;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseRegion.MoneyWiseRegionList;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataInfoLinkSet;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataResource;
@@ -104,7 +104,7 @@ public class MoneyWiseValidateRegion
 
         /* Loop until we found a name */
         String myName = myBase;
-        for (; ; ) {
+        while (true) {
             /* try out the name */
             if (pList.findItemByName(myName) == null) {
                 return myName;

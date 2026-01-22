@@ -126,7 +126,7 @@ public abstract class MoneyWiseValidateCategory<T extends MoneyWiseCategoryBase>
 
         /* Loop until we found a name */
         String myName = myCore;
-        for (; ; ) {
+        while (true) {
             /* try out the name */
             if (pList.findItemByName(myBase + myName) == null) {
                 return myName;
