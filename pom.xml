@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>io.github.tonywasher</groupId>
     <artifactId>joceanus</artifactId>
-    <version>1.6.3-b6</version>
+    <version>1.6.4-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Java Oceanus package</name>
     <description>Parent project for jOceanus</description>
@@ -76,7 +76,7 @@
         <BouncyCastleVersion>1.83</BouncyCastleVersion>
         <JUnitVersion>6.0.1</JUnitVersion>
         <JSONVersion>20251224</JSONVersion>
-        <ApacheMavenVersion>3.9.11</ApacheMavenVersion>
+        <ApacheMavenVersion>3.9.12</ApacheMavenVersion>
         <MySQLVersion>9.5.0</MySQLVersion>
         <MariaDBVersion>3.5.7</MariaDBVersion>
         <PostGreSQLVersion>42.7.9</PostGreSQLVersion>
@@ -102,7 +102,7 @@
         <ShadePluginVersion>3.6.1</ShadePluginVersion>
         <DependencyPluginVersion>3.9.0</DependencyPluginVersion>
         <SurefirePluginVersion>3.5.4</SurefirePluginVersion>
-        <BuildNumberPluginVersion>3.2.1</BuildNumberPluginVersion>
+        <BuildNumberPluginVersion>3.3.0</BuildNumberPluginVersion>
         <BuildHelperPluginVersion>3.6.1</BuildHelperPluginVersion>
         <JarPluginVersion>3.5.0</JarPluginVersion>
         <ProjectInfoPluginVersion>3.9.0</ProjectInfoPluginVersion>
@@ -115,7 +115,7 @@
         <PMDPluginVersion>3.28.0</PMDPluginVersion>
         <JacocoPluginVersion>0.8.14</JacocoPluginVersion>
         <JetBrainsAnnotationsVersion>26.0.2-1</JetBrainsAnnotationsVersion>
-        <VersionsPluginVersion>2.20.1</VersionsPluginVersion>
+        <VersionsPluginVersion>2.21.0</VersionsPluginVersion>
         <ExecPluginVersion>3.6.3</ExecPluginVersion>
         <sonar.organization>tonywasher</sonar.organization>
         <sonar.projectKey>jOceanus</sonar.projectKey>
