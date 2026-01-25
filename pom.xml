@@ -58,10 +58,10 @@
         <maven.build.timestamp.format>yyyy</maven.build.timestamp.format>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <scmMain>main</scmMain>
-        <currentBranch>1.6.3</currentBranch>
+        <currentBranch>1.6.4</currentBranch>
         <currentTag>SNAPSHOT</currentTag>
-        <baseBranch>${currentBranch}</baseBranch>
-        <baseTag>b5</baseTag>
+        <baseBranch>1.6.3</baseBranch>
+        <baseTag>b6</baseTag>
         <currentRef>${snapshotRef}</currentRef>
         <snapshotRef>${scmMain}</snapshotRef>
         <tagRef>${currentBranch}-${currentTag}</tagRef>

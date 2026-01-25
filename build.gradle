@@ -18,7 +18,7 @@ allprojects {
 
     /* general identity */
     group = 'io.github.tonywasher.joceanus'
-    version = '1.6.3-SNAPSHOT'
+    version = '1.6.4-SNAPSHOT'
 
     /* Maven repositories */
     repositories {
@@ -47,7 +47,7 @@ allprojects {
         javaFXPluginVersion = "0.1.0"
 
         /* Annotation versions */
-        jetBrainsAnnotationsVersion = "26.0.2"
+        jetBrainsAnnotationsVersion = "26.0.2-1"
 
         /* jacoco config */
         jacocoVersion = "0.8.14"
