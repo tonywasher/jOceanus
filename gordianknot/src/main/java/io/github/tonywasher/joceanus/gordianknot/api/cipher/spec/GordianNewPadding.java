@@ -15,7 +15,39 @@
  * the License.
  */
 
+package io.github.tonywasher.joceanus.gordianknot.api.cipher.spec;
+
 /**
- * Digest Specifications.
+ * Padding Modes. Available algorithms.
  */
-package io.github.tonywasher.joceanus.gordianknot.api.digest.spec;
+public enum GordianNewPadding {
+    /**
+     * CTS Padding.
+     */
+    CTS,
+
+    /**
+     * ISO7816-4 Padding.
+     */
+    ISO7816D4,
+
+    /**
+     * X9.23 Padding.
+     */
+    X923,
+
+    /**
+     * PKCS7 Padding.
+     */
+    PKCS7,
+
+    /**
+     * TBC Padding.
+     */
+    TBC,
+
+    /**
+     * No Padding.
+     */
+    NONE;
+}

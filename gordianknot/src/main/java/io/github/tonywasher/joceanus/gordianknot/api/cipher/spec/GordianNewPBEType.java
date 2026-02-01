@@ -15,7 +15,29 @@
  * the License.
  */
 
+package io.github.tonywasher.joceanus.gordianknot.api.cipher.spec;
+
 /**
- * Digest Specifications.
+ * PBETypes.
  */
-package io.github.tonywasher.joceanus.gordianknot.api.digest.spec;
+public enum GordianNewPBEType {
+    /**
+     * PBKDF2.
+     */
+    PBKDF2,
+
+    /**
+     * PKCS12.
+     */
+    PKCS12,
+
+    /**
+     * SCRYPT.
+     */
+    SCRYPT,
+
+    /**
+     * ARGON2.
+     */
+    ARGON2;
+}

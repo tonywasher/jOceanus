@@ -122,7 +122,7 @@ public class GordianCoreDigestSpec
      * @return the type
      */
     public GordianCoreDigestState getCoreDigestState() {
-        return theSubSpec instanceof GordianCoreDigestState ? (GordianCoreDigestState) theSubSpec : null;
+        return theSubSpec instanceof GordianCoreDigestState myState ? myState : null;
     }
 
     @Override

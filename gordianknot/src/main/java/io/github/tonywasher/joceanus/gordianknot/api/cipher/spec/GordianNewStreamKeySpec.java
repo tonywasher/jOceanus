@@ -15,7 +15,33 @@
  * the License.
  */
 
+package io.github.tonywasher.joceanus.gordianknot.api.cipher.spec;
+
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianKeySpec;
+
 /**
- * Digest Specifications.
+ * GordianKnot StreamKeySpec.
  */
-package io.github.tonywasher.joceanus.gordianknot.api.digest.spec;
+public interface GordianNewStreamKeySpec
+        extends GordianKeySpec {
+    /**
+     * Obtain streamKey Type.
+     *
+     * @return the streamKeyType
+     */
+    GordianNewStreamKeyType getStreamKeyType();
+
+    /**
+     * Obtain subKey Type.
+     *
+     * @return the subKeyType
+     */
+    GordianNewStreamKeySubType getSubKeyType();
+
+    /**
+     * Is the keySpec valid?
+     *
+     * @return true/false.
+     */
+    boolean isValid();
+}

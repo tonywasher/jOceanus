@@ -15,7 +15,31 @@
  * the License.
  */
 
+package io.github.tonywasher.joceanus.gordianknot.api.cipher.spec;
+
 /**
- * Digest Specifications.
+ * The StreamCipherSpec Builder class.
  */
-package io.github.tonywasher.joceanus.gordianknot.api.digest.spec;
+public interface GordianNewStreamCipherSpecBuilder {
+    /**
+     * Define StreamKeySpec.
+     *
+     * @param pSpec the spec
+     * @return the Builder
+     */
+    GordianNewStreamCipherSpecBuilder withKeySpec(GordianNewStreamKeySpec pSpec);
+
+    /**
+     * Request AEAD variant.
+     *
+     * @return the Builder
+     */
+    GordianNewStreamCipherSpecBuilder asAEAD();
+
+    /**
+     * Build streamCipherSpec.
+     *
+     * @return the streamCipherSpec
+     */
+    GordianNewStreamCipherSpec build();
+}

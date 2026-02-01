@@ -16,6 +16,6 @@
  */
 
 /**
- * Digest Specifications.
+ * Cipher Specifications.
  */
-package io.github.tonywasher.joceanus.gordianknot.api.digest.spec;
+package io.github.tonywasher.joceanus.gordianknot.api.cipher.spec;

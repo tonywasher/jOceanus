@@ -15,7 +15,7 @@
  * the License.
  */
 
-/**
- * Digest Specifications.
- */
-package io.github.tonywasher.joceanus.gordianknot.api.digest.spec;
+package io.github.tonywasher.joceanus.gordianknot.api.cipher.spec;
+
+public class GordianNewPBESpec {
+}
