@@ -17,5 +17,97 @@
 
 package io.github.tonywasher.joceanus.gordianknot.api.cipher.spec;
 
-public class GordianNewPBESpec {
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpec;
+
+/**
+ * PBE Specification.
+ */
+public interface GordianNewPBESpec {
+    /**
+     * Obtain the PBEType.
+     *
+     * @return the PBEType
+     */
+    GordianNewPBEType getPBEType();
+
+    /**
+     * Is the Spec valid?
+     *
+     * @return true/false
+     */
+    boolean isValid();
+
+    /**
+     * DigestAndCountSpec.
+     */
+    interface GordianNewPBEDigestAndCountSpec
+            extends GordianNewPBESpec {
+        /**
+         * Obtain the digestSpec.
+         *
+         * @return the digestSpec
+         */
+        GordianNewDigestSpec getDigestSpec();
+
+        /**
+         * Obtain the iteration count.
+         *
+         * @return the count
+         */
+        int getIterationCount();
+    }
+
+    /**
+     * SCryptSpec.
+     */
+    interface GordianNewPBESCryptSpec
+            extends GordianNewPBESpec {
+        /**
+         * Obtain the blockSize.
+         *
+         * @return the blockSize
+         */
+        int getBlockSize();
+
+        /**
+         * Obtain the cost.
+         *
+         * @return the cost
+         */
+        int getCost();
+
+        /**
+         * Obtain the parallelism.
+         *
+         * @return the parallelism
+         */
+        int getParallel();
+    }
+
+    /**
+     * Argon2Spec.
+     */
+    interface GordianNewPBEArgon2Spec
+            extends GordianNewPBESpec {
+        /**
+         * Obtain the lanes.
+         *
+         * @return the lanes
+         */
+        int getLanes();
+
+        /**
+         * Obtain the memory.
+         *
+         * @return the memory
+         */
+        int getMemory();
+
+        /**
+         * Obtain the iteration count.
+         *
+         * @return the count
+         */
+        int getIterationCount();
+    }
 }

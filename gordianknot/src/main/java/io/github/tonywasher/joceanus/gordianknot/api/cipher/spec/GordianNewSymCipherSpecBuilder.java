@@ -22,7 +22,7 @@ package io.github.tonywasher.joceanus.gordianknot.api.cipher.spec;
  */
 public interface GordianNewSymCipherSpecBuilder {
     /**
-     * Define StreamKeySpec.
+     * Define SymKeySpec.
      *
      * @param pSpec the spec
      * @return the Builder
