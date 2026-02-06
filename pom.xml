@@ -90,7 +90,7 @@
         <JavaVersion>21</JavaVersion>
         <JavaFXVersion>21.0.10</JavaFXVersion>
         <JavaLanguageVersion>21</JavaLanguageVersion>
-        <CheckStyleVersion>13.1.0</CheckStyleVersion>
+        <CheckStyleVersion>13.2.0</CheckStyleVersion>
         <PMDVersion>7.21.0</PMDVersion>
         <CleanPluginVersion>3.5.0</CleanPluginVersion>
         <ResourcesPluginVersion>3.4.0</ResourcesPluginVersion>

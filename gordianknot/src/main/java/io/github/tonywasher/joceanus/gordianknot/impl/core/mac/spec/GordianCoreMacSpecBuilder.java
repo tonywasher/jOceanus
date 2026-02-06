@@ -33,7 +33,7 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.digest.spec.GordianCo
 public class GordianCoreMacSpecBuilder
         implements GordianNewMacSpecBuilder {
     /**
-     * The type.
+     * The digestSpec builder.
      */
     private final GordianNewDigestSpecBuilder theBuilder;
 
