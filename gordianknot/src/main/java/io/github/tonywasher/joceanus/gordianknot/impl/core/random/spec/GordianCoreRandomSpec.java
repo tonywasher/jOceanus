@@ -24,8 +24,6 @@ import io.github.tonywasher.joceanus.gordianknot.api.random.spec.GordianNewRando
 import io.github.tonywasher.joceanus.gordianknot.impl.core.cipher.spec.GordianCoreSymKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.digest.spec.GordianCoreDigestSpec;
 
-import java.util.EnumMap;
-import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -37,11 +35,6 @@ public class GordianCoreRandomSpec
      * The Separator.
      */
     static final String SEP = "-";
-
-    /**
-     * The macTypeMap.
-     */
-    private static final Map<GordianNewRandomType, GordianCoreRandomType> TYPEMAP = newTypeMap();
 
     /**
      * The RandomType.
@@ -78,7 +71,7 @@ public class GordianCoreRandomSpec
     public GordianCoreRandomSpec(final GordianNewRandomType pRandomType,
                                  final Object pSubSpec,
                                  final boolean pResistant) {
-        theType = TYPEMAP.get(pRandomType);
+        theType = GordianCoreRandomType.mapCoreType(pRandomType);
         theSubSpec = pSubSpec;
         isPredictionResistant = pResistant;
         isValid = checkValidity();
@@ -205,18 +198,5 @@ public class GordianCoreRandomSpec
     @Override
     public int hashCode() {
         return Objects.hash(theType, theSubSpec, isPredictionResistant);
-    }
-
-    /**
-     * Build the type map.
-     *
-     * @return the type map
-     */
-    private static Map<GordianNewRandomType, GordianCoreRandomType> newTypeMap() {
-        final Map<GordianNewRandomType, GordianCoreRandomType> myMap = new EnumMap<>(GordianNewRandomType.class);
-        for (GordianNewRandomType myType : GordianNewRandomType.values()) {
-            myMap.put(myType, new GordianCoreRandomType(myType));
-        }
-        return myMap;
     }
 }

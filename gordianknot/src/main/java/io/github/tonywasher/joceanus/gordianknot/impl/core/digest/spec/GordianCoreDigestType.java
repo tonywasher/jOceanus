@@ -22,10 +22,19 @@ import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestResource;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestType;
 
+import java.util.Collection;
+import java.util.EnumMap;
+import java.util.Map;
+
 /**
  * DataDigest types. Available algorithms.
  */
 public final class GordianCoreDigestType {
+    /**
+     * The digestTypeMap.
+     */
+    private static final Map<GordianNewDigestType, GordianCoreDigestType> TYPEMAP = newTypeMap();
+
     /**
      * The DigestType.
      */
@@ -46,7 +55,7 @@ public final class GordianCoreDigestType {
      *
      * @param pType the type
      */
-    GordianCoreDigestType(final GordianNewDigestType pType) {
+    private GordianCoreDigestType(final GordianNewDigestType pType) {
         theType = pType;
         theLengths = lengthsForDigestType(pType);
         theName = bundleIdForDigestType(pType).getValue();
@@ -96,6 +105,16 @@ public final class GordianCoreDigestType {
      */
     public GordianLength[] getSupportedLengths() {
         return theLengths;
+    }
+
+    /**
+     * Obtain supported lengths for a type.
+     *
+     * @param pType the type
+     * @return the supported lengths (first is default)
+     */
+    public static GordianLength[] getSupportedLengths(final GordianNewDigestType pType) {
+        return mapCoreType(pType).getSupportedLengths();
     }
 
     /**
@@ -296,5 +315,37 @@ public final class GordianCoreDigestType {
     @Override
     public int hashCode() {
         return theType.hashCode();
+    }
+
+    /**
+     * Obtain the core type.
+     *
+     * @param pType the base type
+     * @return the core type
+     */
+    public static GordianCoreDigestType mapCoreType(final GordianNewDigestType pType) {
+        return TYPEMAP.get(pType);
+    }
+
+    /**
+     * Build the type map.
+     *
+     * @return the type map
+     */
+    private static Map<GordianNewDigestType, GordianCoreDigestType> newTypeMap() {
+        final Map<GordianNewDigestType, GordianCoreDigestType> myMap = new EnumMap<>(GordianNewDigestType.class);
+        for (GordianNewDigestType myType : GordianNewDigestType.values()) {
+            myMap.put(myType, new GordianCoreDigestType(myType));
+        }
+        return myMap;
+    }
+
+    /**
+     * Obtain the values.
+     *
+     * @return the values
+     */
+    public static Collection<GordianCoreDigestType> values() {
+        return TYPEMAP.values();
     }
 }

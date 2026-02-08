@@ -21,6 +21,10 @@ import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeySpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeyType;
+import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKeyLengths;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * SymKey specification Builder.
@@ -62,6 +66,11 @@ public class GordianCoreSymKeySpecBuilder
 
     @Override
     public GordianNewSymKeySpec build() {
+        /* Handle null type */
+        if (theType == null) {
+            throw new NullPointerException("symKeyType is null");
+        }
+
         /* Handle defaults */
         theKeyLength = theKeyLength == null ? GordianCoreSymKeyType.defaultKeyLengthForSymKeyType(theType) : theKeyLength;
         theBlockLength = theBlockLength == null
@@ -80,5 +89,35 @@ public class GordianCoreSymKeySpecBuilder
         theType = null;
         theBlockLength = null;
         theKeyLength = null;
+    }
+
+    /**
+     * Obtain all possible symKeySpecs for the given keyLength.
+     *
+     * @param pKeyLen the keyLength
+     * @return the list
+     */
+    public static List<GordianNewSymKeySpec> listAllPossibleSymKeySpecs(final GordianLength pKeyLen) {
+        /* Create the array list */
+        final List<GordianNewSymKeySpec> myList = new ArrayList<>();
+
+        /* Check that the keyLength is supported */
+        if (!GordianKeyLengths.isSupportedLength(pKeyLen)) {
+            return myList;
+        }
+
+        /* For each symKey type */
+        for (final GordianCoreSymKeyType myType : GordianCoreSymKeyType.values()) {
+            /* For each supported block length */
+            for (final GordianLength myBlkLen : myType.getSupportedBlockLengths()) {
+                /* Add spec if valid for blkLen and keyLen */
+                if (myType.validBlockAndKeyLengths(myBlkLen, pKeyLen)) {
+                    myList.add(new GordianCoreSymKeySpec(myType.getType(), myBlkLen, pKeyLen));
+                }
+            }
+        }
+
+        /* Return the list */
+        return myList;
     }
 }

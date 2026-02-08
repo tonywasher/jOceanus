@@ -20,7 +20,16 @@ package io.github.tonywasher.joceanus.gordianknot.impl.core.sign.spec;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairType;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianNewSignatureType;
 
-public class GordianCoreSignatureType {
+import java.util.Collection;
+import java.util.EnumMap;
+import java.util.Map;
+
+public final class GordianCoreSignatureType {
+    /**
+     * The signatureTypeMap.
+     */
+    private static final Map<GordianNewSignatureType, GordianCoreSignatureType> TYPEMAP = newTypeMap();
+
     /**
      * The signatureType.
      */
@@ -31,7 +40,7 @@ public class GordianCoreSignatureType {
      *
      * @param pType the type
      */
-    GordianCoreSignatureType(final GordianNewSignatureType pType) {
+    private GordianCoreSignatureType(final GordianNewSignatureType pType) {
         theType = pType;
     }
 
@@ -165,5 +174,37 @@ public class GordianCoreSignatureType {
     @Override
     public int hashCode() {
         return theType.hashCode();
+    }
+
+    /**
+     * Obtain the core type.
+     *
+     * @param pType the base type
+     * @return the core type
+     */
+    public static GordianCoreSignatureType mapCoreType(final GordianNewSignatureType pType) {
+        return TYPEMAP.get(pType);
+    }
+
+    /**
+     * Build the type map.
+     *
+     * @return the type map
+     */
+    private static Map<GordianNewSignatureType, GordianCoreSignatureType> newTypeMap() {
+        final Map<GordianNewSignatureType, GordianCoreSignatureType> myMap = new EnumMap<>(GordianNewSignatureType.class);
+        for (GordianNewSignatureType myType : GordianNewSignatureType.values()) {
+            myMap.put(myType, new GordianCoreSignatureType(myType));
+        }
+        return myMap;
+    }
+
+    /**
+     * Obtain the values.
+     *
+     * @return the values
+     */
+    public static Collection<GordianCoreSignatureType> values() {
+        return TYPEMAP.values();
     }
 }

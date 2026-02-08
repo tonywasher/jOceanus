@@ -21,8 +21,22 @@ import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeySpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeySubType;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeySubType.GordianNewBlakeXofKey;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeySubType.GordianNewChaCha20Key;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeySubType.GordianNewElephantKey;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeySubType.GordianNewISAPKey;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeySubType.GordianNewRomulusKey;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeySubType.GordianNewSalsa20Key;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeySubType.GordianNewSkeinXofKey;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeySubType.GordianNewSparkleKey;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeySubType.GordianNewVMPCKey;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeyType;
+import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKeyLengths;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * StreamKey specification Builder.
@@ -65,6 +79,11 @@ public class GordianCoreStreamKeySpecBuilder
 
     @Override
     public GordianNewStreamKeySpec build() {
+        /* Handle null type */
+        if (theType == null) {
+            throw new NullPointerException("streamKeyType is null");
+        }
+
         /* Handle defaults */
         theSubType = theSubType == null ? GordianCoreStreamKeySubType.defaultSubKeyType(theType) : theSubType;
         theKeyLength = theKeyLength == null ? defaultKeyLength() : theKeyLength;
@@ -118,6 +137,98 @@ public class GordianCoreStreamKeySpecBuilder
                 return GordianCoreStreamKeySubType.requiredSparkleKeyLength((GordianNewSparkleKey) theSubType);
             default:
                 throw new IllegalArgumentException();
+        }
+    }
+
+    /**
+     * List all possible streamKeySpecs for the keyLength.
+     *
+     * @param pKeyLen the keyLength
+     * @return the list
+     */
+    public static List<GordianNewStreamKeySpec> listAllPossibleStreamKeySpecs(final GordianLength pKeyLen) {
+        /* Create the array list */
+        final List<GordianNewStreamKeySpec> myList = new ArrayList<>();
+
+        /* Check that the keyLength is supported */
+        if (!GordianKeyLengths.isSupportedLength(pKeyLen)) {
+            return myList;
+        }
+
+        /* For each streamKey type */
+        for (final GordianCoreStreamKeyType myType : GordianCoreStreamKeyType.values()) {
+            /* if valid for keyLength */
+            if (myType.validForKeyLength(pKeyLen)) {
+                /* If we need a subType */
+                if (myType.needsSubKeyType()) {
+                    /* Add all valid subKeyTypes */
+                    myList.addAll(listStreamSubKeys(myType, pKeyLen));
+
+                    /* Else just add the spec */
+                } else {
+                    myList.add(new GordianCoreStreamKeySpec(myType.getType(), null, pKeyLen));
+                }
+            }
+        }
+
+        /* Return the list */
+        return myList;
+    }
+
+    /**
+     * List all possible subKeyTypes Specs.
+     *
+     * @param pKeyType the keyType
+     * @param pKeyLen  the keyLength
+     * @return the list
+     */
+    private static List<GordianNewStreamKeySpec> listStreamSubKeys(final GordianCoreStreamKeyType pKeyType,
+                                                                   final GordianLength pKeyLen) {
+        /* Create the array list */
+        final List<GordianNewStreamKeySpec> myList = new ArrayList<>();
+
+        /* Loop through the subKeyTypes */
+        for (GordianNewStreamKeySubType mySubKeyType : listStreamSubKeys(pKeyType)) {
+            /* Add valid subKeySpec */
+            final GordianCoreStreamKeySpec mySpec = new GordianCoreStreamKeySpec(pKeyType.getType(), mySubKeyType, pKeyLen);
+            if (mySpec.isValid()) {
+                myList.add(mySpec);
+            }
+        }
+
+        /* Return the list */
+        return myList;
+    }
+
+    /**
+     * List all possible subKeyTypes.
+     *
+     * @param pKeyType the keyType
+     * @return the list
+     */
+    private static List<GordianNewStreamKeySubType> listStreamSubKeys(final GordianCoreStreamKeyType pKeyType) {
+        /* Switch on keyType */
+        switch (pKeyType.getType()) {
+            case SALSA20:
+                return Arrays.asList(GordianNewSalsa20Key.values());
+            case CHACHA20:
+                return Arrays.asList(GordianNewChaCha20Key.values());
+            case VMPC:
+                return Arrays.asList(GordianNewVMPCKey.values());
+            case SKEINXOF:
+                return Arrays.asList(GordianNewSkeinXofKey.values());
+            case BLAKE2XOF:
+                return Arrays.asList(GordianNewBlakeXofKey.values());
+            case ELEPHANT:
+                return Arrays.asList(GordianNewElephantKey.values());
+            case ISAP:
+                return Arrays.asList(GordianNewISAPKey.values());
+            case ROMULUS:
+                return Arrays.asList(GordianNewRomulusKey.values());
+            case SPARKLE:
+                return Arrays.asList(GordianNewSparkleKey.values());
+            default:
+                return Collections.emptyList();
         }
     }
 }

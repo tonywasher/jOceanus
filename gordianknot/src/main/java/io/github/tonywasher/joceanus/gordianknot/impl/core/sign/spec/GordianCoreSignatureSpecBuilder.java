@@ -25,6 +25,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianNewSignatu
 import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianNewSignatureType;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.digest.spec.GordianCoreDigestSpecBuilder;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -106,5 +107,41 @@ public class GordianCoreSignatureSpecBuilder
         theKeyPairType = null;
         theSignatureType = null;
         theSubSpec = null;
+    }
+
+    /**
+     * List all possible encryptorSpecs for a keyPairType.
+     *
+     * @param pKeyPairType the keyPairType
+     * @return the list
+     */
+    public static List<GordianNewSignatureSpec> listAllPossibleSpecs(final GordianKeyPairType pKeyPairType) {
+        /* Access the list of possible digests */
+        final List<GordianNewSignatureSpec> mySignatures = new ArrayList<>();
+        final List<GordianNewDigestSpec> myDigests = GordianCoreDigestSpecBuilder.listAllPossibleSpecs();
+
+        /* For each supported signature */
+        for (GordianCoreSignatureType mySignType : GordianCoreSignatureType.values()) {
+            /* Skip if the signatureType is not valid */
+            if (mySignType.isSupported(pKeyPairType)) {
+                /* If we need null-digestSpec */
+                if (pKeyPairType.useDigestForSignatures().canNotExist()) {
+                    /* Add the signature */
+                    mySignatures.add(new GordianCoreSignatureSpec(pKeyPairType, mySignType.getType(), null));
+                }
+
+                /* If we need digestSpec */
+                if (pKeyPairType.useDigestForSignatures().canExist()) {
+                    /* For each possible digestSpec */
+                    for (GordianNewDigestSpec mySpec : myDigests) {
+                        /* Add the signature */
+                        mySignatures.add(new GordianCoreSignatureSpec(pKeyPairType, mySignType.getType(), mySpec));
+                    }
+                }
+            }
+        }
+
+        /* Return the list */
+        return mySignatures;
     }
 }

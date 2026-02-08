@@ -24,10 +24,19 @@ import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymKeyType;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacResource;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianNewMacType;
 
+import java.util.Collection;
+import java.util.EnumMap;
+import java.util.Map;
+
 /**
  * Mac types. Available algorithms.
  */
 public final class GordianCoreMacType {
+    /**
+     * The macTypeMap.
+     */
+    private static final Map<GordianNewMacType, GordianCoreMacType> TYPEMAP = newTypeMap();
+
     /**
      * The MacType.
      */
@@ -43,7 +52,7 @@ public final class GordianCoreMacType {
      *
      * @param pType the type
      */
-    GordianCoreMacType(final GordianNewMacType pType) {
+    private GordianCoreMacType(final GordianNewMacType pType) {
         theType = pType;
         theName = bundleIdForMacType(pType).getValue();
     }
@@ -168,5 +177,37 @@ public final class GordianCoreMacType {
     @Override
     public int hashCode() {
         return theType.hashCode();
+    }
+
+    /**
+     * Obtain the core type.
+     *
+     * @param pType the base type
+     * @return the core type
+     */
+    public static GordianCoreMacType mapCoreType(final GordianNewMacType pType) {
+        return TYPEMAP.get(pType);
+    }
+
+    /**
+     * Build the type map.
+     *
+     * @return the type map
+     */
+    private static Map<GordianNewMacType, GordianCoreMacType> newTypeMap() {
+        final Map<GordianNewMacType, GordianCoreMacType> myMap = new EnumMap<>(GordianNewMacType.class);
+        for (GordianNewMacType myType : GordianNewMacType.values()) {
+            myMap.put(myType, new GordianCoreMacType(myType));
+        }
+        return myMap;
+    }
+
+    /**
+     * Obtain the values.
+     *
+     * @return the values
+     */
+    public static Collection<GordianCoreMacType> values() {
+        return TYPEMAP.values();
     }
 }

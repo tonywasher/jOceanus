@@ -17,5 +17,152 @@
 
 package io.github.tonywasher.joceanus.gordianknot.impl.core.encrypt.spec;
 
-public class GordianCoreEncryptorSpecBuilder {
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianNewEncryptorSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianNewEncryptorSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianNewSM2EncryptionSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianNewSM2EncryptionType;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairType;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.digest.spec.GordianCoreDigestSpecBuilder;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Asymmetric Encryption Specification Builder.
+ */
+public class GordianCoreEncryptorSpecBuilder
+        implements GordianNewEncryptorSpecBuilder {
+    /**
+     * The keyPairType.
+     */
+    private GordianKeyPairType theKeyPairType;
+
+    /**
+     * The subSpec.
+     */
+    private Object theSubSpec;
+
+    /**
+     * The sm2 encryptionType.
+     */
+    private GordianNewSM2EncryptionType theSM2Type;
+
+    @Override
+    public GordianNewEncryptorSpecBuilder withKeyPairType(final GordianKeyPairType pType) {
+        theKeyPairType = pType;
+        return this;
+    }
+
+    @Override
+    public GordianNewEncryptorSpecBuilder withDigestSpec(final GordianNewDigestSpec pDigestSpec) {
+        theSubSpec = pDigestSpec;
+        return this;
+    }
+
+    @Override
+    public GordianNewEncryptorSpecBuilder withSM2EncryptionType(final GordianNewSM2EncryptionType pType) {
+        theSM2Type = pType;
+        return this;
+    }
+
+    @Override
+    public GordianNewEncryptorSpecBuilder withEncryptorSpecs(final List<GordianNewEncryptorSpec> pSpecs) {
+        theSubSpec = pSpecs;
+        return this;
+    }
+
+    @Override
+    public GordianNewEncryptorSpec build() {
+        /* Handle SM2 */
+        if (theSM2Type != null) {
+            theSubSpec = new GordianCoreSM2EncryptionSpec(theSM2Type, (GordianNewDigestSpec) theSubSpec);
+        }
+
+        /* Build spec and return it */
+        final GordianCoreEncryptorSpec mySpec = new GordianCoreEncryptorSpec(theKeyPairType, theSubSpec);
+        reset();
+        return mySpec;
+    }
+
+    /**
+     * Reset state.
+     */
+    private void reset() {
+        theKeyPairType = null;
+        theSubSpec = null;
+        theSM2Type = null;
+    }
+
+    /**
+     * List all possible encryptorSpecs for a keyPairType.
+     *
+     * @param pKeyPairType the keyPairType
+     * @return the list
+     */
+    public static List<GordianNewEncryptorSpec> listAllPossibleSpecs(final GordianKeyPairType pKeyPairType) {
+        /* Create list */
+        final List<GordianNewEncryptorSpec> myEncryptors = new ArrayList<>();
+        final GordianCoreEncryptorSpecBuilder myBuilder = new GordianCoreEncryptorSpecBuilder();
+        final GordianCoreDigestSpecBuilder myDigestBuilder = new GordianCoreDigestSpecBuilder();
+
+        /* Switch on keyPairType */
+        switch (pKeyPairType) {
+            case RSA:
+                myEncryptors.add(myBuilder.rsa(myDigestBuilder.sha2(GordianLength.LEN_224)));
+                myEncryptors.add(myBuilder.rsa(myDigestBuilder.sha2(GordianLength.LEN_256)));
+                myEncryptors.add(myBuilder.rsa(myDigestBuilder.sha2(GordianLength.LEN_384)));
+                myEncryptors.add(myBuilder.rsa(myDigestBuilder.sha2(GordianLength.LEN_512)));
+                break;
+            case ELGAMAL:
+                myEncryptors.add(myBuilder.elGamal(myDigestBuilder.sha2(GordianLength.LEN_224)));
+                myEncryptors.add(myBuilder.elGamal(myDigestBuilder.sha2(GordianLength.LEN_256)));
+                myEncryptors.add(myBuilder.elGamal(myDigestBuilder.sha2(GordianLength.LEN_384)));
+                myEncryptors.add(myBuilder.elGamal(myDigestBuilder.sha2(GordianLength.LEN_512)));
+                break;
+            case EC:
+            case SM2:
+            case GOST2012:
+                /* Add EC-ElGamal */
+                myEncryptors.add(myBuilder.ec());
+
+                /* Loop through the encryptionSpecs */
+                for (GordianNewSM2EncryptionSpec mySpec : listPossibleSM2Specs()) {
+                    myEncryptors.add(new GordianCoreEncryptorSpec(pKeyPairType, mySpec));
+                }
+                break;
+            default:
+                break;
+        }
+
+        /* Return the list */
+        return myEncryptors;
+    }
+
+    /**
+     * Obtain a list of all possible encryptionSpecs.
+     *
+     * @return the list
+     */
+    private static List<GordianNewSM2EncryptionSpec> listPossibleSM2Specs() {
+        /* Create list */
+        final List<GordianNewSM2EncryptionSpec> mySpecs = new ArrayList<>();
+        final GordianCoreDigestSpecBuilder myBuilder = new GordianCoreDigestSpecBuilder();
+
+        /* Loop through the encryptionTypes */
+        for (GordianNewSM2EncryptionType myType : GordianNewSM2EncryptionType.values()) {
+            mySpecs.add(new GordianCoreSM2EncryptionSpec(myType, myBuilder.sm3()));
+            mySpecs.add(new GordianCoreSM2EncryptionSpec(myType, myBuilder.sha2(GordianLength.LEN_224)));
+            mySpecs.add(new GordianCoreSM2EncryptionSpec(myType, myBuilder.sha2(GordianLength.LEN_256)));
+            mySpecs.add(new GordianCoreSM2EncryptionSpec(myType, myBuilder.sha2(GordianLength.LEN_384)));
+            mySpecs.add(new GordianCoreSM2EncryptionSpec(myType, myBuilder.sha2(GordianLength.LEN_512)));
+            mySpecs.add(new GordianCoreSM2EncryptionSpec(myType, myBuilder.blake2s(GordianLength.LEN_256)));
+            mySpecs.add(new GordianCoreSM2EncryptionSpec(myType, myBuilder.blake2b(GordianLength.LEN_512)));
+            mySpecs.add(new GordianCoreSM2EncryptionSpec(myType, myBuilder.whirlpool()));
+        }
+
+        /* Return the list */
+        return mySpecs;
+    }
 }

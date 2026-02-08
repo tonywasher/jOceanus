@@ -55,12 +55,12 @@ public interface GordianNewEncryptorSpecBuilder {
      * Define encryptorSpec list.
      *
      * @param pSpecs the specs
-     * @return the digestSpec builder
+     * @return the builder
      */
     GordianNewEncryptorSpecBuilder withEncryptorSpecs(List<GordianNewEncryptorSpec> pSpecs);
 
     /**
-     * Build signatureSpec.
+     * Build encryptorSpec.
      *
      * @return the encryptorSpec
      */

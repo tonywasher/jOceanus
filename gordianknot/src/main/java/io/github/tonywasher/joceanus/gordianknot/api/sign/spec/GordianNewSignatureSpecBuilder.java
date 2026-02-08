@@ -57,7 +57,7 @@ public interface GordianNewSignatureSpecBuilder {
      * Define signatureSpec list.
      *
      * @param pSpecs the specs
-     * @return the digestSpec builder
+     * @return the builder
      */
     GordianNewSignatureSpecBuilder withSignatureSpecs(List<GordianNewSignatureSpec> pSpecs);
 

@@ -23,12 +23,21 @@ import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherResourc
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeyType;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKeyLengths;
 
+import java.util.Collection;
+import java.util.EnumMap;
+import java.util.Map;
+
 /**
  * Stream Key Types. Available algorithms.
  */
 public final class GordianCoreStreamKeyType {
     /**
-     * The SymKeyType.
+     * The streamKeyTypeMap.
+     */
+    private static final Map<GordianNewStreamKeyType, GordianCoreStreamKeyType> TYPEMAP = newTypeMap();
+
+    /**
+     * The StreamKeyType.
      */
     private final GordianNewStreamKeyType theType;
 
@@ -42,7 +51,7 @@ public final class GordianCoreStreamKeyType {
      *
      * @param pType the type
      */
-    GordianCoreStreamKeyType(final GordianNewStreamKeyType pType) {
+    private GordianCoreStreamKeyType(final GordianNewStreamKeyType pType) {
         theType = pType;
         theName = bundleIdForStreamKeyType(pType).getValue();
     }
@@ -231,5 +240,37 @@ public final class GordianCoreStreamKeyType {
     @Override
     public int hashCode() {
         return theType.hashCode();
+    }
+
+    /**
+     * Obtain the core type.
+     *
+     * @param pType the base type
+     * @return the core type
+     */
+    public static GordianCoreStreamKeyType mapCoreType(final GordianNewStreamKeyType pType) {
+        return TYPEMAP.get(pType);
+    }
+
+    /**
+     * Build the type map.
+     *
+     * @return the type map
+     */
+    private static Map<GordianNewStreamKeyType, GordianCoreStreamKeyType> newTypeMap() {
+        final Map<GordianNewStreamKeyType, GordianCoreStreamKeyType> myMap = new EnumMap<>(GordianNewStreamKeyType.class);
+        for (GordianNewStreamKeyType myType : GordianNewStreamKeyType.values()) {
+            myMap.put(myType, new GordianCoreStreamKeyType(myType));
+        }
+        return myMap;
+    }
+
+    /**
+     * Obtain the values.
+     *
+     * @return the values
+     */
+    public static Collection<GordianCoreStreamKeyType> values() {
+        return TYPEMAP.values();
     }
 }

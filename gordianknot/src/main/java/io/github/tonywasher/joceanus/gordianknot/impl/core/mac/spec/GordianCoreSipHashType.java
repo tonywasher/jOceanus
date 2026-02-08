@@ -20,10 +20,19 @@ package io.github.tonywasher.joceanus.gordianknot.impl.core.mac.spec;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianNewSipHashType;
 
+import java.util.Collection;
+import java.util.EnumMap;
+import java.util.Map;
+
 /**
  * SipHashSpec.
  */
 public final class GordianCoreSipHashType {
+    /**
+     * The sipHashMap.
+     */
+    private static final Map<GordianNewSipHashType, GordianCoreSipHashType> SIPMAP = newSipHashMap();
+
     /**
      * Small compression.
      */
@@ -59,7 +68,7 @@ public final class GordianCoreSipHashType {
      *
      * @param pType the SipHashType
      */
-    GordianCoreSipHashType(final GordianNewSipHashType pType) {
+    private GordianCoreSipHashType(final GordianNewSipHashType pType) {
         theType = pType;
         theOutLen = determineOutLength();
         theCompression = determineCompression();
@@ -180,5 +189,37 @@ public final class GordianCoreSipHashType {
     @Override
     public int hashCode() {
         return theType.hashCode();
+    }
+
+    /**
+     * Obtain the core type.
+     *
+     * @param pType the base type
+     * @return the core type
+     */
+    public static GordianCoreSipHashType mapCoreType(final GordianNewSipHashType pType) {
+        return SIPMAP.get(pType);
+    }
+
+    /**
+     * Build the sipHash map.
+     *
+     * @return the sipHash map
+     */
+    private static Map<GordianNewSipHashType, GordianCoreSipHashType> newSipHashMap() {
+        final Map<GordianNewSipHashType, GordianCoreSipHashType> myMap = new EnumMap<>(GordianNewSipHashType.class);
+        for (GordianNewSipHashType myType : GordianNewSipHashType.values()) {
+            myMap.put(myType, new GordianCoreSipHashType(myType));
+        }
+        return myMap;
+    }
+
+    /**
+     * Obtain the values.
+     *
+     * @return the values
+     */
+    public static Collection<GordianCoreSipHashType> values() {
+        return SIPMAP.values();
     }
 }

@@ -17,15 +17,11 @@
 
 package io.github.tonywasher.joceanus.gordianknot.impl.core.encrypt.spec;
 
-import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianNewSM2EncryptionSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianNewSM2EncryptionType;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.digest.spec.GordianCoreDigestSpec;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.digest.spec.GordianCoreDigestSpecBuilder;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 /**
@@ -157,31 +153,5 @@ public class GordianCoreSM2EncryptionSpec
     @Override
     public int hashCode() {
         return Objects.hash(theType, theDigest);
-    }
-
-    /**
-     * Obtain a list of all possible encryptionSpecs.
-     *
-     * @return the list
-     */
-    public static List<GordianNewSM2EncryptionSpec> listPossibleSpecs() {
-        /* Create list */
-        final List<GordianNewSM2EncryptionSpec> mySpecs = new ArrayList<>();
-        final GordianCoreDigestSpecBuilder myBuilder = new GordianCoreDigestSpecBuilder();
-
-        /* Loop through the encryptionTypes */
-        for (GordianNewSM2EncryptionType myType : GordianNewSM2EncryptionType.values()) {
-            mySpecs.add(new GordianCoreSM2EncryptionSpec(myType, myBuilder.sm3()));
-            mySpecs.add(new GordianCoreSM2EncryptionSpec(myType, myBuilder.sha2(GordianLength.LEN_224)));
-            mySpecs.add(new GordianCoreSM2EncryptionSpec(myType, myBuilder.sha2(GordianLength.LEN_256)));
-            mySpecs.add(new GordianCoreSM2EncryptionSpec(myType, myBuilder.sha2(GordianLength.LEN_384)));
-            mySpecs.add(new GordianCoreSM2EncryptionSpec(myType, myBuilder.sha2(GordianLength.LEN_512)));
-            mySpecs.add(new GordianCoreSM2EncryptionSpec(myType, myBuilder.blake2s(GordianLength.LEN_256)));
-            mySpecs.add(new GordianCoreSM2EncryptionSpec(myType, myBuilder.blake2b(GordianLength.LEN_512)));
-            mySpecs.add(new GordianCoreSM2EncryptionSpec(myType, myBuilder.whirlpool()));
-        }
-
-        /* Return the list */
-        return mySpecs;
     }
 }

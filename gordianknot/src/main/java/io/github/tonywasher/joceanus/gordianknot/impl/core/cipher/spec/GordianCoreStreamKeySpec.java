@@ -31,8 +31,6 @@ import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStrea
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeySubType.GordianNewVMPCKey;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeyType;
 
-import java.util.EnumMap;
-import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -44,11 +42,6 @@ public class GordianCoreStreamKeySpec
      * The Separator.
      */
     private static final String SEP = "-";
-
-    /**
-     * The streamKeyTypeMap.
-     */
-    private static final Map<GordianNewStreamKeyType, GordianCoreStreamKeyType> TYPEMAP = newTypeMap();
 
     /**
      * The StreamKey Type.
@@ -85,7 +78,7 @@ public class GordianCoreStreamKeySpec
     GordianCoreStreamKeySpec(final GordianNewStreamKeyType pType,
                              final GordianNewStreamKeySubType pSubKeyType,
                              final GordianLength pKeyLength) {
-        theType = TYPEMAP.get(pType);
+        theType = GordianCoreStreamKeyType.mapCoreType(pType);
         theSubKeyType = pSubKeyType;
         theKeyLength = pKeyLength;
         isValid = checkValidity();
@@ -415,18 +408,5 @@ public class GordianCoreStreamKeySpec
     @Override
     public int hashCode() {
         return Objects.hash(theType, theKeyLength, theSubKeyType);
-    }
-
-    /**
-     * Build the type map.
-     *
-     * @return the type map
-     */
-    private static Map<GordianNewStreamKeyType, GordianCoreStreamKeyType> newTypeMap() {
-        final Map<GordianNewStreamKeyType, GordianCoreStreamKeyType> myMap = new EnumMap<>(GordianNewStreamKeyType.class);
-        for (GordianNewStreamKeyType myType : GordianNewStreamKeyType.values()) {
-            myMap.put(myType, new GordianCoreStreamKeyType(myType));
-        }
-        return myMap;
     }
 }
