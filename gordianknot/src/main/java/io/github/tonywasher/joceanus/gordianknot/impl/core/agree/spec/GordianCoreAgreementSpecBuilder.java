@@ -21,7 +21,8 @@ import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianNewAgreem
 import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianNewAgreementSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianNewAgreementSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianNewAgreementType;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.spec.GordianCoreKeyPairSpec;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -35,7 +36,7 @@ public class GordianCoreAgreementSpecBuilder
     /**
      * The keyPairSpec.
      */
-    private GordianKeyPairSpec theKeyPairSpec;
+    private GordianNewKeyPairSpec theKeyPairSpec;
 
     /**
      * The agreement type.
@@ -53,7 +54,7 @@ public class GordianCoreAgreementSpecBuilder
     private boolean withConfirm;
 
     @Override
-    public GordianNewAgreementSpecBuilder withKeyPairSpec(final GordianKeyPairSpec pSpec) {
+    public GordianNewAgreementSpecBuilder withKeyPairSpec(final GordianNewKeyPairSpec pSpec) {
         theKeyPairSpec = pSpec;
         return this;
     }
@@ -100,7 +101,7 @@ public class GordianCoreAgreementSpecBuilder
      * @param pKeyPairSpec the keyPairSpec
      * @return the list
      */
-    public static List<GordianNewAgreementSpec> listAllPossibleSpecs(final GordianKeyPairSpec pKeyPairSpec) {
+    public static List<GordianNewAgreementSpec> listAllPossibleSpecs(final GordianNewKeyPairSpec pKeyPairSpec) {
         /* Create list */
         final List<GordianNewAgreementSpec> myAgreements = new ArrayList<>();
 
@@ -154,7 +155,7 @@ public class GordianCoreAgreementSpecBuilder
                 break;
             case COMPOSITE:
                 /* Loop through the possible keySpecs for the first key */
-                final Iterator<GordianKeyPairSpec> myIterator = pKeyPairSpec.keySpecIterator();
+                final Iterator<GordianNewKeyPairSpec> myIterator = ((GordianCoreKeyPairSpec) pKeyPairSpec).keySpecIterator();
                 for (GordianNewAgreementSpec mySpec : listAllPossibleSpecs(myIterator.next())) {
                     final GordianNewAgreementSpec myTest = new GordianCoreAgreementSpec(pKeyPairSpec,
                             mySpec.getAgreementType(), mySpec.getKDFType(), mySpec.withConfirm());
@@ -178,7 +179,7 @@ public class GordianCoreAgreementSpecBuilder
      * @param pAgreementType the agreementType
      * @return the list
      */
-    private static List<GordianNewAgreementSpec> listAllKDFs(final GordianKeyPairSpec pKeyPairSpec,
+    private static List<GordianNewAgreementSpec> listAllKDFs(final GordianNewKeyPairSpec pKeyPairSpec,
                                                              final GordianNewAgreementType pAgreementType) {
         return listAllKDFs(pKeyPairSpec, pAgreementType, false);
     }
@@ -191,7 +192,7 @@ public class GordianCoreAgreementSpecBuilder
      * @param pConfirm       with key confirmation
      * @return the list
      */
-    private static List<GordianNewAgreementSpec> listAllKDFs(final GordianKeyPairSpec pKeyPairSpec,
+    private static List<GordianNewAgreementSpec> listAllKDFs(final GordianNewKeyPairSpec pKeyPairSpec,
                                                              final GordianNewAgreementType pAgreementType,
                                                              final boolean pConfirm) {
         /* Create list */

@@ -17,7 +17,7 @@
 
 package io.github.tonywasher.joceanus.gordianknot.api.agree.spec;
 
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairSpec;
 
 /**
  * KeyPair Agreement Specification.
@@ -28,7 +28,7 @@ public interface GordianNewAgreementSpec {
      *
      * @return the keyPairSpec
      */
-    GordianKeyPairSpec getKeyPairSpec();
+    GordianNewKeyPairSpec getKeyPairSpec();
 
     /**
      * Obtain the agreementType.

@@ -19,11 +19,12 @@ package io.github.tonywasher.joceanus.gordianknot.impl.core.sign.spec;
 
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpecBuilder;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairType;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairType;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianNewSignatureSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianNewSignatureSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianNewSignatureType;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.digest.spec.GordianCoreDigestSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.spec.GordianCoreKeyPairType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,7 +42,7 @@ public class GordianCoreSignatureSpecBuilder
     /**
      * The keyPairType.
      */
-    private GordianKeyPairType theKeyPairType;
+    private GordianNewKeyPairType theKeyPairType;
 
     /**
      * The type.
@@ -61,7 +62,7 @@ public class GordianCoreSignatureSpecBuilder
     }
 
     @Override
-    public GordianNewSignatureSpecBuilder withKeyPairType(final GordianKeyPairType pType) {
+    public GordianNewSignatureSpecBuilder withKeyPairType(final GordianNewKeyPairType pType) {
         theKeyPairType = pType;
         return this;
     }
@@ -115,8 +116,9 @@ public class GordianCoreSignatureSpecBuilder
      * @param pKeyPairType the keyPairType
      * @return the list
      */
-    public static List<GordianNewSignatureSpec> listAllPossibleSpecs(final GordianKeyPairType pKeyPairType) {
+    public static List<GordianNewSignatureSpec> listAllPossibleSpecs(final GordianNewKeyPairType pKeyPairType) {
         /* Access the list of possible digests */
+        final GordianCoreKeyPairType myCoreType = GordianCoreKeyPairType.mapCoreType(pKeyPairType);
         final List<GordianNewSignatureSpec> mySignatures = new ArrayList<>();
         final List<GordianNewDigestSpec> myDigests = GordianCoreDigestSpecBuilder.listAllPossibleSpecs();
 
@@ -125,13 +127,13 @@ public class GordianCoreSignatureSpecBuilder
             /* Skip if the signatureType is not valid */
             if (mySignType.isSupported(pKeyPairType)) {
                 /* If we need null-digestSpec */
-                if (pKeyPairType.useDigestForSignatures().canNotExist()) {
+                if (myCoreType.useDigestForSignatures().canNotExist()) {
                     /* Add the signature */
                     mySignatures.add(new GordianCoreSignatureSpec(pKeyPairType, mySignType.getType(), null));
                 }
 
                 /* If we need digestSpec */
-                if (pKeyPairType.useDigestForSignatures().canExist()) {
+                if (myCoreType.useDigestForSignatures().canExist()) {
                     /* For each possible digestSpec */
                     for (GordianNewDigestSpec mySpec : myDigests) {
                         /* Add the signature */

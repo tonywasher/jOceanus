@@ -17,7 +17,7 @@
 
 package io.github.tonywasher.joceanus.gordianknot.api.agree.spec;
 
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairSpec;
 
 /**
  * KeyPair Agreement Specification Builder.
@@ -29,7 +29,7 @@ public interface GordianNewAgreementSpecBuilder {
      * @param pSpec the spec
      * @return the Builder
      */
-    GordianNewAgreementSpecBuilder withKeyPairSpec(GordianKeyPairSpec pSpec);
+    GordianNewAgreementSpecBuilder withKeyPairSpec(GordianNewKeyPairSpec pSpec);
 
     /**
      * Define agreementType.
@@ -68,7 +68,7 @@ public interface GordianNewAgreementSpecBuilder {
      * @param pKDFType     the KDF type
      * @return the Spec
      */
-    default GordianNewAgreementSpec kem(final GordianKeyPairSpec pKeyPairSpec,
+    default GordianNewAgreementSpec kem(final GordianNewKeyPairSpec pKeyPairSpec,
                                         final GordianNewAgreementKDF pKDFType) {
         return withKeyPairSpec(pKeyPairSpec).withAgreementType(GordianNewAgreementType.KEM).withKDF(pKDFType).build();
     }
@@ -80,7 +80,7 @@ public interface GordianNewAgreementSpecBuilder {
      * @param pKDFType     the KDF type
      * @return the Spec
      */
-    default GordianNewAgreementSpec anon(final GordianKeyPairSpec pKeyPairSpec,
+    default GordianNewAgreementSpec anon(final GordianNewKeyPairSpec pKeyPairSpec,
                                          final GordianNewAgreementKDF pKDFType) {
         return withKeyPairSpec(pKeyPairSpec).withAgreementType(GordianNewAgreementType.ANON).withKDF(pKDFType).build();
     }
@@ -92,7 +92,7 @@ public interface GordianNewAgreementSpecBuilder {
      * @param pKDFType     the KDF type
      * @return the Spec
      */
-    default GordianNewAgreementSpec basic(final GordianKeyPairSpec pKeyPairSpec,
+    default GordianNewAgreementSpec basic(final GordianNewKeyPairSpec pKeyPairSpec,
                                           final GordianNewAgreementKDF pKDFType) {
         return withKeyPairSpec(pKeyPairSpec).withAgreementType(GordianNewAgreementType.BASIC).withKDF(pKDFType).build();
     }
@@ -104,7 +104,7 @@ public interface GordianNewAgreementSpecBuilder {
      * @param pKDFType     the KDF type
      * @return the Spec
      */
-    default GordianNewAgreementSpec signed(final GordianKeyPairSpec pKeyPairSpec,
+    default GordianNewAgreementSpec signed(final GordianNewKeyPairSpec pKeyPairSpec,
                                            final GordianNewAgreementKDF pKDFType) {
         return withKeyPairSpec(pKeyPairSpec).withAgreementType(GordianNewAgreementType.SIGNED).withKDF(pKDFType).build();
     }
@@ -116,7 +116,7 @@ public interface GordianNewAgreementSpecBuilder {
      * @param pKDFType     the KDF type
      * @return the Spec
      */
-    default GordianNewAgreementSpec mqv(final GordianKeyPairSpec pKeyPairSpec,
+    default GordianNewAgreementSpec mqv(final GordianNewKeyPairSpec pKeyPairSpec,
                                         final GordianNewAgreementKDF pKDFType) {
         return withKeyPairSpec(pKeyPairSpec).withAgreementType(GordianNewAgreementType.MQV).withKDF(pKDFType).build();
     }
@@ -128,7 +128,7 @@ public interface GordianNewAgreementSpecBuilder {
      * @param pKDFType     the KDF type
      * @return the Spec
      */
-    default GordianNewAgreementSpec mqvConfirm(final GordianKeyPairSpec pKeyPairSpec,
+    default GordianNewAgreementSpec mqvConfirm(final GordianNewKeyPairSpec pKeyPairSpec,
                                                final GordianNewAgreementKDF pKDFType) {
         return withKeyPairSpec(pKeyPairSpec).withAgreementType(GordianNewAgreementType.MQV).withKDF(pKDFType).withConfirm().build();
     }
@@ -140,7 +140,7 @@ public interface GordianNewAgreementSpecBuilder {
      * @param pKDFType     the KDF type
      * @return the Spec
      */
-    default GordianNewAgreementSpec unified(final GordianKeyPairSpec pKeyPairSpec,
+    default GordianNewAgreementSpec unified(final GordianNewKeyPairSpec pKeyPairSpec,
                                             final GordianNewAgreementKDF pKDFType) {
         return withKeyPairSpec(pKeyPairSpec).withAgreementType(GordianNewAgreementType.UNIFIED).withKDF(pKDFType).build();
     }
@@ -152,7 +152,7 @@ public interface GordianNewAgreementSpecBuilder {
      * @param pKDFType     the KDF type
      * @return the Spec
      */
-    default GordianNewAgreementSpec unifiedConfirm(final GordianKeyPairSpec pKeyPairSpec,
+    default GordianNewAgreementSpec unifiedConfirm(final GordianNewKeyPairSpec pKeyPairSpec,
                                                    final GordianNewAgreementKDF pKDFType) {
         return withKeyPairSpec(pKeyPairSpec).withAgreementType(GordianNewAgreementType.UNIFIED).withKDF(pKDFType).withConfirm().build();
     }
@@ -164,7 +164,7 @@ public interface GordianNewAgreementSpecBuilder {
      * @param pKDFType     the KDF type
      * @return the Spec
      */
-    default GordianNewAgreementSpec sm2(final GordianKeyPairSpec pKeyPairSpec,
+    default GordianNewAgreementSpec sm2(final GordianNewKeyPairSpec pKeyPairSpec,
                                         final GordianNewAgreementKDF pKDFType) {
         return withKeyPairSpec(pKeyPairSpec).withAgreementType(GordianNewAgreementType.SM2).withKDF(pKDFType).build();
     }
@@ -176,7 +176,7 @@ public interface GordianNewAgreementSpecBuilder {
      * @param pKDFType     the KDF type
      * @return the Spec
      */
-    default GordianNewAgreementSpec sm2Confirm(final GordianKeyPairSpec pKeyPairSpec,
+    default GordianNewAgreementSpec sm2Confirm(final GordianNewKeyPairSpec pKeyPairSpec,
                                                final GordianNewAgreementKDF pKDFType) {
         return withKeyPairSpec(pKeyPairSpec).withAgreementType(GordianNewAgreementType.SM2).withKDF(pKDFType).withConfirm().build();
     }

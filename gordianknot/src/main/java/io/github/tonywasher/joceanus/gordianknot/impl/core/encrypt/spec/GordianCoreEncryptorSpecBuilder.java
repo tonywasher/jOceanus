@@ -23,7 +23,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianNewEncr
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianNewEncryptorSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianNewSM2EncryptionSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianNewSM2EncryptionType;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairType;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairType;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.digest.spec.GordianCoreDigestSpecBuilder;
 
 import java.util.ArrayList;
@@ -37,20 +37,15 @@ public class GordianCoreEncryptorSpecBuilder
     /**
      * The keyPairType.
      */
-    private GordianKeyPairType theKeyPairType;
+    private GordianNewKeyPairType theKeyPairType;
 
     /**
      * The subSpec.
      */
     private Object theSubSpec;
 
-    /**
-     * The sm2 encryptionType.
-     */
-    private GordianNewSM2EncryptionType theSM2Type;
-
     @Override
-    public GordianNewEncryptorSpecBuilder withKeyPairType(final GordianKeyPairType pType) {
+    public GordianNewEncryptorSpecBuilder withKeyPairType(final GordianNewKeyPairType pType) {
         theKeyPairType = pType;
         return this;
     }
@@ -62,8 +57,9 @@ public class GordianCoreEncryptorSpecBuilder
     }
 
     @Override
-    public GordianNewEncryptorSpecBuilder withSM2EncryptionType(final GordianNewSM2EncryptionType pType) {
-        theSM2Type = pType;
+    public GordianNewEncryptorSpecBuilder withSM2EncryptionSpec(final GordianNewSM2EncryptionType pType,
+                                                                final GordianNewDigestSpec pDigestSpec) {
+        theSubSpec = new GordianCoreSM2EncryptionSpec(pType, pDigestSpec);
         return this;
     }
 
@@ -75,11 +71,6 @@ public class GordianCoreEncryptorSpecBuilder
 
     @Override
     public GordianNewEncryptorSpec build() {
-        /* Handle SM2 */
-        if (theSM2Type != null) {
-            theSubSpec = new GordianCoreSM2EncryptionSpec(theSM2Type, (GordianNewDigestSpec) theSubSpec);
-        }
-
         /* Build spec and return it */
         final GordianCoreEncryptorSpec mySpec = new GordianCoreEncryptorSpec(theKeyPairType, theSubSpec);
         reset();
@@ -92,7 +83,6 @@ public class GordianCoreEncryptorSpecBuilder
     private void reset() {
         theKeyPairType = null;
         theSubSpec = null;
-        theSM2Type = null;
     }
 
     /**
@@ -101,7 +91,7 @@ public class GordianCoreEncryptorSpecBuilder
      * @param pKeyPairType the keyPairType
      * @return the list
      */
-    public static List<GordianNewEncryptorSpec> listAllPossibleSpecs(final GordianKeyPairType pKeyPairType) {
+    public static List<GordianNewEncryptorSpec> listAllPossibleSpecs(final GordianNewKeyPairType pKeyPairType) {
         /* Create list */
         final List<GordianNewEncryptorSpec> myEncryptors = new ArrayList<>();
         final GordianCoreEncryptorSpecBuilder myBuilder = new GordianCoreEncryptorSpecBuilder();

@@ -19,7 +19,7 @@ package io.github.tonywasher.joceanus.gordianknot.impl.core.agree.spec;
 
 import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianNewAgreementKDF;
 import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianNewAgreementType;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairType;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairType;
 
 import java.util.Collection;
 import java.util.EnumMap;
@@ -64,7 +64,7 @@ public final class GordianCoreAgreementKDF {
      * @param pAgreeType the agreement type
      * @return true/false
      */
-    public boolean isSupported(final GordianKeyPairType pKeyType,
+    public boolean isSupported(final GordianNewKeyPairType pKeyType,
                                final GordianNewAgreementType pAgreeType) {
         /* Switch on keyType */
         switch (pKeyType) {
@@ -170,6 +170,11 @@ public final class GordianCoreAgreementKDF {
     }
 
     @Override
+    public String toString() {
+        return theKDF.toString();
+    }
+
+    @Override
     public boolean equals(final Object pThat) {
         /* Handle the trivial cases */
         if (this == pThat) {
@@ -195,8 +200,8 @@ public final class GordianCoreAgreementKDF {
      * @param pKDF the base KDF
      * @return the core KDF
      */
-    public static GordianCoreAgreementKDF mapCoreKDF(final GordianNewAgreementKDF pKDF) {
-        return KDFMAP.get(pKDF);
+    public static GordianCoreAgreementKDF mapCoreKDF(final Object pKDF) {
+        return pKDF instanceof GordianNewAgreementKDF myKDF ? KDFMAP.get(myKDF) : null;
     }
 
     /**

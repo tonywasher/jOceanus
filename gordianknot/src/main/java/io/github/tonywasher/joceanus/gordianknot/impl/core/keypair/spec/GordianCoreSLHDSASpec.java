@@ -1,0 +1,335 @@
+/*
+ * GordianKnot: Security Suite
+ * Copyright 2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+package io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.spec;
+
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewSLHDSASpec;
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.nist.NISTObjectIdentifiers;
+import org.bouncycastle.jcajce.spec.SLHDSAParameterSpec;
+import org.bouncycastle.pqc.crypto.slhdsa.SLHDSAParameters;
+
+import java.util.Collection;
+import java.util.EnumMap;
+import java.util.Map;
+
+/**
+ * SphincsPlus KeySpecs.
+ */
+public final class GordianCoreSLHDSASpec {
+    /**
+     * The specMap.
+     */
+    private static final Map<GordianNewSLHDSASpec, GordianCoreSLHDSASpec> SPECMAP = newSpecMap();
+
+    /**
+     * The Spec.
+     */
+    private final GordianNewSLHDSASpec theSpec;
+
+    /**
+     * Constructor.
+     *
+     * @param pSpec the spec
+     */
+    private GordianCoreSLHDSASpec(final GordianNewSLHDSASpec pSpec) {
+        theSpec = pSpec;
+    }
+
+    /**
+     * Obtain the spec.
+     *
+     * @return the spec
+     */
+    public GordianNewSLHDSASpec getSpec() {
+        return theSpec;
+    }
+
+    /**
+     * Is this a hash signer?
+     *
+     * @return true/false
+     */
+    public boolean isHash() {
+        switch (theSpec) {
+            case SHA128F:
+            case SHA128S:
+            case SHA192F:
+            case SHA192S:
+            case SHA256F:
+            case SHA256S:
+            case SHAKE128F:
+            case SHAKE128S:
+            case SHAKE192F:
+            case SHAKE192S:
+            case SHAKE256F:
+            case SHAKE256S:
+                return false;
+            case SHA128F_HASH:
+            case SHA128S_HASH:
+            case SHA192F_HASH:
+            case SHA192S_HASH:
+            case SHA256F_HASH:
+            case SHA256S_HASH:
+            case SHAKE128F_HASH:
+            case SHAKE128S_HASH:
+            case SHAKE192F_HASH:
+            case SHAKE192S_HASH:
+            case SHAKE256F_HASH:
+            case SHAKE256S_HASH:
+            default:
+                return true;
+        }
+    }
+
+    /**
+     * Obtain SLHDSA Parameters.
+     *
+     * @return the parameters.
+     */
+    public SLHDSAParameters getParameters() {
+        switch (theSpec) {
+            case SHA128F:
+                return SLHDSAParameters.sha2_128f;
+            case SHA128S:
+                return SLHDSAParameters.sha2_128s;
+            case SHA192F:
+                return SLHDSAParameters.sha2_192f;
+            case SHA192S:
+                return SLHDSAParameters.sha2_192s;
+            case SHA256F:
+                return SLHDSAParameters.sha2_256f;
+            case SHA256S:
+                return SLHDSAParameters.sha2_256s;
+            case SHAKE128F:
+                return SLHDSAParameters.shake_128f;
+            case SHAKE128S:
+                return SLHDSAParameters.shake_128s;
+            case SHAKE192F:
+                return SLHDSAParameters.shake_192f;
+            case SHAKE192S:
+                return SLHDSAParameters.shake_192s;
+            case SHAKE256F:
+                return SLHDSAParameters.shake_256f;
+            case SHAKE256S:
+                return SLHDSAParameters.shake_256s;
+            case SHA128F_HASH:
+                return SLHDSAParameters.sha2_128f_with_sha256;
+            case SHA128S_HASH:
+                return SLHDSAParameters.sha2_128s_with_sha256;
+            case SHA192F_HASH:
+                return SLHDSAParameters.sha2_192f_with_sha512;
+            case SHA192S_HASH:
+                return SLHDSAParameters.sha2_192s_with_sha512;
+            case SHA256F_HASH:
+                return SLHDSAParameters.sha2_256f_with_sha512;
+            case SHA256S_HASH:
+                return SLHDSAParameters.sha2_256s_with_sha512;
+            case SHAKE128F_HASH:
+                return SLHDSAParameters.shake_128f_with_shake128;
+            case SHAKE128S_HASH:
+                return SLHDSAParameters.shake_128s_with_shake128;
+            case SHAKE192F_HASH:
+                return SLHDSAParameters.shake_192f_with_shake256;
+            case SHAKE192S_HASH:
+                return SLHDSAParameters.shake_192s_with_shake256;
+            case SHAKE256F_HASH:
+                return SLHDSAParameters.shake_256f_with_shake256;
+            case SHAKE256S_HASH:
+                return SLHDSAParameters.shake_256s_with_shake256;
+            default:
+                throw new IllegalArgumentException();
+        }
+    }
+
+    /**
+     * Obtain SPHINCSPlus ParameterSpec.
+     *
+     * @return the parameters.
+     */
+    public SLHDSAParameterSpec getParameterSpec() {
+        switch (theSpec) {
+            case SHA128F:
+                return SLHDSAParameterSpec.slh_dsa_sha2_128f;
+            case SHA128S:
+                return SLHDSAParameterSpec.slh_dsa_sha2_128s;
+            case SHA192F:
+                return SLHDSAParameterSpec.slh_dsa_sha2_192f;
+            case SHA192S:
+                return SLHDSAParameterSpec.slh_dsa_sha2_192s;
+            case SHA256F:
+                return SLHDSAParameterSpec.slh_dsa_sha2_256f;
+            case SHA256S:
+                return SLHDSAParameterSpec.slh_dsa_sha2_256s;
+            case SHAKE128F:
+                return SLHDSAParameterSpec.slh_dsa_shake_128f;
+            case SHAKE128S:
+                return SLHDSAParameterSpec.slh_dsa_shake_128s;
+            case SHAKE192F:
+                return SLHDSAParameterSpec.slh_dsa_shake_192f;
+            case SHAKE192S:
+                return SLHDSAParameterSpec.slh_dsa_shake_192s;
+            case SHAKE256F:
+                return SLHDSAParameterSpec.slh_dsa_shake_256f;
+            case SHAKE256S:
+                return SLHDSAParameterSpec.slh_dsa_shake_256s;
+            case SHA128F_HASH:
+                return SLHDSAParameterSpec.slh_dsa_sha2_128f_with_sha256;
+            case SHA128S_HASH:
+                return SLHDSAParameterSpec.slh_dsa_sha2_128s_with_sha256;
+            case SHA192F_HASH:
+                return SLHDSAParameterSpec.slh_dsa_sha2_192f_with_sha512;
+            case SHA192S_HASH:
+                return SLHDSAParameterSpec.slh_dsa_sha2_192s_with_sha512;
+            case SHA256F_HASH:
+                return SLHDSAParameterSpec.slh_dsa_sha2_256f_with_sha512;
+            case SHA256S_HASH:
+                return SLHDSAParameterSpec.slh_dsa_sha2_256s_with_sha512;
+            case SHAKE128F_HASH:
+                return SLHDSAParameterSpec.slh_dsa_shake_128f_with_shake128;
+            case SHAKE128S_HASH:
+                return SLHDSAParameterSpec.slh_dsa_shake_128s_with_shake128;
+            case SHAKE192F_HASH:
+                return SLHDSAParameterSpec.slh_dsa_shake_192f_with_shake256;
+            case SHAKE192S_HASH:
+                return SLHDSAParameterSpec.slh_dsa_shake_192s_with_shake256;
+            case SHAKE256F_HASH:
+                return SLHDSAParameterSpec.slh_dsa_shake_256f_with_shake256;
+            case SHAKE256S_HASH:
+                return SLHDSAParameterSpec.slh_dsa_shake_256s_with_shake256;
+            default:
+                throw new IllegalArgumentException();
+        }
+    }
+
+    /**
+     * Obtain SLHDSA algorithm Identifier.
+     *
+     * @return the identifier.
+     */
+    public ASN1ObjectIdentifier getIdentifier() {
+        switch (theSpec) {
+            case SHA128F:
+                return NISTObjectIdentifiers.id_slh_dsa_sha2_128f;
+            case SHA128S:
+                return NISTObjectIdentifiers.id_slh_dsa_sha2_128s;
+            case SHA192F:
+                return NISTObjectIdentifiers.id_slh_dsa_sha2_192f;
+            case SHA192S:
+                return NISTObjectIdentifiers.id_slh_dsa_sha2_192s;
+            case SHA256F:
+                return NISTObjectIdentifiers.id_slh_dsa_sha2_256f;
+            case SHA256S:
+                return NISTObjectIdentifiers.id_slh_dsa_sha2_256s;
+            case SHAKE128F:
+                return NISTObjectIdentifiers.id_slh_dsa_shake_128f;
+            case SHAKE128S:
+                return NISTObjectIdentifiers.id_slh_dsa_shake_128s;
+            case SHAKE192F:
+                return NISTObjectIdentifiers.id_slh_dsa_shake_192f;
+            case SHAKE192S:
+                return NISTObjectIdentifiers.id_slh_dsa_shake_192s;
+            case SHAKE256F:
+                return NISTObjectIdentifiers.id_slh_dsa_shake_256f;
+            case SHAKE256S:
+                return NISTObjectIdentifiers.id_slh_dsa_shake_256s;
+            case SHA128F_HASH:
+                return NISTObjectIdentifiers.id_hash_slh_dsa_sha2_128f_with_sha256;
+            case SHA128S_HASH:
+                return NISTObjectIdentifiers.id_hash_slh_dsa_sha2_128s_with_sha256;
+            case SHA192F_HASH:
+                return NISTObjectIdentifiers.id_hash_slh_dsa_sha2_192f_with_sha512;
+            case SHA192S_HASH:
+                return NISTObjectIdentifiers.id_hash_slh_dsa_sha2_192s_with_sha512;
+            case SHA256F_HASH:
+                return NISTObjectIdentifiers.id_hash_slh_dsa_sha2_256f_with_sha512;
+            case SHA256S_HASH:
+                return NISTObjectIdentifiers.id_hash_slh_dsa_sha2_256s_with_sha512;
+            case SHAKE128F_HASH:
+                return NISTObjectIdentifiers.id_hash_slh_dsa_shake_128f_with_shake128;
+            case SHAKE128S_HASH:
+                return NISTObjectIdentifiers.id_hash_slh_dsa_shake_128s_with_shake128;
+            case SHAKE192F_HASH:
+                return NISTObjectIdentifiers.id_hash_slh_dsa_shake_192f_with_shake256;
+            case SHAKE192S_HASH:
+                return NISTObjectIdentifiers.id_hash_slh_dsa_shake_192s_with_shake256;
+            case SHAKE256F_HASH:
+                return NISTObjectIdentifiers.id_hash_slh_dsa_shake_256f_with_shake256;
+            case SHAKE256S_HASH:
+                return NISTObjectIdentifiers.id_hash_slh_dsa_shake_256s_with_shake256;
+            default:
+                throw new IllegalArgumentException();
+        }
+    }
+
+    @Override
+    public String toString() {
+        return theSpec.toString();
+    }
+
+    @Override
+    public boolean equals(final Object pThat) {
+        /* Handle the trivial cases */
+        if (this == pThat) {
+            return true;
+        }
+        if (pThat == null) {
+            return false;
+        }
+
+        /* Check subFields */
+        return pThat instanceof GordianCoreSLHDSASpec myThat
+                && theSpec == myThat.getSpec();
+    }
+
+    @Override
+    public int hashCode() {
+        return theSpec.hashCode();
+    }
+
+    /**
+     * Obtain the core spec.
+     *
+     * @param pSpec the base spec
+     * @return the core spec
+     */
+    public static GordianCoreSLHDSASpec mapCoreSpec(final Object pSpec) {
+        return pSpec instanceof GordianNewSLHDSASpec mySpec ? SPECMAP.get(mySpec) : null;
+    }
+
+    /**
+     * Build the type map.
+     *
+     * @return the type map
+     */
+    private static Map<GordianNewSLHDSASpec, GordianCoreSLHDSASpec> newSpecMap() {
+        final Map<GordianNewSLHDSASpec, GordianCoreSLHDSASpec> myMap = new EnumMap<>(GordianNewSLHDSASpec.class);
+        for (GordianNewSLHDSASpec mySpec : GordianNewSLHDSASpec.values()) {
+            myMap.put(mySpec, new GordianCoreSLHDSASpec(mySpec));
+        }
+        return myMap;
+    }
+
+    /**
+     * Obtain the values.
+     *
+     * @return the values
+     */
+    public static Collection<GordianCoreSLHDSASpec> values() {
+        return SPECMAP.values();
+    }
+}

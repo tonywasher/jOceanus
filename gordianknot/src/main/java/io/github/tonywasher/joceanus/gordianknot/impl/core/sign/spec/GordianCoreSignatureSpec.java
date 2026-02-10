@@ -18,11 +18,11 @@
 package io.github.tonywasher.joceanus.gordianknot.impl.core.sign.spec;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairType;
-import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignatureSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairType;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianNewSignatureSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianNewSignatureType;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.digest.spec.GordianCoreDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.spec.GordianCoreKeyPairType;
 
 import java.util.Iterator;
 import java.util.List;
@@ -41,7 +41,7 @@ public class GordianCoreSignatureSpec
     /**
      * KeyPairType.
      */
-    private final GordianKeyPairType theKeyPairType;
+    private final GordianCoreKeyPairType theKeyPairType;
 
     /**
      * SignatureType.
@@ -70,18 +70,27 @@ public class GordianCoreSignatureSpec
      * @param pSignatureType the signatureType
      * @param pSignatureSpec the signatureSpec
      */
-    public GordianCoreSignatureSpec(final GordianKeyPairType pKeyPairType,
+    public GordianCoreSignatureSpec(final GordianNewKeyPairType pKeyPairType,
                                     final GordianNewSignatureType pSignatureType,
                                     final Object pSignatureSpec) {
         /* Store parameters */
-        theKeyPairType = pKeyPairType;
+        theKeyPairType = GordianCoreKeyPairType.mapCoreType(pKeyPairType);
         theSignatureType = GordianCoreSignatureType.mapCoreType(pSignatureType);
         theSignatureSpec = pSignatureSpec;
         isValid = checkValidity();
     }
 
     @Override
-    public GordianKeyPairType getKeyPairType() {
+    public GordianNewKeyPairType getKeyPairType() {
+        return theKeyPairType.getType();
+    }
+
+    /**
+     * Obtain core keyPairType.
+     *
+     * @return the core type
+     */
+    public GordianCoreKeyPairType getCoreKeyPairType() {
         return theKeyPairType;
     }
 
@@ -109,11 +118,11 @@ public class GordianCoreSignatureSpec
      *
      * @return the digestSpec.
      */
-    public GordianDigestSpec getDigestSpec() {
-        if (!(theSignatureSpec instanceof GordianDigestSpec)) {
-            throw new IllegalArgumentException();
+    public GordianCoreDigestSpec getDigestSpec() {
+        if (theSignatureSpec instanceof GordianCoreDigestSpec mySpec) {
+            return mySpec;
         }
-        return (GordianDigestSpec) theSignatureSpec;
+        throw new IllegalArgumentException();
     }
 
     /**
@@ -122,11 +131,11 @@ public class GordianCoreSignatureSpec
      * @return the signatureSpec iterator.
      */
     @SuppressWarnings("unchecked")
-    public Iterator<GordianSignatureSpec> signatureSpecIterator() {
-        if (!(theSignatureSpec instanceof List)) {
-            throw new IllegalArgumentException();
+    public Iterator<GordianNewSignatureSpec> signatureSpecIterator() {
+        if (theSignatureSpec instanceof List) {
+            return ((List<GordianNewSignatureSpec>) theSignatureSpec).iterator();
         }
-        return ((List<GordianSignatureSpec>) theSignatureSpec).iterator();
+        throw new IllegalArgumentException();
     }
 
     @Override
@@ -140,7 +149,7 @@ public class GordianCoreSignatureSpec
      * @return true/false
      */
     public boolean supportsContext() {
-        switch (theKeyPairType) {
+        switch (theKeyPairType.getType()) {
             case MLDSA:
             case SLHDSA:
                 return true;
@@ -158,17 +167,15 @@ public class GordianCoreSignatureSpec
         if (theKeyPairType == null || theSignatureType == null) {
             return false;
         }
-        switch (theKeyPairType) {
+        switch (theKeyPairType.getType()) {
             case RSA:
             case DSA:
             case EC:
             case DSTU4145:
             case GOST2012:
-                if (!(theSignatureSpec instanceof GordianDigestSpec)) {
-                    return false;
-                }
-                final GordianDigestSpec mySpec = getDigestSpec();
-                return mySpec.isValid() && mySpec.getDigestType().supportsLargeData();
+                return theSignatureSpec instanceof GordianCoreDigestSpec mySpec
+                        && mySpec.isValid()
+                        && mySpec.getCoreDigestType().supportsLargeData();
             case EDDSA:
             case SLHDSA:
             case MLDSA:
@@ -195,10 +202,10 @@ public class GordianCoreSignatureSpec
      * @return valid true/false
      */
     private boolean checkComposite() {
-        final Iterator<GordianSignatureSpec> myIterator = signatureSpecIterator();
+        final Iterator<GordianNewSignatureSpec> myIterator = signatureSpecIterator();
         while (myIterator.hasNext()) {
             /* Check that each spec is valid */
-            final GordianSignatureSpec mySpec = myIterator.next();
+            final GordianCoreSignatureSpec mySpec = (GordianCoreSignatureSpec) myIterator.next();
             if (mySpec == null || !mySpec.isValid()) {
                 return false;
             }
@@ -213,13 +220,13 @@ public class GordianCoreSignatureSpec
      */
     private boolean checkPICNICDigest() {
         /* Check that signature length is 512 */
-        final GordianDigestSpec myDigest = getDigestSpec();
-        if (!GordianLength.LEN_512.equals(myDigest.getDigestLength())) {
+        if (!(theSignatureSpec instanceof GordianCoreDigestSpec mySpec)
+                || (!GordianLength.LEN_512.equals(mySpec.getDigestLength()))) {
             return false;
         }
 
         /* Switch on DigestType */
-        switch (myDigest.getDigestType()) {
+        switch (mySpec.getDigestType()) {
             case SHA2:
             case SHA3:
             case SHAKE:
@@ -236,13 +243,15 @@ public class GordianCoreSignatureSpec
      */
     private boolean checkSM2Digest() {
         /* Switch on DigestType */
-        final GordianDigestSpec myDigest = getDigestSpec();
-        switch (myDigest.getDigestType()) {
+        if (!(theSignatureSpec instanceof GordianCoreDigestSpec mySpec)) {
+            return false;
+        }
+        switch (mySpec.getDigestType()) {
             case SM3:
                 return true;
             case SHA2:
-                return GordianLength.LEN_256.equals(myDigest.getDigestLength())
-                        && !myDigest.isSha2Hybrid();
+                return GordianLength.LEN_256.equals(mySpec.getDigestLength())
+                        && !mySpec.isSha2Hybrid();
             default:
                 return false;
         }
@@ -258,8 +267,8 @@ public class GordianCoreSignatureSpec
                 theName += SEP + theSignatureType;
             }
             if (theSignatureSpec != null) {
-                if (theKeyPairType == GordianKeyPairType.COMPOSITE) {
-                    final Iterator<GordianSignatureSpec> myIterator = signatureSpecIterator();
+                if (theKeyPairType.getType() == GordianNewKeyPairType.COMPOSITE) {
+                    final Iterator<GordianNewSignatureSpec> myIterator = signatureSpecIterator();
                     final StringBuilder myBuilder = new StringBuilder(theName);
                     while (myIterator.hasNext()) {
                         myBuilder.append(SEP).append(myIterator.next().toString());
@@ -287,9 +296,9 @@ public class GordianCoreSignatureSpec
 
         /* Check KeyPairType, signatureType and signatureSpec */
         return pThat instanceof GordianCoreSignatureSpec myThat
-                && theKeyPairType == myThat.getKeyPairType()
+                && Objects.equals(theKeyPairType, myThat.getCoreKeyPairType())
                 && Objects.equals(theSignatureType, myThat.getCoreType())
-                && Objects.equals(theSignatureSpec, myThat.theSignatureSpec);
+                && Objects.equals(theSignatureSpec, myThat.getSignatureSpec());
     }
 
     @Override

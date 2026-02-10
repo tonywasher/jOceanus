@@ -71,6 +71,11 @@ public final class GordianCoreRandomType {
     }
 
     @Override
+    public String toString() {
+        return theType.toString();
+    }
+
+    @Override
     public boolean equals(final Object pThat) {
         /* Handle the trivial cases */
         if (this == pThat) {
@@ -96,8 +101,8 @@ public final class GordianCoreRandomType {
      * @param pType the base type
      * @return the core type
      */
-    public static GordianCoreRandomType mapCoreType(final GordianNewRandomType pType) {
-        return TYPEMAP.get(pType);
+    public static GordianCoreRandomType mapCoreType(final Object pType) {
+        return pType instanceof GordianNewRandomType myType ? TYPEMAP.get(myType) : null;
     }
 
     /**

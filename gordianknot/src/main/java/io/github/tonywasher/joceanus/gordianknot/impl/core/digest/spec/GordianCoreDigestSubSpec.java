@@ -438,11 +438,11 @@ public interface GordianCoreDigestSubSpec {
         /**
          * Obtain the core state.
          *
-         * @param pType the base state
+         * @param pState the base state
          * @return the core state
          */
-        public static GordianCoreDigestState mapCoreState(final GordianNewDigestState pType) {
-            return STATEMAP.get(pType);
+        public static GordianCoreDigestState mapCoreState(final Object pState) {
+            return pState instanceof GordianNewDigestState myState ? STATEMAP.get(myState) : null;
         }
 
         /**

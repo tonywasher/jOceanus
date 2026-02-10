@@ -18,7 +18,7 @@
 package io.github.tonywasher.joceanus.gordianknot.impl.core.agree.spec;
 
 import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianNewAgreementType;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairType;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairType;
 
 import java.util.Collection;
 import java.util.EnumMap;
@@ -102,8 +102,8 @@ public final class GordianCoreAgreementType {
      * @param pKeyPairType the keyPair
      * @return true/false
      */
-    public boolean isSupported(final GordianKeyPairType pKeyPairType) {
-        if (pKeyPairType == GordianKeyPairType.COMPOSITE) {
+    public boolean isSupported(final GordianNewKeyPairType pKeyPairType) {
+        if (pKeyPairType == GordianNewKeyPairType.COMPOSITE) {
             return true;
         }
         switch (theType) {
@@ -131,7 +131,7 @@ public final class GordianCoreAgreementType {
      * @param pKeyPairType the keyPairType
      * @return true/false
      */
-    public static boolean hasKEM(final GordianKeyPairType pKeyPairType) {
+    public static boolean hasKEM(final GordianNewKeyPairType pKeyPairType) {
         switch (pKeyPairType) {
             case RSA:
             case EC:
@@ -159,7 +159,7 @@ public final class GordianCoreAgreementType {
      * @param pKeyPairType the keyPairType
      * @return true/false
      */
-    public static boolean hasAnon(final GordianKeyPairType pKeyPairType) {
+    public static boolean hasAnon(final GordianNewKeyPairType pKeyPairType) {
         switch (pKeyPairType) {
             case DH:
             case EC:
@@ -179,7 +179,7 @@ public final class GordianCoreAgreementType {
      * @param pKeyPairType the keyPairType
      * @return true/false
      */
-    public static boolean hasSM2(final GordianKeyPairType pKeyPairType) {
+    public static boolean hasSM2(final GordianNewKeyPairType pKeyPairType) {
         switch (pKeyPairType) {
             case EC:
             case SM2:
@@ -196,7 +196,7 @@ public final class GordianCoreAgreementType {
      * @param pKeyPairType the keyPairType
      * @return true/false
      */
-    public static boolean hasBasic(final GordianKeyPairType pKeyPairType) {
+    public static boolean hasBasic(final GordianNewKeyPairType pKeyPairType) {
         return isECorDH(pKeyPairType);
     }
 
@@ -206,8 +206,8 @@ public final class GordianCoreAgreementType {
      * @param pKeyPairType the keyPairType
      * @return true/false
      */
-    public static boolean hasMQV(final GordianKeyPairType pKeyPairType) {
-        return pKeyPairType == GordianKeyPairType.DH || isEC(pKeyPairType);
+    public static boolean hasMQV(final GordianNewKeyPairType pKeyPairType) {
+        return pKeyPairType == GordianNewKeyPairType.DH || isEC(pKeyPairType);
     }
 
     /**
@@ -216,7 +216,7 @@ public final class GordianCoreAgreementType {
      * @param pKeyPairType the keyPairType
      * @return true/false
      */
-    public static boolean hasUnified(final GordianKeyPairType pKeyPairType) {
+    public static boolean hasUnified(final GordianNewKeyPairType pKeyPairType) {
         return isECorDH(pKeyPairType);
     }
 
@@ -226,7 +226,7 @@ public final class GordianCoreAgreementType {
      * @param pKeyPairType the keyPairType
      * @return true/false
      */
-    private static boolean isECorDH(final GordianKeyPairType pKeyPairType) {
+    private static boolean isECorDH(final GordianNewKeyPairType pKeyPairType) {
         switch (pKeyPairType) {
             case SM2:
             case EC:
@@ -246,7 +246,7 @@ public final class GordianCoreAgreementType {
      * @param pKeyPairType the keyPairType
      * @return true/false
      */
-    private static boolean isEC(final GordianKeyPairType pKeyPairType) {
+    private static boolean isEC(final GordianNewKeyPairType pKeyPairType) {
         switch (pKeyPairType) {
             case SM2:
             case EC:
@@ -256,6 +256,11 @@ public final class GordianCoreAgreementType {
             default:
                 return false;
         }
+    }
+
+    @Override
+    public String toString() {
+        return theType.toString();
     }
 
     @Override
@@ -284,8 +289,8 @@ public final class GordianCoreAgreementType {
      * @param pType the base type
      * @return the core type
      */
-    public static GordianCoreAgreementType mapCoreType(final GordianNewAgreementType pType) {
-        return TYPEMAP.get(pType);
+    public static GordianCoreAgreementType mapCoreType(final Object pType) {
+        return pType instanceof GordianNewAgreementType myType ? TYPEMAP.get(myType) : null;
     }
 
     /**

@@ -17,7 +17,7 @@
 
 package io.github.tonywasher.joceanus.gordianknot.impl.core.sign.spec;
 
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairType;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairType;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianNewSignatureType;
 
 import java.util.Collection;
@@ -59,16 +59,16 @@ public final class GordianCoreSignatureType {
      * @param pKeyType the asymKeyType
      * @return true/false
      */
-    public boolean isSupported(final GordianKeyPairType pKeyType) {
+    public boolean isSupported(final GordianNewKeyPairType pKeyType) {
         switch (theType) {
             case ISO9796D2:
             case PSSMGF1:
             case PSS128:
             case PSS256:
             case X931:
-                return GordianKeyPairType.RSA == pKeyType;
+                return GordianNewKeyPairType.RSA == pKeyType;
             case NR:
-                return GordianKeyPairType.EC == pKeyType;
+                return GordianNewKeyPairType.EC == pKeyType;
             case PREHASH:
                 return hasPreHash(pKeyType);
             case NATIVE:
@@ -87,7 +87,7 @@ public final class GordianCoreSignatureType {
      * @param pKeyType the asymKeyType
      * @return true/false
      */
-    public static boolean hasPreHash(final GordianKeyPairType pKeyType) {
+    public static boolean hasPreHash(final GordianNewKeyPairType pKeyType) {
         switch (pKeyType) {
             case XMSS:
             case RSA:
@@ -103,7 +103,7 @@ public final class GordianCoreSignatureType {
      * @param pKeyType the asymKeyType
      * @return true/false
      */
-    public static boolean hasDSA(final GordianKeyPairType pKeyType) {
+    public static boolean hasDSA(final GordianNewKeyPairType pKeyType) {
         switch (pKeyType) {
             case EC:
             case DSA:
@@ -119,7 +119,7 @@ public final class GordianCoreSignatureType {
      * @param pKeyType the asymKeyType
      * @return true/false
      */
-    public static boolean hasNative(final GordianKeyPairType pKeyType) {
+    public static boolean hasNative(final GordianNewKeyPairType pKeyType) {
         switch (pKeyType) {
             case SM2:
             case EDDSA:
@@ -157,6 +157,11 @@ public final class GordianCoreSignatureType {
     }
 
     @Override
+    public String toString() {
+        return theType.toString();
+    }
+
+    @Override
     public boolean equals(final Object pThat) {
         /* Handle the trivial cases */
         if (this == pThat) {
@@ -182,8 +187,8 @@ public final class GordianCoreSignatureType {
      * @param pType the base type
      * @return the core type
      */
-    public static GordianCoreSignatureType mapCoreType(final GordianNewSignatureType pType) {
-        return TYPEMAP.get(pType);
+    public static GordianCoreSignatureType mapCoreType(final Object pType) {
+        return pType instanceof GordianNewSignatureType myType ? TYPEMAP.get(myType) : null;
     }
 
     /**

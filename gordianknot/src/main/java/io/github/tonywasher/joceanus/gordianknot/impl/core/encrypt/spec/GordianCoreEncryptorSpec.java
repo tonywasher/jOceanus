@@ -21,8 +21,9 @@ import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDiges
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestType;
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianNewEncryptorSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianNewSM2EncryptionSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairType;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairType;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.digest.spec.GordianCoreDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.spec.GordianCoreKeyPairType;
 
 import java.util.Iterator;
 import java.util.List;
@@ -46,7 +47,7 @@ public class GordianCoreEncryptorSpec
     /**
      * KeyPairType.
      */
-    private final GordianKeyPairType theKeyPairType;
+    private final GordianCoreKeyPairType theKeyPairType;
 
     /**
      * EncryptorType.
@@ -69,15 +70,24 @@ public class GordianCoreEncryptorSpec
      * @param pKeyPairType   the keyPairType
      * @param pEncryptorType the encryptor type
      */
-    public GordianCoreEncryptorSpec(final GordianKeyPairType pKeyPairType,
+    public GordianCoreEncryptorSpec(final GordianNewKeyPairType pKeyPairType,
                                     final Object pEncryptorType) {
-        theKeyPairType = pKeyPairType;
+        theKeyPairType = GordianCoreKeyPairType.mapCoreType(pKeyPairType);
         theEncryptorType = pEncryptorType;
         isValid = checkValidity();
     }
 
     @Override
-    public GordianKeyPairType getKeyPairType() {
+    public GordianNewKeyPairType getKeyPairType() {
+        return theKeyPairType.getType();
+    }
+
+    /**
+     * Obtain core keyPairType.
+     *
+     * @return the core type
+     */
+    public GordianCoreKeyPairType getCoreKeyPairType() {
         return theKeyPairType;
     }
 
@@ -87,15 +97,26 @@ public class GordianCoreEncryptorSpec
     }
 
     /**
+     * Obtain the encryptorType as a particular class.
+     *
+     * @param <T>    the required type
+     * @param pClazz the required class
+     * @return the properly cast value.
+     */
+    private <T> T castValue(final Class<T> pClazz) {
+        if (pClazz.isInstance(theEncryptorType)) {
+            return pClazz.cast(theEncryptorType);
+        }
+        throw new IllegalArgumentException();
+    }
+
+    /**
      * Obtain the digestSpec.
      *
      * @return the digestSpec.
      */
     public GordianCoreDigestSpec getDigestSpec() {
-        if (theEncryptorType instanceof GordianCoreDigestSpec mySpec) {
-            return mySpec;
-        }
-        throw new IllegalArgumentException();
+        return castValue(GordianCoreDigestSpec.class);
     }
 
     /**
@@ -103,11 +124,8 @@ public class GordianCoreEncryptorSpec
      *
      * @return the encryptionSpec.
      */
-    public GordianNewSM2EncryptionSpec getSM2EncryptionSpec() {
-        if (theEncryptorType instanceof GordianNewSM2EncryptionSpec mySpec) {
-            return mySpec;
-        }
-        throw new IllegalArgumentException();
+    public GordianCoreSM2EncryptionSpec getSM2EncryptionSpec() {
+        return castValue(GordianCoreSM2EncryptionSpec.class);
     }
 
     /**
@@ -137,7 +155,7 @@ public class GordianCoreEncryptorSpec
         if (theKeyPairType == null) {
             return false;
         }
-        switch (theKeyPairType) {
+        switch (theKeyPairType.getType()) {
             case RSA:
             case ELGAMAL:
                 return theEncryptorType instanceof GordianNewDigestSpec s
@@ -162,7 +180,10 @@ public class GordianCoreEncryptorSpec
      * @return true/false
      */
     public boolean isSupported() {
-        switch (theKeyPairType) {
+        if (!isValid) {
+            return false;
+        }
+        switch (theKeyPairType.getType()) {
             case RSA:
             case ELGAMAL:
                 final GordianCoreDigestSpec mySpec = getDigestSpec();
@@ -202,7 +223,7 @@ public class GordianCoreEncryptorSpec
             if (isValid) {
                 /* Load the name */
                 theName = theKeyPairType.toString();
-                switch (theKeyPairType) {
+                switch (theKeyPairType.getType()) {
                     case RSA:
                     case ELGAMAL:
                         theName += SEP + theEncryptorType;
@@ -247,7 +268,7 @@ public class GordianCoreEncryptorSpec
 
         /* Match fields */
         return pThat instanceof GordianCoreEncryptorSpec myThat
-                && theKeyPairType == myThat.getKeyPairType()
+                && Objects.equals(theKeyPairType, myThat.getCoreKeyPairType())
                 && Objects.equals(theEncryptorType, myThat.theEncryptorType);
     }
 

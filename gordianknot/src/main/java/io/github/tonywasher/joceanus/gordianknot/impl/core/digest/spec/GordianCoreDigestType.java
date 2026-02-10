@@ -323,8 +323,8 @@ public final class GordianCoreDigestType {
      * @param pType the base type
      * @return the core type
      */
-    public static GordianCoreDigestType mapCoreType(final GordianNewDigestType pType) {
-        return TYPEMAP.get(pType);
+    public static GordianCoreDigestType mapCoreType(final Object pType) {
+        return pType instanceof GordianNewDigestType myType ? TYPEMAP.get(myType) : null;
     }
 
     /**

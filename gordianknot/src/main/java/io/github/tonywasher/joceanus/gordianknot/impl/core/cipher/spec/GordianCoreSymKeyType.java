@@ -447,8 +447,8 @@ public final class GordianCoreSymKeyType {
      * @param pType the base type
      * @return the core type
      */
-    public static GordianCoreSymKeyType mapCoreType(final GordianNewSymKeyType pType) {
-        return TYPEMAP.get(pType);
+    public static GordianCoreSymKeyType mapCoreType(final Object pType) {
+        return pType instanceof GordianNewSymKeyType myType ? TYPEMAP.get(myType) : null;
     }
 
     /**

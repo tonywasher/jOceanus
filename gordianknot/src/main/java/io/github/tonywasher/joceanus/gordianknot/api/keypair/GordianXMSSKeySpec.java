@@ -412,9 +412,9 @@ public class GordianXMSSKeySpec {
         H40(40, new GordianXMSSMTLayers[]{GordianXMSSMTLayers.L2, GordianXMSSMTLayers.L4, GordianXMSSMTLayers.L8}),
 
         /**
-         * 12.
+         * 60.
          */
-        H60(12, new GordianXMSSMTLayers[]{GordianXMSSMTLayers.L3, GordianXMSSMTLayers.L6, GordianXMSSMTLayers.L12});
+        H60(60, new GordianXMSSMTLayers[]{GordianXMSSMTLayers.L3, GordianXMSSMTLayers.L6, GordianXMSSMTLayers.L12});
 
         /**
          * The Height.

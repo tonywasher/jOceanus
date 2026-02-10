@@ -20,8 +20,9 @@ package io.github.tonywasher.joceanus.gordianknot.impl.core.agree.spec;
 import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianNewAgreementKDF;
 import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianNewAgreementSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianNewAgreementType;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairType;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairType;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.spec.GordianCoreKeyPairSpec;
 
 import java.util.Objects;
 
@@ -38,7 +39,7 @@ public class GordianCoreAgreementSpec
     /**
      * KeyPairSpec.
      */
-    private final GordianKeyPairSpec theKeyPairSpec;
+    private final GordianCoreKeyPairSpec theKeyPairSpec;
 
     /**
      * AgreementType.
@@ -72,7 +73,7 @@ public class GordianCoreAgreementSpec
      * @param pAgreementType the agreement type
      * @param pKDFType       the KDF type
      */
-    public GordianCoreAgreementSpec(final GordianKeyPairSpec pKeyPairSpec,
+    public GordianCoreAgreementSpec(final GordianNewKeyPairSpec pKeyPairSpec,
                                     final GordianNewAgreementType pAgreementType,
                                     final GordianNewAgreementKDF pKDFType) {
         this(pKeyPairSpec, pAgreementType, pKDFType, false);
@@ -86,23 +87,28 @@ public class GordianCoreAgreementSpec
      * @param pKDFType       the KDF type
      * @param pConfirm       with key confirmation
      */
-    public GordianCoreAgreementSpec(final GordianKeyPairSpec pKeyPairSpec,
+    public GordianCoreAgreementSpec(final GordianNewKeyPairSpec pKeyPairSpec,
                                     final GordianNewAgreementType pAgreementType,
                                     final GordianNewAgreementKDF pKDFType,
                                     final boolean pConfirm) {
-        theKeyPairSpec = pKeyPairSpec;
+        theKeyPairSpec = (GordianCoreKeyPairSpec) pKeyPairSpec;
         theAgreementType = GordianCoreAgreementType.mapCoreType(pAgreementType);
         theKDFType = GordianCoreAgreementKDF.mapCoreKDF(pKDFType);
         withConfirm = pConfirm;
         isValid = checkValidity();
     }
 
+    @Override
+    public GordianNewKeyPairSpec getKeyPairSpec() {
+        return theKeyPairSpec;
+    }
+
     /**
-     * Obtain the keyPairSpec.
+     * Obtain the core keyPairSpec.
      *
-     * @return the keyPairSpec
+     * @return the core Spec
      */
-    public GordianKeyPairSpec getKeyPairSpec() {
+    public GordianCoreKeyPairSpec getCoreKeyPairSpec() {
         return theKeyPairSpec;
     }
 
@@ -149,8 +155,9 @@ public class GordianCoreAgreementSpec
      * @return true/false
      */
     public boolean isSupported() {
-        final GordianKeyPairType myType = theKeyPairSpec.getKeyPairType();
-        return theAgreementType.isSupported(myType) && theKDFType.isSupported(myType, theAgreementType.getType());
+        final GordianNewKeyPairType myType = theKeyPairSpec.getKeyPairType();
+        return theAgreementType.isSupported(myType)
+                && theKDFType.isSupported(myType, theAgreementType.getType());
     }
 
     /**

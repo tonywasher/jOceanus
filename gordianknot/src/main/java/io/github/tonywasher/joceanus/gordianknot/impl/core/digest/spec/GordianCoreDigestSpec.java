@@ -79,7 +79,7 @@ public class GordianCoreDigestSpec
                           final GordianLength pLength,
                           final boolean pXofMode) {
         theType = GordianCoreDigestType.mapCoreType(pType);
-        theSubSpec = pSubSpec == null ? null : GordianCoreDigestState.mapCoreState((GordianNewDigestState) pSubSpec);
+        theSubSpec = GordianCoreDigestState.mapCoreState(pSubSpec);
         theLength = pLength;
         isXofMode = pXofMode;
         isValid = checkValidity();

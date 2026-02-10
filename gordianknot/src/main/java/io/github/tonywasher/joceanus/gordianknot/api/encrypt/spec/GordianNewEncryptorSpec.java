@@ -17,7 +17,7 @@
 
 package io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec;
 
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairType;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairType;
 
 /**
  * Asymmetric Encryption Specification.
@@ -28,7 +28,7 @@ public interface GordianNewEncryptorSpec {
      *
      * @return the keyPairType.
      */
-    GordianKeyPairType getKeyPairType();
+    GordianNewKeyPairType getKeyPairType();
 
     /**
      * Obtain the encryptorType.

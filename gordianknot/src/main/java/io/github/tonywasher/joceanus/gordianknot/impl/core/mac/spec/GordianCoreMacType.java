@@ -185,8 +185,8 @@ public final class GordianCoreMacType {
      * @param pType the base type
      * @return the core type
      */
-    public static GordianCoreMacType mapCoreType(final GordianNewMacType pType) {
-        return TYPEMAP.get(pType);
+    public static GordianCoreMacType mapCoreType(final Object pType) {
+        return pType instanceof GordianNewMacType myType ? TYPEMAP.get(myType) : null;
     }
 
     /**

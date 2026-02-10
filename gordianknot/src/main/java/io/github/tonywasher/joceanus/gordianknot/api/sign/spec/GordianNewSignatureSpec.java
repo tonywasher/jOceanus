@@ -17,7 +17,7 @@
 
 package io.github.tonywasher.joceanus.gordianknot.api.sign.spec;
 
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairType;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairType;
 
 /**
  * Signature Specification.
@@ -28,7 +28,7 @@ public interface GordianNewSignatureSpec {
      *
      * @return the keyPairType.
      */
-    GordianKeyPairType getKeyPairType();
+    GordianNewKeyPairType getKeyPairType();
 
     /**
      * Obtain the SignatureType.

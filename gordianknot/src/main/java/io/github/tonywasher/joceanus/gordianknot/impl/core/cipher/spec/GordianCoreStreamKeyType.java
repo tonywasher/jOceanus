@@ -248,8 +248,8 @@ public final class GordianCoreStreamKeyType {
      * @param pType the base type
      * @return the core type
      */
-    public static GordianCoreStreamKeyType mapCoreType(final GordianNewStreamKeyType pType) {
-        return TYPEMAP.get(pType);
+    public static GordianCoreStreamKeyType mapCoreType(final Object pType) {
+        return pType instanceof GordianNewStreamKeyType myType ? TYPEMAP.get(myType) : null;
     }
 
     /**

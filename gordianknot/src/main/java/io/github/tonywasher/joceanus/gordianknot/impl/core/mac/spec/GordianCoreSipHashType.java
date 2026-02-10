@@ -197,8 +197,8 @@ public final class GordianCoreSipHashType {
      * @param pType the base type
      * @return the core type
      */
-    public static GordianCoreSipHashType mapCoreType(final GordianNewSipHashType pType) {
-        return SIPMAP.get(pType);
+    public static GordianCoreSipHashType mapCoreType(final Object pType) {
+        return pType instanceof GordianNewSipHashType myType ? SIPMAP.get(myType) : null;
     }
 
     /**

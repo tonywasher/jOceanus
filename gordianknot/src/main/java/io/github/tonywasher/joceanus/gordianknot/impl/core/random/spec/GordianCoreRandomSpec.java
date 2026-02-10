@@ -17,8 +17,6 @@
 
 package io.github.tonywasher.joceanus.gordianknot.impl.core.random.spec;
 
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymKeySpec;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.random.spec.GordianNewRandomSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.random.spec.GordianNewRandomType;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.cipher.spec.GordianCoreSymKeySpec;
@@ -144,12 +142,12 @@ public class GordianCoreRandomSpec
         switch (theType.getType()) {
             case HMAC:
             case HASH:
-                return theSubSpec instanceof GordianDigestSpec mySpec
+                return theSubSpec instanceof GordianCoreDigestSpec mySpec
                         && mySpec.isValid()
-                        && mySpec.getDigestType().supportsLargeData();
+                        && mySpec.getCoreDigestType().supportsLargeData();
             case CTR:
             case X931:
-                return theSubSpec instanceof GordianSymKeySpec mySpec
+                return theSubSpec instanceof GordianCoreSymKeySpec mySpec
                         && mySpec.isValid();
             default:
                 return false;
