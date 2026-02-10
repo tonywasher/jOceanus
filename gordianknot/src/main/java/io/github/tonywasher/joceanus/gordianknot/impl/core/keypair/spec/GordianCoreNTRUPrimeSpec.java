@@ -1,0 +1,410 @@
+/*
+ * GordianKnot: Security Suite
+ * Copyright 2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+package io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.spec;
+
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewNTRUPrimeSpec;
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.bc.BCObjectIdentifiers;
+import org.bouncycastle.pqc.crypto.ntruprime.NTRULPRimeParameters;
+import org.bouncycastle.pqc.crypto.ntruprime.SNTRUPrimeParameters;
+import org.bouncycastle.pqc.jcajce.spec.NTRULPRimeParameterSpec;
+import org.bouncycastle.pqc.jcajce.spec.SNTRUPrimeParameterSpec;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.EnumMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
+/**
+ * NTRUPRIME KeySpec.
+ */
+public class GordianCoreNTRUPrimeSpec
+        implements GordianNewNTRUPrimeSpec {
+    /**
+     * The Separator.
+     */
+    private static final String SEP = "-";
+
+    /**
+     * The type.
+     */
+    private final GordianNewNTRUPrimeType theType;
+
+    /**
+     * The params.
+     */
+    private final GordianCoreNTRUPrimeParams theParams;
+
+    /**
+     * is the spec valid?.
+     */
+    private final boolean isValid;
+
+    /**
+     * The name.
+     */
+    private String theName;
+
+    /**
+     * Constructor.
+     *
+     * @param pType   the Type
+     * @param pParams the params
+     */
+    public GordianCoreNTRUPrimeSpec(final GordianNewNTRUPrimeType pType,
+                                    final GordianNewNTRUPrimeParams pParams) {
+        /* Store parameters */
+        theType = pType;
+        theParams = GordianCoreNTRUPrimeParams.mapCoreParams(pParams);
+
+        /* Check validity */
+        isValid = checkValidity();
+    }
+
+    @Override
+    public GordianNewNTRUPrimeType getType() {
+        return theType;
+    }
+
+    @Override
+    public GordianNewNTRUPrimeParams getParams() {
+        return theParams.getParams();
+    }
+
+    /**
+     * Obtain the params.
+     *
+     * @return the params
+     */
+    public GordianCoreNTRUPrimeParams getCoreParams() {
+        return theParams;
+    }
+
+    /**
+     * Is the keySpec valid?
+     *
+     * @return true/false.
+     */
+    public boolean isValid() {
+        return isValid;
+    }
+
+    /**
+     * Check spec validity.
+     *
+     * @return valid true/false
+     */
+    private boolean checkValidity() {
+        return theType != null && theParams != null;
+    }
+
+    @Override
+    public String toString() {
+        /* If we have not yet loaded the name */
+        if (theName == null) {
+            /* If the keySpec is valid */
+            if (isValid) {
+                /* Load the name */
+                theName = theType.toString() + "Prime" + SEP + theParams.toString();
+            } else {
+                /* Report invalid spec */
+                theName = "InvalidLMSKeySpec: " + theType + SEP + theParams;
+            }
+        }
+
+        /* return the name */
+        return theName;
+    }
+
+    @Override
+    public boolean equals(final Object pThat) {
+        /* Handle the trivial cases */
+        if (this == pThat) {
+            return true;
+        }
+        if (pThat == null) {
+            return false;
+        }
+
+        /* Check values */
+        return pThat instanceof GordianCoreNTRUPrimeSpec myThat
+                && theType == myThat.getType()
+                && theParams == myThat.getCoreParams();
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(theType, theParams);
+    }
+
+    /**
+     * Obtain a list of all possible specs.
+     *
+     * @return the list
+     */
+    public static List<GordianNewNTRUPrimeSpec> listAllPossibleSpecs() {
+        /* Create the list */
+        final List<GordianNewNTRUPrimeSpec> mySpecs = new ArrayList<>();
+
+        /* Add the specs */
+        for (final GordianNewNTRUPrimeType myType : GordianNewNTRUPrimeType.values()) {
+            for (final GordianNewNTRUPrimeParams myParams : GordianNewNTRUPrimeParams.values()) {
+                mySpecs.add(new GordianCoreNTRUPrimeSpec(myType, myParams));
+            }
+        }
+
+        /* Return the list */
+        return mySpecs;
+    }
+
+    /**
+     * NTRUPRIME Parameters.
+     */
+    public static final class GordianCoreNTRUPrimeParams {
+        /**
+         * The paramsMap.
+         */
+        private static final Map<GordianNewNTRUPrimeParams, GordianCoreNTRUPrimeParams> PARMMAP = newParamsMap();
+
+        /**
+         * The Params.
+         */
+        private final GordianNewNTRUPrimeParams theParams;
+
+        /**
+         * Constructor.
+         *
+         * @param pParams the params
+         */
+        private GordianCoreNTRUPrimeParams(final GordianNewNTRUPrimeParams pParams) {
+            theParams = pParams;
+        }
+
+        /**
+         * Obtain the spec.
+         *
+         * @return the spec
+         */
+        public GordianNewNTRUPrimeParams getParams() {
+            return theParams;
+        }
+
+        /**
+         * Obtain NTRUL Parameters.
+         *
+         * @return the parameters.
+         */
+        public NTRULPRimeParameters getNTRULParameters() {
+            switch (theParams) {
+                case PR653:
+                    return NTRULPRimeParameters.ntrulpr653;
+                case PR761:
+                    return NTRULPRimeParameters.ntrulpr761;
+                case PR857:
+                    return NTRULPRimeParameters.ntrulpr857;
+                case PR953:
+                    return NTRULPRimeParameters.ntrulpr953;
+                case PR1013:
+                    return NTRULPRimeParameters.ntrulpr1013;
+                case PR1277:
+                    return NTRULPRimeParameters.ntrulpr1277;
+                default:
+                    throw new IllegalArgumentException();
+            }
+        }
+
+        /**
+         * Obtain NTRUL ParameterSpec.
+         *
+         * @return the parameters.
+         */
+        public NTRULPRimeParameterSpec getNTRULParameterSpec() {
+            switch (theParams) {
+                case PR653:
+                    return NTRULPRimeParameterSpec.ntrulpr653;
+                case PR761:
+                    return NTRULPRimeParameterSpec.ntrulpr761;
+                case PR857:
+                    return NTRULPRimeParameterSpec.ntrulpr857;
+                case PR953:
+                    return NTRULPRimeParameterSpec.ntrulpr953;
+                case PR1013:
+                    return NTRULPRimeParameterSpec.ntrulpr1013;
+                case PR1277:
+                    return NTRULPRimeParameterSpec.ntrulpr1277;
+                default:
+                    throw new IllegalArgumentException();
+            }
+        }
+
+        /**
+         * Obtain NTRUL algorithm Identifier.
+         *
+         * @return the identifier.
+         */
+        public ASN1ObjectIdentifier getNTRULIdentifier() {
+            switch (theParams) {
+                case PR653:
+                    return BCObjectIdentifiers.ntrulpr653;
+                case PR761:
+                    return BCObjectIdentifiers.ntrulpr761;
+                case PR857:
+                    return BCObjectIdentifiers.ntrulpr857;
+                case PR953:
+                    return BCObjectIdentifiers.ntrulpr953;
+                case PR1013:
+                    return BCObjectIdentifiers.ntrulpr1013;
+                case PR1277:
+                    return BCObjectIdentifiers.ntrulpr1277;
+                default:
+                    throw new IllegalArgumentException();
+            }
+        }
+
+        /**
+         * Obtain NTRUL Parameters.
+         *
+         * @return the parameters.
+         */
+        public SNTRUPrimeParameters getSNTRUParameters() {
+            switch (theParams) {
+                case PR653:
+                    return SNTRUPrimeParameters.sntrup653;
+                case PR761:
+                    return SNTRUPrimeParameters.sntrup761;
+                case PR857:
+                    return SNTRUPrimeParameters.sntrup857;
+                case PR953:
+                    return SNTRUPrimeParameters.sntrup953;
+                case PR1013:
+                    return SNTRUPrimeParameters.sntrup1013;
+                case PR1277:
+                    return SNTRUPrimeParameters.sntrup1277;
+                default:
+                    throw new IllegalArgumentException();
+            }
+        }
+
+        /**
+         * Obtain NTRUL ParameterSpec.
+         *
+         * @return the parameters.
+         */
+        public SNTRUPrimeParameterSpec getSNTRUParameterSpec() {
+            switch (theParams) {
+                case PR653:
+                    return SNTRUPrimeParameterSpec.sntrup653;
+                case PR761:
+                    return SNTRUPrimeParameterSpec.sntrup761;
+                case PR857:
+                    return SNTRUPrimeParameterSpec.sntrup857;
+                case PR953:
+                    return SNTRUPrimeParameterSpec.sntrup953;
+                case PR1013:
+                    return SNTRUPrimeParameterSpec.sntrup1013;
+                case PR1277:
+                    return SNTRUPrimeParameterSpec.sntrup1277;
+                default:
+                    throw new IllegalArgumentException();
+            }
+        }
+
+        /**
+         * Obtain SNTRU algorithm Identifier.
+         *
+         * @return the identifier.
+         */
+        public ASN1ObjectIdentifier getSNTRUIdentifier() {
+            switch (theParams) {
+                case PR653:
+                    return BCObjectIdentifiers.sntrup653;
+                case PR761:
+                    return BCObjectIdentifiers.sntrup761;
+                case PR857:
+                    return BCObjectIdentifiers.sntrup857;
+                case PR953:
+                    return BCObjectIdentifiers.sntrup953;
+                case PR1013:
+                    return BCObjectIdentifiers.sntrup1013;
+                case PR1277:
+                    return BCObjectIdentifiers.sntrup1277;
+                default:
+                    throw new IllegalArgumentException();
+            }
+        }
+
+        @Override
+        public String toString() {
+            return theParams.toString();
+        }
+
+        @Override
+        public boolean equals(final Object pThat) {
+            /* Handle the trivial cases */
+            if (this == pThat) {
+                return true;
+            }
+            if (pThat == null) {
+                return false;
+            }
+
+            /* Check subFields */
+            return pThat instanceof GordianCoreNTRUPrimeParams myThat
+                    && theParams == myThat.getParams();
+        }
+
+        @Override
+        public int hashCode() {
+            return theParams.hashCode();
+        }
+
+        /**
+         * Obtain the core params.
+         *
+         * @param pParams the base params
+         * @return the core params
+         */
+        public static GordianCoreNTRUPrimeParams mapCoreParams(final Object pParams) {
+            return pParams instanceof GordianNewNTRUPrimeParams myParams ? PARMMAP.get(myParams) : null;
+        }
+
+        /**
+         * Build the type map.
+         *
+         * @return the type map
+         */
+        private static Map<GordianNewNTRUPrimeParams, GordianCoreNTRUPrimeParams> newParamsMap() {
+            final Map<GordianNewNTRUPrimeParams, GordianCoreNTRUPrimeParams> myMap = new EnumMap<>(GordianNewNTRUPrimeParams.class);
+            for (GordianNewNTRUPrimeParams mySpec : GordianNewNTRUPrimeParams.values()) {
+                myMap.put(mySpec, new GordianCoreNTRUPrimeParams(mySpec));
+            }
+            return myMap;
+        }
+
+        /**
+         * Obtain the values.
+         *
+         * @return the values
+         */
+        public static Collection<GordianCoreNTRUPrimeParams> values() {
+            return PARMMAP.values();
+        }
+    }
+}

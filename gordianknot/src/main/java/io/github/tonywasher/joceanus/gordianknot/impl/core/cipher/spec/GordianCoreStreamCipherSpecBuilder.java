@@ -17,9 +17,13 @@
 
 package io.github.tonywasher.joceanus.gordianknot.impl.core.cipher.spec;
 
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamCipherSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamCipherSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeySpec;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The StreamCipherSpec Builder class.
@@ -62,5 +66,26 @@ public class GordianCoreStreamCipherSpecBuilder
     private void reset() {
         theKeySpec = null;
         asAEAD = false;
+    }
+
+    /**
+     * List all possible streamCipherSpecs for a keyLength.
+     *
+     * @param pKeyLen the keyLength
+     * @return the list
+     */
+    public static List<GordianNewStreamCipherSpec> listAllSupportedStreamCipherSpecs(final GordianLength pKeyLen) {
+        final List<GordianNewStreamCipherSpec> myResult = new ArrayList<>();
+        for (GordianNewStreamKeySpec mySpec : GordianCoreStreamKeySpecBuilder.listAllPossibleStreamKeySpecs(pKeyLen)) {
+            /* Add the standard cipher */
+            final GordianCoreStreamKeySpec myCoreSpec = (GordianCoreStreamKeySpec) mySpec;
+            myResult.add(new GordianCoreStreamCipherSpec(myCoreSpec, false));
+
+            /* Add the AAD Cipher if supported */
+            if (myCoreSpec.supportsAEAD()) {
+                myResult.add(new GordianCoreStreamCipherSpec(myCoreSpec, true));
+            }
+        }
+        return myResult;
     }
 }

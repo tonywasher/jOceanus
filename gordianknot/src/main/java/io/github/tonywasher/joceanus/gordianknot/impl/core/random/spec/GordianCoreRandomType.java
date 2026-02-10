@@ -19,10 +19,19 @@ package io.github.tonywasher.joceanus.gordianknot.impl.core.random.spec;
 
 import io.github.tonywasher.joceanus.gordianknot.api.random.spec.GordianNewRandomType;
 
+import java.util.Collection;
+import java.util.EnumMap;
+import java.util.Map;
+
 /**
  * SP800 Random Generator types.
  */
 public final class GordianCoreRandomType {
+    /**
+     * The randomTypeMap.
+     */
+    private static final Map<GordianNewRandomType, GordianCoreRandomType> TYPEMAP = newTypeMap();
+
     /**
      * The Random type.
      */
@@ -33,7 +42,7 @@ public final class GordianCoreRandomType {
      *
      * @param pType the type
      */
-    GordianCoreRandomType(final GordianNewRandomType pType) {
+    private GordianCoreRandomType(final GordianNewRandomType pType) {
         theType = pType;
     }
 
@@ -62,6 +71,11 @@ public final class GordianCoreRandomType {
     }
 
     @Override
+    public String toString() {
+        return theType.toString();
+    }
+
+    @Override
     public boolean equals(final Object pThat) {
         /* Handle the trivial cases */
         if (this == pThat) {
@@ -79,5 +93,37 @@ public final class GordianCoreRandomType {
     @Override
     public int hashCode() {
         return theType.hashCode();
+    }
+
+    /**
+     * Obtain the core type.
+     *
+     * @param pType the base type
+     * @return the core type
+     */
+    public static GordianCoreRandomType mapCoreType(final Object pType) {
+        return pType instanceof GordianNewRandomType myType ? TYPEMAP.get(myType) : null;
+    }
+
+    /**
+     * Build the type map.
+     *
+     * @return the type map
+     */
+    private static Map<GordianNewRandomType, GordianCoreRandomType> newTypeMap() {
+        final Map<GordianNewRandomType, GordianCoreRandomType> myMap = new EnumMap<>(GordianNewRandomType.class);
+        for (GordianNewRandomType myType : GordianNewRandomType.values()) {
+            myMap.put(myType, new GordianCoreRandomType(myType));
+        }
+        return myMap;
+    }
+
+    /**
+     * Obtain the values.
+     *
+     * @return the values
+     */
+    public static Collection<GordianCoreRandomType> values() {
+        return TYPEMAP.values();
     }
 }

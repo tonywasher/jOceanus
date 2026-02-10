@@ -23,10 +23,19 @@ import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherResourc
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeyType;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKeyLengths;
 
+import java.util.Collection;
+import java.util.EnumMap;
+import java.util.Map;
+
 /**
  * Symmetric Key Types. Available algorithms.
  */
 public final class GordianCoreSymKeyType {
+    /**
+     * The symKeyTypeMap.
+     */
+    private static final Map<GordianNewSymKeyType, GordianCoreSymKeyType> TYPEMAP = newTypeMap();
+
     /**
      * The SymKeyType.
      */
@@ -47,7 +56,7 @@ public final class GordianCoreSymKeyType {
      *
      * @param pType the type
      */
-    GordianCoreSymKeyType(final GordianNewSymKeyType pType) {
+    private GordianCoreSymKeyType(final GordianNewSymKeyType pType) {
         theType = pType;
         theLengths = blockLengthsForSymKeyType(pType);
         theName = bundleIdForSymKeyType(pType).getValue();
@@ -430,5 +439,37 @@ public final class GordianCoreSymKeyType {
     @Override
     public int hashCode() {
         return theType.hashCode();
+    }
+
+    /**
+     * Obtain the core type.
+     *
+     * @param pType the base type
+     * @return the core type
+     */
+    public static GordianCoreSymKeyType mapCoreType(final Object pType) {
+        return pType instanceof GordianNewSymKeyType myType ? TYPEMAP.get(myType) : null;
+    }
+
+    /**
+     * Build the type map.
+     *
+     * @return the type map
+     */
+    private static Map<GordianNewSymKeyType, GordianCoreSymKeyType> newTypeMap() {
+        final Map<GordianNewSymKeyType, GordianCoreSymKeyType> myMap = new EnumMap<>(GordianNewSymKeyType.class);
+        for (GordianNewSymKeyType myType : GordianNewSymKeyType.values()) {
+            myMap.put(myType, new GordianCoreSymKeyType(myType));
+        }
+        return myMap;
+    }
+
+    /**
+     * Obtain the values.
+     *
+     * @return the values
+     */
+    public static Collection<GordianCoreSymKeyType> values() {
+        return TYPEMAP.values();
     }
 }

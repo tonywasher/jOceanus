@@ -23,6 +23,10 @@ import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDiges
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSubSpec.GordianNewDigestState;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestType;
 
+import java.util.Collection;
+import java.util.EnumMap;
+import java.util.Map;
+
 public interface GordianCoreDigestSubSpec {
     /**
      * Obtain the subSpec.
@@ -96,8 +100,13 @@ public interface GordianCoreDigestSubSpec {
     /**
      * State subSpecification.
      */
-    class GordianCoreDigestState
+    final class GordianCoreDigestState
             implements GordianCoreDigestSubSpec {
+        /**
+         * The digestStateMap.
+         */
+        private static final Map<GordianNewDigestState, GordianCoreDigestState> STATEMAP = newStateMap();
+
         /**
          * The State.
          */
@@ -113,14 +122,14 @@ public interface GordianCoreDigestSubSpec {
          *
          * @param pState the state
          */
-        GordianCoreDigestState(final GordianNewDigestState pState) {
+        private GordianCoreDigestState(final GordianNewDigestState pState) {
             theState = pState;
             theLength = lengthForDigestState();
         }
 
         @Override
         public GordianNewDigestSubSpec getSubSpec() {
-            return theState;
+            return getState();
         }
 
         /**
@@ -424,6 +433,38 @@ public interface GordianCoreDigestSubSpec {
         @Override
         public int hashCode() {
             return theState.hashCode();
+        }
+
+        /**
+         * Obtain the core state.
+         *
+         * @param pState the base state
+         * @return the core state
+         */
+        public static GordianCoreDigestState mapCoreState(final Object pState) {
+            return pState instanceof GordianNewDigestState myState ? STATEMAP.get(myState) : null;
+        }
+
+        /**
+         * Build the state map.
+         *
+         * @return the state map
+         */
+        private static Map<GordianNewDigestState, GordianCoreDigestState> newStateMap() {
+            final Map<GordianNewDigestState, GordianCoreDigestState> myMap = new EnumMap<>(GordianNewDigestState.class);
+            for (GordianNewDigestState myState : GordianNewDigestState.values()) {
+                myMap.put(myState, new GordianCoreDigestState(myState));
+            }
+            return myMap;
+        }
+
+        /**
+         * Obtain the values.
+         *
+         * @return the values
+         */
+        public static Collection<GordianCoreDigestState> values() {
+            return STATEMAP.values();
         }
     }
 }

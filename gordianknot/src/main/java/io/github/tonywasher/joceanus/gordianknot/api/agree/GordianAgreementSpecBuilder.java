@@ -121,7 +121,7 @@ public final class GordianAgreementSpecBuilder {
      */
     public static GordianAgreementSpec unifiedConfirm(final GordianKeyPairSpec pKeyPairSpec,
                                                       final GordianAgreementKDF pKDFType) {
-        return new GordianAgreementSpec(pKeyPairSpec, GordianAgreementType.MQV, pKDFType, Boolean.TRUE);
+        return new GordianAgreementSpec(pKeyPairSpec, GordianAgreementType.UNIFIED, pKDFType, Boolean.TRUE);
     }
 
     /**

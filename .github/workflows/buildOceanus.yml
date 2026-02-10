@@ -16,7 +16,7 @@ jobs:
         uses: actions/setup-java@v5
         with:
           java-version: '21'
-          distribution: 'zulu'
+          distribution: 'temurin'
           cache: maven
       - name: Build project with Maven
         env:
@@ -40,7 +40,7 @@ jobs:
         uses: actions/setup-java@v5
         with:
           java-version: '21'
-          distribution: 'zulu'
+          distribution: 'temurin'
           cache: maven
       - name: Build project with Maven
         run: mvn -B package --file pom.xml

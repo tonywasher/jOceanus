@@ -23,6 +23,9 @@ import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymCi
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymCipherSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeySpec;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class GordianCoreSymCipherSpecBuilder
         implements GordianNewSymCipherSpecBuilder {
     /**
@@ -73,5 +76,34 @@ public class GordianCoreSymCipherSpecBuilder
         theKeySpec = null;
         theMode = null;
         thePadding = null;
+    }
+
+    /**
+     * List all possible symCipherSpecs for a keySpec.
+     *
+     * @param pSpec the keySpec
+     * @return the list
+     */
+    public List<GordianNewSymCipherSpec> listAllPossibleSymCipherSpecs(final GordianCoreSymKeySpec pSpec) {
+        /* Create the array list */
+        final List<GordianNewSymCipherSpec> myList = new ArrayList<>();
+
+        /* Loop through the modes */
+        for (GordianCoreCipherMode myMode : GordianCoreCipherMode.values()) {
+            /* If the mode has padding */
+            if (myMode.hasPadding()) {
+                /* Loop through the paddings */
+                for (GordianNewPadding myPadding : GordianNewPadding.values()) {
+                    myList.add(new GordianCoreSymCipherSpec(pSpec, myMode.getMode(), myPadding));
+                }
+
+                /* else no padding */
+            } else {
+                myList.add(new GordianCoreSymCipherSpec(pSpec, myMode.getMode(), GordianNewPadding.NONE));
+            }
+        }
+
+        /* Return the list */
+        return myList;
     }
 }

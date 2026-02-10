@@ -43,7 +43,7 @@ allprojects {
         javaParserVersion = "3.28.0"
 
         /* javaFX versions */
-        javaFXVersion = "21"
+        javaFXVersion = "21.0.10"
         javaFXPluginVersion = "0.1.0"
 
         /* Annotation versions */

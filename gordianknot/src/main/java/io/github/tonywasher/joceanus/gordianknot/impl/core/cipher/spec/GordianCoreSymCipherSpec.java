@@ -23,8 +23,6 @@ import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewPaddi
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymCipherSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeySpec;
 
-import java.util.EnumMap;
-import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -42,11 +40,6 @@ public class GordianCoreSymCipherSpec
      * The Separator.
      */
     private static final String SEP = "-";
-
-    /**
-     * The modeMap.
-     */
-    private static final Map<GordianNewCipherMode, GordianCoreCipherMode> MODEMAP = newModeMap();
 
     /**
      * The keySpec.
@@ -84,7 +77,7 @@ public class GordianCoreSymCipherSpec
                              final GordianNewCipherMode pMode,
                              final GordianNewPadding pPadding) {
         theKeySpec = pKeySpec;
-        theMode = MODEMAP.get(pMode);
+        theMode = GordianCoreCipherMode.mapCoreMode(pMode);
         thePadding = pPadding;
         isValid = checkValidity();
     }
@@ -213,18 +206,5 @@ public class GordianCoreSymCipherSpec
     @Override
     public int hashCode() {
         return Objects.hash(theKeySpec, theMode, thePadding);
-    }
-
-    /**
-     * Build the mode map.
-     *
-     * @return the mode map
-     */
-    private static Map<GordianNewCipherMode, GordianCoreCipherMode> newModeMap() {
-        final Map<GordianNewCipherMode, GordianCoreCipherMode> myMap = new EnumMap<>(GordianNewCipherMode.class);
-        for (GordianNewCipherMode myMode : GordianNewCipherMode.values()) {
-            myMap.put(myMode, new GordianCoreCipherMode(myMode));
-        }
-        return myMap;
     }
 }

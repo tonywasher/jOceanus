@@ -21,8 +21,6 @@ import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeyType;
 
-import java.util.EnumMap;
-import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -34,11 +32,6 @@ public class GordianCoreSymKeySpec
      * The Separator.
      */
     private static final String SEP = "-";
-
-    /**
-     * The symKeyTypeMap.
-     */
-    private static final Map<GordianNewSymKeyType, GordianCoreSymKeyType> TYPEMAP = newTypeMap();
 
     /**
      * The symKeyType.
@@ -75,7 +68,7 @@ public class GordianCoreSymKeySpec
     GordianCoreSymKeySpec(final GordianNewSymKeyType pType,
                           final GordianLength pBlockLength,
                           final GordianLength pKeyLength) {
-        theType = TYPEMAP.get(pType);
+        theType = GordianCoreSymKeyType.mapCoreType(pType);
         theBlockLength = pBlockLength;
         theKeyLength = pKeyLength;
         isValid = checkValidity();
@@ -201,18 +194,5 @@ public class GordianCoreSymKeySpec
     @Override
     public int hashCode() {
         return Objects.hash(theType, theBlockLength, theKeyLength);
-    }
-
-    /**
-     * Build the type map.
-     *
-     * @return the type map
-     */
-    private static Map<GordianNewSymKeyType, GordianCoreSymKeyType> newTypeMap() {
-        final Map<GordianNewSymKeyType, GordianCoreSymKeyType> myMap = new EnumMap<>(GordianNewSymKeyType.class);
-        for (GordianNewSymKeyType myType : GordianNewSymKeyType.values()) {
-            myMap.put(myType, new GordianCoreSymKeyType(myType));
-        }
-        return myMap;
     }
 }

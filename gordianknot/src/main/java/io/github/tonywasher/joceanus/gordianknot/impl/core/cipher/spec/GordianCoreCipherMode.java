@@ -22,10 +22,19 @@ import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymKeyType;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewCipherMode;
 
+import java.util.Collection;
+import java.util.EnumMap;
+import java.util.Map;
+
 /**
  * Cipher Modes. Available algorithms.
  */
 public final class GordianCoreCipherMode {
+    /**
+     * The modeMap.
+     */
+    private static final Map<GordianNewCipherMode, GordianCoreCipherMode> MODEMAP = newModeMap();
+
     /**
      * The CipherMode.
      */
@@ -36,7 +45,7 @@ public final class GordianCoreCipherMode {
      *
      * @param pMode the mode
      */
-    GordianCoreCipherMode(final GordianNewCipherMode pMode) {
+    private GordianCoreCipherMode(final GordianNewCipherMode pMode) {
         theMode = pMode;
     }
 
@@ -165,5 +174,37 @@ public final class GordianCoreCipherMode {
      */
     public boolean needsReInitialisation() {
         return theMode == GordianNewCipherMode.GCM;
+    }
+
+    /**
+     * Build the mode map.
+     *
+     * @return the mode map
+     */
+    private static Map<GordianNewCipherMode, GordianCoreCipherMode> newModeMap() {
+        final Map<GordianNewCipherMode, GordianCoreCipherMode> myMap = new EnumMap<>(GordianNewCipherMode.class);
+        for (GordianNewCipherMode myMode : GordianNewCipherMode.values()) {
+            myMap.put(myMode, new GordianCoreCipherMode(myMode));
+        }
+        return myMap;
+    }
+
+    /**
+     * Obtain the core mode.
+     *
+     * @param pMode the base mode
+     * @return the core mode
+     */
+    public static GordianCoreCipherMode mapCoreMode(final GordianNewCipherMode pMode) {
+        return MODEMAP.get(pMode);
+    }
+
+    /**
+     * Obtain the values.
+     *
+     * @return the values
+     */
+    public static Collection<GordianCoreCipherMode> values() {
+        return MODEMAP.values();
     }
 }

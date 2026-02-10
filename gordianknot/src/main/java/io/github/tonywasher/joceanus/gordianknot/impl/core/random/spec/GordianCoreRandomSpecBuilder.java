@@ -17,11 +17,19 @@
 
 package io.github.tonywasher.joceanus.gordianknot.impl.core.random.spec;
 
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKeyLengths;
 import io.github.tonywasher.joceanus.gordianknot.api.random.spec.GordianNewRandomSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.random.spec.GordianNewRandomSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.random.spec.GordianNewRandomType;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.cipher.spec.GordianCoreSymKeySpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.digest.spec.GordianCoreDigestSpecBuilder;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * SecureRandom Specification Builder.
@@ -83,5 +91,47 @@ public class GordianCoreRandomSpecBuilder
         theType = null;
         theSubSpec = null;
         withResistance = false;
+    }
+
+    /**
+     * List all possible randomSpecs.
+     *
+     * @return the list
+     */
+    public static List<GordianNewRandomSpec> listAllPossibleSpecs() {
+        /* Create the array list */
+        final List<GordianNewRandomSpec> myList = new ArrayList<>();
+        final GordianCoreRandomSpecBuilder myBuilder = new GordianCoreRandomSpecBuilder();
+
+        /* For each digestSpec */
+        for (final GordianNewDigestSpec mySpec : GordianCoreDigestSpecBuilder.listAllPossibleSpecs()) {
+            /* Add a hash random */
+            myList.add(myBuilder.hash(mySpec));
+            myList.add(myBuilder.hashResist(mySpec));
+
+            /* Add an hMac random */
+            myList.add(myBuilder.hMac(mySpec));
+            myList.add(myBuilder.hMacResist(mySpec));
+        }
+
+        /* For each KeyLength */
+        final Iterator<GordianLength> myIterator = GordianKeyLengths.iterator();
+        while (myIterator.hasNext()) {
+            final GordianLength myKeyLen = myIterator.next();
+
+            /* For each symKeySpec */
+            for (final GordianNewSymKeySpec mySpec : GordianCoreSymKeySpecBuilder.listAllPossibleSymKeySpecs(myKeyLen)) {
+                /* Add a CTR random */
+                myList.add(myBuilder.ctr(mySpec));
+                myList.add(myBuilder.ctrResist(mySpec));
+
+                /* Add an X931 random */
+                myList.add(myBuilder.x931(mySpec));
+                myList.add(myBuilder.x931Resist(mySpec));
+            }
+        }
+
+        /* Return the list */
+        return myList;
     }
 }
