@@ -20,7 +20,7 @@ import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusSystem;
 import io.github.tonywasher.joceanus.themis.exc.ThemisDataException;
 import io.github.tonywasher.joceanus.themis.exc.ThemisIOException;
-import io.github.tonywasher.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisChar;
+import io.github.tonywasher.joceanus.themis.xanalysis.parser.proj.ThemisXAnalysisMavenId.ThemisXAnalysisElementParser;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -35,7 +35,6 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import java.io.BufferedInputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -47,7 +46,8 @@ import java.util.Objects;
 /**
  * Maven pom.xml parser.
  */
-public class ThemisXAnalysisMaven {
+public class ThemisXAnalysisMaven
+        implements ThemisXAnalysisElementParser {
     /**
      * Project filename.
      */
@@ -264,18 +264,18 @@ public class ThemisXAnalysisMaven {
         final Element myParentEl = (Element) findNode(XPATH_PARENT);
         final ThemisXAnalysisMavenId myParent = myParentEl == null
                 ? null
-                : new ThemisXAnalysisMavenId(myParentEl);
+                : new ThemisXAnalysisMavenId(this, myParentEl);
         storeParentProperties(myParent);
 
         /* Obtain our mavenId */
-        final ThemisXAnalysisMavenId myId = new ThemisXAnalysisMavenId(myDoc, myParent);
+        final ThemisXAnalysisMavenId myId = new ThemisXAnalysisMavenId(this, myDoc, myParent);
         storeProjectProperties(myId);
 
         /* Process modules */
         processModules();
 
         /* Process dependencies */
-        processDependencies(myId);
+        processDependencies();
 
         /* Process extra directories */
         processXtraDirs();
@@ -284,15 +284,9 @@ public class ThemisXAnalysisMaven {
         return myId;
     }
 
-    /**
-     * Obtain element value.
-     *
-     * @param pElement the element
-     * @param pValue   the value name
-     * @return the value
-     */
-    String getElementValue(final Element pElement,
-                           final String pValue) {
+    @Override
+    public String getElementValue(final Element pElement,
+                                  final String pValue) {
         /* Return null if no element */
         if (pElement == null) {
             return null;
@@ -401,10 +395,9 @@ public class ThemisXAnalysisMaven {
     /**
      * Process dependencies.
      *
-     * @param pParent the parentId
      * @throws OceanusException on error
      */
-    private void processDependencies(final ThemisXAnalysisMavenId pParent) throws OceanusException {
+    private void processDependencies() throws OceanusException {
         /* Process any dependencies */
         final Node myDependencies = findNode(XPATH_DEPENDENCIES);
         if (myDependencies != null) {
@@ -415,7 +408,7 @@ public class ThemisXAnalysisMaven {
                 /* Return result if we have a match */
                 if (myChild instanceof Element myElement
                         && EL_DEPENDENCY.equals(myChild.getNodeName())) {
-                    final ThemisXAnalysisMavenId myId = new ThemisXAnalysisMavenId(myElement);
+                    final ThemisXAnalysisMavenId myId = new ThemisXAnalysisMavenId(this, myElement);
                     if (!myId.isSkippable()) {
                         theDependencies.add(myId);
                     }
@@ -460,256 +453,5 @@ public class ThemisXAnalysisMaven {
             }
         }
         return theParent != null ? theParent.replaceProperty(myResult) : myResult;
-    }
-
-    /**
-     * Maven Module Id.
-     */
-    public final class ThemisXAnalysisMavenId {
-        /**
-         * GroupId element.
-         */
-        private static final String EL_GROUPID = "groupId";
-
-        /**
-         * ArtifactId element.
-         */
-        private static final String EL_ARTIFACTID = "artifactId";
-
-        /**
-         * Version element.
-         */
-        private static final String EL_VERSION = "version";
-
-        /**
-         * Scope element.
-         */
-        private static final String EL_SCOPE = "scope";
-
-        /**
-         * Classifier element.
-         */
-        private static final String EL_CLASSIFIER = "classifier";
-
-        /**
-         * Optional element.
-         */
-        private static final String EL_OPTIONAL = "optional";
-
-        /**
-         * The artifactId.
-         */
-        private final String theArtifactId;
-
-        /**
-         * The groupId.
-         */
-        private String theGroupId;
-
-        /**
-         * The version.
-         */
-        private String theVersion;
-
-        /**
-         * The scope.
-         */
-        private final String theScope;
-
-        /**
-         * The classifier.
-         */
-        private final String theClassifier;
-
-        /**
-         * Optional.
-         */
-        private final String isOptional;
-
-        /**
-         * Constructor.
-         *
-         * @param pElement the element containing the values
-         */
-        private ThemisXAnalysisMavenId(final Element pElement) {
-            /* Access the values */
-            theGroupId = getElementValue(pElement, EL_GROUPID);
-            theArtifactId = getElementValue(pElement, EL_ARTIFACTID);
-            theVersion = getElementValue(pElement, EL_VERSION);
-            theScope = getElementValue(pElement, EL_SCOPE);
-            theClassifier = getElementValue(pElement, EL_CLASSIFIER);
-            isOptional = getElementValue(pElement, EL_OPTIONAL);
-        }
-
-        /**
-         * Constructor.
-         *
-         * @param pElement the element containing the values
-         * @param pParent  the parentId
-         */
-        private ThemisXAnalysisMavenId(final Element pElement,
-                                       final ThemisXAnalysisMavenId pParent) {
-            /* Process as much as we can */
-            this(pElement);
-
-            /* Handle missing groupId/version */
-            if (theGroupId == null) {
-                theGroupId = pParent.getGroupId();
-            }
-            if (theVersion == null) {
-                theVersion = pParent.getVersion();
-            }
-
-            /* If we have a ranged version set to null */
-            if (theVersion != null
-                    && theVersion.startsWith(String.valueOf(ThemisXAnalysisChar.ARRAY_OPEN))) {
-                theVersion = null;
-            }
-        }
-
-        /**
-         * Obtain the groupId.
-         *
-         * @return the groupId
-         */
-        public String getGroupId() {
-            return theGroupId;
-        }
-
-        /**
-         * Obtain the artifactId.
-         *
-         * @return the artifactId
-         */
-        public String getArtifactId() {
-            return theArtifactId;
-        }
-
-        /**
-         * Obtain the version.
-         *
-         * @return the version
-         */
-        public String getVersion() {
-            return theVersion;
-        }
-
-        /**
-         * Obtain the scope.
-         *
-         * @return the scope
-         */
-        public String getScope() {
-            return theScope;
-        }
-
-        /**
-         * Obtain the classifier.
-         *
-         * @return the classifier
-         */
-        public String getClassifier() {
-            return theClassifier;
-        }
-
-        /**
-         * Obtain the optional.
-         *
-         * @return the optional
-         */
-        public String isOptional() {
-            return isOptional;
-        }
-
-        /**
-         * is the dependency skippable?
-         *
-         * @return true/false
-         */
-        public boolean isSkippable() {
-            return "test".equals(theScope)
-                    || "runtime".equals(theScope)
-                    || "provided".equals(theScope)
-                    || theVersion == null
-                    || isOptional != null;
-        }
-
-        @Override
-        public boolean equals(final Object pThat) {
-            /* Handle the trivial cases */
-            if (this == pThat) {
-                return true;
-            }
-            if (pThat == null) {
-                return false;
-            }
-
-            /* Make sure that the object is a MavenId */
-            if (!(pThat instanceof ThemisXAnalysisMavenId myThat)) {
-                return false;
-            }
-
-            /* Check components */
-            return Objects.equals(theGroupId, myThat.getGroupId())
-                    && Objects.equals(theArtifactId, myThat.getArtifactId())
-                    && Objects.equals(theVersion, myThat.getVersion())
-                    && Objects.equals(theScope, myThat.getScope())
-                    && Objects.equals(theClassifier, myThat.getClassifier());
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(theGroupId, theArtifactId, theVersion, theScope, theClassifier);
-        }
-
-        @Override
-        public String toString() {
-            final String myName = theGroupId + ThemisXAnalysisChar.COLON + theArtifactId + ThemisXAnalysisChar.COLON + theVersion;
-            return theClassifier == null ? myName : myName + ThemisXAnalysisChar.COLON + theClassifier;
-        }
-
-        /**
-         * Obtain the mavenBase.
-         *
-         * @return the mavenBase path
-         */
-        private File getMavenBasePath() {
-            /* Determine the repository base */
-            File myBase = new File(System.getProperty("user.home"));
-            myBase = new File(myBase, ".m2");
-            myBase = new File(myBase, "repository");
-            myBase = new File(myBase, theGroupId.replace(ThemisXAnalysisChar.PERIOD, ThemisXAnalysisChar.COMMENT));
-            myBase = new File(myBase, theArtifactId);
-            myBase = new File(myBase, theVersion);
-            return myBase;
-        }
-
-        /**
-         * Obtain the mavenJar.
-         *
-         * @return the mavenJar path
-         */
-        public File getMavenJarPath() {
-            /* Determine the repository base */
-            File myBase = getMavenBasePath();
-            String myName = theArtifactId + ThemisXAnalysisChar.HYPHEN + theVersion;
-            if (theClassifier != null) {
-                myName += ThemisXAnalysisChar.HYPHEN + theClassifier;
-            }
-            myBase = new File(myBase, myName + ".jar");
-            return myBase;
-        }
-
-        /**
-         * Obtain the mavenJar.
-         *
-         * @return the mavenJar path
-         */
-        public File getMavenPomPath() {
-            /* Determine the repository base */
-            File myBase = getMavenBasePath();
-            myBase = new File(myBase, theArtifactId + ThemisXAnalysisChar.HYPHEN + theVersion + ".pom");
-            return myBase;
-        }
     }
 }

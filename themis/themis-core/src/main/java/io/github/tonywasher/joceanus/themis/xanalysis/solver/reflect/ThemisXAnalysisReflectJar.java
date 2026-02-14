@@ -23,7 +23,7 @@ import io.github.tonywasher.joceanus.themis.xanalysis.parser.ThemisXAnalysisPars
 import io.github.tonywasher.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisChar;
 import io.github.tonywasher.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance.ThemisXAnalysisClassInstance;
 import io.github.tonywasher.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance.ThemisXAnalysisTypeInstance;
-import io.github.tonywasher.joceanus.themis.xanalysis.parser.proj.ThemisXAnalysisMaven.ThemisXAnalysisMavenId;
+import io.github.tonywasher.joceanus.themis.xanalysis.parser.proj.ThemisXAnalysisMavenId;
 import io.github.tonywasher.joceanus.themis.xanalysis.parser.proj.ThemisXAnalysisProject;
 import io.github.tonywasher.joceanus.themis.xanalysis.parser.type.ThemisXAnalysisTypeClassInterface;
 
@@ -163,7 +163,8 @@ public class ThemisXAnalysisReflectJar
             /* Protect against exceptions */
             try {
                 final File myJar = myId.getMavenJarPath();
-                final URL myUrl = (new URI("jar:file:/" + myJar + "!/")).toURL();
+                final String myName = myJar.toString().replace("\\", "/");
+                final URL myUrl = (new URI("jar:file:/" + myName + "!/")).toURL();
                 myList.add(myUrl);
 
                 /* Handle exceptions */

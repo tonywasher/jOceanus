@@ -17,20 +17,15 @@
 package io.github.tonywasher.joceanus.themis.xanalysis.solver;
 
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.themis.xanalysis.solver.mapper.ThemisXAnalysisMapper;
 import io.github.tonywasher.joceanus.themis.xanalysis.solver.proj.ThemisXAnalysisSolverModule;
 import io.github.tonywasher.joceanus.themis.xanalysis.solver.proj.ThemisXAnalysisSolverPackage;
 import io.github.tonywasher.joceanus.themis.xanalysis.solver.proj.ThemisXAnalysisSolverProject;
-import io.github.tonywasher.joceanus.themis.xanalysis.solver.reflect.ThemisXAnalysisReflectJar;
 
 /**
  * Solver.
  */
 public class ThemisXAnalysisSolver {
-    /**
-     * The state.
-     */
-    private final ThemisXAnalysisSolverProjectState theState;
-
     /**
      * The error.
      */
@@ -42,26 +37,20 @@ public class ThemisXAnalysisSolver {
      * @param pProject the project
      */
     public ThemisXAnalysisSolver(final ThemisXAnalysisSolverProject pProject) {
-        /* Create the state */
-        theState = new ThemisXAnalysisSolverProjectState(pProject);
+        /* Protect against exceptions */
+        try {
+            final ThemisXAnalysisMapper myMapper = new ThemisXAnalysisMapper(pProject);
 
-        /* Process external classes */
-        try (ThemisXAnalysisReflectJar myJar = new ThemisXAnalysisReflectJar(pProject.getProjectParser())) {
-            /* Process javaLang and other external classes */
-            myJar.processExternalClasses(theState.getExternalClassMap());
-        } catch (OceanusException e) {
-            theError = e;
-        }
-
-        /* If we have no error */
-        if (theError == null) {
             /* Loop through all packages */
             for (ThemisXAnalysisSolverModule myModule : pProject.getModules()) {
                 for (ThemisXAnalysisSolverPackage myPackage : myModule.getPackages()) {
                     /* Process each package */
-                    theState.processPackage(myPackage);
+                    myMapper.processPackage(myPackage);
                 }
             }
+
+        } catch (OceanusException e) {
+            theError = e;
         }
     }
 

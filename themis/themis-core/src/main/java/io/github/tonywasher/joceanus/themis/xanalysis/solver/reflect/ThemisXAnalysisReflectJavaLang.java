@@ -246,6 +246,56 @@ public enum ThemisXAnalysisReflectJavaLang {
     UNSUPPORTEDEXC("UnsupportedOperationException"),
 
     /**
+     * ArrayIndexOutOfBoundsException.
+     */
+    ARRAYINDEXEXC("ArrayIndexOutOfBoundsException"),
+
+    /**
+     * ArrayIndexOutOfBoundsException.
+     */
+    INDEXEXC("IndexOutOfBoundsException"),
+
+    /**
+     * NullPointerException.
+     */
+    NULLEXC("NullPointerException"),
+
+    /**
+     * IllegalAccessException.
+     */
+    ILLACCESSEXC("IllegalAccessException"),
+
+    /**
+     * InstantiationException.
+     */
+    INSTANTIATEEXC("InstantiationException"),
+
+    /**
+     * SecurityException.
+     */
+    SECURITYEXC("SecurityException"),
+
+    /**
+     * SecurityException.
+     */
+    NOMETHODEXC("NoSuchMethodException"),
+
+    /**
+     * ClassNotFoundException.
+     */
+    CLASSNOTFOUNDEXC("ClassNotFoundException"),
+
+    /**
+     * NoClassDefFoundError.
+     */
+    NOCLASSDEFFOUNDEXC("NoClassDefFoundError"),
+
+    /**
+     * ClassCastException.
+     */
+    CLASSCASTEXC("ClassCastException"),
+
+    /**
      * Deprecated.
      */
     DEPRECATED("Deprecated"),

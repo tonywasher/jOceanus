@@ -58,15 +58,15 @@ public class ThemisXAnalysisReflectRecord
         /* Set the modifiers */
         setModifiers(ThemisXAnalysisReflectUtils.buildModifiers(theClass));
 
+        /* Map the type parameters */
+        final NodeList<TypeParameter> myParams = ThemisXAnalysisReflectBaseUtils.buildTypeParams(theClass.getTypeParameters());
+        setTypeParameters(myParams);
+
         /* Set implements lists */
         setImplementedTypes(ThemisXAnalysisReflectUtils.buildImplements(theClass));
 
         /* Set members */
         setMembers(ThemisXAnalysisReflectMemberUtils.buildMembers(theClass));
-
-        /* Map the type parameters */
-        final NodeList<TypeParameter> myParams = ThemisXAnalysisReflectBaseUtils.buildTypeParams(theClass.getTypeParameters());
-        setTypeParameters(myParams);
     }
 
     @Override

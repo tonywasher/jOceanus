@@ -19,7 +19,6 @@ package io.github.tonywasher.joceanus.themis.xanalysis.parser.proj;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.themis.exc.ThemisIOException;
 import io.github.tonywasher.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisParserDef;
-import io.github.tonywasher.joceanus.themis.xanalysis.parser.proj.ThemisXAnalysisMaven.ThemisXAnalysisMavenId;
 
 import java.io.File;
 import java.io.FileInputStream;
