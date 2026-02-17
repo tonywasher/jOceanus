@@ -38,9 +38,7 @@ public class ThemisXAnalysisSolver {
      */
     public ThemisXAnalysisSolver(final ThemisXAnalysisSolverProject pProject) {
         /* Protect against exceptions */
-        try {
-            final ThemisXAnalysisMapper myMapper = new ThemisXAnalysisMapper(pProject);
-
+        try (final ThemisXAnalysisMapper myMapper = new ThemisXAnalysisMapper(pProject)) {
             /* Loop through all packages */
             for (ThemisXAnalysisSolverModule myModule : pProject.getModules()) {
                 for (ThemisXAnalysisSolverPackage myPackage : myModule.getPackages()) {

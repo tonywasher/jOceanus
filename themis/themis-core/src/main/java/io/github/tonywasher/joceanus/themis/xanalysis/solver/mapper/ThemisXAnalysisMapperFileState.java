@@ -20,9 +20,7 @@ package io.github.tonywasher.joceanus.themis.xanalysis.solver.mapper;
 import io.github.tonywasher.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisChar;
 import io.github.tonywasher.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance.ThemisXAnalysisClassInstance;
 import io.github.tonywasher.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance.ThemisXAnalysisNodeInstance;
-import io.github.tonywasher.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance.ThemisXAnalysisTypeInstance;
 import io.github.tonywasher.joceanus.themis.xanalysis.parser.node.ThemisXAnalysisNodeImport;
-import io.github.tonywasher.joceanus.themis.xanalysis.parser.type.ThemisXAnalysisTypeClassInterface;
 import io.github.tonywasher.joceanus.themis.xanalysis.solver.proj.ThemisXAnalysisSolverClass;
 import io.github.tonywasher.joceanus.themis.xanalysis.solver.proj.ThemisXAnalysisSolverFile;
 import io.github.tonywasher.joceanus.themis.xanalysis.solver.proj.ThemisXAnalysisSolverPackage;
@@ -85,11 +83,6 @@ public class ThemisXAnalysisMapperFileState {
      * @param pFile the file to process.
      */
     private void determineKnownClasses(final ThemisXAnalysisSolverFile pFile) {
-        /* Initialise the map with the javaLang classes */
-        for (ThemisXAnalysisClassInstance myClass : theProject.getJavaLangMap().values()) {
-            theKnownClasses.put(myClass.getName(), myClass);
-        }
-
         /* Add all the package top-level classes */
         final ThemisXAnalysisSolverPackage myPackage = (ThemisXAnalysisSolverPackage) pFile.getOwningPackage();
         for (ThemisXAnalysisSolverFile myFile : myPackage.getFiles()) {
@@ -106,47 +99,12 @@ public class ThemisXAnalysisMapperFileState {
             theKnownClasses.put(myImport.getName(), myImport);
         }
 
-        for (ThemisXAnalysisTypeInstance myExtend : pFile.getTopLevel().getUnderlyingClass().getExtends()) {
-            final ThemisXAnalysisTypeClassInterface myClass = (ThemisXAnalysisTypeClassInterface) myExtend;
-            final ThemisXAnalysisClassInstance myClassDef = theKnownClasses.get(myClass.getName());
-            final List<ThemisXAnalysisSolverClass> mySubClasses = theProject.getProjectSubClassMap().get(myClassDef.getFullName());
-            if (mySubClasses != null) {
-                for (ThemisXAnalysisSolverClass mySubClass : mySubClasses) {
-                    theKnownClasses.put(mySubClass.getName(), mySubClass.getUnderlyingClass());
-                }
-            }
-        }
-
-        for (ThemisXAnalysisTypeInstance myImplement : pFile.getTopLevel().getUnderlyingClass().getImplements()) {
-            final ThemisXAnalysisTypeClassInterface myClass = (ThemisXAnalysisTypeClassInterface) myImplement;
-            final ThemisXAnalysisClassInstance myClassDef = theKnownClasses.get(myClass.getName());
-            final List<ThemisXAnalysisSolverClass> mySubClasses = theProject.getProjectSubClassMap().get(myClassDef.getFullName());
-            if (mySubClasses != null) {
-                for (ThemisXAnalysisSolverClass mySubClass : mySubClasses) {
-                    theKnownClasses.put(mySubClass.getName(), mySubClass.getUnderlyingClass());
-                }
-            }
-        }
-
         /* Process the classes in the file */
         for (ThemisXAnalysisSolverClass myClass : pFile.getClasses()) {
             if (!myClass.getUnderlyingClass().isAnonClass()) {
                 theKnownClasses.put(myClass.getName(), myClass.getUnderlyingClass());
             }
         }
-    }
-
-    /**
-     * Obtain ancestors for a class.
-     *
-     * @param pClass the class
-     * @return the list of ancestors
-     */
-    private List<ThemisXAnalysisClassInstance> getAncestors(final ThemisXAnalysisClassInstance pClass) {
-        for (ThemisXAnalysisTypeInstance myExtends : pClass.getExtends()) {
-            final ThemisXAnalysisTypeClassInterface myClass = (ThemisXAnalysisTypeClassInterface) myExtends;
-        }
-        return null;
     }
 
     /**
@@ -176,23 +134,23 @@ public class ThemisXAnalysisMapperFileState {
         /* Look up the reference in the list of known classes */
         ThemisXAnalysisClassInstance myReference = theKnownClasses.get(pReference);
 
-        /* If it is not a known class, but contains a period */
-        final int iIndex = pReference.indexOf(ThemisXAnalysisChar.PERIOD);
-        if (myReference == null && iIndex != -1) {
-            /* Look for a fully qualified class in external and project classes */
-            myReference = theProject.getExternalClassMap().get(pReference);
-            if (myReference == null) {
-                final ThemisXAnalysisSolverClass myClass = theProject.getProjectClassMap().get(pReference);
-                if (myClass != null) {
-                    myReference = myClass.getUnderlyingClass();
-                }
-            }
+        /* If it is not a known class */
+        if (myReference == null) {
+            /* If it contains a period */
+            final int iIndex = pReference.indexOf(ThemisXAnalysisChar.PERIOD);
+            if (iIndex != -1) {
+                /* Look for a fully qualified class in external and project classes */
+                myReference = lookUpFullyNamedClass(pReference);
 
-            /* If still not found */
-            if (myReference == null) {
-                /* Try just the first part */
-                final String myBase = pReference.substring(0, iIndex);
-                myReference = theKnownClasses.get(myBase);
+                /* If still not found */
+                if (myReference == null) {
+                    /* Try just the first part */
+                    myReference = lookUpPartiallyNamedClass(pReference, iIndex);
+                }
+
+                /* else just a simple name */
+            } else {
+                myReference = lookUpJavaLangClass(pReference);
             }
         }
 
@@ -200,6 +158,83 @@ public class ThemisXAnalysisMapperFileState {
         if (myReference != null) {
             declareReferencedClass(myReference);
         }
+        return myReference;
+    }
+
+    /**
+     * lookUp a fullyNamed class.
+     *
+     * @param pReference the possible reference.
+     * @return the resolved class (if found)
+     */
+    private ThemisXAnalysisClassInstance lookUpFullyNamedClass(final String pReference) {
+        /* Look for a fully qualified class in external and project classes */
+        ThemisXAnalysisClassInstance myReference = theProject.getExternalClassMap().get(pReference);
+        if (myReference == null) {
+            final ThemisXAnalysisSolverClass myClass = theProject.getProjectClassMap().get(pReference);
+            if (myClass != null) {
+                myReference = myClass.getUnderlyingClass();
+            }
+        }
+
+        /* If not found, try to load the class */
+        if (myReference == null) {
+            myReference = theProject.tryNamedClass(pReference);
+        }
+
+        /* If we have now found the class, add to knownClasses */
+        if (myReference != null) {
+            theKnownClasses.put(pReference, myReference);
+        }
+
+        /* Return resolved reference (or null) */
+        return myReference;
+    }
+
+    /**
+     * lookUp a partiallyNamed class.
+     *
+     * @param pReference the possible reference.
+     * @return the resolved class (if found)
+     */
+    private ThemisXAnalysisClassInstance lookUpPartiallyNamedClass(final String pReference,
+                                                                   final int pIndex) {
+        /* Try just the first part of the name */
+        final String myBase = pReference.substring(0, pIndex);
+        ThemisXAnalysisClassInstance myReference = theKnownClasses.get(myBase);
+
+        /* If we found a parent */
+        if (myReference != null) {
+            /* Build the full name of the class */
+            final String myName = myReference.getFullName() + pReference.substring(pIndex);
+            myReference = theProject.tryNamedClass(myName);
+
+            /* If we have now found the class, add to knownClasses */
+            if (myReference != null) {
+                theKnownClasses.put(pReference, myReference);
+            }
+        }
+
+        /* Return resolved reference (or null) */
+        return myReference;
+    }
+
+    /**
+     * lookUp a javaLang class.
+     *
+     * @param pReference the possible reference.
+     * @return the resolved class (if found)
+     */
+    private ThemisXAnalysisClassInstance lookUpJavaLangClass(final String pReference) {
+        /* Look for a fully qualified class in external and project classes */
+        ThemisXAnalysisClassInstance myReference = theProject.tryJavaLang(pReference);
+
+        /* If we have now found the class, add to knownClasses */
+        if (myReference != null) {
+            theKnownClasses.put(pReference, myReference);
+        }
+
+        /* Return resolved reference (or null) */
         return myReference;
     }
 

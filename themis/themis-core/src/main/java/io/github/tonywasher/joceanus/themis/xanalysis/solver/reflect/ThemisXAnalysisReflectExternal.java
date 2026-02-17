@@ -22,8 +22,6 @@ import io.github.tonywasher.joceanus.themis.xanalysis.parser.node.ThemisXAnalysi
 import io.github.tonywasher.joceanus.themis.xanalysis.parser.node.ThemisXAnalysisNodeModifierList;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 /**
  * External Class representation.
@@ -33,7 +31,7 @@ public class ThemisXAnalysisReflectExternal
     /**
      * The javaLang prefix.
      */
-    private static final String JAVALANG = "java.lang.";
+    static final String JAVALANG = "java.lang.";
 
     /**
      * The name of the class.
@@ -78,17 +76,6 @@ public class ThemisXAnalysisReflectExternal
         theClassInstance = pClazz;
     }
 
-    /**
-     * Constructor.
-     *
-     * @param pLang the javaLang class
-     */
-    private ThemisXAnalysisReflectExternal(final ThemisXAnalysisReflectJavaLang pLang) {
-        theName = pLang.getName();
-        theFullName = JAVALANG + theName;
-        theModifiers = new ThemisXAnalysisNodeModifierList(new ArrayList<>());
-    }
-
     @Override
     public String getName() {
         return theName;
@@ -107,19 +94,6 @@ public class ThemisXAnalysisReflectExternal
     @Override
     public boolean isTopLevel() {
         return true;
-    }
-
-    /**
-     * Obtain map of java.lang classes.
-     *
-     * @return the map
-     */
-    public static Map<String, ThemisXAnalysisReflectExternal> getJavaLangMap() {
-        final Map<String, ThemisXAnalysisReflectExternal> myMap = new LinkedHashMap<>();
-        for (ThemisXAnalysisReflectJavaLang myLang : ThemisXAnalysisReflectJavaLang.values()) {
-            myMap.put(myLang.getName(), new ThemisXAnalysisReflectExternal(myLang));
-        }
-        return myMap;
     }
 
     /**

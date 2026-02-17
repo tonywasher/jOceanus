@@ -42,11 +42,6 @@ import java.util.Map;
  */
 public class ThemisXAnalysisSolverProjectState {
     /**
-     * Map of all java.lang classes.
-     */
-    private final Map<String, ThemisXAnalysisReflectExternal> theJavaLang;
-
-    /**
      * Map of all classes defined in the project.
      */
     private final Map<String, ThemisXAnalysisSolverClass> theProjectClasses;
@@ -72,9 +67,6 @@ public class ThemisXAnalysisSolverProjectState {
      * @param pProject the project
      */
     ThemisXAnalysisSolverProjectState(final ThemisXAnalysisSolverProject pProject) {
-        /* Build the javaLang map */
-        theJavaLang = ThemisXAnalysisReflectExternal.getJavaLangMap();
-
         /* build the project classMap */
         theProjectClasses = new LinkedHashMap<>();
         buildProjectClassMap(pProject);
@@ -137,11 +129,6 @@ public class ThemisXAnalysisSolverProjectState {
      * @param pProject the project
      */
     private void buildExternalClassMap(final ThemisXAnalysisSolverProject pProject) {
-        /* Initialise the map with the javaLang classes */
-        for (ThemisXAnalysisReflectExternal myClass : theJavaLang.values()) {
-            theExternalClasses.put(myClass.getFullName(), myClass);
-        }
-
         /* Loop through all modules */
         for (ThemisXAnalysisSolverModule myModule : pProject.getModules()) {
             /* Loop through all packages */
@@ -226,9 +213,6 @@ public class ThemisXAnalysisSolverProjectState {
         /* Initialise the map with the javaLang classes */
         theKnownClasses.clear();
         theReferenced.clear();
-        for (ThemisXAnalysisClassInstance myClass : theJavaLang.values()) {
-            theKnownClasses.put(myClass.getName(), myClass);
-        }
 
         /* Add all the package top-level classes */
         final ThemisXAnalysisSolverPackage myPackage = (ThemisXAnalysisSolverPackage) pFile.getOwningPackage();

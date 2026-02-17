@@ -70,7 +70,7 @@ public class ThemisXAnalysisMapperTypeState {
      * @param pInstance the instance
      * @return should cleanUp be called after processing this instance?
      */
-    boolean processElement(final ThemisXAnalysisInstance pInstance) {
+    boolean processInstance(final ThemisXAnalysisInstance pInstance) {
         /* Process interesting instances */
         if (pInstance instanceof ThemisXAnalysisDeclClassInterface myClass) {
             return processClass(myClass);

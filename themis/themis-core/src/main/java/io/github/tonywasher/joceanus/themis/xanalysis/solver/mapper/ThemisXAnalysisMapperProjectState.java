@@ -37,12 +37,8 @@ import java.util.Map;
 /**
  * Project State.
  */
-public class ThemisXAnalysisMapperProjectState {
-    /**
-     * Map of all java.lang classes.
-     */
-    private final Map<String, ThemisXAnalysisReflectExternal> theJavaLang;
-
+public class ThemisXAnalysisMapperProjectState
+        implements AutoCloseable {
     /**
      * Map of all classes defined in the project.
      */
@@ -59,15 +55,17 @@ public class ThemisXAnalysisMapperProjectState {
     private final Map<String, ThemisXAnalysisReflectExternal> theExternalClasses;
 
     /**
+     * The Jar parser.
+     */
+    private final ThemisXAnalysisReflectJar theJar;
+
+    /**
      * Constructor.
      *
      * @param pProject the project
      * @throws OceanusException on error
      */
     ThemisXAnalysisMapperProjectState(final ThemisXAnalysisSolverProject pProject) throws OceanusException {
-        /* Build the javaLang map */
-        theJavaLang = ThemisXAnalysisReflectExternal.getJavaLangMap();
-
         /* build the project classMap */
         theProjectClasses = new LinkedHashMap<>();
         theProjectSubClasses = new LinkedHashMap<>();
@@ -78,19 +76,8 @@ public class ThemisXAnalysisMapperProjectState {
         buildExternalClassMap(pProject);
 
         /* Process external classes */
-        try (ThemisXAnalysisReflectJar myJar = new ThemisXAnalysisReflectJar(pProject.getProjectParser())) {
-            /* Process javaLang and other external classes */
-            myJar.processExternalClasses(theExternalClasses);
-        }
-    }
-
-    /**
-     * Obtain the javaLang classes.
-     *
-     * @return the javaLang classes.
-     */
-    Map<String, ThemisXAnalysisReflectExternal> getJavaLangMap() {
-        return theJavaLang;
+        theJar = new ThemisXAnalysisReflectJar(pProject.getProjectParser(), theExternalClasses);
+        theJar.processExternalClasses();
     }
 
     /**
@@ -170,11 +157,6 @@ public class ThemisXAnalysisMapperProjectState {
      * @param pProject the project
      */
     private void buildExternalClassMap(final ThemisXAnalysisSolverProject pProject) {
-        /* Initialise the map with the javaLang classes */
-        for (ThemisXAnalysisReflectExternal myClass : theJavaLang.values()) {
-            theExternalClasses.put(myClass.getFullName(), myClass);
-        }
-
         /* Loop through all modules */
         for (ThemisXAnalysisSolverModule myModule : pProject.getModules()) {
             /* Loop through all packages */
@@ -205,5 +187,30 @@ public class ThemisXAnalysisMapperProjectState {
                 }
             }
         }
+    }
+
+    /**
+     * Try a class as a java.lang class
+     *
+     * @param pName the class name
+     * @return the loaded class or null if it did not exist
+     */
+    public ThemisXAnalysisReflectExternal tryJavaLang(final String pName) {
+        return theJar.tryJavaLang(pName);
+    }
+
+    /**
+     * Try a class as a java.lang class
+     *
+     * @param pName the class name
+     * @return the loaded class or null if it did not exist
+     */
+    public ThemisXAnalysisReflectExternal tryNamedClass(final String pName) {
+        return theJar.tryNamedClass(pName);
+    }
+
+    @Override
+    public void close() {
+        theJar.close();
     }
 }

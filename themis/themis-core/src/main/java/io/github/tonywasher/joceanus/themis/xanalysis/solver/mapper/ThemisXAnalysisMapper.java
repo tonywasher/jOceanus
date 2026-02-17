@@ -30,7 +30,8 @@ import io.github.tonywasher.joceanus.themis.xanalysis.solver.proj.ThemisXAnalysi
 import io.github.tonywasher.joceanus.themis.xanalysis.solver.proj.ThemisXAnalysisSolverPackage;
 import io.github.tonywasher.joceanus.themis.xanalysis.solver.proj.ThemisXAnalysisSolverProject;
 
-public class ThemisXAnalysisMapper {
+public class ThemisXAnalysisMapper
+        implements AutoCloseable {
     /**
      * Project State.
      */
@@ -104,7 +105,7 @@ public class ThemisXAnalysisMapper {
      */
     private void processInstance(final ThemisXAnalysisInstance pInstance) {
         /* Process stacks */
-        final boolean bumpType = theType.processElement(pInstance);
+        final boolean bumpType = theType.processInstance(pInstance);
         final boolean bumpName = theName.processInstance(pInstance);
 
         /* Process element */
@@ -214,5 +215,10 @@ public class ThemisXAnalysisMapper {
      * @param pCreate the creation
      */
     private void processObjectCreate(final ThemisXAnalysisExprObjectCreate pCreate) {
+    }
+
+    @Override
+    public void close() {
+        theProject.close();
     }
 }
