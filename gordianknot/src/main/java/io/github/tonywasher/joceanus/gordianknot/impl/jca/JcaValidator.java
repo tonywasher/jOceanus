@@ -18,7 +18,7 @@ package io.github.tonywasher.joceanus.gordianknot.impl.jca;
 
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamKeyType;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymKeyType;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestType;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestType;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianValidator;
 
 /**
@@ -33,13 +33,13 @@ public class JcaValidator
     }
 
     @Override
-    protected boolean validHMacDigestType(final GordianDigestType pDigestType) {
+    protected boolean validHMacDigestType(final GordianNewDigestType pDigestType) {
         return JcaDigest.isHMacSupported(pDigestType)
                 && validDigestType(pDigestType);
     }
 
     @Override
-    public boolean validDigestType(final GordianDigestType pDigestType) {
+    public boolean validDigestType(final GordianNewDigestType pDigestType) {
         /* Perform standard checks */
         if (!super.validDigestType(pDigestType)) {
             return false;

@@ -18,15 +18,23 @@ package io.github.tonywasher.joceanus.gordianknot.api.mac;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymKeySpec;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestSpecBuilder;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestSubSpec.GordianDigestState;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestType;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSubSpec.GordianNewDigestState;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestType;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianCoreDigestSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianCoreDigestType;
 
 /**
  * Mac Specification Builder.
  */
 public final class GordianMacSpecBuilder {
+    /**
+     * DigestSpecBuilder.
+     */
+    private static final GordianNewDigestSpecBuilder BUILDER = GordianCoreDigestSpecBuilder.newInstance();
+
     /**
      * Private constructor.
      */
@@ -39,8 +47,8 @@ public final class GordianMacSpecBuilder {
      * @param pDigestType the digestType
      * @return the MacSpec
      */
-    public static GordianMacSpec hMac(final GordianDigestType pDigestType) {
-        return hMac(new GordianDigestSpec(pDigestType), GordianLength.LEN_128);
+    public static GordianMacSpec hMac(final GordianNewDigestType pDigestType) {
+        return hMac(pDigestType, GordianLength.LEN_128);
     }
 
     /**
@@ -50,9 +58,9 @@ public final class GordianMacSpecBuilder {
      * @param pKeyLength  the keyLength
      * @return the MacSpec
      */
-    public static GordianMacSpec hMac(final GordianDigestType pDigestType,
+    public static GordianMacSpec hMac(final GordianNewDigestType pDigestType,
                                       final GordianLength pKeyLength) {
-        return hMac(new GordianDigestSpec(pDigestType), pKeyLength);
+        return hMac(BUILDER.generic(pDigestType), pKeyLength);
     }
 
     /**
@@ -61,7 +69,7 @@ public final class GordianMacSpecBuilder {
      * @param pDigestSpec the digestSpec
      * @return the MacSpec
      */
-    public static GordianMacSpec hMac(final GordianDigestSpec pDigestSpec) {
+    public static GordianMacSpec hMac(final GordianNewDigestSpec pDigestSpec) {
         return new GordianMacSpec(GordianMacType.HMAC, pDigestSpec.getDigestLength(), pDigestSpec);
     }
 
@@ -72,7 +80,7 @@ public final class GordianMacSpecBuilder {
      * @param pKeyLength  the keyLength
      * @return the MacSpec
      */
-    public static GordianMacSpec hMac(final GordianDigestSpec pDigestSpec,
+    public static GordianMacSpec hMac(final GordianNewDigestSpec pDigestSpec,
                                       final GordianLength pKeyLength) {
         return new GordianMacSpec(GordianMacType.HMAC, pKeyLength, pDigestSpec);
     }
@@ -115,7 +123,7 @@ public final class GordianMacSpecBuilder {
      * @return the MacSpec
      */
     public static GordianMacSpec kMac(final GordianLength pKeyLength,
-                                      final GordianDigestSpec pSpec) {
+                                      final GordianNewDigestSpec pSpec) {
         return new GordianMacSpec(GordianMacType.KMAC, pKeyLength, pSpec);
     }
 
@@ -145,7 +153,7 @@ public final class GordianMacSpecBuilder {
      * @return the MacSpec
      */
     public static GordianMacSpec skeinMac(final GordianLength pKeyLength) {
-        return skeinMac(pKeyLength, GordianDigestType.SKEIN.getDefaultLength());
+        return skeinMac(pKeyLength, GordianCoreDigestType.getDefaultLength(GordianNewDigestType.SKEIN));
     }
 
     /**
@@ -157,7 +165,7 @@ public final class GordianMacSpecBuilder {
      */
     public static GordianMacSpec skeinMac(final GordianLength pKeyLength,
                                           final GordianLength pLength) {
-        final GordianDigestSpec mySpec = GordianDigestSpecBuilder.skein(pLength);
+        final GordianNewDigestSpec mySpec = GordianDigestSpecBuilder.skein(pLength);
         return skeinMac(pKeyLength, mySpec);
     }
 
@@ -170,9 +178,9 @@ public final class GordianMacSpecBuilder {
      * @return the MacSpec
      */
     public static GordianMacSpec skeinMac(final GordianLength pKeyLength,
-                                          final GordianDigestState pState,
+                                          final GordianNewDigestState pState,
                                           final GordianLength pLength) {
-        final GordianDigestSpec mySpec = GordianDigestSpecBuilder.skein(pState, pLength);
+        final GordianNewDigestSpec mySpec = GordianDigestSpecBuilder.skein(pState, pLength);
         return skeinMac(pKeyLength, mySpec);
     }
 
@@ -184,7 +192,7 @@ public final class GordianMacSpecBuilder {
      * @return the MacSpec
      */
     public static GordianMacSpec skeinMac(final GordianLength pKeyLength,
-                                          final GordianDigestSpec pSpec) {
+                                          final GordianNewDigestSpec pSpec) {
         return new GordianMacSpec(GordianMacType.SKEIN, pKeyLength, pSpec);
     }
 
@@ -196,8 +204,8 @@ public final class GordianMacSpecBuilder {
      * @return the MacSpec
      */
     public static GordianMacSpec skeinXMac(final GordianLength pKeyLength,
-                                           final GordianDigestState pState) {
-        final GordianDigestSpec mySpec = GordianDigestSpecBuilder.skeinX(pState);
+                                           final GordianNewDigestState pState) {
+        final GordianNewDigestSpec mySpec = GordianDigestSpecBuilder.skeinX(pState);
         return skeinMac(pKeyLength, mySpec);
     }
 
@@ -210,7 +218,7 @@ public final class GordianMacSpecBuilder {
      */
     public static GordianMacSpec blake2sMac(final GordianLength pKeyLength,
                                             final GordianLength pLength) {
-        final GordianDigestSpec mySpec = GordianDigestSpecBuilder.blake2s(pLength);
+        final GordianNewDigestSpec mySpec = GordianDigestSpecBuilder.blake2s(pLength);
         return blake2Mac(pKeyLength, mySpec);
     }
 
@@ -223,7 +231,7 @@ public final class GordianMacSpecBuilder {
      */
     public static GordianMacSpec blake2bMac(final GordianLength pKeyLength,
                                             final GordianLength pLength) {
-        final GordianDigestSpec mySpec = GordianDigestSpecBuilder.blake2b(pLength);
+        final GordianNewDigestSpec mySpec = GordianDigestSpecBuilder.blake2b(pLength);
         return blake2Mac(pKeyLength, mySpec);
     }
 
@@ -235,7 +243,7 @@ public final class GordianMacSpecBuilder {
      * @return the MacSpec
      */
     public static GordianMacSpec blake2Mac(final GordianLength pKeyLength,
-                                           final GordianDigestSpec pSpec) {
+                                           final GordianNewDigestSpec pSpec) {
         return new GordianMacSpec(GordianMacType.BLAKE2, pKeyLength, pSpec);
     }
 
@@ -247,7 +255,7 @@ public final class GordianMacSpecBuilder {
      * @return the MacSpec
      */
     public static GordianMacSpec blake2XMac(final GordianLength pKeyLength,
-                                            final GordianDigestState pState) {
+                                            final GordianNewDigestState pState) {
         return new GordianMacSpec(GordianMacType.BLAKE2, pKeyLength, GordianDigestSpecBuilder.blake2X(pState));
     }
 
@@ -278,7 +286,7 @@ public final class GordianMacSpecBuilder {
      * @return the MacSpec
      */
     public static GordianMacSpec kupynaMac(final GordianLength pKeyLength) {
-        return kupynaMac(pKeyLength, GordianDigestType.KUPYNA.getDefaultLength());
+        return kupynaMac(pKeyLength, GordianCoreDigestType.getDefaultLength(GordianNewDigestType.KUPYNA));
     }
 
     /**
@@ -290,7 +298,7 @@ public final class GordianMacSpecBuilder {
      */
     public static GordianMacSpec kupynaMac(final GordianLength pKeyLength,
                                            final GordianLength pLength) {
-        final GordianDigestSpec mySpec = GordianDigestSpecBuilder.kupyna(pLength);
+        final GordianNewDigestSpec mySpec = GordianDigestSpecBuilder.kupyna(pLength);
         return new GordianMacSpec(GordianMacType.KUPYNA, pKeyLength, mySpec);
     }
 

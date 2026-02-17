@@ -16,7 +16,7 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.api.encrypt;
 
-import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairType;
 
 import java.util.Arrays;
@@ -38,7 +38,7 @@ public final class GordianEncryptorSpecBuilder {
      * @param pSpec the digestSpec
      * @return the encryptorSpec
      */
-    public static GordianEncryptorSpec rsa(final GordianDigestSpec pSpec) {
+    public static GordianEncryptorSpec rsa(final GordianNewDigestSpec pSpec) {
         return new GordianEncryptorSpec(GordianKeyPairType.RSA, pSpec);
     }
 
@@ -48,7 +48,7 @@ public final class GordianEncryptorSpecBuilder {
      * @param pSpec the digestSpec
      * @return the encryptorSpec
      */
-    public static GordianEncryptorSpec elGamal(final GordianDigestSpec pSpec) {
+    public static GordianEncryptorSpec elGamal(final GordianNewDigestSpec pSpec) {
         return new GordianEncryptorSpec(GordianKeyPairType.ELGAMAL, pSpec);
     }
 

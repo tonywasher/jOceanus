@@ -18,7 +18,7 @@ package io.github.tonywasher.joceanus.gordianknot.impl.core.kdf;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianLogicException;
@@ -49,8 +49,8 @@ public class GordianHKDFMulti {
      * @throws GordianException on error
      */
     public GordianHKDFMulti(final GordianFactory pFactory,
-                            final GordianDigestSpec pPrimary,
-                            final GordianDigestSpec... pSecondaries) throws GordianException {
+                            final GordianNewDigestSpec pPrimary,
+                            final GordianNewDigestSpec... pSecondaries) throws GordianException {
         /* Create the list */
         theEngines = new ArrayList<>();
 
@@ -64,7 +64,7 @@ public class GordianHKDFMulti {
         final GordianLength myLength = pPrimary.getDigestLength();
 
         /* Allocate the secondary engines */
-        for (final GordianDigestSpec mySpec : pSecondaries) {
+        for (final GordianNewDigestSpec mySpec : pSecondaries) {
             if (!myLength.equals(mySpec.getDigestLength())) {
                 throw new GordianDataException("Inconsistent digestLengths");
             }

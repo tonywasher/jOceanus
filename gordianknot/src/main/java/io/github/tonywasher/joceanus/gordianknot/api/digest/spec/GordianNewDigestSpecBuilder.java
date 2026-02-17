@@ -62,6 +62,49 @@ public interface GordianNewDigestSpecBuilder {
      */
     GordianNewDigestSpec build();
 
+
+    /**
+     * Create generic digest.
+     *
+     * @param pType the digestType
+     * @return the digestSpec
+     */
+    default GordianNewDigestSpec generic(final GordianNewDigestType pType) {
+        return withType(pType).build();
+    }
+
+    /**
+     * Create generic digest.
+     *
+     * @param pType   the digestType
+     * @param pLength the length
+     * @return the digestSpec
+     */
+    default GordianNewDigestSpec generic(final GordianNewDigestType pType,
+                                         final GordianLength pLength) {
+        return withType(pType).withLength(pLength).build();
+    }
+
+    /**
+     * Create generic digest.
+     *
+     * @param pType    the digestType
+     * @param pState   the state
+     * @param pLength  the length
+     * @param pXofMode asXof
+     * @return the digestSpec
+     */
+    default GordianNewDigestSpec generic(final GordianNewDigestType pType,
+                                         final GordianNewDigestState pState,
+                                         final GordianLength pLength,
+                                         final boolean pXofMode) {
+        withType(pType).withState(pState).withLength(pLength);
+        if (pXofMode) {
+            asXof();
+        }
+        return build();
+    }
+
     /**
      * Create Md2.
      *

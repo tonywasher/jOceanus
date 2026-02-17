@@ -58,7 +58,7 @@ public class GordianCoreSignatureSpecBuilder
      * Constructor.
      */
     public GordianCoreSignatureSpecBuilder() {
-        theBuilder = new GordianCoreDigestSpecBuilder();
+        theBuilder = GordianCoreDigestSpecBuilder.newInstance();
     }
 
     @Override

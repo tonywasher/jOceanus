@@ -20,8 +20,8 @@ import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigest;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianAsyncFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairFactory;
@@ -384,7 +384,7 @@ public class GordianCRMBuilder {
         try {
             /* Create the digest */
             final GordianCoreDigestFactory myDigests = (GordianCoreDigestFactory) pFactory.getDigestFactory();
-            final GordianDigestSpec myDigestSpec = myDigests.getDigestSpecForIdentifier(pParams.getOwf());
+            final GordianNewDigestSpec myDigestSpec = myDigests.getDigestSpecForIdentifier(pParams.getOwf());
             final GordianDigest myDigest = myDigests.createDigest(myDigestSpec);
 
             /* Run through the first iteration */

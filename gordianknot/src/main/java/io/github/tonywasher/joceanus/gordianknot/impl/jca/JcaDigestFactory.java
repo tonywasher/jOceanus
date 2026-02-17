@@ -17,10 +17,11 @@
 package io.github.tonywasher.joceanus.gordianknot.impl.jca;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.digest.GordianCoreDigestFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianCoreDigestSpec;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -41,13 +42,14 @@ public class JcaDigestFactory
     }
 
     @Override
-    public JcaDigest createDigest(final GordianDigestSpec pDigestSpec) throws GordianException {
+    public JcaDigest createDigest(final GordianNewDigestSpec pDigestSpec) throws GordianException {
         /* Check validity of DigestSpec */
         checkDigestSpec(pDigestSpec);
+        final GordianCoreDigestSpec mySpec = (GordianCoreDigestSpec) pDigestSpec;
 
         /* Create digest */
-        final MessageDigest myJavaDigest = getJavaDigest(pDigestSpec);
-        return new JcaDigest(pDigestSpec, myJavaDigest);
+        final MessageDigest myJavaDigest = getJavaDigest(mySpec);
+        return new JcaDigest(mySpec, myJavaDigest);
     }
 
     /**
@@ -57,7 +59,7 @@ public class JcaDigestFactory
      * @return the digest
      * @throws GordianException on error
      */
-    private static MessageDigest getJavaDigest(final GordianDigestSpec pDigestSpec) throws GordianException {
+    private static MessageDigest getJavaDigest(final GordianCoreDigestSpec pDigestSpec) throws GordianException {
         /* Protect against exceptions */
         try {
             /* Return a digest for the algorithm */

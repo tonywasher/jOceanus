@@ -19,6 +19,7 @@ package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.encrypt;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianNewEncryptorSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianNewEncryptorSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianNewSM2EncryptionSpec;
@@ -95,7 +96,7 @@ public class GordianCoreEncryptorSpecBuilder
         /* Create list */
         final List<GordianNewEncryptorSpec> myEncryptors = new ArrayList<>();
         final GordianCoreEncryptorSpecBuilder myBuilder = new GordianCoreEncryptorSpecBuilder();
-        final GordianCoreDigestSpecBuilder myDigestBuilder = new GordianCoreDigestSpecBuilder();
+        final GordianNewDigestSpecBuilder myDigestBuilder = GordianCoreDigestSpecBuilder.newInstance();
 
         /* Switch on keyPairType */
         switch (pKeyPairType) {
@@ -138,7 +139,7 @@ public class GordianCoreEncryptorSpecBuilder
     private static List<GordianNewSM2EncryptionSpec> listPossibleSM2Specs() {
         /* Create list */
         final List<GordianNewSM2EncryptionSpec> mySpecs = new ArrayList<>();
-        final GordianCoreDigestSpecBuilder myBuilder = new GordianCoreDigestSpecBuilder();
+        final GordianCoreDigestSpecBuilder myBuilder = GordianCoreDigestSpecBuilder.newInstance();
 
         /* Loop through the encryptionTypes */
         for (GordianNewSM2EncryptionType myType : GordianNewSM2EncryptionType.values()) {

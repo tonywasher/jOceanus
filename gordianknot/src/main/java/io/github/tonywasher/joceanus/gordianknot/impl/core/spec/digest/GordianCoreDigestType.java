@@ -22,7 +22,6 @@ import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestResource;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestType;
 
-import java.util.Collection;
 import java.util.EnumMap;
 import java.util.Map;
 
@@ -34,6 +33,11 @@ public final class GordianCoreDigestType {
      * The digestTypeMap.
      */
     private static final Map<GordianNewDigestType, GordianCoreDigestType> TYPEMAP = newTypeMap();
+
+    /**
+     * The digestTypeArray.
+     */
+    private static final GordianCoreDigestType[] VALUES = TYPEMAP.values().toArray(new GordianCoreDigestType[0]);
 
     /**
      * The DigestType.
@@ -81,7 +85,7 @@ public final class GordianCoreDigestType {
      * @param pType the digestType
      * @return the default length
      */
-    static GordianLength getDefaultLength(final GordianNewDigestType pType) {
+    public static GordianLength getDefaultLength(final GordianNewDigestType pType) {
         switch (pType) {
             case MD2:
             case MD4:
@@ -114,7 +118,8 @@ public final class GordianCoreDigestType {
      * @return the supported lengths (first is default)
      */
     public static GordianLength[] getSupportedLengths(final GordianNewDigestType pType) {
-        return mapCoreType(pType).getSupportedLengths();
+        final GordianCoreDigestType myType = mapCoreType(pType);
+        return myType == null ? new GordianLength[0] : myType.getSupportedLengths();
     }
 
     /**
@@ -124,7 +129,19 @@ public final class GordianCoreDigestType {
      * @return true/false
      */
     public boolean isLengthValid(final GordianLength pLength) {
-        for (final GordianLength myLength : theLengths) {
+        return isLengthValid(theType, pLength);
+    }
+
+    /**
+     * is digestLength valid?
+     *
+     * @param pType   the digestType
+     * @param pLength the length
+     * @return true/false
+     */
+    public static boolean isLengthValid(final GordianNewDigestType pType,
+                                        final GordianLength pLength) {
+        for (final GordianLength myLength : getSupportedLengths(pType)) {
             if (myLength.equals(pLength)) {
                 return true;
             }
@@ -138,7 +155,17 @@ public final class GordianCoreDigestType {
      * @return true/false
      */
     public boolean supportsLargeData() {
-        return theType != GordianNewDigestType.HARAKA;
+        return supportsLargeData(theType);
+    }
+
+    /**
+     * does the digest support large amounts of data?
+     *
+     * @param pType the digestType
+     * @return true/false
+     */
+    public static boolean supportsLargeData(final GordianNewDigestType pType) {
+        return pType != GordianNewDigestType.HARAKA;
     }
 
     /**
@@ -345,7 +372,7 @@ public final class GordianCoreDigestType {
      *
      * @return the values
      */
-    public static Collection<GordianCoreDigestType> values() {
-        return TYPEMAP.values();
+    public static GordianCoreDigestType[] values() {
+        return VALUES;
     }
 }

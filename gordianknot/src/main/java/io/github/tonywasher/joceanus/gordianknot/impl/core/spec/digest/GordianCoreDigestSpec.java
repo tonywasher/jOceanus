@@ -114,16 +114,17 @@ public class GordianCoreDigestSpec
     }
 
     @Override
+    public GordianNewDigestState getDigestState() {
+        return theSubSpec instanceof GordianCoreDigestState myState ? myState.getState() : null;
+    }
+
+    @Override
     public GordianLength getDigestLength() {
         return theLength;
     }
 
-    /**
-     * Is the digestSpec a Xof mode?
-     *
-     * @return true/false.
-     */
-    public Boolean isXofMode() {
+    @Override
+    public boolean isXofMode() {
         return isXofMode;
     }
 

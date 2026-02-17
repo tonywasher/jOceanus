@@ -22,10 +22,10 @@ import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymKeyType;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestSpecBuilder;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestSubSpec.GordianDigestState;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestType;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSubSpec.GordianNewDigestState;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestType;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacSpecBuilder;
@@ -35,6 +35,7 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseData;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.cipher.GordianCoreCipherFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianCoreDigestType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -85,7 +86,7 @@ public abstract class GordianCoreMacFactory
      *
      * @return the predicate
      */
-    public Predicate<GordianDigestSpec> supportedHMacDigestSpecs() {
+    public Predicate<GordianNewDigestSpec> supportedHMacDigestSpecs() {
         return this::validHMacSpec;
     }
 
@@ -149,9 +150,9 @@ public abstract class GordianCoreMacFactory
      * @param pDigestSpec the digestSpec
      * @return true/false
      */
-    public boolean validHMacSpec(final GordianDigestSpec pDigestSpec) {
+    public boolean validHMacSpec(final GordianNewDigestSpec pDigestSpec) {
         /* Access details */
-        final GordianDigestType myType = pDigestSpec.getDigestType();
+        final GordianNewDigestType myType = pDigestSpec.getDigestType();
         final GordianDigestFactory myDigests = theFactory.getDigestFactory();
 
         /* Check validity */
@@ -181,7 +182,7 @@ public abstract class GordianCoreMacFactory
         /* Switch on MacType */
         final GordianDigestFactory myDigests = theFactory.getDigestFactory();
         final GordianCoreCipherFactory myCiphers = (GordianCoreCipherFactory) theFactory.getCipherFactory();
-        final GordianDigestSpec mySpec = pMacSpec.getDigestSpec();
+        final GordianNewDigestSpec mySpec = pMacSpec.getDigestSpec();
         final GordianSymKeySpec mySymSpec = pMacSpec.getSymKeySpec();
         switch (myType) {
             case HMAC:
@@ -193,16 +194,16 @@ public abstract class GordianCoreMacFactory
             case POLY1305:
                 return supportedPoly1305SymKeySpecs().test(mySymSpec);
             case SKEIN:
-                return GordianDigestType.SKEIN.equals(Objects.requireNonNull(mySpec).getDigestType())
+                return GordianNewDigestType.SKEIN.equals(Objects.requireNonNull(mySpec).getDigestType())
                         && myDigests.supportedDigestSpecs().test(mySpec);
             case BLAKE2:
-                return GordianDigestType.BLAKE2.equals(Objects.requireNonNull(mySpec).getDigestType())
+                return GordianNewDigestType.BLAKE2.equals(Objects.requireNonNull(mySpec).getDigestType())
                         && myDigests.supportedDigestSpecs().test(mySpec);
             case BLAKE3:
-                return GordianDigestType.BLAKE3.equals(Objects.requireNonNull(mySpec).getDigestType())
+                return GordianNewDigestType.BLAKE3.equals(Objects.requireNonNull(mySpec).getDigestType())
                         && myDigests.supportedDigestSpecs().test(mySpec);
             case KUPYNA:
-                return GordianDigestType.KUPYNA.equals(Objects.requireNonNull(mySpec).getDigestType())
+                return GordianNewDigestType.KUPYNA.equals(Objects.requireNonNull(mySpec).getDigestType())
                         && myDigests.supportedDigestSpecs().test(mySpec);
             case KALYNA:
                 return GordianSymKeyType.KALYNA.equals(Objects.requireNonNull(mySymSpec).getSymKeyType())
@@ -287,12 +288,12 @@ public abstract class GordianCoreMacFactory
         final List<GordianMacSpec> myList = new ArrayList<>();
 
         /* For each digestSpec */
-        for (final GordianDigestSpec mySpec : theFactory.getDigestFactory().listAllPossibleSpecs()) {
+        for (final GordianNewDigestSpec mySpec : theFactory.getDigestFactory().listAllPossibleSpecs()) {
             /* Add the hMacSpec */
             myList.add(GordianMacSpecBuilder.hMac(mySpec, pKeyLen));
 
             /* Add KMAC for digestType of SHAKE */
-            if (GordianDigestType.SHAKE == mySpec.getDigestType()) {
+            if (GordianNewDigestType.SHAKE == mySpec.getDigestType()) {
                 myList.add(GordianMacSpecBuilder.kMac(pKeyLen, mySpec));
             }
         }
@@ -322,20 +323,20 @@ public abstract class GordianCoreMacFactory
             myList.add(GordianMacSpecBuilder.poly1305Mac());
 
             /* Add Blake3 macs */
-            for (final GordianLength myLength : GordianDigestType.BLAKE3.getSupportedLengths()) {
+            for (final GordianLength myLength : GordianCoreDigestType.getSupportedLengths(GordianNewDigestType.BLAKE3)) {
                 myList.add(GordianMacSpecBuilder.blake3Mac(myLength));
             }
         }
 
         /* Add kupynaMac */
-        for (final GordianLength myLength : GordianDigestType.KUPYNA.getSupportedLengths()) {
+        for (final GordianLength myLength : GordianCoreDigestType.getSupportedLengths(GordianNewDigestType.KUPYNA)) {
             myList.add(GordianMacSpecBuilder.kupynaMac(pKeyLen, myLength));
         }
 
         /* Loop through states */
-        for (final GordianDigestState myState : GordianDigestState.values()) {
+        for (final GordianNewDigestState myState : GordianNewDigestState.values()) {
             /* Add SkeinMacs */
-            for (final GordianLength myLength : GordianDigestType.SKEIN.getSupportedLengths()) {
+            for (final GordianLength myLength : GordianCoreDigestType.getSupportedLengths(GordianNewDigestType.SKEIN)) {
                 final GordianMacSpec mySkeinSpec = GordianMacSpecBuilder.skeinMac(pKeyLen, myState, myLength);
                 if (mySkeinSpec.isValid()) {
                     myList.add(mySkeinSpec);
@@ -347,7 +348,7 @@ public abstract class GordianCoreMacFactory
             }
 
             /* Add blake2Macs */
-            for (final GordianLength myLength : GordianDigestType.BLAKE2.getSupportedLengths()) {
+            for (final GordianLength myLength : GordianCoreDigestType.getSupportedLengths(GordianNewDigestType.BLAKE2)) {
                 final GordianMacSpec myBlakeSpec = GordianMacSpecBuilder.blake2Mac(pKeyLen, GordianDigestSpecBuilder.blake2(myState, myLength));
                 if (myBlakeSpec.isValid()) {
                     myList.add(myBlakeSpec);

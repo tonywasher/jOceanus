@@ -24,8 +24,8 @@ import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamKeyType
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymKeySpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymKeyType;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKeyLengths;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacSpec;
@@ -34,7 +34,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacType;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianSipHashSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianASN1Util;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.digest.GordianDigestAlgId;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.digest.GordianCoreDigestAlgId;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.DERNull;
 import org.bouncycastle.asn1.cryptopro.CryptoProObjectIdentifiers;
@@ -313,8 +313,8 @@ public class GordianKeyAlgId {
 
         /* Obtain the subSpec */
         final Object mySubSpec = pSpec.getSubSpec();
-        if (mySubSpec instanceof GordianDigestSpec mySpec) {
-            myId = GordianDigestAlgId.appendDigestOID(myId, mySpec);
+        if (mySubSpec instanceof GordianNewDigestSpec mySpec) {
+            myId = GordianCoreDigestAlgId.appendDigestOID(myId, mySpec);
         } else if (mySubSpec instanceof GordianSymKeySpec mySpec) {
             myId = appendSymKeyOID(myId, false, mySpec);
         } else if (mySubSpec instanceof GordianLength myLength) {

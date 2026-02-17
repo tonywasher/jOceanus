@@ -21,7 +21,6 @@ import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeyType;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestType;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestType;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianNewMacSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianNewMacType;
@@ -519,7 +518,7 @@ public class GordianCoreMacSpec
                     break;
                 case SKEIN:
                     final boolean isSkeinXof = Objects.requireNonNull(getDigestSpec()).isXofMode();
-                    theName = GordianDigestType.SKEIN
+                    theName = GordianNewDigestType.SKEIN
                             + (isSkeinXof ? "X" : "")
                             + "Mac"
                             + SEP + getDigestState()
@@ -532,7 +531,7 @@ public class GordianCoreMacSpec
                     break;
                 case BLAKE2:
                     final boolean isBlakeXof = Objects.requireNonNull(getDigestSpec()).isXofMode();
-                    theName = GordianDigestType.BLAKE2
+                    theName = GordianNewDigestType.BLAKE2
                             + Objects.requireNonNull(getDigestState())
                             .getBlake2Algorithm(isBlakeXof)
                             + "Mac" + (isBlakeXof ? "" : SEP + getDigestLength())

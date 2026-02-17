@@ -20,9 +20,11 @@ import io.github.tonywasher.joceanus.gordianknot.api.base.GordianKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymKeyType;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestSubSpec.GordianDigestState;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestType;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestType;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianCoreDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianCoreDigestSubSpec.GordianCoreDigestState;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianCoreDigestType;
 
 import java.util.Objects;
 
@@ -70,7 +72,7 @@ public final class GordianMacSpec
      */
     public GordianMacSpec(final GordianMacType pMacType,
                           final GordianLength pKeyLength,
-                          final GordianDigestSpec pDigestSpec) {
+                          final GordianNewDigestSpec pDigestSpec) {
         /* Store parameters */
         theMacType = pMacType;
         theKeyLength = pKeyLength;
@@ -180,8 +182,8 @@ public final class GordianMacSpec
      *
      * @return the DigestSpec
      */
-    public GordianDigestSpec getDigestSpec() {
-        return theSubSpec instanceof GordianDigestSpec mySpec
+    public GordianNewDigestSpec getDigestSpec() {
+        return theSubSpec instanceof GordianNewDigestSpec mySpec
                 ? mySpec
                 : null;
     }
@@ -191,9 +193,9 @@ public final class GordianMacSpec
      *
      * @return the State
      */
-    private GordianDigestState getDigestState() {
-        return theSubSpec instanceof GordianDigestSpec mySpec
-                ? mySpec.getDigestState()
+    private GordianCoreDigestState getDigestState() {
+        return theSubSpec instanceof GordianCoreDigestSpec mySpec
+                ? mySpec.getCoreDigestState()
                 : null;
     }
 
@@ -203,7 +205,7 @@ public final class GordianMacSpec
      * @return the Length
      */
     private GordianLength getDigestLength() {
-        return theSubSpec instanceof GordianDigestSpec mySpec
+        return theSubSpec instanceof GordianNewDigestSpec mySpec
                 ? mySpec.getDigestLength()
                 : null;
     }
@@ -360,13 +362,13 @@ public final class GordianMacSpec
             case HMAC:
                 return checkDigestValidity(null);
             case KUPYNA:
-                return checkDigestValidity(GordianDigestType.KUPYNA);
+                return checkDigestValidity(GordianNewDigestType.KUPYNA);
             case SKEIN:
-                return checkDigestValidity(GordianDigestType.SKEIN);
+                return checkDigestValidity(GordianNewDigestType.SKEIN);
             case BLAKE2:
                 return checkBlake2Validity();
             case BLAKE3:
-                return checkDigestValidity(GordianDigestType.BLAKE3);
+                return checkDigestValidity(GordianNewDigestType.BLAKE3);
             case KALYNA:
                 return checkSymKeyValidity(GordianSymKeyType.KALYNA);
             case KMAC:
@@ -399,17 +401,17 @@ public final class GordianMacSpec
      * @param pDigestType required digestType (or null)
      * @return valid true/false
      */
-    private boolean checkDigestValidity(final GordianDigestType pDigestType) {
+    private boolean checkDigestValidity(final GordianNewDigestType pDigestType) {
         /* Check that the digestSpec is valid */
-        if (!(theSubSpec instanceof GordianDigestSpec)
-                || !((GordianDigestSpec) theSubSpec).isValid()) {
+        if (!(theSubSpec instanceof GordianNewDigestSpec)
+                || !((GordianNewDigestSpec) theSubSpec).isValid()) {
             return false;
         }
 
         /* Check for digestType restrictions */
-        final GordianDigestType myType = ((GordianDigestSpec) theSubSpec).getDigestType();
+        final GordianNewDigestType myType = ((GordianNewDigestSpec) theSubSpec).getDigestType();
         return pDigestType == null
-                ? myType.supportsLargeData()
+                ? GordianCoreDigestType.supportsLargeData(myType)
                 : myType == pDigestType;
     }
 
@@ -457,12 +459,12 @@ public final class GordianMacSpec
      */
     private boolean checkBlake2Validity() {
         /* Check that the spec is reasonable */
-        if (!checkDigestValidity(GordianDigestType.BLAKE2)) {
+        if (!checkDigestValidity(GordianNewDigestType.BLAKE2)) {
             return false;
         }
 
         /* Check keyLength */
-        return checkBlake2KeyLength(theKeyLength, (GordianDigestSpec) theSubSpec);
+        return checkBlake2KeyLength(theKeyLength, (GordianCoreDigestSpec) theSubSpec);
     }
 
     /**
@@ -473,9 +475,9 @@ public final class GordianMacSpec
      * @return valid true/false
      */
     private static boolean checkBlake2KeyLength(final GordianLength pKeyLen,
-                                                final GordianDigestSpec pSpec) {
+                                                final GordianCoreDigestSpec pSpec) {
         /* Key length must be less or equal to the stateLength */
-        return pKeyLen.getLength() <= pSpec.getDigestState().getLength().getLength();
+        return pKeyLen.getLength() <= pSpec.getCoreDigestState().getLength().getLength();
     }
 
     /**
@@ -485,12 +487,12 @@ public final class GordianMacSpec
      */
     private boolean checkKMACValidity() {
         /* Check that the spec is reasonable */
-        if (!checkDigestValidity(GordianDigestType.SHAKE)) {
+        if (!checkDigestValidity(GordianNewDigestType.SHAKE)) {
             return false;
         }
 
         /* Check keyLength */
-        return checkKMACKeyLength(theKeyLength, (GordianDigestSpec) theSubSpec);
+        return checkKMACKeyLength(theKeyLength, (GordianCoreDigestSpec) theSubSpec);
     }
 
     /**
@@ -501,9 +503,9 @@ public final class GordianMacSpec
      * @return valid true/false
      */
     private static boolean checkKMACKeyLength(final GordianLength pKeyLen,
-                                              final GordianDigestSpec pSpec) {
+                                              final GordianCoreDigestSpec pSpec) {
         /* Key length must be greater or equal to the stateLength */
-        return pKeyLen.getLength() >= pSpec.getDigestState().getLength().getLength();
+        return pKeyLen.getLength() >= pSpec.getCoreDigestState().getLength().getLength();
     }
 
     /**
@@ -536,7 +538,7 @@ public final class GordianMacSpec
                 return true;
             case BLAKE2:
             case SKEIN:
-                return Objects.requireNonNull(getDigestSpec()).isXof();
+                return Objects.requireNonNull((GordianCoreDigestSpec) getDigestSpec()).isXof();
             default:
                 return false;
         }
@@ -579,7 +581,7 @@ public final class GordianMacSpec
                     break;
                 case SKEIN:
                     final boolean isSkeinXof = Objects.requireNonNull(getDigestSpec()).isXofMode();
-                    theName = GordianDigestType.SKEIN
+                    theName = GordianNewDigestType.SKEIN
                             + (isSkeinXof ? "X" : "")
                             + "Mac"
                             + SEP + getDigestState()
@@ -592,7 +594,7 @@ public final class GordianMacSpec
                     break;
                 case BLAKE2:
                     final boolean isBlakeXof = Objects.requireNonNull(getDigestSpec()).isXofMode();
-                    theName = GordianDigestType.BLAKE2
+                    theName = GordianNewDigestType.BLAKE2
                             + Objects.requireNonNull(getDigestState())
                             .getBlake2Algorithm(isBlakeXof)
                             + "Mac" + (isBlakeXof ? "" : SEP + getDigestLength())

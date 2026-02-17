@@ -18,9 +18,9 @@ package io.github.tonywasher.joceanus.gordianknot.impl.core.sign;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestSpecBuilder;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestType;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestType;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairType;
@@ -199,7 +199,7 @@ public abstract class GordianCoreSignatureFactory
         }
 
         /* Check that the digestSpec is supported */
-        final GordianDigestSpec mySpec = pSignSpec.getDigestSpec();
+        final GordianNewDigestSpec mySpec = pSignSpec.getDigestSpec();
         if (mySpec == null
                 || !validSignatureDigestSpec(mySpec)) {
             return false;
@@ -217,12 +217,12 @@ public abstract class GordianCoreSignatureFactory
 
         /* Only allow GOST for DSTU signature */
         if (GordianKeyPairType.DSTU4145.equals(myType)) {
-            return GordianDigestType.GOST.equals(mySpec.getDigestType());
+            return GordianNewDigestType.GOST.equals(mySpec.getDigestType());
         }
 
         /* Only allow STREEBOG for GOST signature */
         if (GordianKeyPairType.GOST2012.equals(myType)) {
-            return GordianDigestType.STREEBOG.equals(mySpec.getDigestType());
+            return GordianNewDigestType.STREEBOG.equals(mySpec.getDigestType());
         }
 
         /* OK */
@@ -235,7 +235,7 @@ public abstract class GordianCoreSignatureFactory
      * @param pDigestSpec the digestSpec
      * @return true/false
      */
-    protected boolean validSignatureDigestSpec(final GordianDigestSpec pDigestSpec) {
+    protected boolean validSignatureDigestSpec(final GordianNewDigestSpec pDigestSpec) {
         final GordianCoreDigestFactory myDigests = (GordianCoreDigestFactory) theFactory.getDigestFactory();
         return myDigests.validDigestSpec(pDigestSpec);
     }
@@ -250,7 +250,7 @@ public abstract class GordianCoreSignatureFactory
         /* Apply restrictions on PREHASH */
         if (GordianSignatureType.PREHASH.equals(pSpec.getSignatureType())) {
             /* Switch on DigestType */
-            final GordianDigestSpec myDigest = pSpec.getDigestSpec();
+            final GordianNewDigestSpec myDigest = pSpec.getDigestSpec();
             switch (myDigest.getDigestType()) {
                 case SHA1:
                 case SHA2:
@@ -278,7 +278,7 @@ public abstract class GordianCoreSignatureFactory
      */
     private static boolean validDDSASignature(final GordianSignatureSpec pSpec) {
         /* Switch on DigestType */
-        final GordianDigestSpec myDigest = pSpec.getDigestSpec();
+        final GordianNewDigestSpec myDigest = pSpec.getDigestSpec();
         switch (myDigest.getDigestType()) {
             case ASCON:
             case ISAP:
@@ -342,7 +342,7 @@ public abstract class GordianCoreSignatureFactory
     public List<GordianSignatureSpec> listPossibleSignatures(final GordianKeyPairType pKeyType) {
         /* Access the list of possible digests */
         final List<GordianSignatureSpec> mySignatures = new ArrayList<>();
-        final List<GordianDigestSpec> myDigests = theFactory.getDigestFactory().listAllPossibleSpecs();
+        final List<GordianNewDigestSpec> myDigests = theFactory.getDigestFactory().listAllPossibleSpecs();
 
         /* For each supported signature */
         for (GordianSignatureType mySignType : GordianSignatureType.values()) {
@@ -357,7 +357,7 @@ public abstract class GordianCoreSignatureFactory
                 /* If we need digestSpec */
                 if (pKeyType.useDigestForSignatures().canExist()) {
                     /* For each possible digestSpec */
-                    for (GordianDigestSpec mySpec : myDigests) {
+                    for (GordianNewDigestSpec mySpec : myDigests) {
                         /* Add the signature */
                         mySignatures.add(new GordianSignatureSpec(pKeyType, mySignType, mySpec));
                     }

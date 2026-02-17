@@ -102,7 +102,7 @@ public class BouncyMac
             if (pIV != null) {
                 myBuilder.setSalt(pIV);
             }
-            if (Objects.requireNonNull(getMacSpec().getDigestSpec()).isXof()) {
+            if (Objects.requireNonNull(getMacSpec().getDigestSpec()).isXofMode()) {
                 myBuilder.setMaxOutputLen(-1);
             }
             return myBuilder.build();

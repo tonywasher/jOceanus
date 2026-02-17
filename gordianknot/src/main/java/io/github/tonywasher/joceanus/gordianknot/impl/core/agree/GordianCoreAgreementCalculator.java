@@ -26,8 +26,9 @@ import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamKeySpec
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymCipher;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymCipherSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymKeySpec;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestType;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestType;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactoryType;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKey;
@@ -41,6 +42,7 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.kdf.GordianHKDFParams
 import io.github.tonywasher.joceanus.gordianknot.impl.core.key.GordianCoreKeyGenerator;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keyset.GordianCoreKeySet;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keyset.GordianCoreKeySetFactory;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianCoreDigestSpecBuilder;
 import org.bouncycastle.util.Arrays;
 
 import java.nio.charset.StandardCharsets;
@@ -333,7 +335,8 @@ public class GordianCoreAgreementCalculator {
         final GordianHKDFParams myParams = GordianHKDFParams.extractThenExpand(pResultLen);
         try {
             /* Customise the HKDF parameters */
-            final GordianDigestSpec myDigestSpec = new GordianDigestSpec(pId.getDigestType());
+            final GordianNewDigestSpecBuilder myBuilder = GordianCoreDigestSpecBuilder.newInstance();
+            final GordianNewDigestSpec myDigestSpec = myBuilder.generic(pId.getDigestType());
             final byte[] myBytes = new byte[Long.BYTES];
             myRandom.nextBytes(myBytes);
             myParams.withIKM(pSecret).withIKM(pId.getId())
@@ -417,26 +420,26 @@ public class GordianCoreAgreementCalculator {
          *
          * @return the id
          */
-        public GordianDigestType getDigestType() {
+        public GordianNewDigestType getDigestType() {
             /*
              * Assign a different digestType to each Id.
              * Note that each type must be available as an HMAC in JCA.
              */
             switch (this) {
                 case FACTORY:
-                    return GordianDigestType.SHA3;
+                    return GordianNewDigestType.SHA3;
                 case KEYSET:
-                    return GordianDigestType.SHA2;
+                    return GordianNewDigestType.SHA2;
                 case KEY:
-                    return GordianDigestType.SKEIN;
+                    return GordianNewDigestType.SKEIN;
                 case IV:
-                    return GordianDigestType.RIPEMD;
+                    return GordianNewDigestType.RIPEMD;
                 case BYTES:
-                    return GordianDigestType.STREEBOG;
+                    return GordianNewDigestType.STREEBOG;
                 case TAGS:
-                    return GordianDigestType.WHIRLPOOL;
+                    return GordianNewDigestType.WHIRLPOOL;
                 case COMPOSITE:
-                    return GordianDigestType.SM3;
+                    return GordianNewDigestType.SM3;
                 default:
                     throw new IllegalArgumentException("Invalid ID");
             }

@@ -20,7 +20,8 @@ import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamKeyType;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymKeyType;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestType;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestType;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianCoreDigestType;
 
 import java.util.Arrays;
 import java.util.List;
@@ -35,7 +36,7 @@ public class GordianValidator {
      *
      * @return the predicate
      */
-    public Predicate<GordianDigestType> supportedHMacDigestTypes() {
+    public Predicate<GordianNewDigestType> supportedHMacDigestTypes() {
         return this::validHMacDigestType;
     }
 
@@ -45,8 +46,8 @@ public class GordianValidator {
      * @param pDigestType the digestType
      * @return true/false
      */
-    protected boolean validHMacDigestType(final GordianDigestType pDigestType) {
-        return validDigestType(pDigestType) && pDigestType.supportsLargeData();
+    protected boolean validHMacDigestType(final GordianNewDigestType pDigestType) {
+        return validDigestType(pDigestType) && GordianCoreDigestType.supportsLargeData(pDigestType);
     }
 
     /**
@@ -55,7 +56,7 @@ public class GordianValidator {
      * @param pDigestType the digestType
      * @return true/false
      */
-    public boolean validDigestType(final GordianDigestType pDigestType) {
+    public boolean validDigestType(final GordianNewDigestType pDigestType) {
         return true;
     }
 
@@ -64,7 +65,7 @@ public class GordianValidator {
      *
      * @return the predicate
      */
-    public Predicate<GordianDigestType> supportedLockDigestTypes() {
+    public Predicate<GordianNewDigestType> supportedLockDigestTypes() {
         return supportedHMacDigestTypes().and(isCombinedHashDigest());
     }
 
@@ -73,7 +74,7 @@ public class GordianValidator {
      *
      * @return the predicate
      */
-    public Predicate<GordianDigestType> supportedKeyGenDigestTypes() {
+    public Predicate<GordianNewDigestType> supportedKeyGenDigestTypes() {
         return supportedHMacDigestTypes().and(isExternalHashDigest());
     }
 
@@ -82,7 +83,7 @@ public class GordianValidator {
      *
      * @return the predicate
      */
-    public Predicate<GordianDigestType> supportedAgreementDigestTypes() {
+    public Predicate<GordianNewDigestType> supportedAgreementDigestTypes() {
         return supportedHMacDigestTypes();
     }
 
@@ -91,9 +92,9 @@ public class GordianValidator {
      *
      * @return the predicate
      */
-    private Predicate<GordianDigestType> isCombinedHashDigest() {
-        return s -> s.getDefaultLength().getLength() >= GordianLength.LEN_256.getLength()
-                && s.supportsLargeData();
+    private Predicate<GordianNewDigestType> isCombinedHashDigest() {
+        return s -> GordianCoreDigestType.getDefaultLength(s).getLength() >= GordianLength.LEN_256.getLength()
+                && GordianCoreDigestType.supportsLargeData(s);
     }
 
     /**
@@ -101,8 +102,8 @@ public class GordianValidator {
      *
      * @return the predicate
      */
-    public Predicate<GordianDigestType> isExternalHashDigest() {
-        return s -> s.isLengthValid(GordianLength.LEN_512);
+    public Predicate<GordianNewDigestType> isExternalHashDigest() {
+        return s -> GordianCoreDigestType.isLengthValid(s, GordianLength.LEN_512);
     }
 
     /**
@@ -110,8 +111,8 @@ public class GordianValidator {
      *
      * @return the list of supported digestTypes.
      */
-    public List<GordianDigestType> listAllExternalDigestTypes() {
-        return Arrays.stream(GordianDigestType.values())
+    public List<GordianNewDigestType> listAllExternalDigestTypes() {
+        return Arrays.stream(GordianNewDigestType.values())
                 .filter(supportedExternalDigestTypes())
                 .toList();
     }
@@ -121,7 +122,7 @@ public class GordianValidator {
      *
      * @return the predicate
      */
-    public Predicate<GordianDigestType> supportedExternalDigestTypes() {
+    public Predicate<GordianNewDigestType> supportedExternalDigestTypes() {
         return supportedHMacDigestTypes().and(isExternalHashDigest());
     }
 

@@ -21,7 +21,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.base.GordianKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymKeyType;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKeyGenerator;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacType;
@@ -30,6 +30,7 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFacto
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.mac.GordianCoreMacFactory;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianCoreDigestSpec;
 
 import javax.crypto.KeyGenerator;
 import javax.crypto.Mac;
@@ -230,7 +231,7 @@ public class JcaMacFactory
             case SIPHASH:
                 return pMacSpec.toString();
             case KMAC:
-                return pMacSpec.getMacType().toString() + pMacSpec.getDigestSpec().getDigestState();
+                return pMacSpec.getMacType().toString() + ((GordianCoreDigestSpec) pMacSpec.getDigestSpec()).getCoreDigestState();
             case GOST:
                 return "GOST28147MAC";
             case VMPC:
@@ -247,8 +248,8 @@ public class JcaMacFactory
      * @return the algorithm
      * @throws GordianException on error
      */
-    private static String getHMacAlgorithm(final GordianDigestSpec pDigestSpec) throws GordianException {
-        return "HMac" + JcaDigest.getHMacAlgorithm(pDigestSpec);
+    private static String getHMacAlgorithm(final GordianNewDigestSpec pDigestSpec) throws GordianException {
+        return "HMac" + JcaDigest.getHMacAlgorithm((GordianCoreDigestSpec) pDigestSpec);
     }
 
     /**
@@ -295,9 +296,9 @@ public class JcaMacFactory
      * @param pSpec the digestSpec
      * @return the algorithm
      */
-    private static String getSkeinMacAlgorithm(final GordianDigestSpec pSpec) {
+    private static String getSkeinMacAlgorithm(final GordianNewDigestSpec pSpec) {
         return "Skein-MAC-"
-                + pSpec.getDigestState()
+                + ((GordianCoreDigestSpec) pSpec).getCoreDigestState()
                 + '-'
                 + pSpec.getDigestLength();
     }
@@ -328,7 +329,7 @@ public class JcaMacFactory
      * @return the algorithm
      * @throws GordianException on error
      */
-    private static String getKupynaMacAlgorithm(final GordianDigestSpec pSpec) throws GordianException {
+    private static String getKupynaMacAlgorithm(final GordianNewDigestSpec pSpec) throws GordianException {
         /* For some reason this is accessed as HMAC !!! */
         return getHMacAlgorithm(pSpec);
     }

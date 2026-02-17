@@ -31,7 +31,7 @@ import java.util.List;
 /**
  * Digest Specification Builder.
  */
-public class GordianCoreDigestSpecBuilder
+public final class GordianCoreDigestSpecBuilder
         implements GordianNewDigestSpecBuilder {
     /**
      * The type.
@@ -52,6 +52,21 @@ public class GordianCoreDigestSpecBuilder
      * The type.
      */
     private boolean asXof;
+
+    /**
+     * Private constructor.
+     */
+    private GordianCoreDigestSpecBuilder() {
+    }
+
+    /**
+     * Obtain new instance.
+     *
+     * @return the new instance
+     */
+    public static GordianCoreDigestSpecBuilder newInstance() {
+        return new GordianCoreDigestSpecBuilder();
+    }
 
     @Override
     public GordianCoreDigestSpecBuilder withType(final GordianNewDigestType pType) {

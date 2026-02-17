@@ -24,12 +24,13 @@ import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamKeyType
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymKeyType;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestType;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestType;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacType;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianCoreDigestType;
 
 import java.security.SecureRandom;
 import java.util.ArrayList;
@@ -162,19 +163,19 @@ public class GordianIdManager {
      * @param pLargeData only generate a Digest that is suitable for processing large amounts of data
      * @return the random digestSpec
      */
-    public GordianDigestSpec generateRandomDigestSpec(final boolean pLargeData) {
+    public GordianNewDigestSpec generateRandomDigestSpec(final boolean pLargeData) {
         /* Access the list to select from */
         final GordianDigestFactory myDigests = theFactory.getDigestFactory();
-        final List<GordianDigestSpec> mySpecs = myDigests.listAllSupportedSpecs();
+        final List<GordianNewDigestSpec> mySpecs = myDigests.listAllSupportedSpecs();
         if (pLargeData) {
-            mySpecs.removeIf(s -> !s.getDigestType().supportsLargeData());
+            mySpecs.removeIf(s -> !GordianCoreDigestType.supportsLargeData(s.getDigestType()));
         }
-        final List<GordianDigestType> myTypes = mySpecs.stream().map(GordianDigestSpec::getDigestType).toList();
+        final List<GordianNewDigestType> myTypes = mySpecs.stream().map(GordianNewDigestSpec::getDigestType).toList();
 
         /* Determine a random index into the list and obtain the digestType */
         final SecureRandom myRandom = theFactory.getRandomSource().getRandom();
         int myIndex = myRandom.nextInt(myTypes.size());
-        final GordianDigestType myDigestType = myTypes.get(myIndex);
+        final GordianNewDigestType myDigestType = myTypes.get(myIndex);
 
         /* Select from among possible digestSpecs of this type */
         mySpecs.removeIf(s -> s.getDigestType() != myDigestType);
@@ -222,11 +223,11 @@ public class GordianIdManager {
      * @param pRandom the seeded random
      * @return the selected keyHashDigestTypes
      */
-    public GordianDigestType deriveLockSecretTypeFromSeed(final Random pRandom) {
+    public GordianNewDigestType deriveLockSecretTypeFromSeed(final Random pRandom) {
         /* Access the list to select from */
         final GordianDigestFactory myDigests = theFactory.getDigestFactory();
         final GordianValidator myValidator = theFactory.getValidator();
-        final List<GordianDigestType> myTypes = myDigests.listAllSupportedTypes().stream()
+        final List<GordianNewDigestType> myTypes = myDigests.listAllSupportedTypes().stream()
                 .filter(myValidator.supportedLockDigestTypes())
                 .filter(myValidator.isExternalHashDigest())
                 .toList();
@@ -243,23 +244,23 @@ public class GordianIdManager {
      * @param pCount  the number of distinct digestTypes to select
      * @return the selected keyHashDigestTypes
      */
-    public GordianDigestType[] deriveLockDigestTypesFromSeed(final Random pRandom,
-                                                             final int pCount) {
+    public GordianNewDigestType[] deriveLockDigestTypesFromSeed(final Random pRandom,
+                                                                final int pCount) {
         /* Access the list to select from */
         final GordianDigestFactory myDigests = theFactory.getDigestFactory();
         final GordianValidator myValidator = theFactory.getValidator();
-        final List<GordianDigestType> myTypes = myDigests.listAllSupportedTypes().stream()
+        final List<GordianNewDigestType> myTypes = myDigests.listAllSupportedTypes().stream()
                 .filter(myValidator.supportedLockDigestTypes())
                 .collect(Collectors.toCollection(ArrayList::new));
 
         /* Allocate the array to return */
-        final GordianDigestType[] myResult = new GordianDigestType[pCount];
+        final GordianNewDigestType[] myResult = new GordianNewDigestType[pCount];
 
         /* Loop selecting digestTypes */
         for (int i = 0; i < pCount; i++) {
             /* Select from the list and remove the selected item */
             final int myIndex = pRandom.nextInt(myTypes.size());
-            final GordianDigestType myType = myTypes.get(myIndex);
+            final GordianNewDigestType myType = myTypes.get(myIndex);
             myTypes.removeIf(t -> t == myType);
             myResult[i] = myType;
         }
@@ -274,10 +275,10 @@ public class GordianIdManager {
      * @param pRandom the seeded random
      * @return the selected externalDigestType
      */
-    public GordianDigestType deriveExternalDigestTypeFromSeed(final Random pRandom) {
+    public GordianNewDigestType deriveExternalDigestTypeFromSeed(final Random pRandom) {
         /* Access the list to select from */
         final GordianValidator myValidator = theFactory.getValidator();
-        final List<GordianDigestType> myTypes = myValidator.listAllExternalDigestTypes();
+        final List<GordianNewDigestType> myTypes = myValidator.listAllExternalDigestTypes();
 
         /* Select from the list */
         final int myIndex = pRandom.nextInt(myTypes.size());
@@ -291,23 +292,23 @@ public class GordianIdManager {
      * @param pCount  the number of distinct digestTypes to select
      * @return the selected keyGenDigestTypes
      */
-    public GordianDigestType[] deriveKeyGenDigestTypesFromSeed(final Random pRandom,
-                                                               final int pCount) {
+    public GordianNewDigestType[] deriveKeyGenDigestTypesFromSeed(final Random pRandom,
+                                                                  final int pCount) {
         /* Access the list to select from */
         final GordianDigestFactory myDigests = theFactory.getDigestFactory();
         final GordianValidator myValidator = theFactory.getValidator();
-        final List<GordianDigestType> myTypes = myDigests.listAllSupportedTypes().stream()
+        final List<GordianNewDigestType> myTypes = myDigests.listAllSupportedTypes().stream()
                 .filter(myValidator.supportedKeyGenDigestTypes())
                 .collect(Collectors.toCollection(ArrayList::new));
 
         /* Allocate the array to return */
-        final GordianDigestType[] myResult = new GordianDigestType[pCount];
+        final GordianNewDigestType[] myResult = new GordianNewDigestType[pCount];
 
         /* Loop selecting digestTypes */
         for (int i = 0; i < pCount; i++) {
             /* Select from the list and remove the selected item */
             final int myIndex = pRandom.nextInt(myTypes.size());
-            final GordianDigestType myType = myTypes.get(myIndex);
+            final GordianNewDigestType myType = myTypes.get(myIndex);
             myTypes.removeIf(t -> t == myType);
             myResult[i] = myType;
         }
@@ -322,11 +323,11 @@ public class GordianIdManager {
      * @param pRandom the seeded random
      * @return the selected agreementDigestType
      */
-    public GordianDigestType deriveAgreementDigestTypeFromSeed(final Random pRandom) {
+    public GordianNewDigestType deriveAgreementDigestTypeFromSeed(final Random pRandom) {
         /* Access the list to select from */
         final GordianDigestFactory myDigests = theFactory.getDigestFactory();
         final GordianValidator myValidator = theFactory.getValidator();
-        final List<GordianDigestType> myTypes = myDigests.listAllSupportedTypes().stream()
+        final List<GordianNewDigestType> myTypes = myDigests.listAllSupportedTypes().stream()
                 .filter(myValidator.supportedAgreementDigestTypes())
                 .toList();
 

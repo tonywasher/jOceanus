@@ -29,8 +29,8 @@ import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymKeyType;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigest;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestType;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestType;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKey;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKeyGenerator;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKeyLengths;
@@ -52,6 +52,7 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.cipher.GordianCoreCip
 import io.github.tonywasher.joceanus.gordianknot.impl.core.digest.GordianCoreDigestFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.mac.GordianCoreMacFactory;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianCoreDigestType;
 import org.bouncycastle.crypto.prng.BasicEntropySourceProvider;
 import org.bouncycastle.crypto.prng.EntropySource;
 import org.bouncycastle.crypto.prng.EntropySourceProvider;
@@ -161,7 +162,7 @@ public class GordianCoreRandomFactory
         final GordianCoreMacFactory myMacs = (GordianCoreMacFactory) theFactory.getMacFactory();
 
         /* Access the digestSpec */
-        final GordianDigestSpec myDigest = pRandomSpec.getDigestSpec();
+        final GordianNewDigestSpec myDigest = pRandomSpec.getDigestSpec();
         final boolean isResistent = pRandomSpec.isPredictionResistant();
         switch (pRandomSpec.getRandomType()) {
             case HASH:
@@ -221,7 +222,7 @@ public class GordianCoreRandomFactory
 
         /* Access details */
         final GordianRandomType myType = pRandomSpec.getRandomType();
-        final GordianDigestSpec myDigest = pRandomSpec.getDigestSpec();
+        final GordianNewDigestSpec myDigest = pRandomSpec.getDigestSpec();
         final GordianSymKeySpec mySymKey = pRandomSpec.getSymKeySpec();
 
         /* Check that the randomType is supported */
@@ -276,7 +277,7 @@ public class GordianCoreRandomFactory
         final GordianRandomSpec myCtrSpec = GordianRandomSpecBuilder.ctr(mySymKeySpec);
 
         /* Create a random hashSpec */
-        final GordianDigestSpec myDigestSpec = generateRandomDigestSpec();
+        final GordianNewDigestSpec myDigestSpec = generateRandomDigestSpec();
         final GordianRandomSpec myHashSpec = GordianRandomSpecBuilder.hash(myDigestSpec);
 
         /* Build the combinedRandom */
@@ -313,19 +314,19 @@ public class GordianCoreRandomFactory
      *
      * @return the random digestSpec
      */
-    private GordianDigestSpec generateRandomDigestSpec() {
+    private GordianNewDigestSpec generateRandomDigestSpec() {
         /* Access the list to select from */
         final GordianCoreDigestFactory myDigests = (GordianCoreDigestFactory) theFactory.getDigestFactory();
-        final List<GordianDigestSpec> mySpecs = myDigests.listAllSupportedSpecs();
-        mySpecs.removeIf(s -> !s.getDigestType().supportsLargeData()
+        final List<GordianNewDigestSpec> mySpecs = myDigests.listAllSupportedSpecs();
+        mySpecs.removeIf(s -> !GordianCoreDigestType.supportsLargeData(s.getDigestType())
                 || s.getDigestLength() != GordianLength.LEN_512);
-        final List<GordianDigestType> myTypes
-                = mySpecs.stream().map(GordianDigestSpec::getDigestType).collect(Collectors.toCollection(ArrayList::new));
+        final List<GordianNewDigestType> myTypes
+                = mySpecs.stream().map(GordianNewDigestSpec::getDigestType).collect(Collectors.toCollection(ArrayList::new));
 
         /* Determine a random index into the list and obtain the digestType */
         final SecureRandom myRandom = theFactory.getRandomSource().getRandom();
         int myIndex = myRandom.nextInt(myTypes.size());
-        final GordianDigestType myDigestType = myTypes.get(myIndex);
+        final GordianNewDigestType myDigestType = myTypes.get(myIndex);
 
         /* Select from among possible digestSpecs of this type */
         mySpecs.removeIf(s -> s.getDigestType() != myDigestType);
@@ -340,7 +341,7 @@ public class GordianCoreRandomFactory
         final GordianIdManager myIds = theFactory.getIdManager();
 
         /* Determine a random specification and create it */
-        final GordianDigestSpec mySpec = myIds.generateRandomDigestSpec(pLargeData);
+        final GordianNewDigestSpec mySpec = myIds.generateRandomDigestSpec(pLargeData);
         return myDigests.createDigest(mySpec);
     }
 
@@ -518,7 +519,7 @@ public class GordianCoreRandomFactory
         final List<GordianRandomSpec> myList = new ArrayList<>();
 
         /* For each digestSpec */
-        for (final GordianDigestSpec mySpec : theFactory.getDigestFactory().listAllPossibleSpecs()) {
+        for (final GordianNewDigestSpec mySpec : theFactory.getDigestFactory().listAllPossibleSpecs()) {
             /* Add a hash random */
             myList.add(GordianRandomSpecBuilder.hash(mySpec));
             myList.add(GordianRandomSpecBuilder.hashResist(mySpec));

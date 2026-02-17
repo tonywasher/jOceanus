@@ -25,7 +25,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymCipher;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymCipherSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigest;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKey;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMac;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacParameters;
@@ -310,7 +310,7 @@ public final class GordianStreamDefinition {
         final GordianCoreKnuthObfuscater myKnuth = (GordianCoreKnuthObfuscater) myFactory.getObfuscater();
 
         /* Parse the TypeId */
-        final GordianDigestSpec mySpec = (GordianDigestSpec) myKnuth.deriveTypeFromExternalId(theTypeId);
+        final GordianNewDigestSpec mySpec = (GordianNewDigestSpec) myKnuth.deriveTypeFromExternalId(theTypeId);
 
         /* Generate the Digest */
         final GordianCoreDigestFactory myDigests = (GordianCoreDigestFactory) myFactory.getDigestFactory();

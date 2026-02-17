@@ -26,8 +26,8 @@ import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamCipherS
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymCipherSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymKeySpec;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKey;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKeyGenerator;
@@ -88,7 +88,7 @@ class SymmetricStore {
      * Factory and Digest definition.
      */
     static class FactoryDigestSpec
-            implements FactorySpec<GordianDigestSpec>, PartneredSpec {
+            implements FactorySpec<GordianNewDigestSpec>, PartneredSpec {
         /**
          * The factory.
          */
@@ -102,7 +102,7 @@ class SymmetricStore {
         /**
          * The digestSpec.
          */
-        private final GordianDigestSpec theDigestSpec;
+        private final GordianNewDigestSpec theDigestSpec;
 
         /**
          * Constructor.
@@ -113,7 +113,7 @@ class SymmetricStore {
          */
         FactoryDigestSpec(final GordianFactory pFactory,
                           final GordianFactory pPartner,
-                          final GordianDigestSpec pDigestSpec) {
+                          final GordianNewDigestSpec pDigestSpec) {
             theFactory = pFactory;
             thePartner = pPartner;
             theDigestSpec = pDigestSpec;
@@ -130,7 +130,7 @@ class SymmetricStore {
         }
 
         @Override
-        public GordianDigestSpec getSpec() {
+        public GordianNewDigestSpec getSpec() {
             return theDigestSpec;
         }
 
@@ -936,8 +936,8 @@ class SymmetricStore {
         /* Loop through the possible digestSpecs */
         final List<FactoryDigestSpec> myResult = new ArrayList<>();
         final GordianCoreDigestFactory myDigestFactory = (GordianCoreDigestFactory) pFactory.getDigestFactory();
-        final Predicate<GordianDigestSpec> myPredicate = pPartner.getDigestFactory().supportedDigestSpecs();
-        for (GordianDigestSpec mySpec : myDigestFactory.listAllSupportedSpecs()) {
+        final Predicate<GordianNewDigestSpec> myPredicate = pPartner.getDigestFactory().supportedDigestSpecs();
+        for (GordianNewDigestSpec mySpec : myDigestFactory.listAllSupportedSpecs()) {
             /* Determine whether the digestSpec is supported by the partner */
             GordianFactory myPartner = myPredicate.test(mySpec) ? pPartner : null;
 

@@ -28,7 +28,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymCipherSpec
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymCipherSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigest;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKey;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKeyGenerator;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMac;
@@ -237,7 +237,7 @@ public final class GordianStreamManager {
         final GordianIdManager myIdMgr = myFactory.getIdManager();
 
         /* Generate the random digest */
-        final GordianDigestSpec mySpec = myIdMgr.generateRandomDigestSpec(true);
+        final GordianNewDigestSpec mySpec = myIdMgr.generateRandomDigestSpec(true);
         return myDigests.createDigest(mySpec);
     }
 

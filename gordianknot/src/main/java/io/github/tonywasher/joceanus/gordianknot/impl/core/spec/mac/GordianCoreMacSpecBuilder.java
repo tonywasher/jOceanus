@@ -20,7 +20,6 @@ package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.mac;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeyType;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestType;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSubSpec.GordianNewDigestState;
@@ -66,7 +65,7 @@ public class GordianCoreMacSpecBuilder
      * Constructor.
      */
     public GordianCoreMacSpecBuilder() {
-        theBuilder = new GordianCoreDigestSpecBuilder();
+        theBuilder = GordianCoreDigestSpecBuilder.newInstance();
     }
 
     @Override
@@ -171,7 +170,7 @@ public class GordianCoreMacSpecBuilder
         /* Create the array list */
         final List<GordianNewMacSpec> myList = new ArrayList<>();
         final GordianCoreMacSpecBuilder myBuilder = new GordianCoreMacSpecBuilder();
-        final GordianCoreDigestSpecBuilder myDigestBuilder = new GordianCoreDigestSpecBuilder();
+        final GordianCoreDigestSpecBuilder myDigestBuilder = GordianCoreDigestSpecBuilder.newInstance();
 
         /* For each digestSpec */
         for (final GordianNewDigestSpec mySpec : GordianCoreDigestSpecBuilder.listAllPossibleSpecs()) {
@@ -235,7 +234,7 @@ public class GordianCoreMacSpecBuilder
             }
 
             /* Add blake2Macs */
-            for (final GordianLength myLength : GordianDigestType.BLAKE2.getSupportedLengths()) {
+            for (final GordianLength myLength : GordianCoreDigestType.getSupportedLengths(GordianNewDigestType.BLAKE2)) {
                 final GordianNewMacSpec myBlakeSpec = myBuilder.blake2Mac(pKeyLen, myDigestBuilder.blake2(myBaseState, myLength));
                 if (myBlakeSpec.isValid()) {
                     myList.add(myBlakeSpec);

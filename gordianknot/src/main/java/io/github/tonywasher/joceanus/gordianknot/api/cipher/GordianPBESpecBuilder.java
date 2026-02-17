@@ -19,7 +19,7 @@ package io.github.tonywasher.joceanus.gordianknot.api.cipher;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianPBESpec.GordianPBEArgon2Spec;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianPBESpec.GordianPBEDigestAndCountSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianPBESpec.GordianPBESCryptSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpec;
 
 /**
  * PBE Specification.
@@ -38,7 +38,7 @@ public final class GordianPBESpecBuilder {
      * @param pCount      the iteration count
      * @return the new spec
      */
-    public static GordianPBEDigestAndCountSpec pbKDF2(final GordianDigestSpec pDigestSpec,
+    public static GordianPBEDigestAndCountSpec pbKDF2(final GordianNewDigestSpec pDigestSpec,
                                                       final int pCount) {
         return new GordianPBEDigestAndCountSpec(GordianPBEType.PBKDF2, pDigestSpec, pCount);
     }
@@ -50,7 +50,7 @@ public final class GordianPBESpecBuilder {
      * @param pCount      the iteration count
      * @return the new spec
      */
-    public static GordianPBEDigestAndCountSpec pkcs12(final GordianDigestSpec pDigestSpec,
+    public static GordianPBEDigestAndCountSpec pkcs12(final GordianNewDigestSpec pDigestSpec,
                                                       final int pCount) {
         return new GordianPBEDigestAndCountSpec(GordianPBEType.PKCS12, pDigestSpec, pCount);
     }

@@ -17,8 +17,8 @@
 package io.github.tonywasher.joceanus.gordianknot.impl.core.encrypt;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianEncryptorFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianEncryptorSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianEncryptorSpecBuilder;
@@ -26,7 +26,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianSM2Encryptio
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairType;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianASN1Util;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.digest.GordianDigestAlgId;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.digest.GordianCoreDigestAlgId;
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.ASN1Sequence;
@@ -186,11 +186,11 @@ public class GordianEncryptorAlgId {
 
         /* Obtain the encryptor */
         final Object myEncryptor = pSpec.getEncryptorType();
-        if (myEncryptor instanceof GordianDigestSpec mySpec) {
-            myId = GordianDigestAlgId.appendDigestOID(myId.branch("2"), mySpec);
+        if (myEncryptor instanceof GordianNewDigestSpec mySpec) {
+            myId = GordianCoreDigestAlgId.appendDigestOID(myId.branch("2"), mySpec);
         } else if (myEncryptor instanceof GordianSM2EncryptionSpec mySpec) {
             myId = myId.branch("4").branch(Integer.toString(mySpec.getEncryptionType().ordinal() + 1));
-            myId = GordianDigestAlgId.appendDigestOID(myId, mySpec.getDigestSpec());
+            myId = GordianCoreDigestAlgId.appendDigestOID(myId, mySpec.getDigestSpec());
         } else {
             myId = myId.branch("1");
         }

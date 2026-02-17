@@ -17,9 +17,9 @@
 package io.github.tonywasher.joceanus.gordianknot.impl.core.sign;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestSpecBuilder;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestSubSpec.GordianDigestState;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSubSpec.GordianNewDigestState;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianFalconSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairSpecBuilder;
@@ -296,9 +296,9 @@ public class GordianSignatureAlgId {
                 new AlgorithmIdentifier(PKCSObjectIdentifiers.sha384WithRSAEncryption, DERNull.INSTANCE));
         addToMaps(GordianSignatureSpecBuilder.rsa(GordianSignatureType.PREHASH, GordianDigestSpecBuilder.sha2(GordianLength.LEN_512)),
                 new AlgorithmIdentifier(PKCSObjectIdentifiers.sha512WithRSAEncryption, DERNull.INSTANCE));
-        addToMaps(GordianSignatureSpecBuilder.rsa(GordianSignatureType.PREHASH, GordianDigestSpecBuilder.sha2(GordianDigestState.STATE512, GordianLength.LEN_224)),
+        addToMaps(GordianSignatureSpecBuilder.rsa(GordianSignatureType.PREHASH, GordianDigestSpecBuilder.sha2(GordianNewDigestState.STATE512, GordianLength.LEN_224)),
                 new AlgorithmIdentifier(PKCSObjectIdentifiers.sha512_224WithRSAEncryption, DERNull.INSTANCE));
-        addToMaps(GordianSignatureSpecBuilder.rsa(GordianSignatureType.PREHASH, GordianDigestSpecBuilder.sha2(GordianDigestState.STATE512, GordianLength.LEN_256)),
+        addToMaps(GordianSignatureSpecBuilder.rsa(GordianSignatureType.PREHASH, GordianDigestSpecBuilder.sha2(GordianNewDigestState.STATE512, GordianLength.LEN_256)),
                 new AlgorithmIdentifier(PKCSObjectIdentifiers.sha512_256WithRSAEncryption, DERNull.INSTANCE));
         addToMaps(GordianSignatureSpecBuilder.rsa(GordianSignatureType.PREHASH, GordianDigestSpecBuilder.sha3(GordianLength.LEN_224)),
                 new AlgorithmIdentifier(NISTObjectIdentifiers.id_rsassa_pkcs1_v1_5_with_sha3_224, DERNull.INSTANCE));
@@ -569,7 +569,7 @@ public class GordianSignatureAlgId {
      * @param pHash     the hash algorithmId
      * @param pSaltSize the saltSize
      */
-    private void addPSS128Algorithms(final GordianDigestSpec pSpec,
+    private void addPSS128Algorithms(final GordianNewDigestSpec pSpec,
                                      final ASN1ObjectIdentifier pHash,
                                      final GordianLength pSaltSize) {
         /* Loop through the RSAModulii */
@@ -609,7 +609,7 @@ public class GordianSignatureAlgId {
      * @param pHash     the hash algorithmId
      * @param pSaltSize the saltSize
      */
-    private void addPSS256Algorithms(final GordianDigestSpec pSpec,
+    private void addPSS256Algorithms(final GordianNewDigestSpec pSpec,
                                      final ASN1ObjectIdentifier pHash,
                                      final GordianLength pSaltSize) {
         /* Loop through the RSAModulii */
@@ -680,14 +680,14 @@ public class GordianSignatureAlgId {
         myId = myId.branch(Integer.toString(mySigType.ordinal() + 1));
 
         /* If we have a digestSpec */
-        if (pSigSpec.getSignatureSpec() instanceof GordianDigestSpec) {
+        if (pSigSpec.getSignatureSpec() instanceof GordianNewDigestSpec) {
             /* Create a branch for digest based on the DigestType/Length/State */
-            final GordianDigestSpec myDigestSpec = pSigSpec.getDigestSpec();
+            final GordianNewDigestSpec myDigestSpec = pSigSpec.getDigestSpec();
             myId = myId.branch(Integer.toString(myDigestSpec.getDigestType().ordinal() + 1));
             myId = myId.branch(Integer.toString(myDigestSpec.getDigestLength().ordinal() + 1));
 
             /* Add a branch if there is a state */
-            final GordianDigestState myState = myDigestSpec.getDigestState();
+            final GordianNewDigestState myState = myDigestSpec.getDigestState();
             if (myState != null) {
                 myId = myId.branch(Integer.toString(myState.ordinal() + 1));
             }

@@ -17,7 +17,7 @@
 package io.github.tonywasher.joceanus.gordianknot.api.random;
 
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymKeySpec;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpec;
 
 /**
  * SecureRandom Specification Builder.
@@ -35,7 +35,7 @@ public final class GordianRandomSpecBuilder {
      * @param pDigest the digestSpec
      * @return the RandomSpec
      */
-    public static GordianRandomSpec hash(final GordianDigestSpec pDigest) {
+    public static GordianRandomSpec hash(final GordianNewDigestSpec pDigest) {
         return new GordianRandomSpec(GordianRandomType.HASH, pDigest, false);
     }
 
@@ -45,7 +45,7 @@ public final class GordianRandomSpecBuilder {
      * @param pDigest the digestSpec
      * @return the RandomSpec
      */
-    public static GordianRandomSpec hashResist(final GordianDigestSpec pDigest) {
+    public static GordianRandomSpec hashResist(final GordianNewDigestSpec pDigest) {
         return new GordianRandomSpec(GordianRandomType.HASH, pDigest, true);
     }
 
@@ -55,7 +55,7 @@ public final class GordianRandomSpecBuilder {
      * @param pDigest the digestSpec
      * @return the RandomSpec
      */
-    public static GordianRandomSpec hMac(final GordianDigestSpec pDigest) {
+    public static GordianRandomSpec hMac(final GordianNewDigestSpec pDigest) {
         return new GordianRandomSpec(GordianRandomType.HMAC, pDigest, false);
     }
 
@@ -65,7 +65,7 @@ public final class GordianRandomSpecBuilder {
      * @param pDigest the digestSpec
      * @return the RandomSpec
      */
-    public static GordianRandomSpec hMacResist(final GordianDigestSpec pDigest) {
+    public static GordianRandomSpec hMacResist(final GordianNewDigestSpec pDigest) {
         return new GordianRandomSpec(GordianRandomType.HMAC, pDigest, true);
     }
 

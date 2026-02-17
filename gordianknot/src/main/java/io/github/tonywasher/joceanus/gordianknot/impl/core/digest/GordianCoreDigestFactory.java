@@ -17,15 +17,15 @@
 package io.github.tonywasher.joceanus.gordianknot.impl.core.digest;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
-import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestSubSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestSubSpec.GordianDigestState;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestType;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestType;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseData;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianCoreDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianCoreDigestSpecBuilder;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 
 import java.util.ArrayList;
@@ -47,7 +47,7 @@ public abstract class GordianCoreDigestFactory
     /**
      * The Digest AlgIds.
      */
-    private GordianDigestAlgId theDigestAlgIds;
+    private GordianCoreDigestAlgId theDigestAlgIds;
 
     /**
      * Constructor.
@@ -67,6 +67,10 @@ public abstract class GordianCoreDigestFactory
         return theFactory;
     }
 
+    @Override
+    public GordianNewDigestSpecBuilder newDigestSpecBuilder() {
+        return GordianCoreDigestSpecBuilder.newInstance();
+    }
 
     /**
      * Obtain Identifier for DigestSpec.
@@ -74,7 +78,7 @@ public abstract class GordianCoreDigestFactory
      * @param pSpec the digestSpec.
      * @return the Identifier
      */
-    public AlgorithmIdentifier getIdentifierForSpec(final GordianDigestSpec pSpec) {
+    public AlgorithmIdentifier getIdentifierForSpec(final GordianNewDigestSpec pSpec) {
         return getDigestAlgIds().getIdentifierForSpec(pSpec);
     }
 
@@ -84,7 +88,7 @@ public abstract class GordianCoreDigestFactory
      * @param pIdentifier the identifier.
      * @return the digestSpec (or null if not found)
      */
-    public GordianDigestSpec getDigestSpecForIdentifier(final AlgorithmIdentifier pIdentifier) {
+    public GordianCoreDigestSpec getDigestSpecForIdentifier(final AlgorithmIdentifier pIdentifier) {
         return getDigestAlgIds().getSpecForIdentifier(pIdentifier);
     }
 
@@ -93,20 +97,20 @@ public abstract class GordianCoreDigestFactory
      *
      * @return the digest Algorithm Ids
      */
-    private GordianDigestAlgId getDigestAlgIds() {
+    private GordianCoreDigestAlgId getDigestAlgIds() {
         if (theDigestAlgIds == null) {
-            theDigestAlgIds = new GordianDigestAlgId(theFactory);
+            theDigestAlgIds = new GordianCoreDigestAlgId(theFactory);
         }
         return theDigestAlgIds;
     }
 
     @Override
-    public Predicate<GordianDigestSpec> supportedDigestSpecs() {
+    public Predicate<GordianNewDigestSpec> supportedDigestSpecs() {
         return this::validDigestSpec;
     }
 
     @Override
-    public Predicate<GordianDigestType> supportedDigestTypes() {
+    public Predicate<GordianNewDigestType> supportedDigestTypes() {
         return t -> theFactory.getValidator().validDigestType(t);
     }
 
@@ -116,7 +120,7 @@ public abstract class GordianCoreDigestFactory
      * @param pDigestSpec the digestSpec
      * @throws GordianException on error
      */
-    public void checkDigestSpec(final GordianDigestSpec pDigestSpec) throws GordianException {
+    public void checkDigestSpec(final GordianNewDigestSpec pDigestSpec) throws GordianException {
         /* Check validity of DigestType */
         if (!supportedDigestSpecs().test(pDigestSpec)) {
             throw new GordianDataException(GordianBaseData.getInvalidText(pDigestSpec));
@@ -129,7 +133,7 @@ public abstract class GordianCoreDigestFactory
      * @param pDigestSpec the digestSpec
      * @return true/false
      */
-    public boolean validDigestSpec(final GordianDigestSpec pDigestSpec) {
+    public boolean validDigestSpec(final GordianNewDigestSpec pDigestSpec) {
         /* Reject invalid digestSpec */
         if (pDigestSpec == null || !pDigestSpec.isValid()) {
             return false;
@@ -146,7 +150,7 @@ public abstract class GordianCoreDigestFactory
     }
 
     @Override
-    public List<GordianDigestSpec> listAllSupportedSpecs() {
+    public List<GordianNewDigestSpec> listAllSupportedSpecs() {
         return listAllPossibleSpecs()
                 .stream()
                 .filter(supportedDigestSpecs())
@@ -154,53 +158,14 @@ public abstract class GordianCoreDigestFactory
     }
 
     @Override
-    public List<GordianDigestType> listAllSupportedTypes() {
-        return Arrays.stream(GordianDigestType.values())
+    public List<GordianNewDigestType> listAllSupportedTypes() {
+        return Arrays.stream(GordianNewDigestType.values())
                 .filter(supportedDigestTypes())
                 .collect(Collectors.toCollection(ArrayList::new));
     }
 
     @Override
-    public List<GordianDigestSpec> listAllPossibleSpecs() {
-        /* Create the array list */
-        final List<GordianDigestSpec> myList = new ArrayList<>();
-
-        /* For each digest type */
-        for (final GordianDigestType myType : GordianDigestType.values()) {
-            /* For each subSpecType */
-            for (GordianDigestSubSpec mySubSpec : GordianDigestSubSpec.getPossibleSubSpecsForType(myType)) {
-                /* For each length */
-                for (final GordianLength myLength : myType.getSupportedLengths()) {
-                    final GordianDigestSpec mySpec = new GordianDigestSpec(myType, mySubSpec, myLength);
-
-                    /* Add if valid */
-                    if (mySpec.isValid()) {
-                        myList.add(mySpec);
-                    }
-                }
-
-                /* If we have a possible Xof */
-                if (mySubSpec instanceof GordianDigestState myState) {
-                    final GordianDigestSpec mySpec = new GordianDigestSpec(myType, myState, myState.getLength(), Boolean.TRUE);
-
-                    /* Add if valid */
-                    if (mySpec.isValid()) {
-                        myList.add(mySpec);
-                    }
-
-                    /* Else look for null Xof type */
-                } else {
-                    final GordianDigestSpec mySpec = new GordianDigestSpec(myType, null, myType.getDefaultLength(), Boolean.TRUE);
-
-                    /* Add if valid */
-                    if (mySpec.isValid()) {
-                        myList.add(mySpec);
-                    }
-                }
-            }
-        }
-
-        /* Return the list */
-        return myList;
+    public List<GordianNewDigestSpec> listAllPossibleSpecs() {
+        return GordianCoreDigestSpecBuilder.listAllPossibleSpecs();
     }
 }

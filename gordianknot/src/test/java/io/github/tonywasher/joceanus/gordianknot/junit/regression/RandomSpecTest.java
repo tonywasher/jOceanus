@@ -21,7 +21,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigest;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactoryType;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKey;
@@ -181,12 +181,12 @@ class RandomSpecTest {
         /* Generate digestSpecs */
         final GordianRandomFactory myRandom = pFactory.getRandomFactory();
         final GordianCoreDigestFactory myDigests = (GordianCoreDigestFactory) pFactory.getDigestFactory();
-        final List<GordianDigestSpec> myValid = myDigests.listAllSupportedSpecs();
+        final List<GordianNewDigestSpec> myValid = myDigests.listAllSupportedSpecs();
 
         /* Loop a large number of times to ensure that all digests are generated */
         for (int i = 0; i < 10000 && !myValid.isEmpty(); i++) {
             final GordianDigest myDigest = myRandom.generateRandomDigest(false);
-            final GordianDigestSpec mySpec = myDigest.getDigestSpec();
+            final GordianNewDigestSpec mySpec = myDigest.getDigestSpec();
             myValid.remove(mySpec);
         }
 

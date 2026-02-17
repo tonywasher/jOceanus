@@ -21,7 +21,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.base.GordianKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymKeyType;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacType;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianSipHashSpec;
@@ -29,6 +29,7 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseData;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.mac.GordianCoreMacFactory;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianCoreDigestSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.ext.digests.GordianBlake3Digest;
 import io.github.tonywasher.joceanus.gordianknot.impl.ext.macs.GordianBlake2Mac;
 import io.github.tonywasher.joceanus.gordianknot.impl.ext.macs.GordianBlake2XMac;
@@ -227,10 +228,11 @@ public class BouncyMacFactory
      * @param pSpec the digestSpec
      * @return the MAC
      */
-    private static Mac getBCSkeinMac(final GordianDigestSpec pSpec) {
+    private static Mac getBCSkeinMac(final GordianNewDigestSpec pSpec) {
+        final GordianCoreDigestSpec mySpec = (GordianCoreDigestSpec) pSpec;
         return pSpec.isXofMode()
-                ? new GordianSkeinXMac(pSpec.getDigestState().getLength().getLength())
-                : new GordianSkeinMac(pSpec.getDigestState().getLength().getLength(), pSpec.getDigestLength().getLength());
+                ? new GordianSkeinXMac(mySpec.getCoreDigestState().getLength().getLength())
+                : new GordianSkeinMac(mySpec.getCoreDigestState().getLength().getLength(), pSpec.getDigestLength().getLength());
     }
 
     /**
@@ -250,7 +252,7 @@ public class BouncyMacFactory
      * @param pSpec the digestSpec
      * @return the MAC
      */
-    private static Mac getBCKupynaMac(final GordianDigestSpec pSpec) {
+    private static Mac getBCKupynaMac(final GordianNewDigestSpec pSpec) {
         return new DSTU7564Mac(pSpec.getDigestLength().getLength());
     }
 
@@ -260,10 +262,10 @@ public class BouncyMacFactory
      * @param pSpec the digestSpec
      * @return the MAC
      */
-    private static Mac getBCBlake2Mac(final GordianDigestSpec pSpec) {
+    private static Mac getBCBlake2Mac(final GordianNewDigestSpec pSpec) {
         return pSpec.isXofMode()
-                ? new GordianBlake2XMac(BouncyDigestFactory.getBlake2Xof(pSpec))
-                : new GordianBlake2Mac(BouncyDigestFactory.getBlake2Digest(pSpec));
+                ? new GordianBlake2XMac(BouncyDigestFactory.getBlake2Xof((GordianCoreDigestSpec) pSpec))
+                : new GordianBlake2Mac(BouncyDigestFactory.getBlake2Digest((GordianCoreDigestSpec) pSpec));
     }
 
     /**
@@ -272,7 +274,7 @@ public class BouncyMacFactory
      * @param pSpec the digestSpec
      * @return the MAC
      */
-    private static Mac getBCBlake3Mac(final GordianDigestSpec pSpec) {
+    private static Mac getBCBlake3Mac(final GordianNewDigestSpec pSpec) {
         final GordianBlake3Digest myDigest = new GordianBlake3Digest(pSpec.getDigestLength().getByteLength());
         return new GordianBlake3Mac(myDigest);
     }
@@ -283,8 +285,8 @@ public class BouncyMacFactory
      * @param pSpec the digestSpec
      * @return the MAC
      */
-    private static Mac getBCKMAC(final GordianDigestSpec pSpec) {
-        return new GordianKMACWrapper(pSpec.getDigestState().getLength().getLength());
+    private static Mac getBCKMAC(final GordianNewDigestSpec pSpec) {
+        return new GordianKMACWrapper(((GordianCoreDigestSpec) pSpec).getCoreDigestState().getLength().getLength());
     }
 
     /**

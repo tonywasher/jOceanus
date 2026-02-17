@@ -20,7 +20,8 @@ import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementKDF;
 import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementType;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.agree.GordianCoreAgreementCalculator.GordianDerivationId;
@@ -30,6 +31,7 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianIOExceptio
 import io.github.tonywasher.joceanus.gordianknot.impl.core.kdf.GordianHKDFEngine;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.kdf.GordianHKDFParams;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianCompositeKeyPair;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianCoreDigestSpecBuilder;
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1OctetString;
 import org.bouncycastle.asn1.ASN1Sequence;
@@ -266,7 +268,8 @@ public class GordianCoreAgreementComposite extends GordianCoreAgreementEngine {
         final GordianHKDFParams myParams = GordianHKDFParams.extractOnly();
         try {
             /* Create the HKDF parameters */
-            final GordianDigestSpec myDigestSpec = new GordianDigestSpec(GordianDerivationId.COMPOSITE.getDigestType());
+            final GordianNewDigestSpecBuilder myBuilder = GordianCoreDigestSpecBuilder.newInstance();
+            final GordianNewDigestSpec myDigestSpec = myBuilder.generic(GordianDerivationId.COMPOSITE.getDigestType());
             Random myRandom = null;
 
             /* Loop through the engines */

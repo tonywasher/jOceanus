@@ -17,8 +17,8 @@
 package io.github.tonywasher.joceanus.gordianknot.api.keypair;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpec;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -371,7 +371,7 @@ public class GordianXMSSKeySpec {
          *
          * @return the digestSpec
          */
-        public GordianDigestSpec getDigestSpec() {
+        public GordianNewDigestSpec getDigestSpec() {
             switch (this) {
                 case SHA256:
                     return GordianDigestSpecBuilder.sha2(GordianLength.LEN_256);

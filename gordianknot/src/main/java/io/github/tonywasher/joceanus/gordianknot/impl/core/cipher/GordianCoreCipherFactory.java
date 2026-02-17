@@ -42,8 +42,8 @@ import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymCipherSpec
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymKeyType;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianWrapper;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKey;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKeyLengths;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseData;
@@ -372,7 +372,7 @@ public abstract class GordianCoreCipherFactory
         /* Digest if specified must be SHA512 currently */
         final GordianPBESpec myPBESpec = pPBECipherSpec.getPBESpec();
         if (myPBESpec instanceof GordianPBEDigestAndCountSpec myCountSpec) {
-            final GordianDigestSpec mySpec = myCountSpec.getDigestSpec();
+            final GordianNewDigestSpec mySpec = myCountSpec.getDigestSpec();
             return GordianDigestSpecBuilder.sha2(GordianLength.LEN_512).equals(mySpec);
         }
 

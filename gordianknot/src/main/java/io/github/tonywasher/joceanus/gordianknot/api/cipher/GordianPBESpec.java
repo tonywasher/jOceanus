@@ -16,7 +16,7 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.api.cipher;
 
-import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpec;
 
 import java.util.Objects;
 
@@ -81,7 +81,7 @@ public abstract class GordianPBESpec {
         /**
          * The DigestSpec.
          */
-        private final GordianDigestSpec theDigestSpec;
+        private final GordianNewDigestSpec theDigestSpec;
 
         /**
          * The count.
@@ -96,7 +96,7 @@ public abstract class GordianPBESpec {
          * @param pCount      the iteration count
          */
         GordianPBEDigestAndCountSpec(final GordianPBEType pPBEType,
-                                     final GordianDigestSpec pDigestSpec,
+                                     final GordianNewDigestSpec pDigestSpec,
                                      final int pCount) {
             /* Init underlying class and store params */
             super(pPBEType);
@@ -112,7 +112,7 @@ public abstract class GordianPBESpec {
          *
          * @return the digestSpec
          */
-        public GordianDigestSpec getDigestSpec() {
+        public GordianNewDigestSpec getDigestSpec() {
             return theDigestSpec;
         }
 

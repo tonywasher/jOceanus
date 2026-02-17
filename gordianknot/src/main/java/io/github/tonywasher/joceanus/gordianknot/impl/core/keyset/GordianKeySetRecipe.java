@@ -19,7 +19,7 @@ package io.github.tonywasher.joceanus.gordianknot.impl.core.keyset;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymKeyType;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestType;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestType;
 import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySetSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianDataConverter;
@@ -179,7 +179,7 @@ public final class GordianKeySetRecipe {
         /**
          * The DigestType.
          */
-        private GordianDigestType theDigestType;
+        private GordianNewDigestType theDigestType;
 
         /**
          * The Poly1305 SymKeyType.
@@ -293,7 +293,7 @@ public final class GordianKeySetRecipe {
          *
          * @return the digestType
          */
-        GordianDigestType getDigestType() {
+        GordianNewDigestType getDigestType() {
             return theDigestType;
         }
 
