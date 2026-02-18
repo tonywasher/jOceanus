@@ -28,10 +28,6 @@ import io.github.tonywasher.joceanus.oceanus.event.OceanusEvent;
 import io.github.tonywasher.joceanus.oceanus.event.OceanusEventManager;
 import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar;
 import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
-import javafx.collections.ObservableList;
-import javafx.scene.control.ContentDisplay;
-import javafx.scene.control.TableCell;
-import javafx.scene.control.TableRow;
 import io.github.tonywasher.joceanus.tethys.api.base.TethysUIEvent;
 import io.github.tonywasher.joceanus.tethys.api.control.TethysUIControl.TethysUIIconMapSet;
 import io.github.tonywasher.joceanus.tethys.api.field.TethysUIFieldAttribute;
@@ -72,6 +68,10 @@ import io.github.tonywasher.joceanus.tethys.javafx.table.TethysUIFXTableColumn.T
 import io.github.tonywasher.joceanus.tethys.javafx.table.TethysUIFXTableColumn.TethysUIFXTableStringColumn;
 import io.github.tonywasher.joceanus.tethys.javafx.table.TethysUIFXTableColumn.TethysUIFXTableUnitsColumn;
 import io.github.tonywasher.joceanus.tethys.javafx.table.TethysUIFXTableColumn.TethysUIFXTableValidatedColumn;
+import javafx.collections.ObservableList;
+import javafx.scene.control.ContentDisplay;
+import javafx.scene.control.TableCell;
+import javafx.scene.control.TableRow;
 
 import java.util.List;
 
@@ -150,8 +150,8 @@ public abstract class TethysUIFXTableCell<T, C, R>
         myRegistrar.addEventListener(TethysUIEvent.EDITFOCUSLOST, e -> handleCancel());
 
         /* Apply validator to a text field */
-        if (theControl instanceof TethysUIFXDataTextField.TethysUIFXTextEditField
-                && theColumn instanceof TethysUIFXTableColumn.TethysUIFXTableValidatedColumn) {
+        if (theControl instanceof TethysUIFXTextEditField
+                && theColumn instanceof TethysUIFXTableValidatedColumn) {
             final TethysUIFXTextEditField<T, ?> myField = (TethysUIFXTextEditField<T, ?>) theControl;
             final TethysUIFXTableValidatedColumn<T, C, R> myColumn = (TethysUIFXTableValidatedColumn<T, C, R>) theColumn;
             myField.setValidator(t -> myColumn.getValidator().apply(t, getActiveRow()));

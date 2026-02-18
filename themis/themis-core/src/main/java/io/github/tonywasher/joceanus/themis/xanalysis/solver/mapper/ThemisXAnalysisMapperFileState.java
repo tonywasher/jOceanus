@@ -108,6 +108,17 @@ public class ThemisXAnalysisMapperFileState {
     }
 
     /**
+     * Process inherited.
+     *
+     * @param pClass the class to process
+     */
+    void processInherited(final ThemisXAnalysisSolverClass pClass) {
+        for (ThemisXAnalysisClassInstance myInherited : theProject.listAllInherited(pClass.getFullName())) {
+            theKnownClasses.put(myInherited.getName(), myInherited);
+        }
+    }
+
+    /**
      * Look up import.
      *
      * @param pImport the import definition.
@@ -195,6 +206,7 @@ public class ThemisXAnalysisMapperFileState {
      * lookUp a partiallyNamed class.
      *
      * @param pReference the possible reference.
+     * @param pIndex     the index of the first period
      * @return the resolved class (if found)
      */
     private ThemisXAnalysisClassInstance lookUpPartiallyNamedClass(final String pReference,
@@ -207,7 +219,8 @@ public class ThemisXAnalysisMapperFileState {
         if (myReference != null) {
             /* Build the full name of the class */
             final String myName = myReference.getFullName() + pReference.substring(pIndex);
-            myReference = theProject.tryNamedClass(myName);
+            final ThemisXAnalysisSolverClass myProjectClass = theProject.getProjectClassMap().get(myName);
+            myReference = myProjectClass == null ? theProject.tryNamedClass(myName) : myProjectClass.getUnderlyingClass();
 
             /* If we have now found the class, add to knownClasses */
             if (myReference != null) {
@@ -227,7 +240,7 @@ public class ThemisXAnalysisMapperFileState {
      */
     private ThemisXAnalysisClassInstance lookUpJavaLangClass(final String pReference) {
         /* Look for a fully qualified class in external and project classes */
-        ThemisXAnalysisClassInstance myReference = theProject.tryJavaLang(pReference);
+        final ThemisXAnalysisClassInstance myReference = theProject.tryJavaLang(pReference);
 
         /* If we have now found the class, add to knownClasses */
         if (myReference != null) {

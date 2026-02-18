@@ -94,12 +94,15 @@ public class ThemisXAnalysisReflectJar
             myClass.setClassInstance(myInstance);
 
             /* Process ancestors */
-            processAncestors(myInstance);
+            processAncestors(myClass);
+
+            /* Process children */
+            processChildren(myLoaded.getClasses());
         }
     }
 
     /**
-     * Try a class as a java.lang class
+     * Try a class as a java.lang class.
      *
      * @param pName the class name
      * @return the loaded class or null if it did not exist
@@ -111,7 +114,7 @@ public class ThemisXAnalysisReflectJar
     }
 
     /**
-     * Try a class as a java.lang class
+     * Try a class as a java.lang class.
      *
      * @param pName the class name
      * @return the loaded class or null if it did not exist
@@ -120,7 +123,7 @@ public class ThemisXAnalysisReflectJar
         /* Protect against exceptions */
         try {
             /* Load the external class */
-            ThemisXAnalysisReflectExternal myExternal = theExternalClasses.get(pName);
+            final ThemisXAnalysisReflectExternal myExternal = theExternalClasses.get(pName);
             if (myExternal == null) {
                 return loadNamedClass(pName);
             }
@@ -152,7 +155,10 @@ public class ThemisXAnalysisReflectJar
         theExternalClasses.put(pFullName, myExternal);
 
         /* Process ancestors */
-        processAncestors(myInstance);
+        processAncestors(myExternal);
+
+        /* Process children */
+        processChildren(myLoaded.getClasses());
 
         /* return the class */
         return myExternal;
@@ -164,17 +170,20 @@ public class ThemisXAnalysisReflectJar
      * @param pExternal the external classes.
      * @throws OceanusException on error
      */
-    private void processAncestors(final ThemisXAnalysisClassInstance pExternal) throws OceanusException {
+    private void processAncestors(final ThemisXAnalysisReflectExternal pExternal) throws OceanusException {
+        /* Access aunderlying instance */
+        final ThemisXAnalysisClassInstance myInstance = pExternal.getClassInstance();
+
         /* Process all the extended classes */
-        for (ThemisXAnalysisTypeInstance myAncestor : pExternal.getExtends()) {
+        for (ThemisXAnalysisTypeInstance myAncestor : myInstance.getExtends()) {
             /* Process the ancestor */
-            processAncestor((ThemisXAnalysisTypeClassInterface) myAncestor);
+            pExternal.addAncestor(processAncestor((ThemisXAnalysisTypeClassInterface) myAncestor));
         }
 
         /* Process all the implemented classes */
-        for (ThemisXAnalysisTypeInstance myAncestor : pExternal.getImplements()) {
+        for (ThemisXAnalysisTypeInstance myAncestor : myInstance.getImplements()) {
             /* Process the ancestor */
-            processAncestor((ThemisXAnalysisTypeClassInterface) myAncestor);
+            pExternal.addAncestor(processAncestor((ThemisXAnalysisTypeClassInterface) myAncestor));
         }
     }
 
@@ -182,9 +191,10 @@ public class ThemisXAnalysisReflectJar
      * Process an ancestor.
      *
      * @param pAncestor the ancestor.
+     * @return the resolved ancestor
      * @throws OceanusException on error
      */
-    private void processAncestor(final ThemisXAnalysisTypeClassInterface pAncestor) throws OceanusException {
+    private ThemisXAnalysisReflectExternal processAncestor(final ThemisXAnalysisTypeClassInterface pAncestor) throws OceanusException {
         /* Access the name of the class and convert to period format */
         final String myFullName = pAncestor.getFullName().replace(ThemisXAnalysisChar.DOLLAR, ThemisXAnalysisChar.PERIOD);
 
@@ -197,6 +207,44 @@ public class ThemisXAnalysisReflectJar
 
         /* Add link */
         pAncestor.setClassInstance(myExternal);
+        return myExternal;
+    }
+
+    /**
+     * Process child classes.
+     *
+     * @param pChildren the children.
+     * @throws OceanusException on error
+     */
+    private void processChildren(final Class<?>[] pChildren) throws OceanusException {
+        /* Loop through the children */
+        for (Class<?> myChild : pChildren) {
+            /* Ignore private/anonymous and local classes */
+            final boolean isLocalAnon = myChild.isAnonymousClass() || myChild.isLocalClass();
+            final boolean isPrivate = ThemisXAnalysisReflectBaseUtils.isPrivate(myChild.getModifiers());
+            if (!isPrivate && !isLocalAnon) {
+                processChild(myChild);
+            }
+        }
+    }
+
+    /**
+     * Process child class.
+     *
+     * @param pChild the child.
+     * @throws OceanusException on error
+     */
+    private void processChild(final Class<?> pChild) throws OceanusException {
+        /* Create a resolved class based on the loaded class */
+        final BodyDeclaration<?> myResolved = buildClass(pChild);
+        final ThemisXAnalysisClassInstance myInstance = (ThemisXAnalysisClassInstance) theProjectParser.parseDeclaration(myResolved);
+        final ThemisXAnalysisReflectExternal myExternal = new ThemisXAnalysisReflectExternal(myInstance);
+
+        /* Store it as an external Class */
+        theExternalClasses.put(myExternal.getFullName(), myExternal);
+
+        /* Process ancestors */
+        processAncestors(myExternal);
     }
 
     /**

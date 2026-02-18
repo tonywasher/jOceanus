@@ -51,6 +51,11 @@ public class ThemisXAnalysisSolverClass
     private final List<ThemisXAnalysisSolverMethod> theMethods;
 
     /**
+     * The ancestors.
+     */
+    private final List<String> theAncestors;
+
+    /**
      * Is the reference list circular?
      */
     private boolean isCircular;
@@ -66,6 +71,7 @@ public class ThemisXAnalysisSolverClass
         /* Store the parameters */
         theFile = pFile;
         theClass = pClass;
+        theAncestors = new ArrayList<>();
 
         /* Access the full name */
         theFullName = theClass.getFullName();
@@ -157,5 +163,23 @@ public class ThemisXAnalysisSolverClass
     @Override
     public String toString() {
         return theFullName;
+    }
+
+    /**
+     * Obtain the list of ancestors.
+     *
+     * @return the list
+     */
+    public List<String> getAncestors() {
+        return theAncestors;
+    }
+
+    /**
+     * Add ancestor.
+     *
+     * @param pAncestor the ancestor
+     */
+    public void addAncestor(final String pAncestor) {
+        theAncestors.add(pAncestor);
     }
 }

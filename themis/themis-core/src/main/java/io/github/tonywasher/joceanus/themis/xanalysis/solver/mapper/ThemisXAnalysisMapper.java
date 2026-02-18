@@ -20,10 +20,13 @@ package io.github.tonywasher.joceanus.themis.xanalysis.solver.mapper;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance;
 import io.github.tonywasher.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance.ThemisXAnalysisClassInstance;
+import io.github.tonywasher.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance.ThemisXAnalysisNodeInstance;
+import io.github.tonywasher.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance.ThemisXAnalysisTypeInstance;
 import io.github.tonywasher.joceanus.themis.xanalysis.parser.expr.ThemisXAnalysisExprFieldAccess;
 import io.github.tonywasher.joceanus.themis.xanalysis.parser.expr.ThemisXAnalysisExprMethodCall;
 import io.github.tonywasher.joceanus.themis.xanalysis.parser.expr.ThemisXAnalysisExprMethodRef;
 import io.github.tonywasher.joceanus.themis.xanalysis.parser.expr.ThemisXAnalysisExprObjectCreate;
+import io.github.tonywasher.joceanus.themis.xanalysis.parser.node.ThemisXAnalysisNodeImport;
 import io.github.tonywasher.joceanus.themis.xanalysis.parser.type.ThemisXAnalysisTypeClassInterface;
 import io.github.tonywasher.joceanus.themis.xanalysis.solver.proj.ThemisXAnalysisSolverClass;
 import io.github.tonywasher.joceanus.themis.xanalysis.solver.proj.ThemisXAnalysisSolverFile;
@@ -69,6 +72,21 @@ public class ThemisXAnalysisMapper
     }
 
     /**
+     * PreProcess package.
+     *
+     * @param pPackage the package
+     */
+    public void preProcessPackage(final ThemisXAnalysisSolverPackage pPackage) {
+        /* Loop through the files in the package */
+        for (ThemisXAnalysisSolverFile myFile : pPackage.getFiles()) {
+            /* preProcess the file if it has not been done yet */
+            if (!myFile.isPreProcessed()) {
+                preProcessFile(myFile);
+            }
+        }
+    }
+
+    /**
      * Process package.
      *
      * @param pPackage the package
@@ -76,13 +94,99 @@ public class ThemisXAnalysisMapper
     public void processPackage(final ThemisXAnalysisSolverPackage pPackage) {
         /* Loop through the files in the package */
         for (ThemisXAnalysisSolverFile myFile : pPackage.getFiles()) {
-            /* Reset the various states */
-            theFile.initForFile(myFile);
-            theType.reset();
-            theName.reset();
-
             /* Process the file */
             processFile(myFile);
+        }
+    }
+
+    /**
+     * Reset fileState.
+     *
+     * @param pFile the file
+     */
+    private void resetFileState(final ThemisXAnalysisSolverFile pFile) {
+        /* Reset the various states */
+        theFile.initForFile(pFile);
+        theType.reset();
+        theName.reset();
+    }
+
+    /**
+     * preProcess file.
+     *
+     * @param pFile the file
+     */
+    private void preProcessFile(final ThemisXAnalysisSolverFile pFile) {
+        /* Note that we have pre-processed this file */
+        pFile.markPreProcessed();
+
+        /* preProcess the imports */
+        preProcessImports(pFile);
+
+        /* Reset the fileState */
+        resetFileState(pFile);
+
+        /* Loop through the classes in the file */
+        for (ThemisXAnalysisSolverClass myClass : pFile.getClasses()) {
+            final ThemisXAnalysisClassInstance myInstance = myClass.getUnderlyingClass();
+
+            /* Ignore anonymous and local classes */
+            if (myInstance.isAnonClass() || myInstance.isLocalDeclaration()) {
+                continue;
+            }
+
+            /* Loop through the extends */
+            for (ThemisXAnalysisTypeInstance myExtends : myInstance.getExtends()) {
+                processAncestor(myClass, myExtends);
+            }
+
+            /* Loop through the implements */
+            for (ThemisXAnalysisTypeInstance myImplements : myInstance.getImplements()) {
+                processAncestor(myClass, myImplements);
+            }
+
+            /* Process inherited children */
+            theFile.processInherited(myClass);
+        }
+    }
+
+
+    /**
+     * preProcess file.
+     *
+     * @param pFile the file
+     */
+    private void preProcessImports(final ThemisXAnalysisSolverFile pFile) {
+        /* Loop through all the imports */
+        for (ThemisXAnalysisNodeInstance myNode : pFile.getUnderlyingFile().getContents().getImports()) {
+            /* If the import is of a project file */
+            final ThemisXAnalysisNodeImport myImport = (ThemisXAnalysisNodeImport) myNode;
+            final ThemisXAnalysisSolverClass myClass = theProject.getProjectClassMap().get(myImport.getFullName());
+            if (myClass != null) {
+                /* Make sure that the file has been pre-processed */
+                final ThemisXAnalysisSolverFile myFile = (ThemisXAnalysisSolverFile) myClass.getOwningFile();
+                if (!myFile.isPreProcessed()) {
+                    /* PreProcess the file */
+                    preProcessFile(myFile);
+                }
+            }
+        }
+    }
+
+    /**
+     * process ancestor.
+     *
+     * @param pClass    the class
+     * @param pAncestor the ancestor
+     */
+    private void processAncestor(final ThemisXAnalysisSolverClass pClass,
+                                 final ThemisXAnalysisTypeInstance pAncestor) {
+        /* Handle ClassInterface Reference */
+        if (pAncestor instanceof ThemisXAnalysisTypeClassInterface myRef) {
+            final ThemisXAnalysisClassInstance myResolved = theFile.processPossibleReference(myRef.getFullName());
+            if (myResolved != null) {
+                pClass.addAncestor(myResolved.getFullName());
+            }
         }
     }
 
@@ -92,6 +196,9 @@ public class ThemisXAnalysisMapper
      * @param pFile the file
      */
     private void processFile(final ThemisXAnalysisSolverFile pFile) {
+        /* Reset the fileState */
+        resetFileState(pFile);
+
         /* Obtain the top-level class element */
         final ThemisXAnalysisSolverClass myBase = pFile.getTopLevel();
         final ThemisXAnalysisInstance myInstance = (ThemisXAnalysisInstance) myBase.getUnderlyingClass();
@@ -134,6 +241,14 @@ public class ThemisXAnalysisMapper
      * @return process children? true/false
      */
     private boolean processElement(final ThemisXAnalysisInstance pElement) {
+        /* Handle ClassInstance */
+        if (pElement instanceof ThemisXAnalysisClassInstance myInstance
+                && !myInstance.isAnonClass()
+                && !myInstance.isLocalDeclaration()) {
+            final ThemisXAnalysisSolverClass myClass = theProject.getProjectClassMap().get(myInstance.getFullName());
+            theFile.processInherited(myClass);
+        }
+
         /* Handle ClassInterface Reference */
         if (pElement instanceof ThemisXAnalysisTypeClassInterface myRef) {
             processClassReference(myRef);

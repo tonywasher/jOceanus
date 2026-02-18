@@ -55,6 +55,11 @@ public class ThemisXAnalysisSolverFile
     private final List<ThemisXAnalysisSolverClass> theReferenced;
 
     /**
+     * Has the file been preProcessed?
+     */
+    private boolean preProcessed;
+
+    /**
      * Is the reference list circular?
      */
     private boolean isCircular;
@@ -111,6 +116,22 @@ public class ThemisXAnalysisSolverFile
      */
     public List<ThemisXAnalysisSolverClass> getClasses() {
         return theClasses;
+    }
+
+    /**
+     * Mark the file as pre-processed.
+     */
+    public void markPreProcessed() {
+        preProcessed = true;
+    }
+
+    /**
+     * Has the file been pre-processed?
+     *
+     * @return true/false
+     */
+    public boolean isPreProcessed() {
+        return preProcessed;
     }
 
     /**

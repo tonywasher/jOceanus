@@ -22,6 +22,7 @@ import io.github.tonywasher.joceanus.themis.xanalysis.parser.node.ThemisXAnalysi
 import io.github.tonywasher.joceanus.themis.xanalysis.parser.node.ThemisXAnalysisNodeModifierList;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * External Class representation.
@@ -49,6 +50,11 @@ public class ThemisXAnalysisReflectExternal
     private final ThemisXAnalysisModifierList theModifiers;
 
     /**
+     * The ancestors.
+     */
+    private final List<String> theAncestors;
+
+    /**
      * The class instance.
      */
     private ThemisXAnalysisClassInstance theClassInstance;
@@ -62,6 +68,7 @@ public class ThemisXAnalysisReflectExternal
         theName = pImport.getShortName();
         theFullName = pImport.getFullName();
         theModifiers = new ThemisXAnalysisNodeModifierList(new ArrayList<>());
+        theAncestors = new ArrayList<>();
     }
 
     /**
@@ -73,6 +80,7 @@ public class ThemisXAnalysisReflectExternal
         theName = pClazz.getName();
         theFullName = pClazz.getFullName();
         theModifiers = pClazz.getModifiers();
+        theAncestors = new ArrayList<>();
         theClassInstance = pClazz;
     }
 
@@ -112,5 +120,23 @@ public class ThemisXAnalysisReflectExternal
      */
     public void setClassInstance(final ThemisXAnalysisClassInstance pClassInstance) {
         theClassInstance = pClassInstance;
+    }
+
+    /**
+     * Obtain the list of ancestors.
+     *
+     * @return the list
+     */
+    public List<String> getAncestors() {
+        return theAncestors;
+    }
+
+    /**
+     * Add ancestor.
+     *
+     * @param pAncestor the ancestor
+     */
+    public void addAncestor(final ThemisXAnalysisReflectExternal pAncestor) {
+        theAncestors.add(pAncestor.getFullName());
     }
 }
