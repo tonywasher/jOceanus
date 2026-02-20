@@ -23,7 +23,6 @@ import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherResourc
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeyType;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKeyLengths;
 
-import java.util.Collection;
 import java.util.EnumMap;
 import java.util.Map;
 
@@ -35,6 +34,11 @@ public final class GordianCoreSymKeyType {
      * The symKeyTypeMap.
      */
     private static final Map<GordianNewSymKeyType, GordianCoreSymKeyType> TYPEMAP = newTypeMap();
+
+    /**
+     * The symKeyTypeArray.
+     */
+    private static final GordianCoreSymKeyType[] VALUES = TYPEMAP.values().toArray(new GordianCoreSymKeyType[0]);
 
     /**
      * The SymKeyType.
@@ -86,6 +90,17 @@ public final class GordianCoreSymKeyType {
     }
 
     /**
+     * Obtain default block length.
+     *
+     * @param pType the type
+     * @return the default length
+     */
+    public static GordianLength getDefaultBlockLength(final GordianNewSymKeyType pType) {
+        final GordianCoreSymKeyType myType = mapCoreType(pType);
+        return myType == null ? null : myType.getDefaultBlockLength();
+    }
+
+    /**
      * Obtain supported block lengths.
      *
      * @return the supported lengths (first is default)
@@ -116,6 +131,19 @@ public final class GordianCoreSymKeyType {
      */
     public boolean hasMultipleBlockLengths() {
         return theLengths.length > 1;
+    }
+
+    /**
+     * Is the KeyType valid for keyLength?
+     *
+     * @param pKeyType the key type
+     * @param pKeyLen  the key length
+     * @return true/false
+     */
+    public static boolean validForKeyLength(final GordianNewSymKeyType pKeyType,
+                                            final GordianLength pKeyLen) {
+        final GordianCoreSymKeyType myType = mapCoreType(pKeyType);
+        return myType != null && myType.validForKeyLength(pKeyLen);
     }
 
     /**
@@ -302,10 +330,10 @@ public final class GordianCoreSymKeyType {
             case SIMON:
             case MARS:
             case LEA:
+            case SEED:
                 return new GordianLength[]{GordianLength.LEN_128};
             case THREEFISH:
                 return new GordianLength[]{GordianLength.LEN_256, GordianLength.LEN_512, GordianLength.LEN_1024};
-            case SEED:
             case TEA:
             case XTEA:
             case IDEA:
@@ -354,11 +382,12 @@ public final class GordianCoreSymKeyType {
             case MARS:
             case LEA:
             case RC5:
+            case SEED:
                 return GordianLength.LEN_128;
             case THREEFISH:
-            case KALYNA:
                 return pKeyLength;
-            case SEED:
+            case KALYNA:
+                return GordianLength.LEN_512.equals(pKeyLength) ? GordianLength.LEN_256 : GordianLength.LEN_128;
             case TEA:
             case XTEA:
             case IDEA:
@@ -469,7 +498,7 @@ public final class GordianCoreSymKeyType {
      *
      * @return the values
      */
-    public static Collection<GordianCoreSymKeyType> values() {
-        return TYPEMAP.values();
+    public static GordianCoreSymKeyType[] values() {
+        return VALUES;
     }
 }

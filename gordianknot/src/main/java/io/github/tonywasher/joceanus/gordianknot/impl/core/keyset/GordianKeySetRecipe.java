@@ -18,7 +18,7 @@ package io.github.tonywasher.joceanus.gordianknot.impl.core.keyset;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymKeyType;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeyType;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestType;
 import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySetSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
@@ -174,7 +174,7 @@ public final class GordianKeySetRecipe {
         /**
          * The SymKeySet.
          */
-        private GordianSymKeyType[] theSymKeyTypes;
+        private GordianNewSymKeyType[] theSymKeyTypes;
 
         /**
          * The DigestType.
@@ -184,7 +184,7 @@ public final class GordianKeySetRecipe {
         /**
          * The Poly1305 SymKeyType.
          */
-        private GordianSymKeyType thePoly1305SymKeyType;
+        private GordianNewSymKeyType thePoly1305SymKeyType;
 
         /**
          * The Initialisation Vector.
@@ -284,7 +284,7 @@ public final class GordianKeySetRecipe {
          *
          * @return the symKeyTypes
          */
-        GordianSymKeyType[] getSymKeyTypes() {
+        GordianNewSymKeyType[] getSymKeyTypes() {
             return theSymKeyTypes;
         }
 
@@ -302,7 +302,7 @@ public final class GordianKeySetRecipe {
          *
          * @return the symKeyType
          */
-        GordianSymKeyType getPoly1305SymKeyType() {
+        GordianNewSymKeyType getPoly1305SymKeyType() {
             return thePoly1305SymKeyType;
         }
 

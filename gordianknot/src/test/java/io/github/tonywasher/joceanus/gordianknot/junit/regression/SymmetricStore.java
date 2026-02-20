@@ -19,13 +19,13 @@ package io.github.tonywasher.joceanus.gordianknot.junit.regression;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianPBESpec;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianPBESpecBuilder;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamCipherSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamCipherSpecBuilder;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamKeySpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymCipherSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewPBESpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactory;
@@ -41,6 +41,12 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.key.GordianCoreKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.key.GordianCoreKeyGenerator;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.mac.GordianCoreMacFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.random.GordianCoreRandomFactory;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher.GordianCorePBESpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher.GordianCoreStreamCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher.GordianCoreStreamKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher.GordianCoreSymCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher.GordianCoreSymKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianCoreDigestSpec;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -130,8 +136,8 @@ class SymmetricStore {
         }
 
         @Override
-        public GordianNewDigestSpec getSpec() {
-            return theDigestSpec;
+        public GordianCoreDigestSpec getSpec() {
+            return (GordianCoreDigestSpec) theDigestSpec;
         }
 
         @Override
@@ -271,7 +277,7 @@ class SymmetricStore {
      * Factory and symKey definition.
      */
     static class FactorySymKeySpec
-            implements FactorySpec<GordianSymKeySpec>, PartneredSpec {
+            implements FactorySpec<GordianNewSymKeySpec>, PartneredSpec {
         /**
          * The factory.
          */
@@ -285,17 +291,17 @@ class SymmetricStore {
         /**
          * The symKeySpec.
          */
-        private final GordianSymKeySpec theSymKeySpec;
+        private final GordianNewSymKeySpec theSymKeySpec;
 
         /**
          * The key.
          */
-        private volatile GordianCoreKey<GordianSymKeySpec> theKey;
+        private volatile GordianCoreKey<GordianNewSymKeySpec> theKey;
 
         /**
          * The partnerKey.
          */
-        private volatile GordianKey<GordianSymKeySpec> thePartnerKey;
+        private volatile GordianKey<GordianNewSymKeySpec> thePartnerKey;
 
         /**
          * Constructor.
@@ -306,7 +312,7 @@ class SymmetricStore {
          */
         FactorySymKeySpec(final GordianFactory pFactory,
                           final GordianFactory pPartner,
-                          final GordianSymKeySpec pSymKeySpec) {
+                          final GordianNewSymKeySpec pSymKeySpec) {
             theFactory = pFactory;
             thePartner = pPartner;
             theSymKeySpec = pSymKeySpec;
@@ -318,9 +324,9 @@ class SymmetricStore {
          * @return the key
          * @throws GordianException on error
          */
-        GordianKey<GordianSymKeySpec> getKey() throws GordianException {
+        GordianKey<GordianNewSymKeySpec> getKey() throws GordianException {
             /* Return key if it exists */
-            GordianCoreKey<GordianSymKeySpec> myKey = theKey;
+            GordianCoreKey<GordianNewSymKeySpec> myKey = theKey;
             if (myKey != null) {
                 return myKey;
             }
@@ -335,8 +341,8 @@ class SymmetricStore {
 
                 /* Generate the key */
                 GordianCipherFactory myFactory = theFactory.getCipherFactory();
-                GordianKeyGenerator<GordianSymKeySpec> myGenerator = myFactory.getKeyGenerator(theSymKeySpec);
-                myKey = (GordianCoreKey<GordianSymKeySpec>) myGenerator.generateKey();
+                GordianKeyGenerator<GordianNewSymKeySpec> myGenerator = myFactory.getKeyGenerator(theSymKeySpec);
+                myKey = (GordianCoreKey<GordianNewSymKeySpec>) myGenerator.generateKey();
                 theKey = myKey;
                 return myKey;
             }
@@ -348,9 +354,9 @@ class SymmetricStore {
          * @return the key
          * @throws GordianException on error
          */
-        GordianKey<GordianSymKeySpec> getPartnerKey() throws GordianException {
+        GordianKey<GordianNewSymKeySpec> getPartnerKey() throws GordianException {
             /* Return key if it exists */
-            GordianKey<GordianSymKeySpec> myPartnerKey = thePartnerKey;
+            GordianKey<GordianNewSymKeySpec> myPartnerKey = thePartnerKey;
             if (myPartnerKey != null || thePartner == null) {
                 return myPartnerKey;
             }
@@ -365,8 +371,8 @@ class SymmetricStore {
 
                 /* Build the key */
                 GordianCipherFactory myFactory = thePartner.getCipherFactory();
-                GordianCoreKeyGenerator<GordianSymKeySpec> myGenerator
-                        = (GordianCoreKeyGenerator<GordianSymKeySpec>) myFactory.getKeyGenerator(theSymKeySpec);
+                GordianCoreKeyGenerator<GordianNewSymKeySpec> myGenerator
+                        = (GordianCoreKeyGenerator<GordianNewSymKeySpec>) myFactory.getKeyGenerator(theSymKeySpec);
                 myPartnerKey = myGenerator.buildKeyFromBytes(theKey.getKeyBytes());
                 thePartnerKey = myPartnerKey;
                 return myPartnerKey;
@@ -384,8 +390,8 @@ class SymmetricStore {
         }
 
         @Override
-        public GordianSymKeySpec getSpec() {
-            return theSymKeySpec;
+        public GordianCoreSymKeySpec getSpec() {
+            return (GordianCoreSymKeySpec) theSymKeySpec;
         }
 
         @Override
@@ -398,7 +404,7 @@ class SymmetricStore {
      * Factory and symCipher definition.
      */
     static class FactorySymCipherSpec
-            implements FactorySpec<GordianSymCipherSpec>, PartneredSpec {
+            implements FactorySpec<GordianNewSymCipherSpec>, PartneredSpec {
         /**
          * The owner.
          */
@@ -407,7 +413,7 @@ class SymmetricStore {
         /**
          * The symKeySpec.
          */
-        private final GordianSymCipherSpec theCipherSpec;
+        private final GordianNewSymCipherSpec theCipherSpec;
 
         /**
          * supported by partner?
@@ -422,8 +428,8 @@ class SymmetricStore {
          * @param pPredicate  the partner predicate
          */
         FactorySymCipherSpec(final FactorySymKeySpec pOwner,
-                             final GordianSymCipherSpec pCipherSpec,
-                             final Predicate<GordianSymCipherSpec> pPredicate) {
+                             final GordianNewSymCipherSpec pCipherSpec,
+                             final Predicate<GordianNewSymCipherSpec> pPredicate) {
             /* Store parameters */
             theOwner = pOwner;
             theCipherSpec = pCipherSpec;
@@ -438,7 +444,7 @@ class SymmetricStore {
          * @return the key
          * @throws GordianException on error
          */
-        GordianKey<GordianSymKeySpec> getKey() throws GordianException {
+        GordianKey<GordianNewSymKeySpec> getKey() throws GordianException {
             return theOwner.getKey();
         }
 
@@ -448,7 +454,7 @@ class SymmetricStore {
          * @return the key
          * @throws GordianException on error
          */
-        GordianKey<GordianSymKeySpec> getPartnerKey() throws GordianException {
+        GordianKey<GordianNewSymKeySpec> getPartnerKey() throws GordianException {
             return theOwner.getPartnerKey();
         }
 
@@ -472,8 +478,8 @@ class SymmetricStore {
         }
 
         @Override
-        public GordianSymCipherSpec getSpec() {
-            return theCipherSpec;
+        public GordianCoreSymCipherSpec getSpec() {
+            return (GordianCoreSymCipherSpec) theCipherSpec;
         }
 
         @Override
@@ -486,7 +492,7 @@ class SymmetricStore {
      * Factory and symPBECipher definition.
      */
     static class FactorySymPBECipherSpec
-            implements FactorySpec<GordianPBESpec> {
+            implements FactorySpec<GordianNewPBESpec> {
         /**
          * The owner.
          */
@@ -495,7 +501,7 @@ class SymmetricStore {
         /**
          * The pbeSpec.
          */
-        private final GordianPBESpec thePBESpec;
+        private final GordianNewPBESpec thePBESpec;
 
         /**
          * Constructor.
@@ -504,7 +510,7 @@ class SymmetricStore {
          * @param pPBESpec the symCipherSpec
          */
         FactorySymPBECipherSpec(final FactorySymCipherSpec pOwner,
-                                final GordianPBESpec pPBESpec) {
+                                final GordianNewPBESpec pPBESpec) {
             /* Store parameters */
             theOwner = pOwner;
             thePBESpec = pPBESpec;
@@ -525,8 +531,8 @@ class SymmetricStore {
         }
 
         @Override
-        public GordianPBESpec getSpec() {
-            return thePBESpec;
+        public GordianCorePBESpec getSpec() {
+            return (GordianCorePBESpec) thePBESpec;
         }
 
         @Override
@@ -539,7 +545,7 @@ class SymmetricStore {
      * Factory and streamKey definition.
      */
     static class FactoryStreamKeySpec
-            implements FactorySpec<GordianStreamKeySpec>, PartneredSpec {
+            implements FactorySpec<GordianNewStreamKeySpec>, PartneredSpec {
         /**
          * The factory.
          */
@@ -553,17 +559,17 @@ class SymmetricStore {
         /**
          * The streamKeyType.
          */
-        private final GordianStreamKeySpec theKeySpec;
+        private final GordianNewStreamKeySpec theKeySpec;
 
         /**
          * The key.
          */
-        private volatile GordianCoreKey<GordianStreamKeySpec> theKey;
+        private volatile GordianCoreKey<GordianNewStreamKeySpec> theKey;
 
         /**
          * The partnerKey.
          */
-        private volatile GordianKey<GordianStreamKeySpec> thePartnerKey;
+        private volatile GordianKey<GordianNewStreamKeySpec> thePartnerKey;
 
         /**
          * Constructor.
@@ -574,7 +580,7 @@ class SymmetricStore {
          */
         FactoryStreamKeySpec(final GordianFactory pFactory,
                              final GordianFactory pPartner,
-                             final GordianStreamKeySpec pKeySpec) {
+                             final GordianNewStreamKeySpec pKeySpec) {
             theFactory = pFactory;
             thePartner = pPartner;
             theKeySpec = pKeySpec;
@@ -586,9 +592,9 @@ class SymmetricStore {
          * @return the key
          * @throws GordianException on error
          */
-        GordianKey<GordianStreamKeySpec> getKey() throws GordianException {
+        GordianKey<GordianNewStreamKeySpec> getKey() throws GordianException {
             /* Return key if it exists */
-            GordianCoreKey<GordianStreamKeySpec> myKey = theKey;
+            GordianCoreKey<GordianNewStreamKeySpec> myKey = theKey;
             if (myKey != null) {
                 return myKey;
             }
@@ -603,8 +609,8 @@ class SymmetricStore {
 
                 /* Generate the key */
                 GordianCipherFactory myFactory = theFactory.getCipherFactory();
-                GordianKeyGenerator<GordianStreamKeySpec> myGenerator = myFactory.getKeyGenerator(theKeySpec);
-                myKey = (GordianCoreKey<GordianStreamKeySpec>) myGenerator.generateKey();
+                GordianKeyGenerator<GordianNewStreamKeySpec> myGenerator = myFactory.getKeyGenerator(theKeySpec);
+                myKey = (GordianCoreKey<GordianNewStreamKeySpec>) myGenerator.generateKey();
                 theKey = myKey;
                 return myKey;
             }
@@ -616,9 +622,9 @@ class SymmetricStore {
          * @return the key
          * @throws GordianException on error
          */
-        GordianKey<GordianStreamKeySpec> getPartnerKey() throws GordianException {
+        GordianKey<GordianNewStreamKeySpec> getPartnerKey() throws GordianException {
             /* Return key if it exists */
-            GordianKey<GordianStreamKeySpec> myPartnerKey = thePartnerKey;
+            GordianKey<GordianNewStreamKeySpec> myPartnerKey = thePartnerKey;
             if (myPartnerKey != null || thePartner == null) {
                 return myPartnerKey;
             }
@@ -633,8 +639,8 @@ class SymmetricStore {
 
                 /* Build the key */
                 GordianCipherFactory myFactory = thePartner.getCipherFactory();
-                GordianCoreKeyGenerator<GordianStreamKeySpec> myGenerator
-                        = (GordianCoreKeyGenerator<GordianStreamKeySpec>) myFactory.getKeyGenerator(theKeySpec);
+                GordianCoreKeyGenerator<GordianNewStreamKeySpec> myGenerator
+                        = (GordianCoreKeyGenerator<GordianNewStreamKeySpec>) myFactory.getKeyGenerator(theKeySpec);
                 myPartnerKey = myGenerator.buildKeyFromBytes(theKey.getKeyBytes());
                 thePartnerKey = myPartnerKey;
                 return myPartnerKey;
@@ -652,8 +658,8 @@ class SymmetricStore {
         }
 
         @Override
-        public GordianStreamKeySpec getSpec() {
-            return theKeySpec;
+        public GordianCoreStreamKeySpec getSpec() {
+            return (GordianCoreStreamKeySpec) theKeySpec;
         }
 
         /**
@@ -662,8 +668,8 @@ class SymmetricStore {
          * @return true/false
          */
         public boolean hasAADVersion() {
-            if (theKeySpec.supportsAEAD()) {
-                final GordianStreamCipherSpec myAADSpec = GordianStreamCipherSpecBuilder.stream(theKeySpec, true);
+            if (((GordianCoreStreamKeySpec) theKeySpec).supportsAEAD()) {
+                final GordianNewStreamCipherSpec myAADSpec = GordianStreamCipherSpecBuilder.stream(theKeySpec, true);
                 return theFactory.getCipherFactory().supportedStreamCipherSpecs().test(myAADSpec);
             }
             return false;
@@ -679,7 +685,7 @@ class SymmetricStore {
      * Factory and streamCipher definition.
      */
     static class FactoryStreamCipherSpec
-            implements FactorySpec<GordianStreamCipherSpec>, PartneredSpec {
+            implements FactorySpec<GordianNewStreamCipherSpec>, PartneredSpec {
         /**
          * The owner.
          */
@@ -688,7 +694,7 @@ class SymmetricStore {
         /**
          * The streamKeySpec.
          */
-        private final GordianStreamCipherSpec theCipherSpec;
+        private final GordianNewStreamCipherSpec theCipherSpec;
 
         /**
          * Constructor.
@@ -697,7 +703,7 @@ class SymmetricStore {
          * @param pCipherSpec the cipherSpec
          */
         FactoryStreamCipherSpec(final FactoryStreamKeySpec pOwner,
-                                final GordianStreamCipherSpec pCipherSpec) {
+                                final GordianNewStreamCipherSpec pCipherSpec) {
             theOwner = pOwner;
             theCipherSpec = pCipherSpec;
         }
@@ -722,8 +728,8 @@ class SymmetricStore {
         }
 
         @Override
-        public GordianStreamCipherSpec getSpec() {
-            return theCipherSpec;
+        public GordianCoreStreamCipherSpec getSpec() {
+            return (GordianCoreStreamCipherSpec) theCipherSpec;
         }
 
         /**
@@ -732,7 +738,7 @@ class SymmetricStore {
          * @return the key
          * @throws GordianException on error
          */
-        GordianKey<GordianStreamKeySpec> getKey() throws GordianException {
+        GordianKey<GordianNewStreamKeySpec> getKey() throws GordianException {
             return theOwner.getKey();
         }
 
@@ -746,7 +752,7 @@ class SymmetricStore {
      * Factory and streamPBECipher definition.
      */
     static class FactoryStreamPBECipherSpec
-            implements FactorySpec<GordianPBESpec> {
+            implements FactorySpec<GordianNewPBESpec> {
         /**
          * The owner.
          */
@@ -755,7 +761,7 @@ class SymmetricStore {
         /**
          * The pbeSpec.
          */
-        private final GordianPBESpec thePBESpec;
+        private final GordianNewPBESpec thePBESpec;
 
         /**
          * Constructor.
@@ -764,7 +770,7 @@ class SymmetricStore {
          * @param pPBESpec the symCipherSpec
          */
         FactoryStreamPBECipherSpec(final FactoryStreamCipherSpec pOwner,
-                                   final GordianPBESpec pPBESpec) {
+                                   final GordianNewPBESpec pPBESpec) {
             /* Store parameters */
             theOwner = pOwner;
             thePBESpec = pPBESpec;
@@ -785,8 +791,8 @@ class SymmetricStore {
         }
 
         @Override
-        public GordianPBESpec getSpec() {
-            return thePBESpec;
+        public GordianCorePBESpec getSpec() {
+            return (GordianCorePBESpec) thePBESpec;
         }
 
         @Override
@@ -990,8 +996,8 @@ class SymmetricStore {
         /* Loop through the possible keySpecs */
         final List<FactorySymKeySpec> myResult = new ArrayList<>();
         final GordianCoreCipherFactory myCipherFactory = (GordianCoreCipherFactory) pFactory.getCipherFactory();
-        final Predicate<GordianSymKeySpec> myPredicate = pPartner.getCipherFactory().supportedSymKeySpecs();
-        for (GordianSymKeySpec mySpec : myCipherFactory.listAllSupportedSymKeySpecs(pKeyLen)) {
+        final Predicate<GordianNewSymKeySpec> myPredicate = pPartner.getCipherFactory().supportedSymKeySpecs();
+        for (GordianNewSymKeySpec mySpec : myCipherFactory.listAllSupportedSymKeySpecs(pKeyLen)) {
             /* Determine whether the keySpec is supported by the partner */
             GordianFactory myPartner = myPredicate.test(mySpec) ? pPartner : null;
 
@@ -1012,15 +1018,15 @@ class SymmetricStore {
     static List<FactorySymCipherSpec> symCipherProvider(final FactorySymKeySpec pKeySpec) {
         /* Access details */
         final GordianFactory myFactory = pKeySpec.getFactory();
-        final GordianSymKeySpec mySpec = pKeySpec.getSpec();
+        final GordianNewSymKeySpec mySpec = pKeySpec.getSpec();
         final GordianCoreCipherFactory myCipherFactory = (GordianCoreCipherFactory) myFactory.getCipherFactory();
         final List<FactorySymCipherSpec> myResult = new ArrayList<>();
         final GordianFactory myPartner = pKeySpec.getPartner();
-        final Predicate<GordianSymCipherSpec> myPredicate
+        final Predicate<GordianNewSymCipherSpec> myPredicate
                 = myPartner == null ? null : myPartner.getCipherFactory().supportedSymCipherSpecs();
 
         /* Build the list */
-        for (GordianSymCipherSpec myCipherSpec : myCipherFactory.listAllSupportedSymCipherSpecs(mySpec)) {
+        for (GordianNewSymCipherSpec myCipherSpec : myCipherFactory.listAllSupportedSymCipherSpecs(mySpec)) {
             myResult.add(new FactorySymCipherSpec(pKeySpec, myCipherSpec, myPredicate));
         }
 
@@ -1039,7 +1045,7 @@ class SymmetricStore {
         final List<FactorySymPBECipherSpec> myResult = new ArrayList<>();
 
         /* Build the list */
-        GordianPBESpec myPBESpec = GordianPBESpecBuilder.pbKDF2(GordianDigestSpecBuilder.sha2(GordianLength.LEN_512), 2048);
+        GordianNewPBESpec myPBESpec = GordianPBESpecBuilder.pbKDF2(GordianDigestSpecBuilder.sha2(GordianLength.LEN_512), 2048);
         myResult.add(new FactorySymPBECipherSpec(pCipherSpec, myPBESpec));
         myPBESpec = GordianPBESpecBuilder.pkcs12(GordianDigestSpecBuilder.sha2(GordianLength.LEN_512), 2048);
         myResult.add(new FactorySymPBECipherSpec(pCipherSpec, myPBESpec));
@@ -1066,8 +1072,8 @@ class SymmetricStore {
         /* Loop through the possible keySpecs */
         final List<FactoryStreamKeySpec> myResult = new ArrayList<>();
         final GordianCoreCipherFactory myCipherFactory = (GordianCoreCipherFactory) pFactory.getCipherFactory();
-        final Predicate<GordianStreamKeySpec> myPredicate = pPartner.getCipherFactory().supportedStreamKeySpecs();
-        for (GordianStreamKeySpec mySpec : myCipherFactory.listAllSupportedStreamKeySpecs(pKeyLen)) {
+        final Predicate<GordianNewStreamKeySpec> myPredicate = pPartner.getCipherFactory().supportedStreamKeySpecs();
+        for (GordianNewStreamKeySpec mySpec : myCipherFactory.listAllSupportedStreamKeySpecs(pKeyLen)) {
             /* Determine whether the keySpec is supported by the partner */
             GordianFactory myPartner = myPredicate.test(mySpec) ? pPartner : null;
 
@@ -1090,7 +1096,7 @@ class SymmetricStore {
         final List<FactoryStreamPBECipherSpec> myResult = new ArrayList<>();
 
         /* Build the list */
-        GordianPBESpec myPBESpec = GordianPBESpecBuilder.pbKDF2(GordianDigestSpecBuilder.sha2(GordianLength.LEN_512), 2048);
+        GordianNewPBESpec myPBESpec = GordianPBESpecBuilder.pbKDF2(GordianDigestSpecBuilder.sha2(GordianLength.LEN_512), 2048);
         myResult.add(new FactoryStreamPBECipherSpec(pCipherSpec, myPBESpec));
         myPBESpec = GordianPBESpecBuilder.pkcs12(GordianDigestSpecBuilder.sha2(GordianLength.LEN_512), 2048);
         myResult.add(new FactoryStreamPBECipherSpec(pCipherSpec, myPBESpec));

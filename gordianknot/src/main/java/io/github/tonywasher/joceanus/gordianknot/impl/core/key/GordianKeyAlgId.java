@@ -19,11 +19,11 @@ package io.github.tonywasher.joceanus.gordianknot.impl.core.key;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamKeySpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamKeyType;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymKeySpecBuilder;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymKeyType;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeyType;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeyType;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKeyLengths;
@@ -106,13 +106,13 @@ public class GordianKeyAlgId {
             final GordianLength myKeyLen = myIterator.next();
 
             /* Loop through the possible SymKeySpecs */
-            for (GordianSymKeySpec mySpec : myCipherFactory.listAllSupportedSymKeySpecs(myKeyLen)) {
+            for (GordianNewSymKeySpec mySpec : myCipherFactory.listAllSupportedSymKeySpecs(myKeyLen)) {
                 /* Add any non-standard symKeys */
                 ensureSymKey(mySpec);
             }
 
             /* Loop through the possible StreamKeySpecs */
-            for (GordianStreamKeySpec mySpec : myCipherFactory.listAllSupportedStreamKeySpecs(myKeyLen)) {
+            for (GordianNewStreamKeySpec mySpec : myCipherFactory.listAllSupportedStreamKeySpecs(myKeyLen)) {
                 /* Add any non-standard streamKeys */
                 ensureStreamKey(mySpec);
             }
@@ -150,7 +150,7 @@ public class GordianKeyAlgId {
      *
      * @param pSpec the symKeySpec
      */
-    private void ensureSymKey(final GordianSymKeySpec pSpec) {
+    private void ensureSymKey(final GordianNewSymKeySpec pSpec) {
         /* If the key is not already known */
         if (!theSpecMap.containsKey(pSpec)) {
             addSymKey(pSpec);
@@ -162,7 +162,7 @@ public class GordianKeyAlgId {
      *
      * @param pSpec the keySpec
      */
-    private void addSymKey(final GordianSymKeySpec pSpec) {
+    private void addSymKey(final GordianNewSymKeySpec pSpec) {
         /* Build SymKey id */
         final ASN1ObjectIdentifier myId = appendSymKeyOID(SYMKEYOID, true, pSpec);
 
@@ -180,9 +180,9 @@ public class GordianKeyAlgId {
      */
     public static ASN1ObjectIdentifier appendSymKeyOID(final ASN1ObjectIdentifier pBaseOID,
                                                        final boolean pAddLength,
-                                                       final GordianSymKeySpec pSpec) {
+                                                       final GordianNewSymKeySpec pSpec) {
         /* Create a branch based on the KeyType */
-        final GordianSymKeyType myType = pSpec.getSymKeyType();
+        final GordianNewSymKeyType myType = pSpec.getSymKeyType();
         ASN1ObjectIdentifier myId = pBaseOID.branch(Integer.toString(myType.ordinal() + 1));
 
         /* Add blockLength */
@@ -216,7 +216,7 @@ public class GordianKeyAlgId {
      *
      * @param pSpec the streamKeySpec
      */
-    private void ensureStreamKey(final GordianStreamKeySpec pSpec) {
+    private void ensureStreamKey(final GordianNewStreamKeySpec pSpec) {
         /* If the key is not already known */
         if (!theSpecMap.containsKey(pSpec)) {
             addStreamKey(pSpec);
@@ -228,7 +228,7 @@ public class GordianKeyAlgId {
      *
      * @param pSpec the keySpec
      */
-    private void addStreamKey(final GordianStreamKeySpec pSpec) {
+    private void addStreamKey(final GordianNewStreamKeySpec pSpec) {
         /* Build StreamKey id */
         final ASN1ObjectIdentifier myId = appendStreamKeyOID(STREAMKEYOID, pSpec);
 
@@ -244,9 +244,9 @@ public class GordianKeyAlgId {
      * @return the resulting OID
      */
     public static ASN1ObjectIdentifier appendStreamKeyOID(final ASN1ObjectIdentifier pBaseOID,
-                                                          final GordianStreamKeySpec pSpec) {
+                                                          final GordianNewStreamKeySpec pSpec) {
         /* Create a branch based on the KeyType */
-        final GordianStreamKeyType myType = pSpec.getStreamKeyType();
+        final GordianNewStreamKeyType myType = pSpec.getStreamKeyType();
         ASN1ObjectIdentifier myId = pBaseOID.branch(Integer.toString(myType.ordinal() + 1));
 
         /* Add keyLength */
@@ -315,7 +315,7 @@ public class GordianKeyAlgId {
         final Object mySubSpec = pSpec.getSubSpec();
         if (mySubSpec instanceof GordianNewDigestSpec mySpec) {
             myId = GordianCoreDigestAlgId.appendDigestOID(myId, mySpec);
-        } else if (mySubSpec instanceof GordianSymKeySpec mySpec) {
+        } else if (mySubSpec instanceof GordianNewSymKeySpec mySpec) {
             myId = appendSymKeyOID(myId, false, mySpec);
         } else if (mySubSpec instanceof GordianLength myLength) {
             myId = myId.branch(Integer.toString(myLength.ordinal() + 1));

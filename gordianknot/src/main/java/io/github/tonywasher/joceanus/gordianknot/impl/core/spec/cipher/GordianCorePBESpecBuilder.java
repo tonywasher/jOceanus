@@ -30,8 +30,23 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher.GordianCo
 /**
  * PBE Specification Builder.
  */
-public class GordianCorePBESpecBuilder
+public final class GordianCorePBESpecBuilder
         implements GordianNewPBESpecBuilder {
+    /**
+     * Private constructor.
+     */
+    private GordianCorePBESpecBuilder() {
+    }
+
+    /**
+     * Obtain new instance.
+     *
+     * @return the new instance
+     */
+    public static GordianCorePBESpecBuilder newInstance() {
+        return new GordianCorePBESpecBuilder();
+    }
+
     @Override
     public GordianNewPBEDigestAndCountSpec pbKDF2(final GordianNewDigestSpec pDigestSpec,
                                                   final int pCount) {

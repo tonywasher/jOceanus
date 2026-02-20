@@ -19,7 +19,7 @@ package io.github.tonywasher.joceanus.gordianknot.impl.core.stream;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianKeyedCipher;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.cipher.GordianCoreCipher;
 
 import java.io.IOException;
@@ -74,7 +74,7 @@ class GordianCipherOutputStream<T extends GordianKeySpec>
      * @return true/false
      */
     boolean isSymKeyStream() {
-        return theCipher.getKeyType() instanceof GordianSymKeySpec;
+        return theCipher.getKeyType() instanceof GordianNewSymKeySpec;
     }
 
     /**

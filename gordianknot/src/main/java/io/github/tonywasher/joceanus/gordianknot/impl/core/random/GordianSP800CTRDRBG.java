@@ -17,7 +17,7 @@
 package io.github.tonywasher.joceanus.gordianknot.impl.core.random;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianByteArrayInteger;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianDataConverter;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.cipher.GordianCoreCipher;
@@ -39,7 +39,7 @@ public class GordianSP800CTRDRBG
     /**
      * The Cipher.
      */
-    private final GordianCoreCipher<GordianSymKeySpec> theCipher;
+    private final GordianCoreCipher<GordianNewSymKeySpec> theCipher;
 
     /**
      * The Entropy Source.
@@ -80,7 +80,7 @@ public class GordianSP800CTRDRBG
      * @param pInitVector    nonce to further distinguish this DRBG (may be null).
      * @throws GordianException on error
      */
-    public GordianSP800CTRDRBG(final GordianCoreCipher<GordianSymKeySpec> pCipher,
+    public GordianSP800CTRDRBG(final GordianCoreCipher<GordianNewSymKeySpec> pCipher,
                                final EntropySource pEntropy,
                                final byte[] pSecurityBytes,
                                final byte[] pInitVector) throws GordianException {

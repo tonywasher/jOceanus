@@ -17,7 +17,7 @@
 package io.github.tonywasher.joceanus.gordianknot.api.mac;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpecBuilder;
@@ -91,7 +91,7 @@ public final class GordianMacSpecBuilder {
      * @param pSymKeySpec the symKeySpec
      * @return the MacSpec
      */
-    public static GordianMacSpec gMac(final GordianSymKeySpec pSymKeySpec) {
+    public static GordianMacSpec gMac(final GordianNewSymKeySpec pSymKeySpec) {
         return new GordianMacSpec(GordianMacType.GMAC, pSymKeySpec);
     }
 
@@ -101,7 +101,7 @@ public final class GordianMacSpecBuilder {
      * @param pSymKeySpec the symKeySpec
      * @return the MacSpec
      */
-    public static GordianMacSpec cMac(final GordianSymKeySpec pSymKeySpec) {
+    public static GordianMacSpec cMac(final GordianNewSymKeySpec pSymKeySpec) {
         return new GordianMacSpec(GordianMacType.CMAC, pSymKeySpec);
     }
 
@@ -142,7 +142,7 @@ public final class GordianMacSpecBuilder {
      * @param pSymKeySpec the symKeySpec
      * @return the MacSpec
      */
-    public static GordianMacSpec poly1305Mac(final GordianSymKeySpec pSymKeySpec) {
+    public static GordianMacSpec poly1305Mac(final GordianNewSymKeySpec pSymKeySpec) {
         return new GordianMacSpec(GordianMacType.POLY1305, pSymKeySpec);
     }
 
@@ -275,7 +275,7 @@ public final class GordianMacSpecBuilder {
      * @param pKeySpec the keySpec
      * @return the MacSpec
      */
-    public static GordianMacSpec kalynaMac(final GordianSymKeySpec pKeySpec) {
+    public static GordianMacSpec kalynaMac(final GordianNewSymKeySpec pKeySpec) {
         return new GordianMacSpec(GordianMacType.KALYNA, pKeySpec);
     }
 
@@ -337,7 +337,7 @@ public final class GordianMacSpecBuilder {
      * @param pSymKeySpec the symKeySpec
      * @return the MacSpec
      */
-    public static GordianMacSpec cbcMac(final GordianSymKeySpec pSymKeySpec) {
+    public static GordianMacSpec cbcMac(final GordianNewSymKeySpec pSymKeySpec) {
         return new GordianMacSpec(GordianMacType.CBCMAC, pSymKeySpec);
     }
 
@@ -347,7 +347,7 @@ public final class GordianMacSpecBuilder {
      * @param pSymKeySpec the symKeySpec
      * @return the MacSpec
      */
-    public static GordianMacSpec cfbMac(final GordianSymKeySpec pSymKeySpec) {
+    public static GordianMacSpec cfbMac(final GordianNewSymKeySpec pSymKeySpec) {
         return new GordianMacSpec(GordianMacType.CFBMAC, pSymKeySpec);
     }
 

@@ -122,13 +122,13 @@ public class GordianCoreStreamCipherSpec
             /* If the keySpec is valid */
             if (isValid) {
                 /* Load the name */
-                theName = super.toString();
+                theName = theKeySpec.toString();
                 if (asAEAD) {
-                    theName += "Poly1305";
+                    theName += "-AEAD";
                 }
             } else {
                 /* Report invalid spec */
-                theName = "InvalidStreamCipherSpec: " + theKeySpec;
+                theName = "InvalidStreamCipherSpec: " + theKeySpec + (asAEAD ? "-AEAD" : "");
             }
         }
 

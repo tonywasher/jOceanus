@@ -29,7 +29,7 @@ import java.util.List;
 /**
  * SymKey specification Builder.
  */
-public class GordianCoreSymKeySpecBuilder
+public final class GordianCoreSymKeySpecBuilder
         implements GordianNewSymKeySpecBuilder {
     /**
      * The type.
@@ -45,6 +45,21 @@ public class GordianCoreSymKeySpecBuilder
      * The keyLength.
      */
     private GordianLength theKeyLength;
+
+    /**
+     * Private constructor.
+     */
+    private GordianCoreSymKeySpecBuilder() {
+    }
+
+    /**
+     * Obtain new instance.
+     *
+     * @return the new instance
+     */
+    public static GordianCoreSymKeySpecBuilder newInstance() {
+        return new GordianCoreSymKeySpecBuilder();
+    }
 
     @Override
     public GordianNewSymKeySpecBuilder withType(final GordianNewSymKeyType pType) {

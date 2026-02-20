@@ -19,12 +19,12 @@ package io.github.tonywasher.joceanus.gordianknot.junit.extensions;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianPadding;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymCipher;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymCipherSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymCipherSpecBuilder;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymKeySpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewPadding;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigest;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestSpecBuilder;
@@ -401,7 +401,7 @@ class RandomTest {
      * @param pTestCases the testCases
      * @throws GordianException on error
      */
-    private void testCTRCipherDRBG(final GordianCoreCipher<GordianSymKeySpec> pCipher,
+    private void testCTRCipherDRBG(final GordianCoreCipher<GordianNewSymKeySpec> pCipher,
                                    final GordianLength pKeySize,
                                    final GordianDRBGInit pInit,
                                    final GordianTestCase[] pTestCases) throws GordianException {
@@ -434,7 +434,7 @@ class RandomTest {
      * @param pTestCases the testCases
      * @throws GordianException on error
      */
-    private void testX931CipherDRBG(final GordianCoreCipher<GordianSymKeySpec> pCipher,
+    private void testX931CipherDRBG(final GordianCoreCipher<GordianNewSymKeySpec> pCipher,
                                     final String pKey,
                                     final GordianDRBGInit pInit,
                                     final GordianTestCase[] pTestCases) throws GordianException {
@@ -918,8 +918,8 @@ class RandomTest {
 
         /* Create the cipher */
         final GordianCipherFactory myFactory = fcBCFACTORY.getCipherFactory();
-        final GordianSymCipherSpec mySpec = GordianSymCipherSpecBuilder.ecb(GordianSymKeySpecBuilder.aes(GordianLength.LEN_128), GordianPadding.NONE);
-        final GordianCoreCipher<GordianSymKeySpec> myCipher = (GordianCoreCipher<GordianSymKeySpec>) myFactory.createSymKeyCipher(mySpec);
+        final GordianNewSymCipherSpec mySpec = GordianSymCipherSpecBuilder.ecb(GordianSymKeySpecBuilder.aes(GordianLength.LEN_128), GordianNewPadding.NONE);
+        final GordianCoreCipher<GordianNewSymKeySpec> myCipher = (GordianCoreCipher<GordianNewSymKeySpec>) myFactory.createSymKeyCipher(mySpec);
 
         /* Create a standard stream */
         Stream<DynamicNode> myStandard = Stream.of(DynamicTest.dynamicTest(STANDARD,
@@ -965,8 +965,8 @@ class RandomTest {
 
         /* Run the tests */
         final GordianCipherFactory myFactory = fcBCFACTORY.getCipherFactory();
-        final GordianSymCipherSpec mySpec = GordianSymCipherSpecBuilder.ecb(GordianSymKeySpecBuilder.aes(GordianLength.LEN_128), GordianPadding.NONE);
-        final GordianCoreCipher<GordianSymKeySpec> myCipher = (GordianCoreCipher<GordianSymKeySpec>) myFactory.createSymKeyCipher(mySpec);
+        final GordianNewSymCipherSpec mySpec = GordianSymCipherSpecBuilder.ecb(GordianSymKeySpecBuilder.aes(GordianLength.LEN_128), GordianNewPadding.NONE);
+        final GordianCoreCipher<GordianNewSymKeySpec> myCipher = (GordianCoreCipher<GordianNewSymKeySpec>) myFactory.createSymKeyCipher(mySpec);
         testX931CipherDRBG(myCipher, "f7d36762b9915f1ed585eb8e91700eb2", myInitF, myTestsF);
 
         /* Create a standard stream */
@@ -1026,8 +1026,8 @@ class RandomTest {
 
         /* Create the cipher */
         final GordianCipherFactory myFactory = fcBCFACTORY.getCipherFactory();
-        final GordianSymCipherSpec mySpec = GordianSymCipherSpecBuilder.ecb(GordianSymKeySpecBuilder.aes(GordianLength.LEN_256), GordianPadding.NONE);
-        final GordianCoreCipher<GordianSymKeySpec> myCipher = (GordianCoreCipher<GordianSymKeySpec>) myFactory.createSymKeyCipher(mySpec);
+        final GordianNewSymCipherSpec mySpec = GordianSymCipherSpecBuilder.ecb(GordianSymKeySpecBuilder.aes(GordianLength.LEN_256), GordianNewPadding.NONE);
+        final GordianCoreCipher<GordianNewSymKeySpec> myCipher = (GordianCoreCipher<GordianNewSymKeySpec>) myFactory.createSymKeyCipher(mySpec);
 
         /* Create a standard stream */
         Stream<DynamicNode> myStandard = Stream.of(DynamicTest.dynamicTest(PERSONALISED + ADDITIONAL,

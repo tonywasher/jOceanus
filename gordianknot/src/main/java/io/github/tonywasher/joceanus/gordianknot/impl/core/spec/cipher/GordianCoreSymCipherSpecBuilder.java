@@ -26,7 +26,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKe
 import java.util.ArrayList;
 import java.util.List;
 
-public class GordianCoreSymCipherSpecBuilder
+public final class GordianCoreSymCipherSpecBuilder
         implements GordianNewSymCipherSpecBuilder {
     /**
      * The keySpec.
@@ -43,10 +43,25 @@ public class GordianCoreSymCipherSpecBuilder
      */
     private GordianNewPadding thePadding;
 
+    /**
+     * Private constructor.
+     */
+    private GordianCoreSymCipherSpecBuilder() {
+    }
+
+    /**
+     * Obtain new instance.
+     *
+     * @return the new instance
+     */
+    public static GordianCoreSymCipherSpecBuilder newInstance() {
+        return new GordianCoreSymCipherSpecBuilder();
+    }
+
     @Override
     public GordianNewSymCipherSpecBuilder withKeySpec(final GordianNewSymKeySpec pKeySpec) {
         theKeySpec = (GordianCoreSymKeySpec) pKeySpec;
-        return null;
+        return this;
     }
 
     @Override
@@ -84,9 +99,10 @@ public class GordianCoreSymCipherSpecBuilder
      * @param pSpec the keySpec
      * @return the list
      */
-    public List<GordianNewSymCipherSpec> listAllPossibleSymCipherSpecs(final GordianCoreSymKeySpec pSpec) {
+    public static List<GordianNewSymCipherSpec> listAllPossibleSymCipherSpecs(final GordianNewSymKeySpec pSpec) {
         /* Create the array list */
         final List<GordianNewSymCipherSpec> myList = new ArrayList<>();
+        final GordianCoreSymKeySpec mySpec = (GordianCoreSymKeySpec) pSpec;
 
         /* Loop through the modes */
         for (GordianCoreCipherMode myMode : GordianCoreCipherMode.values()) {
@@ -94,12 +110,12 @@ public class GordianCoreSymCipherSpecBuilder
             if (myMode.hasPadding()) {
                 /* Loop through the paddings */
                 for (GordianNewPadding myPadding : GordianNewPadding.values()) {
-                    myList.add(new GordianCoreSymCipherSpec(pSpec, myMode.getMode(), myPadding));
+                    myList.add(new GordianCoreSymCipherSpec(mySpec, myMode.getMode(), myPadding));
                 }
 
                 /* else no padding */
             } else {
-                myList.add(new GordianCoreSymCipherSpec(pSpec, myMode.getMode(), GordianNewPadding.NONE));
+                myList.add(new GordianCoreSymCipherSpec(mySpec, myMode.getMode(), GordianNewPadding.NONE));
             }
         }
 

@@ -9,11 +9,11 @@
         <processorPath useClasspath="false">
           <entry name="$MAVEN_REPOSITORY$/org/jetbrains/annotations/26.0.2-1/annotations-26.0.2-1.jar" />
         </processorPath>
-        <module name="tethys-javafx" />
-        <module name="themis-javafx" />
         <module name="moneywise-javafx" />
         <module name="astraeus" />
-        <module name="tethys-test" />
+        <module name="moneywise-core" />
+        <module name="prometheus-core" />
+        <module name="moneywise-swing" />
       </profile>
       <profile name="Annotation profile for gordianknot" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
@@ -105,7 +105,7 @@
         </processorPath>
         <module name="themis-core" />
       </profile>
-      <profile name="Annotation profile for moneywise-core" enabled="true">
+      <profile name="Annotation profile for tethys-javafx" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
@@ -113,9 +113,9 @@
           <entry name="$MAVEN_REPOSITORY$/org/jetbrains/annotations/26.0.2-1/annotations-26.0.2-1.jar" />
           <entry name="$MAVEN_REPOSITORY$/org/jetbrains/annotations/26.0.2-1/annotations-26.0.2-1.jar" />
         </processorPath>
-        <module name="moneywise-core" />
+        <module name="tethys-javafx" />
       </profile>
-      <profile name="Annotation profile for moneywise-swing" enabled="true">
+      <profile name="Annotation profile for tethys-test" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
@@ -123,9 +123,9 @@
           <entry name="$MAVEN_REPOSITORY$/org/jetbrains/annotations/26.0.2-1/annotations-26.0.2-1.jar" />
           <entry name="$MAVEN_REPOSITORY$/org/jetbrains/annotations/26.0.2-1/annotations-26.0.2-1.jar" />
         </processorPath>
-        <module name="moneywise-swing" />
+        <module name="tethys-test" />
       </profile>
-      <profile name="Annotation profile for prometheus-core" enabled="true">
+      <profile name="Annotation profile for themis-javafx" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
@@ -133,7 +133,7 @@
           <entry name="$MAVEN_REPOSITORY$/org/jetbrains/annotations/26.0.2-1/annotations-26.0.2-1.jar" />
           <entry name="$MAVEN_REPOSITORY$/org/jetbrains/annotations/26.0.2-1/annotations-26.0.2-1.jar" />
         </processorPath>
-        <module name="prometheus-core" />
+        <module name="themis-javafx" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>

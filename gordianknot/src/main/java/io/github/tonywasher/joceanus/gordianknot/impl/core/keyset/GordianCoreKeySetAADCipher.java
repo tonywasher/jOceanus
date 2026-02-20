@@ -18,7 +18,7 @@ package io.github.tonywasher.joceanus.gordianknot.impl.core.keyset;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymKeyType;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeyType;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigest;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpec;
@@ -98,7 +98,7 @@ public class GordianCoreKeySetAADCipher
     /**
      * The SymKeyType.
      */
-    private GordianSymKeyType theSymKeyType;
+    private GordianNewSymKeyType theSymKeyType;
 
     /**
      * The cachedBytes.

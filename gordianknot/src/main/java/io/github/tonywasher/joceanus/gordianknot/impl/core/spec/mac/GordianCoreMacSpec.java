@@ -18,7 +18,6 @@
 package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.mac;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeyType;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestType;
@@ -34,6 +33,7 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianCo
 import java.util.Objects;
 
 /**
+ * ♦
  * MacSpec implementation.
  */
 public class GordianCoreMacSpec
@@ -383,7 +383,7 @@ public class GordianCoreMacSpec
         }
 
         /* Restrict keyLengths */
-        final GordianSymKeySpec mySpec = (GordianSymKeySpec) theSubSpec;
+        final GordianNewSymKeySpec mySpec = (GordianNewSymKeySpec) theSubSpec;
         return theKeyLength == GordianLength.LEN_256
                 && (mySpec == null
                 || mySpec.getKeyLength() == GordianLength.LEN_128);

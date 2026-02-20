@@ -20,9 +20,10 @@ package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.mac;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianBundleLoader.GordianBundleId;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherResource;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymKeyType;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeyType;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacResource;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianNewMacType;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher.GordianCoreSymKeyType;
 
 import java.util.Collection;
 import java.util.EnumMap;
@@ -105,7 +106,7 @@ public final class GordianCoreMacType {
                 return GordianLength.LEN_128 == pKeyLen
                         || GordianLength.LEN_256 == pKeyLen;
             case KALYNA:
-                return GordianSymKeyType.KALYNA.validForKeyLength(pKeyLen);
+                return GordianCoreSymKeyType.validForKeyLength(GordianNewSymKeyType.KALYNA, pKeyLen);
             case SIPHASH:
                 return GordianLength.LEN_128 == pKeyLen;
             default:

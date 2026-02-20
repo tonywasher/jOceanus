@@ -55,6 +55,33 @@ public interface GordianNewSymKeySpecBuilder {
     GordianNewSymKeySpec build();
 
     /**
+     * Create generic.
+     *
+     * @param pKeyType   the keyType
+     * @param pKeyLength the keyLength
+     * @return the keySpec
+     */
+    default GordianNewSymKeySpec generic(final GordianNewSymKeyType pKeyType,
+                                         final GordianLength pKeyLength) {
+        return withType(pKeyType).withKeyLength(pKeyLength).build();
+    }
+
+
+    /**
+     * Create generic.
+     *
+     * @param pKeyType     the keyType
+     * @param pBlockLength the blockLength
+     * @param pKeyLength   the keyLength
+     * @return the keySpec
+     */
+    default GordianNewSymKeySpec generic(final GordianNewSymKeyType pKeyType,
+                                         final GordianLength pBlockLength,
+                                         final GordianLength pKeyLength) {
+        return withType(pKeyType).withBlockLength(pBlockLength).withKeyLength(pKeyLength).build();
+    }
+
+    /**
      * Create aes.
      *
      * @param pKeyLength the keyLength
@@ -124,7 +151,7 @@ public interface GordianNewSymKeySpecBuilder {
     }
 
     /**
-     * Create rc5KeySpec. TODO
+     * Create rc5KeySpec.
      *
      * @param pBlockLength the blockLength
      * @return the keySpec
@@ -275,6 +302,34 @@ public interface GordianNewSymKeySpecBuilder {
     default GordianNewSymKeySpec kalyna(final GordianLength pBlockLength,
                                         final GordianLength pKeyLength) {
         return withType(GordianNewSymKeyType.KALYNA).withBlockLength(pBlockLength).withKeyLength(pKeyLength).build();
+    }
+
+    /**
+     * Create gost.
+     *
+     * @return the keySpec
+     */
+    default GordianNewSymKeySpec gost() {
+        return withType(GordianNewSymKeyType.GOST).build();
+    }
+
+    /**
+     * Create kuznyechik.
+     *
+     * @return the keySpec
+     */
+    default GordianNewSymKeySpec kuznyechik() {
+        return withType(GordianNewSymKeyType.KUZNYECHIK).build();
+    }
+
+    /**
+     * Create shacal2.
+     *
+     * @param pKeyLength the keyLength
+     * @return the keySpec
+     */
+    default GordianNewSymKeySpec shacal2(final GordianLength pKeyLength) {
+        return withType(GordianNewSymKeyType.SHACAL2).withKeyLength(pKeyLength).build();
     }
 
     /**

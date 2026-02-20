@@ -18,6 +18,7 @@ package io.github.tonywasher.joceanus.gordianknot.api.cipher;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKey;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 
@@ -32,7 +33,7 @@ public interface GordianWrapper {
      *
      * @return the keyType
      */
-    GordianSymKeySpec getKeySpec();
+    GordianNewSymKeySpec getKeySpec();
 
     /**
      * Secure key.

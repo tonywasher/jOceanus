@@ -19,8 +19,8 @@ package io.github.tonywasher.joceanus.gordianknot.impl.bc;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymKeySpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymKeyType;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeyType;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacType;
@@ -29,6 +29,7 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseData;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.mac.GordianCoreMacFactory;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher.GordianCoreSymKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianCoreDigestSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.ext.digests.GordianBlake3Digest;
 import io.github.tonywasher.joceanus.gordianknot.impl.ext.macs.GordianBlake2Mac;
@@ -192,10 +193,11 @@ public class BouncyMacFactory
      * @return the MAC
      * @throws GordianException on error
      */
-    private static Mac getBCGMac(final GordianSymKeySpec pSymKeySpec) throws GordianException {
-        return GordianSymKeyType.KALYNA.equals(pSymKeySpec.getSymKeyType())
-                ? new GordianKGMac(new GordianKGCMBlockCipher(BouncyCipherFactory.getBCSymEngine(pSymKeySpec)))
-                : new GMac(GCMBlockCipher.newInstance(BouncyCipherFactory.getBCSymEngine(pSymKeySpec)));
+    private static Mac getBCGMac(final GordianNewSymKeySpec pSymKeySpec) throws GordianException {
+        final GordianCoreSymKeySpec mySpec = (GordianCoreSymKeySpec) pSymKeySpec;
+        return GordianNewSymKeyType.KALYNA.equals(pSymKeySpec.getSymKeyType())
+                ? new GordianKGMac(new GordianKGCMBlockCipher(BouncyCipherFactory.getBCSymEngine(mySpec)))
+                : new GMac(GCMBlockCipher.newInstance(BouncyCipherFactory.getBCSymEngine(mySpec)));
     }
 
     /**
@@ -205,8 +207,9 @@ public class BouncyMacFactory
      * @return the MAC
      * @throws GordianException on error
      */
-    private static Mac getBCCMac(final GordianSymKeySpec pSymKeySpec) throws GordianException {
-        return new CMac(BouncyCipherFactory.getBCSymEngine(pSymKeySpec));
+    private static Mac getBCCMac(final GordianNewSymKeySpec pSymKeySpec) throws GordianException {
+        final GordianCoreSymKeySpec mySpec = (GordianCoreSymKeySpec) pSymKeySpec;
+        return new CMac(BouncyCipherFactory.getBCSymEngine(mySpec));
     }
 
     /**
@@ -216,10 +219,11 @@ public class BouncyMacFactory
      * @return the MAC
      * @throws GordianException on error
      */
-    private static Mac getBCPoly1305Mac(final GordianSymKeySpec pSymKeySpec) throws GordianException {
+    private static Mac getBCPoly1305Mac(final GordianNewSymKeySpec pSymKeySpec) throws GordianException {
+        final GordianCoreSymKeySpec mySpec = (GordianCoreSymKeySpec) pSymKeySpec;
         return pSymKeySpec == null
                 ? new Poly1305()
-                : new Poly1305(BouncyCipherFactory.getBCSymEngine(pSymKeySpec));
+                : new Poly1305(BouncyCipherFactory.getBCSymEngine(mySpec));
     }
 
     /**
@@ -241,7 +245,7 @@ public class BouncyMacFactory
      * @param pSymKeySpec the SymKeySpec
      * @return the MAC
      */
-    private static Mac getBCKalynaMac(final GordianSymKeySpec pSymKeySpec) {
+    private static Mac getBCKalynaMac(final GordianNewSymKeySpec pSymKeySpec) {
         final GordianLength myLen = pSymKeySpec.getBlockLength();
         return new GordianDSTU7624Mac(myLen.getLength(), myLen.getLength());
     }
@@ -305,8 +309,9 @@ public class BouncyMacFactory
      * @return the MAC
      * @throws GordianException on error
      */
-    private static Mac getBCCBCMac(final GordianSymKeySpec pSymKeySpec) throws GordianException {
-        return new CBCBlockCipherMac(BouncyCipherFactory.getBCSymEngine(pSymKeySpec));
+    private static Mac getBCCBCMac(final GordianNewSymKeySpec pSymKeySpec) throws GordianException {
+        final GordianCoreSymKeySpec mySpec = (GordianCoreSymKeySpec) pSymKeySpec;
+        return new CBCBlockCipherMac(BouncyCipherFactory.getBCSymEngine(mySpec));
     }
 
     /**
@@ -316,8 +321,9 @@ public class BouncyMacFactory
      * @return the MAC
      * @throws GordianException on error
      */
-    private static Mac getBCCFBMac(final GordianSymKeySpec pSymKeySpec) throws GordianException {
-        return new CFBBlockCipherMac(BouncyCipherFactory.getBCSymEngine(pSymKeySpec));
+    private static Mac getBCCFBMac(final GordianNewSymKeySpec pSymKeySpec) throws GordianException {
+        final GordianCoreSymKeySpec mySpec = (GordianCoreSymKeySpec) pSymKeySpec;
+        return new CFBBlockCipherMac(BouncyCipherFactory.getBCSymEngine(mySpec));
     }
 
     /**

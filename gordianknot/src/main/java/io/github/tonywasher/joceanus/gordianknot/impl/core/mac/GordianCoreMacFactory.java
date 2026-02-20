@@ -19,8 +19,8 @@ package io.github.tonywasher.joceanus.gordianknot.impl.core.mac;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymKeySpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymKeyType;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeyType;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpec;
@@ -95,7 +95,7 @@ public abstract class GordianCoreMacFactory
      *
      * @return the predicate
      */
-    private Predicate<GordianSymKeySpec> supportedPoly1305SymKeySpecs() {
+    private Predicate<GordianNewSymKeySpec> supportedPoly1305SymKeySpecs() {
         return p -> p == null
                 || (validPoly1305SymKeySpec(p)
                 && p.getBlockLength() == GordianLength.LEN_128);
@@ -106,7 +106,7 @@ public abstract class GordianCoreMacFactory
      *
      * @return the predicate
      */
-    private Predicate<GordianSymKeySpec> supportedGMacSymKeySpecs() {
+    private Predicate<GordianNewSymKeySpec> supportedGMacSymKeySpecs() {
         return p -> validGMacSymKeySpec(p)
                 && p.getBlockLength() == GordianLength.LEN_128;
     }
@@ -116,7 +116,7 @@ public abstract class GordianCoreMacFactory
      *
      * @return the predicate
      */
-    private Predicate<GordianSymKeySpec> supportedCMacSymKeySpecs() {
+    private Predicate<GordianNewSymKeySpec> supportedCMacSymKeySpecs() {
         return this::validCMacSymKeySpec;
     }
 
@@ -183,7 +183,7 @@ public abstract class GordianCoreMacFactory
         final GordianDigestFactory myDigests = theFactory.getDigestFactory();
         final GordianCoreCipherFactory myCiphers = (GordianCoreCipherFactory) theFactory.getCipherFactory();
         final GordianNewDigestSpec mySpec = pMacSpec.getDigestSpec();
-        final GordianSymKeySpec mySymSpec = pMacSpec.getSymKeySpec();
+        final GordianNewSymKeySpec mySymSpec = pMacSpec.getSymKeySpec();
         switch (myType) {
             case HMAC:
                 return supportedHMacDigestSpecs().test(mySpec);
@@ -206,11 +206,11 @@ public abstract class GordianCoreMacFactory
                 return GordianNewDigestType.KUPYNA.equals(Objects.requireNonNull(mySpec).getDigestType())
                         && myDigests.supportedDigestSpecs().test(mySpec);
             case KALYNA:
-                return GordianSymKeyType.KALYNA.equals(Objects.requireNonNull(mySymSpec).getSymKeyType())
+                return GordianNewSymKeyType.KALYNA.equals(Objects.requireNonNull(mySymSpec).getSymKeyType())
                         && myCiphers.validSymKeySpec(mySymSpec);
             case CBCMAC:
             case CFBMAC:
-                return (!GordianSymKeyType.RC5.equals(Objects.requireNonNull(mySymSpec).getSymKeyType())
+                return (!GordianNewSymKeyType.RC5.equals(Objects.requireNonNull(mySymSpec).getSymKeyType())
                         || !GordianLength.LEN_128.equals(mySymSpec.getBlockLength()))
                         && myCiphers.validSymKeySpec(mySymSpec);
             case ZUC:
@@ -230,7 +230,7 @@ public abstract class GordianCoreMacFactory
      * @param pKeySpec the keySpec
      * @return true/false
      */
-    protected boolean validPoly1305SymKeySpec(final GordianSymKeySpec pKeySpec) {
+    protected boolean validPoly1305SymKeySpec(final GordianNewSymKeySpec pKeySpec) {
         switch (pKeySpec.getSymKeyType()) {
             case KUZNYECHIK:
             case RC5:
@@ -247,8 +247,8 @@ public abstract class GordianCoreMacFactory
      * @param pKeySpec the keySpec
      * @return true/false
      */
-    protected boolean validGMacSymKeySpec(final GordianSymKeySpec pKeySpec) {
-        if (GordianSymKeyType.RC5.equals(pKeySpec.getSymKeyType())) {
+    protected boolean validGMacSymKeySpec(final GordianNewSymKeySpec pKeySpec) {
+        if (GordianNewSymKeyType.RC5.equals(pKeySpec.getSymKeyType())) {
             return false;
         }
         final GordianCoreCipherFactory myCiphers = (GordianCoreCipherFactory) theFactory.getCipherFactory();
@@ -261,8 +261,8 @@ public abstract class GordianCoreMacFactory
      * @param pKeySpec the keySpec
      * @return true/false
      */
-    protected boolean validCMacSymKeySpec(final GordianSymKeySpec pKeySpec) {
-        if (GordianSymKeyType.RC5.equals(pKeySpec.getSymKeyType())) {
+    protected boolean validCMacSymKeySpec(final GordianNewSymKeySpec pKeySpec) {
+        if (GordianNewSymKeyType.RC5.equals(pKeySpec.getSymKeyType())) {
             return false;
         }
         final GordianCoreCipherFactory myCiphers = (GordianCoreCipherFactory) theFactory.getCipherFactory();
@@ -299,7 +299,7 @@ public abstract class GordianCoreMacFactory
         }
 
         /* For each SymKey */
-        for (final GordianSymKeySpec mySymKeySpec : theFactory.getCipherFactory().listAllSymKeySpecs(pKeyLen)) {
+        for (final GordianNewSymKeySpec mySymKeySpec : theFactory.getCipherFactory().listAllSymKeySpecs(pKeyLen)) {
             /* Add gMac/cMac/cfbMac/cbcMac */
             myList.add(GordianMacSpecBuilder.gMac(mySymKeySpec));
             myList.add(GordianMacSpecBuilder.cMac(mySymKeySpec));
@@ -307,7 +307,7 @@ public abstract class GordianCoreMacFactory
             myList.add(GordianMacSpecBuilder.cfbMac(mySymKeySpec));
 
             /* Add kalynaMac for keyType of Kalyna */
-            if (GordianSymKeyType.KALYNA == mySymKeySpec.getSymKeyType()) {
+            if (GordianNewSymKeyType.KALYNA == mySymKeySpec.getSymKeyType()) {
                 myList.add(GordianMacSpecBuilder.kalynaMac(mySymKeySpec));
             }
         }
@@ -315,7 +315,7 @@ public abstract class GordianCoreMacFactory
         /* Only add poly1305 for 256bit keyLengths */
         if (GordianLength.LEN_256 == pKeyLen) {
             /* For each SymKey at 128 bits*/
-            for (final GordianSymKeySpec mySymKeySpec : theFactory.getCipherFactory().listAllSymKeySpecs(GordianLength.LEN_128)) {
+            for (final GordianNewSymKeySpec mySymKeySpec : theFactory.getCipherFactory().listAllSymKeySpecs(GordianLength.LEN_128)) {
                 myList.add(GordianMacSpecBuilder.poly1305Mac(mySymKeySpec));
             }
 

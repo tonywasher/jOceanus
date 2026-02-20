@@ -17,10 +17,11 @@
 package io.github.tonywasher.joceanus.gordianknot.impl.core.base;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamKeyType;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymKeySpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymKeyType;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeyType;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeyType;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestType;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher.GordianCoreSymKeyType;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianCoreDigestType;
 
 import java.util.Arrays;
@@ -132,7 +133,7 @@ public class GordianValidator {
      * @param pKeyLen the keyLength
      * @return the predicate
      */
-    public Predicate<GordianSymKeySpec> supportedKeySetSymKeySpecs(final GordianLength pKeyLen) {
+    public Predicate<GordianNewSymKeySpec> supportedKeySetSymKeySpecs(final GordianLength pKeyLen) {
         return s -> supportedKeySetSymKeyTypes(pKeyLen).test(s.getSymKeyType())
                 && s.getBlockLength() == GordianLength.LEN_128;
     }
@@ -143,7 +144,7 @@ public class GordianValidator {
      * @param pKeyLen the keyLength
      * @return the predicate
      */
-    public Predicate<GordianSymKeyType> supportedKeySetSymKeyTypes(final GordianLength pKeyLen) {
+    public Predicate<GordianNewSymKeyType> supportedKeySetSymKeyTypes(final GordianLength pKeyLen) {
         return t -> validKeySetSymKeyType(t, pKeyLen);
     }
 
@@ -154,7 +155,7 @@ public class GordianValidator {
      * @param pKeyLen  the keyLength
      * @return true/false
      */
-    private boolean validKeySetSymKeyType(final GordianSymKeyType pKeyType,
+    private boolean validKeySetSymKeyType(final GordianNewSymKeyType pKeyType,
                                           final GordianLength pKeyLen) {
         return validSymKeyType(pKeyType)
                 && validStdBlockSymKeyTypeForKeyLength(pKeyType, pKeyLen);
@@ -167,10 +168,10 @@ public class GordianValidator {
      * @param pKeyLen  the keyLength
      * @return true/false
      */
-    public static boolean validStdBlockSymKeyTypeForKeyLength(final GordianSymKeyType pKeyType,
+    public static boolean validStdBlockSymKeyTypeForKeyLength(final GordianNewSymKeyType pKeyType,
                                                               final GordianLength pKeyLen) {
         return validSymKeyTypeForKeyLength(pKeyType, pKeyLen)
-                && pKeyType.getDefaultBlockLength().equals(GordianLength.LEN_128);
+                && GordianLength.LEN_128.equals(GordianCoreSymKeyType.getDefaultBlockLength(pKeyType));
     }
 
     /**
@@ -180,9 +181,9 @@ public class GordianValidator {
      * @param pKeyLen  the keyLength
      * @return true/false
      */
-    public static boolean validSymKeyTypeForKeyLength(final GordianSymKeyType pKeyType,
+    public static boolean validSymKeyTypeForKeyLength(final GordianNewSymKeyType pKeyType,
                                                       final GordianLength pKeyLen) {
-        return pKeyType.validForKeyLength(pKeyLen);
+        return GordianCoreSymKeyType.validForKeyLength(pKeyType, pKeyLen);
     }
 
     /**
@@ -191,7 +192,7 @@ public class GordianValidator {
      * @param pKeyType the symKeyType
      * @return true/false
      */
-    public boolean validSymKeyType(final GordianSymKeyType pKeyType) {
+    public boolean validSymKeyType(final GordianNewSymKeyType pKeyType) {
         return pKeyType != null;
     }
 
@@ -201,7 +202,7 @@ public class GordianValidator {
      * @param pKeyType the streamKeyType
      * @return true/false
      */
-    public boolean validStreamKeyType(final GordianStreamKeyType pKeyType) {
+    public boolean validStreamKeyType(final GordianNewStreamKeyType pKeyType) {
         return pKeyType != null;
     }
 

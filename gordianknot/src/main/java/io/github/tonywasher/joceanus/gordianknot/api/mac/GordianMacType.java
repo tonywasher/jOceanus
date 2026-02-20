@@ -19,7 +19,8 @@ package io.github.tonywasher.joceanus.gordianknot.api.mac;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianBundleLoader.GordianBundleId;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherResource;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymKeyType;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeyType;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher.GordianCoreSymKeyType;
 
 /**
  * Mac types. Available algorithms.
@@ -156,7 +157,7 @@ public enum GordianMacType {
                 return GordianLength.LEN_128 == pKeyLen
                         || GordianLength.LEN_256 == pKeyLen;
             case KALYNA:
-                return GordianSymKeyType.KALYNA.validForKeyLength(pKeyLen);
+                return GordianCoreSymKeyType.validForKeyLength(GordianNewSymKeyType.KALYNA, pKeyLen);
             case SIPHASH:
                 return GordianLength.LEN_128 == pKeyLen;
             default:

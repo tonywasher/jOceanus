@@ -21,11 +21,11 @@ import io.github.tonywasher.joceanus.gordianknot.api.base.GordianKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherParameters;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamCipher;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamCipherSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymCipher;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymCipherSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestType;
@@ -95,12 +95,12 @@ public class GordianCoreAgreementCalculator {
             return deriveKeySet(mySpec, pSecret);
 
             /* If the resultType is a SymCipherSpec */
-        } else if (pResultType instanceof GordianSymCipherSpec mySpec) {
+        } else if (pResultType instanceof GordianNewSymCipherSpec mySpec) {
             /* Derive the key */
             return deriveCipher(mySpec, pSecret);
 
             /* If the resultType is a StreamCipherSpec */
-        } else if (pResultType instanceof GordianStreamCipherSpec mySpec) {
+        } else if (pResultType instanceof GordianNewStreamCipherSpec mySpec) {
             /* Derive the key */
             return deriveCipher(mySpec, pSecret);
 
@@ -182,13 +182,13 @@ public class GordianCoreAgreementCalculator {
      * @return the ciphers
      * @throws GordianException on error
      */
-    private GordianSymCipher[] deriveCipher(final GordianSymCipherSpec pCipherSpec,
+    private GordianSymCipher[] deriveCipher(final GordianNewSymCipherSpec pCipherSpec,
                                             final byte[] pSecret) throws GordianException {
         /* Derive a shared factory */
         final GordianFactory myFactory = deriveFactory(GordianFactoryType.BC, pSecret);
 
         /* Generate the key */
-        final GordianKey<GordianSymKeySpec> myKey = deriveKey(myFactory, pCipherSpec.getKeyType(), pSecret);
+        final GordianKey<GordianNewSymKeySpec> myKey = deriveKey(myFactory, pCipherSpec.getKeySpec(), pSecret);
 
         /* Create the cipher and initialise with key */
         final GordianCipherFactory myCiphers = myFactory.getCipherFactory();
@@ -222,13 +222,13 @@ public class GordianCoreAgreementCalculator {
      * @return the ciphers
      * @throws GordianException on error
      */
-    private GordianStreamCipher[] deriveCipher(final GordianStreamCipherSpec pCipherSpec,
+    private GordianStreamCipher[] deriveCipher(final GordianNewStreamCipherSpec pCipherSpec,
                                                final byte[] pSecret) throws GordianException {
         /* Derive a shared factory */
         final GordianFactory myFactory = deriveFactory(GordianFactoryType.BC, pSecret);
 
         /* Generate the key */
-        final GordianKey<GordianStreamKeySpec> myKey = deriveKey(myFactory, pCipherSpec.getKeyType(), pSecret);
+        final GordianKey<GordianNewStreamKeySpec> myKey = deriveKey(myFactory, pCipherSpec.getKeySpec(), pSecret);
 
         /* Create the ciphers */
         final GordianCipherFactory myCiphers = myFactory.getCipherFactory();

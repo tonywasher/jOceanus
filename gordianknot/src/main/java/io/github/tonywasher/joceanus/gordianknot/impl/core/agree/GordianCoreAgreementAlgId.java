@@ -20,9 +20,9 @@ import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementKDF;
 import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementType;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamCipherSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymCipherSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactoryType;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianDSAElliptic;
@@ -353,11 +353,11 @@ public class GordianCoreAgreementAlgId {
             final GordianKeySetSpecASN1 myParms = new GordianKeySetSpecASN1(mySpec);
             return myParms.getAlgorithmId();
         }
-        if (pResultType instanceof GordianSymCipherSpec mySpec) {
+        if (pResultType instanceof GordianNewSymCipherSpec mySpec) {
             final GordianCoreCipherFactory myCipherFactory = (GordianCoreCipherFactory) theFactory.getCipherFactory();
             return myCipherFactory.getIdentifierForSpec(mySpec);
         }
-        if (pResultType instanceof GordianStreamCipherSpec mySpec) {
+        if (pResultType instanceof GordianNewStreamCipherSpec mySpec) {
             final GordianCoreCipherFactory myCipherFactory = (GordianCoreCipherFactory) theFactory.getCipherFactory();
             return myCipherFactory.getIdentifierForSpec(mySpec);
         }
@@ -394,7 +394,7 @@ public class GordianCoreAgreementAlgId {
 
         /* Look for a cipher Spec */
         final GordianCoreCipherFactory myCipherFactory = (GordianCoreCipherFactory) theFactory.getCipherFactory();
-        final GordianCipherSpec<?> mySpec = myCipherFactory.getCipherSpecForIdentifier(pResId);
+        final GordianNewCipherSpec<?> mySpec = myCipherFactory.getCipherSpecForIdentifier(pResId);
         if (mySpec != null) {
             return mySpec;
         }

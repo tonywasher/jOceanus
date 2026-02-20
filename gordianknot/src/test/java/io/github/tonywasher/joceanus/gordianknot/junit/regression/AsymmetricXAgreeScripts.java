@@ -28,12 +28,12 @@ import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianCertificate;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairUsage;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairUse;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamCipherSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamCipherSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamKeySpecBuilder;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymCipherSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymCipherSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymKeySpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymCipherSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianAsyncFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactoryType;
@@ -74,12 +74,12 @@ public final class AsymmetricXAgreeScripts {
     /**
      * SymCipherSpec.
      */
-    private static final GordianSymCipherSpec SYMKEYSPEC = GordianSymCipherSpecBuilder.sic(GordianSymKeySpecBuilder.aes(GordianLength.LEN_256));
+    private static final GordianNewSymCipherSpec SYMKEYSPEC = GordianSymCipherSpecBuilder.sic(GordianSymKeySpecBuilder.aes(GordianLength.LEN_256));
 
     /**
      * StreamCipherSpec.
      */
-    private static final GordianStreamCipherSpec STREAMKEYSPEC = GordianStreamCipherSpecBuilder.stream(GordianStreamKeySpecBuilder.chacha(GordianLength.LEN_256));
+    private static final GordianNewStreamCipherSpec STREAMKEYSPEC = GordianStreamCipherSpecBuilder.stream(GordianStreamKeySpecBuilder.chacha(GordianLength.LEN_256));
 
     /**
      * ByteArrayResult.

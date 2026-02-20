@@ -17,23 +17,41 @@
 
 package io.github.tonywasher.joceanus.gordianknot.api.cipher.spec;
 
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianIdSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianKeySpec;
+
 /**
- * The StreamCipherSpec class.
+ * Cipher Specification.
+ *
+ * @param <T> the keyType
  */
-public interface GordianNewStreamCipherSpec
-        extends GordianNewCipherSpec<GordianNewStreamKeySpec> {
+public interface GordianNewCipherSpec<T extends GordianKeySpec>
+        extends GordianIdSpec {
     /**
-     * Is the cipherSpec explicitly an AEAD variant?
+     * Obtain the keySpec.
      *
-     * @return true/false.
+     * @return the keySpec
      */
-    boolean asAEAD();
+    T getKeySpec();
 
     /**
-     * is this an AEAD mode?
+     * Does the cipher need an IV?
      *
      * @return true/false
      */
-    boolean isAEAD();
+    boolean needsIV();
 
+    /**
+     * Obtain the IV length for the cipher.
+     *
+     * @return the IV length
+     */
+    int getIVLength();
+
+    /**
+     * Is the keySpec valid?
+     *
+     * @return true/false.
+     */
+    boolean isValid();
 }

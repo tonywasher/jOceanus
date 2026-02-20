@@ -18,8 +18,8 @@ package io.github.tonywasher.joceanus.gordianknot.junit.regression;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamKeySpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactory.GordianFactoryLock;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactoryType;
@@ -182,12 +182,12 @@ class KeySetTest {
         /**
          * The symKey.
          */
-        private final GordianKey<GordianSymKeySpec> theSymKey;
+        private final GordianKey<GordianNewSymKeySpec> theSymKey;
 
         /**
          * The streamKey.
          */
-        private final GordianKey<GordianStreamKeySpec> theStreamKey;
+        private final GordianKey<GordianNewStreamKeySpec> theStreamKey;
 
         /**
          * The macKey.
@@ -290,7 +290,7 @@ class KeySetTest {
          *
          * @return the symKey
          */
-        GordianKey<GordianSymKeySpec> getSymKey() {
+        GordianKey<GordianNewSymKeySpec> getSymKey() {
             return theSymKey;
         }
 
@@ -299,7 +299,7 @@ class KeySetTest {
          *
          * @return the streamKey
          */
-        GordianKey<GordianStreamKeySpec> getStreamKey() {
+        GordianKey<GordianNewStreamKeySpec> getStreamKey() {
             return theStreamKey;
         }
 
@@ -786,20 +786,20 @@ class KeySetTest {
     private void checkWrap(final FactoryKeySet pKeySet) throws GordianException {
         /* Access the keys */
         final GordianCoreKeySet myKeySet = (GordianCoreKeySet) pKeySet.getKeySet();
-        final GordianKey<GordianSymKeySpec> mySymKey = pKeySet.getSymKey();
-        final GordianKey<GordianStreamKeySpec> myStreamKey = pKeySet.getStreamKey();
+        final GordianKey<GordianNewSymKeySpec> mySymKey = pKeySet.getSymKey();
+        final GordianKey<GordianNewStreamKeySpec> myStreamKey = pKeySet.getStreamKey();
         final GordianKey<GordianMacSpec> myMacKey = pKeySet.getMacKey();
         final GordianLength myKeyLen = pKeySet.getPasswordLockSpec().getKeySetSpec().getKeyLength();
 
         /* Check wrap of symKey */
         final byte[] mySymSafe = myKeySet.secureKey(mySymKey);
-        final GordianKey<GordianSymKeySpec> mySymResult = myKeySet.deriveKey(mySymSafe, mySymKey.getKeyType());
+        final GordianKey<GordianNewSymKeySpec> mySymResult = myKeySet.deriveKey(mySymSafe, mySymKey.getKeyType());
         Assertions.assertEquals(mySymKey, mySymResult, "Failed to wrap/unwrap symKey");
         Assertions.assertEquals(myKeySet.getKeyWrapLength(myKeyLen), mySymSafe.length, "Incorrect wrapped symLength");
 
         /* Check wrap of streamKey */
         final byte[] myStreamSafe = myKeySet.secureKey(myStreamKey);
-        final GordianKey<GordianStreamKeySpec> myStreamResult = myKeySet.deriveKey(myStreamSafe, myStreamKey.getKeyType());
+        final GordianKey<GordianNewStreamKeySpec> myStreamResult = myKeySet.deriveKey(myStreamSafe, myStreamKey.getKeyType());
         Assertions.assertEquals(myStreamKey, myStreamResult, "Failed to wrap/unwrap streamKey");
         Assertions.assertEquals(myKeySet.getKeyWrapLength(myKeyLen), myStreamSafe.length, "Incorrect wrapped streamLength");
 

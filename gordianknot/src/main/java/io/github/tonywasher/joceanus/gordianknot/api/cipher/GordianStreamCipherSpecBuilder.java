@@ -16,10 +16,20 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.api.cipher;
 
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamCipherSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher.GordianCoreStreamCipherSpecBuilder;
+
 /**
  * The StreamCipherSpec Builder class.
  */
 public final class GordianStreamCipherSpecBuilder {
+    /**
+     * StreamCipherSpecBuilder.
+     */
+    private static final GordianNewStreamCipherSpecBuilder BUILDER = GordianCoreStreamCipherSpecBuilder.newInstance();
+
     /**
      * Private constructor.
      */
@@ -32,8 +42,8 @@ public final class GordianStreamCipherSpecBuilder {
      * @param pKeySpec the keySpec
      * @return the cipherSpec
      */
-    public static GordianStreamCipherSpec stream(final GordianStreamKeySpec pKeySpec) {
-        return new GordianStreamCipherSpec(pKeySpec);
+    public static GordianNewStreamCipherSpec stream(final GordianNewStreamKeySpec pKeySpec) {
+        return BUILDER.generic(pKeySpec);
     }
 
     /**
@@ -43,8 +53,8 @@ public final class GordianStreamCipherSpecBuilder {
      * @param pAAD     is this an AAD cipher?
      * @return the cipherSpec
      */
-    public static GordianStreamCipherSpec stream(final GordianStreamKeySpec pKeySpec,
-                                                 final boolean pAAD) {
-        return new GordianStreamCipherSpec(pKeySpec, pAAD);
+    public static GordianNewStreamCipherSpec stream(final GordianNewStreamKeySpec pKeySpec,
+                                                    final boolean pAAD) {
+        return BUILDER.generic(pKeySpec, pAAD);
     }
 }

@@ -23,8 +23,8 @@ import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementType;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianCertificate;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairUse;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamCipherSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymCipherSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactoryType;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySetSpec;
@@ -201,7 +201,7 @@ public class GordianCoreAgreementParams
         }
 
         /* Validate a symCipherSpec */
-        if (pResultType instanceof GordianSymCipherSpec mySpec) {
+        if (pResultType instanceof GordianNewSymCipherSpec mySpec) {
             /* Check Spec */
             final GordianCoreCipherFactory myCipherFactory = (GordianCoreCipherFactory) theFactory.getCipherFactory();
             myCipherFactory.checkSymCipherSpec(mySpec);
@@ -209,7 +209,7 @@ public class GordianCoreAgreementParams
         }
 
         /* Validate a streamCipherSpec */
-        if (pResultType instanceof GordianStreamCipherSpec mySpec) {
+        if (pResultType instanceof GordianNewStreamCipherSpec mySpec) {
             /* Check Spec */
             final GordianCoreCipherFactory myCipherFactory = (GordianCoreCipherFactory) theFactory.getCipherFactory();
             myCipherFactory.checkStreamCipherSpec(mySpec);

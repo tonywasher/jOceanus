@@ -20,13 +20,13 @@ import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherParameters;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianPadding;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymCipher;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymCipherSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymCipherSpecBuilder;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymKeySpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymKeyType;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewPadding;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeyType;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigest;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpec;
@@ -171,10 +171,10 @@ public class GordianCoreRandomFactory
                 final GordianMacSpec myMacSpec = GordianMacSpecBuilder.hMac(myDigest);
                 return buildHMAC(myMacs.createMac(myMacSpec), isResistent);
             case CTR:
-                GordianSymCipherSpec myCipherSpec = GordianSymCipherSpecBuilder.ecb(pRandomSpec.getSymKeySpec(), GordianPadding.NONE);
+                GordianNewSymCipherSpec myCipherSpec = GordianSymCipherSpecBuilder.ecb(pRandomSpec.getSymKeySpec(), GordianNewPadding.NONE);
                 return buildCTR(myCiphers.createSymKeyCipher(myCipherSpec), isResistent);
             case X931:
-                myCipherSpec = GordianSymCipherSpecBuilder.ecb(pRandomSpec.getSymKeySpec(), GordianPadding.NONE);
+                myCipherSpec = GordianSymCipherSpecBuilder.ecb(pRandomSpec.getSymKeySpec(), GordianNewPadding.NONE);
                 return buildX931(myCiphers.createSymKeyCipher(myCipherSpec), isResistent);
             default:
                 throw new GordianDataException(GordianBaseData.getInvalidText(pRandomSpec));
@@ -223,7 +223,7 @@ public class GordianCoreRandomFactory
         /* Access details */
         final GordianRandomType myType = pRandomSpec.getRandomType();
         final GordianNewDigestSpec myDigest = pRandomSpec.getDigestSpec();
-        final GordianSymKeySpec mySymKey = pRandomSpec.getSymKeySpec();
+        final GordianNewSymKeySpec mySymKey = pRandomSpec.getSymKeySpec();
 
         /* Check that the randomType is supported */
         switch (myType) {
@@ -273,7 +273,7 @@ public class GordianCoreRandomFactory
      */
     GordianCombinedRandom generateRandomCombined() throws GordianException {
         /* Create a random ctrSpec */
-        final GordianSymKeySpec mySymKeySpec = generateRandomSymKeySpec();
+        final GordianNewSymKeySpec mySymKeySpec = generateRandomSymKeySpec();
         final GordianRandomSpec myCtrSpec = GordianRandomSpecBuilder.ctr(mySymKeySpec);
 
         /* Create a random hashSpec */
@@ -289,19 +289,19 @@ public class GordianCoreRandomFactory
      *
      * @return the random symKeySpec
      */
-    private GordianSymKeySpec generateRandomSymKeySpec() {
+    private GordianNewSymKeySpec generateRandomSymKeySpec() {
         /* Access the list of symKeySpecs and unique symKeyTypes */
         final GordianCoreCipherFactory myCiphers = (GordianCoreCipherFactory) theFactory.getCipherFactory();
-        final List<GordianSymKeySpec> mySpecs = myCiphers.listAllSupportedSymKeySpecs(GordianLength.LEN_128);
+        final List<GordianNewSymKeySpec> mySpecs = myCiphers.listAllSupportedSymKeySpecs(GordianLength.LEN_128);
 
         /* Remove the specs that are wrong block size and obtain keyTypes */
         mySpecs.removeIf(s -> s.getBlockLength() != GordianLength.LEN_128);
-        final List<GordianSymKeyType> myTypes
-                = mySpecs.stream().map(GordianSymKeySpec::getSymKeyType).collect(Collectors.toCollection(ArrayList::new));
+        final List<GordianNewSymKeyType> myTypes
+                = mySpecs.stream().map(GordianNewSymKeySpec::getSymKeyType).collect(Collectors.toCollection(ArrayList::new));
 
         /* Determine a random index into the list and obtain the symKeyType */
         int myIndex = theRandom.nextInt(myTypes.size());
-        final GordianSymKeyType myKeyType = myTypes.get(myIndex);
+        final GordianNewSymKeyType myKeyType = myTypes.get(myIndex);
 
         /* Select from among possible keySpecs of this type */
         mySpecs.removeIf(s -> s.getSymKeyType() != myKeyType);
@@ -368,31 +368,31 @@ public class GordianCoreRandomFactory
     }
 
     @Override
-    public GordianKey<GordianSymKeySpec> generateRandomSymKey(final GordianLength pKeyLen) throws GordianException {
+    public GordianKey<GordianNewSymKeySpec> generateRandomSymKey(final GordianLength pKeyLen) throws GordianException {
         /* Access Cipher Factory and IdManager */
         final GordianCipherFactory myCiphers = theFactory.getCipherFactory();
         final GordianIdManager myIds = theFactory.getIdManager();
 
         /* Determine a random keySpec */
-        final GordianSymKeySpec mySpec = myIds.generateRandomSymKeySpec(pKeyLen);
+        final GordianNewSymKeySpec mySpec = myIds.generateRandomSymKeySpec(pKeyLen);
 
         /* Generate a random key */
-        final GordianKeyGenerator<GordianSymKeySpec> myGenerator = myCiphers.getKeyGenerator(mySpec);
+        final GordianKeyGenerator<GordianNewSymKeySpec> myGenerator = myCiphers.getKeyGenerator(mySpec);
         return myGenerator.generateKey();
     }
 
     @Override
-    public GordianKey<GordianStreamKeySpec> generateRandomStreamKey(final GordianLength pKeyLen,
-                                                                    final boolean pLargeData) throws GordianException {
+    public GordianKey<GordianNewStreamKeySpec> generateRandomStreamKey(final GordianLength pKeyLen,
+                                                                       final boolean pLargeData) throws GordianException {
         /* Access Cipher Factory and IdManager */
         final GordianCipherFactory myCiphers = theFactory.getCipherFactory();
         final GordianIdManager myIds = theFactory.getIdManager();
 
         /* Generate a random keySpec */
-        final GordianStreamKeySpec mySpec = myIds.generateRandomStreamKeySpec(pKeyLen, pLargeData);
+        final GordianNewStreamKeySpec mySpec = myIds.generateRandomStreamKeySpec(pKeyLen, pLargeData);
 
         /* Generate a random key */
-        final GordianKeyGenerator<GordianStreamKeySpec> myGenerator = myCiphers.getKeyGenerator(mySpec);
+        final GordianKeyGenerator<GordianNewStreamKeySpec> myGenerator = myCiphers.getKeyGenerator(mySpec);
         return myGenerator.generateKey();
     }
 
@@ -450,7 +450,7 @@ public class GordianCoreRandomFactory
         final byte[] myInit = theRandom.generateSeed(NUM_ENTROPY_BYTES_REQUIRED);
 
         /* Build DRBG */
-        final GordianCoreCipher<GordianSymKeySpec> myCipher = (GordianCoreCipher<GordianSymKeySpec>) pCipher;
+        final GordianCoreCipher<GordianNewSymKeySpec> myCipher = (GordianCoreCipher<GordianNewSymKeySpec>) pCipher;
         final EntropySource myEntropy = theEntropyProvider.get(NUM_ENTROPY_BITS_REQUIRED);
         final GordianSP800CTRDRBG myProvider = new GordianSP800CTRDRBG(myCipher,
                 myEntropy, theRandomSource.defaultPersonalisation(), myInit);
@@ -470,8 +470,8 @@ public class GordianCoreRandomFactory
                                           final boolean isPredictionResistant) throws GordianException {
         /* Initialise the cipher with a random key */
         final GordianCipherFactory myCiphers = theFactory.getCipherFactory();
-        final GordianKeyGenerator<GordianSymKeySpec> myGenerator = myCiphers.getKeyGenerator(pCipher.getKeyType());
-        final GordianKey<GordianSymKeySpec> myKey = myGenerator.generateKey();
+        final GordianKeyGenerator<GordianNewSymKeySpec> myGenerator = myCiphers.getKeyGenerator(pCipher.getKeyType());
+        final GordianKey<GordianNewSymKeySpec> myKey = myGenerator.generateKey();
         pCipher.initForEncrypt(GordianCipherParameters.key(myKey));
 
         /* Build DRBG */
@@ -535,7 +535,7 @@ public class GordianCoreRandomFactory
             final GordianLength myKeyLen = myIterator.next();
 
             /* For each symKeySpec */
-            for (final GordianSymKeySpec mySpec : theFactory.getCipherFactory().listAllSymKeySpecs(myKeyLen)) {
+            for (final GordianNewSymKeySpec mySpec : theFactory.getCipherFactory().listAllSymKeySpecs(myKeyLen)) {
                 /* Add a CTR random */
                 myList.add(GordianRandomSpecBuilder.ctr(mySpec));
                 myList.add(GordianRandomSpecBuilder.ctrResist(mySpec));

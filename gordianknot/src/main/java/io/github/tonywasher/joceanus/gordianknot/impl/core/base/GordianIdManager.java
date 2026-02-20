@@ -19,10 +19,10 @@ package io.github.tonywasher.joceanus.gordianknot.impl.core.base;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamKeySpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamKeyType;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymKeySpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymKeyType;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeyType;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeyType;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestType;
@@ -30,6 +30,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacType;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher.GordianCoreStreamKeyType;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianCoreDigestType;
 
 import java.security.SecureRandom;
@@ -64,16 +65,16 @@ public class GordianIdManager {
      * @param pKeyLen the keyLength
      * @return the random symKeySpec
      */
-    public GordianSymKeySpec generateRandomSymKeySpec(final GordianLength pKeyLen) {
+    public GordianNewSymKeySpec generateRandomSymKeySpec(final GordianLength pKeyLen) {
         /* Access the list of symKeySpecs and unique symKeyTypes */
         final GordianCipherFactory myCiphers = theFactory.getCipherFactory();
-        final List<GordianSymKeySpec> mySpecs = myCiphers.listAllSupportedSymKeySpecs(pKeyLen);
-        final List<GordianSymKeyType> myTypes = mySpecs.stream().map(GordianSymKeySpec::getSymKeyType).toList();
+        final List<GordianNewSymKeySpec> mySpecs = myCiphers.listAllSupportedSymKeySpecs(pKeyLen);
+        final List<GordianNewSymKeyType> myTypes = mySpecs.stream().map(GordianNewSymKeySpec::getSymKeyType).toList();
 
         /* Determine a random index into the list and obtain the symKeyType */
         final SecureRandom myRandom = theFactory.getRandomSource().getRandom();
         int myIndex = myRandom.nextInt(myTypes.size());
-        final GordianSymKeyType myKeyType = myTypes.get(myIndex);
+        final GordianNewSymKeyType myKeyType = myTypes.get(myIndex);
 
         /* Select from among possible keySpecs of this type */
         mySpecs.removeIf(s -> s.getSymKeyType() != myKeyType);
@@ -88,17 +89,17 @@ public class GordianIdManager {
      * @param pCount  the count
      * @return the random symKeySpecs
      */
-    public GordianSymKeySpec[] generateRandomKeySetSymKeySpecs(final GordianLength pKeyLen,
-                                                               final int pCount) {
+    public GordianNewSymKeySpec[] generateRandomKeySetSymKeySpecs(final GordianLength pKeyLen,
+                                                                  final int pCount) {
         /* Access the list to select from */
         final GordianCipherFactory myCiphers = theFactory.getCipherFactory();
-        final List<GordianSymKeySpec> mySpecs = myCiphers.listAllSupportedSymKeySpecs(pKeyLen);
+        final List<GordianNewSymKeySpec> mySpecs = myCiphers.listAllSupportedSymKeySpecs(pKeyLen);
 
         /* Remove the short block specs that cannot support SIC Mode */
         mySpecs.removeIf(s -> s.getBlockLength() == GordianLength.LEN_64);
 
         /* Create the Access list and loop to populate */
-        final GordianSymKeySpec[] myResult = new GordianSymKeySpec[pCount];
+        final GordianNewSymKeySpec[] myResult = new GordianNewSymKeySpec[pCount];
         for (int i = 0; i < pCount; i++) {
             myResult[i] = selectSymKeySpecFromList(mySpecs);
         }
@@ -113,15 +114,15 @@ public class GordianIdManager {
      * @param pList the list of symKeySpecs
      * @return the random symKeySpec
      */
-    public GordianSymKeySpec selectSymKeySpecFromList(final List<GordianSymKeySpec> pList) {
+    public GordianNewSymKeySpec selectSymKeySpecFromList(final List<GordianNewSymKeySpec> pList) {
         /* Select the random Spec */
-        final List<GordianSymKeyType> myTypes = pList.stream().map(GordianSymKeySpec::getSymKeyType).toList();
+        final List<GordianNewSymKeyType> myTypes = pList.stream().map(GordianNewSymKeySpec::getSymKeyType).toList();
         final SecureRandom myRandom = theFactory.getRandomSource().getRandom();
         int myIndex = myRandom.nextInt(pList.size());
-        final GordianSymKeyType myType = myTypes.get(myIndex);
+        final GordianNewSymKeyType myType = myTypes.get(myIndex);
 
         /* Strip out the possible specs */
-        final List<GordianSymKeySpec> mySpecs = pList.stream().filter(mySpec -> mySpec.getSymKeyType() == myType).toList();
+        final List<GordianNewSymKeySpec> mySpecs = pList.stream().filter(mySpec -> mySpec.getSymKeyType() == myType).toList();
         pList.removeIf(mySpec -> mySpec.getSymKeyType() == myType);
 
         /* Return the result */
@@ -136,20 +137,20 @@ public class GordianIdManager {
      * @param pLargeData only generate a Key that is suitable for processing large amounts of data
      * @return the random streamKeySpec
      */
-    public GordianStreamKeySpec generateRandomStreamKeySpec(final GordianLength pKeyLen,
-                                                            final boolean pLargeData) {
+    public GordianNewStreamKeySpec generateRandomStreamKeySpec(final GordianLength pKeyLen,
+                                                               final boolean pLargeData) {
         /* Access the list to select from */
         final GordianCipherFactory myCiphers = theFactory.getCipherFactory();
-        final List<GordianStreamKeySpec> mySpecs = myCiphers.listAllSupportedStreamKeySpecs(pKeyLen);
+        final List<GordianNewStreamKeySpec> mySpecs = myCiphers.listAllSupportedStreamKeySpecs(pKeyLen);
         if (pLargeData) {
-            mySpecs.removeIf(s -> !s.getStreamKeyType().supportsLargeData());
+            mySpecs.removeIf(s -> !GordianCoreStreamKeyType.supportsLargeData(s.getStreamKeyType()));
         }
-        final List<GordianStreamKeyType> myTypes = mySpecs.stream().map(GordianStreamKeySpec::getStreamKeyType).toList();
+        final List<GordianNewStreamKeyType> myTypes = mySpecs.stream().map(GordianNewStreamKeySpec::getStreamKeyType).toList();
 
         /* Determine a random index into the list and obtain the streamKeyType */
         final SecureRandom myRandom = theFactory.getRandomSource().getRandom();
         int myIndex = myRandom.nextInt(myTypes.size());
-        final GordianStreamKeyType myKeyType = myTypes.get(myIndex);
+        final GordianNewStreamKeyType myKeyType = myTypes.get(myIndex);
 
         /* Select from among possible keySpecs of this type */
         mySpecs.removeIf(s -> s.getStreamKeyType() != myKeyType);
@@ -191,24 +192,24 @@ public class GordianIdManager {
      * @param pCount  the number of distinct digestTypes to select
      * @return the remaining seed
      */
-    public GordianSymKeyType[] deriveKeySetSymKeyTypesFromSeed(final Random pRandom,
-                                                               final GordianLength pKeyLen,
-                                                               final int pCount) {
+    public GordianNewSymKeyType[] deriveKeySetSymKeyTypesFromSeed(final Random pRandom,
+                                                                  final GordianLength pKeyLen,
+                                                                  final int pCount) {
         /* Access the list to select from */
         final GordianCipherFactory myCiphers = theFactory.getCipherFactory();
         final GordianValidator myValidator = theFactory.getValidator();
-        final List<GordianSymKeyType> myTypes = myCiphers.listAllSupportedSymKeyTypes().stream()
+        final List<GordianNewSymKeyType> myTypes = myCiphers.listAllSupportedSymKeyTypes().stream()
                 .filter(myValidator.supportedKeySetSymKeyTypes(pKeyLen))
                 .collect(Collectors.toCollection(ArrayList::new));
 
         /* Allocate the array to return */
-        final GordianSymKeyType[] myResult = new GordianSymKeyType[pCount];
+        final GordianNewSymKeyType[] myResult = new GordianNewSymKeyType[pCount];
 
         /* Loop selecting digestTypes */
         for (int i = 0; i < pCount; i++) {
             /* Select from the list and remove the selected item */
             final int myIndex = pRandom.nextInt(myTypes.size());
-            final GordianSymKeyType myType = myTypes.get(myIndex);
+            final GordianNewSymKeyType myType = myTypes.get(myIndex);
             myTypes.removeIf(t -> t == myType);
             myResult[i] = myType;
         }

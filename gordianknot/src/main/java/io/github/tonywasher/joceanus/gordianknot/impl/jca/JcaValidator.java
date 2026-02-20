@@ -16,8 +16,8 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.impl.jca;
 
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamKeyType;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymKeyType;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeyType;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeyType;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestType;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianValidator;
 
@@ -27,7 +27,7 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianValidator
 public class JcaValidator
         extends GordianValidator {
     @Override
-    public boolean validSymKeyType(final GordianSymKeyType pKeyType) {
+    public boolean validSymKeyType(final GordianNewSymKeyType pKeyType) {
         return supportedSymKeyType(pKeyType)
                 && super.validSymKeyType(pKeyType);
     }
@@ -64,7 +64,7 @@ public class JcaValidator
     }
 
     @Override
-    public boolean validStreamKeyType(final GordianStreamKeyType pKeyType) {
+    public boolean validStreamKeyType(final GordianNewStreamKeyType pKeyType) {
         if (pKeyType == null) {
             return false;
         }
@@ -95,7 +95,7 @@ public class JcaValidator
      * @param pKeyType the keyType
      * @return true/false
      */
-    private static boolean supportedSymKeyType(final GordianSymKeyType pKeyType) {
+    private static boolean supportedSymKeyType(final GordianNewSymKeyType pKeyType) {
         if (pKeyType == null) {
             return false;
         }

@@ -20,18 +20,18 @@ import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherParameters;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianKeyedCipher;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianPBESpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamCipherSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamKeySpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamKeySpec.GordianElephantKey;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamKeySpec.GordianSparkleKey;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewPBESpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeySubType.GordianNewElephantKey;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeySubType.GordianNewSparkleKey;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianRandomSource;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianLogicException;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher.GordianCoreSymCipherSpec;
 
 import java.security.SecureRandom;
 import java.util.Arrays;
@@ -47,7 +47,7 @@ public abstract class GordianCoreCipher<T extends GordianKeySpec>
     /**
      * CipherSpec.
      */
-    private final GordianCipherSpec<T> theCipherSpec;
+    private final GordianNewCipherSpec<T> theCipherSpec;
 
     /**
      * The Random Generator.
@@ -66,7 +66,7 @@ public abstract class GordianCoreCipher<T extends GordianKeySpec>
      * @param pCipherSpec the cipherSpec
      */
     protected GordianCoreCipher(final GordianBaseFactory pFactory,
-                                final GordianCipherSpec<T> pCipherSpec) {
+                                final GordianNewCipherSpec<T> pCipherSpec) {
         theCipherSpec = pCipherSpec;
         theRandom = pFactory.getRandomSource();
         theParameters = new GordianCoreCipherParameters<>(pFactory, theCipherSpec);
@@ -74,11 +74,11 @@ public abstract class GordianCoreCipher<T extends GordianKeySpec>
 
     @Override
     public T getKeyType() {
-        return theCipherSpec.getKeyType();
+        return theCipherSpec.getKeySpec();
     }
 
     @Override
-    public GordianCipherSpec<T> getCipherSpec() {
+    public GordianNewCipherSpec<T> getCipherSpec() {
         return theCipherSpec;
     }
 
@@ -132,7 +132,7 @@ public abstract class GordianCoreCipher<T extends GordianKeySpec>
     }
 
     @Override
-    public GordianPBESpec getPBESpec() {
+    public GordianNewPBESpec getPBESpec() {
         return theParameters.getPBESpec();
     }
 
@@ -192,7 +192,7 @@ public abstract class GordianCoreCipher<T extends GordianKeySpec>
      */
     protected int getAEADMacSize() {
         /* SymCipher depends on BlockSize */
-        if (theCipherSpec instanceof GordianSymCipherSpec mySymSpec) {
+        if (theCipherSpec instanceof GordianCoreSymCipherSpec mySymSpec) {
             final GordianLength myBlkLen = mySymSpec.getBlockLength();
 
             /* Switch on cipher Mode */
@@ -210,11 +210,11 @@ public abstract class GordianCoreCipher<T extends GordianKeySpec>
             }
 
             /* Stream Cipher uses Poly1305 */
-        } else if (theCipherSpec instanceof GordianStreamCipherSpec myCipherSpec) {
-            final GordianStreamKeySpec mySpec = myCipherSpec.getKeyType();
+        } else if (theCipherSpec instanceof GordianNewStreamCipherSpec myCipherSpec) {
+            final GordianNewStreamKeySpec mySpec = myCipherSpec.getKeySpec();
             switch (mySpec.getStreamKeyType()) {
                 case SPARKLE:
-                    switch ((GordianSparkleKey) mySpec.getSubKeyType()) {
+                    switch ((GordianNewSparkleKey) mySpec.getSubKeyType()) {
                         case SPARKLE256_256:
                             return GordianLength.LEN_256.getLength();
                         case SPARKLE192_192:
@@ -223,7 +223,7 @@ public abstract class GordianCoreCipher<T extends GordianKeySpec>
                             return GordianLength.LEN_128.getLength();
                     }
                 case ELEPHANT:
-                    switch ((GordianElephantKey) mySpec.getSubKeyType()) {
+                    switch ((GordianNewElephantKey) mySpec.getSubKeyType()) {
                         case ELEPHANT160:
                         case ELEPHANT176:
                             return GordianLength.LEN_64.getLength();

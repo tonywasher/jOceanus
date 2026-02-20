@@ -23,7 +23,6 @@ import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherResourc
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeyType;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKeyLengths;
 
-import java.util.Collection;
 import java.util.EnumMap;
 import java.util.Map;
 
@@ -35,6 +34,11 @@ public final class GordianCoreStreamKeyType {
      * The streamKeyTypeMap.
      */
     private static final Map<GordianNewStreamKeyType, GordianCoreStreamKeyType> TYPEMAP = newTypeMap();
+
+    /**
+     * The streamKeyTypeArray.
+     */
+    private static final GordianCoreStreamKeyType[] VALUES = TYPEMAP.values().toArray(new GordianCoreStreamKeyType[0]);
 
     /**
      * The StreamKeyType.
@@ -138,7 +142,17 @@ public final class GordianCoreStreamKeyType {
      * @return true/false
      */
     public boolean supportsLargeData() {
-        switch (theType) {
+        return supportsLargeData(theType);
+    }
+
+    /**
+     * Is this KeyType valid for largeData?
+     *
+     * @param pType the keyType
+     * @return true/false
+     */
+    public static boolean supportsLargeData(final GordianNewStreamKeyType pType) {
+        switch (pType) {
             case SNOW3G:
             case ZUC:
                 return false;
@@ -270,7 +284,7 @@ public final class GordianCoreStreamKeyType {
      *
      * @return the values
      */
-    public static Collection<GordianCoreStreamKeyType> values() {
-        return TYPEMAP.values();
+    public static GordianCoreStreamKeyType[] values() {
+        return VALUES;
     }
 }

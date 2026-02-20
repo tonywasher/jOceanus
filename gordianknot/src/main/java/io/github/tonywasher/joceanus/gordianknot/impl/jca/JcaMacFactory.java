@@ -19,8 +19,8 @@ package io.github.tonywasher.joceanus.gordianknot.impl.jca;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymKeySpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymKeyType;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeyType;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKeyGenerator;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacSpec;
@@ -259,7 +259,7 @@ public class JcaMacFactory
      * @return the algorithm
      * @throws GordianException on error
      */
-    private static String getGMacAlgorithm(final GordianSymKeySpec pKeySpec) throws GordianException {
+    private static String getGMacAlgorithm(final GordianNewSymKeySpec pKeySpec) throws GordianException {
         /* Return algorithm name */
         return JcaCipherFactory.getSymKeyAlgorithm(pKeySpec) + "GMAC";
     }
@@ -271,7 +271,7 @@ public class JcaMacFactory
      * @return the algorithm
      * @throws GordianException on error
      */
-    private static String getCMacAlgorithm(final GordianSymKeySpec pKeySpec) throws GordianException {
+    private static String getCMacAlgorithm(final GordianNewSymKeySpec pKeySpec) throws GordianException {
         /* Return algorithm name */
         return JcaCipherFactory.getSymKeyAlgorithm(pKeySpec) + CMAC_ALGORITHM;
     }
@@ -283,7 +283,7 @@ public class JcaMacFactory
      * @return the algorithm
      * @throws GordianException on error
      */
-    private static String getPoly1305Algorithm(final GordianSymKeySpec pKeySpec) throws GordianException {
+    private static String getPoly1305Algorithm(final GordianNewSymKeySpec pKeySpec) throws GordianException {
         /* Return algorithm name */
         return pKeySpec == null
                 ? "POLY1305"
@@ -335,7 +335,7 @@ public class JcaMacFactory
     }
 
     @Override
-    protected boolean validCMacSymKeySpec(final GordianSymKeySpec pKeySpec) {
+    protected boolean validCMacSymKeySpec(final GordianNewSymKeySpec pKeySpec) {
         switch (pKeySpec.getSymKeyType()) {
             case AES:
             case DESEDE:
@@ -351,7 +351,7 @@ public class JcaMacFactory
     }
 
     @Override
-    protected boolean validGMacSymKeySpec(final GordianSymKeySpec pKeySpec) {
+    protected boolean validGMacSymKeySpec(final GordianNewSymKeySpec pKeySpec) {
         switch (pKeySpec.getSymKeyType()) {
             case KUZNYECHIK:
             case KALYNA:
@@ -362,8 +362,8 @@ public class JcaMacFactory
     }
 
     @Override
-    protected boolean validPoly1305SymKeySpec(final GordianSymKeySpec pKeySpec) {
-        if (GordianSymKeyType.KALYNA.equals(pKeySpec.getSymKeyType())) {
+    protected boolean validPoly1305SymKeySpec(final GordianNewSymKeySpec pKeySpec) {
+        if (GordianNewSymKeyType.KALYNA.equals(pKeySpec.getSymKeyType())) {
             return false;
         }
         return super.validPoly1305SymKeySpec(pKeySpec);

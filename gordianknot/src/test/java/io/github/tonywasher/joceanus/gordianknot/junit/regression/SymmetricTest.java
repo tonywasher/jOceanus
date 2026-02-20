@@ -168,16 +168,16 @@ class SymmetricTest {
             myStream = Stream.concat(myStream, mySubStream);
         }
 
-        /* Add mac Tests */
-        mySubStream = SymmetricMacScripts.macTests(pFactory, pPartner);
-        myStream = Stream.concat(myStream, mySubStream);
-
         /* Add symKey Tests */
         mySubStream = SymmetricSymScripts.symKeyTests(pFactory, pPartner);
         myStream = Stream.concat(myStream, mySubStream);
 
         /* Add streamKey Tests */
         mySubStream = SymmetricStreamScripts.streamKeyTests(pFactory, pPartner);
+        myStream = Stream.concat(myStream, mySubStream);
+
+        /* Add mac Tests */
+        mySubStream = SymmetricMacScripts.macTests(pFactory, pPartner);
         myStream = Stream.concat(myStream, mySubStream);
 
         /* Add random Tests */

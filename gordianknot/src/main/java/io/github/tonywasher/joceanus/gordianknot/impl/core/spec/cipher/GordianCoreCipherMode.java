@@ -18,9 +18,9 @@
 package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymKeySpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymKeyType;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewCipherMode;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeyType;
 
 import java.util.Collection;
 import java.util.EnumMap;
@@ -134,22 +134,22 @@ public final class GordianCoreCipherMode {
      * @param pKeySpec the keySpec
      * @return true/false
      */
-    public boolean validForSymKey(final GordianSymKeySpec pKeySpec) {
-        final GordianSymKeyType myKeyType = pKeySpec.getSymKeyType();
+    public boolean validForSymKey(final GordianNewSymKeySpec pKeySpec) {
+        final GordianNewSymKeyType myKeyType = pKeySpec.getSymKeyType();
         final GordianLength myKeyLen = pKeySpec.getKeyLength();
         switch (theMode) {
             case G3413OFB:
             case G3413CFB:
             case G3413CBC:
             case G3413CTR:
-                return GordianSymKeyType.KUZNYECHIK.equals(myKeyType);
+                return GordianNewSymKeyType.KUZNYECHIK.equals(myKeyType);
             case GOFB:
             case GCFB:
-                return GordianSymKeyType.GOST.equals(myKeyType);
+                return GordianNewSymKeyType.GOST.equals(myKeyType);
             case KCTR:
             case KGCM:
             case KCCM:
-                return GordianSymKeyType.KALYNA.equals(myKeyType);
+                return GordianNewSymKeyType.KALYNA.equals(myKeyType);
             case GCMSIV:
                 return GordianLength.LEN_128.equals(myKeyLen)
                         || GordianLength.LEN_256.equals(myKeyLen);
@@ -174,6 +174,31 @@ public final class GordianCoreCipherMode {
      */
     public boolean needsReInitialisation() {
         return theMode == GordianNewCipherMode.GCM;
+    }
+
+    @Override
+    public String toString() {
+        return theMode.toString();
+    }
+
+    @Override
+    public boolean equals(final Object pThat) {
+        /* Handle the trivial cases */
+        if (this == pThat) {
+            return true;
+        }
+        if (pThat == null) {
+            return false;
+        }
+
+        /* Check subFields */
+        return pThat instanceof GordianCoreCipherMode myThat
+                && theMode == myThat.getMode();
+    }
+
+    @Override
+    public int hashCode() {
+        return theMode.hashCode();
     }
 
     /**

@@ -42,7 +42,7 @@ import java.util.List;
  * StreamKey specification Builder.
  */
 
-public class GordianCoreStreamKeySpecBuilder
+public final class GordianCoreStreamKeySpecBuilder
         implements GordianNewStreamKeySpecBuilder {
     /**
      * The type.
@@ -58,6 +58,21 @@ public class GordianCoreStreamKeySpecBuilder
      * The keyLength.
      */
     private GordianLength theKeyLength;
+
+    /**
+     * Private constructor.
+     */
+    private GordianCoreStreamKeySpecBuilder() {
+    }
+
+    /**
+     * Obtain new instance.
+     *
+     * @return the new instance
+     */
+    public static GordianCoreStreamKeySpecBuilder newInstance() {
+        return new GordianCoreStreamKeySpecBuilder();
+    }
 
     @Override
     public GordianNewStreamKeySpecBuilder withType(final GordianNewStreamKeyType pType) {

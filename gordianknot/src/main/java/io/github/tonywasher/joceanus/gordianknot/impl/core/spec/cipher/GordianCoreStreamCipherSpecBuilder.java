@@ -28,7 +28,7 @@ import java.util.List;
 /**
  * The StreamCipherSpec Builder class.
  */
-public class GordianCoreStreamCipherSpecBuilder
+public final class GordianCoreStreamCipherSpecBuilder
         implements GordianNewStreamCipherSpecBuilder {
     /**
      * The keySpec.
@@ -39,6 +39,21 @@ public class GordianCoreStreamCipherSpecBuilder
      * Is this an AEAD variant?
      */
     private boolean asAEAD;
+
+    /**
+     * Private constructor.
+     */
+    private GordianCoreStreamCipherSpecBuilder() {
+    }
+
+    /**
+     * Obtain new instance.
+     *
+     * @return the new instance
+     */
+    public static GordianCoreStreamCipherSpecBuilder newInstance() {
+        return new GordianCoreStreamCipherSpecBuilder();
+    }
 
     @Override
     public GordianNewStreamCipherSpecBuilder withKeySpec(final GordianNewStreamKeySpec pSpec) {

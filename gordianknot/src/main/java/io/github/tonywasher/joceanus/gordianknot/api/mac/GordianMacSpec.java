@@ -18,10 +18,11 @@ package io.github.tonywasher.joceanus.gordianknot.api.mac;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymKeySpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymKeyType;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeyType;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestType;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher.GordianCoreSymKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianCoreDigestSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianCoreDigestSubSpec.GordianCoreDigestState;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianCoreDigestType;
@@ -87,7 +88,7 @@ public final class GordianMacSpec
      * @param pKeySpec the keySpec
      */
     public GordianMacSpec(final GordianMacType pMacType,
-                          final GordianSymKeySpec pKeySpec) {
+                          final GordianNewSymKeySpec pKeySpec) {
         /* Store macType */
         theMacType = pMacType;
 
@@ -215,8 +216,8 @@ public final class GordianMacSpec
      *
      * @return the SymKeySpec
      */
-    public GordianSymKeySpec getSymKeySpec() {
-        return theSubSpec instanceof GordianSymKeySpec mySpec
+    public GordianNewSymKeySpec getSymKeySpec() {
+        return theSubSpec instanceof GordianNewSymKeySpec mySpec
                 ? mySpec
                 : null;
     }
@@ -226,8 +227,8 @@ public final class GordianMacSpec
      *
      * @return the Type
      */
-    private GordianSymKeyType getSymKeyType() {
-        return theSubSpec instanceof GordianSymKeySpec mySpec
+    private GordianNewSymKeyType getSymKeyType() {
+        return theSubSpec instanceof GordianNewSymKeySpec mySpec
                 ? mySpec.getSymKeyType()
                 : null;
     }
@@ -238,7 +239,7 @@ public final class GordianMacSpec
      * @return the BlockLength
      */
     private GordianLength getSymKeyBlockLength() {
-        return theSubSpec instanceof GordianSymKeySpec mySpec
+        return theSubSpec instanceof GordianNewSymKeySpec mySpec
                 ? mySpec.getBlockLength()
                 : null;
     }
@@ -249,7 +250,7 @@ public final class GordianMacSpec
      * @return the BlockLength
      */
     private int getSymKeyBlockByteLength() {
-        return theSubSpec instanceof GordianSymKeySpec mySpec
+        return theSubSpec instanceof GordianNewSymKeySpec mySpec
                 ? Objects.requireNonNull(mySpec.getBlockLength()).getByteLength()
                 : 0;
     }
@@ -260,7 +261,7 @@ public final class GordianMacSpec
      * @return the HalfBlockLength
      */
     private GordianLength getSymKeyHalfBlockLength() {
-        return theSubSpec instanceof GordianSymKeySpec mySpec
+        return theSubSpec instanceof GordianCoreSymKeySpec mySpec
                 ? mySpec.getHalfBlockLength()
                 : null;
     }
@@ -370,7 +371,7 @@ public final class GordianMacSpec
             case BLAKE3:
                 return checkDigestValidity(GordianNewDigestType.BLAKE3);
             case KALYNA:
-                return checkSymKeyValidity(GordianSymKeyType.KALYNA);
+                return checkSymKeyValidity(GordianNewSymKeyType.KALYNA);
             case KMAC:
                 return checkKMACValidity();
             case CMAC:
@@ -421,16 +422,16 @@ public final class GordianMacSpec
      * @param pSymKeyType required symKeyType (or null)
      * @return valid true/false
      */
-    private boolean checkSymKeyValidity(final GordianSymKeyType pSymKeyType) {
+    private boolean checkSymKeyValidity(final GordianNewSymKeyType pSymKeyType) {
         /* Check that the symKeySpec is valid */
-        if (!(theSubSpec instanceof GordianSymKeySpec)
-                || !((GordianSymKeySpec) theSubSpec).isValid()) {
+        if (!(theSubSpec instanceof GordianNewSymKeySpec)
+                || !((GordianNewSymKeySpec) theSubSpec).isValid()) {
             return false;
         }
 
         /* Check for symKeyType restrictions */
         return pSymKeyType == null
-                || ((GordianSymKeySpec) theSubSpec).getSymKeyType() == pSymKeyType;
+                || ((GordianNewSymKeySpec) theSubSpec).getSymKeyType() == pSymKeyType;
     }
 
     /**
@@ -446,7 +447,7 @@ public final class GordianMacSpec
         }
 
         /* Restrict keyLengths */
-        final GordianSymKeySpec mySpec = (GordianSymKeySpec) theSubSpec;
+        final GordianNewSymKeySpec mySpec = (GordianNewSymKeySpec) theSubSpec;
         return theKeyLength == GordianLength.LEN_256
                 && (mySpec == null
                 || mySpec.getKeyLength() == GordianLength.LEN_128);

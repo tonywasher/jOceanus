@@ -16,7 +16,7 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.api.random;
 
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpec;
 
 /**
@@ -75,7 +75,7 @@ public final class GordianRandomSpecBuilder {
      * @param pSymKeySpec the symKeySpec
      * @return the RandomSpec
      */
-    public static GordianRandomSpec ctr(final GordianSymKeySpec pSymKeySpec) {
+    public static GordianRandomSpec ctr(final GordianNewSymKeySpec pSymKeySpec) {
         return new GordianRandomSpec(GordianRandomType.CTR, pSymKeySpec, false);
     }
 
@@ -85,7 +85,7 @@ public final class GordianRandomSpecBuilder {
      * @param pSymKeySpec the symKeySpec
      * @return the RandomSpec
      */
-    public static GordianRandomSpec ctrResist(final GordianSymKeySpec pSymKeySpec) {
+    public static GordianRandomSpec ctrResist(final GordianNewSymKeySpec pSymKeySpec) {
         return new GordianRandomSpec(GordianRandomType.CTR, pSymKeySpec, true);
     }
 
@@ -95,7 +95,7 @@ public final class GordianRandomSpecBuilder {
      * @param pSymKeySpec the symKeySpec
      * @return the RandomSpec
      */
-    public static GordianRandomSpec x931(final GordianSymKeySpec pSymKeySpec) {
+    public static GordianRandomSpec x931(final GordianNewSymKeySpec pSymKeySpec) {
         return new GordianRandomSpec(GordianRandomType.X931, pSymKeySpec, false);
     }
 
@@ -105,7 +105,7 @@ public final class GordianRandomSpecBuilder {
      * @param pSymKeySpec the symKeySpec
      * @return the RandomSpec
      */
-    public static GordianRandomSpec x931Resist(final GordianSymKeySpec pSymKeySpec) {
+    public static GordianRandomSpec x931Resist(final GordianNewSymKeySpec pSymKeySpec) {
         return new GordianRandomSpec(GordianRandomType.X931, pSymKeySpec, true);
     }
 }

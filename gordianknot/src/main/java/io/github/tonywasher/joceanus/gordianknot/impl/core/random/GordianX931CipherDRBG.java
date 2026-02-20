@@ -18,8 +18,8 @@ package io.github.tonywasher.joceanus.gordianknot.impl.core.random;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymCipher;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymCipherSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianByteArrayInteger;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher.GordianCoreSymCipherSpec;
 import org.bouncycastle.crypto.prng.EntropySource;
 
 /**
@@ -259,7 +259,7 @@ public class GordianX931CipherDRBG
 
     @Override
     public int getBlockSize() {
-        final GordianSymCipherSpec mySpec = (GordianSymCipherSpec) theCipher.getCipherSpec();
+        final GordianCoreSymCipherSpec mySpec = (GordianCoreSymCipherSpec) theCipher.getCipherSpec();
         return mySpec.getBlockLength().getLength();
     }
 

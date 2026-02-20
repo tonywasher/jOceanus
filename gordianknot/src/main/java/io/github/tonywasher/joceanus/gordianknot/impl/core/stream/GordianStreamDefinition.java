@@ -19,11 +19,11 @@ package io.github.tonywasher.joceanus.gordianknot.impl.core.stream;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherParameters;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamCipher;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamCipherSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymCipher;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymCipherSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigest;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKey;
@@ -362,13 +362,13 @@ public final class GordianStreamDefinition {
         final GordianCoreKnuthObfuscater myKnuth = (GordianCoreKnuthObfuscater) myFactory.getObfuscater();
 
         /* Parse the TypeId */
-        final GordianSymCipherSpec mySpec = (GordianSymCipherSpec) myKnuth.deriveTypeFromExternalId(theTypeId);
-        final GordianSymKeySpec myKeySpec = mySpec.getKeyType();
+        final GordianNewSymCipherSpec mySpec = (GordianNewSymCipherSpec) myKnuth.deriveTypeFromExternalId(theTypeId);
+        final GordianNewSymKeySpec myKeySpec = mySpec.getKeySpec();
 
         /* Generate the Cipher */
         final GordianCoreCipherFactory myCiphers = (GordianCoreCipherFactory) myFactory.getCipherFactory();
         final GordianSymCipher myCipher = myCiphers.createSymKeyCipher(mySpec);
-        final GordianKey<GordianSymKeySpec> myKey = pKeySet.deriveKey(theTypeDefinition, myKeySpec);
+        final GordianKey<GordianNewSymKeySpec> myKey = pKeySet.deriveKey(theTypeDefinition, myKeySpec);
         myCipher.initForDecrypt(GordianCipherParameters.keyAndNonce(myKey, theInitVector));
 
         /* Create the stream */
@@ -390,13 +390,13 @@ public final class GordianStreamDefinition {
         final GordianCoreKnuthObfuscater myKnuth = (GordianCoreKnuthObfuscater) myFactory.getObfuscater();
 
         /* Parse the TypeId */
-        final GordianStreamCipherSpec mySpec = (GordianStreamCipherSpec) myKnuth.deriveTypeFromExternalId(theTypeId);
-        final GordianStreamKeySpec myType = mySpec.getKeyType();
+        final GordianNewStreamCipherSpec mySpec = (GordianNewStreamCipherSpec) myKnuth.deriveTypeFromExternalId(theTypeId);
+        final GordianNewStreamKeySpec myType = mySpec.getKeySpec();
 
         /* Generate the Cipher */
         final GordianCoreCipherFactory myCiphers = (GordianCoreCipherFactory) myFactory.getCipherFactory();
         final GordianStreamCipher myCipher = myCiphers.createStreamKeyCipher(mySpec);
-        final GordianKey<GordianStreamKeySpec> myKey = pKeySet.deriveKey(theTypeDefinition, myType);
+        final GordianKey<GordianNewStreamKeySpec> myKey = pKeySet.deriveKey(theTypeDefinition, myType);
         myCipher.initForDecrypt(GordianCipherParameters.keyAndNonce(myKey, theInitVector));
 
         /* Create the stream */

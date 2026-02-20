@@ -18,8 +18,8 @@ package io.github.tonywasher.joceanus.gordianknot.api.random;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamKeySpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigest;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKey;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMac;
@@ -94,7 +94,7 @@ public interface GordianRandomFactory {
      * @return the new key
      * @throws GordianException on error
      */
-    GordianKey<GordianSymKeySpec> generateRandomSymKey(GordianLength pKeyLen) throws GordianException;
+    GordianKey<GordianNewSymKeySpec> generateRandomSymKey(GordianLength pKeyLen) throws GordianException;
 
     /**
      * generate random GordianStreamKey.
@@ -104,8 +104,8 @@ public interface GordianRandomFactory {
      * @return the new StreamKey
      * @throws GordianException on error
      */
-    GordianKey<GordianStreamKeySpec> generateRandomStreamKey(GordianLength pKeyLen,
-                                                             boolean pLargeData) throws GordianException;
+    GordianKey<GordianNewStreamKeySpec> generateRandomStreamKey(GordianLength pKeyLen,
+                                                                boolean pLargeData) throws GordianException;
 
     /**
      * Obtain a list of supported randomSpecs.

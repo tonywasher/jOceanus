@@ -24,9 +24,9 @@ import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementType;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianCertificate;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamCipher;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamCipherSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymCipher;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymCipherSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactoryType;
 import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySet;
@@ -153,14 +153,14 @@ public class GordianCoreAgreement
     @Override
     public GordianSymCipher[] getSymCipherPairResult() {
         return GordianAgreementStatus.RESULT_AVAILABLE.equals(theState.getStatus())
-                && theState.getResultType() instanceof GordianSymCipherSpec
+                && theState.getResultType() instanceof GordianNewSymCipherSpec
                 ? (GordianSymCipher[]) theState.getResult() : null;
     }
 
     @Override
     public GordianStreamCipher[] getStreamCipherPairResult() {
         return GordianAgreementStatus.RESULT_AVAILABLE.equals(theState.getStatus())
-                && theState.getResultType() instanceof GordianStreamCipherSpec
+                && theState.getResultType() instanceof GordianNewStreamCipherSpec
                 ? (GordianStreamCipher[]) theState.getResult() : null;
     }
 
