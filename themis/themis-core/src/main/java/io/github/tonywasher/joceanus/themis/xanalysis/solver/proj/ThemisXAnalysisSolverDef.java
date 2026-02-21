@@ -75,6 +75,13 @@ public interface ThemisXAnalysisSolverDef {
          * @return the package
          */
         ThemisXAnalysisPackage getUnderlyingPackage();
+
+        /**
+         * Is this a standard package?
+         *
+         * @return true/false
+         */
+        boolean isStandard();
     }
 
     /**

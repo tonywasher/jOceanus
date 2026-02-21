@@ -16,13 +16,16 @@
  */
 package io.github.tonywasher.joceanus.themis.xanalysis.solver.proj;
 
+import io.github.tonywasher.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisChar;
 import io.github.tonywasher.joceanus.themis.xanalysis.parser.proj.ThemisXAnalysisFile;
 import io.github.tonywasher.joceanus.themis.xanalysis.parser.proj.ThemisXAnalysisPackage;
 import io.github.tonywasher.joceanus.themis.xanalysis.solver.proj.ThemisXAnalysisSolverDef.ThemisXAnalysisSolverModuleDef;
 import io.github.tonywasher.joceanus.themis.xanalysis.solver.proj.ThemisXAnalysisSolverDef.ThemisXAnalysisSolverPackageDef;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Solver Package.
@@ -40,19 +43,24 @@ public class ThemisXAnalysisSolverPackage
     private final ThemisXAnalysisPackage thePackage;
 
     /**
+     * The shortName.
+     */
+    private final String theShortName;
+
+    /**
      * The files.
      */
     private final List<ThemisXAnalysisSolverFile> theFiles;
 
     /**
-     * The list of packages that are referenced by this package.
+     * The list of child packages.
      */
-    private final List<ThemisXAnalysisSolverPackage> theReferenced;
+    private final List<ThemisXAnalysisSolverPackage> theChildren;
 
     /**
-     * Is the reference list circular?
+     * Is this a standard package?
      */
-    private boolean isCircular;
+    private final boolean isStandard;
 
     /**
      * Constructor.
@@ -65,10 +73,16 @@ public class ThemisXAnalysisSolverPackage
         /* Store the package and register with parser */
         theModule = pModule;
         thePackage = pPackage;
-        theReferenced = new ArrayList<>();
+        isStandard = pPackage.isStandard();
+
+        /* Determine the short name */
+        final String myName = getPackageName();
+        final int iIndex = myName.lastIndexOf(ThemisXAnalysisChar.PERIOD);
+        theShortName = iIndex == -1 ? myName : myName.substring(iIndex + 1);
 
         /* Populate the fileList */
         theFiles = new ArrayList<>();
+        theChildren = new ArrayList<>();
         for (ThemisXAnalysisFile myFile : thePackage.getFiles()) {
             final ThemisXAnalysisSolverFile mySolverFile = new ThemisXAnalysisSolverFile(this, myFile);
             theFiles.add(mySolverFile);
@@ -95,6 +109,15 @@ public class ThemisXAnalysisSolverPackage
     }
 
     /**
+     * Obtain the short package name.
+     *
+     * @return the shirt package name
+     */
+    public String getShortName() {
+        return theShortName;
+    }
+
+    /**
      * Obtain the file list.
      *
      * @return the file list
@@ -104,28 +127,35 @@ public class ThemisXAnalysisSolverPackage
     }
 
     /**
-     * Obtain the list of referenced packages.
+     * Obtain the list of child packages.
      *
-     * @return the list of referenced packages
+     * @return the list of child packages
      */
-    public List<ThemisXAnalysisSolverPackage> getReferenced() {
-        return theReferenced;
+    public List<ThemisXAnalysisSolverPackage> getChildren() {
+        return theChildren;
     }
 
     /**
-     * Is teh reference list circular?
+     * Add the child package.
+     *
+     * @param pChild the child package
+     */
+    public void addChild(final ThemisXAnalysisSolverPackage pChild) {
+        theChildren.add(pChild);
+    }
+
+    @Override
+    public boolean isStandard() {
+        return isStandard;
+    }
+
+    /**
+     * Is the package a placeHolder?
      *
      * @return true/false
      */
-    public boolean isCircular() {
-        return isCircular;
-    }
-
-    /**
-     * Mark the package as circular.
-     */
-    public void markCircular() {
-        isCircular = true;
+    public boolean isPlaceHolder() {
+        return thePackage.isPlaceHolder();
     }
 
     @Override
@@ -138,7 +168,7 @@ public class ThemisXAnalysisSolverPackage
             return false;
         }
 
-        /* Make sure that the object is a DSMPackage */
+        /* Make sure that the object is a Package */
         if (!(pThat instanceof ThemisXAnalysisSolverPackage myThat)) {
             return false;
         }
@@ -155,5 +185,41 @@ public class ThemisXAnalysisSolverPackage
     @Override
     public String toString() {
         return thePackage.toString();
+    }
+
+    /**
+     * Find references to the target package and it's children.
+     *
+     * @param pPackage the target package
+     * @return the map of references
+     */
+    public Map<ThemisXAnalysisSolverClass, List<ThemisXAnalysisSolverClass>> findReferences(final ThemisXAnalysisSolverPackage pPackage) {
+        /* Create result map */
+        final Map<ThemisXAnalysisSolverClass, List<ThemisXAnalysisSolverClass>> myResult = new HashMap<>();
+
+        /* Look for references */
+        findReferences(myResult, pPackage);
+
+        /* Return the results */
+        return myResult;
+    }
+
+    /**
+     * Find references to the target package and it's children.
+     *
+     * @param pReferenceMap the map of references
+     * @param pPackage      the target package
+     */
+    private void findReferences(final Map<ThemisXAnalysisSolverClass, List<ThemisXAnalysisSolverClass>> pReferenceMap,
+                                final ThemisXAnalysisSolverPackage pPackage) {
+        /* Loop through the files */
+        for (ThemisXAnalysisSolverFile myFile : theFiles) {
+            myFile.findReferences(pReferenceMap, pPackage.getPackageName());
+        }
+
+        /* Loop through the children to find further references */
+        for (ThemisXAnalysisSolverPackage myChild : theChildren) {
+            myChild.findReferences(pReferenceMap, pPackage);
+        }
     }
 }

@@ -30,6 +30,11 @@ import java.util.Objects;
  */
 public class ThemisXAnalysisPackage {
     /**
+     * The path xtra.
+     */
+    static final String PATH_XTRA = ".src.main.java".replace(ThemisXAnalysisChar.PERIOD, File.separatorChar);
+
+    /**
      * The package-info file.
      */
     private static final String PACKAGE_INFO = "package-info" + ThemisXAnalysisFile.SFX_JAVA;
@@ -50,17 +55,28 @@ public class ThemisXAnalysisPackage {
     private final List<ThemisXAnalysisFile> theFiles;
 
     /**
+     * Is this a standard package?
+     */
+    private final boolean isStandard;
+
+    /**
+     * Is this a placeHolder package?
+     */
+    private final boolean isPlaceHolder;
+
+    /**
      * Constructor.
      *
      * @param pLocation the location
      * @param pPackage  the package name.
-     * @throws OceanusException on error
      */
     ThemisXAnalysisPackage(final File pLocation,
-                           final String pPackage) throws OceanusException {
+                           final String pPackage) {
         /* Store package name */
         theLocation = pLocation;
         thePackage = pPackage;
+        isStandard = pLocation.getAbsolutePath().endsWith(PATH_XTRA);
+        isPlaceHolder = false;
 
         /* Create directory path and record the location */
         final String myPath = pPackage.replace(ThemisXAnalysisChar.PERIOD, File.separatorChar);
@@ -68,6 +84,22 @@ public class ThemisXAnalysisPackage {
 
         /* Build list of files */
         theFiles = listFiles(myLocation);
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param pPackage the package name.
+     */
+    public ThemisXAnalysisPackage(final String pPackage) {
+        /* Store package name */
+        theLocation = null;
+        thePackage = pPackage;
+        isStandard = false;
+        isPlaceHolder = true;
+
+        /* Build empty list of files */
+        theFiles = new ArrayList<>();
     }
 
     /**
@@ -95,6 +127,24 @@ public class ThemisXAnalysisPackage {
      */
     public List<ThemisXAnalysisFile> getFiles() {
         return theFiles;
+    }
+
+    /**
+     * Is this a standard package?
+     *
+     * @return true/false
+     */
+    public boolean isStandard() {
+        return isStandard;
+    }
+
+    /**
+     * Is this a placeHolder package?
+     *
+     * @return true/false
+     */
+    public boolean isPlaceHolder() {
+        return isPlaceHolder;
     }
 
     /**

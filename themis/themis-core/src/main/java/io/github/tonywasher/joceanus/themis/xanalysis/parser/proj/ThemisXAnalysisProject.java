@@ -174,7 +174,7 @@ public class ThemisXAnalysisProject {
             final ThemisXAnalysisMaven myPom = new ThemisXAnalysisMaven(pParent, myInStream);
 
             /* If source directory exists */
-            final File mySrc = new File(pPom.getParent(), ThemisXAnalysisModule.PATH_XTRA);
+            final File mySrc = new File(pPom.getParent(), ThemisXAnalysisPackage.PATH_XTRA);
             if (mySrc.exists()
                     && mySrc.isDirectory()) {
                 /* Add the module to the list */

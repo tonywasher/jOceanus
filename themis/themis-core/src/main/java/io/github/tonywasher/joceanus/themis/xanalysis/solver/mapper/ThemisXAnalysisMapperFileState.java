@@ -64,6 +64,15 @@ public class ThemisXAnalysisMapperFileState {
     }
 
     /**
+     * Obtain the referenced classes.
+     *
+     * @return the referenced classes
+     */
+    List<ThemisXAnalysisSolverClass> getReferenced() {
+        return theReferenced;
+    }
+
+    /**
      * InitialiseForFile.
      *
      * @param pFile the file

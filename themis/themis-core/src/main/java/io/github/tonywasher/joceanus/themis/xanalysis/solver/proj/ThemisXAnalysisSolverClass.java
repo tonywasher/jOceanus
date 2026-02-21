@@ -56,9 +56,9 @@ public class ThemisXAnalysisSolverClass
     private final List<String> theAncestors;
 
     /**
-     * Is the reference list circular?
+     * Is this a standard class?
      */
-    private boolean isCircular;
+    private final boolean isStandard;
 
     /**
      * Constructor.
@@ -75,6 +75,7 @@ public class ThemisXAnalysisSolverClass
 
         /* Access the full name */
         theFullName = theClass.getFullName();
+        isStandard = pFile.getOwningPackage().isStandard();
 
         /* Populate the methodList */
         theMethods = new ArrayList<>();
@@ -107,6 +108,15 @@ public class ThemisXAnalysisSolverClass
     @Override
     public ThemisXAnalysisClassInstance getUnderlyingClass() {
         return theClass;
+    }
+
+    /**
+     * Is this a standard class?
+     *
+     * @return true/false
+     */
+    public boolean isStandard() {
+        return isStandard;
     }
 
     /**
@@ -146,7 +156,7 @@ public class ThemisXAnalysisSolverClass
             return false;
         }
 
-        /* Make sure that the object is a DSMClass */
+        /* Make sure that the object is a Class */
         if (!(pThat instanceof ThemisXAnalysisSolverClass myThat)) {
             return false;
         }

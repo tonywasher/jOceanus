@@ -98,7 +98,7 @@ public class ThemisXAnalysisSolverProjectState {
         /* Loop through all modules */
         for (ThemisXAnalysisSolverModule myModule : pProject.getModules()) {
             /* Loop through all packages */
-            for (ThemisXAnalysisSolverPackage myPackage : myModule.getPackages()) {
+            for (ThemisXAnalysisSolverPackage myPackage : myModule.getPackages().values()) {
                 buildProjectClassMap(myPackage);
             }
         }
@@ -132,7 +132,7 @@ public class ThemisXAnalysisSolverProjectState {
         /* Loop through all modules */
         for (ThemisXAnalysisSolverModule myModule : pProject.getModules()) {
             /* Loop through all packages */
-            for (ThemisXAnalysisSolverPackage myPackage : myModule.getPackages()) {
+            for (ThemisXAnalysisSolverPackage myPackage : myModule.getPackages().values()) {
                 buildExternalClassMap(myPackage);
             }
         }

@@ -16,13 +16,16 @@
  */
 package io.github.tonywasher.joceanus.themis.xanalysis.solver.proj;
 
+import io.github.tonywasher.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisChar;
 import io.github.tonywasher.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance.ThemisXAnalysisClassInstance;
 import io.github.tonywasher.joceanus.themis.xanalysis.parser.proj.ThemisXAnalysisFile;
+import io.github.tonywasher.joceanus.themis.xanalysis.parser.proj.ThemisXAnalysisPackage;
 import io.github.tonywasher.joceanus.themis.xanalysis.solver.proj.ThemisXAnalysisSolverDef.ThemisXAnalysisSolverFileDef;
 import io.github.tonywasher.joceanus.themis.xanalysis.solver.proj.ThemisXAnalysisSolverDef.ThemisXAnalysisSolverPackageDef;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Solver File.
@@ -50,14 +53,24 @@ public class ThemisXAnalysisSolverFile
     private final List<ThemisXAnalysisSolverClass> theClasses;
 
     /**
-     * The referenced classes.
+     * The referenced classes in all packages.
      */
     private final List<ThemisXAnalysisSolverClass> theReferenced;
 
     /**
-     * Has the file been preProcessed?
+     * The referenced classes in local package.
      */
-    private boolean preProcessed;
+    private final List<ThemisXAnalysisSolverClass> theLocalReferences;
+
+    /**
+     * The implied referenced classes in local package.
+     */
+    private final List<ThemisXAnalysisSolverClass> theImpliedReferences;
+
+    /**
+     * Does the file need preProcessing?
+     */
+    private boolean needsPreProcess;
 
     /**
      * Is the reference list circular?
@@ -76,6 +89,9 @@ public class ThemisXAnalysisSolverFile
         thePackage = pPackage;
         theFile = pFile;
 
+        /* Note that we need preProcessing */
+        needsPreProcess = true;
+
         /* Populate the classList */
         theClasses = new ArrayList<>();
         for (ThemisXAnalysisClassInstance myClass : theFile.getClasses()) {
@@ -86,8 +102,10 @@ public class ThemisXAnalysisSolverFile
         /* Determine top-level class */
         theTopLevel = theClasses.stream().filter(ThemisXAnalysisSolverClass::isTopLevel).findFirst().orElse(null);
 
-        /* Create the referenced classes */
+        /* Create the reference lists */
         theReferenced = new ArrayList<>();
+        theLocalReferences = new ArrayList<>();
+        theImpliedReferences = new ArrayList<>();
     }
 
     @Override
@@ -119,19 +137,37 @@ public class ThemisXAnalysisSolverFile
     }
 
     /**
-     * Mark the file as pre-processed.
+     * Obtain the local references.
+     *
+     * @return the local references
      */
-    public void markPreProcessed() {
-        preProcessed = true;
+    public List<ThemisXAnalysisSolverClass> getLocalReferences() {
+        return theLocalReferences;
     }
 
     /**
-     * Has the file been pre-processed?
+     * Obtain the implied references.
+     *
+     * @return the implied references
+     */
+    public List<ThemisXAnalysisSolverClass> getImpliedReferences() {
+        return theImpliedReferences;
+    }
+
+    /**
+     * Mark the file as pre-processed.
+     */
+    public void markPreProcessed() {
+        needsPreProcess = false;
+    }
+
+    /**
+     * Does this file need preProcessing?
      *
      * @return true/false
      */
-    public boolean isPreProcessed() {
-        return preProcessed;
+    public boolean needsPreProcess() {
+        return needsPreProcess;
     }
 
     /**
@@ -149,29 +185,29 @@ public class ThemisXAnalysisSolverFile
     }
 
     /**
-     * Obtain the list of classes that reference the named package.
+     * Find references to the target package and it's children.
      *
-     * @param pPackage the package
-     * @return the list of referencing classes
+     * @param pReferenceMap the map of references
+     * @param pPackage      the target package
      */
-    public List<ThemisXAnalysisSolverClass> getReferencesTo(final String pPackage) {
-        /* Loop through the classes */
+    void findReferences(final Map<ThemisXAnalysisSolverClass, List<ThemisXAnalysisSolverClass>> pReferenceMap,
+                        final String pPackage) {
+        /* Create list and prefix */
         final List<ThemisXAnalysisSolverClass> myReferences = new ArrayList<>();
+        final String myPrefix = pPackage + ThemisXAnalysisChar.PERIOD;
+
+        /* Loop through the references */
         for (ThemisXAnalysisSolverClass myReference : theReferenced) {
-            if (pPackage.equals(myReference.getPackageName())) {
+            final String myName = myReference.getFullName();
+            if (myName.startsWith(myPrefix)) {
                 myReferences.add(myReference);
             }
         }
-        return myReferences;
-    }
 
-    /**
-     * Obtain the list of local classes that are referenced.
-     *
-     * @return the list of referencing classes
-     */
-    private List<ThemisXAnalysisSolverClass> getLocalReferences() {
-        return getReferencesTo(thePackage.toString());
+        /* If we have references, add to map */
+        if (!myReferences.isEmpty()) {
+            pReferenceMap.put(theTopLevel, myReferences);
+        }
     }
 
     /**
@@ -182,46 +218,83 @@ public class ThemisXAnalysisSolverFile
     public void setReferenced(final List<ThemisXAnalysisSolverClass> pReferenced) {
         /* Add all references except for a self-reference */
         theReferenced.addAll(pReferenced.stream().filter(s -> !s.equals(getTopLevel())).toList());
+
+        /* Build local reference list */
+        final String myPackage = theTopLevel.getPackageName();
+        for (ThemisXAnalysisSolverClass myClass : theReferenced) {
+            /* Add reference if this is a local class */
+            if (myClass.getPackageName().equals(myPackage)) {
+                theLocalReferences.add(myClass);
+            }
+        }
     }
 
     /**
      * process local references.
      */
     public void processLocalReferences() {
-        /* Create a reference list */
-        final List<ThemisXAnalysisSolverClass> myFullyReferenced = new ArrayList<>();
-
         /* Loop through the referenced local classes */
-        for (ThemisXAnalysisSolverClass myClass : getLocalReferences()) {
+        for (ThemisXAnalysisSolverClass myClass : theLocalReferences) {
             /* Process the class */
-            processLocalReferences(myFullyReferenced, myClass);
+            processLocalReferences(myClass);
         }
 
         /* Determine whether we are circular */
-        isCircular = myFullyReferenced.contains(theTopLevel);
+        isCircular = theImpliedReferences.contains(theTopLevel);
     }
 
     /**
      * process local references.
      *
-     * @param pReferences the references list
-     * @param pClass      the class to process local references for
+     * @param pClass the class to process local references for
      */
-    private void processLocalReferences(final List<ThemisXAnalysisSolverClass> pReferences,
-                                        final ThemisXAnalysisSolverClass pClass) {
+    private void processLocalReferences(final ThemisXAnalysisSolverClass pClass) {
         /* If this is not already in the local reference list */
-        if (!pReferences.contains(pClass)) {
+        if (!theImpliedReferences.contains(pClass)) {
             /* Add the class */
-            pReferences.add(pClass);
+            theImpliedReferences.add(pClass);
 
             /* Only process further if we have not found circularity */
             if (!pClass.equals(theTopLevel)) {
                 /* Loop through the local references */
                 for (ThemisXAnalysisSolverClass myClass : ((ThemisXAnalysisSolverFile) pClass.getOwningFile()).getLocalReferences()) {
                     /* Process the local references */
-                    processLocalReferences(pReferences, myClass);
+                    processLocalReferences(myClass);
                 }
             }
         }
+    }
+
+    /**
+     * Compare this package to another package for sort order.
+     *
+     * @param pThat the other package to compare to
+     * @return true/false
+     */
+    public int compareTo(final ThemisXAnalysisSolverFile pThat) {
+        /* Access top-level class */
+        final ThemisXAnalysisSolverClass myClass = pThat.getTopLevel();
+
+        /* Handle simple dependency */
+        if (theImpliedReferences.contains(myClass)
+                && !pThat.getImpliedReferences().contains(theTopLevel)) {
+            return -1;
+        }
+        if (pThat.getImpliedReferences().contains(theTopLevel)
+                && !theImpliedReferences.contains(myClass)) {
+            return 1;
+        }
+
+        /* Sort on number of dependencies */
+        final int iDiff = pThat.theImpliedReferences.size()
+                - theImpliedReferences.size();
+        if (iDiff != 0) {
+            return iDiff;
+        }
+
+        /* If all else fails rely on alphabetical */
+        final ThemisXAnalysisPackage myPackage = (ThemisXAnalysisPackage) thePackage;
+        final ThemisXAnalysisPackage myThatPackage = (ThemisXAnalysisPackage) pThat.getOwningPackage();
+        return myPackage.getPackage().compareTo(myThatPackage.getPackage());
     }
 }

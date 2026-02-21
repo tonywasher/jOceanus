@@ -80,7 +80,7 @@ public class ThemisXAnalysisMapper
         /* Loop through the files in the package */
         for (ThemisXAnalysisSolverFile myFile : pPackage.getFiles()) {
             /* preProcess the file if it has not been done yet */
-            if (!myFile.isPreProcessed()) {
+            if (myFile.needsPreProcess()) {
                 preProcessFile(myFile);
             }
         }
@@ -165,7 +165,7 @@ public class ThemisXAnalysisMapper
             if (myClass != null) {
                 /* Make sure that the file has been pre-processed */
                 final ThemisXAnalysisSolverFile myFile = (ThemisXAnalysisSolverFile) myClass.getOwningFile();
-                if (!myFile.isPreProcessed()) {
+                if (myFile.needsPreProcess()) {
                     /* PreProcess the file */
                     preProcessFile(myFile);
                 }
@@ -203,6 +203,9 @@ public class ThemisXAnalysisMapper
         final ThemisXAnalysisSolverClass myBase = pFile.getTopLevel();
         final ThemisXAnalysisInstance myInstance = (ThemisXAnalysisInstance) myBase.getUnderlyingClass();
         processInstance(myInstance);
+
+        /* Propagate the referenced classes */
+        pFile.setReferenced(theFile.getReferenced());
     }
 
     /**

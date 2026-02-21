@@ -102,7 +102,7 @@ public class ThemisXAnalysisMapperProjectState
         /* Loop through all modules */
         for (ThemisXAnalysisSolverModule myModule : pProject.getModules()) {
             /* Loop through all packages */
-            for (ThemisXAnalysisSolverPackage myPackage : myModule.getPackages()) {
+            for (ThemisXAnalysisSolverPackage myPackage : myModule.getPackages().values()) {
                 buildProjectClassMap(myPackage);
             }
         }
@@ -122,8 +122,7 @@ public class ThemisXAnalysisMapperProjectState
 
                 /* Ignore local/anonymous and private classes */
                 final boolean isLocalAnon = myInstance.isAnonClass() || myInstance.isLocalDeclaration();
-                final boolean isPrivate = false; //myInstance.getModifiers().isPrivate();
-                if (!isPrivate && !isLocalAnon) {
+                if (!isLocalAnon) {
                     theProjectClasses.put(myClass.getFullName(), myClass);
                 }
             }
@@ -139,7 +138,7 @@ public class ThemisXAnalysisMapperProjectState
         /* Loop through all modules */
         for (ThemisXAnalysisSolverModule myModule : pProject.getModules()) {
             /* Loop through all packages */
-            for (ThemisXAnalysisSolverPackage myPackage : myModule.getPackages()) {
+            for (ThemisXAnalysisSolverPackage myPackage : myModule.getPackages().values()) {
                 buildExternalClassMap(myPackage);
             }
         }
@@ -289,9 +288,6 @@ public class ThemisXAnalysisMapperProjectState
      */
     private void listAllExternalAncestors(final List<String> pExisting,
                                           final ThemisXAnalysisReflectExternal pClass) {
-        if (pClass == null) {
-            int i = 0;
-        }
         for (String myAncestor : pClass.getAncestors()) {
             /* If the ancestor is unknown */
             if (!pExisting.contains(myAncestor)) {

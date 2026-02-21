@@ -41,7 +41,7 @@ public class ThemisXAnalysisSolver {
         try (ThemisXAnalysisMapper myMapper = new ThemisXAnalysisMapper(pProject)) {
             /* Loop through all packages */
             for (ThemisXAnalysisSolverModule myModule : pProject.getModules()) {
-                for (ThemisXAnalysisSolverPackage myPackage : myModule.getPackages()) {
+                for (ThemisXAnalysisSolverPackage myPackage : myModule.getPackages().values()) {
                     /* preProcess each package */
                     myMapper.preProcessPackage(myPackage);
                 }
@@ -49,7 +49,7 @@ public class ThemisXAnalysisSolver {
 
             /* Loop through all packages */
             for (ThemisXAnalysisSolverModule myModule : pProject.getModules()) {
-                for (ThemisXAnalysisSolverPackage myPackage : myModule.getPackages()) {
+                for (ThemisXAnalysisSolverPackage myPackage : myModule.getPackages().values()) {
                     /* Process each package */
                     myMapper.processPackage(myPackage);
                 }
