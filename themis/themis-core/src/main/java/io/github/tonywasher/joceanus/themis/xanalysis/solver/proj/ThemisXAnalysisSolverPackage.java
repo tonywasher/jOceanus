@@ -23,15 +23,13 @@ import io.github.tonywasher.joceanus.themis.xanalysis.solver.proj.ThemisXAnalysi
 import io.github.tonywasher.joceanus.themis.xanalysis.solver.proj.ThemisXAnalysisSolverDef.ThemisXAnalysisSolverPackageDef;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Solver Package.
  */
 public class ThemisXAnalysisSolverPackage
-        implements ThemisXAnalysisSolverPackageDef {
+        implements ThemisXAnalysisSolverPackageDef, Comparable<ThemisXAnalysisSolverPackage> {
     /**
      * The owning module.
      */
@@ -58,9 +56,29 @@ public class ThemisXAnalysisSolverPackage
     private final List<ThemisXAnalysisSolverPackage> theChildren;
 
     /**
+     * The referenceMap.
+     */
+    private final ThemisXAnalysisSolverReference theReferenceMap;
+
+    /**
+     * The referenced sibling packages in local package.
+     */
+    private final List<ThemisXAnalysisSolverPackage> theLocalReferences;
+
+    /**
+     * The implied referenced sibling packages in local package.
+     */
+    private final List<ThemisXAnalysisSolverPackage> theImpliedReferences;
+
+    /**
      * Is this a standard package?
      */
     private final boolean isStandard;
+
+    /**
+     * Is the reference list circular?
+     */
+    private boolean isCircular;
 
     /**
      * Constructor.
@@ -79,6 +97,11 @@ public class ThemisXAnalysisSolverPackage
         final String myName = getPackageName();
         final int iIndex = myName.lastIndexOf(ThemisXAnalysisChar.PERIOD);
         theShortName = iIndex == -1 ? myName : myName.substring(iIndex + 1);
+
+        /* Create the referenceMap and lists */
+        theReferenceMap = new ThemisXAnalysisSolverReference();
+        theLocalReferences = new ArrayList<>();
+        theImpliedReferences = new ArrayList<>();
 
         /* Populate the fileList */
         theFiles = new ArrayList<>();
@@ -99,11 +122,7 @@ public class ThemisXAnalysisSolverPackage
         return thePackage;
     }
 
-    /**
-     * Obtain the package name.
-     *
-     * @return the package name
-     */
+    @Override
     public String getPackageName() {
         return thePackage.getPackage();
     }
@@ -136,6 +155,33 @@ public class ThemisXAnalysisSolverPackage
     }
 
     /**
+     * Obtain the referenceMap.
+     *
+     * @return the referenceMap
+     */
+    public ThemisXAnalysisSolverReference getReferenceMap() {
+        return theReferenceMap;
+    }
+
+    /**
+     * Obtain the local references.
+     *
+     * @return the local references
+     */
+    public List<ThemisXAnalysisSolverPackage> getLocalReferences() {
+        return theLocalReferences;
+    }
+
+    /**
+     * Obtain the implied references.
+     *
+     * @return the implied references
+     */
+    public List<ThemisXAnalysisSolverPackage> getImpliedReferences() {
+        return theImpliedReferences;
+    }
+
+    /**
      * Add the child package.
      *
      * @param pChild the child package
@@ -150,6 +196,15 @@ public class ThemisXAnalysisSolverPackage
     }
 
     /**
+     * Is the reference list circular?
+     *
+     * @return true/false
+     */
+    public boolean isCircular() {
+        return isCircular;
+    }
+
+    /**
      * Is the package a placeHolder?
      *
      * @return true/false
@@ -157,6 +212,53 @@ public class ThemisXAnalysisSolverPackage
     public boolean isPlaceHolder() {
         return thePackage.isPlaceHolder();
     }
+
+    /**
+     * Set the referenced classes.
+     *
+     * @param pReferenced the referenced classes
+     */
+    public void setReferenced(final List<ThemisXAnalysisSolverPackage> pReferenced) {
+        /* Add all references except for a self-reference */
+        theLocalReferences.addAll(pReferenced.stream().filter(s -> !s.equals(this)).toList());
+    }
+
+    /**
+     * process local references.
+     */
+    public void processLocalReferences() {
+        /* Loop through the referenced local classes */
+        for (ThemisXAnalysisSolverPackage myPackage : theLocalReferences) {
+            /* Process the class */
+            processLocalReferences(myPackage);
+        }
+
+        /* Determine whether we are circular */
+        isCircular = theImpliedReferences.contains(this);
+    }
+
+    /**
+     * process local references.
+     *
+     * @param pPackage the class to process local references for
+     */
+    private void processLocalReferences(final ThemisXAnalysisSolverPackage pPackage) {
+        /* If this is not already in the local reference list */
+        if (!theImpliedReferences.contains(pPackage)) {
+            /* Add the class */
+            theImpliedReferences.add(pPackage);
+
+            /* Only process further if we have not found circularity */
+            if (!pPackage.equals(this)) {
+                /* Loop through the local references */
+                for (ThemisXAnalysisSolverPackage myPackage : pPackage.getLocalReferences()) {
+                    /* Process the local references */
+                    processLocalReferences(myPackage);
+                }
+            }
+        }
+    }
+
 
     @Override
     public boolean equals(final Object pThat) {
@@ -187,39 +289,26 @@ public class ThemisXAnalysisSolverPackage
         return thePackage.toString();
     }
 
-    /**
-     * Find references to the target package and it's children.
-     *
-     * @param pPackage the target package
-     * @return the map of references
-     */
-    public Map<ThemisXAnalysisSolverClass, List<ThemisXAnalysisSolverClass>> findReferences(final ThemisXAnalysisSolverPackage pPackage) {
-        /* Create result map */
-        final Map<ThemisXAnalysisSolverClass, List<ThemisXAnalysisSolverClass>> myResult = new HashMap<>();
-
-        /* Look for references */
-        findReferences(myResult, pPackage);
-
-        /* Return the results */
-        return myResult;
-    }
-
-    /**
-     * Find references to the target package and it's children.
-     *
-     * @param pReferenceMap the map of references
-     * @param pPackage      the target package
-     */
-    private void findReferences(final Map<ThemisXAnalysisSolverClass, List<ThemisXAnalysisSolverClass>> pReferenceMap,
-                                final ThemisXAnalysisSolverPackage pPackage) {
-        /* Loop through the files */
-        for (ThemisXAnalysisSolverFile myFile : theFiles) {
-            myFile.findReferences(pReferenceMap, pPackage.getPackageName());
+    @Override
+    public int compareTo(final ThemisXAnalysisSolverPackage pThat) {
+        /* Handle simple dependency */
+        if (theImpliedReferences.contains(pThat)
+                && !pThat.getImpliedReferences().contains(this)) {
+            return -1;
+        }
+        if (pThat.getImpliedReferences().contains(this)
+                && !theImpliedReferences.contains(pThat)) {
+            return 1;
         }
 
-        /* Loop through the children to find further references */
-        for (ThemisXAnalysisSolverPackage myChild : theChildren) {
-            myChild.findReferences(pReferenceMap, pPackage);
+        /* Sort on number of dependencies */
+        final int iDiff = pThat.theImpliedReferences.size()
+                - theImpliedReferences.size();
+        if (iDiff != 0) {
+            return iDiff;
         }
+
+        /* If all else fails rely on alphabetical */
+        return getPackageName().compareTo(pThat.getPackageName());
     }
 }

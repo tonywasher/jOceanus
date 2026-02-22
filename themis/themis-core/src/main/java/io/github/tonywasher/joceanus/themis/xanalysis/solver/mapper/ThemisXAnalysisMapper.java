@@ -97,6 +97,12 @@ public class ThemisXAnalysisMapper
             /* Process the file */
             processFile(myFile);
         }
+
+        /* Loop through the files in the package */
+        for (ThemisXAnalysisSolverFile myFile : pPackage.getFiles()) {
+            /* Process the local references */
+            myFile.processLocalReferences();
+        }
     }
 
     /**

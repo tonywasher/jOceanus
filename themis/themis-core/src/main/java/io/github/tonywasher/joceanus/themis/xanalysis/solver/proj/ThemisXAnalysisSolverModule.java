@@ -107,46 +107,21 @@ public class ThemisXAnalysisSolverModule
         for (ThemisXAnalysisSolverPackage myPackage : myPackages) {
             /* Add the parent link */
             addParentLink(myPackageMap, myPackage);
-            /* Determine name of parent package */
-            //String myName = myPackage.getPackageName();
-            //int iIndex = myName.lastIndexOf(ThemisXAnalysisChar.PERIOD);
-            //String myParentName = iIndex == -1 ? null : myName.substring(0, iIndex);
-
-            /* Look up parent */
-            //ThemisXAnalysisSolverPackage myChildPkg = myPackage;
-            //ThemisXAnalysisSolverPackage myParentPkg = myPackageMap.get(myParentName);
-
-            /* While we have an unknown parent */
-            //while (myParentPkg == null) {
-            /* Create a placeholder parent and put into maps */
-            //myParentPkg = new ThemisXAnalysisSolverPackage(this, new ThemisXAnalysisPackage(myParentName));
-            //myPackageMap.put(myParentName, myParentPkg);
-            //thePackages.put(myParentName, myParentPkg);
-            //myParentPkg.addChild(myChildPkg);
-
-            /* Move up the package name */
-            // myChildPkg = myParentPkg;
-            // myName = myParentName;
-            // iIndex = myName.lastIndexOf(ThemisXAnalysisChar.PERIOD);
-            // myParentName = iIndex == -1 ? null : myName.substring(0, iIndex);
-            // if (myParentName == null) {
-            //     break;
-            // }
-            // myParentPkg = myPackageMap.get(myParentName);
-            //}
         }
     }
 
-
     /**
      * Create placeHolder packages.
+     *
+     * @param pPackageMap the referenceMap
+     * @param pPackage    the package
      */
     private void addParentLink(final Map<String, ThemisXAnalysisSolverPackage> pPackageMap,
                                final ThemisXAnalysisSolverPackage pPackage) {
         /* Determine name of parent package */
-        String myName = pPackage.getPackageName();
-        int iIndex = myName.lastIndexOf(ThemisXAnalysisChar.PERIOD);
-        String myParentName = iIndex == -1 ? null : myName.substring(0, iIndex);
+        final String myName = pPackage.getPackageName();
+        final int iIndex = myName.lastIndexOf(ThemisXAnalysisChar.PERIOD);
+        final String myParentName = iIndex == -1 ? null : myName.substring(0, iIndex);
 
         /* If we have a parent */
         if (myParentName != null) {
@@ -169,6 +144,8 @@ public class ThemisXAnalysisSolverModule
 
     /**
      * Look for packages that are immediate roots.
+     *
+     * @return the immediate roots
      */
     public List<ThemisXAnalysisSolverPackage> findRoots() {
         /* Loop through the full packages */

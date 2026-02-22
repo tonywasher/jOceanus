@@ -16,22 +16,19 @@
  */
 package io.github.tonywasher.joceanus.themis.xanalysis.solver.proj;
 
-import io.github.tonywasher.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisChar;
 import io.github.tonywasher.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance.ThemisXAnalysisClassInstance;
 import io.github.tonywasher.joceanus.themis.xanalysis.parser.proj.ThemisXAnalysisFile;
-import io.github.tonywasher.joceanus.themis.xanalysis.parser.proj.ThemisXAnalysisPackage;
 import io.github.tonywasher.joceanus.themis.xanalysis.solver.proj.ThemisXAnalysisSolverDef.ThemisXAnalysisSolverFileDef;
 import io.github.tonywasher.joceanus.themis.xanalysis.solver.proj.ThemisXAnalysisSolverDef.ThemisXAnalysisSolverPackageDef;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Solver File.
  */
 public class ThemisXAnalysisSolverFile
-        implements ThemisXAnalysisSolverFileDef {
+        implements ThemisXAnalysisSolverFileDef, Comparable<ThemisXAnalysisSolverFile> {
     /**
      * The owning package.
      */
@@ -137,6 +134,15 @@ public class ThemisXAnalysisSolverFile
     }
 
     /**
+     * Obtain the referenced classes.
+     *
+     * @return the classes
+     */
+    public List<ThemisXAnalysisSolverClass> getReferenced() {
+        return theReferenced;
+    }
+
+    /**
      * Obtain the local references.
      *
      * @return the local references
@@ -179,35 +185,18 @@ public class ThemisXAnalysisSolverFile
         return isCircular;
     }
 
+    /**
+     * Obtain the location.
+     *
+     * @return the location
+     */
+    public String getLocation() {
+        return theFile.getLocation();
+    }
+
     @Override
     public String toString() {
         return theFile.toString();
-    }
-
-    /**
-     * Find references to the target package and it's children.
-     *
-     * @param pReferenceMap the map of references
-     * @param pPackage      the target package
-     */
-    void findReferences(final Map<ThemisXAnalysisSolverClass, List<ThemisXAnalysisSolverClass>> pReferenceMap,
-                        final String pPackage) {
-        /* Create list and prefix */
-        final List<ThemisXAnalysisSolverClass> myReferences = new ArrayList<>();
-        final String myPrefix = pPackage + ThemisXAnalysisChar.PERIOD;
-
-        /* Loop through the references */
-        for (ThemisXAnalysisSolverClass myReference : theReferenced) {
-            final String myName = myReference.getFullName();
-            if (myName.startsWith(myPrefix)) {
-                myReferences.add(myReference);
-            }
-        }
-
-        /* If we have references, add to map */
-        if (!myReferences.isEmpty()) {
-            pReferenceMap.put(theTopLevel, myReferences);
-        }
     }
 
     /**
@@ -265,12 +254,31 @@ public class ThemisXAnalysisSolverFile
         }
     }
 
-    /**
-     * Compare this package to another package for sort order.
-     *
-     * @param pThat the other package to compare to
-     * @return true/false
-     */
+    @Override
+    public boolean equals(final Object pThat) {
+        /* Handle the trivial cases */
+        if (this == pThat) {
+            return true;
+        }
+        if (pThat == null) {
+            return false;
+        }
+
+        /* Make sure that the object is a File */
+        if (!(pThat instanceof ThemisXAnalysisSolverFile myThat)) {
+            return false;
+        }
+
+        /* Check name of package */
+        return getLocation().equals(myThat.getLocation());
+    }
+
+    @Override
+    public int hashCode() {
+        return theFile.getLocation().hashCode();
+    }
+
+    @Override
     public int compareTo(final ThemisXAnalysisSolverFile pThat) {
         /* Access top-level class */
         final ThemisXAnalysisSolverClass myClass = pThat.getTopLevel();
@@ -293,8 +301,6 @@ public class ThemisXAnalysisSolverFile
         }
 
         /* If all else fails rely on alphabetical */
-        final ThemisXAnalysisPackage myPackage = (ThemisXAnalysisPackage) thePackage;
-        final ThemisXAnalysisPackage myThatPackage = (ThemisXAnalysisPackage) pThat.getOwningPackage();
-        return myPackage.getPackage().compareTo(myThatPackage.getPackage());
+        return getLocation().compareTo(pThat.getLocation());
     }
 }

@@ -77,6 +77,13 @@ public interface ThemisXAnalysisSolverDef {
         ThemisXAnalysisPackage getUnderlyingPackage();
 
         /**
+         * Obtain the package name.
+         *
+         * @return the packageName
+         */
+        String getPackageName();
+
+        /**
          * Is this a standard package?
          *
          * @return true/false

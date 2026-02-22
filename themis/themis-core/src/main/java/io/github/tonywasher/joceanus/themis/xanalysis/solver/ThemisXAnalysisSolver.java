@@ -18,6 +18,7 @@ package io.github.tonywasher.joceanus.themis.xanalysis.solver;
 
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.themis.xanalysis.solver.mapper.ThemisXAnalysisMapper;
+import io.github.tonywasher.joceanus.themis.xanalysis.solver.mapper.ThemisXAnalysisMapperReference;
 import io.github.tonywasher.joceanus.themis.xanalysis.solver.proj.ThemisXAnalysisSolverModule;
 import io.github.tonywasher.joceanus.themis.xanalysis.solver.proj.ThemisXAnalysisSolverPackage;
 import io.github.tonywasher.joceanus.themis.xanalysis.solver.proj.ThemisXAnalysisSolverProject;
@@ -54,6 +55,9 @@ public class ThemisXAnalysisSolver {
                     myMapper.processPackage(myPackage);
                 }
             }
+
+            /* Process all references */
+            new ThemisXAnalysisMapperReference().processReferences(pProject);
 
         } catch (OceanusException e) {
             theError = e;
