@@ -20,7 +20,6 @@ package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.mac;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianNewSipHashType;
 
-import java.util.Collection;
 import java.util.EnumMap;
 import java.util.Map;
 
@@ -32,6 +31,11 @@ public final class GordianCoreSipHashType {
      * The sipHashMap.
      */
     private static final Map<GordianNewSipHashType, GordianCoreSipHashType> SIPMAP = newSipHashMap();
+
+    /**
+     * The sipHashTypeArray.
+     */
+    private static final GordianCoreSipHashType[] VALUES = SIPMAP.values().toArray(new GordianCoreSipHashType[0]);
 
     /**
      * Small compression.
@@ -219,7 +223,7 @@ public final class GordianCoreSipHashType {
      *
      * @return the values
      */
-    public static Collection<GordianCoreSipHashType> values() {
-        return SIPMAP.values();
+    public static GordianCoreSipHashType[] values() {
+        return VALUES;
     }
 }

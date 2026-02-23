@@ -28,7 +28,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKe
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKeyLengths;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianASN1Util;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.key.GordianKeyAlgId;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.key.GordianCoreKeyAlgId;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher.GordianCoreCipherMode;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher.GordianCoreStreamKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher.GordianCoreSymCipherSpec;
@@ -285,7 +285,7 @@ public class GordianCoreCipherAlgId {
         /* Build SymKey id */
         final GordianCoreSymCipherSpec mySpec = (GordianCoreSymCipherSpec) pSpec;
         final GordianCoreSymKeySpec myKeySpec = (GordianCoreSymKeySpec) mySpec.getKeySpec();
-        ASN1ObjectIdentifier myId = GordianKeyAlgId.appendSymKeyOID(CIPHEROID.branch("1"), true, myKeySpec);
+        ASN1ObjectIdentifier myId = GordianCoreKeyAlgId.appendSymKeyOID(CIPHEROID.branch("1"), true, myKeySpec);
 
         /* Add mode */
         final GordianCoreCipherMode myMode = mySpec.getCoreCipherMode();
@@ -320,7 +320,7 @@ public class GordianCoreCipherAlgId {
     private void addStreamCipher(final GordianNewStreamCipherSpec pSpec) {
         /* Create a branch for cipher based on the KeyType */
         final GordianCoreStreamKeySpec mySpec = (GordianCoreStreamKeySpec) pSpec.getKeySpec();
-        ASN1ObjectIdentifier myId = GordianKeyAlgId.appendStreamKeyOID(CIPHEROID.branch("2"), mySpec);
+        ASN1ObjectIdentifier myId = GordianCoreKeyAlgId.appendStreamKeyOID(CIPHEROID.branch("2"), mySpec);
         if (mySpec.supportsAEAD()) {
             myId = myId.branch(Integer.toString(pSpec.isAEAD() ? 2 : 1));
         }

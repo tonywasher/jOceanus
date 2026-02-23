@@ -32,7 +32,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.lock.GordianKeySetLock;
 import io.github.tonywasher.joceanus.gordianknot.api.lock.GordianLockFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.lock.GordianPasswordLockSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMac;
-import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianNewMacSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.random.GordianRandomFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianDataConverter;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
@@ -192,7 +192,7 @@ class KeySetTest {
         /**
          * The macKey.
          */
-        private final GordianKey<GordianMacSpec> theMacKey;
+        private final GordianKey<GordianNewMacSpec> theMacKey;
 
         /**
          * Constructor.
@@ -308,7 +308,7 @@ class KeySetTest {
          *
          * @return the macKey
          */
-        GordianKey<GordianMacSpec> getMacKey() {
+        GordianKey<GordianNewMacSpec> getMacKey() {
             return theMacKey;
         }
 
@@ -788,7 +788,7 @@ class KeySetTest {
         final GordianCoreKeySet myKeySet = (GordianCoreKeySet) pKeySet.getKeySet();
         final GordianKey<GordianNewSymKeySpec> mySymKey = pKeySet.getSymKey();
         final GordianKey<GordianNewStreamKeySpec> myStreamKey = pKeySet.getStreamKey();
-        final GordianKey<GordianMacSpec> myMacKey = pKeySet.getMacKey();
+        final GordianKey<GordianNewMacSpec> myMacKey = pKeySet.getMacKey();
         final GordianLength myKeyLen = pKeySet.getPasswordLockSpec().getKeySetSpec().getKeyLength();
 
         /* Check wrap of symKey */
@@ -805,7 +805,7 @@ class KeySetTest {
 
         /* Check wrap of macKey */
         final byte[] myMacSafe = myKeySet.secureKey(myMacKey);
-        final GordianKey<GordianMacSpec> myMacResult = myKeySet.deriveKey(myMacSafe, myMacKey.getKeyType());
+        final GordianKey<GordianNewMacSpec> myMacResult = myKeySet.deriveKey(myMacSafe, myMacKey.getKeyType());
         Assertions.assertEquals(myMacKey, myMacResult, "Failed to wrap/unwrap macKey");
         Assertions.assertEquals(myKeySet.getKeyWrapLength(myKeyLen), myMacSafe.length, "Incorrect wrapped macLength: " + myMacKey.getKeyType());
 

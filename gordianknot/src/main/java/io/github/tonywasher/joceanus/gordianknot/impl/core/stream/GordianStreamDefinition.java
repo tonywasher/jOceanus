@@ -29,7 +29,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDiges
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKey;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMac;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacParameters;
-import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianNewMacSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianCoreKnuthObfuscater;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianDataConverter;
@@ -335,12 +335,12 @@ public final class GordianStreamDefinition {
         final GordianCoreKnuthObfuscater myKnuth = (GordianCoreKnuthObfuscater) myFactory.getObfuscater();
 
         /* Parse the TypeId */
-        final GordianMacSpec mySpec = (GordianMacSpec) myKnuth.deriveTypeFromExternalId(theTypeId);
+        final GordianNewMacSpec mySpec = (GordianNewMacSpec) myKnuth.deriveTypeFromExternalId(theTypeId);
 
         /* Generate the MAC */
         final GordianCoreMacFactory myMacs = (GordianCoreMacFactory) myFactory.getMacFactory();
         final GordianMac myMac = myMacs.createMac(mySpec);
-        final GordianKey<GordianMacSpec> myKey = pKeySet.deriveKey(theTypeDefinition, mySpec);
+        final GordianKey<GordianNewMacSpec> myKey = pKeySet.deriveKey(theTypeDefinition, mySpec);
         myMac.init(GordianMacParameters.keyAndNonce(myKey, theInitVector));
 
         /* Create the stream */

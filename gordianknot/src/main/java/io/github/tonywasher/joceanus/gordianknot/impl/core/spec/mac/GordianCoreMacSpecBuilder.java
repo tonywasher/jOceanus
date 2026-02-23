@@ -39,7 +39,7 @@ import java.util.List;
 /**
  * Mac Specification Builder.
  */
-public class GordianCoreMacSpecBuilder
+public final class GordianCoreMacSpecBuilder
         implements GordianNewMacSpecBuilder {
     /**
      * The digestSpec builder.
@@ -64,8 +64,17 @@ public class GordianCoreMacSpecBuilder
     /**
      * Constructor.
      */
-    public GordianCoreMacSpecBuilder() {
+    private GordianCoreMacSpecBuilder() {
         theBuilder = GordianCoreDigestSpecBuilder.newInstance();
+    }
+
+    /**
+     * Obtain new instance.
+     *
+     * @return the new instance
+     */
+    public static GordianCoreMacSpecBuilder newInstance() {
+        return new GordianCoreMacSpecBuilder();
     }
 
     @Override

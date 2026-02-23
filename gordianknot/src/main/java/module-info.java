@@ -41,6 +41,7 @@ module io.github.tonywasher.joceanus.gordianknot {
     exports io.github.tonywasher.joceanus.gordianknot.api.keystore;
     exports io.github.tonywasher.joceanus.gordianknot.api.lock;
     exports io.github.tonywasher.joceanus.gordianknot.api.mac;
+    exports io.github.tonywasher.joceanus.gordianknot.api.mac.spec;
     exports io.github.tonywasher.joceanus.gordianknot.api.random;
     exports io.github.tonywasher.joceanus.gordianknot.api.sign;
     exports io.github.tonywasher.joceanus.gordianknot.api.zip;

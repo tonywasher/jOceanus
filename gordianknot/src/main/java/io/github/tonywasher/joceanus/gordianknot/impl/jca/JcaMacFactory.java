@@ -23,14 +23,15 @@ import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKe
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeyType;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKeyGenerator;
-import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacType;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianNewMacSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianNewMacType;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseData;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.mac.GordianCoreMacFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianCoreDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.mac.GordianCoreMacSpec;
 
 import javax.crypto.KeyGenerator;
 import javax.crypto.Mac;
@@ -86,7 +87,7 @@ public class JcaMacFactory
             checkMacSpec(pMacSpec);
 
             /* Create the new generator */
-            final String myAlgorithm = getMacSpecAlgorithm((GordianMacSpec) pMacSpec);
+            final String myAlgorithm = getMacSpecAlgorithm((GordianCoreMacSpec) pMacSpec);
             final KeyGenerator myJavaGenerator = getJavaKeyGenerator(myAlgorithm);
             myGenerator = new JcaKeyGenerator<>(getFactory(), pMacSpec, myJavaGenerator);
 
@@ -97,17 +98,17 @@ public class JcaMacFactory
     }
 
     @Override
-    public JcaMac createMac(final GordianMacSpec pMacSpec) throws GordianException {
+    public JcaMac createMac(final GordianNewMacSpec pMacSpec) throws GordianException {
         /* Check validity of MacSpec */
         checkMacSpec(pMacSpec);
 
         /* Create Mac */
-        final Mac myJavaMac = getJavaMac(pMacSpec);
+        final Mac myJavaMac = getJavaMac((GordianCoreMacSpec) pMacSpec);
         return new JcaMac(getFactory(), pMacSpec, myJavaMac);
     }
 
     @Override
-    protected boolean validMacType(final GordianMacType pMacType) {
+    protected boolean validMacType(final GordianNewMacType pMacType) {
         switch (pMacType) {
             case BLAKE2:
             case BLAKE3:
@@ -127,7 +128,7 @@ public class JcaMacFactory
      * @return the MAC
      * @throws GordianException on error
      */
-    private Mac getJavaMac(final GordianMacSpec pMacSpec) throws GordianException {
+    private Mac getJavaMac(final GordianCoreMacSpec pMacSpec) throws GordianException {
         switch (pMacSpec.getMacType()) {
             case HMAC:
             case GMAC:
@@ -212,7 +213,7 @@ public class JcaMacFactory
      * @return the Algorithm
      * @throws GordianException on error
      */
-    private static String getMacSpecAlgorithm(final GordianMacSpec pMacSpec) throws GordianException {
+    private static String getMacSpecAlgorithm(final GordianCoreMacSpec pMacSpec) throws GordianException {
         switch (pMacSpec.getMacType()) {
             case HMAC:
                 return getHMacAlgorithm(pMacSpec.getDigestSpec());
@@ -309,7 +310,7 @@ public class JcaMacFactory
      * @param pSpec the digestSpec
      * @return the algorithm
      */
-    private static String getZucMacAlgorithm(final GordianMacSpec pSpec) {
+    private static String getZucMacAlgorithm(final GordianCoreMacSpec pSpec) {
         final String myKeyLen = Integer.toString(pSpec.getKeyLength().getLength());
         final String myMacLen = Integer.toString(pSpec.getMacLength().getLength());
         final StringBuilder myBuilder = new StringBuilder();

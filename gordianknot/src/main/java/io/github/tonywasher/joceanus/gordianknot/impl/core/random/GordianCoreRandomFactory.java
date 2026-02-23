@@ -37,8 +37,8 @@ import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKeyLengths;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMac;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacParameters;
-import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianNewMacSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.random.GordianRandomFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.random.GordianRandomSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.random.GordianRandomSpecBuilder;
@@ -168,7 +168,7 @@ public class GordianCoreRandomFactory
             case HASH:
                 return buildHash(myDigests.createDigest(myDigest), isResistent);
             case HMAC:
-                final GordianMacSpec myMacSpec = GordianMacSpecBuilder.hMac(myDigest);
+                final GordianNewMacSpec myMacSpec = GordianMacSpecBuilder.hMac(myDigest);
                 return buildHMAC(myMacs.createMac(myMacSpec), isResistent);
             case CTR:
                 GordianNewSymCipherSpec myCipherSpec = GordianSymCipherSpecBuilder.ecb(pRandomSpec.getSymKeySpec(), GordianNewPadding.NONE);
@@ -353,11 +353,11 @@ public class GordianCoreRandomFactory
         final GordianIdManager myIds = theFactory.getIdManager();
 
         /* Determine a random specification */
-        final GordianMacSpec mySpec = myIds.generateRandomMacSpec(pKeyLen, pLargeData);
+        final GordianNewMacSpec mySpec = myIds.generateRandomMacSpec(pKeyLen, pLargeData);
 
         /* Determine a random key */
-        final GordianKeyGenerator<GordianMacSpec> myGenerator = myMacs.getKeyGenerator(mySpec);
-        final GordianKey<GordianMacSpec> myKey = myGenerator.generateKey();
+        final GordianKeyGenerator<GordianNewMacSpec> myGenerator = myMacs.getKeyGenerator(mySpec);
+        final GordianKey<GordianNewMacSpec> myKey = myGenerator.generateKey();
 
         /* Create and initialise the MAC */
         final GordianMac myMac = myMacs.createMac(mySpec);

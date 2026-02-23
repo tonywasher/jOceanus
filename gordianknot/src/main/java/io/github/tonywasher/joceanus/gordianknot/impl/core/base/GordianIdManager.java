@@ -27,11 +27,12 @@ import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestFactory
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestType;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacSpecBuilder;
-import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacType;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianNewMacSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianNewMacType;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher.GordianCoreStreamKeyType;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianCoreDigestType;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.mac.GordianCoreMacType;
 
 import java.security.SecureRandom;
 import java.util.ArrayList;
@@ -344,27 +345,27 @@ public class GordianIdManager {
      * @param pLargeData only generate a Mac that is suitable for parsing large amounts of data
      * @return the new MacSpec
      */
-    public GordianMacSpec generateRandomMacSpec(final GordianLength pKeyLen,
-                                                final boolean pLargeData) {
+    public GordianNewMacSpec generateRandomMacSpec(final GordianLength pKeyLen,
+                                                   final boolean pLargeData) {
         /* Access the list to select from */
         final GordianMacFactory myMacs = theFactory.getMacFactory();
-        final List<GordianMacSpec> mySpecs = myMacs.listAllSupportedSpecs(pKeyLen);
+        final List<GordianNewMacSpec> mySpecs = myMacs.listAllSupportedSpecs(pKeyLen);
 
         /* Modify list (if required) to remove macs that do not support largeData */
         if (pLargeData) {
-            mySpecs.removeIf(s -> !s.getMacType().supportsLargeData());
+            mySpecs.removeIf(s -> !GordianCoreMacType.supportsLargeData(s.getMacType()));
         }
 
         /* Modify list to remove rawPoly1305 */
         mySpecs.remove(GordianMacSpecBuilder.poly1305Mac());
 
         /* Extract the macTypes */
-        final List<GordianMacType> myTypes = mySpecs.stream().map(GordianMacSpec::getMacType).toList();
+        final List<GordianNewMacType> myTypes = mySpecs.stream().map(GordianNewMacSpec::getMacType).toList();
 
         /* Determine a random index into the list and obtain the macType */
         final SecureRandom myRandom = theFactory.getRandomSource().getRandom();
         int myIndex = myRandom.nextInt(myTypes.size());
-        final GordianMacType myMacType = myTypes.get(myIndex);
+        final GordianNewMacType myMacType = myTypes.get(myIndex);
 
         /* Select from among possible macSpecs of this type */
         mySpecs.removeIf(s -> s.getMacType() != myMacType);

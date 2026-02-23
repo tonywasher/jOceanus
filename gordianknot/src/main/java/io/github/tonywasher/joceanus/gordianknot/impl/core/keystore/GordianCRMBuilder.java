@@ -31,7 +31,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySet;
 import io.github.tonywasher.joceanus.gordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStorePair;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMac;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianNewMacSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignParams;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignature;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignatureSpec;
@@ -401,7 +401,7 @@ public class GordianCRMBuilder {
 
             /* Create the mac */
             final GordianMacFactory myMacs = pFactory.getMacFactory();
-            final GordianMacSpec myMacSpec = (GordianMacSpec) pFactory.getKeySpecForIdentifier(pParams.getMac());
+            final GordianNewMacSpec myMacSpec = (GordianNewMacSpec) pFactory.getKeySpecForIdentifier(pParams.getMac());
             final GordianMac myMac = myMacs.createMac(myMacSpec);
             myMac.initKeyBytes(myKey);
 

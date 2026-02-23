@@ -32,7 +32,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKey;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKeyGenerator;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianNewMacSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.random.GordianRandomSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.random.GordianRandomType;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.cipher.GordianCoreCipherFactory;
@@ -150,7 +150,7 @@ class SymmetricStore {
      * Factory and Mac definition.
      */
     static class FactoryMacSpec
-            implements FactorySpec<GordianMacSpec>, PartneredSpec {
+            implements FactorySpec<GordianNewMacSpec>, PartneredSpec {
         /**
          * The factory.
          */
@@ -164,17 +164,17 @@ class SymmetricStore {
         /**
          * The macSpec.
          */
-        private final GordianMacSpec theMacSpec;
+        private final GordianNewMacSpec theMacSpec;
 
         /**
          * The key.
          */
-        private volatile GordianCoreKey<GordianMacSpec> theKey;
+        private volatile GordianCoreKey<GordianNewMacSpec> theKey;
 
         /**
          * The partnerKey.
          */
-        private volatile GordianKey<GordianMacSpec> thePartnerKey;
+        private volatile GordianKey<GordianNewMacSpec> thePartnerKey;
 
         /**
          * Constructor.
@@ -185,7 +185,7 @@ class SymmetricStore {
          */
         FactoryMacSpec(final GordianFactory pFactory,
                        final GordianFactory pPartner,
-                       final GordianMacSpec pMacSpec) {
+                       final GordianNewMacSpec pMacSpec) {
             theFactory = pFactory;
             thePartner = pPartner;
             theMacSpec = pMacSpec;
@@ -197,9 +197,9 @@ class SymmetricStore {
          * @return the key
          * @throws GordianException on error
          */
-        GordianKey<GordianMacSpec> getKey() throws GordianException {
+        GordianKey<GordianNewMacSpec> getKey() throws GordianException {
             /* Return key if it exists */
-            GordianCoreKey<GordianMacSpec> myKey = theKey;
+            GordianCoreKey<GordianNewMacSpec> myKey = theKey;
             if (myKey != null) {
                 return myKey;
             }
@@ -214,8 +214,8 @@ class SymmetricStore {
 
                 /* Generate the key */
                 GordianMacFactory myFactory = theFactory.getMacFactory();
-                GordianKeyGenerator<GordianMacSpec> myGenerator = myFactory.getKeyGenerator(theMacSpec);
-                myKey = (GordianCoreKey<GordianMacSpec>) myGenerator.generateKey();
+                GordianKeyGenerator<GordianNewMacSpec> myGenerator = myFactory.getKeyGenerator(theMacSpec);
+                myKey = (GordianCoreKey<GordianNewMacSpec>) myGenerator.generateKey();
                 theKey = myKey;
                 return myKey;
             }
@@ -227,9 +227,9 @@ class SymmetricStore {
          * @return the key
          * @throws GordianException on error
          */
-        GordianKey<GordianMacSpec> getPartnerKey() throws GordianException {
+        GordianKey<GordianNewMacSpec> getPartnerKey() throws GordianException {
             /* Return key if it exists */
-            GordianKey<GordianMacSpec> myPartnerKey = thePartnerKey;
+            GordianKey<GordianNewMacSpec> myPartnerKey = thePartnerKey;
             if (myPartnerKey != null || thePartner == null) {
                 return myPartnerKey;
             }
@@ -244,8 +244,8 @@ class SymmetricStore {
 
                 /* Build the key */
                 GordianMacFactory myFactory = thePartner.getMacFactory();
-                GordianCoreKeyGenerator<GordianMacSpec> myGenerator
-                        = (GordianCoreKeyGenerator<GordianMacSpec>) myFactory.getKeyGenerator(theMacSpec);
+                GordianCoreKeyGenerator<GordianNewMacSpec> myGenerator
+                        = (GordianCoreKeyGenerator<GordianNewMacSpec>) myFactory.getKeyGenerator(theMacSpec);
                 myPartnerKey = myGenerator.buildKeyFromBytes(theKey.getKeyBytes());
                 thePartnerKey = myPartnerKey;
                 return myPartnerKey;
@@ -263,7 +263,7 @@ class SymmetricStore {
         }
 
         @Override
-        public GordianMacSpec getSpec() {
+        public GordianNewMacSpec getSpec() {
             return theMacSpec;
         }
 
@@ -969,8 +969,8 @@ class SymmetricStore {
         /* Loop through the possible macSpecs */
         final List<FactoryMacSpec> myResult = new ArrayList<>();
         final GordianCoreMacFactory myMacFactory = (GordianCoreMacFactory) pFactory.getMacFactory();
-        final Predicate<GordianMacSpec> myPredicate = pPartner.getMacFactory().supportedMacSpecs();
-        for (GordianMacSpec mySpec : myMacFactory.listAllSupportedSpecs(pKeyLen)) {
+        final Predicate<GordianNewMacSpec> myPredicate = pPartner.getMacFactory().supportedMacSpecs();
+        for (GordianNewMacSpec mySpec : myMacFactory.listAllSupportedSpecs(pKeyLen)) {
             /* Determine whether the macSpec is supported by the partner */
             GordianFactory myPartner = myPredicate.test(mySpec) ? pPartner : null;
 

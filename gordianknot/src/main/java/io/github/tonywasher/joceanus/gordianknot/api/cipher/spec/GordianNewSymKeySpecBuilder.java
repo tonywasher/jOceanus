@@ -65,8 +65,7 @@ public interface GordianNewSymKeySpecBuilder {
                                          final GordianLength pKeyLength) {
         return withType(pKeyType).withKeyLength(pKeyLength).build();
     }
-
-
+    
     /**
      * Create generic.
      *

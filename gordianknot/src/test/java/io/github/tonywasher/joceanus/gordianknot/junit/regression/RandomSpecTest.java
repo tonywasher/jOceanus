@@ -27,8 +27,8 @@ import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactoryType;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKey;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKeyLengths;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMac;
-import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianNewMacSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.random.GordianRandomFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.cipher.GordianCoreCipherFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.digest.GordianCoreDigestFactory;
@@ -256,13 +256,13 @@ class RandomSpecTest {
         /* Generate macSpecs */
         final GordianRandomFactory myRandom = pFactory.getRandomFactory();
         final GordianCoreMacFactory myMacs = (GordianCoreMacFactory) pFactory.getMacFactory();
-        final List<GordianMacSpec> myValid = myMacs.listAllSupportedSpecs(pLength);
+        final List<GordianNewMacSpec> myValid = myMacs.listAllSupportedSpecs(pLength);
         myValid.remove(GordianMacSpecBuilder.poly1305Mac());
 
         /* Loop a large number of times to ensure that all macs are generated */
         for (int i = 0; i < 10000 && !myValid.isEmpty(); i++) {
             final GordianMac myMac = myRandom.generateRandomMac(pLength, false);
-            final GordianMacSpec mySpec = myMac.getMacSpec();
+            final GordianNewMacSpec mySpec = myMac.getMacSpec();
             myValid.remove(mySpec);
         }
 

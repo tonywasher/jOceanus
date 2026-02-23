@@ -22,15 +22,16 @@ import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeyType;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacType;
-import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianSipHashSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianNewMacSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianNewMacType;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseData;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.mac.GordianCoreMacFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher.GordianCoreSymKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianCoreDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.mac.GordianCoreMacSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.mac.GordianCoreSipHashType;
 import io.github.tonywasher.joceanus.gordianknot.impl.ext.digests.GordianBlake3Digest;
 import io.github.tonywasher.joceanus.gordianknot.impl.ext.macs.GordianBlake2Mac;
 import io.github.tonywasher.joceanus.gordianknot.impl.ext.macs.GordianBlake2XMac;
@@ -96,7 +97,7 @@ public class BouncyMacFactory
             checkMacSpec(pMacSpec);
 
             /* Create the new generator */
-            final CipherKeyGenerator myBCGenerator = getBCKeyGenerator((GordianMacSpec) pMacSpec);
+            final CipherKeyGenerator myBCGenerator = getBCKeyGenerator((GordianNewMacSpec) pMacSpec);
             myGenerator = new BouncyKeyGenerator<>(getFactory(), pMacSpec, myBCGenerator);
 
             /* Add to cache */
@@ -111,19 +112,19 @@ public class BouncyMacFactory
      * @param pKeyType the keyType
      * @return the KeyGenerator
      */
-    private static CipherKeyGenerator getBCKeyGenerator(final GordianMacSpec pKeyType) {
-        return GordianMacType.POLY1305.equals(pKeyType.getMacType())
+    private static CipherKeyGenerator getBCKeyGenerator(final GordianNewMacSpec pKeyType) {
+        return GordianNewMacType.POLY1305.equals(pKeyType.getMacType())
                 ? new Poly1305KeyGenerator()
                 : new CipherKeyGenerator();
     }
 
     @Override
-    public BouncyMac createMac(final GordianMacSpec pMacSpec) throws GordianException {
+    public BouncyMac createMac(final GordianNewMacSpec pMacSpec) throws GordianException {
         /* Check validity of MacSpec */
         checkMacSpec(pMacSpec);
 
         /* Create Mac */
-        final Mac myBCMac = getBCMac(pMacSpec);
+        final Mac myBCMac = getBCMac((GordianCoreMacSpec) pMacSpec);
         return myBCMac instanceof Xof myXof
                 ? new BouncyMacXof(getFactory(), pMacSpec, myXof)
                 : new BouncyMac(getFactory(), pMacSpec, myBCMac);
@@ -136,7 +137,7 @@ public class BouncyMacFactory
      * @return the MAC
      * @throws GordianException on error
      */
-    private Mac getBCMac(final GordianMacSpec pMacSpec) throws GordianException {
+    private Mac getBCMac(final GordianCoreMacSpec pMacSpec) throws GordianException {
         switch (pMacSpec.getMacType()) {
             case HMAC:
                 return getBCHMac(pMacSpec);
@@ -182,7 +183,7 @@ public class BouncyMacFactory
      * @return the MAC
      * @throws GordianException on error
      */
-    private Mac getBCHMac(final GordianMacSpec pMacSpec) throws GordianException {
+    private Mac getBCHMac(final GordianNewMacSpec pMacSpec) throws GordianException {
         return new BouncyHMac(getFactory().getDigestFactory(), pMacSpec);
     }
 
@@ -332,7 +333,7 @@ public class BouncyMacFactory
      * @param pSpec the SipHashSpec
      * @return the MAC
      */
-    private static Mac getBCSipHash(final GordianSipHashSpec pSpec) {
+    private static Mac getBCSipHash(final GordianCoreSipHashType pSpec) {
         return pSpec.isLong()
                 ? new SipHash128(pSpec.getCompression(), pSpec.getFinalisation())
                 : new SipHash(pSpec.getCompression(), pSpec.getFinalisation());
@@ -353,7 +354,7 @@ public class BouncyMacFactory
      * @param pMacSpec the macSpec
      * @return the MAC
      */
-    private static Mac getBCZucMac(final GordianMacSpec pMacSpec) {
+    private static Mac getBCZucMac(final GordianCoreMacSpec pMacSpec) {
         return GordianLength.LEN_128 == pMacSpec.getKeyLength()
                 ? new GordianZuc128Mac()
                 : new GordianZuc256Mac(pMacSpec.getMacLength().getLength());

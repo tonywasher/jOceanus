@@ -27,8 +27,8 @@ import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianBadCredential
 import io.github.tonywasher.joceanus.gordianknot.api.lock.GordianPasswordLockSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMac;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianNewMacSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianDataConverter;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianIdManager;
@@ -224,7 +224,7 @@ public final class GordianPasswordLockRecipe {
         final GordianMacFactory myMacs = pFactory.getMacFactory();
 
         /* Create the primeMac */
-        GordianMacSpec myMacSpec = GordianMacSpecBuilder.hMac(theParams.getPrimeDigest());
+        GordianNewMacSpec myMacSpec = GordianMacSpecBuilder.hMac(theParams.getPrimeDigest());
         final GordianMac myPrimeMac = myMacs.createMac(myMacSpec);
         myPrimeMac.initKeyBytes(pPassword);
 

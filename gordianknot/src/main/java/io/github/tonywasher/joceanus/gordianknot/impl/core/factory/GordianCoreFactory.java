@@ -41,7 +41,7 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianRandomSou
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianSeededRandom;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianValidator;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.key.GordianKeyAlgId;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.key.GordianCoreKeyAlgId;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keyset.GordianCoreKeySetFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.lock.GordianCoreLockFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.random.GordianCoreRandomFactory;
@@ -138,7 +138,7 @@ public abstract class GordianCoreFactory
     /**
      * The Key AlgIds.
      */
-    private GordianKeyAlgId theKeyAlgIds;
+    private GordianCoreKeyAlgId theKeyAlgIds;
 
     /**
      * Async Factory.
@@ -432,9 +432,9 @@ public abstract class GordianCoreFactory
      *
      * @return the key Algorithm Ids
      */
-    private GordianKeyAlgId getKeyAlgIds() {
+    private GordianCoreKeyAlgId getKeyAlgIds() {
         if (theKeyAlgIds == null) {
-            theKeyAlgIds = new GordianKeyAlgId(this);
+            theKeyAlgIds = new GordianCoreKeyAlgId(this);
         }
         return theKeyAlgIds;
     }

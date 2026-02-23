@@ -91,13 +91,48 @@ public interface GordianNewMacSpecBuilder {
     GordianNewMacSpec build();
 
     /**
+     * Create generic.
+     *
+     * @param pMacType   the macType
+     * @param pKeyLength the keyLength
+     * @return the MacSpec
+     */
+    default GordianNewMacSpec generic(final GordianNewMacType pMacType,
+                                      final GordianLength pKeyLength) {
+        return withType(pMacType).withKeyLength(pKeyLength).build();
+    }
+
+    /**
+     * Create generic.
+     *
+     * @param pMacType    the macType
+     * @param pSymKeySpec the symKeySpec
+     * @return the MacSpec
+     */
+    default GordianNewMacSpec generic(final GordianNewMacType pMacType,
+                                      final GordianNewSymKeySpec pSymKeySpec) {
+        return withType(pMacType).withSymKeySubSpec(pSymKeySpec).build();
+    }
+
+    /**
      * Create hMacSpec.
      *
      * @param pDigestType the digestType
      * @return the MacSpec
      */
     default GordianNewMacSpec hMac(final GordianNewDigestType pDigestType) {
-        return hMac(usingDigestSpecBuilder().withType(pDigestType).build(), GordianLength.LEN_128);
+        return hMac(pDigestType, GordianLength.LEN_128);
+    }
+
+    /**
+     * Create hMacSpec.
+     *
+     * @param pDigestType the digestType
+     * @return the MacSpec
+     */
+    default GordianNewMacSpec hMac(final GordianNewDigestType pDigestType,
+                                   final GordianLength pKeyLength) {
+        return hMac(usingDigestSpecBuilder().withType(pDigestType).build(), pKeyLength);
     }
 
     /**

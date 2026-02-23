@@ -30,8 +30,8 @@ import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairGenerator;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianNewMacSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.key.GordianCoreKey;
@@ -428,7 +428,7 @@ public final class GordianMultiCipher
         final byte[] myBytes = deriveBytes(pParams, pSecuredKey, pOffset);
 
         /* Access the relevant generator */
-        final GordianCoreKeyGenerator<T> myGenerator = pKeyType instanceof GordianMacSpec
+        final GordianCoreKeyGenerator<T> myGenerator = pKeyType instanceof GordianNewMacSpec
                 ? (GordianCoreKeyGenerator<T>) theFactory.getMacFactory().getKeyGenerator(pKeyType)
                 : (GordianCoreKeyGenerator<T>) theFactory.getCipherFactory().getKeyGenerator(pKeyType);
 
@@ -558,7 +558,7 @@ public final class GordianMultiCipher
      * @return the key
      * @throws GordianException on error
      */
-    public GordianKey<GordianMacSpec> derivePoly1305Key(final GordianKeySetParameters pParams) throws GordianException {
+    public GordianKey<GordianNewMacSpec> derivePoly1305Key(final GordianKeySetParameters pParams) throws GordianException {
         /* Access keyType from parameters */
         final GordianNewSymKeyType myKeyType = pParams.getPoly1305SymKeyType();
 
@@ -575,8 +575,8 @@ public final class GordianMultiCipher
 
         /* Obtain the keyGenerator */
         final GordianMacFactory myMacs = theFactory.getMacFactory();
-        final GordianMacSpec mySpec = GordianMacSpecBuilder.poly1305Mac();
-        final GordianCoreKeyGenerator<GordianMacSpec> myGenerator = (GordianCoreKeyGenerator<GordianMacSpec>) myMacs.getKeyGenerator(mySpec);
+        final GordianNewMacSpec mySpec = GordianMacSpecBuilder.poly1305Mac();
+        final GordianCoreKeyGenerator<GordianNewMacSpec> myGenerator = (GordianCoreKeyGenerator<GordianNewMacSpec>) myMacs.getKeyGenerator(mySpec);
         return myGenerator.buildKeyFromBytes(myKeyBytes);
     }
 

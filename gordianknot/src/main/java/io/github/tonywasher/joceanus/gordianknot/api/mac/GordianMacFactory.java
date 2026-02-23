@@ -20,6 +20,9 @@ import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKeyGenerator;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianNewMacSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianNewMacSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianNewMacType;
 
 import java.util.List;
 import java.util.function.Predicate;
@@ -45,21 +48,28 @@ public interface GordianMacFactory {
      * @return the new MAC
      * @throws GordianException on error
      */
-    GordianMac createMac(GordianMacSpec pMacSpec) throws GordianException;
+    GordianMac createMac(GordianNewMacSpec pMacSpec) throws GordianException;
+
+    /**
+     * create new GordianDigestSpecBuilder.
+     *
+     * @return the new DigestSpecBuilder
+     */
+    GordianNewMacSpecBuilder newMacSpecBuilder();
 
     /**
      * Obtain predicate for supported macSpecs.
      *
      * @return the predicate
      */
-    Predicate<GordianMacSpec> supportedMacSpecs();
+    Predicate<GordianNewMacSpec> supportedMacSpecs();
 
     /**
      * Obtain predicate for supported macTypes.
      *
      * @return the predicate
      */
-    Predicate<GordianMacType> supportedMacTypes();
+    Predicate<GordianNewMacType> supportedMacTypes();
 
     /**
      * Obtain a list of supported macSpecs for a keyLength.
@@ -67,5 +77,5 @@ public interface GordianMacFactory {
      * @param pKeyLen the keyLength
      * @return the list of supported macSpecs.
      */
-    List<GordianMacSpec> listAllSupportedSpecs(GordianLength pKeyLen);
+    List<GordianNewMacSpec> listAllSupportedSpecs(GordianLength pKeyLen);
 }

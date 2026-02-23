@@ -23,8 +23,8 @@ import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDiges
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMac;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianNewMacSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianNewMacSpecBuilder;
 
 import java.util.Arrays;
 import java.util.Iterator;
@@ -58,7 +58,8 @@ public class GordianHKDFEngine {
 
         /* Create the hMac */
         final GordianMacFactory myMacFactory = pFactory.getMacFactory();
-        final GordianMacSpec myMacSpec = GordianMacSpecBuilder.hMac(pDigestSpec);
+        final GordianNewMacSpecBuilder myBuilder = myMacFactory.newMacSpecBuilder();
+        final GordianNewMacSpec myMacSpec = myBuilder.hMac(pDigestSpec);
         theHMac = myMacFactory.createMac(myMacSpec);
     }
 

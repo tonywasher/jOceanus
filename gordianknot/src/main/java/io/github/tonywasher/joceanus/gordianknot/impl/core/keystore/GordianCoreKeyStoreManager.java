@@ -34,7 +34,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySetSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStoreKey;
 import io.github.tonywasher.joceanus.gordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStorePair;
 import io.github.tonywasher.joceanus.gordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStoreSet;
-import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianNewMacSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.cert.GordianCoreCertificate;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
@@ -95,7 +95,7 @@ public class GordianCoreKeyStoreManager
                                                                       final String pAlias,
                                                                       final char[] pPassword) throws GordianException {
         /* Access the relevant keyGenerator */
-        final GordianKeyGenerator<K> myGenerator = pKeySpec instanceof GordianMacSpec
+        final GordianKeyGenerator<K> myGenerator = pKeySpec instanceof GordianNewMacSpec
                 ? theFactory.getMacFactory().getKeyGenerator(pKeySpec)
                 : theFactory.getCipherFactory().getKeyGenerator(pKeySpec);
 

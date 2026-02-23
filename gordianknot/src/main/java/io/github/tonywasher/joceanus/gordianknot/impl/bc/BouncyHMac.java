@@ -19,7 +19,8 @@ package io.github.tonywasher.joceanus.gordianknot.impl.bc;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianNewMacSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.mac.GordianCoreMacSpec;
 import org.bouncycastle.crypto.CipherParameters;
 import org.bouncycastle.crypto.Digest;
 import org.bouncycastle.crypto.ExtendedDigest;
@@ -48,7 +49,7 @@ public class BouncyHMac
     /**
      * The macSpec.
      */
-    private final GordianMacSpec theMacSpec;
+    private final GordianCoreMacSpec theMacSpec;
 
     /**
      * The underlying digest.
@@ -92,9 +93,9 @@ public class BouncyHMac
      * @param pMacSpec the MacSpec
      */
     BouncyHMac(final GordianDigestFactory pFactory,
-               final GordianMacSpec pMacSpec) throws GordianException {
-        theMacSpec = pMacSpec;
-        theDigest = ((BouncyDigest) pFactory.createDigest(pMacSpec.getDigestSpec())).getDigest();
+               final GordianNewMacSpec pMacSpec) throws GordianException {
+        theMacSpec = (GordianCoreMacSpec) pMacSpec;
+        theDigest = ((BouncyDigest) pFactory.createDigest(theMacSpec.getDigestSpec())).getDigest();
         theDigestLen = theMacSpec.getMacLength().getByteLength();
         final int myBlockLen = theDigest instanceof ExtendedDigest xd
                 ? xd.getByteLength()

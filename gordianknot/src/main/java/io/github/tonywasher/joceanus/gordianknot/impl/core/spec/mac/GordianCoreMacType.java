@@ -25,7 +25,6 @@ import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacResource;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianNewMacType;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher.GordianCoreSymKeyType;
 
-import java.util.Collection;
 import java.util.EnumMap;
 import java.util.Map;
 
@@ -37,6 +36,11 @@ public final class GordianCoreMacType {
      * The macTypeMap.
      */
     private static final Map<GordianNewMacType, GordianCoreMacType> TYPEMAP = newTypeMap();
+
+    /**
+     * The macTypeArray.
+     */
+    private static final GordianCoreMacType[] VALUES = TYPEMAP.values().toArray(new GordianCoreMacType[0]);
 
     /**
      * The MacType.
@@ -78,7 +82,17 @@ public final class GordianCoreMacType {
      * @return true/false
      */
     public boolean needsReInitialisation() {
-        return theType == GordianNewMacType.GMAC;
+        return needsReInitialisation(theType);
+    }
+
+    /**
+     * Does the macType need re-initialisation after final.
+     *
+     * @param pMacType the macType
+     * @return true/false
+     */
+    public static boolean needsReInitialisation(final GordianNewMacType pMacType) {
+        return pMacType == GordianNewMacType.GMAC;
     }
 
     /**
@@ -87,7 +101,17 @@ public final class GordianCoreMacType {
      * @return true/false
      */
     public boolean supportsLargeData() {
-        return theType != GordianNewMacType.ZUC;
+        return supportsLargeData(theType);
+    }
+
+    /**
+     * Is the MacType valid for largeData?
+     *
+     * @param pMacType the macType
+     * @return true/false
+     */
+    public static boolean supportsLargeData(final GordianNewMacType pMacType) {
+        return pMacType != GordianNewMacType.ZUC;
     }
 
     /**
@@ -208,7 +232,7 @@ public final class GordianCoreMacType {
      *
      * @return the values
      */
-    public static Collection<GordianCoreMacType> values() {
-        return TYPEMAP.values();
+    public static GordianCoreMacType[] values() {
+        return VALUES;
     }
 }

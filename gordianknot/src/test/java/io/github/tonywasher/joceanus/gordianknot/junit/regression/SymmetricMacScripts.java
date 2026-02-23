@@ -27,9 +27,11 @@ import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKeyLengths;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMac;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacParameters;
-import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacType;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianNewMacSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianNewMacType;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.mac.GordianCoreMacSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.mac.GordianCoreMacType;
 import io.github.tonywasher.joceanus.gordianknot.junit.regression.SymmetricStore.FactoryMacSpec;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.util.Arrays;
@@ -116,7 +118,7 @@ public final class SymmetricMacScripts {
         myTests = Stream.concat(myTests, Stream.of(DynamicTest.dynamicTest("multi", () -> multiMac(pMacSpec))));
 
         /* Add Xof test if this is a Xof */
-        if (pMacSpec.getSpec().isXof()
+        if (((GordianCoreMacSpec) pMacSpec.getSpec()).isXof()
                 && GordianFactoryType.BC.equals(pMacSpec.getFactory().getFactoryType())) {
             myTests = Stream.concat(myTests, Stream.of(DynamicTest.dynamicTest("xof", () -> checkXof(pMacSpec))));
         }
@@ -144,10 +146,10 @@ public final class SymmetricMacScripts {
      */
     private static void profileMac(final FactoryMacSpec pMacSpec) throws GordianException {
         final GordianFactory myFactory = pMacSpec.getFactory();
-        final GordianMacSpec mySpec = pMacSpec.getSpec();
+        final GordianCoreMacSpec mySpec = (GordianCoreMacSpec) pMacSpec.getSpec();
         final GordianMacFactory myMacFactory = myFactory.getMacFactory();
         final GordianMac myMac1 = myMacFactory.createMac(pMacSpec.getSpec());
-        final GordianKey<GordianMacSpec> myKey = pMacSpec.getKey();
+        final GordianKey<GordianNewMacSpec> myKey = pMacSpec.getKey();
 
         /* Check that the macLength is correct */
         Assertions.assertEquals(mySpec.getMacLength().getByteLength(), myMac1.getMacSize(), "MacLength incorrect");
@@ -157,9 +159,9 @@ public final class SymmetricMacScripts {
         boolean isInconsistent = false;
 
         /* Access the two macs */
-        final GordianMacType myType = mySpec.getMacType();
-        final boolean twoMacs = GordianMacType.GMAC.equals(myType);
-        final boolean needsReInit = myType.needsReInitialisation();
+        final GordianNewMacType myType = mySpec.getMacType();
+        final boolean twoMacs = GordianNewMacType.GMAC.equals(myType);
+        final boolean needsReInit = GordianCoreMacType.needsReInitialisation(myType);
         final GordianMac myMac2 = twoMacs
                 ? myMacFactory.createMac(mySpec)
                 : myMac1;
@@ -202,11 +204,11 @@ public final class SymmetricMacScripts {
     private static void multiMac(final FactoryMacSpec pMacSpec) throws GordianException {
         /* Create the mac */
         final GordianFactory myFactory = pMacSpec.getFactory();
-        final GordianMacSpec mySpec = pMacSpec.getSpec();
+        final GordianCoreMacSpec mySpec = (GordianCoreMacSpec) pMacSpec.getSpec();
         final GordianMacFactory myMacFactory = myFactory.getMacFactory();
         final GordianMac myMac1 = myMacFactory.createMac(mySpec);
         final GordianMac myMac2 = myMacFactory.createMac(mySpec);
-        final GordianKey<GordianMacSpec> myKey = pMacSpec.getKey();
+        final GordianKey<GordianNewMacSpec> myKey = pMacSpec.getKey();
 
         /* Check that the macLength is correct */
         Assertions.assertEquals(mySpec.getMacLength().getByteLength(), myMac1.getMacSize(), "MacLength incorrect");
@@ -238,11 +240,11 @@ public final class SymmetricMacScripts {
     private static void checkXof(final FactoryMacSpec pMacSpec) throws GordianException {
         /* Create the digest */
         final GordianFactory myFactory = pMacSpec.getFactory();
-        final GordianMacSpec mySpec = pMacSpec.getSpec();
+        final GordianCoreMacSpec mySpec = (GordianCoreMacSpec) pMacSpec.getSpec();
         final GordianMacFactory myMacFactory = myFactory.getMacFactory();
         final GordianMac myMac = myMacFactory.createMac(mySpec);
         final GordianXof myXof = (GordianXof) myMac;
-        final GordianKey<GordianMacSpec> myKey = pMacSpec.getKey();
+        final GordianKey<GordianNewMacSpec> myKey = pMacSpec.getKey();
 
         /* Create the data */
         final byte[] myData = SymmetricTest.getTestData();
@@ -279,13 +281,13 @@ public final class SymmetricMacScripts {
         /* Create the macs */
         final GordianFactory myFactory = pMacSpec.getFactory();
         final GordianFactory myPartner = pMacSpec.getPartner();
-        final GordianMacSpec mySpec = pMacSpec.getSpec();
+        final GordianCoreMacSpec mySpec = (GordianCoreMacSpec) pMacSpec.getSpec();
         final GordianMacFactory myMacFactory = myFactory.getMacFactory();
         final GordianMac myMac = myMacFactory.createMac(mySpec);
         final GordianMacFactory myPartnerFactory = myPartner.getMacFactory();
         final GordianMac myPartnerMac = myPartnerFactory.createMac(mySpec);
-        final GordianKey<GordianMacSpec> myKey = pMacSpec.getKey();
-        final GordianKey<GordianMacSpec> myPartnerKey = pMacSpec.getPartnerKey();
+        final GordianKey<GordianNewMacSpec> myKey = pMacSpec.getKey();
+        final GordianKey<GordianNewMacSpec> myPartnerKey = pMacSpec.getPartnerKey();
 
         /* Calculate macs */
         final byte[] myBytes = "MacInput".getBytes();
