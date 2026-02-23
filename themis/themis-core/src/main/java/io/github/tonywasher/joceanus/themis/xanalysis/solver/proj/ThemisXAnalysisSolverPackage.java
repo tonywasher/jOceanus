@@ -81,6 +81,11 @@ public class ThemisXAnalysisSolverPackage
     private boolean isCircular;
 
     /**
+     * Is the package incestuous viz. its parent?
+     */
+    private boolean isIncestuous;
+
+    /**
      * Constructor.
      *
      * @param pModule  the owning module
@@ -202,6 +207,22 @@ public class ThemisXAnalysisSolverPackage
      */
     public boolean isCircular() {
         return isCircular;
+    }
+
+    /**
+     * Mark the package as incestuous.
+     */
+    public void markIncestuous() {
+        isIncestuous = true;
+    }
+
+    /**
+     * Is the reference list incestuous?
+     *
+     * @return true/false
+     */
+    public boolean isIncestuous() {
+        return isIncestuous;
     }
 
     /**

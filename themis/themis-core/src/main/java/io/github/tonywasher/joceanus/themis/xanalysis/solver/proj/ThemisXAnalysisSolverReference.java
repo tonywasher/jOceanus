@@ -29,7 +29,7 @@ public class ThemisXAnalysisSolverReference {
     /**
      * Map of references to other packages.
      */
-    private final Map<String, ThemisXAnalysisSolverRefPackage> theMap;
+    private final Map<ThemisXAnalysisSolverPackage, ThemisXAnalysisSolverRefPackage> theMap;
 
     /**
      * Constructor.
@@ -41,10 +41,20 @@ public class ThemisXAnalysisSolverReference {
     /**
      * Obtain the references for a package.
      *
-     * @param pPackage the package name
+     * @param pPackage the package
      * @return the references
      */
-    public ThemisXAnalysisSolverRefPackage getReferences(final String pPackage) {
+    public ThemisXAnalysisSolverRefPackage getReferences(final ThemisXAnalysisSolverPackage pPackage) {
+        return theMap.get(pPackage);
+    }
+
+    /**
+     * Obtain the references for a package.
+     *
+     * @param pPackage the package
+     * @return the reference
+     */
+    public ThemisXAnalysisSolverRefPackage getReferredPackage(final ThemisXAnalysisSolverPackage pPackage) {
         return theMap.get(pPackage);
     }
 
@@ -54,8 +64,18 @@ public class ThemisXAnalysisSolverReference {
      * @param pReferences the references
      */
     public void addReferences(final ThemisXAnalysisSolverRefPackage pReferences) {
-        final String myPackage = pReferences.getPackage();
+        final ThemisXAnalysisSolverPackage myPackage = pReferences.getPackage();
         theMap.put(myPackage, pReferences);
+    }
+
+    /**
+     * Obtain references of type.
+     *
+     * @param pRefType the refType
+     * @return the references
+     */
+    public List<ThemisXAnalysisSolverRefPackage> getReferences(final ThemisXAnalysisRefType pRefType) {
+        return theMap.values().stream().filter(p -> p.getReferenceType() == pRefType).toList();
     }
 
     /**
@@ -65,7 +85,7 @@ public class ThemisXAnalysisSolverReference {
         /**
          * The package that is referred to.
          */
-        private final String thePackage;
+        private final ThemisXAnalysisSolverPackage thePackage;
 
         /**
          * The referenceType.
@@ -83,7 +103,7 @@ public class ThemisXAnalysisSolverReference {
          * @param pPackage the package
          * @param pRefType the reference type
          */
-        public ThemisXAnalysisSolverRefPackage(final String pPackage,
+        public ThemisXAnalysisSolverRefPackage(final ThemisXAnalysisSolverPackage pPackage,
                                                final ThemisXAnalysisRefType pRefType) {
             thePackage = pPackage;
             theRefType = pRefType;
@@ -95,7 +115,7 @@ public class ThemisXAnalysisSolverReference {
          *
          * @return the class
          */
-        public String getPackage() {
+        public ThemisXAnalysisSolverPackage getPackage() {
             return thePackage;
         }
 
@@ -128,7 +148,7 @@ public class ThemisXAnalysisSolverReference {
 
         @Override
         public String toString() {
-            return thePackage;
+            return thePackage.toString();
         }
     }
 

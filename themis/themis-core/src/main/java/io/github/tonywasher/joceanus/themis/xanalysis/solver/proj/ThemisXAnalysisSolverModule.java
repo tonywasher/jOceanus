@@ -34,6 +34,11 @@ import java.util.Map;
 public class ThemisXAnalysisSolverModule
         implements ThemisXAnalysisSolverModuleDef {
     /**
+     * The root package.
+     */
+    private static final String ROOT = "";
+
+    /**
      * The owning project.
      */
     private final ThemisXAnalysisSolverProjectDef theProject;
@@ -121,25 +126,26 @@ public class ThemisXAnalysisSolverModule
         /* Determine name of parent package */
         final String myName = pPackage.getPackageName();
         final int iIndex = myName.lastIndexOf(ThemisXAnalysisChar.PERIOD);
-        final String myParentName = iIndex == -1 ? null : myName.substring(0, iIndex);
+        final String myParentName = iIndex == -1 ? ROOT : myName.substring(0, iIndex);
 
-        /* If we have a parent */
-        if (myParentName != null) {
-            /* Look up parent */
-            ThemisXAnalysisSolverPackage myParent = pPackageMap.get(myParentName);
+        /* Look up parent */
+        ThemisXAnalysisSolverPackage myParent = pPackageMap.get(myParentName);
 
-            /* If we did not find a parent */
-            if (myParent == null) {
-                /* Create a placeholder parent and put into maps */
-                myParent = new ThemisXAnalysisSolverPackage(this, new ThemisXAnalysisPackage(myParentName));
-                pPackageMap.put(myParentName, myParent);
-                thePackages.put(myParentName, myParent);
+        /* If we did not find a parent */
+        if (myParent == null) {
+            /* Create a placeholder parent and put into maps */
+            myParent = new ThemisXAnalysisSolverPackage(this, new ThemisXAnalysisPackage(myParentName));
+            pPackageMap.put(myParentName, myParent);
+            thePackages.put(myParentName, myParent);
 
-                /* Add further links */
+            /* Add further links if we have not reached ROOT */
+            if (!ROOT.equals(myParentName)) {
                 addParentLink(pPackageMap, myParent);
             }
-            myParent.addChild(pPackage);
         }
+
+        /* Add child to parent */
+        myParent.addChild(pPackage);
     }
 
     /**
@@ -147,18 +153,8 @@ public class ThemisXAnalysisSolverModule
      *
      * @return the immediate roots
      */
-    public List<ThemisXAnalysisSolverPackage> findRoots() {
-        /* Loop through the full packages */
-        final List<ThemisXAnalysisSolverPackage> myResult = new ArrayList<>();
-        for (ThemisXAnalysisSolverPackage myPackage : thePackages.values()) {
-            /* Add to list if the package is a direct child */
-            final String myName = myPackage.getPackageName();
-            if (myName.indexOf(ThemisXAnalysisChar.PERIOD) != -1) {
-                myResult.add(myPackage);
-            }
-        }
-
-        /* Return the list */
-        return myResult;
+    public ThemisXAnalysisSolverPackage getRoot() {
+        /* Return the root */
+        return thePackages.get(ROOT);
     }
 }

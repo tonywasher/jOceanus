@@ -304,7 +304,7 @@ public class ThemisXAnalysisMapper
             /* Report failure */
             final boolean bFound = (myType != null || myName != null);
             if (!bFound) {
-                System.out.println(pReference.getFullName());
+                System.out.println("Unresolved link: " + pReference.getFullName());
             }
         }
     }
