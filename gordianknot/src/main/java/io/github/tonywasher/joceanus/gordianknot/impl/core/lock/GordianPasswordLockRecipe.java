@@ -27,8 +27,8 @@ import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianBadCredential
 import io.github.tonywasher.joceanus.gordianknot.api.lock.GordianPasswordLockSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMac;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianNewMacSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianNewMacSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianDataConverter;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianIdManager;
@@ -224,23 +224,24 @@ public final class GordianPasswordLockRecipe {
         final GordianMacFactory myMacs = pFactory.getMacFactory();
 
         /* Create the primeMac */
-        GordianNewMacSpec myMacSpec = GordianMacSpecBuilder.hMac(theParams.getPrimeDigest());
+        final GordianNewMacSpecBuilder myMacBuilder = myMacs.newMacSpecBuilder();
+        GordianNewMacSpec myMacSpec = myMacBuilder.hMac(theParams.getPrimeDigest());
         final GordianMac myPrimeMac = myMacs.createMac(myMacSpec);
         myPrimeMac.initKeyBytes(pPassword);
 
         /* Create the alternateMac */
-        myMacSpec = GordianMacSpecBuilder.hMac(theParams.getSecondaryDigest());
+        myMacSpec = myMacBuilder.hMac(theParams.getSecondaryDigest());
         final GordianMac mySecondaryMac = myMacs.createMac(myMacSpec);
         mySecondaryMac.initKeyBytes(pPassword);
 
         /* Create the alternateMac */
-        myMacSpec = GordianMacSpecBuilder.hMac(theParams.getTertiaryDigest());
+        myMacSpec = myMacBuilder.hMac(theParams.getTertiaryDigest());
         final GordianMac myTertiaryMac = myMacs.createMac(myMacSpec);
         myTertiaryMac.initKeyBytes(pPassword);
 
         /* Create the secretMac */
         final GordianNewDigestSpecBuilder myBuilder = GordianCoreDigestSpecBuilder.newInstance();
-        myMacSpec = GordianMacSpecBuilder.hMac(myBuilder.generic(theParams.getSecretDigest(), GordianLength.LEN_512));
+        myMacSpec = myMacBuilder.hMac(myBuilder.generic(theParams.getSecretDigest(), GordianLength.LEN_512));
         final GordianMac mySecretMac = myMacs.createMac(myMacSpec);
         mySecretMac.initKeyBytes(pPassword);
 

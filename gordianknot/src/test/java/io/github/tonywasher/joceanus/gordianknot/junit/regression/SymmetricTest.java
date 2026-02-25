@@ -24,8 +24,8 @@ import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactoryType;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianKnuthObfuscater;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKeyLengths;
 import io.github.tonywasher.joceanus.gordianknot.api.random.GordianRandomFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.random.GordianRandomSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.random.GordianRandomType;
+import io.github.tonywasher.joceanus.gordianknot.api.random.spec.GordianNewRandomSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.random.spec.GordianNewRandomType;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianDataConverter;
 import io.github.tonywasher.joceanus.gordianknot.junit.regression.SymmetricStore.FactoryRandomSpec;
 import io.github.tonywasher.joceanus.gordianknot.junit.regression.SymmetricStore.FactoryRandomType;
@@ -199,7 +199,7 @@ class SymmetricTest {
         Stream<DynamicNode> myStream = Stream.empty();
 
         /* Loop through the random types */
-        for (GordianRandomType myType : GordianRandomType.values()) {
+        for (GordianNewRandomType myType : GordianNewRandomType.values()) {
             /* If this type has symKeySpecs */
             if (myType.hasSymKeySpec()) {
                 /* Create an empty stream */
@@ -242,7 +242,7 @@ class SymmetricTest {
     private void checkRandomSpec(final FactoryRandomSpec pRandomSpec) throws GordianException {
         /* Create the secure random */
         final GordianFactory myFactory = pRandomSpec.getFactory();
-        final GordianRandomSpec mySpec = pRandomSpec.getSpec();
+        final GordianNewRandomSpec mySpec = pRandomSpec.getSpec();
         final GordianRandomFactory myRandomFactory = myFactory.getRandomFactory();
         final SecureRandom myRandom = myRandomFactory.createRandom(mySpec);
 

@@ -21,7 +21,6 @@ import io.github.tonywasher.joceanus.gordianknot.api.base.GordianKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamCipher;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymCipher;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymCipherSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianWrapper;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewCipherMode;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewPadding;
@@ -32,6 +31,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStrea
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeySubType.GordianNewVMPCKey;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeyType;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymCipherSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKey;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKeyGenerator;
@@ -42,6 +42,7 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianCryptoExce
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher.GordianCoreStreamCipherSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher.GordianCoreSymCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher.GordianCoreSymCipherSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaAEADCipher.JcaStreamAEADCipher;
 import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaAEADCipher.JcaSymAEADCipher;
 import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaCipher.JcaStreamCipher;
@@ -144,7 +145,8 @@ public class JcaCipherFactory
     public GordianWrapper createKeyWrapper(final GordianKey<GordianNewSymKeySpec> pKey) throws GordianException {
         /* Create the cipher */
         final JcaKey<GordianNewSymKeySpec> myKey = JcaKey.accessKey(pKey);
-        final GordianNewSymCipherSpec mySpec = GordianSymCipherSpecBuilder.ecb(myKey.getKeyType(), GordianNewPadding.NONE);
+        final GordianNewSymCipherSpecBuilder myBuilder = GordianCoreSymCipherSpecBuilder.newInstance();
+        final GordianNewSymCipherSpec mySpec = myBuilder.ecb(myKey.getKeyType(), GordianNewPadding.NONE);
         final JcaSymCipher myJcaCipher = (JcaSymCipher) createSymKeyCipher(mySpec);
         return createKeyWrapper(myKey, myJcaCipher);
     }
@@ -158,11 +160,11 @@ public class JcaCipherFactory
      * @throws GordianException on error
      */
     private static <T extends GordianKeySpec> String getKeyAlgorithm(final T pKeySpec) throws GordianException {
-        if (pKeySpec instanceof GordianNewStreamKeySpec) {
-            return getStreamKeyAlgorithm((GordianNewStreamKeySpec) pKeySpec);
+        if (pKeySpec instanceof GordianNewStreamKeySpec mySpec) {
+            return getStreamKeyAlgorithm(mySpec);
         }
-        if (pKeySpec instanceof GordianNewSymKeySpec) {
-            return getSymKeyAlgorithm((GordianNewSymKeySpec) pKeySpec);
+        if (pKeySpec instanceof GordianNewSymKeySpec mySpec) {
+            return getSymKeyAlgorithm(mySpec);
         }
         throw new GordianDataException(GordianBaseData.getInvalidText(pKeySpec));
     }

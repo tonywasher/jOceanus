@@ -27,8 +27,8 @@ import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestFactory
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestType;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianNewMacSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianNewMacSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianNewMacType;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher.GordianCoreStreamKeyType;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianCoreDigestType;
@@ -349,6 +349,7 @@ public class GordianIdManager {
                                                    final boolean pLargeData) {
         /* Access the list to select from */
         final GordianMacFactory myMacs = theFactory.getMacFactory();
+        final GordianNewMacSpecBuilder myMacBuilder = myMacs.newMacSpecBuilder();
         final List<GordianNewMacSpec> mySpecs = myMacs.listAllSupportedSpecs(pKeyLen);
 
         /* Modify list (if required) to remove macs that do not support largeData */
@@ -357,7 +358,7 @@ public class GordianIdManager {
         }
 
         /* Modify list to remove rawPoly1305 */
-        mySpecs.remove(GordianMacSpecBuilder.poly1305Mac());
+        mySpecs.remove(myMacBuilder.poly1305Mac());
 
         /* Extract the macTypes */
         final List<GordianNewMacType> myTypes = mySpecs.stream().map(GordianNewMacSpec::getMacType).toList();

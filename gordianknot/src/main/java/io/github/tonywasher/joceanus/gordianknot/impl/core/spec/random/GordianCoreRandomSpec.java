@@ -122,10 +122,16 @@ public class GordianCoreRandomSpec
     }
 
     /**
-     * Obtain the predication resistance.
+     * Obtain the symKeySpec for a randomSpec.
      *
-     * @return the resistance.
+     * @return the symKeySpec.
+     * @pSpec the randomSpec
      */
+    public static GordianCoreSymKeySpec getSymKeySpec(final GordianNewRandomSpec pSpec) {
+        return ((GordianCoreRandomSpec) pSpec).getSymKeySpec();
+    }
+
+    @Override
     public boolean isPredictionResistant() {
         return isPredictionResistant;
     }

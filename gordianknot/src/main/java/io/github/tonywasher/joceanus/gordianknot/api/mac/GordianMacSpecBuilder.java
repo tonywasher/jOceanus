@@ -31,7 +31,7 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.mac.GordianCoreM
  */
 public final class GordianMacSpecBuilder {
     /**
-     * DigestSpecBuilder.
+     * MacSpecBuilder.
      */
     private static final GordianNewMacSpecBuilder BUILDER = GordianCoreMacSpecBuilder.newInstance();
 

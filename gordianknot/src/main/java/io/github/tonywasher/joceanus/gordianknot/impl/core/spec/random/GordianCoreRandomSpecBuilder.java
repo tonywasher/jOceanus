@@ -34,9 +34,8 @@ import java.util.List;
 /**
  * SecureRandom Specification Builder.
  */
-public class GordianCoreRandomSpecBuilder
+public final class GordianCoreRandomSpecBuilder
         implements GordianNewRandomSpecBuilder {
-
     /**
      * The type.
      */
@@ -51,6 +50,21 @@ public class GordianCoreRandomSpecBuilder
      * The subSpec.
      */
     private boolean withResistance;
+
+    /**
+     * Constructor.
+     */
+    private GordianCoreRandomSpecBuilder() {
+    }
+
+    /**
+     * Obtain new instance.
+     *
+     * @return the new instance
+     */
+    public static GordianCoreRandomSpecBuilder newInstance() {
+        return new GordianCoreRandomSpecBuilder();
+    }
 
     @Override
     public GordianNewRandomSpecBuilder withType(final GordianNewRandomType pType) {

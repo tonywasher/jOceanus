@@ -19,22 +19,22 @@ package io.github.tonywasher.joceanus.gordianknot.junit.regression;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianPBESpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamCipherSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewPBESpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewPBESpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamCipherSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymCipherSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeySpec;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKey;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKeyGenerator;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianNewMacSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.random.GordianRandomSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.random.GordianRandomType;
+import io.github.tonywasher.joceanus.gordianknot.api.random.spec.GordianNewRandomSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.random.spec.GordianNewRandomType;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.cipher.GordianCoreCipherFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.digest.GordianCoreDigestFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.key.GordianCoreKey;
@@ -42,11 +42,13 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.key.GordianCoreKeyGen
 import io.github.tonywasher.joceanus.gordianknot.impl.core.mac.GordianCoreMacFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.random.GordianCoreRandomFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher.GordianCorePBESpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher.GordianCorePBESpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher.GordianCoreStreamCipherSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher.GordianCoreStreamKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher.GordianCoreSymCipherSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher.GordianCoreSymKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianCoreDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianCoreDigestSpecBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -805,7 +807,7 @@ class SymmetricStore {
      * Factory and randomType definition.
      */
     static class FactoryRandomType
-            implements FactorySpec<GordianRandomType> {
+            implements FactorySpec<GordianNewRandomType> {
         /**
          * The factory.
          */
@@ -814,7 +816,7 @@ class SymmetricStore {
         /**
          * The randomType.
          */
-        private final GordianRandomType theRandomType;
+        private final GordianNewRandomType theRandomType;
 
         /**
          * The length.
@@ -833,7 +835,7 @@ class SymmetricStore {
          * @param pRandomType the randomType
          */
         FactoryRandomType(final GordianFactory pFactory,
-                          final GordianRandomType pRandomType) {
+                          final GordianNewRandomType pRandomType) {
             this(pFactory, pRandomType, null);
         }
 
@@ -845,7 +847,7 @@ class SymmetricStore {
          * @param pLength     the keyLength
          */
         FactoryRandomType(final GordianFactory pFactory,
-                          final GordianRandomType pRandomType,
+                          final GordianNewRandomType pRandomType,
                           final GordianLength pLength) {
             theFactory = pFactory;
             theRandomType = pRandomType;
@@ -859,7 +861,7 @@ class SymmetricStore {
         }
 
         @Override
-        public GordianRandomType getSpec() {
+        public GordianNewRandomType getSpec() {
             return theRandomType;
         }
 
@@ -891,7 +893,7 @@ class SymmetricStore {
      * Factory and randomSpec definition.
      */
     static class FactoryRandomSpec
-            implements FactorySpec<GordianRandomSpec> {
+            implements FactorySpec<GordianNewRandomSpec> {
         /**
          * The factory.
          */
@@ -900,7 +902,7 @@ class SymmetricStore {
         /**
          * The randomSpec.
          */
-        private final GordianRandomSpec theRandomSpec;
+        private final GordianNewRandomSpec theRandomSpec;
 
         /**
          * Constructor.
@@ -909,7 +911,7 @@ class SymmetricStore {
          * @param pRandomSpec the randomSpec
          */
         FactoryRandomSpec(final GordianFactory pFactory,
-                          final GordianRandomSpec pRandomSpec) {
+                          final GordianNewRandomSpec pRandomSpec) {
             theFactory = pFactory;
             theRandomSpec = pRandomSpec;
         }
@@ -920,7 +922,7 @@ class SymmetricStore {
         }
 
         @Override
-        public GordianRandomSpec getSpec() {
+        public GordianNewRandomSpec getSpec() {
             return theRandomSpec;
         }
 
@@ -1045,13 +1047,15 @@ class SymmetricStore {
         final List<FactorySymPBECipherSpec> myResult = new ArrayList<>();
 
         /* Build the list */
-        GordianNewPBESpec myPBESpec = GordianPBESpecBuilder.pbKDF2(GordianDigestSpecBuilder.sha2(GordianLength.LEN_512), 2048);
+        final GordianNewDigestSpecBuilder myBuilder = GordianCoreDigestSpecBuilder.newInstance();
+        final GordianNewPBESpecBuilder myPBEBuilder = GordianCorePBESpecBuilder.newInstance();
+        GordianNewPBESpec myPBESpec = myPBEBuilder.pbKDF2(myBuilder.sha2(GordianLength.LEN_512), 2048);
         myResult.add(new FactorySymPBECipherSpec(pCipherSpec, myPBESpec));
-        myPBESpec = GordianPBESpecBuilder.pkcs12(GordianDigestSpecBuilder.sha2(GordianLength.LEN_512), 2048);
+        myPBESpec = myPBEBuilder.pkcs12(myBuilder.sha2(GordianLength.LEN_512), 2048);
         myResult.add(new FactorySymPBECipherSpec(pCipherSpec, myPBESpec));
-        myPBESpec = GordianPBESpecBuilder.scrypt(16, 1, 1);
+        myPBESpec = myPBEBuilder.scrypt(16, 1, 1);
         myResult.add(new FactorySymPBECipherSpec(pCipherSpec, myPBESpec));
-        myPBESpec = GordianPBESpecBuilder.argon2(1, 4096, 2);
+        myPBESpec = myPBEBuilder.argon2(1, 4096, 2);
         myResult.add(new FactorySymPBECipherSpec(pCipherSpec, myPBESpec));
 
         /* Return the list */
@@ -1096,13 +1100,15 @@ class SymmetricStore {
         final List<FactoryStreamPBECipherSpec> myResult = new ArrayList<>();
 
         /* Build the list */
-        GordianNewPBESpec myPBESpec = GordianPBESpecBuilder.pbKDF2(GordianDigestSpecBuilder.sha2(GordianLength.LEN_512), 2048);
+        final GordianNewDigestSpecBuilder myBuilder = GordianCoreDigestSpecBuilder.newInstance();
+        final GordianNewPBESpecBuilder myPBEBuilder = GordianCorePBESpecBuilder.newInstance();
+        GordianNewPBESpec myPBESpec = myPBEBuilder.pbKDF2(myBuilder.sha2(GordianLength.LEN_512), 2048);
         myResult.add(new FactoryStreamPBECipherSpec(pCipherSpec, myPBESpec));
-        myPBESpec = GordianPBESpecBuilder.pkcs12(GordianDigestSpecBuilder.sha2(GordianLength.LEN_512), 2048);
+        myPBESpec = myPBEBuilder.pkcs12(myBuilder.sha2(GordianLength.LEN_512), 2048);
         myResult.add(new FactoryStreamPBECipherSpec(pCipherSpec, myPBESpec));
-        myPBESpec = GordianPBESpecBuilder.scrypt(16, 1, 1);
+        myPBESpec = myPBEBuilder.scrypt(16, 1, 1);
         myResult.add(new FactoryStreamPBECipherSpec(pCipherSpec, myPBESpec));
-        myPBESpec = GordianPBESpecBuilder.argon2(1, 4096, 2);
+        myPBESpec = myPBEBuilder.argon2(1, 4096, 2);
         myResult.add(new FactoryStreamPBECipherSpec(pCipherSpec, myPBESpec));
 
         /* Return the list */
@@ -1117,14 +1123,14 @@ class SymmetricStore {
      * @return the randomType
      */
     static FactoryRandomType randomProvider(final GordianFactory pFactory,
-                                            final GordianRandomType pType) {
+                                            final GordianNewRandomType pType) {
         /* Create the random type */
         final GordianCoreRandomFactory myRandomFactory = (GordianCoreRandomFactory) pFactory.getRandomFactory();
         final FactoryRandomType myFactoryType = new FactoryRandomType(pFactory, pType);
 
         /* Populate the list of specs */
         final List<FactoryRandomSpec> myList = myFactoryType.getSpecs();
-        for (GordianRandomSpec mySpec : myRandomFactory.listAllSupportedRandomSpecs(pType)) {
+        for (GordianNewRandomSpec mySpec : myRandomFactory.listAllSupportedRandomSpecs(pType)) {
             /* Add the randomSpec */
             myList.add(new FactoryRandomSpec(pFactory, mySpec));
         }
@@ -1142,7 +1148,7 @@ class SymmetricStore {
      * @return the randomType
      */
     static FactoryRandomType randomProvider(final GordianFactory pFactory,
-                                            final GordianRandomType pType,
+                                            final GordianNewRandomType pType,
                                             final GordianLength pKeyLen) {
         /* Create the random type */
         final GordianCoreRandomFactory myRandomFactory = (GordianCoreRandomFactory) pFactory.getRandomFactory();
@@ -1150,7 +1156,7 @@ class SymmetricStore {
 
         /* Populate the list of specs */
         final List<FactoryRandomSpec> myList = myFactoryType.getSpecs();
-        for (GordianRandomSpec mySpec : myRandomFactory.listAllSupportedRandomSpecs(pType, pKeyLen)) {
+        for (GordianNewRandomSpec mySpec : myRandomFactory.listAllSupportedRandomSpecs(pType, pKeyLen)) {
             /* Add the randomSpec */
             myList.add(new FactoryRandomSpec(pFactory, mySpec));
         }

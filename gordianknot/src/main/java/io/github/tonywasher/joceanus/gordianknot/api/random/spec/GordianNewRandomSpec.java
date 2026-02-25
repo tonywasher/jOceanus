@@ -22,9 +22,9 @@ package io.github.tonywasher.joceanus.gordianknot.api.random.spec;
  */
 public interface GordianNewRandomSpec {
     /**
-     * Obtain Mac Type.
+     * Obtain Random Type.
      *
-     * @return the MacType
+     * @return the RandomType
      */
     GordianNewRandomType getRandomType();
 
@@ -34,6 +34,13 @@ public interface GordianNewRandomSpec {
      * @return the SubSpec
      */
     Object getSubSpec();
+
+    /**
+     * Obtain the predication resistance.
+     *
+     * @return the resistance.
+     */
+    boolean isPredictionResistant();
 
     /**
      * Is the randomSpec valid?

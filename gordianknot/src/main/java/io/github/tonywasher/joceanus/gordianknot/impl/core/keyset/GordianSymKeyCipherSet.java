@@ -19,11 +19,12 @@ package io.github.tonywasher.joceanus.gordianknot.impl.core.keyset;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymCipher;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymCipherSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewPadding;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymCipherSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher.GordianCoreSymCipherSpecBuilder;
 
 /**
  * Class to contain the symmetric key ciphers.
@@ -64,9 +65,10 @@ final class GordianSymKeyCipherSet {
         final GordianCipherFactory myFactory = pFactory.getCipherFactory();
 
         /* Create the standard ciphers */
-        thePaddingCipher = myFactory.createSymKeyCipher(GordianSymCipherSpecBuilder.ecb(myKeySpec, GordianNewPadding.PKCS7));
-        theStandardCipher = myFactory.createSymKeyCipher(GordianSymCipherSpecBuilder.ecb(myKeySpec, GordianNewPadding.NONE));
-        theStreamCipher = myFactory.createSymKeyCipher(GordianSymCipherSpecBuilder.sic(myKeySpec));
+        final GordianNewSymCipherSpecBuilder myBuilder = GordianCoreSymCipherSpecBuilder.newInstance();
+        thePaddingCipher = myFactory.createSymKeyCipher(myBuilder.ecb(myKeySpec, GordianNewPadding.PKCS7));
+        theStandardCipher = myFactory.createSymKeyCipher(myBuilder.ecb(myKeySpec, GordianNewPadding.NONE));
+        theStreamCipher = myFactory.createSymKeyCipher(myBuilder.sic(myKeySpec));
     }
 
     /**

@@ -18,11 +18,19 @@ package io.github.tonywasher.joceanus.gordianknot.api.random;
 
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.random.spec.GordianNewRandomSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.random.spec.GordianNewRandomSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.random.GordianCoreRandomSpecBuilder;
 
 /**
  * SecureRandom Specification Builder.
  */
 public final class GordianRandomSpecBuilder {
+    /**
+     * RandomSpecBuilder.
+     */
+    private static final GordianNewRandomSpecBuilder BUILDER = GordianCoreRandomSpecBuilder.newInstance();
+
     /**
      * Private constructor.
      */
@@ -35,8 +43,8 @@ public final class GordianRandomSpecBuilder {
      * @param pDigest the digestSpec
      * @return the RandomSpec
      */
-    public static GordianRandomSpec hash(final GordianNewDigestSpec pDigest) {
-        return new GordianRandomSpec(GordianRandomType.HASH, pDigest, false);
+    public static GordianNewRandomSpec hash(final GordianNewDigestSpec pDigest) {
+        return BUILDER.hash(pDigest);
     }
 
     /**
@@ -45,8 +53,8 @@ public final class GordianRandomSpecBuilder {
      * @param pDigest the digestSpec
      * @return the RandomSpec
      */
-    public static GordianRandomSpec hashResist(final GordianNewDigestSpec pDigest) {
-        return new GordianRandomSpec(GordianRandomType.HASH, pDigest, true);
+    public static GordianNewRandomSpec hashResist(final GordianNewDigestSpec pDigest) {
+        return BUILDER.hashResist(pDigest);
     }
 
     /**
@@ -55,8 +63,8 @@ public final class GordianRandomSpecBuilder {
      * @param pDigest the digestSpec
      * @return the RandomSpec
      */
-    public static GordianRandomSpec hMac(final GordianNewDigestSpec pDigest) {
-        return new GordianRandomSpec(GordianRandomType.HMAC, pDigest, false);
+    public static GordianNewRandomSpec hMac(final GordianNewDigestSpec pDigest) {
+        return BUILDER.hMac(pDigest);
     }
 
     /**
@@ -65,8 +73,8 @@ public final class GordianRandomSpecBuilder {
      * @param pDigest the digestSpec
      * @return the RandomSpec
      */
-    public static GordianRandomSpec hMacResist(final GordianNewDigestSpec pDigest) {
-        return new GordianRandomSpec(GordianRandomType.HMAC, pDigest, true);
+    public static GordianNewRandomSpec hMacResist(final GordianNewDigestSpec pDigest) {
+        return BUILDER.hMacResist(pDigest);
     }
 
     /**
@@ -75,8 +83,8 @@ public final class GordianRandomSpecBuilder {
      * @param pSymKeySpec the symKeySpec
      * @return the RandomSpec
      */
-    public static GordianRandomSpec ctr(final GordianNewSymKeySpec pSymKeySpec) {
-        return new GordianRandomSpec(GordianRandomType.CTR, pSymKeySpec, false);
+    public static GordianNewRandomSpec ctr(final GordianNewSymKeySpec pSymKeySpec) {
+        return BUILDER.ctr(pSymKeySpec);
     }
 
     /**
@@ -85,8 +93,8 @@ public final class GordianRandomSpecBuilder {
      * @param pSymKeySpec the symKeySpec
      * @return the RandomSpec
      */
-    public static GordianRandomSpec ctrResist(final GordianNewSymKeySpec pSymKeySpec) {
-        return new GordianRandomSpec(GordianRandomType.CTR, pSymKeySpec, true);
+    public static GordianNewRandomSpec ctrResist(final GordianNewSymKeySpec pSymKeySpec) {
+        return BUILDER.ctrResist(pSymKeySpec);
     }
 
     /**
@@ -95,8 +103,8 @@ public final class GordianRandomSpecBuilder {
      * @param pSymKeySpec the symKeySpec
      * @return the RandomSpec
      */
-    public static GordianRandomSpec x931(final GordianNewSymKeySpec pSymKeySpec) {
-        return new GordianRandomSpec(GordianRandomType.X931, pSymKeySpec, false);
+    public static GordianNewRandomSpec x931(final GordianNewSymKeySpec pSymKeySpec) {
+        return BUILDER.x931(pSymKeySpec);
     }
 
     /**
@@ -105,7 +113,7 @@ public final class GordianRandomSpecBuilder {
      * @param pSymKeySpec the symKeySpec
      * @return the RandomSpec
      */
-    public static GordianRandomSpec x931Resist(final GordianNewSymKeySpec pSymKeySpec) {
-        return new GordianRandomSpec(GordianRandomType.X931, pSymKeySpec, true);
+    public static GordianNewRandomSpec x931Resist(final GordianNewSymKeySpec pSymKeySpec) {
+        return BUILDER.x931Resist(pSymKeySpec);
     }
 }

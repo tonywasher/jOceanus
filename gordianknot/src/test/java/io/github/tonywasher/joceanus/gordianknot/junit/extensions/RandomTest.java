@@ -27,12 +27,13 @@ import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymCi
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigest;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestType;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactoryType;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMac;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianNewMacSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.cipher.GordianCoreCipher;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.random.GordianDRBGenerator;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.random.GordianSP800CTRDRBG;
@@ -510,7 +511,8 @@ class RandomTest {
 
         /* Create the digest */
         final GordianDigestFactory myFactory = fcBCFACTORY.getDigestFactory();
-        final GordianDigest myDigest = myFactory.createDigest(GordianDigestSpecBuilder.sha1());
+        final GordianNewDigestSpecBuilder myBuilder = myFactory.newDigestSpecBuilder();
+        final GordianDigest myDigest = myFactory.createDigest(myBuilder.sha1());
 
         /* Create a standard stream */
         Stream<DynamicNode> myStandard = Stream.of(DynamicTest.dynamicTest(STANDARD,
@@ -575,7 +577,8 @@ class RandomTest {
 
         /* Create the mac */
         final GordianMacFactory myFactory = fcBCFACTORY.getMacFactory();
-        final GordianMac myMac = myFactory.createMac(GordianMacSpecBuilder.hMac(GordianDigestSpecBuilder.sha1()));
+        final GordianNewMacSpecBuilder myBuilder = myFactory.newMacSpecBuilder();
+        final GordianMac myMac = myFactory.createMac(myBuilder.hMac(GordianNewDigestType.SHA1));
 
         /* Create a standard stream */
         Stream<DynamicNode> myStandard = Stream.of(DynamicTest.dynamicTest(STANDARD,
@@ -718,7 +721,8 @@ class RandomTest {
 
         /* Build the digest */
         final GordianDigestFactory myFactory = fcBCFACTORY.getDigestFactory();
-        final GordianDigest myDigest = myFactory.createDigest(GordianDigestSpecBuilder.sha2(GordianLength.LEN_512));
+        final GordianNewDigestSpecBuilder myBuilder = myFactory.newDigestSpecBuilder();
+        final GordianDigest myDigest = myFactory.createDigest(myBuilder.sha2(GordianLength.LEN_512));
 
         /* Create a standard stream */
         Stream<DynamicNode> myStandard = Stream.of(DynamicTest.dynamicTest(PERSONALISED + ADDITIONAL,
@@ -840,7 +844,8 @@ class RandomTest {
 
         /* Create the mac */
         final GordianMacFactory myFactory = fcBCFACTORY.getMacFactory();
-        final GordianMac myMac = myFactory.createMac(GordianMacSpecBuilder.hMac(GordianDigestSpecBuilder.sha2(GordianLength.LEN_512)));
+        final GordianNewMacSpecBuilder myBuilder = myFactory.newMacSpecBuilder();
+        final GordianMac myMac = myFactory.createMac(myBuilder.hMac(GordianNewDigestType.SHA2, GordianLength.LEN_512));
 
         /* Create a standard stream */
         Stream<DynamicNode> myStandard = Stream.of(DynamicTest.dynamicTest(PERSONALISED,

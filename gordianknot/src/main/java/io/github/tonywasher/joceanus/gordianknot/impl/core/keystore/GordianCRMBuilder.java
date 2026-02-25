@@ -20,8 +20,8 @@ import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigest;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianAsyncFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairFactory;
@@ -431,7 +431,8 @@ public class GordianCRMBuilder {
         /* Create the digest */
         final GordianBaseFactory myFactory = theGateway.getFactory();
         final GordianDigestFactory myDigests = myFactory.getDigestFactory();
-        final GordianDigest myDigest = myDigests.createDigest(GordianDigestSpecBuilder.sha2(GordianLength.LEN_256));
+        final GordianNewDigestSpecBuilder myBuilder = myDigests.newDigestSpecBuilder();
+        final GordianDigest myDigest = myDigests.createDigest(myBuilder.sha2(GordianLength.LEN_256));
 
         /* Calculate the digest */
         if (myMACSecret != null) {

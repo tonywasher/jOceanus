@@ -51,9 +51,9 @@ public interface GordianMacFactory {
     GordianMac createMac(GordianNewMacSpec pMacSpec) throws GordianException;
 
     /**
-     * create new GordianDigestSpecBuilder.
+     * create new GordianMacSpecBuilder.
      *
-     * @return the new DigestSpecBuilder
+     * @return the new MacSpecBuilder
      */
     GordianNewMacSpecBuilder newMacSpecBuilder();
 

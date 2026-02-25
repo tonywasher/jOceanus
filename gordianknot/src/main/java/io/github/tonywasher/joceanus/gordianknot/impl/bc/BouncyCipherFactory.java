@@ -21,7 +21,6 @@ import io.github.tonywasher.joceanus.gordianknot.api.base.GordianKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamCipher;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymCipher;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymCipherSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianWrapper;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewCipherMode;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewPadding;
@@ -36,6 +35,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStrea
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeySubType.GordianNewSparkleKey;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeySubType.GordianNewVMPCKey;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymCipherSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeyType;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKey;
@@ -47,6 +47,7 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher.GordianCo
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher.GordianCoreStreamKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher.GordianCoreStreamKeySubType;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher.GordianCoreSymCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher.GordianCoreSymCipherSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher.GordianCoreSymKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.ext.digests.GordianBlake2bDigest;
 import io.github.tonywasher.joceanus.gordianknot.impl.ext.digests.GordianBlake2sDigest;
@@ -220,7 +221,8 @@ public class BouncyCipherFactory
     public GordianWrapper createKeyWrapper(final GordianKey<GordianNewSymKeySpec> pKey) throws GordianException {
         /* Create the cipher */
         final BouncyKey<GordianNewSymKeySpec> myKey = BouncyKey.accessKey(pKey);
-        final GordianNewSymCipherSpec mySpec = GordianSymCipherSpecBuilder.ecb(myKey.getKeyType(), GordianNewPadding.NONE);
+        final GordianNewSymCipherSpecBuilder myBuilder = GordianCoreSymCipherSpecBuilder.newInstance();
+        final GordianNewSymCipherSpec mySpec = myBuilder.ecb(myKey.getKeyType(), GordianNewPadding.NONE);
         final BouncySymKeyCipher myBCCipher = (BouncySymKeyCipher) createSymKeyCipher(mySpec);
         return createKeyWrapper(myKey, myBCCipher);
     }
