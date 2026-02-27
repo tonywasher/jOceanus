@@ -24,8 +24,23 @@ import io.github.tonywasher.joceanus.gordianknot.api.keyset.spec.GordianNewKeySe
 /**
  * KeySet Spec Builder.
  */
-public class GordianCoreKeySetSpecBuilder
+public final class GordianCoreKeySetSpecBuilder
         implements GordianNewKeySetSpecBuilder {
+    /**
+     * Private constructor.
+     */
+    private GordianCoreKeySetSpecBuilder() {
+    }
+
+    /**
+     * Obtain new instance.
+     *
+     * @return the new instance
+     */
+    public static GordianCoreKeySetSpecBuilder newInstance() {
+        return new GordianCoreKeySetSpecBuilder();
+    }
+
     @Override
     public GordianNewKeySetSpec keySetSpec() {
         return new GordianCoreKeySetSpec();

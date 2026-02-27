@@ -24,7 +24,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDiges
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestType;
 import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianBadCredentialsException;
-import io.github.tonywasher.joceanus.gordianknot.api.lock.GordianPasswordLockSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.lock.spec.GordianNewPasswordLockSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMac;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianNewMacSpec;
@@ -54,7 +54,7 @@ public final class GordianPasswordLockRecipe {
     /**
      * The PasswordLockSpec.
      */
-    private final GordianPasswordLockSpec theLockSpec;
+    private final GordianNewPasswordLockSpec theLockSpec;
 
     /**
      * The Recipe.
@@ -93,7 +93,7 @@ public final class GordianPasswordLockRecipe {
      * @param pLockSpec the passwordLockSpec
      */
     GordianPasswordLockRecipe(final GordianBaseFactory pFactory,
-                              final GordianPasswordLockSpec pLockSpec) {
+                              final GordianNewPasswordLockSpec pLockSpec) {
         /* Access the secureRandom */
         final SecureRandom myRandom = pFactory.getRandomSource().getRandom();
 

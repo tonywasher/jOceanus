@@ -27,7 +27,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStrea
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymCipherSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactoryType;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
-import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySetSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keyset.spec.GordianNewKeySetSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignatureFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignatureSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseData;
@@ -193,7 +193,7 @@ public class GordianCoreAgreementParams
         }
 
         /* Validate a keySetSpec */
-        if (pResultType instanceof GordianKeySetSpec mySpec) {
+        if (pResultType instanceof GordianNewKeySetSpec mySpec) {
             /* Check Spec */
             final GordianCoreKeySetFactory myKeySetFactory = (GordianCoreKeySetFactory) theFactory.getKeySetFactory();
             myKeySetFactory.checkKeySetSpec(mySpec);

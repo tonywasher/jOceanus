@@ -27,7 +27,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.lock.GordianKeyPairLock;
 import io.github.tonywasher.joceanus.gordianknot.api.lock.GordianKeySetLock;
 import io.github.tonywasher.joceanus.gordianknot.api.lock.GordianLock;
 import io.github.tonywasher.joceanus.gordianknot.api.lock.GordianLockFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.lock.GordianPasswordLockSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.lock.spec.GordianNewPasswordLockSpec;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.oceanus.convert.OceanusDataConverter;
 import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogManager;
@@ -83,7 +83,7 @@ public class PrometheusSecurityPasswordCache {
     /**
      * PasswordLockSpec.
      */
-    private final GordianPasswordLockSpec theLockSpec;
+    private final GordianNewPasswordLockSpec theLockSpec;
 
     /**
      * Local keySet.
@@ -98,7 +98,7 @@ public class PrometheusSecurityPasswordCache {
      * @throws OceanusException on error
      */
     PrometheusSecurityPasswordCache(final PrometheusSecurityPasswordManager pManager,
-                                    final GordianPasswordLockSpec pLockSpec) throws OceanusException {
+                                    final GordianNewPasswordLockSpec pLockSpec) throws OceanusException {
         /* Protect against exceptions */
         try {
             /* Store factory and lockSpec*/

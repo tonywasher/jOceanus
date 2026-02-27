@@ -19,7 +19,7 @@ package io.github.tonywasher.joceanus.gordianknot.api.zip;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.lock.GordianLock;
-import io.github.tonywasher.joceanus.gordianknot.api.lock.GordianPasswordLockSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.lock.spec.GordianNewPasswordLockSpec;
 
 import java.io.File;
 import java.io.InputStream;
@@ -36,9 +36,7 @@ public interface GordianZipFactory {
      * @return the zipLock
      * @throws GordianException on error
      */
-    default GordianZipLock keySetZipLock(final char[] pPassword) throws GordianException {
-        return keySetZipLock(new GordianPasswordLockSpec(), pPassword);
-    }
+    GordianZipLock keySetZipLock(char[] pPassword) throws GordianException;
 
     /**
      * Create a keySetLock.
@@ -48,7 +46,7 @@ public interface GordianZipFactory {
      * @return the zipLock
      * @throws GordianException on error
      */
-    GordianZipLock keySetZipLock(GordianPasswordLockSpec pLockSpec,
+    GordianZipLock keySetZipLock(GordianNewPasswordLockSpec pLockSpec,
                                  char[] pPassword) throws GordianException;
 
     /**
@@ -58,9 +56,7 @@ public interface GordianZipFactory {
      * @return the zipLock
      * @throws GordianException on error
      */
-    default GordianZipLock factoryZipLock(final char[] pPassword) throws GordianException {
-        return factoryZipLock(new GordianPasswordLockSpec(), pPassword);
-    }
+    GordianZipLock factoryZipLock(char[] pPassword) throws GordianException;
 
     /**
      * Create a factoryLock.
@@ -70,7 +66,7 @@ public interface GordianZipFactory {
      * @return the zipLock
      * @throws GordianException on error
      */
-    GordianZipLock factoryZipLock(GordianPasswordLockSpec pLockSpec,
+    GordianZipLock factoryZipLock(GordianNewPasswordLockSpec pLockSpec,
                                   char[] pPassword) throws GordianException;
 
     /**
@@ -81,10 +77,8 @@ public interface GordianZipFactory {
      * @return the zipLock
      * @throws GordianException on error
      */
-    default GordianZipLock keyPairZipLock(final GordianKeyPair pKeyPair,
-                                          final char[] pPassword) throws GordianException {
-        return keyPairZipLock(new GordianPasswordLockSpec(), pKeyPair, pPassword);
-    }
+    GordianZipLock keyPairZipLock(GordianKeyPair pKeyPair,
+                                  char[] pPassword) throws GordianException;
 
     /**
      * Create a keyPairZipLock.
@@ -95,7 +89,7 @@ public interface GordianZipFactory {
      * @return the zipLock
      * @throws GordianException on error
      */
-    GordianZipLock keyPairZipLock(GordianPasswordLockSpec pLockSpec,
+    GordianZipLock keyPairZipLock(GordianNewPasswordLockSpec pLockSpec,
                                   GordianKeyPair pKeyPair,
                                   char[] pPassword) throws GordianException;
 

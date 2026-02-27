@@ -38,8 +38,10 @@ module io.github.tonywasher.joceanus.gordianknot {
     exports io.github.tonywasher.joceanus.gordianknot.api.key;
     exports io.github.tonywasher.joceanus.gordianknot.api.keypair;
     exports io.github.tonywasher.joceanus.gordianknot.api.keyset;
+    exports io.github.tonywasher.joceanus.gordianknot.api.keyset.spec;
     exports io.github.tonywasher.joceanus.gordianknot.api.keystore;
     exports io.github.tonywasher.joceanus.gordianknot.api.lock;
+    exports io.github.tonywasher.joceanus.gordianknot.api.lock.spec;
     exports io.github.tonywasher.joceanus.gordianknot.api.mac;
     exports io.github.tonywasher.joceanus.gordianknot.api.mac.spec;
     exports io.github.tonywasher.joceanus.gordianknot.api.random;

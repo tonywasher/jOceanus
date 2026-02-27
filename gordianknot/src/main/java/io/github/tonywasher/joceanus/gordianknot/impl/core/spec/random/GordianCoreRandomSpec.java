@@ -124,8 +124,8 @@ public class GordianCoreRandomSpec
     /**
      * Obtain the symKeySpec for a randomSpec.
      *
+     * @param pSpec the randomSpec
      * @return the symKeySpec.
-     * @pSpec the randomSpec
      */
     public static GordianCoreSymKeySpec getSymKeySpec(final GordianNewRandomSpec pSpec) {
         return ((GordianCoreRandomSpec) pSpec).getSymKeySpec();

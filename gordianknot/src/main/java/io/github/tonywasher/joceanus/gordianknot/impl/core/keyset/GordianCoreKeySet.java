@@ -33,7 +33,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySet;
 import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySetAADCipher;
 import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySetCipher;
-import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySetSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keyset.spec.GordianNewKeySetSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianParameters;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianPersonalisation.GordianPersonalId;
@@ -69,7 +69,7 @@ public final class GordianCoreKeySet
     /**
      * The keySetSpec.
      */
-    private final GordianKeySetSpec theSpec;
+    private final GordianNewKeySetSpec theSpec;
 
     /**
      * Map of KeySpec to symKey.
@@ -89,7 +89,7 @@ public final class GordianCoreKeySet
      * @throws GordianException on error
      */
     GordianCoreKeySet(final GordianBaseFactory pFactory,
-                      final GordianKeySetSpec pSpec) throws GordianException {
+                      final GordianNewKeySetSpec pSpec) throws GordianException {
         /* Store parameters */
         theFactory = pFactory;
         theSpec = pSpec;
@@ -129,7 +129,7 @@ public final class GordianCoreKeySet
     }
 
     @Override
-    public GordianKeySetSpec getKeySetSpec() {
+    public GordianNewKeySetSpec getKeySetSpec() {
         return theSpec;
     }
 

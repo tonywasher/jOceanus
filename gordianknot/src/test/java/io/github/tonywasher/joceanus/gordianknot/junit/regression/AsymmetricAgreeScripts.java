@@ -43,12 +43,13 @@ import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairGener
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySet;
-import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySetSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keyset.spec.GordianNewKeySetSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.agree.GordianCoreAgreement;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.agree.GordianCoreAgreementFactory;
 import io.github.tonywasher.joceanus.gordianknot.junit.regression.AsymmetricStore.FactoryAgreement;
 import io.github.tonywasher.joceanus.gordianknot.junit.regression.AsymmetricStore.FactoryKeyPairs;
 import io.github.tonywasher.joceanus.gordianknot.junit.regression.KeyStoreUtils.KeyStoreAlias;
+import io.github.tonywasher.joceanus.gordianknot.util.GordianUtilities;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.junit.jupiter.api.Assertions;
@@ -65,11 +66,11 @@ import java.util.stream.Stream;
 /**
  * Agreement scripts.
  */
-public final class AsymmetricXAgreeScripts {
+public final class AsymmetricAgreeScripts {
     /**
      * KeySetSpec.
      */
-    static final GordianKeySetSpec KEYSETSPEC = new GordianKeySetSpec();
+    static final GordianNewKeySetSpec KEYSETSPEC = GordianUtilities.newKeySetSpecBuilder().keySetSpec();
 
     /**
      * SymCipherSpec.
@@ -119,7 +120,7 @@ public final class AsymmetricXAgreeScripts {
     /**
      * Private constructor.
      */
-    private AsymmetricXAgreeScripts() {
+    private AsymmetricAgreeScripts() {
     }
 
     /**

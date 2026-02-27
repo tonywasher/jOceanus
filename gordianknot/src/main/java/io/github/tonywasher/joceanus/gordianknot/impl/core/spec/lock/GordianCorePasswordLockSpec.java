@@ -29,21 +29,6 @@ import java.util.Objects;
 public class GordianCorePasswordLockSpec
         implements GordianNewPasswordLockSpec {
     /**
-     * Minimum iterations.
-     */
-    public static final Integer MINIMUM_ITERATIONS = 1;
-
-    /**
-     * Maximum iterations.
-     */
-    public static final Integer MAXIMUM_ITERATIONS = 64;
-
-    /**
-     * Default iterations.
-     */
-    public static final Integer DEFAULT_ITERATIONS = 8;
-
-    /**
      * 1K Multiplier.
      */
     private static final int K_MULTIPLIER = 1024;

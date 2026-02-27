@@ -32,7 +32,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySet;
-import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySetSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keyset.spec.GordianNewKeySetSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.agree.GordianCoreAgreementFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianParameters;
@@ -41,6 +41,7 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.encrypt.GordianCoreEn
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianIOException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keyset.GordianKeySetSpecASN1;
+import io.github.tonywasher.joceanus.gordianknot.util.GordianUtilities;
 import org.bouncycastle.asn1.BEROctetString;
 import org.bouncycastle.asn1.cms.EncryptedContentInfo;
 import org.bouncycastle.asn1.cms.IssuerAndSerialNumber;
@@ -137,7 +138,8 @@ public class GordianCRMEncryptor {
         final GordianCoreAgreementFactory myAgreeFactory = (GordianCoreAgreementFactory) myFactory.getAgreementFactory();
         final GordianCertificate myCert = myAgreeFactory.newMiniCertificate(SERVER, pCertificate.getKeyPair(),
                 new GordianKeyPairUsage(GordianKeyPairUse.AGREEMENT));
-        final GordianAgreementParams myParams = myAgreeFactory.newAgreementParams(pAgreeSpec, new GordianKeySetSpec())
+        final GordianNewKeySetSpecBuilder myBuilder = GordianUtilities.newKeySetSpecBuilder();
+        final GordianAgreementParams myParams = myAgreeFactory.newAgreementParams(pAgreeSpec, myBuilder.keySetSpec())
                 .setServerCertificate(myCert);
         final GordianAgreement myAgree = myAgreeFactory.createAgreement(myParams);
         final byte[] myHello = myAgree.nextMessage();

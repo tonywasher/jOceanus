@@ -843,9 +843,11 @@ class RandomTest {
         };
 
         /* Create the mac */
-        final GordianMacFactory myFactory = fcBCFACTORY.getMacFactory();
-        final GordianNewMacSpecBuilder myBuilder = myFactory.newMacSpecBuilder();
-        final GordianMac myMac = myFactory.createMac(myBuilder.hMac(GordianNewDigestType.SHA2, GordianLength.LEN_512));
+        final GordianDigestFactory myDigestFactory = fcBCFACTORY.getDigestFactory();
+        final GordianNewDigestSpecBuilder myDigestBuilder = myDigestFactory.newDigestSpecBuilder();
+        final GordianMacFactory myMacFactory = fcBCFACTORY.getMacFactory();
+        final GordianNewMacSpecBuilder myMacBuilder = myMacFactory.newMacSpecBuilder();
+        final GordianMac myMac = myMacFactory.createMac(myMacBuilder.hMac(myDigestBuilder.sha2(GordianLength.LEN_512)));
 
         /* Create a standard stream */
         Stream<DynamicNode> myStandard = Stream.of(DynamicTest.dynamicTest(PERSONALISED,

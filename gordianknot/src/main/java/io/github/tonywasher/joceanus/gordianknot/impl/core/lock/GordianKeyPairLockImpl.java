@@ -33,7 +33,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySet;
 import io.github.tonywasher.joceanus.gordianknot.api.lock.GordianKeyPairLock;
-import io.github.tonywasher.joceanus.gordianknot.api.lock.GordianPasswordLockSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.lock.spec.GordianNewPasswordLockSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.agree.GordianCoreAgreementMessageASN1;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianDataConverter;
@@ -88,7 +88,7 @@ public class GordianKeyPairLockImpl
      * @throws GordianException on error
      */
     public GordianKeyPairLockImpl(final GordianBaseFactory pLockingFactory,
-                                  final GordianPasswordLockSpec pLockSpec,
+                                  final GordianNewPasswordLockSpec pLockSpec,
                                   final GordianKeyPair pKeyPair,
                                   final char[] pPassword) throws GordianException {
         /* Protect from exceptions */

@@ -128,6 +128,7 @@ public interface GordianNewMacSpecBuilder {
      * Create hMacSpec.
      *
      * @param pDigestType the digestType
+     * @param pKeyLength  the keyLength
      * @return the MacSpec
      */
     default GordianNewMacSpec hMac(final GordianNewDigestType pDigestType,

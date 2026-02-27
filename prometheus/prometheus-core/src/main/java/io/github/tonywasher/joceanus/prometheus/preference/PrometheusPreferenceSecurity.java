@@ -21,11 +21,13 @@ import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactoryType;
 import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySet;
-import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySetSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keyset.spec.GordianNewKeySetSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keyset.spec.GordianNewKeySetSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.lock.GordianKeySetLock;
 import io.github.tonywasher.joceanus.gordianknot.api.lock.GordianLockFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.lock.GordianPasswordLockSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.lock.spec.GordianNewPasswordLockSpec;
 import io.github.tonywasher.joceanus.gordianknot.util.GordianGenerator;
+import io.github.tonywasher.joceanus.gordianknot.util.GordianUtilities;
 import io.github.tonywasher.joceanus.metis.preference.MetisPreferenceKey;
 import io.github.tonywasher.joceanus.metis.preference.MetisPreferenceManager;
 import io.github.tonywasher.joceanus.metis.preference.MetisPreferenceResource;
@@ -85,7 +87,7 @@ public class PrometheusPreferenceSecurity {
 
             /* Derive or create the lock */
             final GordianKeySetLock myKeySetLock = myLock == null
-                    ? myLocks.newKeySetLock(new GordianPasswordLockSpec(), myPassword)
+                    ? myLocks.newKeySetLock(GordianUtilities.newPasswordLockSpecBuilder().passwordLock(), myPassword)
                     : myLocks.resolveKeySetLock(myLock, myPassword);
 
             /* record the KeySet */
@@ -269,11 +271,6 @@ public class PrometheusPreferenceSecurity {
         private static final Set<GordianLength> VALID_LENGTHS = EnumSet.of(GordianLength.LEN_128, GordianLength.LEN_192, GordianLength.LEN_256);
 
         /**
-         * Default Security Phrase.
-         */
-        private static final String DEFAULT_SECURITY_PHRASE = "PleaseChangeMeToSomethingMoreUnique";
-
-        /**
          * Minimum Number of Active KeySets.
          */
         private static final int MINIMUM_ACTIVE_KEYSETS = 4;
@@ -312,11 +309,12 @@ public class PrometheusPreferenceSecurity {
          *
          * @return the spec
          */
-        public GordianKeySetSpec getKeySetSpec() {
+        public GordianNewKeySetSpec getKeySetSpec() {
             /* Build and return keySetSpec */
             final GordianLength myKeyLen = getEnumValue(PrometheusSecurityPreferenceKey.KEYLENGTH, GordianLength.class);
             final int mySteps = getIntegerValue(PrometheusSecurityPreferenceKey.CIPHERSTEPS);
-            return new GordianKeySetSpec(myKeyLen, mySteps);
+            final GordianNewKeySetSpecBuilder myBuilder = GordianUtilities.newKeySetSpecBuilder();
+            return myBuilder.keySetSpec(myKeyLen, mySteps);
         }
 
         /**
@@ -324,10 +322,10 @@ public class PrometheusPreferenceSecurity {
          *
          * @return the spec
          */
-        public GordianPasswordLockSpec getPasswordLockSpec() {
+        public GordianNewPasswordLockSpec getPasswordLockSpec() {
             /* Build and return keySetSpec */
             final int myIterations = getIntegerValue(PrometheusSecurityPreferenceKey.HASHITERATIONS);
-            return new GordianPasswordLockSpec(myIterations, getKeySetSpec());
+            return GordianUtilities.newPasswordLockSpecBuilder().passwordLock(myIterations, getKeySetSpec());
         }
 
         @Override
@@ -361,25 +359,25 @@ public class PrometheusPreferenceSecurity {
             /* Make sure that the cipherSteps is specified */
             MetisIntegerPreference myPref = getIntegerPreference(PrometheusSecurityPreferenceKey.CIPHERSTEPS);
             if (!myPref.isAvailable()) {
-                myPref.setValue(GordianKeySetSpec.DEFAULT_CIPHER_STEPS);
+                myPref.setValue(GordianNewKeySetSpec.DEFAULT_CIPHER_STEPS);
             }
 
             /* Define the range */
-            myPref.setRange(GordianKeySetSpec.MINIMUM_CIPHER_STEPS, GordianKeySetSpec.MAXIMUM_CIPHER_STEPS);
+            myPref.setRange(GordianNewKeySetSpec.MINIMUM_CIPHER_STEPS, GordianNewKeySetSpec.MAXIMUM_CIPHER_STEPS);
             if (!myPref.validate()) {
-                myPref.setValue(GordianKeySetSpec.DEFAULT_CIPHER_STEPS);
+                myPref.setValue(GordianNewKeySetSpec.DEFAULT_CIPHER_STEPS);
             }
 
             /* Make sure that the hashIterations is specified */
             myPref = getIntegerPreference(PrometheusSecurityPreferenceKey.HASHITERATIONS);
             if (!myPref.isAvailable()) {
-                myPref.setValue(GordianPasswordLockSpec.DEFAULT_ITERATIONS);
+                myPref.setValue(GordianNewPasswordLockSpec.DEFAULT_ITERATIONS);
             }
 
             /* Define the range */
-            myPref.setRange(GordianPasswordLockSpec.MINIMUM_ITERATIONS, GordianPasswordLockSpec.MAXIMUM_ITERATIONS);
+            myPref.setRange(GordianNewPasswordLockSpec.MINIMUM_ITERATIONS, GordianNewPasswordLockSpec.MAXIMUM_ITERATIONS);
             if (!myPref.validate()) {
-                myPref.setValue(GordianPasswordLockSpec.DEFAULT_ITERATIONS);
+                myPref.setValue(GordianNewPasswordLockSpec.DEFAULT_ITERATIONS);
             }
 
             /* Make sure that the activeKeySets is specified */

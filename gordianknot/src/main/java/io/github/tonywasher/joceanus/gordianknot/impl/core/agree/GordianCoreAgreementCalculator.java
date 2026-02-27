@@ -33,7 +33,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactoryType;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKey;
 import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySet;
-import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySetSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keyset.spec.GordianNewKeySetSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianDataConverter;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianParameters;
@@ -90,7 +90,7 @@ public class GordianCoreAgreementCalculator {
             return deriveFactory(myType, pSecret);
 
             /* If the resultType is a KeySetSpec */
-        } else if (pResultType instanceof GordianKeySetSpec mySpec) {
+        } else if (pResultType instanceof GordianNewKeySetSpec mySpec) {
             /* Derive the keySet */
             return deriveKeySet(mySpec, pSecret);
 
@@ -150,7 +150,7 @@ public class GordianCoreAgreementCalculator {
      * @return the derived keySet
      * @throws GordianException on error
      */
-    private GordianKeySet deriveKeySet(final GordianKeySetSpec pSpec,
+    private GordianKeySet deriveKeySet(final GordianNewKeySetSpec pSpec,
                                        final byte[] pSecret) throws GordianException {
         /* Derive a shared factory */
         final GordianFactory myFactory = deriveFactory(GordianFactoryType.BC, pSecret);

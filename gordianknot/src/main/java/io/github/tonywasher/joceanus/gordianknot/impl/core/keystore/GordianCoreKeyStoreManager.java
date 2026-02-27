@@ -30,7 +30,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairGener
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySet;
 import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySetFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySetSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keyset.spec.GordianNewKeySetSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStoreKey;
 import io.github.tonywasher.joceanus.gordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStorePair;
 import io.github.tonywasher.joceanus.gordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStoreSet;
@@ -80,7 +80,7 @@ public class GordianCoreKeyStoreManager
     }
 
     @Override
-    public GordianKeyStoreSet createKeySet(final GordianKeySetSpec pKeySetSpec,
+    public GordianKeyStoreSet createKeySet(final GordianNewKeySetSpec pKeySetSpec,
                                            final String pAlias,
                                            final char[] pPassword) throws GordianException {
         final GordianKeySetFactory myFactory = theFactory.getKeySetFactory();

@@ -17,9 +17,13 @@
 package io.github.tonywasher.joceanus.gordianknot.util;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
+import io.github.tonywasher.joceanus.gordianknot.api.keyset.spec.GordianNewKeySetSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.lock.spec.GordianNewPasswordLockSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keyset.GordianCoreKeySet;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keyset.GordianKeySetData;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.lock.GordianFactoryLockImpl;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keyset.GordianCoreKeySetSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.lock.GordianCorePasswordLockSpecBuilder;
 
 /**
  * Utilities.
@@ -78,5 +82,23 @@ public final class GordianUtilities {
      */
     public static int getKeySetEncryptionLength(final int pDataLength) {
         return GordianKeySetData.getEncryptionLength(pDataLength);
+    }
+
+    /**
+     * Obtain KeySetSpecBuilder instance.
+     *
+     * @return the specBuilder
+     */
+    public static GordianNewKeySetSpecBuilder newKeySetSpecBuilder() {
+        return GordianCoreKeySetSpecBuilder.newInstance();
+    }
+
+    /**
+     * Obtain PasswordLockSpecBuilder instance.
+     *
+     * @return the specBuilder
+     */
+    public static GordianNewPasswordLockSpecBuilder newPasswordLockSpecBuilder() {
+        return GordianCorePasswordLockSpecBuilder.newInstance();
     }
 }

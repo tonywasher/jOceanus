@@ -27,10 +27,12 @@ import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKey;
 import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySet;
 import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySetAADCipher;
 import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySetCipher;
-import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySetSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keyset.spec.GordianNewKeySetSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keyset.spec.GordianNewKeySetSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.lock.GordianKeySetLock;
 import io.github.tonywasher.joceanus.gordianknot.api.lock.GordianLockFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.lock.GordianPasswordLockSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.lock.spec.GordianNewPasswordLockSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.lock.spec.GordianNewPasswordLockSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMac;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianNewMacSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.random.GordianRandomFactory;
@@ -162,7 +164,7 @@ class KeySetTest {
         /**
          * the KeySetSpec.
          */
-        private final GordianPasswordLockSpec theSpec;
+        private final GordianNewPasswordLockSpec theSpec;
 
         /**
          * The keyHash.
@@ -210,9 +212,11 @@ class KeySetTest {
             maxSteps = pMaxSteps;
 
             /* Create the keySetHashSpec */
-            final int myMaxSteps = pMaxSteps ? GordianKeySetSpec.MAXIMUM_CIPHER_STEPS
-                    : GordianKeySetSpec.MINIMUM_CIPHER_STEPS;
-            theSpec = new GordianPasswordLockSpec(new GordianKeySetSpec(pKeyLen, myMaxSteps));
+            final GordianNewKeySetSpecBuilder myKSBuilder = GordianUtilities.newKeySetSpecBuilder();
+            final GordianNewPasswordLockSpecBuilder myPLBuilder = GordianUtilities.newPasswordLockSpecBuilder();
+            final int myMaxSteps = pMaxSteps ? GordianNewKeySetSpec.MAXIMUM_CIPHER_STEPS
+                    : GordianNewKeySetSpec.MINIMUM_CIPHER_STEPS;
+            theSpec = myPLBuilder.passwordLock(myKSBuilder.keySetSpec(pKeyLen, myMaxSteps));
 
             /* Generate the hash */
             final GordianFactory myFactory = theFactory.getFactory();
@@ -245,7 +249,7 @@ class KeySetTest {
          *
          * @return the passwordLockSpec
          */
-        GordianPasswordLockSpec getPasswordLockSpec() {
+        GordianNewPasswordLockSpec getPasswordLockSpec() {
             return theSpec;
         }
 

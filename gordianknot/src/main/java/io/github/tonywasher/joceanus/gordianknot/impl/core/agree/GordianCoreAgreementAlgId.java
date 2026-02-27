@@ -33,7 +33,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairSpecB
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairType;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianNTRUPrimeSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianSM2Elliptic;
-import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySetSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keyset.spec.GordianNewKeySetSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianASN1Util;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseData;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.cipher.GordianCoreCipherFactory;
@@ -349,7 +349,7 @@ public class GordianCoreAgreementAlgId {
                     : GordianBaseData.JCAFACTORYOID;
             return new AlgorithmIdentifier(myOID, null);
         }
-        if (pResultType instanceof GordianKeySetSpec mySpec) {
+        if (pResultType instanceof GordianNewKeySetSpec mySpec) {
             final GordianKeySetSpecASN1 myParms = new GordianKeySetSpecASN1(mySpec);
             return myParms.getAlgorithmId();
         }

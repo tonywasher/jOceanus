@@ -29,21 +29,6 @@ import java.util.Objects;
 public class GordianCoreKeySetSpec
         implements GordianNewKeySetSpec {
     /**
-     * Minimum Cipher Steps.
-     */
-    public static final Integer MINIMUM_CIPHER_STEPS = 3;
-
-    /**
-     * Maximum Cipher Steps.
-     */
-    public static final Integer MAXIMUM_CIPHER_STEPS = 6;
-
-    /**
-     * Default Cipher Steps.
-     */
-    public static final Integer DEFAULT_CIPHER_STEPS = 4;
-
-    /**
      * Default KeyLength.
      */
     public static final GordianLength DEFAULT_KEYLEN = GordianLength.LEN_256;

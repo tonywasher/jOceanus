@@ -21,7 +21,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.base.GordianKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamKeySpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymKeySpecBuilder;
-import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySetSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keyset.spec.GordianNewKeySetSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStoreKey;
 import io.github.tonywasher.joceanus.gordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStoreSet;
 import io.github.tonywasher.joceanus.gordianknot.api.keystore.GordianKeyStoreFactory;
@@ -30,6 +30,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.keystore.GordianKeyStoreMan
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keystore.GordianCoreKeyStore;
 import io.github.tonywasher.joceanus.gordianknot.junit.regression.KeyStoreUtils.KeyStoreAlias;
+import io.github.tonywasher.joceanus.gordianknot.util.GordianUtilities;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DynamicContainer;
 import org.junit.jupiter.api.DynamicNode;
@@ -49,7 +50,7 @@ public final class KeyStoreSymmetric {
     /**
      * The KeySetSpec.
      */
-    static final GordianKeySetSpec KEYSETSPEC = new GordianKeySetSpec(KEYLEN);
+    static final GordianNewKeySetSpec KEYSETSPEC = GordianUtilities.newKeySetSpecBuilder().keySetSpec(KEYLEN);
 
     /**
      * The KeyStore Manager.

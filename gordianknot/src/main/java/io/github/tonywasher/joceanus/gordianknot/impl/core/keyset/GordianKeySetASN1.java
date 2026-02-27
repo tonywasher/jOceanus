@@ -23,7 +23,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKe
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeySpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeyType;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKey;
-import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySetSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keyset.spec.GordianNewKeySetSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianASN1Util;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianASN1Util.GordianASN1Object;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
@@ -67,7 +67,7 @@ public class GordianKeySetASN1
     /**
      * The keySetSpec.
      */
-    private final GordianKeySetSpec theSpec;
+    private final GordianNewKeySetSpec theSpec;
 
     /**
      * The map of keyTypes to key.

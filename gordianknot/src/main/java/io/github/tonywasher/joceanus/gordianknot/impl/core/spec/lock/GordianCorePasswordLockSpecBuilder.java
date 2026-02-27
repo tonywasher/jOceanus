@@ -24,8 +24,23 @@ import io.github.tonywasher.joceanus.gordianknot.api.lock.spec.GordianNewPasswor
 /**
  * PasswordLock Spec Builder.
  */
-public class GordianCorePasswordLockSpecBuilder
+public final class GordianCorePasswordLockSpecBuilder
         implements GordianNewPasswordLockSpecBuilder {
+    /**
+     * Private Constructor.
+     */
+    private GordianCorePasswordLockSpecBuilder() {
+    }
+
+    /**
+     * Obtain new instance.
+     *
+     * @return the new instance
+     */
+    public static GordianCorePasswordLockSpecBuilder newInstance() {
+        return new GordianCorePasswordLockSpecBuilder();
+    }
+
     @Override
     public GordianNewPasswordLockSpec passwordLock() {
         return new GordianCorePasswordLockSpec();

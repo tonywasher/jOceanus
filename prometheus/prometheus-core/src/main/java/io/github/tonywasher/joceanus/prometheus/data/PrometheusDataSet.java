@@ -17,7 +17,7 @@
 package io.github.tonywasher.joceanus.prometheus.data;
 
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactory.GordianFactoryLock;
-import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySetSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keyset.spec.GordianNewKeySetSpec;
 import io.github.tonywasher.joceanus.metis.data.MetisDataFieldValue;
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldItem;
@@ -110,7 +110,7 @@ public abstract class PrometheusDataSet
     /**
      * KeySetSpec.
      */
-    private final GordianKeySetSpec theKeySetSpec;
+    private final GordianNewKeySetSpec theKeySetSpec;
 
     /**
      * Number of activeKeySets.
@@ -301,7 +301,7 @@ public abstract class PrometheusDataSet
      *
      * @return the keySetSpec
      */
-    public GordianKeySetSpec getKeySetSpec() {
+    public GordianNewKeySetSpec getKeySetSpec() {
         return theKeySetSpec;
     }
 

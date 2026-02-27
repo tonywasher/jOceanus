@@ -19,11 +19,20 @@ package io.github.tonywasher.joceanus.gordianknot.api.lock;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySet;
+import io.github.tonywasher.joceanus.gordianknot.api.lock.spec.GordianNewPasswordLockSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.lock.spec.GordianNewPasswordLockSpecBuilder;
 
 /**
  * Lock Factory API.
  */
 public interface GordianLockFactory {
+    /**
+     * create new GordianPasswordLockSpecBuilder.
+     *
+     * @return the new PasswordLockSpecBuilder
+     */
+    GordianNewPasswordLockSpecBuilder newPasswordLockSpecBuilder();
+
     /**
      * Create a new keySetLock for a keySet.
      *
@@ -32,10 +41,8 @@ public interface GordianLockFactory {
      * @return the keySet lock
      * @throws GordianException on error
      */
-    default GordianKeySetLock newKeySetLock(final GordianKeySet pKeySetToLock,
-                                            final char[] pPassword) throws GordianException {
-        return newKeySetLock(pKeySetToLock, new GordianPasswordLockSpec(), pPassword);
-    }
+    GordianKeySetLock newKeySetLock(GordianKeySet pKeySetToLock,
+                                    char[] pPassword) throws GordianException;
 
     /**
      * Create a new keySetLock for a keySet.
@@ -47,7 +54,7 @@ public interface GordianLockFactory {
      * @throws GordianException on error
      */
     GordianKeySetLock newKeySetLock(GordianKeySet pKeySetToLock,
-                                    GordianPasswordLockSpec pLockSpec,
+                                    GordianNewPasswordLockSpec pLockSpec,
                                     char[] pPassword) throws GordianException;
 
     /**
@@ -57,9 +64,7 @@ public interface GordianLockFactory {
      * @return the keySet lock
      * @throws GordianException on error
      */
-    default GordianKeySetLock newKeySetLock(final char[] pPassword) throws GordianException {
-        return newKeySetLock(new GordianPasswordLockSpec(), pPassword);
-    }
+    GordianKeySetLock newKeySetLock(char[] pPassword) throws GordianException;
 
     /**
      * Create a new keySetLock for a new random keySet.
@@ -69,7 +74,7 @@ public interface GordianLockFactory {
      * @return the keySet lock
      * @throws GordianException on error
      */
-    GordianKeySetLock newKeySetLock(GordianPasswordLockSpec pLockSpec,
+    GordianKeySetLock newKeySetLock(GordianNewPasswordLockSpec pLockSpec,
                                     char[] pPassword) throws GordianException;
 
     /**
@@ -91,10 +96,8 @@ public interface GordianLockFactory {
      * @return the keySet lock
      * @throws GordianException on error
      */
-    default GordianKeyPairLock newKeyPairLock(final GordianKeyPair pKeyPair,
-                                              final char[] pPassword) throws GordianException {
-        return newKeyPairLock(new GordianPasswordLockSpec(), pKeyPair, pPassword);
-    }
+    GordianKeyPairLock newKeyPairLock(GordianKeyPair pKeyPair,
+                                      char[] pPassword) throws GordianException;
 
     /**
      * Create a new keyPairLock.
@@ -105,7 +108,7 @@ public interface GordianLockFactory {
      * @return the keySet lock
      * @throws GordianException on error
      */
-    GordianKeyPairLock newKeyPairLock(GordianPasswordLockSpec pLockSpec,
+    GordianKeyPairLock newKeyPairLock(GordianNewPasswordLockSpec pLockSpec,
                                       GordianKeyPair pKeyPair,
                                       char[] pPassword) throws GordianException;
 
