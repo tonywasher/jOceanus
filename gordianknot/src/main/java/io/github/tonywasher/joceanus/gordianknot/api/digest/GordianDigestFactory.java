@@ -17,6 +17,9 @@
 package io.github.tonywasher.joceanus.gordianknot.api.digest;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestType;
 
 import java.util.List;
 import java.util.function.Predicate;
@@ -32,40 +35,47 @@ public interface GordianDigestFactory {
      * @return the new Digest
      * @throws GordianException on error
      */
-    GordianDigest createDigest(GordianDigestSpec pDigestSpec) throws GordianException;
+    GordianDigest createDigest(GordianNewDigestSpec pDigestSpec) throws GordianException;
+
+    /**
+     * create new GordianDigestSpecBuilder.
+     *
+     * @return the new DigestSpecBuilder
+     */
+    GordianNewDigestSpecBuilder newDigestSpecBuilder();
 
     /**
      * Obtain predicate for supported digestSpecs.
      *
      * @return the predicate
      */
-    Predicate<GordianDigestSpec> supportedDigestSpecs();
+    Predicate<GordianNewDigestSpec> supportedDigestSpecs();
 
     /**
      * Obtain predicate for supported digestTypes.
      *
      * @return the predicate
      */
-    Predicate<GordianDigestType> supportedDigestTypes();
+    Predicate<GordianNewDigestType> supportedDigestTypes();
 
     /**
      * Obtain a list of supported digestSpecs.
      *
      * @return the list of supported digestSpecs.
      */
-    List<GordianDigestSpec> listAllSupportedSpecs();
+    List<GordianNewDigestSpec> listAllSupportedSpecs();
 
     /**
      * Obtain a list of supported digestTypes.
      *
      * @return the list of supported digestTypes.
      */
-    List<GordianDigestType> listAllSupportedTypes();
+    List<GordianNewDigestType> listAllSupportedTypes();
 
     /**
      * List all possible digestSpecs.
      *
      * @return the list
      */
-    List<GordianDigestSpec> listAllPossibleSpecs();
+    List<GordianNewDigestSpec> listAllPossibleSpecs();
 }

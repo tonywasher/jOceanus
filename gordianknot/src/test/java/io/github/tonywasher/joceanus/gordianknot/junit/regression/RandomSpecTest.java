@@ -18,17 +18,17 @@ package io.github.tonywasher.joceanus.gordianknot.junit.regression;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamKeySpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigest;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactoryType;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKey;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKeyLengths;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMac;
-import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianNewMacSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.random.GordianRandomFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.cipher.GordianCoreCipherFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.digest.GordianCoreDigestFactory;
@@ -181,12 +181,12 @@ class RandomSpecTest {
         /* Generate digestSpecs */
         final GordianRandomFactory myRandom = pFactory.getRandomFactory();
         final GordianCoreDigestFactory myDigests = (GordianCoreDigestFactory) pFactory.getDigestFactory();
-        final List<GordianDigestSpec> myValid = myDigests.listAllSupportedSpecs();
+        final List<GordianNewDigestSpec> myValid = myDigests.listAllSupportedSpecs();
 
         /* Loop a large number of times to ensure that all digests are generated */
         for (int i = 0; i < 10000 && !myValid.isEmpty(); i++) {
             final GordianDigest myDigest = myRandom.generateRandomDigest(false);
-            final GordianDigestSpec mySpec = myDigest.getDigestSpec();
+            final GordianNewDigestSpec mySpec = myDigest.getDigestSpec();
             myValid.remove(mySpec);
         }
 
@@ -206,12 +206,12 @@ class RandomSpecTest {
         /* Generate digestSpecs */
         final GordianRandomFactory myRandom = pFactory.getRandomFactory();
         final GordianCoreCipherFactory myCiphers = (GordianCoreCipherFactory) pFactory.getCipherFactory();
-        final List<GordianSymKeySpec> myValid = myCiphers.listAllSupportedSymKeySpecs(pLength);
+        final List<GordianNewSymKeySpec> myValid = myCiphers.listAllSupportedSymKeySpecs(pLength);
 
         /* Loop a large number of times to ensure that all digests are generated */
         for (int i = 0; i < 10000 && !myValid.isEmpty(); i++) {
-            final GordianKey<GordianSymKeySpec> myKey = myRandom.generateRandomSymKey(pLength);
-            final GordianSymKeySpec mySpec = myKey.getKeyType();
+            final GordianKey<GordianNewSymKeySpec> myKey = myRandom.generateRandomSymKey(pLength);
+            final GordianNewSymKeySpec mySpec = myKey.getKeyType();
             myValid.remove(mySpec);
         }
 
@@ -231,12 +231,12 @@ class RandomSpecTest {
         /* Generate digestSpecs */
         final GordianRandomFactory myRandom = pFactory.getRandomFactory();
         final GordianCoreCipherFactory myCiphers = (GordianCoreCipherFactory) pFactory.getCipherFactory();
-        final List<GordianStreamKeySpec> myValid = myCiphers.listAllSupportedStreamKeySpecs(pLength);
+        final List<GordianNewStreamKeySpec> myValid = myCiphers.listAllSupportedStreamKeySpecs(pLength);
 
         /* Loop a large number of times to ensure that all digests are generated */
         for (int i = 0; i < 10000 && !myValid.isEmpty(); i++) {
-            final GordianKey<GordianStreamKeySpec> myKey = myRandom.generateRandomStreamKey(pLength, false);
-            final GordianStreamKeySpec mySpec = myKey.getKeyType();
+            final GordianKey<GordianNewStreamKeySpec> myKey = myRandom.generateRandomStreamKey(pLength, false);
+            final GordianNewStreamKeySpec mySpec = myKey.getKeyType();
             myValid.remove(mySpec);
         }
 
@@ -256,13 +256,13 @@ class RandomSpecTest {
         /* Generate macSpecs */
         final GordianRandomFactory myRandom = pFactory.getRandomFactory();
         final GordianCoreMacFactory myMacs = (GordianCoreMacFactory) pFactory.getMacFactory();
-        final List<GordianMacSpec> myValid = myMacs.listAllSupportedSpecs(pLength);
+        final List<GordianNewMacSpec> myValid = myMacs.listAllSupportedSpecs(pLength);
         myValid.remove(GordianMacSpecBuilder.poly1305Mac());
 
         /* Loop a large number of times to ensure that all macs are generated */
         for (int i = 0; i < 10000 && !myValid.isEmpty(); i++) {
             final GordianMac myMac = myRandom.generateRandomMac(pLength, false);
-            final GordianMacSpec mySpec = myMac.getMacSpec();
+            final GordianNewMacSpec mySpec = myMac.getMacSpec();
             myValid.remove(mySpec);
         }
 

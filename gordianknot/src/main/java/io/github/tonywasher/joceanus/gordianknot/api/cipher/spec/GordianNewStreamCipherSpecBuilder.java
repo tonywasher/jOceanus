@@ -42,4 +42,30 @@ public interface GordianNewStreamCipherSpecBuilder {
      * @return the streamCipherSpec
      */
     GordianNewStreamCipherSpec build();
+
+    /**
+     * Create a generic streamCipherSpec.
+     *
+     * @param pKeySpec the keySpec
+     * @return the cipherSpec
+     */
+    default GordianNewStreamCipherSpec generic(final GordianNewStreamKeySpec pKeySpec) {
+        return generic(pKeySpec, false);
+    }
+
+    /**
+     * Create a generic streamCipherSpec.
+     *
+     * @param pKeySpec the keySpec
+     * @param pAAD     is this an AAD cipher?
+     * @return the cipherSpec
+     */
+    default GordianNewStreamCipherSpec generic(final GordianNewStreamKeySpec pKeySpec,
+                                               final boolean pAAD) {
+        withKeySpec(pKeySpec);
+        if (pAAD) {
+            asAEAD();
+        }
+        return build();
+    }
 }

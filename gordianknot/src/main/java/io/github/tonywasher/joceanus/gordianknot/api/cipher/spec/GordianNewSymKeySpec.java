@@ -20,6 +20,9 @@ package io.github.tonywasher.joceanus.gordianknot.api.cipher.spec;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 
+/**
+ * SymKey specification.
+ */
 public interface GordianNewSymKeySpec
         extends GordianKeySpec {
     /**

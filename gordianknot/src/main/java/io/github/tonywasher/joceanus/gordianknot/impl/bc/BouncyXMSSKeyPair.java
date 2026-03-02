@@ -18,7 +18,7 @@ package io.github.tonywasher.joceanus.gordianknot.impl.bc;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianXMSSKeySpec;
@@ -646,7 +646,7 @@ public final class BouncyXMSSKeyPair {
 
             /* Set the digest */
             final GordianXMSSKeySpec myKeySpec = myPair.getKeyPairSpec().getXMSSKeySpec();
-            final GordianDigestSpec myDigestSpec = myKeySpec.getDigestType().getDigestSpec();
+            final GordianNewDigestSpec myDigestSpec = myKeySpec.getDigestType().getDigestSpec();
             setDigest(preHash ? myDigestSpec : null);
 
             /* Initialise and set the signer */
@@ -669,7 +669,7 @@ public final class BouncyXMSSKeyPair {
 
             /* Set the digest */
             final GordianXMSSKeySpec myKeySpec = myPair.getKeyPairSpec().getXMSSKeySpec();
-            final GordianDigestSpec myDigestSpec = myKeySpec.getDigestType().getDigestSpec();
+            final GordianNewDigestSpec myDigestSpec = myKeySpec.getDigestType().getDigestSpec();
             setDigest(preHash ? myDigestSpec : null);
 
             /* Initialise and set the signer */

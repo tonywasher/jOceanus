@@ -63,6 +63,20 @@ public interface GordianNewStreamKeySpecBuilder {
     GordianNewStreamKeySpec build();
 
     /**
+     * Create generic.
+     *
+     * @param pKeyType   the keyType
+     * @param pKeyLength the keyLength
+     * @param pSubType   the subType
+     * @return the keySpec
+     */
+    default GordianNewStreamKeySpec generic(final GordianNewStreamKeyType pKeyType,
+                                            final GordianLength pKeyLength,
+                                            final GordianNewStreamKeySubType pSubType) {
+        return withType(pKeyType).withKeyLength(pKeyLength).withSubType(pSubType).build();
+    }
+
+    /**
      * Create hc.
      *
      * @param pKeyLength the keyLength

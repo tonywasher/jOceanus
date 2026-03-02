@@ -17,12 +17,15 @@
 
 package io.github.tonywasher.joceanus.gordianknot.api.digest.spec;
 
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianIdSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSubSpec.GordianNewDigestState;
 
 /**
  * DataDigestSpec definition.
  */
-public interface GordianNewDigestSpec {
+public interface GordianNewDigestSpec
+        extends GordianIdSpec {
     /**
      * Obtain Digest Type.
      *
@@ -38,11 +41,25 @@ public interface GordianNewDigestSpec {
     GordianNewDigestSubSpec getSubSpec();
 
     /**
+     * Obtain DigestState.
+     *
+     * @return the State
+     */
+    GordianNewDigestState getDigestState();
+
+    /**
      * Obtain Digest Length.
      *
      * @return the Length
      */
     GordianLength getDigestLength();
+
+    /**
+     * Is the digestSpec a Xof mode?
+     *
+     * @return true/false.
+     */
+    boolean isXofMode();
 
     /**
      * Is the digestSpec valid?

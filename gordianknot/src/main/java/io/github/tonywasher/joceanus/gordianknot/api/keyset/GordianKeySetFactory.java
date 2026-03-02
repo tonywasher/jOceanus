@@ -17,6 +17,8 @@
 package io.github.tonywasher.joceanus.gordianknot.api.keyset;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.keyset.spec.GordianNewKeySetSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keyset.spec.GordianNewKeySetSpecBuilder;
 
 import java.util.function.Predicate;
 
@@ -31,12 +33,19 @@ public interface GordianKeySetFactory {
      * @return the new keySet
      * @throws GordianException on error
      */
-    GordianKeySet generateKeySet(GordianKeySetSpec pKeySetSpec) throws GordianException;
+    GordianKeySet generateKeySet(GordianNewKeySetSpec pKeySetSpec) throws GordianException;
+
+    /**
+     * create new GordianKeySetSpecBuilder.
+     *
+     * @return the new KeySetSpecBuilder
+     */
+    GordianNewKeySetSpecBuilder newKeySetSpecBuilder();
 
     /**
      * Obtain predicate for supported KeySetSpecs.
      *
      * @return the predicate
      */
-    Predicate<GordianKeySetSpec> supportedKeySetSpecs();
+    Predicate<GordianNewKeySetSpec> supportedKeySetSpecs();
 }

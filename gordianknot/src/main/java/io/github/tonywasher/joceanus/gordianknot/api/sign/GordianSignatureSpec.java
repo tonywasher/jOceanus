@@ -17,8 +17,10 @@
 package io.github.tonywasher.joceanus.gordianknot.api.sign;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairType;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianCoreDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianCoreDigestType;
 
 import java.util.Iterator;
 import java.util.List;
@@ -131,11 +133,11 @@ public final class GordianSignatureSpec {
      *
      * @return the digestSpec.
      */
-    public GordianDigestSpec getDigestSpec() {
-        if (!(theSignatureSpec instanceof GordianDigestSpec)) {
+    public GordianNewDigestSpec getDigestSpec() {
+        if (!(theSignatureSpec instanceof GordianNewDigestSpec)) {
             throw new IllegalArgumentException();
         }
-        return (GordianDigestSpec) theSignatureSpec;
+        return (GordianNewDigestSpec) theSignatureSpec;
     }
 
     /**
@@ -190,11 +192,11 @@ public final class GordianSignatureSpec {
             case EC:
             case DSTU4145:
             case GOST2012:
-                if (!(theSignatureSpec instanceof GordianDigestSpec)) {
+                if (!(theSignatureSpec instanceof GordianNewDigestSpec)) {
                     return false;
                 }
-                final GordianDigestSpec mySpec = getDigestSpec();
-                return mySpec.isValid() && mySpec.getDigestType().supportsLargeData();
+                final GordianNewDigestSpec mySpec = getDigestSpec();
+                return mySpec.isValid() && GordianCoreDigestType.supportsLargeData(mySpec.getDigestType());
             case EDDSA:
             case SLHDSA:
             case MLDSA:
@@ -239,7 +241,7 @@ public final class GordianSignatureSpec {
      */
     private boolean checkPICNICDigest() {
         /* Check that signature length is 512 */
-        final GordianDigestSpec myDigest = getDigestSpec();
+        final GordianNewDigestSpec myDigest = getDigestSpec();
         if (!GordianLength.LEN_512.equals(myDigest.getDigestLength())) {
             return false;
         }
@@ -262,7 +264,7 @@ public final class GordianSignatureSpec {
      */
     private boolean checkSM2Digest() {
         /* Switch on DigestType */
-        final GordianDigestSpec myDigest = getDigestSpec();
+        final GordianCoreDigestSpec myDigest = (GordianCoreDigestSpec) getDigestSpec();
         switch (myDigest.getDigestType()) {
             case SM3:
                 return true;

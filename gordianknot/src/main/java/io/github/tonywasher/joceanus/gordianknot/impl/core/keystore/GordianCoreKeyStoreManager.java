@@ -30,11 +30,11 @@ import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairGener
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySet;
 import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySetFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySetSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keyset.spec.GordianNewKeySetSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStoreKey;
 import io.github.tonywasher.joceanus.gordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStorePair;
 import io.github.tonywasher.joceanus.gordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStoreSet;
-import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianNewMacSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.cert.GordianCoreCertificate;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
@@ -80,7 +80,7 @@ public class GordianCoreKeyStoreManager
     }
 
     @Override
-    public GordianKeyStoreSet createKeySet(final GordianKeySetSpec pKeySetSpec,
+    public GordianKeyStoreSet createKeySet(final GordianNewKeySetSpec pKeySetSpec,
                                            final String pAlias,
                                            final char[] pPassword) throws GordianException {
         final GordianKeySetFactory myFactory = theFactory.getKeySetFactory();
@@ -95,7 +95,7 @@ public class GordianCoreKeyStoreManager
                                                                       final String pAlias,
                                                                       final char[] pPassword) throws GordianException {
         /* Access the relevant keyGenerator */
-        final GordianKeyGenerator<K> myGenerator = pKeySpec instanceof GordianMacSpec
+        final GordianKeyGenerator<K> myGenerator = pKeySpec instanceof GordianNewMacSpec
                 ? theFactory.getMacFactory().getKeyGenerator(pKeySpec)
                 : theFactory.getCipherFactory().getKeyGenerator(pKeySpec);
 

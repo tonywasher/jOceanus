@@ -20,8 +20,8 @@ import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigest;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianAsyncFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairFactory;
@@ -31,7 +31,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySet;
 import io.github.tonywasher.joceanus.gordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStorePair;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMac;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianNewMacSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignParams;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignature;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignatureSpec;
@@ -384,7 +384,7 @@ public class GordianCRMBuilder {
         try {
             /* Create the digest */
             final GordianCoreDigestFactory myDigests = (GordianCoreDigestFactory) pFactory.getDigestFactory();
-            final GordianDigestSpec myDigestSpec = myDigests.getDigestSpecForIdentifier(pParams.getOwf());
+            final GordianNewDigestSpec myDigestSpec = myDigests.getDigestSpecForIdentifier(pParams.getOwf());
             final GordianDigest myDigest = myDigests.createDigest(myDigestSpec);
 
             /* Run through the first iteration */
@@ -401,7 +401,7 @@ public class GordianCRMBuilder {
 
             /* Create the mac */
             final GordianMacFactory myMacs = pFactory.getMacFactory();
-            final GordianMacSpec myMacSpec = (GordianMacSpec) pFactory.getKeySpecForIdentifier(pParams.getMac());
+            final GordianNewMacSpec myMacSpec = (GordianNewMacSpec) pFactory.getKeySpecForIdentifier(pParams.getMac());
             final GordianMac myMac = myMacs.createMac(myMacSpec);
             myMac.initKeyBytes(myKey);
 
@@ -431,7 +431,8 @@ public class GordianCRMBuilder {
         /* Create the digest */
         final GordianBaseFactory myFactory = theGateway.getFactory();
         final GordianDigestFactory myDigests = myFactory.getDigestFactory();
-        final GordianDigest myDigest = myDigests.createDigest(GordianDigestSpecBuilder.sha2(GordianLength.LEN_256));
+        final GordianNewDigestSpecBuilder myBuilder = myDigests.newDigestSpecBuilder();
+        final GordianDigest myDigest = myDigests.createDigest(myBuilder.sha2(GordianLength.LEN_256));
 
         /* Calculate the digest */
         if (myMACSecret != null) {

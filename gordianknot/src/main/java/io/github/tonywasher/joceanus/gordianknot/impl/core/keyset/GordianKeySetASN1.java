@@ -19,10 +19,11 @@ package io.github.tonywasher.joceanus.gordianknot.impl.core.keyset;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymKeySpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymKeyType;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeySpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeyType;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKey;
-import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySetSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keyset.spec.GordianNewKeySetSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianASN1Util;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianASN1Util.GordianASN1Object;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
@@ -30,6 +31,7 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataExcept
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianIOException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.key.GordianCoreKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.key.GordianCoreKeyGenerator;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher.GordianCoreSymKeySpecBuilder;
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1Integer;
 import org.bouncycastle.asn1.ASN1OctetString;
@@ -65,7 +67,7 @@ public class GordianKeySetASN1
     /**
      * The keySetSpec.
      */
-    private final GordianKeySetSpec theSpec;
+    private final GordianNewKeySetSpec theSpec;
 
     /**
      * The map of keyTypes to key.
@@ -85,10 +87,10 @@ public class GordianKeySetASN1
         theMap = new LinkedHashMap<>();
 
         /* Loop through the keys placing keyBytes into the map */
-        final Map<GordianSymKeySpec, GordianKey<GordianSymKeySpec>> myMap = pKeySet.getSymKeyMap();
-        for (Entry<GordianSymKeySpec, GordianKey<GordianSymKeySpec>> myEntry : myMap.entrySet()) {
+        final Map<GordianNewSymKeySpec, GordianKey<GordianNewSymKeySpec>> myMap = pKeySet.getSymKeyMap();
+        for (Entry<GordianNewSymKeySpec, GordianKey<GordianNewSymKeySpec>> myEntry : myMap.entrySet()) {
             theMap.put(myEntry.getKey().getSymKeyType().ordinal() + 1,
-                    ((GordianCoreKey<GordianSymKeySpec>) myEntry.getValue()).getKeyBytes());
+                    ((GordianCoreKey<GordianNewSymKeySpec>) myEntry.getValue()).getKeyBytes());
         }
     }
 
@@ -177,14 +179,15 @@ public class GordianKeySetASN1
         final GordianBaseKeySet myKeySet = myKeySetFactory.createKeySet(theSpec);
 
         /* Declare the keys */
+        final GordianNewSymKeySpecBuilder myBuilder = GordianCoreSymKeySpecBuilder.newInstance();
         for (Entry<Integer, byte[]> myEntry : theMap.entrySet()) {
-            final GordianSymKeyType myKeyType = GordianSymKeyType.values()[myEntry.getKey() - 1];
-            final GordianSymKeySpec mySpec = new GordianSymKeySpec(myKeyType, GordianLength.LEN_128, theSpec.getKeyLength());
-            final GordianCoreKeyGenerator<GordianSymKeySpec> myGenerator =
-                    (GordianCoreKeyGenerator<GordianSymKeySpec>) myCipherFactory.getKeyGenerator(mySpec);
+            final GordianNewSymKeyType myKeyType = GordianNewSymKeyType.values()[myEntry.getKey() - 1];
+            final GordianNewSymKeySpec mySpec = myBuilder.generic(myKeyType, GordianLength.LEN_128, theSpec.getKeyLength());
+            final GordianCoreKeyGenerator<GordianNewSymKeySpec> myGenerator =
+                    (GordianCoreKeyGenerator<GordianNewSymKeySpec>) myCipherFactory.getKeyGenerator(mySpec);
 
             /* Generate and declare the key */
-            final GordianKey<GordianSymKeySpec> myKey = myGenerator.buildKeyFromBytes(myEntry.getValue());
+            final GordianKey<GordianNewSymKeySpec> myKey = myGenerator.buildKeyFromBytes(myEntry.getValue());
             myKeySet.declareSymKey(myKey);
         }
 

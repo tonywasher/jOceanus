@@ -20,13 +20,13 @@ import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherParameters;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianWrapper;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKey;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianNewMacSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianDataConverter;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
@@ -76,12 +76,12 @@ public class GordianCoreWrapper
     /**
      * Underlying key.
      */
-    private final GordianKey<GordianSymKeySpec> theKey;
+    private final GordianKey<GordianNewSymKeySpec> theKey;
 
     /**
      * Underlying cipher.
      */
-    private final GordianCoreCipher<GordianSymKeySpec> theCipher;
+    private final GordianCoreCipher<GordianNewSymKeySpec> theCipher;
 
     /**
      * The block size.
@@ -96,8 +96,8 @@ public class GordianCoreWrapper
      * @param pCipher  the underlying cipher
      */
     GordianCoreWrapper(final GordianBaseFactory pFactory,
-                       final GordianKey<GordianSymKeySpec> pKey,
-                       final GordianCoreCipher<GordianSymKeySpec> pCipher) {
+                       final GordianKey<GordianNewSymKeySpec> pKey,
+                       final GordianCoreCipher<GordianNewSymKeySpec> pCipher) {
         theFactory = pFactory;
         theKey = pKey;
         theCipher = pCipher;
@@ -119,7 +119,7 @@ public class GordianCoreWrapper
     }
 
     @Override
-    public GordianSymKeySpec getKeySpec() {
+    public GordianNewSymKeySpec getKeySpec() {
         return theCipher.getKeyType();
     }
 
@@ -161,7 +161,7 @@ public class GordianCoreWrapper
         final byte[] myBytes = deriveBytes(myWrappedKey);
 
         /* Access the relevant keyGenerator */
-        final GordianCoreKeyGenerator<T> myGenerator = pKeyType instanceof GordianMacSpec
+        final GordianCoreKeyGenerator<T> myGenerator = pKeyType instanceof GordianNewMacSpec
                 ? (GordianCoreKeyGenerator<T>) theFactory.getMacFactory().getKeyGenerator(pKeyType)
                 : (GordianCoreKeyGenerator<T>) theFactory.getCipherFactory().getKeyGenerator(pKeyType);
 

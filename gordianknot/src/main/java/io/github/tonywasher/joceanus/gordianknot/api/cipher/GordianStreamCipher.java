@@ -16,9 +16,11 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.api.cipher;
 
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeySpec;
+
 /**
  * GordianKnot streamKey Cipher.
  */
 public interface GordianStreamCipher
-        extends GordianKeyedCipher<GordianStreamKeySpec> {
+        extends GordianKeyedCipher<GordianNewStreamKeySpec> {
 }

@@ -18,6 +18,7 @@ package io.github.tonywasher.joceanus.gordianknot.api.digest;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianConsumer;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpec;
 
 /**
  * GordianKnot interface for Message Digests.
@@ -29,7 +30,7 @@ public interface GordianDigest
      *
      * @return the digestSpec
      */
-    GordianDigestSpec getDigestSpec();
+    GordianNewDigestSpec getDigestSpec();
 
     /**
      * Obtain the digest size.

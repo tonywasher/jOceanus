@@ -16,9 +16,10 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.api.encrypt;
 
-import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestType;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestType;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairType;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianCoreDigestSpec;
 
 import java.util.Iterator;
 import java.util.List;
@@ -94,8 +95,8 @@ public final class GordianEncryptorSpec {
      *
      * @return the digestSpec.
      */
-    public GordianDigestSpec getDigestSpec() {
-        if (theEncryptorType instanceof GordianDigestSpec mySpec) {
+    public GordianNewDigestSpec getDigestSpec() {
+        if (theEncryptorType instanceof GordianNewDigestSpec mySpec) {
             return mySpec;
         }
         throw new IllegalArgumentException();
@@ -147,7 +148,7 @@ public final class GordianEncryptorSpec {
         switch (theKeyPairType) {
             case RSA:
             case ELGAMAL:
-                return theEncryptorType instanceof GordianDigestSpec s
+                return theEncryptorType instanceof GordianNewDigestSpec s
                         && s.isValid();
             case SM2:
                 return theEncryptorType == null
@@ -172,8 +173,8 @@ public final class GordianEncryptorSpec {
         switch (theKeyPairType) {
             case RSA:
             case ELGAMAL:
-                final GordianDigestSpec mySpec = getDigestSpec();
-                return GordianDigestType.SHA2.equals(mySpec.getDigestType()) && !mySpec.isSha2Hybrid();
+                final GordianCoreDigestSpec mySpec = (GordianCoreDigestSpec) getDigestSpec();
+                return GordianNewDigestType.SHA2.equals(mySpec.getDigestType()) && !mySpec.isSha2Hybrid();
             case EC:
             case GOST2012:
             case SM2:

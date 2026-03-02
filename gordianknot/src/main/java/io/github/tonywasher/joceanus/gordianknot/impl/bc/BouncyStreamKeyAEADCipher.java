@@ -19,8 +19,8 @@ package io.github.tonywasher.joceanus.gordianknot.impl.bc;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherParameters;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamAEADCipher;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamCipherSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.cipher.GordianCoreCipher;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
@@ -38,7 +38,7 @@ import java.util.Arrays;
  * Cipher for BouncyCastle Stream Ciphers.
  */
 public class BouncyStreamKeyAEADCipher
-        extends GordianCoreCipher<GordianStreamKeySpec>
+        extends GordianCoreCipher<GordianNewStreamKeySpec>
         implements GordianStreamAEADCipher {
     /**
      * The cipher.
@@ -58,7 +58,7 @@ public class BouncyStreamKeyAEADCipher
      * @param pCipher     the cipher
      */
     BouncyStreamKeyAEADCipher(final GordianBaseFactory pFactory,
-                              final GordianStreamCipherSpec pCipherSpec,
+                              final GordianNewStreamCipherSpec pCipherSpec,
                               final AEADCipher pCipher) {
         super(pFactory, pCipherSpec);
         theCipher = pCipher;
@@ -69,7 +69,7 @@ public class BouncyStreamKeyAEADCipher
                      final GordianCipherParameters pParams) throws GordianException {
         /* Process the parameters and access the key */
         processParameters(pParams);
-        final BouncyKey<GordianStreamKeySpec> myKey = BouncyKey.accessKey(getKey());
+        final BouncyKey<GordianNewStreamKeySpec> myKey = BouncyKey.accessKey(getKey());
 
         /* Initialise the cipher */
         final KeyParameter myKeyParms = new KeyParameter(myKey.getKey());

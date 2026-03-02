@@ -18,8 +18,8 @@ package io.github.tonywasher.joceanus.gordianknot.impl.bc;
 
 import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianEncryptorSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
@@ -389,7 +389,7 @@ public final class BouncyRSAKeyPair {
         private static Signer getRSASigner(final GordianBaseFactory pFactory,
                                            final GordianSignatureSpec pSpec) throws GordianException {
             /* Create the digest */
-            final GordianDigestSpec myDigestSpec = pSpec.getDigestSpec();
+            final GordianNewDigestSpec myDigestSpec = pSpec.getDigestSpec();
             final BouncyDigest myDigest = (BouncyDigest) pFactory.getDigestFactory().createDigest(myDigestSpec);
             final int mySaltLength = myDigestSpec.getDigestLength().getByteLength();
 

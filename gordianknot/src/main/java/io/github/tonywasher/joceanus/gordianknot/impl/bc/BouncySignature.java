@@ -17,12 +17,13 @@
 package io.github.tonywasher.joceanus.gordianknot.impl.bc;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairType;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignatureSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.sign.GordianCoreSignature;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianCoreDigestSpec;
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1Encoding;
 import org.bouncycastle.asn1.ASN1Integer;
@@ -96,7 +97,7 @@ public final class BouncySignature {
                               final GordianSignatureSpec pSpec,
                               final Digest pDigest) {
             super(pFactory, pSpec);
-            theDigest = new BouncyDigest(pSpec.getDigestSpec(), pDigest);
+            theDigest = new BouncyDigest((GordianCoreDigestSpec) pSpec.getDigestSpec(), pDigest);
         }
 
         /**
@@ -105,7 +106,7 @@ public final class BouncySignature {
          * @param pSpec the digestSpec.
          * @throws GordianException on error
          */
-        protected void setDigest(final GordianDigestSpec pSpec) throws GordianException {
+        protected void setDigest(final GordianNewDigestSpec pSpec) throws GordianException {
             theDigest = pSpec == null
                     ? new BouncyDigest(null, new NullDigest())
                     : (BouncyDigest) getDigestFactory().createDigest(pSpec);

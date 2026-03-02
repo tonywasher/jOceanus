@@ -19,8 +19,8 @@ package io.github.tonywasher.joceanus.gordianknot.impl.core.key;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestType;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestType;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKey;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKeyGenerator;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMac;
@@ -30,6 +30,7 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianRandomSou
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.kdf.GordianHKDFMulti;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.kdf.GordianHKDFParams;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianCoreDigestSpecBuilder;
 
 import java.security.SecureRandom;
 import java.util.Arrays;
@@ -129,7 +130,7 @@ public abstract class GordianCoreKeyGenerator<T extends GordianKeySpec>
         GordianHKDFParams myParams = null;
 
         /* Derive the two digestTypes from the seededRandom */
-        final GordianDigestType[] myDigestTypes = theFactory.getIdManager().deriveKeyGenDigestTypesFromSeed(pSeededRandom, 2);
+        final GordianNewDigestType[] myDigestTypes = theFactory.getIdManager().deriveKeyGenDigestTypesFromSeed(pSeededRandom, 2);
 
         /* Determine info bytes */
         final byte[] myAlgo = GordianDataConverter.stringToByteArray(theKeyType.toString());
@@ -139,10 +140,11 @@ public abstract class GordianCoreKeyGenerator<T extends GordianKeySpec>
 
         /* Protect against exceptions */
         try {
+            final GordianNewDigestSpecBuilder myBuilder = GordianCoreDigestSpecBuilder.newInstance();
             /* Create the HKDF and parameters */
             final GordianHKDFMulti myEngine = new GordianHKDFMulti(theFactory,
-                    new GordianDigestSpec(myDigestTypes[0], GordianLength.LEN_512),
-                    new GordianDigestSpec(myDigestTypes[1], GordianLength.LEN_512));
+                    myBuilder.generic(myDigestTypes[0], GordianLength.LEN_512),
+                    myBuilder.generic(myDigestTypes[1], GordianLength.LEN_512));
             myParams = GordianHKDFParams.expandOnly(pSecret, myKeyLen)
                     .withInfo(myAlgo).withInfo(myKeyLenBytes).withInfo(mySeed);
             theFactory.getPersonalisation().updateInfo(myParams);

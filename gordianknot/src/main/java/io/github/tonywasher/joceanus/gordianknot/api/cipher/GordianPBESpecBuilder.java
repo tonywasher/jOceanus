@@ -16,15 +16,22 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.api.cipher;
 
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianPBESpec.GordianPBEArgon2Spec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianPBESpec.GordianPBEDigestAndCountSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianPBESpec.GordianPBESCryptSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewPBESpec.GordianNewPBEArgon2Spec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewPBESpec.GordianNewPBEDigestAndCountSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewPBESpec.GordianNewPBESCryptSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewPBESpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher.GordianCorePBESpecBuilder;
 
 /**
  * PBE Specification.
  */
 public final class GordianPBESpecBuilder {
+    /**
+     * StreamKeySpecBuilder.
+     */
+    private static final GordianNewPBESpecBuilder BUILDER = GordianCorePBESpecBuilder.newInstance();
+
     /**
      * Private constructor.
      */
@@ -38,9 +45,9 @@ public final class GordianPBESpecBuilder {
      * @param pCount      the iteration count
      * @return the new spec
      */
-    public static GordianPBEDigestAndCountSpec pbKDF2(final GordianDigestSpec pDigestSpec,
-                                                      final int pCount) {
-        return new GordianPBEDigestAndCountSpec(GordianPBEType.PBKDF2, pDigestSpec, pCount);
+    public static GordianNewPBEDigestAndCountSpec pbKDF2(final GordianNewDigestSpec pDigestSpec,
+                                                         final int pCount) {
+        return BUILDER.pbKDF2(pDigestSpec, pCount);
     }
 
     /**
@@ -50,9 +57,9 @@ public final class GordianPBESpecBuilder {
      * @param pCount      the iteration count
      * @return the new spec
      */
-    public static GordianPBEDigestAndCountSpec pkcs12(final GordianDigestSpec pDigestSpec,
-                                                      final int pCount) {
-        return new GordianPBEDigestAndCountSpec(GordianPBEType.PKCS12, pDigestSpec, pCount);
+    public static GordianNewPBEDigestAndCountSpec pkcs12(final GordianNewDigestSpec pDigestSpec,
+                                                         final int pCount) {
+        return BUILDER.pkcs12(pDigestSpec, pCount);
     }
 
     /**
@@ -63,10 +70,10 @@ public final class GordianPBESpecBuilder {
      * @param pParallel  the parallelisation
      * @return the new spec
      */
-    public static GordianPBESCryptSpec scrypt(final int pCost,
-                                              final int pBlockSize,
-                                              final int pParallel) {
-        return new GordianPBESCryptSpec(pCost, pBlockSize, pParallel);
+    public static GordianNewPBESCryptSpec scrypt(final int pCost,
+                                                 final int pBlockSize,
+                                                 final int pParallel) {
+        return BUILDER.scrypt(pCost, pBlockSize, pParallel);
     }
 
     /**
@@ -77,9 +84,9 @@ public final class GordianPBESpecBuilder {
      * @param pIterations the iterations
      * @return the new spec
      */
-    public static GordianPBEArgon2Spec argon2(final int pLanes,
-                                              final int pMemory,
-                                              final int pIterations) {
-        return new GordianPBEArgon2Spec(pLanes, pMemory, pIterations);
+    public static GordianNewPBEArgon2Spec argon2(final int pLanes,
+                                                 final int pMemory,
+                                                 final int pIterations) {
+        return BUILDER.argon2(pLanes, pMemory, pIterations);
     }
 }

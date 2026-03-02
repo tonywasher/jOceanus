@@ -19,8 +19,8 @@ package io.github.tonywasher.joceanus.gordianknot.impl.bc;
 import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestType;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestType;
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianEncryptorSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianSM2EncryptionSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianSM2EncryptionSpec.GordianSM2EncryptionType;
@@ -79,8 +79,8 @@ public final class BouncySM2KeyPair {
             super(pFactory, pSpec);
 
             /* Create the signer */
-            final GordianDigestSpec mySpec = pSpec.getDigestSpec();
-            if (GordianDigestType.SM3.equals(mySpec.getDigestType())) {
+            final GordianNewDigestSpec mySpec = pSpec.getDigestSpec();
+            if (GordianNewDigestType.SM3.equals(mySpec.getDigestType())) {
                 theSigner = new SM2Signer();
             } else {
                 final BouncyDigest myDigest = (BouncyDigest) pFactory.getDigestFactory().createDigest(mySpec);

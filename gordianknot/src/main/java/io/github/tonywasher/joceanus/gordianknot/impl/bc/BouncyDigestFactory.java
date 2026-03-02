@@ -18,13 +18,15 @@ package io.github.tonywasher.joceanus.gordianknot.impl.bc;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestSubSpec.GordianDigestState;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestType;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSubSpec.GordianNewDigestState;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestType;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseData;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.digest.GordianCoreDigestFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianCoreDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianCoreDigestSubSpec.GordianCoreDigestState;
 import io.github.tonywasher.joceanus.gordianknot.impl.ext.digests.GordianBlake2Base;
 import io.github.tonywasher.joceanus.gordianknot.impl.ext.digests.GordianBlake2Xof;
 import io.github.tonywasher.joceanus.gordianknot.impl.ext.digests.GordianBlake2bDigest;
@@ -89,15 +91,16 @@ public class BouncyDigestFactory
     }
 
     @Override
-    public BouncyDigest createDigest(final GordianDigestSpec pDigestSpec) throws GordianException {
+    public BouncyDigest createDigest(final GordianNewDigestSpec pDigestSpec) throws GordianException {
         /* Check validity of DigestSpec */
         checkDigestSpec(pDigestSpec);
+        final GordianCoreDigestSpec mySpec = (GordianCoreDigestSpec) pDigestSpec;
 
         /* Create digest */
-        final Digest myBCDigest = getBCDigest(pDigestSpec);
+        final Digest myBCDigest = getBCDigest(mySpec);
         return myBCDigest instanceof Xof myXof
-                ? new BouncyDigestXof(pDigestSpec, myXof)
-                : new BouncyDigest(pDigestSpec, myBCDigest);
+                ? new BouncyDigestXof(mySpec, myXof)
+                : new BouncyDigest(mySpec, myBCDigest);
     }
 
     /**
@@ -107,9 +110,9 @@ public class BouncyDigestFactory
      * @return the digest
      * @throws GordianException on error
      */
-    private static Digest getBCDigest(final GordianDigestSpec pDigestSpec) throws GordianException {
+    private static Digest getBCDigest(final GordianCoreDigestSpec pDigestSpec) throws GordianException {
         /* Access digest details */
-        final GordianDigestType myType = pDigestSpec.getDigestType();
+        final GordianNewDigestType myType = pDigestSpec.getDigestType();
         final GordianLength myLen = pDigestSpec.getDigestLength();
 
         /* Switch on digest type */
@@ -120,12 +123,12 @@ public class BouncyDigestFactory
                 return getRIPEMDDigest(myLen);
             case SKEIN:
                 return pDigestSpec.isXofMode()
-                        ? getSkeinXof(pDigestSpec.getDigestState())
-                        : getSkeinDigest(pDigestSpec.getDigestState(), myLen);
+                        ? getSkeinXof(pDigestSpec.getCoreDigestState())
+                        : getSkeinDigest(pDigestSpec.getCoreDigestState(), myLen);
             case SHA3:
                 return getSHA3Digest(myLen);
             case SHAKE:
-                return new SHAKEDigest(pDigestSpec.getDigestState().getLength().getLength());
+                return new SHAKEDigest(pDigestSpec.getCoreDigestState().getLength().getLength());
             case KANGAROO:
                 return getKangarooDigest(pDigestSpec);
             case HARAKA:
@@ -205,9 +208,9 @@ public class BouncyDigestFactory
      * @param pSpec the digest spec
      * @return the digest
      */
-    static GordianBlake2Base getBlake2Digest(final GordianDigestSpec pSpec) {
+    static GordianBlake2Base getBlake2Digest(final GordianCoreDigestSpec pSpec) {
         final int myLength = pSpec.getDigestLength().getLength();
-        return pSpec.getDigestState().isBlake2bState()
+        return pSpec.getCoreDigestState().isBlake2bState()
                 ? new GordianBlake2bDigest(myLength)
                 : new GordianBlake2sDigest(myLength);
     }
@@ -218,8 +221,8 @@ public class BouncyDigestFactory
      * @param pSpec the digest spec
      * @return the digest
      */
-    static GordianBlake2Xof getBlake2Xof(final GordianDigestSpec pSpec) {
-        final GordianDigestState myState = pSpec.getDigestState();
+    static GordianBlake2Xof getBlake2Xof(final GordianCoreDigestSpec pSpec) {
+        final GordianCoreDigestState myState = pSpec.getCoreDigestState();
         final int myLength = pSpec.getDigestLength().getLength();
         return myState.isBlake2bState()
                 ? new GordianBlake2Xof(new GordianBlake2bDigest(myLength))
@@ -232,9 +235,9 @@ public class BouncyDigestFactory
      * @param pSpec the digest spec
      * @return the digest
      */
-    private static GordianKangarooBase getKangarooDigest(final GordianDigestSpec pSpec) {
+    private static GordianKangarooBase getKangarooDigest(final GordianCoreDigestSpec pSpec) {
         final int myLength = pSpec.getDigestLength().getByteLength();
-        return GordianDigestState.STATE128.equals(pSpec.getDigestState())
+        return GordianNewDigestState.STATE128.equals(pSpec.getDigestState())
                 ? new GordianKangarooTwelve(myLength)
                 : new GordianMarsupilamiFourteen(myLength);
     }
@@ -245,8 +248,8 @@ public class BouncyDigestFactory
      * @param pSpec the digest spec
      * @return the digest
      */
-    private static Digest getHarakaDigest(final GordianDigestSpec pSpec) {
-        return GordianDigestState.STATE256.equals(pSpec.getDigestState())
+    private static Digest getHarakaDigest(final GordianCoreDigestSpec pSpec) {
+        return GordianNewDigestState.STATE256.equals(pSpec.getDigestState())
                 ? new Haraka256Digest()
                 : new Haraka512Digest();
     }
@@ -257,7 +260,7 @@ public class BouncyDigestFactory
      * @param pSpec the digest spec
      * @return the digest
      */
-    private static Digest getAsconDigest(final GordianDigestSpec pSpec) {
+    private static Digest getAsconDigest(final GordianCoreDigestSpec pSpec) {
         return pSpec.isXofMode() ? new AsconXof128()
                 : new AsconHash256();
     }
@@ -268,7 +271,7 @@ public class BouncyDigestFactory
      * @param pSpec the digest spec
      * @return the digest
      */
-    private static Digest getSparkleDigest(final GordianDigestSpec pSpec) {
+    private static Digest getSparkleDigest(final GordianCoreDigestSpec pSpec) {
         return GordianLength.LEN_256 == pSpec.getDigestLength()
                 ? new SparkleDigest(SparkleParameters.ESCH256)
                 : new SparkleDigest(SparkleParameters.ESCH384);
@@ -280,16 +283,16 @@ public class BouncyDigestFactory
      * @param pSpec the digestSpec
      * @return the digest
      */
-    private static Digest getSHA2Digest(final GordianDigestSpec pSpec) {
+    private static Digest getSHA2Digest(final GordianCoreDigestSpec pSpec) {
         final GordianLength myLen = pSpec.getDigestLength();
-        final GordianDigestState myState = pSpec.getDigestState();
+        final GordianNewDigestState myState = pSpec.getDigestState();
         switch (myLen) {
             case LEN_224:
-                return GordianDigestState.STATE256.equals(myState)
+                return GordianNewDigestState.STATE256.equals(myState)
                         ? new SHA224Digest()
                         : new SHA512tDigest(myLen.getLength());
             case LEN_256:
-                return GordianDigestState.STATE256.equals(myState)
+                return GordianNewDigestState.STATE256.equals(myState)
                         ? new SHA256Digest()
                         : new SHA512tDigest(myLen.getLength());
             case LEN_384:
@@ -327,7 +330,7 @@ public class BouncyDigestFactory
      * @param pLength the digest length
      * @return the digest
      */
-    private static Digest getSkeinDigest(final GordianDigestState pState,
+    private static Digest getSkeinDigest(final GordianCoreDigestState pState,
                                          final GordianLength pLength) {
         return new GordianSkeinDigest(pState.getLength().getLength(), pLength.getLength());
     }
@@ -338,7 +341,7 @@ public class BouncyDigestFactory
      * @param pState the state
      * @return the digest
      */
-    private static Digest getSkeinXof(final GordianDigestState pState) {
+    private static Digest getSkeinXof(final GordianCoreDigestState pState) {
         final int myLength = pState.getLength().getLength();
         return new GordianSkeinXof(new GordianSkeinDigest(myLength, myLength));
     }

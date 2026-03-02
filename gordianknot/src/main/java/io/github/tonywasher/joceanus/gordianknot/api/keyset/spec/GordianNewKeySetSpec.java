@@ -24,6 +24,21 @@ import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
  */
 public interface GordianNewKeySetSpec {
     /**
+     * Minimum Cipher Steps.
+     */
+    Integer MINIMUM_CIPHER_STEPS = 3;
+
+    /**
+     * Maximum Cipher Steps.
+     */
+    Integer MAXIMUM_CIPHER_STEPS = 6;
+
+    /**
+     * Default Cipher Steps.
+     */
+    Integer DEFAULT_CIPHER_STEPS = 4;
+
+    /**
      * Obtain the keyLength.
      *
      * @return the keyLength

@@ -17,19 +17,24 @@
 package io.github.tonywasher.joceanus.gordianknot.api.cipher;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamKeySpec.GordianChaCha20Key;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamKeySpec.GordianElephantKey;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamKeySpec.GordianISAPKey;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamKeySpec.GordianRomulusKey;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamKeySpec.GordianSalsa20Key;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamKeySpec.GordianSkeinXofKey;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamKeySpec.GordianSparkleKey;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamKeySpec.GordianVMPCKey;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeySpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeySubType.GordianNewElephantKey;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeySubType.GordianNewISAPKey;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeySubType.GordianNewRomulusKey;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeySubType.GordianNewSkeinXofKey;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeySubType.GordianNewSparkleKey;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher.GordianCoreStreamKeySpecBuilder;
 
 /**
  * GordianKnot StreamKeySpec Builder.
  */
 public final class GordianStreamKeySpecBuilder {
+    /**
+     * StreamKeySpecBuilder.
+     */
+    private static final GordianNewStreamKeySpecBuilder BUILDER = GordianCoreStreamKeySpecBuilder.newInstance();
+
     /**
      * Private constructor.
      */
@@ -42,8 +47,8 @@ public final class GordianStreamKeySpecBuilder {
      * @param pKeyLength the keyLength
      * @return the keySpec
      */
-    public static GordianStreamKeySpec hc(final GordianLength pKeyLength) {
-        return new GordianStreamKeySpec(GordianStreamKeyType.HC, pKeyLength);
+    public static GordianNewStreamKeySpec hc(final GordianLength pKeyLength) {
+        return BUILDER.hc(pKeyLength);
     }
 
     /**
@@ -52,8 +57,8 @@ public final class GordianStreamKeySpecBuilder {
      * @param pKeyLength the keyLength
      * @return the keySpec
      */
-    public static GordianStreamKeySpec chacha(final GordianLength pKeyLength) {
-        return new GordianStreamKeySpec(GordianStreamKeyType.CHACHA20, pKeyLength, GordianChaCha20Key.STD);
+    public static GordianNewStreamKeySpec chacha(final GordianLength pKeyLength) {
+        return BUILDER.chacha(pKeyLength);
     }
 
     /**
@@ -62,8 +67,8 @@ public final class GordianStreamKeySpecBuilder {
      * @param pKeyLength the keyLength
      * @return the keySpec
      */
-    public static GordianStreamKeySpec chacha7539(final GordianLength pKeyLength) {
-        return new GordianStreamKeySpec(GordianStreamKeyType.CHACHA20, pKeyLength, GordianChaCha20Key.ISO7539);
+    public static GordianNewStreamKeySpec chacha7539(final GordianLength pKeyLength) {
+        return BUILDER.chacha7539(pKeyLength);
     }
 
     /**
@@ -72,8 +77,8 @@ public final class GordianStreamKeySpecBuilder {
      * @param pKeyLength the keyLength
      * @return the keySpec
      */
-    public static GordianStreamKeySpec xchacha(final GordianLength pKeyLength) {
-        return new GordianStreamKeySpec(GordianStreamKeyType.CHACHA20, pKeyLength, GordianChaCha20Key.XCHACHA);
+    public static GordianNewStreamKeySpec xchacha(final GordianLength pKeyLength) {
+        return BUILDER.xchacha(pKeyLength);
     }
 
     /**
@@ -82,8 +87,8 @@ public final class GordianStreamKeySpecBuilder {
      * @param pKeyLength the keyLength
      * @return the keySpec
      */
-    public static GordianStreamKeySpec salsa(final GordianLength pKeyLength) {
-        return new GordianStreamKeySpec(GordianStreamKeyType.SALSA20, pKeyLength, GordianSalsa20Key.STD);
+    public static GordianNewStreamKeySpec salsa(final GordianLength pKeyLength) {
+        return BUILDER.salsa(pKeyLength);
     }
 
     /**
@@ -92,8 +97,8 @@ public final class GordianStreamKeySpecBuilder {
      * @param pKeyLength the keyLength
      * @return the keySpec
      */
-    public static GordianStreamKeySpec xsalsa(final GordianLength pKeyLength) {
-        return new GordianStreamKeySpec(GordianStreamKeyType.SALSA20, pKeyLength, GordianSalsa20Key.XSALSA);
+    public static GordianNewStreamKeySpec xsalsa(final GordianLength pKeyLength) {
+        return BUILDER.xsalsa(pKeyLength);
     }
 
     /**
@@ -102,8 +107,8 @@ public final class GordianStreamKeySpecBuilder {
      * @param pKeyLength the keyLength
      * @return the keySpec
      */
-    public static GordianStreamKeySpec isaac(final GordianLength pKeyLength) {
-        return new GordianStreamKeySpec(GordianStreamKeyType.ISAAC, pKeyLength);
+    public static GordianNewStreamKeySpec isaac(final GordianLength pKeyLength) {
+        return BUILDER.isaac(pKeyLength);
     }
 
     /**
@@ -112,8 +117,8 @@ public final class GordianStreamKeySpecBuilder {
      * @param pKeyLength the keyLength
      * @return the keySpec
      */
-    public static GordianStreamKeySpec rc4(final GordianLength pKeyLength) {
-        return new GordianStreamKeySpec(GordianStreamKeyType.RC4, pKeyLength);
+    public static GordianNewStreamKeySpec rc4(final GordianLength pKeyLength) {
+        return BUILDER.rc4(pKeyLength);
     }
 
     /**
@@ -122,8 +127,8 @@ public final class GordianStreamKeySpecBuilder {
      * @param pKeyLength the keyLength
      * @return the keySpec
      */
-    public static GordianStreamKeySpec vmpc(final GordianLength pKeyLength) {
-        return new GordianStreamKeySpec(GordianStreamKeyType.VMPC, pKeyLength, GordianVMPCKey.STD);
+    public static GordianNewStreamKeySpec vmpc(final GordianLength pKeyLength) {
+        return BUILDER.vmpc(pKeyLength);
     }
 
     /**
@@ -132,8 +137,8 @@ public final class GordianStreamKeySpecBuilder {
      * @param pKeyLength the keyLength
      * @return the keySpec
      */
-    public static GordianStreamKeySpec vmpcKSA(final GordianLength pKeyLength) {
-        return new GordianStreamKeySpec(GordianStreamKeyType.VMPC, pKeyLength, GordianVMPCKey.KSA);
+    public static GordianNewStreamKeySpec vmpcKSA(final GordianLength pKeyLength) {
+        return BUILDER.vmpcKSA(pKeyLength);
     }
 
     /**
@@ -142,8 +147,8 @@ public final class GordianStreamKeySpecBuilder {
      * @param pKeyLength the keyLength
      * @return the keySpec
      */
-    public static GordianStreamKeySpec grain(final GordianLength pKeyLength) {
-        return new GordianStreamKeySpec(GordianStreamKeyType.GRAIN, pKeyLength);
+    public static GordianNewStreamKeySpec grain(final GordianLength pKeyLength) {
+        return BUILDER.grain(pKeyLength);
     }
 
     /**
@@ -152,8 +157,8 @@ public final class GordianStreamKeySpecBuilder {
      * @param pKeyLength the keyLength
      * @return the keySpec
      */
-    public static GordianStreamKeySpec rabbit(final GordianLength pKeyLength) {
-        return new GordianStreamKeySpec(GordianStreamKeyType.RABBIT, pKeyLength);
+    public static GordianNewStreamKeySpec rabbit(final GordianLength pKeyLength) {
+        return BUILDER.rabbit(pKeyLength);
     }
 
     /**
@@ -162,8 +167,8 @@ public final class GordianStreamKeySpecBuilder {
      * @param pKeyLength the keyLength
      * @return the keySpec
      */
-    public static GordianStreamKeySpec sosemanuk(final GordianLength pKeyLength) {
-        return new GordianStreamKeySpec(GordianStreamKeyType.SOSEMANUK, pKeyLength);
+    public static GordianNewStreamKeySpec sosemanuk(final GordianLength pKeyLength) {
+        return BUILDER.sosemanuk(pKeyLength);
     }
 
     /**
@@ -172,8 +177,8 @@ public final class GordianStreamKeySpecBuilder {
      * @param pKeyLength the keyLength
      * @return the keySpec
      */
-    public static GordianStreamKeySpec snow3G(final GordianLength pKeyLength) {
-        return new GordianStreamKeySpec(GordianStreamKeyType.SNOW3G, pKeyLength);
+    public static GordianNewStreamKeySpec snow3G(final GordianLength pKeyLength) {
+        return BUILDER.snow3G(pKeyLength);
     }
 
     /**
@@ -182,20 +187,20 @@ public final class GordianStreamKeySpecBuilder {
      * @param pKeyLength the keyLength
      * @return the keySpec
      */
-    public static GordianStreamKeySpec zuc(final GordianLength pKeyLength) {
-        return new GordianStreamKeySpec(GordianStreamKeyType.ZUC, pKeyLength);
+    public static GordianNewStreamKeySpec zuc(final GordianLength pKeyLength) {
+        return BUILDER.zuc(pKeyLength);
     }
 
     /**
      * Create skeinKeySpec.
      *
-     * @param pKeyLength   the keyLength
-     * @param pStateLength the stateLength
+     * @param pKeyLength the keyLength
+     * @param pSubSpec   the subSpec
      * @return the keySpec
      */
-    public static GordianStreamKeySpec skeinXof(final GordianLength pKeyLength,
-                                                final GordianLength pStateLength) {
-        return new GordianStreamKeySpec(GordianStreamKeyType.SKEINXOF, pKeyLength, GordianSkeinXofKey.getKeyTypeForLength(pStateLength));
+    public static GordianNewStreamKeySpec skeinXof(final GordianLength pKeyLength,
+                                                   final GordianNewSkeinXofKey pSubSpec) {
+        return BUILDER.skeinXof(pKeyLength, pSubSpec);
     }
 
     /**
@@ -204,8 +209,8 @@ public final class GordianStreamKeySpecBuilder {
      * @param pKeyLength the keyLength
      * @return the keySpec
      */
-    public static GordianStreamKeySpec blake2Xof(final GordianLength pKeyLength) {
-        return new GordianStreamKeySpec(GordianStreamKeyType.BLAKE2XOF, pKeyLength);
+    public static GordianNewStreamKeySpec blake2Xof(final GordianLength pKeyLength) {
+        return BUILDER.blake2Xof(pKeyLength);
     }
 
     /**
@@ -213,8 +218,8 @@ public final class GordianStreamKeySpecBuilder {
      *
      * @return the keySpec
      */
-    public static GordianStreamKeySpec blake3Xof() {
-        return new GordianStreamKeySpec(GordianStreamKeyType.BLAKE3XOF, GordianLength.LEN_256);
+    public static GordianNewStreamKeySpec blake3Xof() {
+        return BUILDER.blake3Xof();
     }
 
     /**
@@ -222,8 +227,8 @@ public final class GordianStreamKeySpecBuilder {
      *
      * @return the keySpec
      */
-    public static GordianStreamKeySpec ascon() {
-        return new GordianStreamKeySpec(GordianStreamKeyType.ASCON, GordianLength.LEN_256);
+    public static GordianNewStreamKeySpec ascon() {
+        return BUILDER.ascon();
     }
 
     /**
@@ -232,8 +237,8 @@ public final class GordianStreamKeySpecBuilder {
      * @param pSubSpec the subSpec
      * @return the keySpec
      */
-    public static GordianStreamKeySpec elephant(final GordianElephantKey pSubSpec) {
-        return new GordianStreamKeySpec(GordianStreamKeyType.ELEPHANT, GordianLength.LEN_256, pSubSpec);
+    public static GordianNewStreamKeySpec elephant(final GordianNewElephantKey pSubSpec) {
+        return BUILDER.elephant(pSubSpec);
     }
 
     /**
@@ -242,8 +247,8 @@ public final class GordianStreamKeySpecBuilder {
      * @param pSubSpec the subSpec
      * @return the keySpec
      */
-    public static GordianStreamKeySpec isap(final GordianISAPKey pSubSpec) {
-        return new GordianStreamKeySpec(GordianStreamKeyType.ISAP, GordianLength.LEN_256, pSubSpec);
+    public static GordianNewStreamKeySpec isap(final GordianNewISAPKey pSubSpec) {
+        return BUILDER.isap(pSubSpec);
     }
 
     /**
@@ -251,8 +256,8 @@ public final class GordianStreamKeySpecBuilder {
      *
      * @return the keySpec
      */
-    public static GordianStreamKeySpec photonBeetle() {
-        return new GordianStreamKeySpec(GordianStreamKeyType.PHOTONBEETLE, GordianLength.LEN_256);
+    public static GordianNewStreamKeySpec photonBeetle() {
+        return BUILDER.photonBeetle();
     }
 
     /**
@@ -261,8 +266,8 @@ public final class GordianStreamKeySpecBuilder {
      * @param pSubSpec the subSpec
      * @return the keySpec
      */
-    public static GordianStreamKeySpec romulus(final GordianRomulusKey pSubSpec) {
-        return new GordianStreamKeySpec(GordianStreamKeyType.ROMULUS, GordianLength.LEN_256, pSubSpec);
+    public static GordianNewStreamKeySpec romulus(final GordianNewRomulusKey pSubSpec) {
+        return BUILDER.romulus(pSubSpec);
     }
 
     /**
@@ -271,8 +276,8 @@ public final class GordianStreamKeySpecBuilder {
      * @param pSubSpec the subSpec
      * @return the keySpec
      */
-    public static GordianStreamKeySpec sparkle(final GordianSparkleKey pSubSpec) {
-        return new GordianStreamKeySpec(GordianStreamKeyType.SPARKLE, pSubSpec.requiredKeyLength(), pSubSpec);
+    public static GordianNewStreamKeySpec sparkle(final GordianNewSparkleKey pSubSpec) {
+        return BUILDER.sparkle(pSubSpec);
     }
 
     /**
@@ -280,7 +285,7 @@ public final class GordianStreamKeySpecBuilder {
      *
      * @return the keySpec
      */
-    public static GordianStreamKeySpec xoodyak() {
-        return new GordianStreamKeySpec(GordianStreamKeyType.XOODYAK, GordianLength.LEN_256);
+    public static GordianNewStreamKeySpec xoodyak() {
+        return BUILDER.xoodyak();
     }
 }

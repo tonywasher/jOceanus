@@ -18,8 +18,7 @@ package io.github.tonywasher.joceanus.gordianknot.impl.jca;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestType;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestType;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianEdwardsElliptic;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairType;
@@ -30,6 +29,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignatureType;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.sign.GordianCoreSignature;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianCoreDigestSpec;
 import org.bouncycastle.jcajce.spec.ContextParameterSpec;
 
 import java.security.InvalidAlgorithmParameterException;
@@ -293,7 +293,7 @@ public abstract class JcaSignature
             super(pFactory, pSignatureSpec);
 
             /* Create the signature class */
-            final String myDigest = JcaDigest.getSignAlgorithm(pSignatureSpec.getDigestSpec());
+            final String myDigest = JcaDigest.getSignAlgorithm((GordianCoreDigestSpec) pSignatureSpec.getDigestSpec());
             setSigner(getJavaSignature(myDigest + getSignatureBase(pSignatureSpec), false));
         }
     }
@@ -312,7 +312,7 @@ public abstract class JcaSignature
 
         /* Note if we are DSA */
         final boolean isDSA = GordianKeyPairType.DSA.equals(pSignatureSpec.getKeyPairType());
-        final boolean isSHAKE = GordianDigestType.SHAKE.equals(pSignatureSpec.getDigestSpec().getDigestType());
+        final boolean isSHAKE = GordianNewDigestType.SHAKE.equals(pSignatureSpec.getDigestSpec().getDigestType());
 
         /* Switch on signature type */
         switch (pSignatureSpec.getSignatureType()) {
@@ -361,7 +361,7 @@ public abstract class JcaSignature
             super(pFactory, pSignatureSpec);
 
             /* Create the signature class */
-            final String myDigest = JcaDigest.getSignAlgorithm(pSignatureSpec.getDigestSpec());
+            final String myDigest = JcaDigest.getSignAlgorithm((GordianCoreDigestSpec) pSignatureSpec.getDigestSpec());
             setSigner(getJavaSignature(myDigest + getSignatureBase(pSignatureSpec), false));
         }
     }
@@ -707,7 +707,7 @@ public abstract class JcaSignature
         private String getAlgorithmForKeyPair(final GordianKeyPair pKeyPair) throws GordianException {
             /* Determine the required signer */
             final GordianXMSSKeySpec myXMSSKeySpec = pKeyPair.getKeyPairSpec().getXMSSKeySpec();
-            final GordianDigestSpec myDigestSpec = myXMSSKeySpec.getDigestType().getDigestSpec();
+            final GordianCoreDigestSpec myDigestSpec = (GordianCoreDigestSpec) myXMSSKeySpec.getDigestType().getDigestSpec();
             final String myDigest = JcaDigest.getAlgorithm(myDigestSpec);
 
             /* Create builder */

@@ -19,11 +19,12 @@ package io.github.tonywasher.joceanus.gordianknot.junit.regression;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigest;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianXof;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactoryType;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.digest.GordianCoreDigestFactory;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianCoreDigestSpec;
 import io.github.tonywasher.joceanus.gordianknot.junit.regression.SymmetricStore.FactoryDigestSpec;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.util.Arrays;
@@ -74,14 +75,15 @@ public class SymmetricDigestScripts {
     private static Stream<DynamicNode> digestTests(final FactoryDigestSpec pDigestSpec) {
         /* Add profile test */
         Stream<DynamicNode> myTests = Stream.of(DynamicTest.dynamicTest("profile", () -> profileDigest(pDigestSpec)));
+        final GordianCoreDigestSpec mySpec = (GordianCoreDigestSpec) pDigestSpec.getSpec();
 
         /* Add Multi test as long as large data is supported */
-        if (pDigestSpec.getSpec().getDigestType().supportsLargeData()) {
+        if (mySpec.getCoreDigestType().supportsLargeData()) {
             myTests = Stream.concat(myTests, Stream.of(DynamicTest.dynamicTest("multi", () -> multiDigest(pDigestSpec))));
         }
 
         /* Add Xof test if this is a Xof */
-        if (pDigestSpec.getSpec().isXof()
+        if (mySpec.isXof()
                 && GordianFactoryType.BC.equals(pDigestSpec.getFactory().getFactoryType())) {
             myTests = Stream.concat(myTests, Stream.of(DynamicTest.dynamicTest("xof", () -> checkXof(pDigestSpec))));
         }
@@ -110,7 +112,7 @@ public class SymmetricDigestScripts {
     private static void profileDigest(final FactoryDigestSpec pDigestSpec) throws GordianException {
         /* Create the digest */
         final GordianFactory myFactory = pDigestSpec.getFactory();
-        final GordianDigestSpec mySpec = pDigestSpec.getSpec();
+        final GordianNewDigestSpec mySpec = pDigestSpec.getSpec();
         final GordianDigestFactory myDigestFactory = myFactory.getDigestFactory();
         final GordianDigest myDigest = myDigestFactory.createDigest(mySpec);
 
@@ -141,7 +143,7 @@ public class SymmetricDigestScripts {
     private static void multiDigest(final FactoryDigestSpec pDigestSpec) throws GordianException {
         /* Create the digest */
         final GordianFactory myFactory = pDigestSpec.getFactory();
-        final GordianDigestSpec mySpec = pDigestSpec.getSpec();
+        final GordianNewDigestSpec mySpec = pDigestSpec.getSpec();
         final GordianDigestFactory myDigestFactory = myFactory.getDigestFactory();
         final GordianDigest myDigest = myDigestFactory.createDigest(mySpec);
 
@@ -173,7 +175,7 @@ public class SymmetricDigestScripts {
     private static void checkXof(final FactoryDigestSpec pDigestSpec) throws GordianException {
         /* Create the digest */
         final GordianFactory myFactory = pDigestSpec.getFactory();
-        final GordianDigestSpec mySpec = pDigestSpec.getSpec();
+        final GordianNewDigestSpec mySpec = pDigestSpec.getSpec();
         final GordianDigestFactory myDigestFactory = myFactory.getDigestFactory();
         final GordianXof myXof = (GordianXof) myDigestFactory.createDigest(mySpec);
 
@@ -211,7 +213,7 @@ public class SymmetricDigestScripts {
         /* Create the digests */
         final GordianFactory myFactory = pDigestSpec.getFactory();
         final GordianFactory myPartner = pDigestSpec.getPartner();
-        final GordianDigestSpec mySpec = pDigestSpec.getSpec();
+        final GordianNewDigestSpec mySpec = pDigestSpec.getSpec();
         final GordianDigestFactory myDigestFactory = myFactory.getDigestFactory();
         final GordianDigest myDigest = myDigestFactory.createDigest(mySpec);
         final GordianDigestFactory myPartnerFactory = myPartner.getDigestFactory();
@@ -242,7 +244,7 @@ public class SymmetricDigestScripts {
         Assertions.assertNotNull(myId, "Unknown AlgorithmId for " + pSpec.getSpec());
 
         /* Check unique mapping */
-        final GordianDigestSpec mySpec = myFactory.getDigestSpecForIdentifier(myId);
+        final GordianNewDigestSpec mySpec = myFactory.getDigestSpecForIdentifier(myId);
         Assertions.assertEquals(pSpec.getSpec(), mySpec, "Invalid mapping for  " + pSpec.getSpec());
     }
 
@@ -252,11 +254,12 @@ public class SymmetricDigestScripts {
      * @param pDigestSpec the digestSpec
      * @return the input
      */
-    private static byte[] getDigestInput(final GordianDigestSpec pDigestSpec) {
+    private static byte[] getDigestInput(final GordianNewDigestSpec pDigestSpec) {
         /* Obtain basic input */
         final byte[] myBytes = "DigestInput".getBytes();
-        return pDigestSpec.getDigestType().supportsLargeData()
+        final GordianCoreDigestSpec mySpec = (GordianCoreDigestSpec) pDigestSpec;
+        return mySpec.getCoreDigestType().supportsLargeData()
                 ? myBytes
-                : Arrays.copyOf(myBytes, pDigestSpec.getDigestState().getLength().getByteLength());
+                : Arrays.copyOf(myBytes, mySpec.getCoreDigestState().getLength().getByteLength());
     }
 }

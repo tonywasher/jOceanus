@@ -19,13 +19,13 @@ package io.github.tonywasher.joceanus.gordianknot.impl.bc;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherParameters;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymCipher;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymCipherSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymKeySpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymKeyType;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeyType;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseData;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.cipher.GordianCoreCipher;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher.GordianCoreSymCipherSpec;
 import org.bouncycastle.crypto.BufferedBlockCipher;
 import org.bouncycastle.crypto.CipherParameters;
 import org.bouncycastle.crypto.DataLengthException;
@@ -38,7 +38,7 @@ import org.bouncycastle.crypto.params.RC5Parameters;
  * Cipher for BouncyCastle Symmetric Ciphers.
  */
 public final class BouncySymKeyCipher
-        extends GordianCoreCipher<GordianSymKeySpec>
+        extends GordianCoreCipher<GordianNewSymKeySpec>
         implements GordianSymCipher {
     /**
      * Cipher.
@@ -57,21 +57,21 @@ public final class BouncySymKeyCipher
      * @param pCipherSpec the cipherSpec
      * @param pCipher     the cipher
      */
-    protected BouncySymKeyCipher(final GordianBaseFactory pFactory,
-                                 final GordianSymCipherSpec pCipherSpec,
-                                 final BufferedBlockCipher pCipher) {
+    BouncySymKeyCipher(final GordianBaseFactory pFactory,
+                       final GordianCoreSymCipherSpec pCipherSpec,
+                       final BufferedBlockCipher pCipher) {
         super(pFactory, pCipherSpec);
         theCipher = pCipher;
     }
 
     @Override
-    public BouncyKey<GordianSymKeySpec> getKey() {
-        return (BouncyKey<GordianSymKeySpec>) super.getKey();
+    public BouncyKey<GordianNewSymKeySpec> getKey() {
+        return (BouncyKey<GordianNewSymKeySpec>) super.getKey();
     }
 
     @Override
-    public GordianSymCipherSpec getCipherSpec() {
-        return (GordianSymCipherSpec) super.getCipherSpec();
+    public GordianCoreSymCipherSpec getCipherSpec() {
+        return (GordianCoreSymCipherSpec) super.getCipherSpec();
     }
 
     @Override
@@ -79,7 +79,7 @@ public final class BouncySymKeyCipher
                      final GordianCipherParameters pParams) throws GordianException {
         /* Process the parameters and access the key */
         processParameters(pParams);
-        final BouncyKey<GordianSymKeySpec> myKey = BouncyKey.accessKey(getKey());
+        final BouncyKey<GordianNewSymKeySpec> myKey = BouncyKey.accessKey(getKey());
 
         /* Initialise the cipher */
         final CipherParameters myParms = generateParameters(myKey, getInitVector());
@@ -94,16 +94,16 @@ public final class BouncySymKeyCipher
      * @param pIV  the initVector
      * @return the parameters
      */
-    private static CipherParameters generateParameters(final BouncyKey<GordianSymKeySpec> pKey,
+    private static CipherParameters generateParameters(final BouncyKey<GordianNewSymKeySpec> pKey,
                                                        final byte[] pIV) {
         /* Default parameter */
         CipherParameters myParams = new KeyParameter(pKey.getKey());
 
         /* Build Key parameter */
-        final GordianSymKeySpec myKeySpec = pKey.getKeyType();
+        final GordianNewSymKeySpec myKeySpec = pKey.getKeyType();
         if (myKeySpec != null) {
-            final GordianSymKeyType myType = myKeySpec.getSymKeyType();
-            if (GordianSymKeyType.RC5.equals(myType)) {
+            final GordianNewSymKeyType myType = myKeySpec.getSymKeyType();
+            if (GordianNewSymKeyType.RC5.equals(myType)) {
                 myParams = new RC5Parameters(pKey.getKey(), GordianBaseData.RC5_ROUNDS);
             }
         }
@@ -158,7 +158,7 @@ public final class BouncySymKeyCipher
 
     @Override
     public int getBlockSize() {
-        return getCipherSpec().getCipherMode().hasPadding()
+        return getCipherSpec().getCoreCipherMode().hasPadding()
                 ? theCipher.getBlockSize() : 0;
     }
 

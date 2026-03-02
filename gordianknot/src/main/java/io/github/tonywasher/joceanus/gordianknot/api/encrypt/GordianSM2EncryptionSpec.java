@@ -17,8 +17,9 @@
 package io.github.tonywasher.joceanus.gordianknot.api.encrypt;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianCoreDigestSpec;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,7 +37,7 @@ public class GordianSM2EncryptionSpec {
     /**
      * DigestSpec.
      */
-    private final GordianDigestSpec theDigest;
+    private final GordianNewDigestSpec theDigest;
 
     /**
      * The Validity.
@@ -55,7 +56,7 @@ public class GordianSM2EncryptionSpec {
      * @param pDigest the digestSpec
      */
     GordianSM2EncryptionSpec(final GordianSM2EncryptionType pType,
-                             final GordianDigestSpec pDigest) {
+                             final GordianNewDigestSpec pDigest) {
         /* Store parameters */
         theType = pType;
         theDigest = pDigest;
@@ -68,7 +69,7 @@ public class GordianSM2EncryptionSpec {
      * @param pSpec the digestSpec
      * @return the encryptionSpec
      */
-    public static GordianSM2EncryptionSpec c1c2c3(final GordianDigestSpec pSpec) {
+    public static GordianSM2EncryptionSpec c1c2c3(final GordianNewDigestSpec pSpec) {
         return new GordianSM2EncryptionSpec(GordianSM2EncryptionType.C1C2C3, pSpec);
     }
 
@@ -78,7 +79,7 @@ public class GordianSM2EncryptionSpec {
      * @param pSpec the digestSpec
      * @return the encryptionSpec
      */
-    public static GordianSM2EncryptionSpec c1c3c2(final GordianDigestSpec pSpec) {
+    public static GordianSM2EncryptionSpec c1c3c2(final GordianNewDigestSpec pSpec) {
         return new GordianSM2EncryptionSpec(GordianSM2EncryptionType.C1C3C2, pSpec);
     }
 
@@ -96,7 +97,7 @@ public class GordianSM2EncryptionSpec {
      *
      * @return the digestSpec
      */
-    public GordianDigestSpec getDigestSpec() {
+    public GordianNewDigestSpec getDigestSpec() {
         return theDigest;
     }
 
@@ -126,14 +127,15 @@ public class GordianSM2EncryptionSpec {
      * @return true/false
      */
     private boolean isDigestSupported() {
-        switch (theDigest.getDigestType()) {
+        final GordianCoreDigestSpec mySpec = (GordianCoreDigestSpec) theDigest;
+        switch (mySpec.getDigestType()) {
             case SHA2:
-                return !theDigest.isSha2Hybrid();
+                return !mySpec.isSha2Hybrid();
             case WHIRLPOOL:
             case SM3:
                 return true;
             case BLAKE2:
-                return theDigest.getDigestLength().equals(theDigest.getDigestState().getLength());
+                return theDigest.getDigestLength().equals(mySpec.getCoreDigestState().getLength());
             default:
                 return false;
         }

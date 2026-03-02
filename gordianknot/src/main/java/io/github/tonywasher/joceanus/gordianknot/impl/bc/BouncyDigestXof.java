@@ -16,8 +16,8 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.impl.bc;
 
-import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianXof;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianCoreDigestSpec;
 import org.bouncycastle.crypto.Xof;
 
 /**
@@ -36,7 +36,7 @@ public class BouncyDigestXof
      * @param pDigestSpec the digestSpec
      * @param pXof        the digestXof
      */
-    BouncyDigestXof(final GordianDigestSpec pDigestSpec,
+    BouncyDigestXof(final GordianCoreDigestSpec pDigestSpec,
                     final Xof pXof) {
         super(pDigestSpec, pXof);
         theXof = pXof;

@@ -17,8 +17,8 @@
 package io.github.tonywasher.joceanus.gordianknot.impl.core.cipher;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianKeySpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianPBESpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewPBESpec;
 
 import java.util.Objects;
 
@@ -31,17 +31,17 @@ public class GordianPBECipherSpec<T extends GordianKeySpec> {
     /**
      * The PBESpec.
      */
-    private final GordianPBESpec thePBESpec;
+    private final GordianNewPBESpec thePBESpec;
 
     /**
      * The CipherSpec.
      */
-    private final GordianCipherSpec<T> theCipherSpec;
+    private final GordianNewCipherSpec<T> theCipherSpec;
 
     /**
      * Is the Spec valid?
      */
-    private boolean isValid;
+    private final boolean isValid;
 
     /**
      * Constructor.
@@ -49,8 +49,8 @@ public class GordianPBECipherSpec<T extends GordianKeySpec> {
      * @param pPBESpec    the PBE Spec
      * @param pCipherSpec the CipherSpec
      */
-    public GordianPBECipherSpec(final GordianPBESpec pPBESpec,
-                                final GordianCipherSpec<T> pCipherSpec) {
+    public GordianPBECipherSpec(final GordianNewPBESpec pPBESpec,
+                                final GordianNewCipherSpec<T> pCipherSpec) {
         thePBESpec = pPBESpec;
         theCipherSpec = pCipherSpec;
         isValid = pPBESpec != null && pPBESpec.isValid()
@@ -62,7 +62,7 @@ public class GordianPBECipherSpec<T extends GordianKeySpec> {
      *
      * @return the pbeSpec
      */
-    public GordianPBESpec getPBESpec() {
+    public GordianNewPBESpec getPBESpec() {
         return thePBESpec;
     }
 
@@ -71,7 +71,7 @@ public class GordianPBECipherSpec<T extends GordianKeySpec> {
      *
      * @return the cipherSpec
      */
-    public GordianCipherSpec<T> getCipherSpec() {
+    public GordianNewCipherSpec<T> getCipherSpec() {
         return theCipherSpec;
     }
 

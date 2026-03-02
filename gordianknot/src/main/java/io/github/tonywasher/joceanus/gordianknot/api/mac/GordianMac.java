@@ -19,6 +19,7 @@ package io.github.tonywasher.joceanus.gordianknot.api.mac;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianConsumer;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKey;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianNewMacSpec;
 
 /**
  * GordianKnot interface for Message Authentication Codes.
@@ -30,14 +31,14 @@ public interface GordianMac
      *
      * @return the MacSpec
      */
-    GordianMacSpec getMacSpec();
+    GordianNewMacSpec getMacSpec();
 
     /**
      * Obtain the key.
      *
      * @return the key
      */
-    GordianKey<GordianMacSpec> getKey();
+    GordianKey<GordianNewMacSpec> getKey();
 
     /**
      * Obtain the keyType.

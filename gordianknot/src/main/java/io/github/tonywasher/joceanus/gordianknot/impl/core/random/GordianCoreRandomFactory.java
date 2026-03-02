@@ -20,29 +20,28 @@ import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherParameters;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianPadding;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymCipher;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymCipherSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymCipherSpecBuilder;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymKeySpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymKeyType;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewPadding;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymCipherSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeyType;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigest;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestType;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestType;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKey;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKeyGenerator;
-import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKeyLengths;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMac;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacParameters;
-import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianNewMacSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianNewMacSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.random.GordianRandomFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.random.GordianRandomSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.random.GordianRandomSpecBuilder;
-import io.github.tonywasher.joceanus.gordianknot.api.random.GordianRandomType;
+import io.github.tonywasher.joceanus.gordianknot.api.random.spec.GordianNewRandomSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.random.spec.GordianNewRandomSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.random.spec.GordianNewRandomType;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseData;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianIdManager;
@@ -52,13 +51,15 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.cipher.GordianCoreCip
 import io.github.tonywasher.joceanus.gordianknot.impl.core.digest.GordianCoreDigestFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.mac.GordianCoreMacFactory;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianCoreDigestType;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.random.GordianCoreRandomSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.random.GordianCoreRandomSpecBuilder;
 import org.bouncycastle.crypto.prng.BasicEntropySourceProvider;
 import org.bouncycastle.crypto.prng.EntropySource;
 import org.bouncycastle.crypto.prng.EntropySourceProvider;
 
 import java.security.SecureRandom;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.function.BiPredicate;
 import java.util.function.Predicate;
@@ -149,7 +150,7 @@ public class GordianCoreRandomFactory
     }
 
     @Override
-    public GordianSecureRandom createRandom(final GordianRandomSpec pRandomSpec) throws GordianException {
+    public GordianSecureRandom createRandom(final GordianNewRandomSpec pRandomSpec) throws GordianException {
         /* Check validity of RandomSpec */
         if (!supportedRandomSpecs().test(pRandomSpec)) {
             throw new GordianDataException(GordianBaseData.getInvalidText(pRandomSpec));
@@ -159,21 +160,24 @@ public class GordianCoreRandomFactory
         final GordianCoreDigestFactory myDigests = (GordianCoreDigestFactory) theFactory.getDigestFactory();
         final GordianCoreCipherFactory myCiphers = (GordianCoreCipherFactory) theFactory.getCipherFactory();
         final GordianCoreMacFactory myMacs = (GordianCoreMacFactory) theFactory.getMacFactory();
+        final GordianNewSymCipherSpecBuilder myCipherBuilder = myCiphers.newSymCipherSpecBuilder();
+        final GordianNewMacSpecBuilder myMacBuilder = myMacs.newMacSpecBuilder();
 
         /* Access the digestSpec */
-        final GordianDigestSpec myDigest = pRandomSpec.getDigestSpec();
+        final GordianCoreRandomSpec mySpec = (GordianCoreRandomSpec) pRandomSpec;
+        final GordianNewDigestSpec myDigest = mySpec.getDigestSpec();
         final boolean isResistent = pRandomSpec.isPredictionResistant();
         switch (pRandomSpec.getRandomType()) {
             case HASH:
                 return buildHash(myDigests.createDigest(myDigest), isResistent);
             case HMAC:
-                final GordianMacSpec myMacSpec = GordianMacSpecBuilder.hMac(myDigest);
+                final GordianNewMacSpec myMacSpec = myMacBuilder.hMac(myDigest);
                 return buildHMAC(myMacs.createMac(myMacSpec), isResistent);
             case CTR:
-                GordianSymCipherSpec myCipherSpec = GordianSymCipherSpecBuilder.ecb(pRandomSpec.getSymKeySpec(), GordianPadding.NONE);
+                GordianNewSymCipherSpec myCipherSpec = myCipherBuilder.ecb(mySpec.getSymKeySpec(), GordianNewPadding.NONE);
                 return buildCTR(myCiphers.createSymKeyCipher(myCipherSpec), isResistent);
             case X931:
-                myCipherSpec = GordianSymCipherSpecBuilder.ecb(pRandomSpec.getSymKeySpec(), GordianPadding.NONE);
+                myCipherSpec = myCipherBuilder.ecb(mySpec.getSymKeySpec(), GordianNewPadding.NONE);
                 return buildX931(myCiphers.createSymKeyCipher(myCipherSpec), isResistent);
             default:
                 throw new GordianDataException(GordianBaseData.getInvalidText(pRandomSpec));
@@ -181,8 +185,8 @@ public class GordianCoreRandomFactory
     }
 
     @Override
-    public GordianCombinedRandom createRandom(final GordianRandomSpec pCtrSpec,
-                                              final GordianRandomSpec pHashSpec) throws GordianException {
+    public GordianCombinedRandom createRandom(final GordianNewRandomSpec pCtrSpec,
+                                              final GordianNewRandomSpec pHashSpec) throws GordianException {
         /* Check validity of ctrSpecs */
         if (!validCombinedSpec(pCtrSpec, pHashSpec)) {
             throw new GordianDataException(GordianBaseData.getInvalidText(pCtrSpec)
@@ -198,13 +202,18 @@ public class GordianCoreRandomFactory
     }
 
     @Override
-    public Predicate<GordianRandomSpec> supportedRandomSpecs() {
+    public Predicate<GordianNewRandomSpec> supportedRandomSpecs() {
         return this::validRandomSpec;
     }
 
     @Override
-    public BiPredicate<GordianRandomSpec, GordianRandomSpec> supportedCombinedSpecs() {
+    public BiPredicate<GordianNewRandomSpec, GordianNewRandomSpec> supportedCombinedSpecs() {
         return this::validCombinedSpec;
+    }
+
+    @Override
+    public GordianNewRandomSpecBuilder newRandomSpecBuilder() {
+        return GordianCoreRandomSpecBuilder.newInstance();
     }
 
     /**
@@ -213,16 +222,17 @@ public class GordianCoreRandomFactory
      * @param pRandomSpec the randomSpec
      * @return true/false
      */
-    private boolean validRandomSpec(final GordianRandomSpec pRandomSpec) {
+    private boolean validRandomSpec(final GordianNewRandomSpec pRandomSpec) {
         /* Reject invalid randomSpec */
         if (pRandomSpec == null || !pRandomSpec.isValid()) {
             return false;
         }
 
         /* Access details */
-        final GordianRandomType myType = pRandomSpec.getRandomType();
-        final GordianDigestSpec myDigest = pRandomSpec.getDigestSpec();
-        final GordianSymKeySpec mySymKey = pRandomSpec.getSymKeySpec();
+        final GordianCoreRandomSpec mySpec = (GordianCoreRandomSpec) pRandomSpec;
+        final GordianNewRandomType myType = pRandomSpec.getRandomType();
+        final GordianNewDigestSpec myDigest = mySpec.getDigestSpec();
+        final GordianNewSymKeySpec mySymKey = mySpec.getSymKeySpec();
 
         /* Check that the randomType is supported */
         switch (myType) {
@@ -248,20 +258,22 @@ public class GordianCoreRandomFactory
      * @param pHashSpec the Hash Spec
      * @return true/false
      */
-    private boolean validCombinedSpec(final GordianRandomSpec pCtrSpec,
-                                      final GordianRandomSpec pHashSpec) {
+    private boolean validCombinedSpec(final GordianNewRandomSpec pCtrSpec,
+                                      final GordianNewRandomSpec pHashSpec) {
         /* Check validity of ctrSpecs */
+        final GordianCoreRandomSpec myCtrSpec = (GordianCoreRandomSpec) pCtrSpec;
         if (!supportedRandomSpecs().test(pCtrSpec)
-                || pCtrSpec.getRandomType() != GordianRandomType.CTR
-                || pCtrSpec.getSymKeySpec().getKeyLength() != GordianLength.LEN_128
-                || pCtrSpec.getSymKeySpec().getBlockLength() != GordianLength.LEN_128) {
+                || pCtrSpec.getRandomType() != GordianNewRandomType.CTR
+                || myCtrSpec.getSymKeySpec().getKeyLength() != GordianLength.LEN_128
+                || myCtrSpec.getSymKeySpec().getBlockLength() != GordianLength.LEN_128) {
             return false;
         }
 
         /* Validate the hashSpec */
+        final GordianCoreRandomSpec myHashSpec = (GordianCoreRandomSpec) pHashSpec;
         return supportedRandomSpecs().test(pHashSpec)
-                && pHashSpec.getRandomType() == GordianRandomType.HASH
-                && pHashSpec.getDigestSpec().getDigestLength() == GordianLength.LEN_512;
+                && pHashSpec.getRandomType() == GordianNewRandomType.HASH
+                && myHashSpec.getDigestSpec().getDigestLength() == GordianLength.LEN_512;
     }
 
     /**
@@ -272,12 +284,13 @@ public class GordianCoreRandomFactory
      */
     GordianCombinedRandom generateRandomCombined() throws GordianException {
         /* Create a random ctrSpec */
-        final GordianSymKeySpec mySymKeySpec = generateRandomSymKeySpec();
-        final GordianRandomSpec myCtrSpec = GordianRandomSpecBuilder.ctr(mySymKeySpec);
+        final GordianNewRandomSpecBuilder myBuilder = GordianCoreRandomSpecBuilder.newInstance();
+        final GordianNewSymKeySpec mySymKeySpec = generateRandomSymKeySpec();
+        final GordianNewRandomSpec myCtrSpec = myBuilder.ctr(mySymKeySpec);
 
         /* Create a random hashSpec */
-        final GordianDigestSpec myDigestSpec = generateRandomDigestSpec();
-        final GordianRandomSpec myHashSpec = GordianRandomSpecBuilder.hash(myDigestSpec);
+        final GordianNewDigestSpec myDigestSpec = generateRandomDigestSpec();
+        final GordianNewRandomSpec myHashSpec = myBuilder.hash(myDigestSpec);
 
         /* Build the combinedRandom */
         return createRandom(myCtrSpec, myHashSpec);
@@ -288,19 +301,19 @@ public class GordianCoreRandomFactory
      *
      * @return the random symKeySpec
      */
-    private GordianSymKeySpec generateRandomSymKeySpec() {
+    private GordianNewSymKeySpec generateRandomSymKeySpec() {
         /* Access the list of symKeySpecs and unique symKeyTypes */
         final GordianCoreCipherFactory myCiphers = (GordianCoreCipherFactory) theFactory.getCipherFactory();
-        final List<GordianSymKeySpec> mySpecs = myCiphers.listAllSupportedSymKeySpecs(GordianLength.LEN_128);
+        final List<GordianNewSymKeySpec> mySpecs = myCiphers.listAllSupportedSymKeySpecs(GordianLength.LEN_128);
 
         /* Remove the specs that are wrong block size and obtain keyTypes */
         mySpecs.removeIf(s -> s.getBlockLength() != GordianLength.LEN_128);
-        final List<GordianSymKeyType> myTypes
-                = mySpecs.stream().map(GordianSymKeySpec::getSymKeyType).collect(Collectors.toCollection(ArrayList::new));
+        final List<GordianNewSymKeyType> myTypes
+                = mySpecs.stream().map(GordianNewSymKeySpec::getSymKeyType).collect(Collectors.toCollection(ArrayList::new));
 
         /* Determine a random index into the list and obtain the symKeyType */
         int myIndex = theRandom.nextInt(myTypes.size());
-        final GordianSymKeyType myKeyType = myTypes.get(myIndex);
+        final GordianNewSymKeyType myKeyType = myTypes.get(myIndex);
 
         /* Select from among possible keySpecs of this type */
         mySpecs.removeIf(s -> s.getSymKeyType() != myKeyType);
@@ -313,19 +326,19 @@ public class GordianCoreRandomFactory
      *
      * @return the random digestSpec
      */
-    private GordianDigestSpec generateRandomDigestSpec() {
+    private GordianNewDigestSpec generateRandomDigestSpec() {
         /* Access the list to select from */
         final GordianCoreDigestFactory myDigests = (GordianCoreDigestFactory) theFactory.getDigestFactory();
-        final List<GordianDigestSpec> mySpecs = myDigests.listAllSupportedSpecs();
-        mySpecs.removeIf(s -> !s.getDigestType().supportsLargeData()
+        final List<GordianNewDigestSpec> mySpecs = myDigests.listAllSupportedSpecs();
+        mySpecs.removeIf(s -> !GordianCoreDigestType.supportsLargeData(s.getDigestType())
                 || s.getDigestLength() != GordianLength.LEN_512);
-        final List<GordianDigestType> myTypes
-                = mySpecs.stream().map(GordianDigestSpec::getDigestType).collect(Collectors.toCollection(ArrayList::new));
+        final List<GordianNewDigestType> myTypes
+                = mySpecs.stream().map(GordianNewDigestSpec::getDigestType).collect(Collectors.toCollection(ArrayList::new));
 
         /* Determine a random index into the list and obtain the digestType */
         final SecureRandom myRandom = theFactory.getRandomSource().getRandom();
         int myIndex = myRandom.nextInt(myTypes.size());
-        final GordianDigestType myDigestType = myTypes.get(myIndex);
+        final GordianNewDigestType myDigestType = myTypes.get(myIndex);
 
         /* Select from among possible digestSpecs of this type */
         mySpecs.removeIf(s -> s.getDigestType() != myDigestType);
@@ -340,7 +353,7 @@ public class GordianCoreRandomFactory
         final GordianIdManager myIds = theFactory.getIdManager();
 
         /* Determine a random specification and create it */
-        final GordianDigestSpec mySpec = myIds.generateRandomDigestSpec(pLargeData);
+        final GordianNewDigestSpec mySpec = myIds.generateRandomDigestSpec(pLargeData);
         return myDigests.createDigest(mySpec);
     }
 
@@ -352,11 +365,11 @@ public class GordianCoreRandomFactory
         final GordianIdManager myIds = theFactory.getIdManager();
 
         /* Determine a random specification */
-        final GordianMacSpec mySpec = myIds.generateRandomMacSpec(pKeyLen, pLargeData);
+        final GordianNewMacSpec mySpec = myIds.generateRandomMacSpec(pKeyLen, pLargeData);
 
         /* Determine a random key */
-        final GordianKeyGenerator<GordianMacSpec> myGenerator = myMacs.getKeyGenerator(mySpec);
-        final GordianKey<GordianMacSpec> myKey = myGenerator.generateKey();
+        final GordianKeyGenerator<GordianNewMacSpec> myGenerator = myMacs.getKeyGenerator(mySpec);
+        final GordianKey<GordianNewMacSpec> myKey = myGenerator.generateKey();
 
         /* Create and initialise the MAC */
         final GordianMac myMac = myMacs.createMac(mySpec);
@@ -367,31 +380,31 @@ public class GordianCoreRandomFactory
     }
 
     @Override
-    public GordianKey<GordianSymKeySpec> generateRandomSymKey(final GordianLength pKeyLen) throws GordianException {
+    public GordianKey<GordianNewSymKeySpec> generateRandomSymKey(final GordianLength pKeyLen) throws GordianException {
         /* Access Cipher Factory and IdManager */
         final GordianCipherFactory myCiphers = theFactory.getCipherFactory();
         final GordianIdManager myIds = theFactory.getIdManager();
 
         /* Determine a random keySpec */
-        final GordianSymKeySpec mySpec = myIds.generateRandomSymKeySpec(pKeyLen);
+        final GordianNewSymKeySpec mySpec = myIds.generateRandomSymKeySpec(pKeyLen);
 
         /* Generate a random key */
-        final GordianKeyGenerator<GordianSymKeySpec> myGenerator = myCiphers.getKeyGenerator(mySpec);
+        final GordianKeyGenerator<GordianNewSymKeySpec> myGenerator = myCiphers.getKeyGenerator(mySpec);
         return myGenerator.generateKey();
     }
 
     @Override
-    public GordianKey<GordianStreamKeySpec> generateRandomStreamKey(final GordianLength pKeyLen,
-                                                                    final boolean pLargeData) throws GordianException {
+    public GordianKey<GordianNewStreamKeySpec> generateRandomStreamKey(final GordianLength pKeyLen,
+                                                                       final boolean pLargeData) throws GordianException {
         /* Access Cipher Factory and IdManager */
         final GordianCipherFactory myCiphers = theFactory.getCipherFactory();
         final GordianIdManager myIds = theFactory.getIdManager();
 
         /* Generate a random keySpec */
-        final GordianStreamKeySpec mySpec = myIds.generateRandomStreamKeySpec(pKeyLen, pLargeData);
+        final GordianNewStreamKeySpec mySpec = myIds.generateRandomStreamKeySpec(pKeyLen, pLargeData);
 
         /* Generate a random key */
-        final GordianKeyGenerator<GordianStreamKeySpec> myGenerator = myCiphers.getKeyGenerator(mySpec);
+        final GordianKeyGenerator<GordianNewStreamKeySpec> myGenerator = myCiphers.getKeyGenerator(mySpec);
         return myGenerator.generateKey();
     }
 
@@ -449,7 +462,7 @@ public class GordianCoreRandomFactory
         final byte[] myInit = theRandom.generateSeed(NUM_ENTROPY_BYTES_REQUIRED);
 
         /* Build DRBG */
-        final GordianCoreCipher<GordianSymKeySpec> myCipher = (GordianCoreCipher<GordianSymKeySpec>) pCipher;
+        final GordianCoreCipher<GordianNewSymKeySpec> myCipher = (GordianCoreCipher<GordianNewSymKeySpec>) pCipher;
         final EntropySource myEntropy = theEntropyProvider.get(NUM_ENTROPY_BITS_REQUIRED);
         final GordianSP800CTRDRBG myProvider = new GordianSP800CTRDRBG(myCipher,
                 myEntropy, theRandomSource.defaultPersonalisation(), myInit);
@@ -469,8 +482,8 @@ public class GordianCoreRandomFactory
                                           final boolean isPredictionResistant) throws GordianException {
         /* Initialise the cipher with a random key */
         final GordianCipherFactory myCiphers = theFactory.getCipherFactory();
-        final GordianKeyGenerator<GordianSymKeySpec> myGenerator = myCiphers.getKeyGenerator(pCipher.getKeyType());
-        final GordianKey<GordianSymKeySpec> myKey = myGenerator.generateKey();
+        final GordianKeyGenerator<GordianNewSymKeySpec> myGenerator = myCiphers.getKeyGenerator(pCipher.getKeyType());
+        final GordianKey<GordianNewSymKeySpec> myKey = myGenerator.generateKey();
         pCipher.initForEncrypt(GordianCipherParameters.key(myKey));
 
         /* Build DRBG */
@@ -480,7 +493,7 @@ public class GordianCoreRandomFactory
     }
 
     @Override
-    public List<GordianRandomSpec> listAllSupportedRandomSpecs() {
+    public List<GordianNewRandomSpec> listAllSupportedRandomSpecs() {
         return listAllPossibleSpecs()
                 .stream()
                 .filter(supportedRandomSpecs())
@@ -488,7 +501,7 @@ public class GordianCoreRandomFactory
     }
 
     @Override
-    public List<GordianRandomSpec> listAllSupportedRandomSpecs(final GordianRandomType pType) {
+    public List<GordianNewRandomSpec> listAllSupportedRandomSpecs(final GordianNewRandomType pType) {
         return listAllPossibleSpecs()
                 .stream()
                 .filter(s -> s.getRandomType().equals(pType))
@@ -497,13 +510,13 @@ public class GordianCoreRandomFactory
     }
 
     @Override
-    public List<GordianRandomSpec> listAllSupportedRandomSpecs(final GordianRandomType pType,
-                                                               final GordianLength pKeyLen) {
+    public List<GordianNewRandomSpec> listAllSupportedRandomSpecs(final GordianNewRandomType pType,
+                                                                  final GordianLength pKeyLen) {
         return listAllPossibleSpecs()
                 .stream()
                 .filter(s -> s.getRandomType().equals(pType))
                 .filter(s -> s.getRandomType().hasSymKeySpec())
-                .filter(s -> s.getSymKeySpec().getKeyLength() == pKeyLen)
+                .filter(s -> GordianCoreRandomSpec.getSymKeySpec(s).getKeyLength() == pKeyLen)
                 .filter(supportedRandomSpecs())
                 .toList();
     }
@@ -513,39 +526,7 @@ public class GordianCoreRandomFactory
      *
      * @return the list
      */
-    private List<GordianRandomSpec> listAllPossibleSpecs() {
-        /* Create the array list */
-        final List<GordianRandomSpec> myList = new ArrayList<>();
-
-        /* For each digestSpec */
-        for (final GordianDigestSpec mySpec : theFactory.getDigestFactory().listAllPossibleSpecs()) {
-            /* Add a hash random */
-            myList.add(GordianRandomSpecBuilder.hash(mySpec));
-            myList.add(GordianRandomSpecBuilder.hashResist(mySpec));
-
-            /* Add an hMac random */
-            myList.add(GordianRandomSpecBuilder.hMac(mySpec));
-            myList.add(GordianRandomSpecBuilder.hMacResist(mySpec));
-        }
-
-        /* For each KeyLength */
-        final Iterator<GordianLength> myIterator = GordianKeyLengths.iterator();
-        while (myIterator.hasNext()) {
-            final GordianLength myKeyLen = myIterator.next();
-
-            /* For each symKeySpec */
-            for (final GordianSymKeySpec mySpec : theFactory.getCipherFactory().listAllSymKeySpecs(myKeyLen)) {
-                /* Add a CTR random */
-                myList.add(GordianRandomSpecBuilder.ctr(mySpec));
-                myList.add(GordianRandomSpecBuilder.ctrResist(mySpec));
-
-                /* Add an X931 random */
-                myList.add(GordianRandomSpecBuilder.x931(mySpec));
-                myList.add(GordianRandomSpecBuilder.x931Resist(mySpec));
-            }
-        }
-
-        /* Return the list */
-        return myList;
+    private List<GordianNewRandomSpec> listAllPossibleSpecs() {
+        return GordianCoreRandomSpecBuilder.listAllPossibleSpecs();
     }
 }

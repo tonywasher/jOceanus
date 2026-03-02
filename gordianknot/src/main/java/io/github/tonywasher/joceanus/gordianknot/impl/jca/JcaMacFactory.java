@@ -19,17 +19,19 @@ package io.github.tonywasher.joceanus.gordianknot.impl.jca;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymKeySpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymKeyType;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeyType;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKeyGenerator;
-import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacType;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianNewMacSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianNewMacType;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseData;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.mac.GordianCoreMacFactory;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianCoreDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.mac.GordianCoreMacSpec;
 
 import javax.crypto.KeyGenerator;
 import javax.crypto.Mac;
@@ -85,7 +87,7 @@ public class JcaMacFactory
             checkMacSpec(pMacSpec);
 
             /* Create the new generator */
-            final String myAlgorithm = getMacSpecAlgorithm((GordianMacSpec) pMacSpec);
+            final String myAlgorithm = getMacSpecAlgorithm((GordianCoreMacSpec) pMacSpec);
             final KeyGenerator myJavaGenerator = getJavaKeyGenerator(myAlgorithm);
             myGenerator = new JcaKeyGenerator<>(getFactory(), pMacSpec, myJavaGenerator);
 
@@ -96,17 +98,17 @@ public class JcaMacFactory
     }
 
     @Override
-    public JcaMac createMac(final GordianMacSpec pMacSpec) throws GordianException {
+    public JcaMac createMac(final GordianNewMacSpec pMacSpec) throws GordianException {
         /* Check validity of MacSpec */
         checkMacSpec(pMacSpec);
 
         /* Create Mac */
-        final Mac myJavaMac = getJavaMac(pMacSpec);
+        final Mac myJavaMac = getJavaMac((GordianCoreMacSpec) pMacSpec);
         return new JcaMac(getFactory(), pMacSpec, myJavaMac);
     }
 
     @Override
-    protected boolean validMacType(final GordianMacType pMacType) {
+    protected boolean validMacType(final GordianNewMacType pMacType) {
         switch (pMacType) {
             case BLAKE2:
             case BLAKE3:
@@ -126,7 +128,7 @@ public class JcaMacFactory
      * @return the MAC
      * @throws GordianException on error
      */
-    private Mac getJavaMac(final GordianMacSpec pMacSpec) throws GordianException {
+    private Mac getJavaMac(final GordianCoreMacSpec pMacSpec) throws GordianException {
         switch (pMacSpec.getMacType()) {
             case HMAC:
             case GMAC:
@@ -211,7 +213,7 @@ public class JcaMacFactory
      * @return the Algorithm
      * @throws GordianException on error
      */
-    private static String getMacSpecAlgorithm(final GordianMacSpec pMacSpec) throws GordianException {
+    private static String getMacSpecAlgorithm(final GordianCoreMacSpec pMacSpec) throws GordianException {
         switch (pMacSpec.getMacType()) {
             case HMAC:
                 return getHMacAlgorithm(pMacSpec.getDigestSpec());
@@ -230,7 +232,7 @@ public class JcaMacFactory
             case SIPHASH:
                 return pMacSpec.toString();
             case KMAC:
-                return pMacSpec.getMacType().toString() + pMacSpec.getDigestSpec().getDigestState();
+                return pMacSpec.getMacType().toString() + ((GordianCoreDigestSpec) pMacSpec.getDigestSpec()).getCoreDigestState();
             case GOST:
                 return "GOST28147MAC";
             case VMPC:
@@ -247,8 +249,8 @@ public class JcaMacFactory
      * @return the algorithm
      * @throws GordianException on error
      */
-    private static String getHMacAlgorithm(final GordianDigestSpec pDigestSpec) throws GordianException {
-        return "HMac" + JcaDigest.getHMacAlgorithm(pDigestSpec);
+    private static String getHMacAlgorithm(final GordianNewDigestSpec pDigestSpec) throws GordianException {
+        return "HMac" + JcaDigest.getHMacAlgorithm((GordianCoreDigestSpec) pDigestSpec);
     }
 
     /**
@@ -258,7 +260,7 @@ public class JcaMacFactory
      * @return the algorithm
      * @throws GordianException on error
      */
-    private static String getGMacAlgorithm(final GordianSymKeySpec pKeySpec) throws GordianException {
+    private static String getGMacAlgorithm(final GordianNewSymKeySpec pKeySpec) throws GordianException {
         /* Return algorithm name */
         return JcaCipherFactory.getSymKeyAlgorithm(pKeySpec) + "GMAC";
     }
@@ -270,7 +272,7 @@ public class JcaMacFactory
      * @return the algorithm
      * @throws GordianException on error
      */
-    private static String getCMacAlgorithm(final GordianSymKeySpec pKeySpec) throws GordianException {
+    private static String getCMacAlgorithm(final GordianNewSymKeySpec pKeySpec) throws GordianException {
         /* Return algorithm name */
         return JcaCipherFactory.getSymKeyAlgorithm(pKeySpec) + CMAC_ALGORITHM;
     }
@@ -282,7 +284,7 @@ public class JcaMacFactory
      * @return the algorithm
      * @throws GordianException on error
      */
-    private static String getPoly1305Algorithm(final GordianSymKeySpec pKeySpec) throws GordianException {
+    private static String getPoly1305Algorithm(final GordianNewSymKeySpec pKeySpec) throws GordianException {
         /* Return algorithm name */
         return pKeySpec == null
                 ? "POLY1305"
@@ -295,9 +297,9 @@ public class JcaMacFactory
      * @param pSpec the digestSpec
      * @return the algorithm
      */
-    private static String getSkeinMacAlgorithm(final GordianDigestSpec pSpec) {
+    private static String getSkeinMacAlgorithm(final GordianNewDigestSpec pSpec) {
         return "Skein-MAC-"
-                + pSpec.getDigestState()
+                + ((GordianCoreDigestSpec) pSpec).getCoreDigestState()
                 + '-'
                 + pSpec.getDigestLength();
     }
@@ -308,7 +310,7 @@ public class JcaMacFactory
      * @param pSpec the digestSpec
      * @return the algorithm
      */
-    private static String getZucMacAlgorithm(final GordianMacSpec pSpec) {
+    private static String getZucMacAlgorithm(final GordianCoreMacSpec pSpec) {
         final String myKeyLen = Integer.toString(pSpec.getKeyLength().getLength());
         final String myMacLen = Integer.toString(pSpec.getMacLength().getLength());
         final StringBuilder myBuilder = new StringBuilder();
@@ -328,13 +330,13 @@ public class JcaMacFactory
      * @return the algorithm
      * @throws GordianException on error
      */
-    private static String getKupynaMacAlgorithm(final GordianDigestSpec pSpec) throws GordianException {
+    private static String getKupynaMacAlgorithm(final GordianNewDigestSpec pSpec) throws GordianException {
         /* For some reason this is accessed as HMAC !!! */
         return getHMacAlgorithm(pSpec);
     }
 
     @Override
-    protected boolean validCMacSymKeySpec(final GordianSymKeySpec pKeySpec) {
+    protected boolean validCMacSymKeySpec(final GordianNewSymKeySpec pKeySpec) {
         switch (pKeySpec.getSymKeyType()) {
             case AES:
             case DESEDE:
@@ -350,7 +352,7 @@ public class JcaMacFactory
     }
 
     @Override
-    protected boolean validGMacSymKeySpec(final GordianSymKeySpec pKeySpec) {
+    protected boolean validGMacSymKeySpec(final GordianNewSymKeySpec pKeySpec) {
         switch (pKeySpec.getSymKeyType()) {
             case KUZNYECHIK:
             case KALYNA:
@@ -361,8 +363,8 @@ public class JcaMacFactory
     }
 
     @Override
-    protected boolean validPoly1305SymKeySpec(final GordianSymKeySpec pKeySpec) {
-        if (GordianSymKeyType.KALYNA.equals(pKeySpec.getSymKeyType())) {
+    protected boolean validPoly1305SymKeySpec(final GordianNewSymKeySpec pKeySpec) {
+        if (GordianNewSymKeyType.KALYNA.equals(pKeySpec.getSymKeyType())) {
             return false;
         }
         return super.validPoly1305SymKeySpec(pKeySpec);

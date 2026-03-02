@@ -16,8 +16,6 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.api.factory;
 
-import io.github.tonywasher.joceanus.gordianknot.api.base.GordianBundleLoader.GordianBundleId;
-
 /**
  * Factory Type.
  */
@@ -31,38 +29,4 @@ public enum GordianFactoryType {
      * JCA.
      */
     JCA;
-
-    /**
-     * The String name.
-     */
-    private String theName;
-
-    @Override
-    public String toString() {
-        /* If we have not yet loaded the name */
-        if (theName == null) {
-            /* Load the name */
-            theName = bundleIdForFactoryType().getValue();
-        }
-
-        /* return the name */
-        return theName;
-    }
-
-    /**
-     * Obtain the resource bundleId for this factoryType.
-     *
-     * @return the resource bundleId
-     */
-    private GordianBundleId bundleIdForFactoryType() {
-        /* Create the map and return it */
-        switch (this) {
-            case BC:
-                return GordianFactoryResource.FACTORY_BC;
-            case JCA:
-                return GordianFactoryResource.FACTORY_JCA;
-            default:
-                throw new IllegalArgumentException();
-        }
-    }
 }

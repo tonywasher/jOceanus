@@ -26,9 +26,10 @@ import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySet;
 import io.github.tonywasher.joceanus.gordianknot.api.lock.GordianKeyPairLock;
 import io.github.tonywasher.joceanus.gordianknot.api.lock.GordianKeySetLock;
 import io.github.tonywasher.joceanus.gordianknot.api.lock.GordianLockFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.lock.GordianPasswordLockSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.lock.spec.GordianNewPasswordLockSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.zip.GordianZipLock;
 import io.github.tonywasher.joceanus.gordianknot.util.GordianGenerator;
+import io.github.tonywasher.joceanus.gordianknot.util.GordianUtilities;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.prometheus.exc.PrometheusDataException;
 import io.github.tonywasher.joceanus.prometheus.exc.PrometheusLogicException;
@@ -61,7 +62,7 @@ public class PrometheusSecurityPasswordManager {
     /**
      * PasswordLockSpec.
      */
-    private final GordianPasswordLockSpec theLockSpec;
+    private final GordianNewPasswordLockSpec theLockSpec;
 
     /**
      * The Cache.
@@ -82,7 +83,7 @@ public class PrometheusSecurityPasswordManager {
      */
     public PrometheusSecurityPasswordManager(final GordianFactory pFactory,
                                              final PrometheusSecurityDialogController pDialog) throws OceanusException {
-        this(pFactory, new GordianPasswordLockSpec(), pDialog);
+        this(pFactory, GordianUtilities.newPasswordLockSpecBuilder().passwordLock(), pDialog);
     }
 
     /**
@@ -94,7 +95,7 @@ public class PrometheusSecurityPasswordManager {
      * @throws OceanusException on error
      */
     public PrometheusSecurityPasswordManager(final GordianFactory pFactory,
-                                             final GordianPasswordLockSpec pLockSpec,
+                                             final GordianNewPasswordLockSpec pLockSpec,
                                              final PrometheusSecurityDialogController pDialog) throws OceanusException {
         /* Allocate the factory */
         theFactory = pFactory;
@@ -120,7 +121,7 @@ public class PrometheusSecurityPasswordManager {
      *
      * @return the lockSpec
      */
-    public GordianPasswordLockSpec getLockSpec() {
+    public GordianNewPasswordLockSpec getLockSpec() {
         return theLockSpec;
     }
 

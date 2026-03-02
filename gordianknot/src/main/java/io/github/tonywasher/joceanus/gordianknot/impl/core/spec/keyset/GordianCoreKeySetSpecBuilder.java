@@ -1,0 +1,59 @@
+/*
+ * GordianKnot: Security Suite
+ * Copyright 2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keyset;
+
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
+import io.github.tonywasher.joceanus.gordianknot.api.keyset.spec.GordianNewKeySetSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keyset.spec.GordianNewKeySetSpecBuilder;
+
+/**
+ * KeySet Spec Builder.
+ */
+public final class GordianCoreKeySetSpecBuilder
+        implements GordianNewKeySetSpecBuilder {
+    /**
+     * Private constructor.
+     */
+    private GordianCoreKeySetSpecBuilder() {
+    }
+
+    /**
+     * Obtain new instance.
+     *
+     * @return the new instance
+     */
+    public static GordianCoreKeySetSpecBuilder newInstance() {
+        return new GordianCoreKeySetSpecBuilder();
+    }
+
+    @Override
+    public GordianNewKeySetSpec keySetSpec() {
+        return new GordianCoreKeySetSpec();
+    }
+
+    @Override
+    public GordianNewKeySetSpec keySetSpec(final GordianLength pKeyLen) {
+        return new GordianCoreKeySetSpec(pKeyLen);
+    }
+
+    @Override
+    public GordianNewKeySetSpec keySetSpec(final GordianLength pKeyLen,
+                                           final int pNumSteps) {
+        return new GordianCoreKeySetSpec(pKeyLen, pNumSteps);
+    }
+}

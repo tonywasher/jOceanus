@@ -25,13 +25,16 @@ import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySet;
 import io.github.tonywasher.joceanus.gordianknot.api.lock.GordianKeyPairLock;
 import io.github.tonywasher.joceanus.gordianknot.api.lock.GordianKeySetLock;
 import io.github.tonywasher.joceanus.gordianknot.api.lock.GordianLockFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.lock.GordianPasswordLockSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.lock.spec.GordianNewPasswordLockSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.lock.spec.GordianNewPasswordLockSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseData;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianParameters;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keyset.GordianCoreKeySet;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keyset.GordianCoreKeySetFactory;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.lock.GordianCorePasswordLockSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.lock.GordianCorePasswordLockSpecBuilder;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -60,6 +63,11 @@ public class GordianCoreLockFactory
         theFactory = (GordianBaseFactory) pFactory;
     }
 
+    @Override
+    public GordianNewPasswordLockSpecBuilder newPasswordLockSpecBuilder() {
+        return GordianCorePasswordLockSpecBuilder.newInstance();
+    }
+
     /**
      * Create a new factoryLock for an existing factory.
      *
@@ -70,7 +78,7 @@ public class GordianCoreLockFactory
      * @throws GordianException on error
      */
     public GordianFactoryLock newFactoryLock(final GordianFactory pFactoryToLock,
-                                             final GordianPasswordLockSpec pLockSpec,
+                                             final GordianNewPasswordLockSpec pLockSpec,
                                              final char[] pPassword) throws GordianException {
         /* Check the passwordLockSpec */
         checkPasswordLockSpec(pLockSpec);
@@ -88,7 +96,7 @@ public class GordianCoreLockFactory
      * @return the factoryLock
      * @throws GordianException on error
      */
-    public GordianFactoryLock newFactoryLock(final GordianPasswordLockSpec pLockSpec,
+    public GordianFactoryLock newFactoryLock(final GordianNewPasswordLockSpec pLockSpec,
                                              final GordianFactoryType pFactoryType,
                                              final char[] pPassword) throws GordianException {
         /* Create the lockFactory */
@@ -129,7 +137,13 @@ public class GordianCoreLockFactory
 
     @Override
     public GordianKeySetLock newKeySetLock(final GordianKeySet pKeySetToLock,
-                                           final GordianPasswordLockSpec pLockSpec,
+                                           final char[] pPassword) throws GordianException {
+        return newKeySetLock(pKeySetToLock, new GordianCorePasswordLockSpec(), pPassword);
+    }
+
+    @Override
+    public GordianKeySetLock newKeySetLock(final GordianKeySet pKeySetToLock,
+                                           final GordianNewPasswordLockSpec pLockSpec,
                                            final char[] pPassword) throws GordianException {
         /* Check the passwordLockSpec */
         checkPasswordLockSpec(pLockSpec);
@@ -139,7 +153,12 @@ public class GordianCoreLockFactory
     }
 
     @Override
-    public GordianKeySetLock newKeySetLock(final GordianPasswordLockSpec pLockSpec,
+    public GordianKeySetLock newKeySetLock(final char[] pPassword) throws GordianException {
+        return newKeySetLock(new GordianCorePasswordLockSpec(), pPassword);
+    }
+
+    @Override
+    public GordianKeySetLock newKeySetLock(final GordianNewPasswordLockSpec pLockSpec,
                                            final char[] pPassword) throws GordianException {
         /* Create a new random keySet */
         final GordianKeySet myKeySet = theFactory.getKeySetFactory().generateKeySet(pLockSpec.getKeySetSpec());
@@ -170,7 +189,13 @@ public class GordianCoreLockFactory
     }
 
     @Override
-    public GordianKeyPairLock newKeyPairLock(final GordianPasswordLockSpec pLockSpec,
+    public GordianKeyPairLock newKeyPairLock(final GordianKeyPair pKeyPair,
+                                             final char[] pPassword) throws GordianException {
+        return newKeyPairLock(new GordianCorePasswordLockSpec(), pKeyPair, pPassword);
+    }
+
+    @Override
+    public GordianKeyPairLock newKeyPairLock(final GordianNewPasswordLockSpec pLockSpec,
                                              final GordianKeyPair pKeyPair,
                                              final char[] pPassword) throws GordianException {
         /* Check the passwordLockSpec */
@@ -252,7 +277,7 @@ public class GordianCoreLockFactory
      * @param pSpec the passwoerdLockSpec
      * @throws GordianException on error
      */
-    public void checkPasswordLockSpec(final GordianPasswordLockSpec pSpec) throws GordianException {
+    public void checkPasswordLockSpec(final GordianNewPasswordLockSpec pSpec) throws GordianException {
         /* Check validity of PasswordLockSpec */
         if (!validPasswordLockSpec(pSpec)) {
             throw new GordianDataException(GordianBaseData.getInvalidText(pSpec));
@@ -265,7 +290,7 @@ public class GordianCoreLockFactory
      * @param pSpec the passwordLockSpec
      * @return true/false
      */
-    private static boolean validPasswordLockSpec(final GordianPasswordLockSpec pSpec) {
+    private static boolean validPasswordLockSpec(final GordianNewPasswordLockSpec pSpec) {
         /* Check for invalid spec */
         if (pSpec == null || !pSpec.isValid()) {
             return false;

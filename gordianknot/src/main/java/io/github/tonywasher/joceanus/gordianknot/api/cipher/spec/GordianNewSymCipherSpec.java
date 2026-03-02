@@ -20,14 +20,8 @@ package io.github.tonywasher.joceanus.gordianknot.api.cipher.spec;
 /**
  * The SymCipherSpec class.
  */
-public interface GordianNewSymCipherSpec {
-    /**
-     * Obtain the symKeySpec.
-     *
-     * @return the spec
-     */
-    GordianNewSymKeySpec getKeySpec();
-
+public interface GordianNewSymCipherSpec
+        extends GordianNewCipherSpec<GordianNewSymKeySpec> {
     /**
      * Obtain the cipherMode.
      *
@@ -41,25 +35,4 @@ public interface GordianNewSymCipherSpec {
      * @return the padding
      */
     GordianNewPadding getPadding();
-
-    /**
-     * Does the cipher need an IV?
-     *
-     * @return true/false
-     */
-    boolean needsIV();
-
-    /**
-     * Obtain the IV length for the cipher.
-     *
-     * @return the IV length
-     */
-    int getIVLength();
-
-    /**
-     * Is the symCipherSpec valid?
-     *
-     * @return true/false.
-     */
-    boolean isValid();
 }

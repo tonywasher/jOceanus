@@ -17,8 +17,8 @@
 package io.github.tonywasher.joceanus.gordianknot.impl.jca;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestSubSpec.GordianDigestState;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSubSpec.GordianNewDigestState;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignature;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignatureSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignatureType;
@@ -27,6 +27,7 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFacto
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.sign.GordianCompositeSigner;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.sign.GordianCoreSignatureFactory;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianCoreDigestSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaSignature.JcaDSASignature;
 import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaSignature.JcaEdDSASignature;
 import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaSignature.JcaFalconSignature;
@@ -152,7 +153,7 @@ public class JcaSignatureFactory
      */
     private static boolean validRSASignature(final GordianSignatureSpec pSpec) {
         /* Switch on DigestType */
-        final GordianDigestSpec myDigest = pSpec.getDigestSpec();
+        final GordianNewDigestSpec myDigest = pSpec.getDigestSpec();
         switch (myDigest.getDigestType()) {
             case SHA1:
             case SHA2:
@@ -182,7 +183,7 @@ public class JcaSignatureFactory
      */
     private static boolean validRSASHAKESignature(final GordianSignatureSpec pSpec) {
         /* Must be pure SHAKE */
-        final GordianDigestSpec myDigest = pSpec.getDigestSpec();
+        final GordianNewDigestSpec myDigest = pSpec.getDigestSpec();
         if (!pSpec.getSignatureType().isPSS()) {
             return false;
         }
@@ -190,9 +191,9 @@ public class JcaSignatureFactory
         /* Switch on SignatureType */
         switch (pSpec.getSignatureType()) {
             case PSS128:
-                return GordianDigestState.STATE128.equals(myDigest.getDigestState());
+                return GordianNewDigestState.STATE128.equals(myDigest.getDigestState());
             case PSS256:
-                return GordianDigestState.STATE256.equals(myDigest.getDigestState());
+                return GordianNewDigestState.STATE256.equals(myDigest.getDigestState());
             default:
                 return false;
         }
@@ -206,7 +207,7 @@ public class JcaSignatureFactory
      */
     private static boolean validECSignature(final GordianSignatureSpec pSpec) {
         /* Switch on DigestType */
-        final GordianDigestSpec myDigest = pSpec.getDigestSpec();
+        final GordianCoreDigestSpec myDigest = (GordianCoreDigestSpec) pSpec.getDigestSpec();
         switch (myDigest.getDigestType()) {
             case SHA2:
                 return !myDigest.isSha2Hybrid();
@@ -227,7 +228,7 @@ public class JcaSignatureFactory
      */
     private static boolean validDSASignature(final GordianSignatureSpec pSpec) {
         /* Switch on DigestType */
-        final GordianDigestSpec myDigest = pSpec.getDigestSpec();
+        final GordianCoreDigestSpec myDigest = (GordianCoreDigestSpec) pSpec.getDigestSpec();
         switch (myDigest.getDigestType()) {
             case SHA2:
                 return !myDigest.isSha2Hybrid();

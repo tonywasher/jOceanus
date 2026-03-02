@@ -21,6 +21,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.base.GordianKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKey;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
+import io.github.tonywasher.joceanus.gordianknot.api.keyset.spec.GordianNewKeySetSpec;
 
 import java.security.spec.X509EncodedKeySpec;
 
@@ -33,7 +34,7 @@ public interface GordianKeySet {
      *
      * @return the keySetSpec
      */
-    GordianKeySetSpec getKeySetSpec();
+    GordianNewKeySetSpec getKeySetSpec();
 
     /**
      * Create a keySetCipher.

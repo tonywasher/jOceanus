@@ -20,14 +20,8 @@ package io.github.tonywasher.joceanus.gordianknot.api.cipher.spec;
 /**
  * The StreamCipherSpec class.
  */
-public interface GordianNewStreamCipherSpec {
-    /**
-     * Obtain the symKeySpec.
-     *
-     * @return the spec
-     */
-    GordianNewStreamKeySpec getKeySpec();
-
+public interface GordianNewStreamCipherSpec
+        extends GordianNewCipherSpec<GordianNewStreamKeySpec> {
     /**
      * Is the cipherSpec explicitly an AEAD variant?
      *
@@ -42,24 +36,4 @@ public interface GordianNewStreamCipherSpec {
      */
     boolean isAEAD();
 
-    /**
-     * Does the cipher need an IV?
-     *
-     * @return true/false
-     */
-    boolean needsIV();
-
-    /**
-     * Obtain the IV length for the cipher.
-     *
-     * @return the IV length
-     */
-    int getIVLength();
-
-    /**
-     * Is the symCipherSpec valid?
-     *
-     * @return true/false.
-     */
-    boolean isValid();
 }

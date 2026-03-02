@@ -16,10 +16,21 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.api.cipher;
 
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewPadding;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymCipherSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher.GordianCoreSymCipherSpecBuilder;
+
 /**
  * The SymCipherSpec Builder class.
  */
 public final class GordianSymCipherSpecBuilder {
+    /**
+     * SymCipherSpecBuilder.
+     */
+    private static final GordianNewSymCipherSpecBuilder BUILDER = GordianCoreSymCipherSpecBuilder.newInstance();
+
     /**
      * Private constructor.
      */
@@ -33,9 +44,9 @@ public final class GordianSymCipherSpecBuilder {
      * @param pPadding the padding
      * @return the cipherSpec
      */
-    public static GordianSymCipherSpec ecb(final GordianSymKeySpec pKeySpec,
-                                           final GordianPadding pPadding) {
-        return new GordianSymCipherSpec(pKeySpec, GordianCipherMode.ECB, pPadding);
+    public static GordianNewSymCipherSpec ecb(final GordianNewSymKeySpec pKeySpec,
+                                              final GordianNewPadding pPadding) {
+        return BUILDER.ecb(pKeySpec, pPadding);
     }
 
     /**
@@ -45,9 +56,9 @@ public final class GordianSymCipherSpecBuilder {
      * @param pPadding the padding
      * @return the cipherSpec
      */
-    public static GordianSymCipherSpec cbc(final GordianSymKeySpec pKeySpec,
-                                           final GordianPadding pPadding) {
-        return new GordianSymCipherSpec(pKeySpec, GordianCipherMode.CBC, pPadding);
+    public static GordianNewSymCipherSpec cbc(final GordianNewSymKeySpec pKeySpec,
+                                              final GordianNewPadding pPadding) {
+        return BUILDER.cbc(pKeySpec, pPadding);
     }
 
     /**
@@ -56,8 +67,8 @@ public final class GordianSymCipherSpecBuilder {
      * @param pKeySpec the keySpec
      * @return the cipherSpec
      */
-    public static GordianSymCipherSpec cfb(final GordianSymKeySpec pKeySpec) {
-        return new GordianSymCipherSpec(pKeySpec, GordianCipherMode.CFB, GordianPadding.NONE);
+    public static GordianNewSymCipherSpec cfb(final GordianNewSymKeySpec pKeySpec) {
+        return BUILDER.cfb(pKeySpec);
     }
 
     /**
@@ -66,8 +77,8 @@ public final class GordianSymCipherSpecBuilder {
      * @param pKeySpec the keySpec
      * @return the cipherSpec
      */
-    public static GordianSymCipherSpec gcfb(final GordianSymKeySpec pKeySpec) {
-        return new GordianSymCipherSpec(pKeySpec, GordianCipherMode.GCFB, GordianPadding.NONE);
+    public static GordianNewSymCipherSpec gcfb(final GordianNewSymKeySpec pKeySpec) {
+        return BUILDER.gcfb(pKeySpec);
     }
 
     /**
@@ -76,8 +87,8 @@ public final class GordianSymCipherSpecBuilder {
      * @param pKeySpec the keySpec
      * @return the cipherSpec
      */
-    public static GordianSymCipherSpec ofb(final GordianSymKeySpec pKeySpec) {
-        return new GordianSymCipherSpec(pKeySpec, GordianCipherMode.OFB, GordianPadding.NONE);
+    public static GordianNewSymCipherSpec ofb(final GordianNewSymKeySpec pKeySpec) {
+        return BUILDER.ofb(pKeySpec);
     }
 
     /**
@@ -86,8 +97,8 @@ public final class GordianSymCipherSpecBuilder {
      * @param pKeySpec the keySpec
      * @return the cipherSpec
      */
-    public static GordianSymCipherSpec gofb(final GordianSymKeySpec pKeySpec) {
-        return new GordianSymCipherSpec(pKeySpec, GordianCipherMode.GOFB, GordianPadding.NONE);
+    public static GordianNewSymCipherSpec gofb(final GordianNewSymKeySpec pKeySpec) {
+        return BUILDER.gofb(pKeySpec);
     }
 
     /**
@@ -96,8 +107,8 @@ public final class GordianSymCipherSpecBuilder {
      * @param pKeySpec the keySpec
      * @return the cipherSpec
      */
-    public static GordianSymCipherSpec sic(final GordianSymKeySpec pKeySpec) {
-        return new GordianSymCipherSpec(pKeySpec, GordianCipherMode.SIC, GordianPadding.NONE);
+    public static GordianNewSymCipherSpec sic(final GordianNewSymKeySpec pKeySpec) {
+        return BUILDER.sic(pKeySpec);
     }
 
     /**
@@ -106,8 +117,8 @@ public final class GordianSymCipherSpecBuilder {
      * @param pKeySpec the keySpec
      * @return the cipherSpec
      */
-    public static GordianSymCipherSpec kctr(final GordianSymKeySpec pKeySpec) {
-        return new GordianSymCipherSpec(pKeySpec, GordianCipherMode.KCTR, GordianPadding.NONE);
+    public static GordianNewSymCipherSpec kctr(final GordianNewSymKeySpec pKeySpec) {
+        return BUILDER.kctr(pKeySpec);
     }
 
     /**
@@ -116,8 +127,8 @@ public final class GordianSymCipherSpecBuilder {
      * @param pKeySpec the keySpec
      * @return the cipherSpec
      */
-    public static GordianSymCipherSpec ccm(final GordianSymKeySpec pKeySpec) {
-        return new GordianSymCipherSpec(pKeySpec, GordianCipherMode.CCM, GordianPadding.NONE);
+    public static GordianNewSymCipherSpec ccm(final GordianNewSymKeySpec pKeySpec) {
+        return BUILDER.ccm(pKeySpec);
     }
 
     /**
@@ -126,8 +137,8 @@ public final class GordianSymCipherSpecBuilder {
      * @param pKeySpec the keySpec
      * @return the cipherSpec
      */
-    public static GordianSymCipherSpec kccm(final GordianSymKeySpec pKeySpec) {
-        return new GordianSymCipherSpec(pKeySpec, GordianCipherMode.KCCM, GordianPadding.NONE);
+    public static GordianNewSymCipherSpec kccm(final GordianNewSymKeySpec pKeySpec) {
+        return BUILDER.kccm(pKeySpec);
     }
 
     /**
@@ -136,8 +147,8 @@ public final class GordianSymCipherSpecBuilder {
      * @param pKeySpec the keySpec
      * @return the cipherSpec
      */
-    public static GordianSymCipherSpec gcm(final GordianSymKeySpec pKeySpec) {
-        return new GordianSymCipherSpec(pKeySpec, GordianCipherMode.GCM, GordianPadding.NONE);
+    public static GordianNewSymCipherSpec gcm(final GordianNewSymKeySpec pKeySpec) {
+        return BUILDER.gcm(pKeySpec);
     }
 
     /**
@@ -146,8 +157,8 @@ public final class GordianSymCipherSpecBuilder {
      * @param pKeySpec the keySpec
      * @return the cipherSpec
      */
-    public static GordianSymCipherSpec kgcm(final GordianSymKeySpec pKeySpec) {
-        return new GordianSymCipherSpec(pKeySpec, GordianCipherMode.KGCM, GordianPadding.NONE);
+    public static GordianNewSymCipherSpec kgcm(final GordianNewSymKeySpec pKeySpec) {
+        return BUILDER.kgcm(pKeySpec);
     }
 
     /**
@@ -156,8 +167,8 @@ public final class GordianSymCipherSpecBuilder {
      * @param pKeySpec the keySpec
      * @return the cipherSpec
      */
-    public static GordianSymCipherSpec eax(final GordianSymKeySpec pKeySpec) {
-        return new GordianSymCipherSpec(pKeySpec, GordianCipherMode.EAX, GordianPadding.NONE);
+    public static GordianNewSymCipherSpec eax(final GordianNewSymKeySpec pKeySpec) {
+        return BUILDER.eax(pKeySpec);
     }
 
     /**
@@ -166,7 +177,7 @@ public final class GordianSymCipherSpecBuilder {
      * @param pKeySpec the keySpec
      * @return the cipherSpec
      */
-    public static GordianSymCipherSpec ocb(final GordianSymKeySpec pKeySpec) {
-        return new GordianSymCipherSpec(pKeySpec, GordianCipherMode.OCB, GordianPadding.NONE);
+    public static GordianNewSymCipherSpec ocb(final GordianNewSymKeySpec pKeySpec) {
+        return BUILDER.ocb(pKeySpec);
     }
 }

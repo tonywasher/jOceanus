@@ -23,8 +23,8 @@ import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairUsage;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairUse;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigest;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianIOException;
 import org.bouncycastle.asn1.ASN1BitString;
@@ -221,8 +221,9 @@ public final class GordianCertUtils {
     static byte[] createKeyId(final GordianFactory pFactory,
                               final byte[] pEncodedPublicKey) throws GordianException {
         /* Build the hash */
-        final GordianDigestSpec mySpec = GordianDigestSpecBuilder.sha3(GordianLength.LEN_256);
         final GordianDigestFactory myDigests = pFactory.getDigestFactory();
+        final GordianNewDigestSpecBuilder myBuilder = myDigests.newDigestSpecBuilder();
+        final GordianNewDigestSpec mySpec = myBuilder.sha3(GordianLength.LEN_256);
         final GordianDigest myDigest = myDigests.createDigest(mySpec);
         myDigest.update(pEncodedPublicKey);
 

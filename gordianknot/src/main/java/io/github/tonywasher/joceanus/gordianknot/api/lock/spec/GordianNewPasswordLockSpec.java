@@ -24,6 +24,21 @@ import io.github.tonywasher.joceanus.gordianknot.api.keyset.spec.GordianNewKeySe
  */
 public interface GordianNewPasswordLockSpec {
     /**
+     * Minimum iterations.
+     */
+    Integer MINIMUM_ITERATIONS = 1;
+
+    /**
+     * Maximum iterations.
+     */
+    Integer MAXIMUM_ITERATIONS = 64;
+
+    /**
+     * Default iterations.
+     */
+    Integer DEFAULT_ITERATIONS = 8;
+
+    /**
      * Access the number of Iterations.
      *
      * @return the number of iterations

@@ -53,6 +53,20 @@ public interface GordianNewSymCipherSpecBuilder {
     GordianNewSymCipherSpec build();
 
     /**
+     * Create a generic symKey cipherSpec.
+     *
+     * @param pKeySpec the keySpec
+     * @param pMode    the mode
+     * @param pPadding the padding
+     * @return the cipherSpec
+     */
+    default GordianNewSymCipherSpec generic(final GordianNewSymKeySpec pKeySpec,
+                                            final GordianNewCipherMode pMode,
+                                            final GordianNewPadding pPadding) {
+        return withKeySpec(pKeySpec).withMode(pMode).withPadding(pPadding).build();
+    }
+
+    /**
      * Create an ECB symKey cipherSpec.
      *
      * @param pKeySpec the keySpec

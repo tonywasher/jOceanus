@@ -21,18 +21,19 @@ import io.github.tonywasher.joceanus.gordianknot.api.base.GordianKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherParameters;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianPBESpec;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamAEADCipher;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamCipher;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamCipherSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamCipherSpecBuilder;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewPBESpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKey;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKeyLengths;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.cipher.GordianCoreCipherFactory;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher.GordianCoreStreamCipherSpec;
 import io.github.tonywasher.joceanus.gordianknot.junit.regression.SymmetricStore.FactoryStreamCipherSpec;
 import io.github.tonywasher.joceanus.gordianknot.junit.regression.SymmetricStore.FactoryStreamKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.junit.regression.SymmetricStore.FactoryStreamPBECipherSpec;
@@ -194,7 +195,6 @@ public class SymmetricStreamScripts {
      */
     private static void checkStreamCipher(final FactoryStreamCipherSpec pCipherSpec) throws GordianException {
         /* If this cipher is in fact an AEAD cipher */
-        /* Elephant, ISAP, PhotonBeetle and Xoodyak do not currently support AEADParameters so treat as non-AEAD for the time being */
         if (pCipherSpec.getSpec().isAEAD()) {
             /* Test as AEAD cipher */
             checkStreamAADCipher(pCipherSpec);
@@ -204,22 +204,22 @@ public class SymmetricStreamScripts {
         /* Access details */
         final FactoryStreamKeySpec myOwner = pCipherSpec.getOwner();
         final GordianFactory myFactory = myOwner.getFactory();
-        final GordianStreamKeySpec myKeySpec = myOwner.getSpec();
+        final GordianNewStreamKeySpec myKeySpec = myOwner.getSpec();
         final GordianCipherFactory myCipherFactory = myFactory.getCipherFactory();
-        final GordianKey<GordianStreamKeySpec> myStreamKey = myOwner.getKey();
+        final GordianKey<GordianNewStreamKeySpec> myStreamKey = myOwner.getKey();
 
         /* Access Data */
         final byte[] myTestData = SymmetricTest.getTestData();
 
         /* Create the Cipher */
-        final GordianStreamCipherSpec myCipherSpec = GordianStreamCipherSpecBuilder.stream(myKeySpec);
+        final GordianCoreStreamCipherSpec myCipherSpec = (GordianCoreStreamCipherSpec) GordianStreamCipherSpecBuilder.stream(myKeySpec);
         final GordianStreamCipher myCipher = myCipherFactory.createStreamKeyCipher(myCipherSpec);
         GordianCipherParameters myParms = GordianCipherParameters.keyWithRandomNonce(myStreamKey);
         myCipher.initForEncrypt(myParms);
         final byte[] myIV = myCipher.getInitVector();
         myParms = GordianCipherParameters.keyAndNonce(myStreamKey, myIV);
         final byte[] myEncrypted = myCipher.finish(myTestData);
-        if (myCipherSpec.getKeyType().getStreamKeyType().needsReInit()) {
+        if (myCipherSpec.getCoreKeySpec().getCoreStreamKeyType().needsReInit()) {
             myCipher.initForEncrypt(myParms);
         }
         final byte[] myEncrypted2 = myCipher.finish(myTestData);
@@ -239,11 +239,11 @@ public class SymmetricStreamScripts {
     private static void multiStreamCipher(final FactoryStreamCipherSpec pCipherSpec) throws GordianException {
         /* Create the cipher */
         final GordianFactory myFactory = pCipherSpec.getFactory();
-        final GordianStreamCipherSpec mySpec = pCipherSpec.getSpec();
+        final GordianNewStreamCipherSpec mySpec = pCipherSpec.getSpec();
         final GordianCipherFactory myCipherFactory = myFactory.getCipherFactory();
         final GordianStreamCipher myCipher1 = myCipherFactory.createStreamKeyCipher(mySpec);
         final GordianStreamCipher myCipher2 = myCipherFactory.createStreamKeyCipher(mySpec);
-        final GordianKey<GordianStreamKeySpec> myKey = pCipherSpec.getKey();
+        final GordianKey<GordianNewStreamKeySpec> myKey = pCipherSpec.getKey();
 
         /* Access the test data */
         final byte[] myBytes = SymmetricTest.getTestData();
@@ -306,8 +306,8 @@ public class SymmetricStreamScripts {
         /* Access details */
         final GordianFactory myFactory = pCipherSpec.getFactory();
         final FactoryStreamCipherSpec myOwner = pCipherSpec.getOwner();
-        final GordianStreamCipherSpec myCipherSpec = myOwner.getSpec();
-        final GordianPBESpec myPBESpec = pCipherSpec.getSpec();
+        final GordianNewStreamCipherSpec myCipherSpec = myOwner.getSpec();
+        final GordianNewPBESpec myPBESpec = pCipherSpec.getSpec();
         final GordianCipherFactory myCipherFactory = myFactory.getCipherFactory();
 
         /* Access Data */
@@ -337,9 +337,9 @@ public class SymmetricStreamScripts {
     private static void checkStreamAADCipher(final FactoryStreamCipherSpec pCipherSpec) throws GordianException {
         /* Access details */
         final GordianFactory myFactory = pCipherSpec.getFactory();
-        final GordianStreamCipherSpec mySpec = pCipherSpec.getSpec();
+        final GordianNewStreamCipherSpec mySpec = pCipherSpec.getSpec();
         final GordianCipherFactory myCipherFactory = myFactory.getCipherFactory();
-        final GordianKey<GordianStreamKeySpec> myKey = pCipherSpec.getKey();
+        final GordianKey<GordianNewStreamKeySpec> myKey = pCipherSpec.getKey();
 
         /* Access Data */
         final byte[] myTestData = SymmetricTest.getTestData();
@@ -368,14 +368,14 @@ public class SymmetricStreamScripts {
         /* Create the macs */
         final GordianFactory myFactory = pKeySpec.getFactory();
         final GordianFactory myPartner = pKeySpec.getPartner();
-        final GordianStreamKeySpec mySpec = pKeySpec.getSpec();
-        final GordianStreamCipherSpec myCipherSpec = GordianStreamCipherSpecBuilder.stream(mySpec);
+        final GordianNewStreamKeySpec mySpec = pKeySpec.getSpec();
+        final GordianNewStreamCipherSpec myCipherSpec = GordianStreamCipherSpecBuilder.stream(mySpec);
         final GordianCipherFactory myCipherFactory = myFactory.getCipherFactory();
         final GordianStreamCipher myCipher = myCipherFactory.createStreamKeyCipher(myCipherSpec);
         final GordianCipherFactory myPartnerFactory = myPartner.getCipherFactory();
         final GordianStreamCipher myPartnerCipher = myPartnerFactory.createStreamKeyCipher(myCipherSpec);
-        final GordianKey<GordianStreamKeySpec> myKey = pKeySpec.getKey();
-        final GordianKey<GordianStreamKeySpec> myPartnerKey = pKeySpec.getPartnerKey();
+        final GordianKey<GordianNewStreamKeySpec> myKey = pKeySpec.getKey();
+        final GordianKey<GordianNewStreamKeySpec> myPartnerKey = pKeySpec.getPartnerKey();
 
         /* Create message and buffers  */
         final byte[] myBytes = SymmetricTest.getTestData();
@@ -400,11 +400,11 @@ public class SymmetricStreamScripts {
      */
     private static void profileStreamKey(final FactoryStreamKeySpec pStreamKeySpec) throws GordianException {
         final GordianFactory myFactory = pStreamKeySpec.getFactory();
-        final GordianStreamKeySpec myKeySpec = pStreamKeySpec.getSpec();
+        final GordianNewStreamKeySpec myKeySpec = pStreamKeySpec.getSpec();
         final GordianCipherFactory myCipherFactory = myFactory.getCipherFactory();
-        final GordianKey<GordianStreamKeySpec> myStreamKey = pStreamKeySpec.getKey();
+        final GordianKey<GordianNewStreamKeySpec> myStreamKey = pStreamKeySpec.getKey();
         byte[] myBytes = SymmetricTest.getTestData();
-        final GordianStreamCipherSpec myCipherSpec = GordianStreamCipherSpecBuilder.stream(myKeySpec);
+        final GordianNewStreamCipherSpec myCipherSpec = GordianStreamCipherSpecBuilder.stream(myKeySpec);
         final GordianStreamCipher myCipher = myCipherFactory.createStreamKeyCipher(myCipherSpec);
         GordianCipherParameters myParms = GordianCipherParameters.keyWithRandomNonce(myStreamKey);
         final long myStart = System.nanoTime();
@@ -451,7 +451,7 @@ public class SymmetricStreamScripts {
         Assertions.assertNotNull(myId, "Unknown AlgorithmId for " + pSpec.getSpec());
 
         /* Check unique mapping */
-        final GordianCipherSpec<?> mySpec = myFactory.getCipherSpecForIdentifier(myId);
+        final GordianNewCipherSpec<?> mySpec = myFactory.getCipherSpecForIdentifier(myId);
         Assertions.assertEquals(pSpec.getSpec(), mySpec, "Invalid mapping for  " + pSpec.getSpec());
     }
 }

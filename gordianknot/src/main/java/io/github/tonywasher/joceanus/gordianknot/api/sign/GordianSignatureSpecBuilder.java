@@ -17,8 +17,8 @@
 package io.github.tonywasher.joceanus.gordianknot.api.sign;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairType;
 
 import java.util.Arrays;
@@ -42,7 +42,7 @@ public final class GordianSignatureSpecBuilder {
      * @return the SignatureSpec
      */
     public static GordianSignatureSpec rsa(final GordianSignatureType pSignatureType,
-                                           final GordianDigestSpec pDigestSpec) {
+                                           final GordianNewDigestSpec pDigestSpec) {
         return new GordianSignatureSpec(GordianKeyPairType.RSA, pSignatureType, pDigestSpec);
     }
 
@@ -54,7 +54,7 @@ public final class GordianSignatureSpecBuilder {
      * @return the SignatureSpec
      */
     public static GordianSignatureSpec dsa(final GordianSignatureType pSignatureType,
-                                           final GordianDigestSpec pDigestSpec) {
+                                           final GordianNewDigestSpec pDigestSpec) {
         return new GordianSignatureSpec(GordianKeyPairType.DSA, pSignatureType, pDigestSpec);
     }
 
@@ -66,7 +66,7 @@ public final class GordianSignatureSpecBuilder {
      * @return the SignatureSpec
      */
     public static GordianSignatureSpec ec(final GordianSignatureType pSignatureType,
-                                          final GordianDigestSpec pDigestSpec) {
+                                          final GordianNewDigestSpec pDigestSpec) {
         return new GordianSignatureSpec(GordianKeyPairType.EC, pSignatureType, pDigestSpec);
     }
 
@@ -76,7 +76,7 @@ public final class GordianSignatureSpecBuilder {
      * @param pDigestSpec the digestSpec
      * @return the SignatureSpec
      */
-    public static GordianSignatureSpec sm2(final GordianDigestSpec pDigestSpec) {
+    public static GordianSignatureSpec sm2(final GordianNewDigestSpec pDigestSpec) {
         return new GordianSignatureSpec(GordianKeyPairType.SM2, pDigestSpec);
     }
 
@@ -168,7 +168,7 @@ public final class GordianSignatureSpecBuilder {
      * @param pDigest the digestSpec
      * @return the SignatureSpec
      */
-    public static GordianSignatureSpec picnic(final GordianDigestSpec pDigest) {
+    public static GordianSignatureSpec picnic(final GordianNewDigestSpec pDigest) {
         return new GordianSignatureSpec(GordianKeyPairType.PICNIC, GordianSignatureType.NATIVE, pDigest);
     }
 

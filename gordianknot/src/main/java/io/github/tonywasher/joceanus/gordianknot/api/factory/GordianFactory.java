@@ -23,7 +23,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySet;
 import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySetFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.lock.GordianLock;
 import io.github.tonywasher.joceanus.gordianknot.api.lock.GordianLockFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.lock.GordianPasswordLockSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.lock.spec.GordianNewPasswordLockSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.random.GordianRandomFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.zip.GordianZipFactory;
@@ -122,11 +122,8 @@ public interface GordianFactory {
      * @return the factoryLock
      * @throws GordianException on error
      */
-    default GordianFactoryLock newFactoryLock(final GordianFactory pFactoryToLock,
-                                              final char[] pPassword) throws GordianException {
-        /* Create the factoryLock */
-        return newFactoryLock(pFactoryToLock, new GordianPasswordLockSpec(), pPassword);
-    }
+    GordianFactoryLock newFactoryLock(GordianFactory pFactoryToLock,
+                                      char[] pPassword) throws GordianException;
 
     /**
      * Create a new factoryLock for a factory.
@@ -138,7 +135,7 @@ public interface GordianFactory {
      * @throws GordianException on error
      */
     GordianFactoryLock newFactoryLock(GordianFactory pFactoryToLock,
-                                      GordianPasswordLockSpec pLockSpec,
+                                      GordianNewPasswordLockSpec pLockSpec,
                                       char[] pPassword) throws GordianException;
 
     /**
@@ -149,11 +146,8 @@ public interface GordianFactory {
      * @return the factoryLock
      * @throws GordianException on error
      */
-    default GordianFactoryLock newFactoryLock(final GordianFactoryType pFactoryType,
-                                              final char[] pPassword) throws GordianException {
-        /* Create the factoryLock */
-        return newFactoryLock(new GordianPasswordLockSpec(), pFactoryType, pPassword);
-    }
+    GordianFactoryLock newFactoryLock(GordianFactoryType pFactoryType,
+                                      char[] pPassword) throws GordianException;
 
     /**
      * Create a new factoryLock for a new random factory.
@@ -164,7 +158,7 @@ public interface GordianFactory {
      * @return the factoryLock
      * @throws GordianException on error
      */
-    GordianFactoryLock newFactoryLock(GordianPasswordLockSpec pLockSpec,
+    GordianFactoryLock newFactoryLock(GordianNewPasswordLockSpec pLockSpec,
                                       GordianFactoryType pFactoryType,
                                       char[] pPassword) throws GordianException;
 

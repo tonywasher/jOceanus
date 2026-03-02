@@ -25,11 +25,11 @@ import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherParamet
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherParameters.GordianKeyCipherParameters;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherParameters.GordianNonceParameters;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherParameters.GordianPBECipherParameters;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianPBESpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianPBESpec.GordianPBEArgon2Spec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianPBESpec.GordianPBEDigestAndCountSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianPBESpec.GordianPBESCryptSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewPBESpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewPBESpec.GordianNewPBEArgon2Spec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewPBESpec.GordianNewPBEDigestAndCountSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewPBESpec.GordianNewPBESCryptSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseData;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
@@ -68,7 +68,7 @@ public class GordianCoreCipherParameters<T extends GordianKeySpec> {
     /**
      * The cipherSpec.
      */
-    private final GordianCipherSpec<T> theSpec;
+    private final GordianNewCipherSpec<T> theSpec;
 
     /**
      * The secureRandom.
@@ -103,7 +103,7 @@ public class GordianCoreCipherParameters<T extends GordianKeySpec> {
     /**
      * PBESpec.
      */
-    private GordianPBESpec thePBESpec;
+    private GordianNewPBESpec thePBESpec;
 
     /**
      * Constructor.
@@ -112,7 +112,7 @@ public class GordianCoreCipherParameters<T extends GordianKeySpec> {
      * @param pCipherSpec the CipherSpec
      */
     GordianCoreCipherParameters(final GordianBaseFactory pFactory,
-                                final GordianCipherSpec<T> pCipherSpec) {
+                                final GordianNewCipherSpec<T> pCipherSpec) {
         theFactory = pFactory;
         theSpec = pCipherSpec;
         theRandom = theFactory.getRandomSource();
@@ -159,10 +159,9 @@ public class GordianCoreCipherParameters<T extends GordianKeySpec> {
      *
      * @return the pbeSpec
      */
-    GordianPBESpec getPBESpec() {
+    GordianNewPBESpec getPBESpec() {
         return thePBESpec;
     }
-
 
     /**
      * Process cipherParameters.
@@ -197,7 +196,7 @@ public class GordianCoreCipherParameters<T extends GordianKeySpec> {
      */
     private void processPBEParameters(final GordianPBECipherParameters pParams) throws GordianException {
         /* Check that the PBE parameters are supported */
-        final GordianPBESpec myPBESpec = pParams.getPBESpec();
+        final GordianNewPBESpec myPBESpec = pParams.getPBESpec();
         final GordianPBECipherSpec<T> myPBECipherSpec = new GordianPBECipherSpec<>(myPBESpec, theSpec);
         final GordianBaseCipherFactory myCipherFactory = (GordianBaseCipherFactory) theFactory.getCipherFactory();
         if (!myCipherFactory.supportedPBECipherSpecs().test(myPBECipherSpec)) {
@@ -247,7 +246,7 @@ public class GordianCoreCipherParameters<T extends GordianKeySpec> {
         /* Create generator if needed */
         if (theGenerator == null) {
             final GordianCipherFactory myFactory = theFactory.getCipherFactory();
-            theGenerator = (GordianCoreKeyGenerator<T>) myFactory.getKeyGenerator(theSpec.getKeyType());
+            theGenerator = (GordianCoreKeyGenerator<T>) myFactory.getKeyGenerator(theSpec.getKeySpec());
         }
 
         /* Create the key */
@@ -333,7 +332,7 @@ public class GordianCoreCipherParameters<T extends GordianKeySpec> {
         byte[] myPassword = null;
         try {
             /* Create the digest */
-            final GordianPBEDigestAndCountSpec mySpec = (GordianPBEDigestAndCountSpec) thePBESpec;
+            final GordianNewPBEDigestAndCountSpec mySpec = (GordianNewPBEDigestAndCountSpec) thePBESpec;
             final Digest myDigest = new SHA512Digest();
 
             /* Create the generator and initialise it */
@@ -342,7 +341,7 @@ public class GordianCoreCipherParameters<T extends GordianKeySpec> {
             myGenerator.init(myPassword, thePBESalt, mySpec.getIterationCount());
 
             /* Generate the parameters */
-            final int myKeyLen = theSpec.getKeyType().getKeyLength().getLength();
+            final int myKeyLen = theSpec.getKeySpec().getKeyLength().getLength();
             final int myIVLen = theSpec.needsIV() ? Byte.SIZE * theSpec.getIVLength() : 0;
             return myIVLen == 0
                     ? myGenerator.generateDerivedParameters(myKeyLen)
@@ -365,7 +364,7 @@ public class GordianCoreCipherParameters<T extends GordianKeySpec> {
         byte[] myPassword = null;
         try {
             /* Create the digest */
-            final GordianPBEDigestAndCountSpec mySpec = (GordianPBEDigestAndCountSpec) thePBESpec;
+            final GordianNewPBEDigestAndCountSpec mySpec = (GordianNewPBEDigestAndCountSpec) thePBESpec;
             final Digest myDigest = new SHA512Digest();
 
             /* Create the generator and initialise it */
@@ -374,7 +373,7 @@ public class GordianCoreCipherParameters<T extends GordianKeySpec> {
             myGenerator.init(myPassword, thePBESalt, mySpec.getIterationCount());
 
             /* Generate the parameters */
-            final int myKeyLen = theSpec.getKeyType().getKeyLength().getLength();
+            final int myKeyLen = theSpec.getKeySpec().getKeyLength().getLength();
             final int myIVLen = theSpec.needsIV() ? Byte.SIZE * theSpec.getIVLength() : 0;
             return myIVLen == 0
                     ? myGenerator.generateDerivedParameters(myKeyLen)
@@ -397,11 +396,11 @@ public class GordianCoreCipherParameters<T extends GordianKeySpec> {
         byte[] myPassword = null;
         try {
             /* Access the password as bytes */
-            final GordianPBESCryptSpec mySpec = (GordianPBESCryptSpec) thePBESpec;
+            final GordianNewPBESCryptSpec mySpec = (GordianNewPBESCryptSpec) thePBESpec;
             myPassword = PBEParametersGenerator.PKCS5PasswordToUTF8Bytes(pPassword);
 
             /* Generate the bytes */
-            final int myKeyLen = theSpec.getKeyType().getKeyLength().getByteLength();
+            final int myKeyLen = theSpec.getKeySpec().getKeyLength().getByteLength();
             final int myIVLen = theSpec.needsIV() ? theSpec.getIVLength() : 0;
             final int myBufLen = myIVLen + myKeyLen;
             final byte[] myBuffer = SCrypt.generate(myPassword, thePBESalt, mySpec.getCost(),
@@ -427,7 +426,7 @@ public class GordianCoreCipherParameters<T extends GordianKeySpec> {
      */
     private CipherParameters deriveArgon2Parameters(final char[] pPassword) {
         /* Create the parameters */
-        final GordianPBEArgon2Spec mySpec = (GordianPBEArgon2Spec) thePBESpec;
+        final GordianNewPBEArgon2Spec mySpec = (GordianNewPBEArgon2Spec) thePBESpec;
         final Argon2Parameters.Builder myBuilder = new Argon2Parameters.Builder();
         myBuilder.withSalt(thePBESalt);
         myBuilder.withIterations(mySpec.getIterationCount());
@@ -438,7 +437,7 @@ public class GordianCoreCipherParameters<T extends GordianKeySpec> {
         /* Generate the bytes */
         final Argon2BytesGenerator myGenerator = new Argon2BytesGenerator();
         myGenerator.init(myParams);
-        final int myKeyLen = theSpec.getKeyType().getKeyLength().getByteLength();
+        final int myKeyLen = theSpec.getKeySpec().getKeyLength().getByteLength();
         final int myIVLen = theSpec.needsIV() ? theSpec.getIVLength() : 0;
         final int myBufLen = myIVLen + myKeyLen;
         final byte[] myBuffer = new byte[myBufLen];
