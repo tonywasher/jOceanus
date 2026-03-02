@@ -23,7 +23,7 @@ import io.github.tonywasher.joceanus.themis.xanalysis.parser.ThemisXAnalysisPars
 import io.github.tonywasher.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisChar;
 import io.github.tonywasher.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance.ThemisXAnalysisClassInstance;
 import io.github.tonywasher.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance.ThemisXAnalysisTypeInstance;
-import io.github.tonywasher.joceanus.themis.xanalysis.parser.proj.ThemisXAnalysisMaven.ThemisXAnalysisMavenId;
+import io.github.tonywasher.joceanus.themis.xanalysis.parser.proj.ThemisXAnalysisMavenId;
 import io.github.tonywasher.joceanus.themis.xanalysis.parser.proj.ThemisXAnalysisProject;
 import io.github.tonywasher.joceanus.themis.xanalysis.parser.type.ThemisXAnalysisTypeClassInterface;
 
@@ -56,17 +56,20 @@ public class ThemisXAnalysisReflectJar
     /**
      * The External Classes map.
      */
-    private Map<String, ThemisXAnalysisReflectExternal> theExternalClasses;
+    private final Map<String, ThemisXAnalysisReflectExternal> theExternalClasses;
 
     /**
      * Constructor.
      *
-     * @param pParser the project parser.
+     * @param pParser   the project parser.
+     * @param pExternal classes the externalClass map.
      * @throws OceanusException on error
      */
-    public ThemisXAnalysisReflectJar(final ThemisXAnalysisParser pParser) throws OceanusException {
+    public ThemisXAnalysisReflectJar(final ThemisXAnalysisParser pParser,
+                                     final Map<String, ThemisXAnalysisReflectExternal> pExternal) throws OceanusException {
         /* Create URL list and create URL Loader */
         theProjectParser = pParser;
+        theExternalClasses = pExternal;
         final URL[] myUrls = determineURLList(pParser.getProject());
         theClassLoader = URLClassLoader.newInstance(myUrls);
     }
@@ -74,13 +77,11 @@ public class ThemisXAnalysisReflectJar
     /**
      * Process external class list.
      *
-     * @param pExternalClasses the external classes.
      * @throws OceanusException on error
      */
-    public void processExternalClasses(final Map<String, ThemisXAnalysisReflectExternal> pExternalClasses) throws OceanusException {
+    public void processExternalClasses() throws OceanusException {
         /* Extract the values as a separate list */
-        theExternalClasses = pExternalClasses;
-        final List<ThemisXAnalysisReflectExternal> myExternals = new ArrayList<>(pExternalClasses.values());
+        final List<ThemisXAnalysisReflectExternal> myExternals = new ArrayList<>(theExternalClasses.values());
 
         /* Loop through the list */
         for (ThemisXAnalysisReflectExternal myClass : myExternals) {
@@ -93,8 +94,74 @@ public class ThemisXAnalysisReflectJar
             myClass.setClassInstance(myInstance);
 
             /* Process ancestors */
-            processAncestors(myInstance);
+            processAncestors(myClass);
+
+            /* Process children */
+            processChildren(myLoaded.getClasses());
         }
+    }
+
+    /**
+     * Try a class as a java.lang class.
+     *
+     * @param pName the class name
+     * @return the loaded class or null if it did not exist
+     */
+    public ThemisXAnalysisReflectExternal tryJavaLang(final String pName) {
+        /* Create the javaLang name and try for the named class */
+        final String myFullName = ThemisXAnalysisReflectExternal.JAVALANG + pName;
+        return tryNamedClass(myFullName);
+    }
+
+    /**
+     * Try a class as a java.lang class.
+     *
+     * @param pName the class name
+     * @return the loaded class or null if it did not exist
+     */
+    public ThemisXAnalysisReflectExternal tryNamedClass(final String pName) {
+        /* Protect against exceptions */
+        try {
+            /* Load the external class */
+            final ThemisXAnalysisReflectExternal myExternal = theExternalClasses.get(pName);
+            if (myExternal == null) {
+                return loadNamedClass(pName);
+            }
+            return myExternal;
+
+            /* If we failed, just return null */
+        } catch (OceanusException e) {
+            return null;
+        }
+    }
+
+    /**
+     * Load the class.
+     *
+     * @param pFullName the fullName of the class
+     * @return the loaded class
+     * @throws OceanusException on error
+     */
+    private ThemisXAnalysisReflectExternal loadNamedClass(final String pFullName) throws OceanusException {
+        /* Load the external class */
+        final Class<?> myLoaded = loadClass(pFullName);
+
+        /* Create a resolved class based on the loaded class */
+        final BodyDeclaration<?> myResolved = buildClass(myLoaded);
+        final ThemisXAnalysisClassInstance myInstance = (ThemisXAnalysisClassInstance) theProjectParser.parseDeclaration(myResolved);
+        final ThemisXAnalysisReflectExternal myExternal = new ThemisXAnalysisReflectExternal(myInstance);
+
+        /* Store it as an external Class */
+        theExternalClasses.put(pFullName, myExternal);
+
+        /* Process ancestors */
+        processAncestors(myExternal);
+
+        /* Process children */
+        processChildren(myLoaded.getClasses());
+
+        /* return the class */
+        return myExternal;
     }
 
     /**
@@ -103,17 +170,20 @@ public class ThemisXAnalysisReflectJar
      * @param pExternal the external classes.
      * @throws OceanusException on error
      */
-    private void processAncestors(final ThemisXAnalysisClassInstance pExternal) throws OceanusException {
+    private void processAncestors(final ThemisXAnalysisReflectExternal pExternal) throws OceanusException {
+        /* Access aunderlying instance */
+        final ThemisXAnalysisClassInstance myInstance = pExternal.getClassInstance();
+
         /* Process all the extended classes */
-        for (ThemisXAnalysisTypeInstance myAncestor : pExternal.getExtends()) {
+        for (ThemisXAnalysisTypeInstance myAncestor : myInstance.getExtends()) {
             /* Process the ancestor */
-            processAncestor((ThemisXAnalysisTypeClassInterface) myAncestor);
+            pExternal.addAncestor(processAncestor((ThemisXAnalysisTypeClassInterface) myAncestor));
         }
 
         /* Process all the implemented classes */
-        for (ThemisXAnalysisTypeInstance myAncestor : pExternal.getImplements()) {
+        for (ThemisXAnalysisTypeInstance myAncestor : myInstance.getImplements()) {
             /* Process the ancestor */
-            processAncestor((ThemisXAnalysisTypeClassInterface) myAncestor);
+            pExternal.addAncestor(processAncestor((ThemisXAnalysisTypeClassInterface) myAncestor));
         }
     }
 
@@ -121,9 +191,10 @@ public class ThemisXAnalysisReflectJar
      * Process an ancestor.
      *
      * @param pAncestor the ancestor.
+     * @return the resolved ancestor
      * @throws OceanusException on error
      */
-    private void processAncestor(final ThemisXAnalysisTypeClassInterface pAncestor) throws OceanusException {
+    private ThemisXAnalysisReflectExternal processAncestor(final ThemisXAnalysisTypeClassInterface pAncestor) throws OceanusException {
         /* Access the name of the class and convert to period format */
         final String myFullName = pAncestor.getFullName().replace(ThemisXAnalysisChar.DOLLAR, ThemisXAnalysisChar.PERIOD);
 
@@ -131,22 +202,49 @@ public class ThemisXAnalysisReflectJar
         ThemisXAnalysisReflectExternal myExternal = theExternalClasses.get(myFullName);
         if (myExternal == null) {
             /* Load the external class */
-            final Class<?> myLoaded = loadClass(myFullName);
-
-            /* Create a resolved class based on the loaded class */
-            final BodyDeclaration<?> myResolved = buildClass(myLoaded);
-            final ThemisXAnalysisClassInstance myInstance = (ThemisXAnalysisClassInstance) theProjectParser.parseDeclaration(myResolved);
-            myExternal = new ThemisXAnalysisReflectExternal(myInstance);
-            theExternalClasses.put(myFullName, myExternal);
-
-            /* Process ancestors */
-            processAncestors(myInstance);
-
-            /* else known class */
-        } else {
-            /* Add link */
-            pAncestor.setClassInstance(myExternal);
+            myExternal = loadNamedClass(myFullName);
         }
+
+        /* Add link */
+        pAncestor.setClassInstance(myExternal);
+        return myExternal;
+    }
+
+    /**
+     * Process child classes.
+     *
+     * @param pChildren the children.
+     * @throws OceanusException on error
+     */
+    private void processChildren(final Class<?>[] pChildren) throws OceanusException {
+        /* Loop through the children */
+        for (Class<?> myChild : pChildren) {
+            /* Ignore private/anonymous and local classes */
+            final boolean isLocalAnon = myChild.isAnonymousClass() || myChild.isLocalClass();
+            final boolean isPrivate = ThemisXAnalysisReflectBaseUtils.isPrivate(myChild.getModifiers());
+            if (!isPrivate && !isLocalAnon) {
+                processChild(myChild);
+            }
+        }
+    }
+
+    /**
+     * Process child class.
+     *
+     * @param pChild the child.
+     * @throws OceanusException on error
+     */
+    private void processChild(final Class<?> pChild) throws OceanusException {
+        /* Create a resolved class based on the loaded class */
+        final BodyDeclaration<?> myResolved = buildClass(pChild);
+        final ThemisXAnalysisClassInstance myInstance = (ThemisXAnalysisClassInstance) theProjectParser.parseDeclaration(myResolved);
+        final ThemisXAnalysisReflectExternal myExternal = new ThemisXAnalysisReflectExternal(myInstance);
+
+        /* Store it as an external Class */
+        theExternalClasses.put(myExternal.getFullName(), myExternal);
+
+        /* Process ancestors */
+        processAncestors(myExternal);
     }
 
     /**
@@ -163,7 +261,8 @@ public class ThemisXAnalysisReflectJar
             /* Protect against exceptions */
             try {
                 final File myJar = myId.getMavenJarPath();
-                final URL myUrl = (new URI("jar:file:/" + myJar + "!/")).toURL();
+                final String myName = myJar.toString().replace("\\", "/");
+                final URL myUrl = (new URI("jar:file:/" + myName + "!/")).toURL();
                 myList.add(myUrl);
 
                 /* Handle exceptions */

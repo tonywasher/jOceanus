@@ -19,7 +19,6 @@ package io.github.tonywasher.joceanus.themis.xanalysis.parser.proj;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.themis.exc.ThemisIOException;
 import io.github.tonywasher.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisParserDef;
-import io.github.tonywasher.joceanus.themis.xanalysis.parser.proj.ThemisXAnalysisMaven.ThemisXAnalysisMavenId;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -175,7 +174,7 @@ public class ThemisXAnalysisProject {
             final ThemisXAnalysisMaven myPom = new ThemisXAnalysisMaven(pParent, myInStream);
 
             /* If source directory exists */
-            final File mySrc = new File(pPom.getParent(), ThemisXAnalysisModule.PATH_XTRA);
+            final File mySrc = new File(pPom.getParent(), ThemisXAnalysisPackage.PATH_XTRA);
             if (mySrc.exists()
                     && mySrc.isDirectory()) {
                 /* Add the module to the list */

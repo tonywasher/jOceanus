@@ -51,6 +51,10 @@ public class ThemisXAnalysisReflectMethod
         /* Mark as default */
         setDefault(theMethod.isDefault());
 
+        /* Map the type parameters */
+        final NodeList<TypeParameter> myParams = ThemisXAnalysisReflectBaseUtils.buildTypeParams(theMethod.getTypeParameters());
+        setTypeParameters(myParams);
+
         /* Set the return type */
         setType(ThemisXAnalysisReflectUtils.buildClassOrInterface(theMethod.getReturnType()));
 
@@ -59,9 +63,5 @@ public class ThemisXAnalysisReflectMethod
 
         /* Build the thrown list */
         setThrownExceptions(ThemisXAnalysisReflectUtils.buildThrown(theMethod));
-
-        /* Map the type parameters */
-        final NodeList<TypeParameter> myParams = ThemisXAnalysisReflectBaseUtils.buildTypeParams(theMethod.getTypeParameters());
-        setTypeParameters(myParams);
     }
 }

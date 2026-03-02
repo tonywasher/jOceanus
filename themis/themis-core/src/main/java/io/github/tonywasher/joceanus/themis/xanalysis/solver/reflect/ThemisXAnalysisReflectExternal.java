@@ -22,8 +22,7 @@ import io.github.tonywasher.joceanus.themis.xanalysis.parser.node.ThemisXAnalysi
 import io.github.tonywasher.joceanus.themis.xanalysis.parser.node.ThemisXAnalysisNodeModifierList;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.List;
 
 /**
  * External Class representation.
@@ -33,7 +32,7 @@ public class ThemisXAnalysisReflectExternal
     /**
      * The javaLang prefix.
      */
-    private static final String JAVALANG = "java.lang.";
+    static final String JAVALANG = "java.lang.";
 
     /**
      * The name of the class.
@@ -51,6 +50,11 @@ public class ThemisXAnalysisReflectExternal
     private final ThemisXAnalysisModifierList theModifiers;
 
     /**
+     * The ancestors.
+     */
+    private final List<String> theAncestors;
+
+    /**
      * The class instance.
      */
     private ThemisXAnalysisClassInstance theClassInstance;
@@ -64,6 +68,7 @@ public class ThemisXAnalysisReflectExternal
         theName = pImport.getShortName();
         theFullName = pImport.getFullName();
         theModifiers = new ThemisXAnalysisNodeModifierList(new ArrayList<>());
+        theAncestors = new ArrayList<>();
     }
 
     /**
@@ -75,18 +80,8 @@ public class ThemisXAnalysisReflectExternal
         theName = pClazz.getName();
         theFullName = pClazz.getFullName();
         theModifiers = pClazz.getModifiers();
+        theAncestors = new ArrayList<>();
         theClassInstance = pClazz;
-    }
-
-    /**
-     * Constructor.
-     *
-     * @param pLang the javaLang class
-     */
-    private ThemisXAnalysisReflectExternal(final ThemisXAnalysisReflectJavaLang pLang) {
-        theName = pLang.getName();
-        theFullName = JAVALANG + theName;
-        theModifiers = new ThemisXAnalysisNodeModifierList(new ArrayList<>());
     }
 
     @Override
@@ -110,19 +105,6 @@ public class ThemisXAnalysisReflectExternal
     }
 
     /**
-     * Obtain map of java.lang classes.
-     *
-     * @return the map
-     */
-    public static Map<String, ThemisXAnalysisReflectExternal> getJavaLangMap() {
-        final Map<String, ThemisXAnalysisReflectExternal> myMap = new LinkedHashMap<>();
-        for (ThemisXAnalysisReflectJavaLang myLang : ThemisXAnalysisReflectJavaLang.values()) {
-            myMap.put(myLang.getName(), new ThemisXAnalysisReflectExternal(myLang));
-        }
-        return myMap;
-    }
-
-    /**
      * Obtain the class instance.
      *
      * @return the class instance
@@ -138,5 +120,23 @@ public class ThemisXAnalysisReflectExternal
      */
     public void setClassInstance(final ThemisXAnalysisClassInstance pClassInstance) {
         theClassInstance = pClassInstance;
+    }
+
+    /**
+     * Obtain the list of ancestors.
+     *
+     * @return the list
+     */
+    public List<String> getAncestors() {
+        return theAncestors;
+    }
+
+    /**
+     * Add ancestor.
+     *
+     * @param pAncestor the ancestor
+     */
+    public void addAncestor(final ThemisXAnalysisReflectExternal pAncestor) {
+        theAncestors.add(pAncestor.getFullName());
     }
 }

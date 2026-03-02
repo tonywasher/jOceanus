@@ -31,11 +31,6 @@ import java.util.Objects;
  */
 public class ThemisXAnalysisModule {
     /**
-     * The path xtra.
-     */
-    static final String PATH_XTRA = ".src.main.java".replace(ThemisXAnalysisChar.PERIOD, ThemisXAnalysisChar.COMMENT);
-
-    /**
      * The module-info file.
      */
     private static final String MODULE_INFO = "module-info" + ThemisXAnalysisFile.SFX_JAVA;
@@ -65,15 +60,14 @@ public class ThemisXAnalysisModule {
      *
      * @param pLocation the location of the module
      * @param pPom      the module Pom
-     * @throws OceanusException on error
      */
     ThemisXAnalysisModule(final File pLocation,
-                          final ThemisXAnalysisMaven pPom) throws OceanusException {
+                          final ThemisXAnalysisMaven pPom) {
         /* Create the list */
         thePackages = new ArrayList<>();
 
         /* Store the name and location */
-        theLocation = new File(pLocation, PATH_XTRA);
+        theLocation = new File(pLocation, ThemisXAnalysisPackage.PATH_XTRA);
         theName = pLocation.getName();
 
         /* Initiate search for packages */
@@ -123,10 +117,9 @@ public class ThemisXAnalysisModule {
      *
      * @param pLocation the location to search
      * @param pPackage  the package name
-     * @throws OceanusException on error
      */
     void checkForPackage(final File pLocation,
-                         final String pPackage) throws OceanusException {
+                         final String pPackage) {
         /* Assume not a package */
         boolean isPackage = false;
 

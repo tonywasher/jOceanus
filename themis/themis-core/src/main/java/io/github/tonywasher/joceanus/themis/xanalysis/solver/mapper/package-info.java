@@ -15,7 +15,7 @@
  * the License.
  */
 
-package io.github.tonywasher.joceanus.themis.xanalysis.solver;
-
-public class ThemisXAnalysisSolverFileState {
-}
+/**
+ * Classes to link names and references to underlying classes.
+ */
+package io.github.tonywasher.joceanus.themis.xanalysis.solver.mapper;

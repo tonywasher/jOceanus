@@ -51,9 +51,14 @@ public class ThemisXAnalysisSolverClass
     private final List<ThemisXAnalysisSolverMethod> theMethods;
 
     /**
-     * Is the reference list circular?
+     * The ancestors.
      */
-    private boolean isCircular;
+    private final List<String> theAncestors;
+
+    /**
+     * Is this a standard class?
+     */
+    private final boolean isStandard;
 
     /**
      * Constructor.
@@ -66,9 +71,11 @@ public class ThemisXAnalysisSolverClass
         /* Store the parameters */
         theFile = pFile;
         theClass = pClass;
+        theAncestors = new ArrayList<>();
 
         /* Access the full name */
         theFullName = theClass.getFullName();
+        isStandard = pFile.getOwningPackage().isStandard();
 
         /* Populate the methodList */
         theMethods = new ArrayList<>();
@@ -101,6 +108,15 @@ public class ThemisXAnalysisSolverClass
     @Override
     public ThemisXAnalysisClassInstance getUnderlyingClass() {
         return theClass;
+    }
+
+    /**
+     * Is this a standard class?
+     *
+     * @return true/false
+     */
+    public boolean isStandard() {
+        return isStandard;
     }
 
     /**
@@ -140,7 +156,7 @@ public class ThemisXAnalysisSolverClass
             return false;
         }
 
-        /* Make sure that the object is a DSMClass */
+        /* Make sure that the object is a Class */
         if (!(pThat instanceof ThemisXAnalysisSolverClass myThat)) {
             return false;
         }
@@ -157,5 +173,23 @@ public class ThemisXAnalysisSolverClass
     @Override
     public String toString() {
         return theFullName;
+    }
+
+    /**
+     * Obtain the list of ancestors.
+     *
+     * @return the list
+     */
+    public List<String> getAncestors() {
+        return theAncestors;
+    }
+
+    /**
+     * Add ancestor.
+     *
+     * @param pAncestor the ancestor
+     */
+    public void addAncestor(final String pAncestor) {
+        theAncestors.add(pAncestor);
     }
 }

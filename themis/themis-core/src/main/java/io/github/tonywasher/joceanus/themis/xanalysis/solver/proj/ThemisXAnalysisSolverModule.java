@@ -16,19 +16,28 @@
  */
 package io.github.tonywasher.joceanus.themis.xanalysis.solver.proj;
 
+import io.github.tonywasher.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisChar;
 import io.github.tonywasher.joceanus.themis.xanalysis.parser.proj.ThemisXAnalysisModule;
 import io.github.tonywasher.joceanus.themis.xanalysis.parser.proj.ThemisXAnalysisPackage;
 import io.github.tonywasher.joceanus.themis.xanalysis.solver.proj.ThemisXAnalysisSolverDef.ThemisXAnalysisSolverModuleDef;
 import io.github.tonywasher.joceanus.themis.xanalysis.solver.proj.ThemisXAnalysisSolverDef.ThemisXAnalysisSolverProjectDef;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Solver Module.
  */
 public class ThemisXAnalysisSolverModule
         implements ThemisXAnalysisSolverModuleDef {
+    /**
+     * The root package.
+     */
+    private static final String ROOT = "";
+
     /**
      * The owning project.
      */
@@ -42,7 +51,7 @@ public class ThemisXAnalysisSolverModule
     /**
      * The list of packages.
      */
-    private final List<ThemisXAnalysisSolverPackage> thePackages;
+    private final Map<String, ThemisXAnalysisSolverPackage> thePackages;
 
     /**
      * Constructor.
@@ -57,11 +66,14 @@ public class ThemisXAnalysisSolverModule
         theModule = pModule;
 
         /* Initialise the packages */
-        thePackages = new ArrayList<>();
+        thePackages = new LinkedHashMap<>();
         for (ThemisXAnalysisPackage myPackage : theModule.getPackages()) {
             final ThemisXAnalysisSolverPackage mySolverPackage = new ThemisXAnalysisSolverPackage(this, myPackage);
-            thePackages.add(mySolverPackage);
+            thePackages.put(mySolverPackage.getPackageName(), mySolverPackage);
         }
+
+        /* Create placeHolders*/
+        createPlaceHolders();
     }
 
     @Override
@@ -79,12 +91,70 @@ public class ThemisXAnalysisSolverModule
      *
      * @return the packages
      */
-    public List<ThemisXAnalysisSolverPackage> getPackages() {
+    public Map<String, ThemisXAnalysisSolverPackage> getPackages() {
         return thePackages;
     }
 
     @Override
     public String toString() {
         return theModule.toString();
+    }
+
+    /**
+     * Create placeHolder packages.
+     */
+    private void createPlaceHolders() {
+        /* Create a list and map of real packages */
+        final HashMap<String, ThemisXAnalysisSolverPackage> myPackageMap = new HashMap<>(thePackages);
+        final List<ThemisXAnalysisSolverPackage> myPackages = new ArrayList<>(thePackages.values());
+
+        /* Loop through the full packages */
+        for (ThemisXAnalysisSolverPackage myPackage : myPackages) {
+            /* Add the parent link */
+            addParentLink(myPackageMap, myPackage);
+        }
+    }
+
+    /**
+     * Create placeHolder packages.
+     *
+     * @param pPackageMap the referenceMap
+     * @param pPackage    the package
+     */
+    private void addParentLink(final Map<String, ThemisXAnalysisSolverPackage> pPackageMap,
+                               final ThemisXAnalysisSolverPackage pPackage) {
+        /* Determine name of parent package */
+        final String myName = pPackage.getPackageName();
+        final int iIndex = myName.lastIndexOf(ThemisXAnalysisChar.PERIOD);
+        final String myParentName = iIndex == -1 ? ROOT : myName.substring(0, iIndex);
+
+        /* Look up parent */
+        ThemisXAnalysisSolverPackage myParent = pPackageMap.get(myParentName);
+
+        /* If we did not find a parent */
+        if (myParent == null) {
+            /* Create a placeholder parent and put into maps */
+            myParent = new ThemisXAnalysisSolverPackage(this, new ThemisXAnalysisPackage(myParentName));
+            pPackageMap.put(myParentName, myParent);
+            thePackages.put(myParentName, myParent);
+
+            /* Add further links if we have not reached ROOT */
+            if (!ROOT.equals(myParentName)) {
+                addParentLink(pPackageMap, myParent);
+            }
+        }
+
+        /* Add child to parent */
+        myParent.addChild(pPackage);
+    }
+
+    /**
+     * Look for packages that are immediate roots.
+     *
+     * @return the immediate roots
+     */
+    public ThemisXAnalysisSolverPackage getRoot() {
+        /* Return the root */
+        return thePackages.get(ROOT);
     }
 }

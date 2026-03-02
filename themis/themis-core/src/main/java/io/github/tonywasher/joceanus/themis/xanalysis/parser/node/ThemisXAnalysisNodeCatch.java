@@ -46,8 +46,8 @@ public class ThemisXAnalysisNodeCatch
     ThemisXAnalysisNodeCatch(final ThemisXAnalysisParserDef pParser,
                              final CatchClause pCatch) throws OceanusException {
         super(pParser, pCatch);
-        theBody = pParser.parseStatement(pCatch.getBody());
         theParameter = pParser.parseNode(pCatch.getParameter());
+        theBody = pParser.parseStatement(pCatch.getBody());
     }
 
     /**

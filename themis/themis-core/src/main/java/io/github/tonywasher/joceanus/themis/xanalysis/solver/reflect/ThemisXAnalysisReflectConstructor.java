@@ -28,7 +28,7 @@ import java.lang.reflect.Constructor;
 public class ThemisXAnalysisReflectConstructor
         extends ConstructorDeclaration {
     /**
-     * The underlying method.
+     * The underlying constructor.
      */
     private final Constructor<?> theConstructor;
 
@@ -38,8 +38,11 @@ public class ThemisXAnalysisReflectConstructor
      * @param pConstructor the constructor definition.
      */
     ThemisXAnalysisReflectConstructor(final Constructor<?> pConstructor) {
-        /* Store the method */
+        /* Store the constructor */
         theConstructor = pConstructor;
+
+        /* Store the name */
+        setName(pConstructor.getName());
 
         /* Set the modifiers */
         setModifiers(ThemisXAnalysisReflectUtils.buildModifiers(theConstructor));
