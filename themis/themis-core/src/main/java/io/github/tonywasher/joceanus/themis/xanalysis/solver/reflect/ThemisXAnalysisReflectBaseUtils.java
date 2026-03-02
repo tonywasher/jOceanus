@@ -168,7 +168,7 @@ public final class ThemisXAnalysisReflectBaseUtils {
      * @param pName the name to create a type for
      * @return the type.
      */
-    static ClassOrInterfaceType createTypeForName(final String pName) {
+    public static ClassOrInterfaceType createTypeForName(final String pName) {
         final int myLast = pName.lastIndexOf(ThemisXAnalysisChar.PERIOD);
         if (myLast != -1) {
             final ClassOrInterfaceType myScope = createTypeForName(pName.substring(0, myLast));

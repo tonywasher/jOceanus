@@ -50,9 +50,9 @@ public class ThemisXAnalysisStmtForEach
     ThemisXAnalysisStmtForEach(final ThemisXAnalysisParserDef pParser,
                                final ForEachStmt pStatement) throws OceanusException {
         super(pParser, pStatement);
-        theBody = pParser.parseStatement(pStatement.getBody());
         theVariable = pParser.parseExpression(pStatement.getVariable());
         theVariableDeclarator = pParser.parseNode(pStatement.getVariableDeclarator());
+        theBody = pParser.parseStatement(pStatement.getBody());
     }
 
     /**

@@ -28,6 +28,7 @@ import io.github.tonywasher.joceanus.themis.xanalysis.solver.reflect.ThemisXAnal
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Executable;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
 /**
@@ -72,6 +73,16 @@ public final class ThemisXAnalysisReflectUtils {
      */
     static NodeList<Modifier> buildModifiers(final Method pMethod) {
         return buildModifiers(pMethod.getModifiers());
+    }
+
+    /**
+     * Build modifiers.
+     *
+     * @param pField the field
+     * @return the modifier list
+     */
+    static NodeList<Modifier> buildModifiers(final Field pField) {
+        return buildModifiers(pField.getModifiers());
     }
 
     /**

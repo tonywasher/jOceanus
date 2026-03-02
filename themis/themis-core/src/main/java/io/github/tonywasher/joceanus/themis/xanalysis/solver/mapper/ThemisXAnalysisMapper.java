@@ -20,12 +20,13 @@ package io.github.tonywasher.joceanus.themis.xanalysis.solver.mapper;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance;
 import io.github.tonywasher.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance.ThemisXAnalysisClassInstance;
+import io.github.tonywasher.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance.ThemisXAnalysisExpressionInstance;
 import io.github.tonywasher.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance.ThemisXAnalysisNodeInstance;
 import io.github.tonywasher.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance.ThemisXAnalysisTypeInstance;
 import io.github.tonywasher.joceanus.themis.xanalysis.parser.expr.ThemisXAnalysisExprFieldAccess;
 import io.github.tonywasher.joceanus.themis.xanalysis.parser.expr.ThemisXAnalysisExprMethodCall;
 import io.github.tonywasher.joceanus.themis.xanalysis.parser.expr.ThemisXAnalysisExprMethodRef;
-import io.github.tonywasher.joceanus.themis.xanalysis.parser.expr.ThemisXAnalysisExprObjectCreate;
+import io.github.tonywasher.joceanus.themis.xanalysis.parser.expr.ThemisXAnalysisExprName;
 import io.github.tonywasher.joceanus.themis.xanalysis.parser.node.ThemisXAnalysisNodeImport;
 import io.github.tonywasher.joceanus.themis.xanalysis.parser.type.ThemisXAnalysisTypeClassInterface;
 import io.github.tonywasher.joceanus.themis.xanalysis.solver.proj.ThemisXAnalysisSolverClass;
@@ -33,6 +34,12 @@ import io.github.tonywasher.joceanus.themis.xanalysis.solver.proj.ThemisXAnalysi
 import io.github.tonywasher.joceanus.themis.xanalysis.solver.proj.ThemisXAnalysisSolverPackage;
 import io.github.tonywasher.joceanus.themis.xanalysis.solver.proj.ThemisXAnalysisSolverProject;
 
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Analysis Mapper.
+ */
 public class ThemisXAnalysisMapper
         implements AutoCloseable {
     /**
@@ -192,6 +199,7 @@ public class ThemisXAnalysisMapper
             final ThemisXAnalysisClassInstance myResolved = theFile.processPossibleReference(myRef.getFullName());
             if (myResolved != null) {
                 pClass.addAncestor(myResolved.getFullName());
+                myRef.setClassInstance(myResolved);
             }
         }
     }
@@ -229,7 +237,7 @@ public class ThemisXAnalysisMapper
 
         /* Process children */
         if (doChildren) {
-            for (ThemisXAnalysisInstance myChild : pInstance.getChildren()) {
+            for (ThemisXAnalysisInstance myChild : sortedChildren(pInstance)) {
                 processInstance(myChild);
             }
         }
@@ -267,21 +275,19 @@ public class ThemisXAnalysisMapper
         /* Handle FieldAccess */
         if (pElement instanceof ThemisXAnalysisExprFieldAccess myAccess) {
             processFieldAccess(myAccess);
+            return false;
         }
 
         /* Handle MethodCall */
         if (pElement instanceof ThemisXAnalysisExprMethodCall myCall) {
             processMethodCall(myCall);
+            return false;
         }
 
         /* Handle MethodReference */
         if (pElement instanceof ThemisXAnalysisExprMethodRef myRef) {
             processMethodReference(myRef);
-        }
-
-        /* Handle ObjectCreation */
-        if (pElement instanceof ThemisXAnalysisExprObjectCreate myCreate) {
-            processObjectCreate(myCreate);
+            return false;
         }
         return true;
     }
@@ -315,6 +321,29 @@ public class ThemisXAnalysisMapper
      * @param pAccess the fieldAccess
      */
     private void processFieldAccess(final ThemisXAnalysisExprFieldAccess pAccess) {
+        final ThemisXAnalysisExpressionInstance myExpr = pAccess.getScope();
+        if (myExpr instanceof ThemisXAnalysisExprName myNameExpr) {
+            /* Check to see if the field access is to an explicit class */
+            final String myFullName = pAccess.toString();
+            final String myNameRef = myNameExpr.toString();
+            ThemisXAnalysisClassInstance myResolved = theFile.processPossibleReference(myFullName);
+
+            /* If not a full path look to see whether it is a field of a class */
+            if (myResolved == null) {
+                myResolved = theFile.processPossibleReference(myNameRef);
+            }
+
+            /* If we still failed to resolve */
+            if (myResolved == null) {
+                /* Check for variable names */
+                final ThemisXAnalysisInstance myName = theName.lookUpName(myNameRef);
+
+                /* Report failure */
+                if (myName == null) {
+                    System.out.println("Unresolved fieldAccess: " + myNameRef);
+                }
+            }
+        }
     }
 
     /**
@@ -323,6 +352,27 @@ public class ThemisXAnalysisMapper
      * @param pCall the methodCall
      */
     private void processMethodCall(final ThemisXAnalysisExprMethodCall pCall) {
+        final ThemisXAnalysisExpressionInstance myExpr = pCall.getScope();
+        if (myExpr instanceof ThemisXAnalysisExprName myNameExpr) {
+            /* Check to see if the field access is to an explicit class */
+            final String myNameRef = myNameExpr.toString();
+            final ThemisXAnalysisClassInstance myResolved = theFile.processPossibleReference(myNameRef);
+
+            /* If we still failed to resolve */
+            if (myResolved == null) {
+                /* Check for variable names */
+                final ThemisXAnalysisInstance myName = theName.lookUpName(myNameRef);
+
+                /* Report failure */
+                if (myName == null) {
+                    System.out.println("Unresolved methodCall using name: " + myNameRef);
+                }
+            }
+        } else if (myExpr instanceof ThemisXAnalysisExprFieldAccess myFieldExpr) {
+            processFieldAccess(myFieldExpr);
+        } else if (myExpr instanceof ThemisXAnalysisExprMethodCall myMethodCall) {
+            processMethodCall(myMethodCall);
+        }
     }
 
     /**
@@ -331,14 +381,50 @@ public class ThemisXAnalysisMapper
      * @param pReference the reference
      */
     private void processMethodReference(final ThemisXAnalysisExprMethodRef pReference) {
+        final ThemisXAnalysisExpressionInstance myExpr = pReference.getScope();
+        if (myExpr instanceof ThemisXAnalysisExprName myNameExpr) {
+            /* Check to see if the method reference is to an explicit class */
+            final String myNameRef = myNameExpr.toString();
+            final ThemisXAnalysisClassInstance myResolved = theFile.processPossibleReference(myNameRef);
+
+            /* If we still failed to resolve */
+            if (myResolved == null) {
+                /* Check for variable names */
+                final ThemisXAnalysisInstance myName = theName.lookUpName(myNameRef);
+
+                /* Report failure */
+                if (myName == null) {
+                    System.out.println("Unresolved methodRef: " + myNameRef);
+                }
+            }
+        }
     }
 
     /**
-     * Process object Creation.
+     * Obtain sorted list of children.
      *
-     * @param pCreate the creation
+     * @param pInstance the instanceNode
+     * @return the sorted list
      */
-    private void processObjectCreate(final ThemisXAnalysisExprObjectCreate pCreate) {
+    private List<ThemisXAnalysisInstance> sortedChildren(final ThemisXAnalysisInstance pInstance) {
+        final List<ThemisXAnalysisInstance> myChildren = new ArrayList<>(pInstance.getChildren());
+        myChildren.sort(this::compareTo);
+        return myChildren;
+    }
+
+    /**
+     * Comparator that pushes ClassInstances to bottom of list.
+     *
+     * @param pFirst  the first node
+     * @param pSecond the second node
+     * @return -1, 0, 1 according to order
+     */
+    private int compareTo(final ThemisXAnalysisInstance pFirst,
+                          final ThemisXAnalysisInstance pSecond) {
+        if (pFirst instanceof ThemisXAnalysisClassInstance) {
+            return pSecond instanceof ThemisXAnalysisClassInstance ? 0 : 1;
+        }
+        return pSecond instanceof ThemisXAnalysisClassInstance ? -1 : 0;
     }
 
     @Override

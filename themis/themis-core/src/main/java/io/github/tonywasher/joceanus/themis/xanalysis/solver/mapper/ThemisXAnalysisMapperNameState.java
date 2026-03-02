@@ -18,13 +18,22 @@
 package io.github.tonywasher.joceanus.themis.xanalysis.solver.mapper;
 
 import io.github.tonywasher.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance;
+import io.github.tonywasher.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance.ThemisXAnalysisClassInstance;
+import io.github.tonywasher.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance.ThemisXAnalysisDeclarationInstance;
 import io.github.tonywasher.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance.ThemisXAnalysisId;
+import io.github.tonywasher.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance.ThemisXAnalysisNodeInstance;
 import io.github.tonywasher.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance.ThemisXAnalysisTypeInstance;
+import io.github.tonywasher.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisModifierList;
+import io.github.tonywasher.joceanus.themis.xanalysis.parser.decl.ThemisXAnalysisDeclEnum;
+import io.github.tonywasher.joceanus.themis.xanalysis.parser.decl.ThemisXAnalysisDeclEnumValue;
+import io.github.tonywasher.joceanus.themis.xanalysis.parser.decl.ThemisXAnalysisDeclField;
 import io.github.tonywasher.joceanus.themis.xanalysis.parser.decl.ThemisXAnalysisDeclaration;
 import io.github.tonywasher.joceanus.themis.xanalysis.parser.expr.ThemisXAnalysisExprTypePattern;
 import io.github.tonywasher.joceanus.themis.xanalysis.parser.node.ThemisXAnalysisNodeParameter;
 import io.github.tonywasher.joceanus.themis.xanalysis.parser.node.ThemisXAnalysisNodeVariable;
 import io.github.tonywasher.joceanus.themis.xanalysis.parser.stmt.ThemisXAnalysisStatement;
+import io.github.tonywasher.joceanus.themis.xanalysis.parser.type.ThemisXAnalysisTypeClassInterface;
+import io.github.tonywasher.joceanus.themis.xanalysis.solver.reflect.ThemisXAnalysisReflectExternal;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
@@ -78,6 +87,12 @@ public class ThemisXAnalysisMapperNameState {
         }
 
         /* Process interesting elements */
+        if (pInstance instanceof ThemisXAnalysisClassInstance myClass) {
+            processClass(myClass);
+        }
+        if (pInstance instanceof ThemisXAnalysisDeclEnum myEnum) {
+            return processEnum(myEnum);
+        }
         if (pInstance instanceof ThemisXAnalysisNodeVariable myVar) {
             return processVariable(myVar);
         }
@@ -118,6 +133,21 @@ public class ThemisXAnalysisMapperNameState {
     }
 
     /**
+     * Process enumValue.
+     *
+     * @param pElement the element
+     * @return false
+     */
+    private boolean processEnum(final ThemisXAnalysisDeclEnum pElement) {
+        final ThemisXAnalysisMapperTypeRef myRef = new ThemisXAnalysisMapperTypeRef(pElement);
+        for (ThemisXAnalysisDeclarationInstance myInstance : pElement.getValues()) {
+            final ThemisXAnalysisDeclEnumValue myValue = (ThemisXAnalysisDeclEnumValue) myInstance;
+            theName.declareEnum(myRef, myValue);
+        }
+        return false;
+    }
+
+    /**
      * Process variableDecl element.
      *
      * @param pElement the element
@@ -148,6 +178,48 @@ public class ThemisXAnalysisMapperNameState {
     private boolean processPattern(final ThemisXAnalysisExprTypePattern pElement) {
         theName.declarePattern(pElement);
         return false;
+    }
+
+    /**
+     * Process class element.
+     *
+     * @param pClass the element
+     */
+    private void processClass(final ThemisXAnalysisClassInstance pClass) {
+        for (ThemisXAnalysisTypeInstance myClass : pClass.getExtends()) {
+            final ThemisXAnalysisTypeClassInterface myExtend = (ThemisXAnalysisTypeClassInterface) myClass;
+            ThemisXAnalysisClassInstance myClassInstance = myExtend.getClassInstance();
+            if (myClassInstance instanceof ThemisXAnalysisReflectExternal myExternal) {
+                myClassInstance = myExternal.getClassInstance();
+            }
+            if (myClassInstance != null) {
+                /* Loop through all the field declarations */
+                for (ThemisXAnalysisInstance myChild : myClassInstance.getBody()) {
+                    if (myChild instanceof ThemisXAnalysisDeclField myField) {
+                        processField(myField);
+                    }
+                }
+
+                /* Follow the chain */
+                processClass(myClassInstance);
+            }
+        }
+    }
+
+    /**
+     * Process field element.
+     *
+     * @param pField the element
+     */
+    private void processField(final ThemisXAnalysisDeclField pField) {
+        /* If the field is public or protected */
+        final ThemisXAnalysisModifierList myModifiers = pField.getModifiers();
+        if (myModifiers.isProtected() || myModifiers.isPublic()) {
+            for (ThemisXAnalysisNodeInstance myVarNode : pField.getVariables()) {
+                final ThemisXAnalysisNodeVariable myVar = (ThemisXAnalysisNodeVariable) myVarNode;
+                processVariable(myVar);
+            }
+        }
     }
 
     /**
@@ -234,6 +306,17 @@ public class ThemisXAnalysisMapperNameState {
         ThemisXAnalysisMapperNameMap(final ThemisXAnalysisMapperNameMap pParent) {
             theParent = pParent;
             theNames = new HashMap<>();
+        }
+
+        /**
+         * Declare enumValue.
+         *
+         * @param pRef  the reference
+         * @param pEnum the enumValue
+         */
+        void declareEnum(final ThemisXAnalysisMapperTypeRef pRef,
+                         final ThemisXAnalysisDeclEnumValue pEnum) {
+            theNames.put(pEnum.getName().toString(), pRef);
         }
 
         /**

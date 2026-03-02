@@ -19,11 +19,13 @@ package io.github.tonywasher.joceanus.themis.xanalysis.solver.reflect;
 import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.body.BodyDeclaration;
 import com.github.javaparser.ast.body.ConstructorDeclaration;
+import com.github.javaparser.ast.body.FieldDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.themis.exc.ThemisDataException;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
 /**
@@ -45,6 +47,10 @@ public final class ThemisXAnalysisReflectMemberUtils {
     static NodeList<BodyDeclaration<?>> buildMembers(final Class<?> pClass) throws OceanusException {
         final NodeList<BodyDeclaration<?>> myMembers = new NodeList<>();
         try {
+            for (Field myField : pClass.getDeclaredFields()) {
+                final FieldDeclaration myParsed = new ThemisXAnalysisReflectField(myField);
+                myMembers.add(myParsed);
+            }
             for (Constructor<?> myConstructor : pClass.getConstructors()) {
                 final ConstructorDeclaration myParsed = new ThemisXAnalysisReflectConstructor(myConstructor);
                 myMembers.add(myParsed);
