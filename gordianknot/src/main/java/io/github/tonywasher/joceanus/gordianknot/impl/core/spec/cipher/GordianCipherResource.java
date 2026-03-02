@@ -14,11 +14,11 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package io.github.tonywasher.joceanus.gordianknot.api.cipher;
+package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher;
 
-import io.github.tonywasher.joceanus.gordianknot.api.base.GordianBundleLoader;
-import io.github.tonywasher.joceanus.gordianknot.api.base.GordianBundleLoader.GordianBundleId;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestResource;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.base.GordianBundleLoader;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.base.GordianBundleLoader.GordianBundleId;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianDigestResource;
 
 /**
  * Resource IDs for Cipher package.

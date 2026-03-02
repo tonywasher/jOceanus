@@ -17,12 +17,11 @@
 
 package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.mac;
 
-import io.github.tonywasher.joceanus.gordianknot.api.base.GordianBundleLoader.GordianBundleId;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherResource;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeyType;
-import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacResource;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianNewMacType;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.base.GordianBundleLoader.GordianBundleId;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher.GordianCipherResource;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher.GordianCoreSymKeyType;
 
 import java.util.EnumMap;

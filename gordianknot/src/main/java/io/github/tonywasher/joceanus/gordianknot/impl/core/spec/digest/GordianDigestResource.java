@@ -14,10 +14,10 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package io.github.tonywasher.joceanus.gordianknot.api.digest;
+package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest;
 
-import io.github.tonywasher.joceanus.gordianknot.api.base.GordianBundleLoader;
-import io.github.tonywasher.joceanus.gordianknot.api.base.GordianBundleLoader.GordianBundleId;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.base.GordianBundleLoader;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.base.GordianBundleLoader.GordianBundleId;
 
 /**
  * Resource IDs for Digests package.

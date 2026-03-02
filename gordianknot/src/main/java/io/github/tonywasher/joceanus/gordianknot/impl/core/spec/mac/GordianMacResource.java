@@ -14,30 +14,95 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package io.github.tonywasher.joceanus.gordianknot.api.factory;
+package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.mac;
 
-import io.github.tonywasher.joceanus.gordianknot.api.base.GordianBundleLoader;
-import io.github.tonywasher.joceanus.gordianknot.api.base.GordianBundleLoader.GordianBundleId;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.base.GordianBundleLoader;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.base.GordianBundleLoader.GordianBundleId;
 
 /**
- * Resource IDs for Factory package.
+ * Resource IDs for Mac package.
  */
-public enum GordianFactoryResource
+public enum GordianMacResource
         implements GordianBundleId {
     /**
-     * Factory BC.
+     * MAC HMAC.
      */
-    FACTORY_BC("BC"),
+    MAC_HMAC("HMAC"),
 
     /**
-     * Factory JCA.
+     * MAC GMAC.
      */
-    FACTORY_JCA("JCA");
+    MAC_GMAC("GMAC"),
+
+    /**
+     * MAC CMAC.
+     */
+    MAC_CMAC("CMAC"),
+
+    /**
+     * MAC KMAC.
+     */
+    MAC_KMAC("KMAC"),
+
+    /**
+     * MAC POLY1305.
+     */
+    MAC_POLY("POLY1305"),
+
+    /**
+     * MAC SKEIN.
+     */
+    MAC_SKEIN("SKEIN"),
+
+    /**
+     * MAC KALYNA.
+     */
+    MAC_KALYNA("KALYNA"),
+
+    /**
+     * MAC KUPYNA.
+     */
+    MAC_KUPYNA("KUPYNA"),
+
+    /**
+     * MAC BLAKE2.
+     */
+    MAC_BLAKE2("BLAKE2"),
+
+    /**
+     * MAC BLAKE2.
+     */
+    MAC_BLAKE3("BLAKE3"),
+
+    /**
+     * MAC CBC.
+     */
+    MAC_CBC("CBC"),
+
+    /**
+     * MAC CFB.
+     */
+    MAC_CFB("CFB"),
+
+    /**
+     * MAC SipHash.
+     */
+    MAC_SIPHASH("SipHash"),
+
+    /**
+     * MAC GOST.
+     */
+    MAC_GOST("GOST"),
+
+    /**
+     * MAC VMPC.
+     */
+    MAC_VMPC("VMPC");
 
     /**
      * The Resource Loader.
      */
-    private static final GordianBundleLoader LOADER = GordianBundleLoader.getLoader(GordianFactoryResource.class.getCanonicalName());
+    private static final GordianBundleLoader LOADER = GordianBundleLoader.getLoader(GordianMacResource.class.getCanonicalName());
 
     /**
      * The Id.
@@ -54,7 +119,7 @@ public enum GordianFactoryResource
      *
      * @param pKeyName the key name
      */
-    GordianFactoryResource(final String pKeyName) {
+    GordianMacResource(final String pKeyName) {
         theKeyName = pKeyName;
     }
 
@@ -65,7 +130,7 @@ public enum GordianFactoryResource
 
     @Override
     public String getNameSpace() {
-        return "factory";
+        return "mac";
     }
 
     @Override

@@ -49,5 +49,9 @@ module io.github.tonywasher.joceanus.gordianknot {
     exports io.github.tonywasher.joceanus.gordianknot.api.sign;
     exports io.github.tonywasher.joceanus.gordianknot.api.zip;
     exports io.github.tonywasher.joceanus.gordianknot.util;
+    exports io.github.tonywasher.joceanus.gordianknot.impl.core.spec.base;
+    exports io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest;
+    exports io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher;
+    exports io.github.tonywasher.joceanus.gordianknot.impl.core.spec.mac;
 }
 

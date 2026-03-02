@@ -18,7 +18,6 @@
 package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestResource;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSubSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSubSpec.GordianNewDigestState;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestType;

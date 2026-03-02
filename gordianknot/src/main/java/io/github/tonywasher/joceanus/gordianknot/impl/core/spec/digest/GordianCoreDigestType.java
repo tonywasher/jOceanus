@@ -17,10 +17,9 @@
 
 package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest;
 
-import io.github.tonywasher.joceanus.gordianknot.api.base.GordianBundleLoader.GordianBundleId;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestResource;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestType;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.base.GordianBundleLoader.GordianBundleId;
 
 import java.util.EnumMap;
 import java.util.Map;
