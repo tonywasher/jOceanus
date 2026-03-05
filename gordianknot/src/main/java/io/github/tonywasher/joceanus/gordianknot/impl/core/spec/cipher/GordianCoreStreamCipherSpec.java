@@ -53,8 +53,8 @@ public class GordianCoreStreamCipherSpec
      * @param pKeySpec the keySpec
      * @param pAEAD    is this an AAD variant?
      */
-    public GordianCoreStreamCipherSpec(final GordianCoreStreamKeySpec pKeySpec,
-                                       final boolean pAEAD) {
+    GordianCoreStreamCipherSpec(final GordianCoreStreamKeySpec pKeySpec,
+                                final boolean pAEAD) {
         theKeySpec = pKeySpec;
         asAEAD = pAEAD;
         isValid = checkValidity();

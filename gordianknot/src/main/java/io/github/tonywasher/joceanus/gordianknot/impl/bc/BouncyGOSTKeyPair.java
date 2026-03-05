@@ -18,7 +18,7 @@ package io.github.tonywasher.joceanus.gordianknot.impl.bc;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignParams;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignatureSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyEllipticKeyPair.BouncyECPrivateKey;
@@ -29,6 +29,7 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFacto
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianIOException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianKeyPairValidity;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairSpec;
 import org.bouncycastle.asn1.ASN1BitString;
 import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1Integer;
@@ -118,7 +119,7 @@ public final class BouncyGOSTKeyPair {
          * @param pKeySpec the keySpec
          */
         BouncyGOSTKeyPairGenerator(final GordianBaseFactory pFactory,
-                                   final GordianKeyPairSpec pKeySpec) {
+                                   final GordianNewKeyPairSpec pKeySpec) {
             /* Initialise underlying class */
             super(pFactory, pKeySpec);
 
@@ -126,7 +127,8 @@ public final class BouncyGOSTKeyPair {
             theGenerator = new ECKeyPairGenerator();
 
             /* Determine domain */
-            final String myCurve = pKeySpec.getElliptic().getCurveName();
+            final GordianCoreKeyPairSpec myKeySpec = (GordianCoreKeyPairSpec) pKeySpec;
+            final String myCurve = myKeySpec.getElliptic().getCurveName();
             final GOST3410ParameterSpec mySpec = new GOST3410ParameterSpec(myCurve);
             final X9ECParameters x9 = ECGOST3410NamedCurves.getByNameX9(myCurve);
             theSpec = new ECNamedCurveSpec(

@@ -18,7 +18,7 @@ package io.github.tonywasher.joceanus.gordianknot.api.sign;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairType;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairType;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianCoreDigestSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianCoreDigestType;
 
@@ -38,7 +38,7 @@ public final class GordianSignatureSpec {
     /**
      * KeyPairType.
      */
-    private final GordianKeyPairType theKeyPairType;
+    private final GordianNewKeyPairType theKeyPairType;
 
     /**
      * SignatureType.
@@ -66,7 +66,7 @@ public final class GordianSignatureSpec {
      * @param pKeyPairType   the keyPairType
      * @param pSignatureSpec the signatureSpec
      */
-    public GordianSignatureSpec(final GordianKeyPairType pKeyPairType,
+    public GordianSignatureSpec(final GordianNewKeyPairType pKeyPairType,
                                 final Object pSignatureSpec) {
         /* Store parameters */
         this(pKeyPairType, GordianSignatureType.NATIVE, pSignatureSpec);
@@ -78,7 +78,7 @@ public final class GordianSignatureSpec {
      * @param pKeyPairType   the keyPairType
      * @param pSignatureType the signatureType
      */
-    public GordianSignatureSpec(final GordianKeyPairType pKeyPairType,
+    public GordianSignatureSpec(final GordianNewKeyPairType pKeyPairType,
                                 final GordianSignatureType pSignatureType) {
         /* Store parameters */
         this(pKeyPairType, pSignatureType, null);
@@ -91,7 +91,7 @@ public final class GordianSignatureSpec {
      * @param pSignatureType the signatureType
      * @param pSignatureSpec the signatureSpec
      */
-    public GordianSignatureSpec(final GordianKeyPairType pKeyPairType,
+    public GordianSignatureSpec(final GordianNewKeyPairType pKeyPairType,
                                 final GordianSignatureType pSignatureType,
                                 final Object pSignatureSpec) {
         /* Store parameters */
@@ -106,7 +106,7 @@ public final class GordianSignatureSpec {
      *
      * @return the keyPairType.
      */
-    public GordianKeyPairType getKeyPairType() {
+    public GordianNewKeyPairType getKeyPairType() {
         return theKeyPairType;
     }
 
@@ -286,7 +286,7 @@ public final class GordianSignatureSpec {
                 theName += SEP + theSignatureType.toString();
             }
             if (theSignatureSpec != null) {
-                if (theKeyPairType == GordianKeyPairType.COMPOSITE) {
+                if (theKeyPairType == GordianNewKeyPairType.COMPOSITE) {
                     final Iterator<GordianSignatureSpec> myIterator = signatureSpecIterator();
                     final StringBuilder myBuilder = new StringBuilder(theName);
                     while (myIterator.hasNext()) {

@@ -17,8 +17,6 @@
 
 package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair;
 
-import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
-
 /**
  * Elliptic framework.
  */
@@ -35,5 +33,14 @@ public interface GordianCoreElliptic {
      *
      * @return the size
      */
-    GordianLength getKeySize();
+    int getKeySize();
+
+    /**
+     * Does the curve have a custom implementation?
+     *
+     * @return true/false
+     */
+    default boolean hasCustomCurve() {
+        return false;
+    }
 }

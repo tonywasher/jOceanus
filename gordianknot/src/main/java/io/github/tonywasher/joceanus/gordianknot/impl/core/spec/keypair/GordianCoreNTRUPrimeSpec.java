@@ -26,7 +26,6 @@ import org.bouncycastle.pqc.jcajce.spec.NTRULPRimeParameterSpec;
 import org.bouncycastle.pqc.jcajce.spec.SNTRUPrimeParameterSpec;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
@@ -68,8 +67,8 @@ public class GordianCoreNTRUPrimeSpec
      * @param pType   the Type
      * @param pParams the params
      */
-    public GordianCoreNTRUPrimeSpec(final GordianNewNTRUPrimeType pType,
-                                    final GordianNewNTRUPrimeParams pParams) {
+    GordianCoreNTRUPrimeSpec(final GordianNewNTRUPrimeType pType,
+                             final GordianNewNTRUPrimeParams pParams) {
         /* Store parameters */
         theType = pType;
         theParams = GordianCoreNTRUPrimeParams.mapCoreParams(pParams);
@@ -182,6 +181,11 @@ public class GordianCoreNTRUPrimeSpec
          * The paramsMap.
          */
         private static final Map<GordianNewNTRUPrimeParams, GordianCoreNTRUPrimeParams> PARMMAP = newParamsMap();
+
+        /**
+         * The parmArray.
+         */
+        private static final GordianCoreNTRUPrimeParams[] VALUES = PARMMAP.values().toArray(new GordianCoreNTRUPrimeParams[0]);
 
         /**
          * The Params.
@@ -403,8 +407,8 @@ public class GordianCoreNTRUPrimeSpec
          *
          * @return the values
          */
-        public static Collection<GordianCoreNTRUPrimeParams> values() {
-            return PARMMAP.values();
+        public static GordianCoreNTRUPrimeParams[] values() {
+            return VALUES;
         }
     }
 }

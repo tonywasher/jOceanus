@@ -367,7 +367,7 @@ public class GordianCoreKnuthObfuscater
 
         /* Create DigestSpec */
         final GordianNewDigestSpecBuilder myBuilder = GordianCoreDigestSpecBuilder.newInstance();
-        return myBuilder.generic(myType, mySubSpec, myLength, isXof);
+        return myBuilder.digest(myType, mySubSpec, myLength, isXof);
     }
 
     /**
@@ -409,7 +409,7 @@ public class GordianCoreKnuthObfuscater
 
         /* Create SymKeySpec */
         final GordianNewSymKeySpecBuilder myBuilder = GordianCoreSymKeySpecBuilder.newInstance();
-        return myBuilder.generic(myType, myBlkLength, myKeyLength);
+        return myBuilder.symKey(myType, myBlkLength, myKeyLength);
     }
 
     /**
@@ -451,7 +451,7 @@ public class GordianCoreKnuthObfuscater
 
         /* Create the cipherSpec */
         final GordianNewSymCipherSpecBuilder myBuilder = GordianCoreSymCipherSpecBuilder.newInstance();
-        return myBuilder.generic(mySpec, myMode, myPadding);
+        return myBuilder.symCipher(mySpec, myMode, myPadding);
     }
 
     /**
@@ -493,7 +493,7 @@ public class GordianCoreKnuthObfuscater
 
         /* Create StreamKeySpec */
         final GordianNewStreamKeySpecBuilder myBuilder = GordianCoreStreamKeySpecBuilder.newInstance();
-        return myBuilder.generic(myType, myKeyLength, mySubKeyType);
+        return myBuilder.streamKey(myType, myKeyLength, mySubKeyType);
     }
 
     /**
@@ -527,7 +527,7 @@ public class GordianCoreKnuthObfuscater
 
         /* Create the cipherSpec */
         final GordianNewStreamCipherSpecBuilder myBuilder = GordianCoreStreamCipherSpecBuilder.newInstance();
-        return myBuilder.generic(mySpec, myAAD != 0);
+        return myBuilder.streamCipher(mySpec, myAAD != 0);
     }
 
     /**
@@ -720,11 +720,11 @@ public class GordianCoreKnuthObfuscater
             case KALYNA:
             case CFBMAC:
             case CBCMAC:
-                return myBuilder.generic(myMacType, deriveSymKeySpecFromEncodedId(myId));
+                return myBuilder.mac(myMacType, deriveSymKeySpecFromEncodedId(myId));
             case POLY1305:
                 return myId == 0
                         ? myBuilder.poly1305Mac()
-                        : myBuilder.generic(myMacType, deriveSymKeySpecFromEncodedId(myId));
+                        : myBuilder.mac(myMacType, deriveSymKeySpecFromEncodedId(myId));
             case SKEIN:
                 final GordianNewDigestSpec mySkeinSpec = deriveDigestSpecFromEncodedId(myId);
                 return myBuilder.skeinMac(myKeyLen, mySkeinSpec);
@@ -746,7 +746,7 @@ public class GordianCoreKnuthObfuscater
             case SIPHASH:
                 return myBuilder.sipHash(deriveSipHashTypeFromEncodedId(myId));
             default:
-                return myBuilder.generic(myMacType, myKeyLen);
+                return myBuilder.mac(myMacType, myKeyLen);
         }
     }
 

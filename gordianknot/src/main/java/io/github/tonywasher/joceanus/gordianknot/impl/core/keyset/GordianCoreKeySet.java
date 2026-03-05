@@ -29,7 +29,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKeyGenerator;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairGenerator;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySet;
 import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySetAADCipher;
 import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySetCipher;
@@ -361,7 +361,7 @@ public final class GordianCoreKeySet
 
         /* Determine and check the keySpec */
         final GordianKeyPairFactory myFactory = theFactory.getAsyncFactory().getKeyPairFactory();
-        final GordianKeyPairSpec myKeySpec = myFactory.determineKeyPairSpec(pPublicKeySpec);
+        final GordianNewKeyPairSpec myKeySpec = myFactory.determineKeyPairSpec(pPublicKeySpec);
         if (!myKeySpec.equals(myFactory.determineKeyPairSpec(myPrivate))) {
             throw new GordianLogicException("Mismatch on keySpecs");
         }
@@ -522,7 +522,7 @@ public final class GordianCoreKeySet
             /* If this is supported for a keySet */
             if (mySymPredicate.test(myType)) {
                 /* Generate the key */
-                final GordianNewSymKeySpec mySpec = myBuilder.generic(myType, myKeyLen);
+                final GordianNewSymKeySpec mySpec = myBuilder.symKey(myType, myKeyLen);
                 final GordianCipherFactory myCipherFactory = theFactory.getCipherFactory();
                 final GordianKeyGenerator<GordianNewSymKeySpec> myGenerator = myCipherFactory.getKeyGenerator(mySpec);
                 final GordianKey<GordianNewSymKeySpec> myKey = myGenerator.generateKey();
@@ -556,7 +556,7 @@ public final class GordianCoreKeySet
             /* If this is supported for a keySet */
             if (mySymPredicate.test(myType)) {
                 /* Generate the key and add to map */
-                final GordianNewSymKeySpec mySpec = myBuilder.generic(myType, myKeyLen);
+                final GordianNewSymKeySpec mySpec = myBuilder.symKey(myType, myKeyLen);
                 final GordianKey<GordianNewSymKeySpec> myKey = generateKey(mySpec, pSecret, mySeededRandom);
                 theSymKeyMap.put(mySpec, myKey);
                 theCipher.declareSymKey(myKey);

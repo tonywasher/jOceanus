@@ -17,13 +17,31 @@
 package io.github.tonywasher.joceanus.gordianknot.util;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewPBESpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamCipherSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeySpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymCipherSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeySpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.keyset.spec.GordianNewKeySetSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.lock.spec.GordianNewPasswordLockSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianNewMacSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.random.spec.GordianNewRandomSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keyset.GordianCoreKeySet;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keyset.GordianKeySetData;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.lock.GordianFactoryLockImpl;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher.GordianCorePBESpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher.GordianCoreStreamCipherSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher.GordianCoreStreamKeySpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher.GordianCoreSymCipherSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher.GordianCoreSymKeySpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianCoreDigestSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keyset.GordianCoreKeySetSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.lock.GordianCorePasswordLockSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.mac.GordianCoreMacSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.random.GordianCoreRandomSpecBuilder;
 
 /**
  * Utilities.
@@ -85,6 +103,78 @@ public final class GordianUtilities {
     }
 
     /**
+     * Obtain DigestSpecBuilder instance.
+     *
+     * @return the specBuilder
+     */
+    public static GordianNewDigestSpecBuilder newDigestSpecBuilder() {
+        return GordianCoreDigestSpecBuilder.newInstance();
+    }
+
+    /**
+     * Obtain SymKeySpecBuilder instance.
+     *
+     * @return the specBuilder
+     */
+    public static GordianNewSymKeySpecBuilder newSymKeySpecBuilder() {
+        return GordianCoreSymKeySpecBuilder.newInstance();
+    }
+
+    /**
+     * Obtain SymKeySpecBuilder instance.
+     *
+     * @return the specBuilder
+     */
+    public static GordianNewSymCipherSpecBuilder newSymCipherSpecBuilder() {
+        return GordianCoreSymCipherSpecBuilder.newInstance();
+    }
+
+    /**
+     * Obtain SymKeySpecBuilder instance.
+     *
+     * @return the specBuilder
+     */
+    public static GordianNewStreamKeySpecBuilder newStreamKeySpecBuilder() {
+        return GordianCoreStreamKeySpecBuilder.newInstance();
+    }
+
+    /**
+     * Obtain SymKeySpecBuilder instance.
+     *
+     * @return the specBuilder
+     */
+    public static GordianNewStreamCipherSpecBuilder newStreamCipherSpecBuilder() {
+        return GordianCoreStreamCipherSpecBuilder.newInstance();
+    }
+
+    /**
+     * Obtain PBESpecBuilder instance.
+     *
+     * @return the specBuilder
+     */
+    public static GordianNewPBESpecBuilder newPBESpecBuilder() {
+        return GordianCorePBESpecBuilder.newInstance();
+    }
+
+    /**
+     * Obtain MacSpecBuilder instance.
+     *
+     * @return the specBuilder
+     */
+    public static GordianNewMacSpecBuilder newMacSpecBuilder() {
+        return GordianCoreMacSpecBuilder.newInstance();
+    }
+
+    /**
+     * Obtain RandomSpecBuilder instance.
+     *
+     * @return the specBuilder
+     */
+    public static GordianNewRandomSpecBuilder newRandomSpecBuilder() {
+        return GordianCoreRandomSpecBuilder.newInstance();
+    }
+
+    /**
      * Obtain KeySetSpecBuilder instance.
      *
      * @return the specBuilder
@@ -100,5 +190,14 @@ public final class GordianUtilities {
      */
     public static GordianNewPasswordLockSpecBuilder newPasswordLockSpecBuilder() {
         return GordianCorePasswordLockSpecBuilder.newInstance();
+    }
+
+    /**
+     * Obtain KeyPairSpecBuilder instance.
+     *
+     * @return the specBuilder
+     */
+    public static GordianNewKeyPairSpecBuilder newKeyPairSpecBuilder() {
+        return GordianCoreKeyPairSpecBuilder.newInstance();
     }
 }

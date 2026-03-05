@@ -40,8 +40,8 @@ import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactoryType;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairGenerator;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySet;
 import io.github.tonywasher.joceanus.gordianknot.api.keyset.spec.GordianNewKeySetSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.agree.GordianCoreAgreement;
@@ -70,7 +70,7 @@ public final class AsymmetricAgreeScripts {
     /**
      * KeySetSpec.
      */
-    static final GordianNewKeySetSpec KEYSETSPEC = GordianUtilities.newKeySetSpecBuilder().keySetSpec();
+    static final GordianNewKeySetSpec KEYSETSPEC = GordianUtilities.newKeySetSpecBuilder().keySet();
 
     /**
      * SymCipherSpec.
@@ -133,7 +133,7 @@ public final class AsymmetricAgreeScripts {
     static void createSecuritySigners(final GordianFactory pBCFactory,
                                       final GordianFactory pJCAFactory) throws GordianException {
         /* Create the BC Signer */
-        final GordianKeyPairSpec mySpec = GordianKeyPairSpecBuilder.ed448();
+        final GordianNewKeyPairSpec mySpec = GordianKeyPairSpecBuilder.ed448();
         GordianAsyncFactory myFactory = pBCFactory.getAsyncFactory();
         GordianKeyPairFactory myKPFactory = myFactory.getKeyPairFactory();
         GordianAgreementFactory myAgreeFactory = myFactory.getAgreementFactory();

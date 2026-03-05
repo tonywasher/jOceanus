@@ -23,8 +23,8 @@ import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactoryType;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairGenerator;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairSpecBuilder;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianMLKEMSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewMLKEMSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keyset.spec.GordianNewKeySetSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.lock.spec.GordianNewPasswordLockSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.lock.spec.GordianNewPasswordLockSpecBuilder;
@@ -91,10 +91,11 @@ class ZipFileTest {
         final GordianFactory myFactory = GordianGenerator.createRandomFactory(pType);
 
         /* Create the keyPair */
+        final GordianNewKeyPairSpecBuilder myBuilder = GordianUtilities.newKeyPairSpecBuilder();
         final GordianKeyPairFactory myAsymFactory = myFactory.getAsyncFactory().getKeyPairFactory();
-        GordianKeyPairGenerator myPairGenerator = myAsymFactory.getKeyPairGenerator(GordianKeyPairSpecBuilder.x448());
+        GordianKeyPairGenerator myPairGenerator = myAsymFactory.getKeyPairGenerator(myBuilder.x448());
         final GordianKeyPair myKeyPair1 = myPairGenerator.generateKeyPair();
-        myPairGenerator = myAsymFactory.getKeyPairGenerator(GordianKeyPairSpecBuilder.mlkem(GordianMLKEMSpec.MLKEM512));
+        myPairGenerator = myAsymFactory.getKeyPairGenerator(myBuilder.mlkem(GordianNewMLKEMSpec.MLKEM512));
         final GordianKeyPair myKeyPair2 = myPairGenerator.generateKeyPair();
 
         /* Return the stream */
@@ -241,7 +242,7 @@ class ZipFileTest {
         /* Create appropriate zipLock */
         final GordianNewKeySetSpecBuilder myKSBuilder = GordianUtilities.newKeySetSpecBuilder();
         final GordianNewPasswordLockSpecBuilder myPLBuilder = GordianUtilities.newPasswordLockSpecBuilder();
-        final GordianNewPasswordLockSpec mySpec = myPLBuilder.passwordLock(myKSBuilder.keySetSpec(pKeyLen));
+        final GordianNewPasswordLockSpec mySpec = myPLBuilder.passwordLock(myKSBuilder.keySet(pKeyLen));
         if (pKeyPair instanceof GordianKeyPair) {
             return pFactory.keyPairZipLock(mySpec, (GordianKeyPair) pKeyPair, DEF_PASSWORD.clone());
         }

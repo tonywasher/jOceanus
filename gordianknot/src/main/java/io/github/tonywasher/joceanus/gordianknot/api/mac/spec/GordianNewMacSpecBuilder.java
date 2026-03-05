@@ -97,8 +97,8 @@ public interface GordianNewMacSpecBuilder {
      * @param pKeyLength the keyLength
      * @return the MacSpec
      */
-    default GordianNewMacSpec generic(final GordianNewMacType pMacType,
-                                      final GordianLength pKeyLength) {
+    default GordianNewMacSpec mac(final GordianNewMacType pMacType,
+                                  final GordianLength pKeyLength) {
         return withType(pMacType).withKeyLength(pKeyLength).build();
     }
 
@@ -109,8 +109,8 @@ public interface GordianNewMacSpecBuilder {
      * @param pSymKeySpec the symKeySpec
      * @return the MacSpec
      */
-    default GordianNewMacSpec generic(final GordianNewMacType pMacType,
-                                      final GordianNewSymKeySpec pSymKeySpec) {
+    default GordianNewMacSpec mac(final GordianNewMacType pMacType,
+                                  final GordianNewSymKeySpec pSymKeySpec) {
         return withType(pMacType).withSymKeySubSpec(pSymKeySpec).build();
     }
 

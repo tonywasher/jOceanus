@@ -18,7 +18,7 @@ package io.github.tonywasher.joceanus.gordianknot.impl.bc;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairType;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairType;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignatureSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
@@ -221,7 +221,7 @@ public final class BouncySignature {
     static DSA getDSASigner(final GordianBaseFactory pFactory,
                             final GordianSignatureSpec pSpec) throws GordianException {
         /* Note if we are DSA */
-        final boolean isDSA = GordianKeyPairType.DSA.equals(pSpec.getKeyPairType());
+        final boolean isDSA = GordianNewKeyPairType.DSA.equals(pSpec.getKeyPairType());
 
         /* Switch on signature type */
         switch (pSpec.getSignatureType()) {

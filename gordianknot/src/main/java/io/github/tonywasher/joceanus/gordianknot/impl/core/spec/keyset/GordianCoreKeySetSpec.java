@@ -51,7 +51,7 @@ public class GordianCoreKeySetSpec
     /**
      * Constructor.
      */
-    public GordianCoreKeySetSpec() {
+    GordianCoreKeySetSpec() {
         this(DEFAULT_KEYLEN);
     }
 
@@ -60,7 +60,7 @@ public class GordianCoreKeySetSpec
      *
      * @param pKeyLen the keyLength.
      */
-    public GordianCoreKeySetSpec(final GordianLength pKeyLen) {
+    GordianCoreKeySetSpec(final GordianLength pKeyLen) {
         this(pKeyLen, DEFAULT_CIPHER_STEPS);
     }
 
@@ -70,8 +70,8 @@ public class GordianCoreKeySetSpec
      * @param pKeyLen   the keyLength.
      * @param pNumSteps the number of cipherSteps
      */
-    public GordianCoreKeySetSpec(final GordianLength pKeyLen,
-                                 final int pNumSteps) {
+    GordianCoreKeySetSpec(final GordianLength pKeyLen,
+                          final int pNumSteps) {
         theKeyLength = pKeyLen;
         theCipherSteps = pNumSteps;
         isValid = validateKeySetSpec();

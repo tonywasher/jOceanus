@@ -18,8 +18,8 @@ package io.github.tonywasher.joceanus.gordianknot.impl.jca;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianStateAwareKeyPair;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianCoreKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianPrivateKey;
@@ -99,7 +99,7 @@ public class JcaKeyPair
      * @throws GordianException on error
      */
     public static void checkKeyPair(final GordianKeyPair pKeyPair,
-                                    final GordianKeyPairSpec pSpec) throws GordianException {
+                                    final GordianNewKeyPairSpec pSpec) throws GordianException {
         /* Check the keyPair */
         checkKeyPair(pKeyPair);
 
@@ -126,7 +126,7 @@ public class JcaKeyPair
          * @param pKeySpec   the keySpec
          * @param pPublicKey the public key
          */
-        protected JcaPublicKey(final GordianKeyPairSpec pKeySpec,
+        protected JcaPublicKey(final GordianNewKeyPairSpec pKeySpec,
                                final PublicKey pPublicKey) {
             super(pKeySpec);
             theKey = pPublicKey;
@@ -186,7 +186,7 @@ public class JcaKeyPair
          * @param pKeySpec    the keySpec
          * @param pPrivateKey the private key
          */
-        protected JcaPrivateKey(final GordianKeyPairSpec pKeySpec,
+        protected JcaPrivateKey(final GordianNewKeyPairSpec pKeySpec,
                                 final PrivateKey pPrivateKey) {
             super(pKeySpec);
             theKey = pPrivateKey;
@@ -247,7 +247,7 @@ public class JcaKeyPair
          * @param pKeySpec the key spec
          * @param pKey     the key
          */
-        JcaStateAwarePrivateKey(final GordianKeyPairSpec pKeySpec,
+        JcaStateAwarePrivateKey(final GordianNewKeyPairSpec pKeySpec,
                                 final PrivateKey pKey) {
             super(pKeySpec, pKey);
             thePrivateKey = pKey;
@@ -329,7 +329,7 @@ public class JcaKeyPair
          * @param pKeySpec   the keySpec
          * @param pPublicKey the public key
          */
-        protected JcaDHPublicKey(final GordianKeyPairSpec pKeySpec,
+        protected JcaDHPublicKey(final GordianNewKeyPairSpec pKeySpec,
                                  final BCDHPublicKey pPublicKey) {
             super(pKeySpec, pPublicKey);
             theKey = pPublicKey;
@@ -402,7 +402,7 @@ public class JcaKeyPair
          * @param pKeySpec the key spec
          * @param pKey     the key
          */
-        JcaDHPrivateKey(final GordianKeyPairSpec pKeySpec,
+        JcaDHPrivateKey(final GordianNewKeyPairSpec pKeySpec,
                         final BCDHPrivateKey pKey) {
             super(pKeySpec, pKey);
             thePrivateKey = pKey;

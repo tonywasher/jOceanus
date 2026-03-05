@@ -25,7 +25,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDiges
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairGenerator;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStorePair;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignParams;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignature;
@@ -494,7 +494,7 @@ public class GordianCoreCertificate
         /* Derive the keyPair */
         final GordianKeyPairFactory myFactory = getFactory().getAsyncFactory().getKeyPairFactory();
         final X509EncodedKeySpec myX509 = getX509KeySpec();
-        final GordianKeyPairSpec myKeySpec = myFactory.determineKeyPairSpec(myX509);
+        final GordianNewKeyPairSpec myKeySpec = myFactory.determineKeyPairSpec(myX509);
         final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(myKeySpec);
         return myGenerator.derivePublicOnlyKeyPair(myX509);
     }

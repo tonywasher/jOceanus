@@ -43,7 +43,7 @@ public final class GordianStreamCipherSpecBuilder {
      * @return the cipherSpec
      */
     public static GordianNewStreamCipherSpec stream(final GordianNewStreamKeySpec pKeySpec) {
-        return BUILDER.generic(pKeySpec);
+        return BUILDER.streamCipher(pKeySpec);
     }
 
     /**
@@ -55,6 +55,6 @@ public final class GordianStreamCipherSpecBuilder {
      */
     public static GordianNewStreamCipherSpec stream(final GordianNewStreamKeySpec pKeySpec,
                                                     final boolean pAAD) {
-        return BUILDER.generic(pKeySpec, pAAD);
+        return BUILDER.streamCipher(pKeySpec, pAAD);
     }
 }

@@ -16,8 +16,8 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.api.agree;
 
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairType;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairType;
 
 import java.util.Objects;
 
@@ -33,7 +33,7 @@ public final class GordianAgreementSpec {
     /**
      * KeyPairSpec.
      */
-    private final GordianKeyPairSpec theKeyPairSpec;
+    private final GordianNewKeyPairSpec theKeyPairSpec;
 
     /**
      * AgreementType.
@@ -67,7 +67,7 @@ public final class GordianAgreementSpec {
      * @param pAgreementType the agreement type
      * @param pKDFType       the KDF type
      */
-    public GordianAgreementSpec(final GordianKeyPairSpec pKeyPairSpec,
+    public GordianAgreementSpec(final GordianNewKeyPairSpec pKeyPairSpec,
                                 final GordianAgreementType pAgreementType,
                                 final GordianAgreementKDF pKDFType) {
         this(pKeyPairSpec, pAgreementType, pKDFType, Boolean.FALSE);
@@ -81,7 +81,7 @@ public final class GordianAgreementSpec {
      * @param pKDFType       the KDF type
      * @param pConfirm       with key confirmation
      */
-    public GordianAgreementSpec(final GordianKeyPairSpec pKeyPairSpec,
+    public GordianAgreementSpec(final GordianNewKeyPairSpec pKeyPairSpec,
                                 final GordianAgreementType pAgreementType,
                                 final GordianAgreementKDF pKDFType,
                                 final Boolean pConfirm) {
@@ -97,7 +97,7 @@ public final class GordianAgreementSpec {
      *
      * @return the keyPairSpec
      */
-    public GordianKeyPairSpec getKeyPairSpec() {
+    public GordianNewKeyPairSpec getKeyPairSpec() {
         return theKeyPairSpec;
     }
 
@@ -134,7 +134,7 @@ public final class GordianAgreementSpec {
      * @return true/false
      */
     public boolean isSupported() {
-        final GordianKeyPairType myType = theKeyPairSpec.getKeyPairType();
+        final GordianNewKeyPairType myType = theKeyPairSpec.getKeyPairType();
         return theAgreementType.isSupported(myType) && theKDFType.isSupported(myType, theAgreementType);
     }
 

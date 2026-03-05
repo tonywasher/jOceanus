@@ -18,7 +18,7 @@ package io.github.tonywasher.joceanus.gordianknot.api.encrypt;
 
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestType;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairType;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairType;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianCoreDigestSpec;
 
 import java.util.Iterator;
@@ -42,7 +42,7 @@ public final class GordianEncryptorSpec {
     /**
      * KeyPairType.
      */
-    private final GordianKeyPairType theKeyPairType;
+    private final GordianNewKeyPairType theKeyPairType;
 
     /**
      * EncryptorType.
@@ -65,7 +65,7 @@ public final class GordianEncryptorSpec {
      * @param pKeyPairType   the keyPairType
      * @param pEncryptorType the encryptor type
      */
-    public GordianEncryptorSpec(final GordianKeyPairType pKeyPairType,
+    public GordianEncryptorSpec(final GordianNewKeyPairType pKeyPairType,
                                 final Object pEncryptorType) {
         theKeyPairType = pKeyPairType;
         theEncryptorType = pEncryptorType;
@@ -77,7 +77,7 @@ public final class GordianEncryptorSpec {
      *
      * @return the keyPairType.
      */
-    public GordianKeyPairType getKeyPairType() {
+    public GordianNewKeyPairType getKeyPairType() {
         return theKeyPairType;
     }
 

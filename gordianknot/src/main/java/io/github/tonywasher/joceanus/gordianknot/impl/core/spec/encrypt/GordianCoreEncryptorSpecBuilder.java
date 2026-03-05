@@ -33,7 +33,7 @@ import java.util.List;
 /**
  * Asymmetric Encryption Specification Builder.
  */
-public class GordianCoreEncryptorSpecBuilder
+public final class GordianCoreEncryptorSpecBuilder
         implements GordianNewEncryptorSpecBuilder {
     /**
      * The keyPairType.
@@ -44,6 +44,21 @@ public class GordianCoreEncryptorSpecBuilder
      * The subSpec.
      */
     private Object theSubSpec;
+
+    /**
+     * Private constructor.
+     */
+    private GordianCoreEncryptorSpecBuilder() {
+    }
+
+    /**
+     * Obtain new instance.
+     *
+     * @return the new instance
+     */
+    public static GordianCoreEncryptorSpecBuilder newInstance() {
+        return new GordianCoreEncryptorSpecBuilder();
+    }
 
     @Override
     public GordianNewEncryptorSpecBuilder withKeyPairType(final GordianNewKeyPairType pType) {

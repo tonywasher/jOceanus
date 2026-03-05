@@ -25,20 +25,18 @@ import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStrea
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymCipherSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactoryType;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianDSAElliptic;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianDSTU4145Elliptic;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianGOSTElliptic;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairSpecBuilder;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairType;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianNTRUPrimeSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianSM2Elliptic;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairType;
 import io.github.tonywasher.joceanus.gordianknot.api.keyset.spec.GordianNewKeySetSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianASN1Util;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseData;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.cipher.GordianCoreCipherFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keyset.GordianKeySetSpecASN1;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreNTRUPrimeSpec;
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1GeneralString;
 import org.bouncycastle.asn1.ASN1Integer;
@@ -87,8 +85,8 @@ public class GordianCoreAgreementAlgId {
     /**
      * Null KeyPairSpec for Partial AgreementSpec.
      */
-    private static final GordianKeyPairSpec NULLKEYPAIRSPEC = GordianKeyPairSpecBuilder.ed448();
-
+    private static final GordianNewKeyPairSpec NULLKEYPAIRSPEC = GordianCoreKeyPairSpecBuilder.newInstance().ed448();
+ 
     /**
      * The factory.
      */
@@ -107,12 +105,12 @@ public class GordianCoreAgreementAlgId {
     /**
      * Map of KeyPairSpec to ObjectIdentifier.
      */
-    private final Map<GordianKeyPairSpec, ASN1ObjectIdentifier> theKeyPair2IdMap;
+    private final Map<GordianNewKeyPairSpec, ASN1ObjectIdentifier> theKeyPair2IdMap;
 
     /**
      * Map of Identifier to AgreementSpec.
      */
-    private final Map<ASN1ObjectIdentifier, GordianKeyPairSpec> theId2KeyPairMap;
+    private final Map<ASN1ObjectIdentifier, GordianNewKeyPairSpec> theId2KeyPairMap;
 
     /**
      * Constructor.
@@ -177,7 +175,7 @@ public class GordianCoreAgreementAlgId {
      */
     private void addAllKeyPairs() {
         /* Loop through all the Agreement types */
-        for (GordianKeyPairSpec mySpec : theFactory.getAsyncFactory().getKeyPairFactory().listPossibleKeySpecs()) {
+        for (GordianNewKeyPairSpec mySpec : theFactory.getAsyncFactory().getKeyPairFactory().listPossibleKeySpecs()) {
             /* Add agreements */
             addKeyPair(mySpec);
         }
@@ -189,57 +187,58 @@ public class GordianCoreAgreementAlgId {
      *
      * @param pSpec the keyPairSpec
      */
-    private void addKeyPair(final GordianKeyPairSpec pSpec) {
+    private void addKeyPair(final GordianNewKeyPairSpec pSpec) {
         /* Add branch for agreementType */
-        final GordianKeyPairType myType = pSpec.getKeyPairType();
+        final GordianCoreKeyPairSpec mySpec = (GordianCoreKeyPairSpec) pSpec;
+        final GordianNewKeyPairType myType = pSpec.getKeyPairType();
         ASN1ObjectIdentifier myId = KEYPAIRSPECOID.branch(Integer.toString(myType.ordinal() + 1));
 
         /* switch on type */
         switch (myType) {
             case RSA:
-                myId = myId.branch(Integer.toString(pSpec.getRSAModulus().ordinal() + 1));
+                myId = myId.branch(Integer.toString(mySpec.getRSASpec().getSpec().ordinal() + 1));
                 break;
             case DH:
-                myId = myId.branch(Integer.toString(pSpec.getDHGroup().ordinal() + 1));
+                myId = myId.branch(Integer.toString(mySpec.getDHSpec().getSpec().ordinal() + 1));
                 break;
             case XDH:
-                myId = myId.branch(Integer.toString(pSpec.getEdwardsElliptic().ordinal() + 1));
+                myId = myId.branch(Integer.toString(mySpec.getEdwardsSpec().getSpec().ordinal() + 1));
                 break;
             case EC:
-                myId = myId.branch(Integer.toString(((GordianDSAElliptic) pSpec.getElliptic()).ordinal() + 1));
+                myId = myId.branch(Integer.toString(mySpec.getECSpec().getSpec().ordinal() + 1));
                 break;
             case SM2:
-                myId = myId.branch(Integer.toString(((GordianSM2Elliptic) pSpec.getElliptic()).ordinal() + 1));
+                myId = myId.branch(Integer.toString(mySpec.getSM2Spec().getSpec().ordinal() + 1));
                 break;
             case GOST2012:
-                myId = myId.branch(Integer.toString(((GordianGOSTElliptic) pSpec.getElliptic()).ordinal() + 1));
+                myId = myId.branch(Integer.toString(mySpec.getGOSTSpec().getSpec().ordinal() + 1));
                 break;
             case DSTU4145:
-                myId = myId.branch(Integer.toString(((GordianDSTU4145Elliptic) pSpec.getElliptic()).ordinal() + 1));
+                myId = myId.branch(Integer.toString(mySpec.getDSTUSpec().getSpec().ordinal() + 1));
                 break;
             case CMCE:
-                myId = myId.branch(Integer.toString(pSpec.getCMCEKeySpec().ordinal() + 1));
+                myId = myId.branch(Integer.toString(mySpec.getCMCESpec().getSpec().ordinal() + 1));
                 break;
             case FRODO:
-                myId = myId.branch(Integer.toString(pSpec.getFRODOKeySpec().ordinal() + 1));
+                myId = myId.branch(Integer.toString(mySpec.getFRODOSpec().getSpec().ordinal() + 1));
                 break;
             case SABER:
-                myId = myId.branch(Integer.toString(pSpec.getSABERKeySpec().ordinal() + 1));
+                myId = myId.branch(Integer.toString(mySpec.getSABERSpec().getSpec().ordinal() + 1));
                 break;
             case MLKEM:
-                myId = myId.branch(Integer.toString(pSpec.getMLKEMKeySpec().ordinal() + 1));
+                myId = myId.branch(Integer.toString(mySpec.getMLKEMSpec().getSpec().ordinal() + 1));
                 break;
             case HQC:
-                myId = myId.branch(Integer.toString(pSpec.getHQCKeySpec().ordinal() + 1));
+                myId = myId.branch(Integer.toString(mySpec.getHQCSpec().getSpec().ordinal() + 1));
                 break;
             case BIKE:
-                myId = myId.branch(Integer.toString(pSpec.getBIKEKeySpec().ordinal() + 1));
+                myId = myId.branch(Integer.toString(mySpec.getBIKESpec().getSpec().ordinal() + 1));
                 break;
             case NTRU:
-                myId = myId.branch(Integer.toString(pSpec.getNTRUKeySpec().ordinal() + 1));
+                myId = myId.branch(Integer.toString(mySpec.getNTRUSpec().getSpec().ordinal() + 1));
                 break;
             case NTRUPRIME:
-                final GordianNTRUPrimeSpec myNTRUPrime = pSpec.getNTRUPrimeKeySpec();
+                final GordianCoreNTRUPrimeSpec myNTRUPrime = mySpec.getNTRUPrimeSpec();
                 myId = myId.branch(Integer.toString(myNTRUPrime.getType().ordinal() + 1));
                 myId = myId.branch(Integer.toString(myNTRUPrime.getParams().ordinal() + 1));
                 break;
@@ -266,13 +265,13 @@ public class GordianCoreAgreementAlgId {
         final ASN1ObjectIdentifier myAgreeId = theAgree2IdMap.get(myPartial);
 
         /* Handle composite keyPairSpec */
-        final GordianKeyPairSpec mySpec = pSpec.getKeyPairSpec();
-        if (mySpec.getKeyPairType() == GordianKeyPairType.COMPOSITE) {
+        final GordianCoreKeyPairSpec mySpec = (GordianCoreKeyPairSpec) pSpec.getKeyPairSpec();
+        if (mySpec.getKeyPairType() == GordianNewKeyPairType.COMPOSITE) {
             final ASN1EncodableVector v = new ASN1EncodableVector();
             final ASN1ObjectIdentifier myId = theKeyPair2IdMap.get(GordianKeyPairSpecBuilder.composite());
-            final Iterator<GordianKeyPairSpec> myIterator = mySpec.keySpecIterator();
+            final Iterator<GordianNewKeyPairSpec> myIterator = mySpec.keySpecIterator();
             while (myIterator.hasNext()) {
-                final GordianKeyPairSpec myPair = myIterator.next();
+                final GordianNewKeyPairSpec myPair = myIterator.next();
                 v.add(theKeyPair2IdMap.get(myPair));
             }
             final AlgorithmIdentifier myPairId = new AlgorithmIdentifier(myId, new DERSequence(v));
@@ -296,10 +295,10 @@ public class GordianCoreAgreementAlgId {
 
         /* Derive the specs */
         final GordianAgreementSpec mySpec = theId2AgreeMap.get(myId);
-        final GordianKeyPairSpec myPairSpec = theId2KeyPairMap.get(myPairId.getAlgorithm());
-        if (myPairSpec.getKeyPairType() == GordianKeyPairType.COMPOSITE) {
+        final GordianNewKeyPairSpec myPairSpec = theId2KeyPairMap.get(myPairId.getAlgorithm());
+        if (myPairSpec.getKeyPairType() == GordianNewKeyPairType.COMPOSITE) {
             final ASN1Sequence myPairs = ASN1Sequence.getInstance(myPairId.getParameters());
-            final List<GordianKeyPairSpec> mySpecs = new ArrayList<>();
+            final List<GordianNewKeyPairSpec> mySpecs = new ArrayList<>();
             final Enumeration<?> en = myPairs.getObjects();
             while (en.hasMoreElements()) {
                 mySpecs.add(theId2KeyPairMap.get(ASN1ObjectIdentifier.getInstance(en.nextElement())));
@@ -329,7 +328,7 @@ public class GordianCoreAgreementAlgId {
      * @param pSpec       the keyPairSpec
      * @param pIdentifier the identifier
      */
-    private void addToMaps(final GordianKeyPairSpec pSpec,
+    private void addToMaps(final GordianNewKeyPairSpec pSpec,
                            final ASN1ObjectIdentifier pIdentifier) {
         theKeyPair2IdMap.put(pSpec, pIdentifier);
         theId2KeyPairMap.put(pIdentifier, pSpec);

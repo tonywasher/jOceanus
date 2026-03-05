@@ -21,7 +21,6 @@ import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewDSASpec;
 import org.bouncycastle.asn1.x509.DSAParameter;
 
-import java.util.Collection;
 import java.util.EnumMap;
 import java.util.Map;
 
@@ -33,6 +32,11 @@ public final class GordianCoreDSASpec {
      * The specMap.
      */
     private static final Map<GordianNewDSASpec, GordianCoreDSASpec> SPECMAP = newSpecMap();
+
+    /**
+     * The specArray.
+     */
+    private static final GordianCoreDSASpec[] VALUES = SPECMAP.values().toArray(new GordianCoreDSASpec[0]);
 
     /**
      * The Spec.
@@ -62,13 +66,14 @@ public final class GordianCoreDSASpec {
      *
      * @return the keySize
      */
-    public GordianLength getKeySize() {
+    public int getKeySize() {
         switch (theSpec) {
             case MOD1024:
-                return GordianLength.LEN_160;
+                return GordianLength.LEN_1024.getLength();
             case MOD2048:
+                return GordianLength.LEN_2048.getLength();
             case MOD3072:
-                return GordianLength.LEN_256;
+                return GordianLength.LEN_3072.getLength();
             default:
                 throw new IllegalArgumentException();
         }
@@ -79,14 +84,13 @@ public final class GordianCoreDSASpec {
      *
      * @return the hashSize
      */
-    public GordianLength getHashSize() {
+    public int getHashSize() {
         switch (theSpec) {
             case MOD1024:
-                return GordianLength.LEN_1024;
+                return GordianLength.LEN_160.getLength();
             case MOD2048:
-                return GordianLength.LEN_2048;
             case MOD3072:
-                return GordianLength.LEN_3072;
+                return GordianLength.LEN_256.getLength();
             default:
                 throw new IllegalArgumentException();
         }
@@ -103,8 +107,8 @@ public final class GordianCoreDSASpec {
         final int myLen = pParams.getP().bitLength();
         final int myHashSize = pParams.getQ().bitLength();
         for (GordianCoreDSASpec mySpec : values()) {
-            if (mySpec.getKeySize().getLength() == myLen
-                    && mySpec.getHashSize().getLength() == myHashSize) {
+            if (mySpec.getKeySize() == myLen
+                    && mySpec.getHashSize() == myHashSize) {
                 return mySpec;
             }
         }
@@ -164,7 +168,7 @@ public final class GordianCoreDSASpec {
      *
      * @return the values
      */
-    public static Collection<GordianCoreDSASpec> values() {
-        return SPECMAP.values();
+    public static GordianCoreDSASpec[] values() {
+        return VALUES;
     }
 }

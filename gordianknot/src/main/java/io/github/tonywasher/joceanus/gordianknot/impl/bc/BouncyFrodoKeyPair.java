@@ -19,7 +19,7 @@ package io.github.tonywasher.joceanus.gordianknot.impl.bc;
 import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPrivateKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPublicKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.agree.GordianCoreAgreementFactory;
@@ -27,6 +27,7 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFacto
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianIOException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianKeyPairValidity;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairSpec;
 import org.bouncycastle.asn1.ASN1Encoding;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
@@ -72,7 +73,7 @@ public final class BouncyFrodoKeyPair {
          * @param pKeySpec   the keySpec
          * @param pPublicKey the public key
          */
-        BouncyFrodoPublicKey(final GordianKeyPairSpec pKeySpec,
+        BouncyFrodoPublicKey(final GordianNewKeyPairSpec pKeySpec,
                              final FrodoPublicKeyParameters pPublicKey) {
             super(pKeySpec, pPublicKey);
         }
@@ -99,7 +100,7 @@ public final class BouncyFrodoKeyPair {
          * @param pKeySpec    the keySpec
          * @param pPrivateKey the private key
          */
-        BouncyFrodoPrivateKey(final GordianKeyPairSpec pKeySpec,
+        BouncyFrodoPrivateKey(final GordianNewKeyPairSpec pKeySpec,
                               final FrodoPrivateKeyParameters pPrivateKey) {
             super(pKeySpec, pPrivateKey);
         }
@@ -134,7 +135,7 @@ public final class BouncyFrodoKeyPair {
          * @throws GordianException on error
          */
         BouncyFrodoKeyPairGenerator(final GordianBaseFactory pFactory,
-                                    final GordianKeyPairSpec pKeySpec) throws GordianException {
+                                    final GordianNewKeyPairSpec pKeySpec) throws GordianException {
             /* Initialise underlying class */
             super(pFactory, pKeySpec);
 
@@ -142,7 +143,8 @@ public final class BouncyFrodoKeyPair {
             theGenerator = new FrodoKeyPairGenerator();
 
             /* Determine the parameters */
-            final FrodoParameters myParms = pKeySpec.getFRODOKeySpec().getParameters();
+            final GordianCoreKeyPairSpec myKeySpec = (GordianCoreKeyPairSpec) pKeySpec;
+            final FrodoParameters myParms = myKeySpec.getFRODOSpec().getParameters();
 
             /* Initialise the generator */
             final FrodoKeyGenerationParameters myParams = new FrodoKeyGenerationParameters(getRandom(), myParms);

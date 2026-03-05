@@ -61,8 +61,8 @@ public interface GordianNewSymKeySpecBuilder {
      * @param pKeyLength the keyLength
      * @return the keySpec
      */
-    default GordianNewSymKeySpec generic(final GordianNewSymKeyType pKeyType,
-                                         final GordianLength pKeyLength) {
+    default GordianNewSymKeySpec symKey(final GordianNewSymKeyType pKeyType,
+                                        final GordianLength pKeyLength) {
         return withType(pKeyType).withKeyLength(pKeyLength).build();
     }
 
@@ -74,9 +74,9 @@ public interface GordianNewSymKeySpecBuilder {
      * @param pKeyLength   the keyLength
      * @return the keySpec
      */
-    default GordianNewSymKeySpec generic(final GordianNewSymKeyType pKeyType,
-                                         final GordianLength pBlockLength,
-                                         final GordianLength pKeyLength) {
+    default GordianNewSymKeySpec symKey(final GordianNewSymKeyType pKeyType,
+                                        final GordianLength pBlockLength,
+                                        final GordianLength pKeyLength) {
         return withType(pKeyType).withBlockLength(pBlockLength).withKeyLength(pKeyLength).build();
     }
 

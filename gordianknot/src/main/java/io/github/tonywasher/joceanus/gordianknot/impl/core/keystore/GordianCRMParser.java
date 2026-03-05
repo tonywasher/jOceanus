@@ -32,7 +32,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianAsyncFactory
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairGenerator;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySet;
 import io.github.tonywasher.joceanus.gordianknot.api.keystore.GordianKeyStoreEntry;
 import io.github.tonywasher.joceanus.gordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStorePair;
@@ -314,7 +314,7 @@ public class GordianCRMParser {
             final GordianAsyncFactory myFactory = theGateway.getFactory().getAsyncFactory();
             final GordianKeyPairFactory myKPFactory = myFactory.getKeyPairFactory();
             final X509EncodedKeySpec myX509Spec = new X509EncodedKeySpec(pPublicKey.getEncoded());
-            final GordianKeyPairSpec myKeySpec = myKPFactory.determineKeyPairSpec(myX509Spec);
+            final GordianNewKeyPairSpec myKeySpec = myKPFactory.determineKeyPairSpec(myX509Spec);
             final GordianKeyPairGenerator myGenerator = myKPFactory.getKeyPairGenerator(myKeySpec);
             final GordianKeyPair myKeyPair = myGenerator.derivePublicOnlyKeyPair(myX509Spec);
 
@@ -356,7 +356,7 @@ public class GordianCRMParser {
             /* Access the generator */
             final GordianKeyPairFactory myFactory = theGateway.getFactory().getAsyncFactory().getKeyPairFactory();
             final X509EncodedKeySpec myX509Spec = new X509EncodedKeySpec(pPublicKey.getEncoded());
-            final GordianKeyPairSpec myKeySpec = myFactory.determineKeyPairSpec(myX509Spec);
+            final GordianNewKeyPairSpec myKeySpec = myFactory.determineKeyPairSpec(myX509Spec);
             final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(myKeySpec);
 
             /* Determine type of proof of Possession */
@@ -393,7 +393,7 @@ public class GordianCRMParser {
     private void checkPrivateKey(final GordianKeyPair pKeyPair) throws GordianException {
         /* Access details */
         final GordianAsyncFactory myFactory = theGateway.getFactory().getAsyncFactory();
-        final GordianKeyPairSpec mySpec = pKeyPair.getKeyPairSpec();
+        final GordianNewKeyPairSpec mySpec = pKeyPair.getKeyPairSpec();
 
         /* Check for encryption private key */
         final GordianEncryptorSpec myEncSpec = myFactory.getEncryptorFactory().defaultForKeyPair(mySpec);
@@ -427,7 +427,7 @@ public class GordianCRMParser {
 
         /* Access details */
         final GordianEncryptorFactory myEncFactory = myFactory.getAsyncFactory().getEncryptorFactory();
-        final GordianKeyPairSpec mySpec = pKeyPair.getKeyPairSpec();
+        final GordianNewKeyPairSpec mySpec = pKeyPair.getKeyPairSpec();
         final GordianEncryptorSpec myEncSpec = myEncFactory.defaultForKeyPair(mySpec);
 
         /* Create and initialise encryptors */
@@ -458,7 +458,7 @@ public class GordianCRMParser {
         /* Access details */
         final GordianBaseFactory myFactory = theGateway.getFactory();
         final GordianAgreementFactory myAgreeFactory = myFactory.getAsyncFactory().getAgreementFactory();
-        final GordianKeyPairSpec mySpec = pKeyPair.getKeyPairSpec();
+        final GordianNewKeyPairSpec mySpec = pKeyPair.getKeyPairSpec();
         final GordianAgreementSpec myAgreeSpec = myAgreeFactory.defaultForKeyPair(mySpec);
 
         /* Create agreement */

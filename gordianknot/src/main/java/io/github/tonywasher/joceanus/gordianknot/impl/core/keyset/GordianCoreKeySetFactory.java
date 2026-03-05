@@ -24,7 +24,6 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseData;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory.GordianKeySetGenerate;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keyset.GordianCoreKeySetSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keyset.GordianCoreKeySetSpecBuilder;
 
 import java.util.function.Predicate;
@@ -85,7 +84,8 @@ public class GordianCoreKeySetFactory
 
     @Override
     public GordianKeySet generateKeySet(final byte[] pSeed) throws GordianException {
-        final GordianCoreKeySet myKeySet = generateKeySet(new GordianCoreKeySetSpec());
+        final GordianCoreKeySetSpecBuilder myBuilder = GordianCoreKeySetSpecBuilder.newInstance();
+        final GordianCoreKeySet myKeySet = generateKeySet(myBuilder.keySet());
         myKeySet.buildFromSecret(pSeed);
         return myKeySet;
     }

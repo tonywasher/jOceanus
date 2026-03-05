@@ -33,7 +33,6 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianParameter
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keyset.GordianCoreKeySet;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keyset.GordianCoreKeySetFactory;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.lock.GordianCorePasswordLockSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.lock.GordianCorePasswordLockSpecBuilder;
 
 import java.net.InetAddress;
@@ -138,7 +137,8 @@ public class GordianCoreLockFactory
     @Override
     public GordianKeySetLock newKeySetLock(final GordianKeySet pKeySetToLock,
                                            final char[] pPassword) throws GordianException {
-        return newKeySetLock(pKeySetToLock, new GordianCorePasswordLockSpec(), pPassword);
+        final GordianCorePasswordLockSpecBuilder myBuilder = GordianCorePasswordLockSpecBuilder.newInstance();
+        return newKeySetLock(pKeySetToLock, myBuilder.passwordLock(), pPassword);
     }
 
     @Override
@@ -154,7 +154,8 @@ public class GordianCoreLockFactory
 
     @Override
     public GordianKeySetLock newKeySetLock(final char[] pPassword) throws GordianException {
-        return newKeySetLock(new GordianCorePasswordLockSpec(), pPassword);
+        final GordianCorePasswordLockSpecBuilder myBuilder = GordianCorePasswordLockSpecBuilder.newInstance();
+        return newKeySetLock(myBuilder.passwordLock(), pPassword);
     }
 
     @Override
@@ -191,7 +192,8 @@ public class GordianCoreLockFactory
     @Override
     public GordianKeyPairLock newKeyPairLock(final GordianKeyPair pKeyPair,
                                              final char[] pPassword) throws GordianException {
-        return newKeyPairLock(new GordianCorePasswordLockSpec(), pKeyPair, pPassword);
+        final GordianCorePasswordLockSpecBuilder myBuilder = GordianCorePasswordLockSpecBuilder.newInstance();
+        return newKeyPairLock(myBuilder.passwordLock(), pKeyPair, pPassword);
     }
 
     @Override

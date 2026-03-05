@@ -19,13 +19,14 @@ package io.github.tonywasher.joceanus.gordianknot.impl.bc;
 import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPrivateKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPublicKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.agree.GordianCoreAgreementFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianKeyPairValidity;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairSpec;
 import org.bouncycastle.asn1.ASN1Encoding;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
@@ -76,7 +77,7 @@ public final class BouncyXDHKeyPair {
          * @param pKeySpec   the keySpec
          * @param pPublicKey the public key
          */
-        BouncyX25519PublicKey(final GordianKeyPairSpec pKeySpec,
+        BouncyX25519PublicKey(final GordianNewKeyPairSpec pKeySpec,
                               final X25519PublicKeyParameters pPublicKey) {
             super(pKeySpec, pPublicKey);
         }
@@ -103,7 +104,7 @@ public final class BouncyXDHKeyPair {
          * @param pKeySpec    the keySpec
          * @param pPrivateKey the private key
          */
-        BouncyX25519PrivateKey(final GordianKeyPairSpec pKeySpec,
+        BouncyX25519PrivateKey(final GordianNewKeyPairSpec pKeySpec,
                                final X25519PrivateKeyParameters pPrivateKey) {
             super(pKeySpec, pPrivateKey);
         }
@@ -131,7 +132,7 @@ public final class BouncyXDHKeyPair {
          * @param pKeySpec   the keySpec
          * @param pPublicKey the public key
          */
-        BouncyX448PublicKey(final GordianKeyPairSpec pKeySpec,
+        BouncyX448PublicKey(final GordianNewKeyPairSpec pKeySpec,
                             final X448PublicKeyParameters pPublicKey) {
             super(pKeySpec, pPublicKey);
         }
@@ -158,7 +159,7 @@ public final class BouncyXDHKeyPair {
          * @param pKeySpec    the keySpec
          * @param pPrivateKey the private key
          */
-        BouncyX448PrivateKey(final GordianKeyPairSpec pKeySpec,
+        BouncyX448PrivateKey(final GordianNewKeyPairSpec pKeySpec,
                              final X448PrivateKeyParameters pPrivateKey) {
             super(pKeySpec, pPrivateKey);
         }
@@ -192,7 +193,7 @@ public final class BouncyXDHKeyPair {
          * @param pKeySpec the keySpec
          */
         BouncyX25519KeyPairGenerator(final GordianBaseFactory pFactory,
-                                     final GordianKeyPairSpec pKeySpec) {
+                                     final GordianNewKeyPairSpec pKeySpec) {
             /* Initialise underlying class */
             super(pFactory, pKeySpec);
 
@@ -323,7 +324,7 @@ public final class BouncyXDHKeyPair {
          * @param pKeySpec the keySpec
          */
         BouncyX448KeyPairGenerator(final GordianBaseFactory pFactory,
-                                   final GordianKeyPairSpec pKeySpec) {
+                                   final GordianNewKeyPairSpec pKeySpec) {
             /* Initialise underlying class */
             super(pFactory, pKeySpec);
 
@@ -443,8 +444,9 @@ public final class BouncyXDHKeyPair {
      * @param pSpec the keyPairSpec
      * @return the agreement
      */
-    private static RawAgreement establishAgreement(final GordianKeyPairSpec pSpec) {
-        return pSpec.getEdwardsElliptic().is25519()
+    private static RawAgreement establishAgreement(final GordianNewKeyPairSpec pSpec) {
+        final GordianCoreKeyPairSpec mySpec = (GordianCoreKeyPairSpec) pSpec;
+        return mySpec.getEdwardsSpec().is25519()
                 ? new X25519Agreement()
                 : new X448Agreement();
     }

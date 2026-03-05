@@ -23,7 +23,6 @@ import org.bouncycastle.asn1.bc.BCObjectIdentifiers;
 import org.bouncycastle.pqc.crypto.ntru.NTRUParameters;
 import org.bouncycastle.pqc.jcajce.spec.NTRUParameterSpec;
 
-import java.util.Collection;
 import java.util.EnumMap;
 import java.util.Map;
 
@@ -35,6 +34,11 @@ public final class GordianCoreNTRUSpec {
      * The specMap.
      */
     private static final Map<GordianNewNTRUSpec, GordianCoreNTRUSpec> SPECMAP = newSpecMap();
+
+    /**
+     * The specArray.
+     */
+    private static final GordianCoreNTRUSpec[] VALUES = SPECMAP.values().toArray(new GordianCoreNTRUSpec[0]);
 
     /**
      * The Spec.
@@ -184,7 +188,7 @@ public final class GordianCoreNTRUSpec {
      *
      * @return the values
      */
-    public static Collection<GordianCoreNTRUSpec> values() {
-        return SPECMAP.values();
+    public static GordianCoreNTRUSpec[] values() {
+        return VALUES;
     }
 }

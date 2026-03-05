@@ -16,10 +16,38 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.api.keypair;
 
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianLMSKeySpec.GordianHSSKeySpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianXMSSKeySpec.GordianXMSSDigestType;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianXMSSKeySpec.GordianXMSSHeight;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianXMSSKeySpec.GordianXMSSMTLayers;
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewBIKESpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewCMCESpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewDHSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewDSASpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewDSTUSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewECSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewFRODOSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewFalconSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewGOSTSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewHQCSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewLMSSpec.GordianNewLMSHash;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewLMSSpec.GordianNewLMSHeight;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewLMSSpec.GordianNewLMSWidth;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewMLDSASpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewMLKEMSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewMayoSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewNTRUPrimeSpec.GordianNewNTRUPrimeParams;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewNTRUPrimeSpec.GordianNewNTRUPrimeType;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewNTRUSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewPicnicSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewRSASpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewSABERSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewSLHDSASpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewSM2Spec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewSnovaSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewXMSSSpec.GordianNewXMSSDigestType;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewXMSSSpec.GordianNewXMSSHeight;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewXMSSSpec.GordianNewXMSSMTLayers;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairSpecBuilder;
 
 import java.util.Arrays;
 import java.util.List;
@@ -29,6 +57,11 @@ import java.util.List;
  */
 public final class GordianKeyPairSpecBuilder {
     /**
+     * KeyPairSpecBuilder.
+     */
+    private static final GordianNewKeyPairSpecBuilder BUILDER = GordianCoreKeyPairSpecBuilder.newInstance();
+
+    /**
      * Private constructor.
      */
     private GordianKeyPairSpecBuilder() {
@@ -37,81 +70,81 @@ public final class GordianKeyPairSpecBuilder {
     /**
      * Create RSAKey.
      *
-     * @param pModulus the modulus
+     * @param pSpec the rsaSpec
      * @return the KeySpec
      */
-    public static GordianKeyPairSpec rsa(final GordianRSAModulus pModulus) {
-        return new GordianKeyPairSpec(GordianKeyPairType.RSA, pModulus);
+    public static GordianNewKeyPairSpec rsa(final GordianNewRSASpec pSpec) {
+        return BUILDER.rsa(pSpec);
     }
 
     /**
      * Create ECKey.
      *
-     * @param pCurve the curve
+     * @param pSpec the ecSpec
      * @return the KeySpec
      */
-    public static GordianKeyPairSpec ec(final GordianDSAElliptic pCurve) {
-        return new GordianKeyPairSpec(GordianKeyPairType.EC, pCurve);
+    public static GordianNewKeyPairSpec ec(final GordianNewECSpec pSpec) {
+        return BUILDER.ec(pSpec);
     }
 
     /**
      * Create SM2Key.
      *
-     * @param pCurve the curve
+     * @param pSpec the SM2Spec
      * @return the KeySpec
      */
-    public static GordianKeyPairSpec sm2(final GordianSM2Elliptic pCurve) {
-        return new GordianKeyPairSpec(GordianKeyPairType.SM2, pCurve);
+    public static GordianNewKeyPairSpec sm2(final GordianNewSM2Spec pSpec) {
+        return BUILDER.sm2(pSpec);
     }
 
     /**
      * Create DSTU4145Key.
      *
-     * @param pCurve the curve
+     * @param pSpec the DSTUSpec
      * @return the KeySpec
      */
-    public static GordianKeyPairSpec dstu4145(final GordianDSTU4145Elliptic pCurve) {
-        return new GordianKeyPairSpec(GordianKeyPairType.DSTU4145, pCurve);
+    public static GordianNewKeyPairSpec dstu4145(final GordianNewDSTUSpec pSpec) {
+        return BUILDER.dstu4145(pSpec);
     }
 
     /**
      * Create GOST2012Key.
      *
-     * @param pCurve the curve
+     * @param pSpec the GOSTSpec
      * @return the KeySpec
      */
-    public static GordianKeyPairSpec gost2012(final GordianGOSTElliptic pCurve) {
-        return new GordianKeyPairSpec(GordianKeyPairType.GOST2012, pCurve);
+    public static GordianNewKeyPairSpec gost2012(final GordianNewGOSTSpec pSpec) {
+        return BUILDER.gost2012(pSpec);
     }
 
     /**
      * Create DSAKey.
      *
-     * @param pKeyType the keyType
+     * @param pSpec the dsaSpec
      * @return the KeySpec
      */
-    public static GordianKeyPairSpec dsa(final GordianDSAKeyType pKeyType) {
-        return new GordianKeyPairSpec(GordianKeyPairType.DSA, pKeyType);
+    public static GordianNewKeyPairSpec dsa(final GordianNewDSASpec pSpec) {
+        return BUILDER.dsa(pSpec);
     }
 
     /**
      * Create DHKey.
      *
-     * @param pGroup the group
+     * @param pSpec the dhSpec
      * @return the KeySpec
      */
-    public static GordianKeyPairSpec dh(final GordianDHGroup pGroup) {
-        return new GordianKeyPairSpec(GordianKeyPairType.DH, pGroup);
+    public static GordianNewKeyPairSpec dh(final GordianNewDHSpec pSpec) {
+        return BUILDER.dh(pSpec);
     }
 
     /**
      * Create ElGamalKey.
      *
-     * @param pGroup the group
+     * @param pSpec the dhSpec
      * @return the KeySpec
      */
-    public static GordianKeyPairSpec elGamal(final GordianDHGroup pGroup) {
-        return new GordianKeyPairSpec(GordianKeyPairType.ELGAMAL, pGroup);
+    public static GordianNewKeyPairSpec elGamal(final GordianNewDHSpec pSpec) {
+        return BUILDER.elGamal(pSpec);
     }
 
     /**
@@ -119,8 +152,8 @@ public final class GordianKeyPairSpecBuilder {
      *
      * @return the KeySpec
      */
-    public static GordianKeyPairSpec x25519() {
-        return new GordianKeyPairSpec(GordianKeyPairType.XDH, GordianEdwardsElliptic.CURVE25519);
+    public static GordianNewKeyPairSpec x25519() {
+        return BUILDER.x25519();
     }
 
     /**
@@ -128,8 +161,8 @@ public final class GordianKeyPairSpecBuilder {
      *
      * @return the KeySpec
      */
-    public static GordianKeyPairSpec x448() {
-        return new GordianKeyPairSpec(GordianKeyPairType.XDH, GordianEdwardsElliptic.CURVE448);
+    public static GordianNewKeyPairSpec x448() {
+        return BUILDER.x448();
     }
 
     /**
@@ -137,8 +170,8 @@ public final class GordianKeyPairSpecBuilder {
      *
      * @return the KeySpec
      */
-    public static GordianKeyPairSpec ed25519() {
-        return new GordianKeyPairSpec(GordianKeyPairType.EDDSA, GordianEdwardsElliptic.CURVE25519);
+    public static GordianNewKeyPairSpec ed25519() {
+        return BUILDER.ed25519();
     }
 
     /**
@@ -146,8 +179,8 @@ public final class GordianKeyPairSpecBuilder {
      *
      * @return the KeySpec
      */
-    public static GordianKeyPairSpec ed448() {
-        return new GordianKeyPairSpec(GordianKeyPairType.EDDSA, GordianEdwardsElliptic.CURVE448);
+    public static GordianNewKeyPairSpec ed448() {
+        return BUILDER.ed448();
     }
 
     /**
@@ -157,9 +190,9 @@ public final class GordianKeyPairSpecBuilder {
      * @param pHeight     the height
      * @return the KeySpec
      */
-    public static GordianKeyPairSpec xmss(final GordianXMSSDigestType pDigestType,
-                                          final GordianXMSSHeight pHeight) {
-        return new GordianKeyPairSpec(GordianKeyPairType.XMSS, GordianXMSSKeySpec.xmss(pDigestType, pHeight));
+    public static GordianNewKeyPairSpec xmss(final GordianNewXMSSDigestType pDigestType,
+                                             final GordianNewXMSSHeight pHeight) {
+        return BUILDER.xmss(pDigestType, pHeight);
     }
 
     /**
@@ -170,32 +203,44 @@ public final class GordianKeyPairSpecBuilder {
      * @param pLayers     the layers
      * @return the KeySpec
      */
-    public static GordianKeyPairSpec xmssmt(final GordianXMSSDigestType pDigestType,
-                                            final GordianXMSSHeight pHeight,
-                                            final GordianXMSSMTLayers pLayers) {
-        return new GordianKeyPairSpec(GordianKeyPairType.XMSS, GordianXMSSKeySpec.xmssmt(pDigestType, pHeight, pLayers));
+    public static GordianNewKeyPairSpec xmssmt(final GordianNewXMSSDigestType pDigestType,
+                                               final GordianNewXMSSHeight pHeight,
+                                               final GordianNewXMSSMTLayers pLayers) {
+        return BUILDER.xmssmt(pDigestType, pHeight, pLayers);
     }
 
     /**
      * Create lmsKey.
      *
-     * @param pKeySpec the keySpec
+     * @param pHashType the hashType
+     * @param pHeight   the height
+     * @param pWidth    the width
+     * @param pLength   the length
      * @return the KeySpec
      */
-    public static GordianKeyPairSpec lms(final GordianLMSKeySpec pKeySpec) {
-        return hss(pKeySpec, 1);
+    public static GordianNewKeyPairSpec lms(final GordianNewLMSHash pHashType,
+                                            final GordianNewLMSHeight pHeight,
+                                            final GordianNewLMSWidth pWidth,
+                                            final GordianLength pLength) {
+        return hss(pHashType, pHeight, pWidth, pLength, 1);
     }
 
     /**
      * Create hssKey.
      *
-     * @param pKeySpec the keySpec
-     * @param pDepth   the treeDepth
+     * @param pHashType the hashType
+     * @param pHeight   the height
+     * @param pWidth    the width
+     * @param pLength   the length
+     * @param pDepth    the treeDepth
      * @return the KeySpec
      */
-    public static GordianKeyPairSpec hss(final GordianLMSKeySpec pKeySpec,
-                                         final int pDepth) {
-        return new GordianKeyPairSpec(GordianKeyPairType.LMS, new GordianHSSKeySpec(pKeySpec, pDepth));
+    public static GordianNewKeyPairSpec hss(final GordianNewLMSHash pHashType,
+                                            final GordianNewLMSHeight pHeight,
+                                            final GordianNewLMSWidth pWidth,
+                                            final GordianLength pLength,
+                                            final int pDepth) {
+        return BUILDER.hss(pHashType, pHeight, pWidth, pLength, pDepth);
     }
 
     /**
@@ -203,138 +248,140 @@ public final class GordianKeyPairSpecBuilder {
      *
      * @return the KeySpec
      */
-    public static GordianKeyPairSpec newHope() {
-        return new GordianKeyPairSpec(GordianKeyPairType.NEWHOPE, null);
+    public static GordianNewKeyPairSpec newHope() {
+        return BUILDER.newHope();
     }
 
     /**
      * Create SLHDSAKey.
      *
-     * @param pSpec the SLHDSA Spec
+     * @param pSpec the slhdsaSpec
      * @return the KeySpec
      */
-    public static GordianKeyPairSpec slhdsa(final GordianSLHDSASpec pSpec) {
-        return new GordianKeyPairSpec(GordianKeyPairType.SLHDSA, pSpec);
+    public static GordianNewKeyPairSpec slhdsa(final GordianNewSLHDSASpec pSpec) {
+        return BUILDER.slhdsa(pSpec);
     }
 
     /**
      * Create CMCEKey.
      *
-     * @param pSpec the CMCE Spec
+     * @param pSpec the cmceSpec
      * @return the KeySpec
      */
-    public static GordianKeyPairSpec cmce(final GordianCMCESpec pSpec) {
-        return new GordianKeyPairSpec(GordianKeyPairType.CMCE, pSpec);
+    public static GordianNewKeyPairSpec cmce(final GordianNewCMCESpec pSpec) {
+        return BUILDER.cmce(pSpec);
     }
 
     /**
      * Create FRODOKey.
      *
-     * @param pSpec the FRODO Spec
+     * @param pSpec the frodoSpec
      * @return the KeySpec
      */
-    public static GordianKeyPairSpec frodo(final GordianFRODOSpec pSpec) {
-        return new GordianKeyPairSpec(GordianKeyPairType.FRODO, pSpec);
+    public static GordianNewKeyPairSpec frodo(final GordianNewFRODOSpec pSpec) {
+        return BUILDER.frodo(pSpec);
     }
 
     /**
      * Create SABERKey.
      *
-     * @param pSpec the SABER Spec
+     * @param pSpec the saberSpec
      * @return the KeySpec
      */
-    public static GordianKeyPairSpec saber(final GordianSABERSpec pSpec) {
-        return new GordianKeyPairSpec(GordianKeyPairType.SABER, pSpec);
+    public static GordianNewKeyPairSpec saber(final GordianNewSABERSpec pSpec) {
+        return BUILDER.saber(pSpec);
     }
 
     /**
      * Create MLKEMKey.
      *
-     * @param pSpec the MLKEM Spec
+     * @param pSpec the mlkemSpec
      * @return the KeySpec
      */
-    public static GordianKeyPairSpec mlkem(final GordianMLKEMSpec pSpec) {
-        return new GordianKeyPairSpec(GordianKeyPairType.MLKEM, pSpec);
+    public static GordianNewKeyPairSpec mlkem(final GordianNewMLKEMSpec pSpec) {
+        return BUILDER.mlkem(pSpec);
     }
 
     /**
      * Create MLDSAKey.
      *
-     * @param pSpec the MLDSA Spec
+     * @param pSpec the mldsaSpec
      * @return the KeySpec
      */
-    public static GordianKeyPairSpec mldsa(final GordianMLDSASpec pSpec) {
-        return new GordianKeyPairSpec(GordianKeyPairType.MLDSA, pSpec);
+    public static GordianNewKeyPairSpec mldsa(final GordianNewMLDSASpec pSpec) {
+        return BUILDER.mldsa(pSpec);
     }
 
     /**
      * Create HQCKey.
      *
-     * @param pSpec the HQC Spec
+     * @param pSpec the hqcSpec
      * @return the KeySpec
      */
-    public static GordianKeyPairSpec hqc(final GordianHQCSpec pSpec) {
-        return new GordianKeyPairSpec(GordianKeyPairType.HQC, pSpec);
+    public static GordianNewKeyPairSpec hqc(final GordianNewHQCSpec pSpec) {
+        return BUILDER.hqc(pSpec);
     }
 
     /**
      * Create BIKEKey.
      *
-     * @param pSpec the BIKE Spec
+     * @param pSpec the bikeSpec
      * @return the KeySpec
      */
-    public static GordianKeyPairSpec bike(final GordianBIKESpec pSpec) {
-        return new GordianKeyPairSpec(GordianKeyPairType.BIKE, pSpec);
+    public static GordianNewKeyPairSpec bike(final GordianNewBIKESpec pSpec) {
+        return BUILDER.bike(pSpec);
     }
 
     /**
      * Create NTRUKey.
      *
-     * @param pSpec the NTRU Spec
+     * @param pSpec the ntruSpec
      * @return the KeySpec
      */
-    public static GordianKeyPairSpec ntru(final GordianNTRUSpec pSpec) {
-        return new GordianKeyPairSpec(GordianKeyPairType.NTRU, pSpec);
+    public static GordianNewKeyPairSpec ntru(final GordianNewNTRUSpec pSpec) {
+        return BUILDER.ntru(pSpec);
     }
 
     /**
      * Create NTRUPRIMEKey.
      *
-     * @param pSpec the NTRUPRIME Spec
+     * @param pType   the Type
+     * @param pParams the params
      * @return the KeySpec
      */
-    public static GordianKeyPairSpec ntruprime(final GordianNTRUPrimeSpec pSpec) {
-        return new GordianKeyPairSpec(GordianKeyPairType.NTRUPRIME, pSpec);
+    public static GordianNewKeyPairSpec ntruprime(final GordianNewNTRUPrimeType pType,
+                                                  final GordianNewNTRUPrimeParams pParams) {
+        return BUILDER.ntruprime(pType, pParams);
     }
 
     /**
      * Create FalconKey.
      *
-     * @param pSpec the FALCON Spec
+     * @param pSpec the falconSpec
      * @return the KeySpec
      */
-    public static GordianKeyPairSpec falcon(final GordianFalconSpec pSpec) {
-        return new GordianKeyPairSpec(GordianKeyPairType.FALCON, pSpec);
+    public static GordianNewKeyPairSpec falcon(final GordianNewFalconSpec pSpec) {
+        return BUILDER.falcon(pSpec);
     }
 
     /**
      * Create PicnicKey.
      *
-     * @param pSpec the Picnic Spec
+     * @param pSpec the picnicSpec
      * @return the KeySpec
      */
-    public static GordianKeyPairSpec picnic(final GordianPicnicSpec pSpec) {
-        return new GordianKeyPairSpec(GordianKeyPairType.PICNIC, pSpec);
+    public static GordianNewKeyPairSpec picnic(final GordianNewPicnicSpec pSpec) {
+        return BUILDER.picnic(pSpec);
     }
 
     /**
      * Create MayoKey.
      *
-     * @param pSpec the Mayo Spec
+     * @param pSpec the mayoSpec
      * @return the KeySpec
      */
-    public static GordianKeyPairSpec mayo(final GordianMayoSpec pSpec) {
-        return new GordianKeyPairSpec(GordianKeyPairType.MAYO, pSpec);
+    public static GordianNewKeyPairSpec mayo(final GordianNewMayoSpec pSpec) {
+        return BUILDER.mayo(pSpec);
     }
 
     /**
@@ -343,8 +390,8 @@ public final class GordianKeyPairSpecBuilder {
      * @param pSpec the Snova Spec
      * @return the KeySpec
      */
-    public static GordianKeyPairSpec snova(final GordianSnovaSpec pSpec) {
-        return new GordianKeyPairSpec(GordianKeyPairType.SNOVA, pSpec);
+    public static GordianNewKeyPairSpec snova(final GordianNewSnovaSpec pSpec) {
+        return BUILDER.snova(pSpec);
     }
 
     /**
@@ -353,7 +400,7 @@ public final class GordianKeyPairSpecBuilder {
      * @param pSpecs the list of keySpecs
      * @return the KeySpec
      */
-    public static GordianKeyPairSpec composite(final GordianKeyPairSpec... pSpecs) {
+    public static GordianNewKeyPairSpec composite(final GordianNewKeyPairSpec... pSpecs) {
         return composite(Arrays.asList(pSpecs));
     }
 
@@ -363,7 +410,7 @@ public final class GordianKeyPairSpecBuilder {
      * @param pSpecs the list of keySpecs
      * @return the KeySpec
      */
-    public static GordianKeyPairSpec composite(final List<GordianKeyPairSpec> pSpecs) {
-        return new GordianKeyPairSpec(GordianKeyPairType.COMPOSITE, pSpecs);
+    public static GordianNewKeyPairSpec composite(final List<GordianNewKeyPairSpec> pSpecs) {
+        return BUILDER.composite(pSpecs);
     }
 }

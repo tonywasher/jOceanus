@@ -18,8 +18,8 @@ package io.github.tonywasher.joceanus.gordianknot.api.encrypt;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairType;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairType;
 
 import java.util.List;
 import java.util.function.Predicate;
@@ -50,7 +50,7 @@ public interface GordianEncryptorFactory {
      * @param pKeyType the keyType
      * @return the list of supported encryptorSpecs.
      */
-    default List<GordianEncryptorSpec> listAllSupportedEncryptors(final GordianKeyPairType pKeyType) {
+    default List<GordianEncryptorSpec> listAllSupportedEncryptors(final GordianNewKeyPairType pKeyType) {
         return listPossibleEncryptors(pKeyType)
                 .stream()
                 .filter(supportedEncryptors())
@@ -76,7 +76,7 @@ public interface GordianEncryptorFactory {
      * @param pEncryptorSpec the macSpec
      * @return true/false
      */
-    boolean validEncryptorSpecForKeyPairSpec(GordianKeyPairSpec pKeyPairSpec,
+    boolean validEncryptorSpecForKeyPairSpec(GordianNewKeyPairSpec pKeyPairSpec,
                                              GordianEncryptorSpec pEncryptorSpec);
 
     /**
@@ -93,7 +93,7 @@ public interface GordianEncryptorFactory {
      * @param pKeyPairSpec the keySpec
      * @return the list of supported encryptorSpecs.
      */
-    List<GordianEncryptorSpec> listAllSupportedEncryptors(GordianKeyPairSpec pKeyPairSpec);
+    List<GordianEncryptorSpec> listAllSupportedEncryptors(GordianNewKeyPairSpec pKeyPairSpec);
 
     /**
      * Obtain a list of all possible encryptors for the keyType.
@@ -101,7 +101,7 @@ public interface GordianEncryptorFactory {
      * @param pKeyPairType the keyPairType
      * @return the list
      */
-    List<GordianEncryptorSpec> listPossibleEncryptors(GordianKeyPairType pKeyPairType);
+    List<GordianEncryptorSpec> listPossibleEncryptors(GordianNewKeyPairType pKeyPairType);
 
     /**
      * Create default signatureSpec for key.
@@ -109,5 +109,5 @@ public interface GordianEncryptorFactory {
      * @param pKeySpec the keySpec
      * @return the SignatureSpec
      */
-    GordianEncryptorSpec defaultForKeyPair(GordianKeyPairSpec pKeySpec);
+    GordianEncryptorSpec defaultForKeyPair(GordianNewKeyPairSpec pKeySpec);
 }

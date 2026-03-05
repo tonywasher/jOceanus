@@ -33,7 +33,6 @@ import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianEncryptorFac
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianEncryptorSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianEncryptorSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignParams;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignature;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignatureFactory;
@@ -41,6 +40,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignatureSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianLogicException;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairSpec;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x500.X500NameBuilder;
 import org.bouncycastle.asn1.x500.style.BCStyle;
@@ -194,7 +194,7 @@ public final class GordianKeyPairValidity {
     private static Object getValidityCheck(final GordianBaseFactory pFactory,
                                            final GordianKeyPair pKeyPair) {
         /* Switch on keyType */
-        final GordianKeyPairSpec mySpec = pKeyPair.getKeyPairSpec();
+        final GordianCoreKeyPairSpec mySpec = (GordianCoreKeyPairSpec) pKeyPair.getKeyPairSpec();
         switch (mySpec.getKeyPairType()) {
             case RSA:
             case DSA:
@@ -217,7 +217,7 @@ public final class GordianKeyPairValidity {
             case DH:
                 return GordianAgreementSpecBuilder.anon(mySpec, GordianAgreementKDF.SHA256KDF);
             case XDH:
-                return mySpec.getEdwardsElliptic().is25519()
+                return mySpec.getEdwardsSpec().is25519()
                         ? GordianAgreementSpecBuilder.anon(mySpec, GordianAgreementKDF.SHA256KDF)
                         : GordianAgreementSpecBuilder.anon(mySpec, GordianAgreementKDF.SHA512KDF);
             case CMCE:

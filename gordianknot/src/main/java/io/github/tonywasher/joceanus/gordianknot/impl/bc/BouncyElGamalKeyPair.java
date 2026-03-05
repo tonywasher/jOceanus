@@ -18,15 +18,16 @@ package io.github.tonywasher.joceanus.gordianknot.impl.bc;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianEncryptorSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianDHGroup;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPrivateKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPublicKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyRSAKeyPair.BouncyCoreEncryptor;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianKeyPairValidity;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreDHSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairSpec;
 import org.bouncycastle.asn1.ASN1Integer;
 import org.bouncycastle.asn1.oiw.ElGamalParameter;
 import org.bouncycastle.asn1.oiw.OIWObjectIdentifiers;
@@ -70,7 +71,7 @@ public final class BouncyElGamalKeyPair {
          * @param pKeySpec   the keySpec
          * @param pPublicKey the public key
          */
-        BouncyElGamalPublicKey(final GordianKeyPairSpec pKeySpec,
+        BouncyElGamalPublicKey(final GordianNewKeyPairSpec pKeySpec,
                                final ElGamalPublicKeyParameters pPublicKey) {
             super(pKeySpec, pPublicKey);
         }
@@ -120,7 +121,7 @@ public final class BouncyElGamalKeyPair {
          * @param pKeySpec    the keySpec
          * @param pPrivateKey the private key
          */
-        BouncyElGamalPrivateKey(final GordianKeyPairSpec pKeySpec,
+        BouncyElGamalPrivateKey(final GordianNewKeyPairSpec pKeySpec,
                                 final ElGamalPrivateKeyParameters pPrivateKey) {
             super(pKeySpec, pPrivateKey);
         }
@@ -165,12 +166,13 @@ public final class BouncyElGamalKeyPair {
          * @param pKeySpec the keySpec
          */
         BouncyElGamalKeyPairGenerator(final GordianBaseFactory pFactory,
-                                      final GordianKeyPairSpec pKeySpec) {
+                                      final GordianNewKeyPairSpec pKeySpec) {
             /* Initialise underlying class */
             super(pFactory, pKeySpec);
 
             /* Create the parameter generator */
-            final GordianDHGroup myGroup = pKeySpec.getDHGroup();
+            final GordianCoreKeyPairSpec myKeySpec = (GordianCoreKeyPairSpec) pKeySpec;
+            final GordianCoreDHSpec myGroup = myKeySpec.getDHSpec();
             final DHParameters myDHParms = myGroup.getParameters();
             final ElGamalParameters myParms = new ElGamalParameters(myDHParms.getP(), myDHParms.getQ());
             final ElGamalKeyGenerationParameters myParams = new ElGamalKeyGenerationParameters(getRandom(), myParms);

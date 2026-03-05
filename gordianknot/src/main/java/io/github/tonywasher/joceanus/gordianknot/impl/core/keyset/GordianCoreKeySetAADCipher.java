@@ -211,7 +211,7 @@ public class GordianCoreKeySetAADCipher
         /* Create the digest */
         final GordianDigestFactory myDigests = getFactory().getDigestFactory();
         final GordianNewDigestSpecBuilder myBuilder = GordianCoreDigestSpecBuilder.newInstance();
-        final GordianNewDigestSpec myDigestSpec = myBuilder.generic(pParams.getDigestType(), GordianLength.LEN_512);
+        final GordianNewDigestSpec myDigestSpec = myBuilder.digest(pParams.getDigestType(), GordianLength.LEN_512);
         theDigest = myDigests.createDigest(myDigestSpec);
 
         /* initialise the Mac */

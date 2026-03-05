@@ -24,7 +24,7 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianASN1Util;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianASN1Util.GordianASN1Object;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianIOException;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keyset.GordianCoreKeySetSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keyset.GordianCoreKeySetSpecBuilder;
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1Integer;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
@@ -88,7 +88,8 @@ public class GordianKeySetSpecASN1
             }
 
             /* Create the keySpec */
-            theSpec = new GordianCoreKeySetSpec(myLen, myNumSteps);
+            final GordianCoreKeySetSpecBuilder myBuilder = GordianCoreKeySetSpecBuilder.newInstance();
+            theSpec = myBuilder.keySet(myLen, myNumSteps);
 
             /* handle exceptions */
         } catch (IllegalArgumentException e) {

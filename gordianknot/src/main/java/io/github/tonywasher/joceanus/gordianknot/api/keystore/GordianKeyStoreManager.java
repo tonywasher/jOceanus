@@ -19,7 +19,7 @@ package io.github.tonywasher.joceanus.gordianknot.api.keystore;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairUsage;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keyset.spec.GordianNewKeySetSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStoreKey;
 import io.github.tonywasher.joceanus.gordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStorePair;
@@ -74,7 +74,7 @@ public interface GordianKeyStoreManager {
      * @return the new keyPair entry
      * @throws GordianException on error
      */
-    GordianKeyStorePair createRootKeyPair(GordianKeyPairSpec pKeySpec,
+    GordianKeyStorePair createRootKeyPair(GordianNewKeyPairSpec pKeySpec,
                                           X500Name pSubject,
                                           String pAlias,
                                           char[] pPassword) throws GordianException;
@@ -91,7 +91,7 @@ public interface GordianKeyStoreManager {
      * @return the new keyPair entry
      * @throws GordianException on error
      */
-    GordianKeyStorePair createKeyPair(GordianKeyPairSpec pKeySpec,
+    GordianKeyStorePair createKeyPair(GordianNewKeyPairSpec pKeySpec,
                                       X500Name pSubject,
                                       GordianKeyPairUsage pUsage,
                                       GordianKeyStorePair pSigner,

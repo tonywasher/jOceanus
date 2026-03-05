@@ -32,7 +32,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.zip.GordianZipReadFile;
 import io.github.tonywasher.joceanus.gordianknot.api.zip.GordianZipWriteFile;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianIOException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianLogicException;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.lock.GordianCorePasswordLockSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.lock.GordianCorePasswordLockSpecBuilder;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -67,7 +67,8 @@ public class GordianCoreZipFactory
 
     @Override
     public GordianZipLock keySetZipLock(final char[] pPassword) throws GordianException {
-        return keySetZipLock(new GordianCorePasswordLockSpec(), pPassword);
+        final GordianCorePasswordLockSpecBuilder myBuilder = GordianCorePasswordLockSpecBuilder.newInstance();
+        return keySetZipLock(myBuilder.passwordLock(), pPassword);
     }
 
     @Override
@@ -80,7 +81,8 @@ public class GordianCoreZipFactory
 
     @Override
     public GordianZipLock factoryZipLock(final char[] pPassword) throws GordianException {
-        return factoryZipLock(new GordianCorePasswordLockSpec(), pPassword);
+        final GordianCorePasswordLockSpecBuilder myBuilder = GordianCorePasswordLockSpecBuilder.newInstance();
+        return factoryZipLock(myBuilder.passwordLock(), pPassword);
     }
 
     @Override
@@ -93,7 +95,8 @@ public class GordianCoreZipFactory
     @Override
     public GordianZipLock keyPairZipLock(final GordianKeyPair pKeyPair,
                                          final char[] pPassword) throws GordianException {
-        return keyPairZipLock(new GordianCorePasswordLockSpec(), pKeyPair, pPassword);
+        final GordianCorePasswordLockSpecBuilder myBuilder = GordianCorePasswordLockSpecBuilder.newInstance();
+        return keyPairZipLock(myBuilder.passwordLock(), pKeyPair, pPassword);
     }
 
     @Override

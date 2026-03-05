@@ -19,7 +19,7 @@ package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.lock;
 
 import io.github.tonywasher.joceanus.gordianknot.api.keyset.spec.GordianNewKeySetSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.lock.spec.GordianNewPasswordLockSpec;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keyset.GordianCoreKeySetSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keyset.GordianCoreKeySetSpecBuilder;
 
 import java.util.Objects;
 
@@ -51,7 +51,7 @@ public class GordianCorePasswordLockSpec
     /**
      * Constructor.
      */
-    public GordianCorePasswordLockSpec() {
+    GordianCorePasswordLockSpec() {
         this(DEFAULT_ITERATIONS);
     }
 
@@ -60,8 +60,8 @@ public class GordianCorePasswordLockSpec
      *
      * @param pKIterations the iterations (x 1K).
      */
-    public GordianCorePasswordLockSpec(final int pKIterations) {
-        this(pKIterations, new GordianCoreKeySetSpec());
+    GordianCorePasswordLockSpec(final int pKIterations) {
+        this(pKIterations, GordianCoreKeySetSpecBuilder.newInstance().keySet());
     }
 
     /**
@@ -69,7 +69,7 @@ public class GordianCorePasswordLockSpec
      *
      * @param pKeySetSpec the keySetSpec.
      */
-    public GordianCorePasswordLockSpec(final GordianNewKeySetSpec pKeySetSpec) {
+    GordianCorePasswordLockSpec(final GordianNewKeySetSpec pKeySetSpec) {
         this(DEFAULT_ITERATIONS, pKeySetSpec);
     }
 
@@ -79,8 +79,8 @@ public class GordianCorePasswordLockSpec
      * @param pKIterations the iterations (x 1K).
      * @param pKeySetSpec  the keySetSpec
      */
-    public GordianCorePasswordLockSpec(final int pKIterations,
-                                       final GordianNewKeySetSpec pKeySetSpec) {
+    GordianCorePasswordLockSpec(final int pKIterations,
+                                final GordianNewKeySetSpec pKeySetSpec) {
         theKIterations = pKIterations;
         theKeySetSpec = pKeySetSpec;
         isValid = validateLockSpec();

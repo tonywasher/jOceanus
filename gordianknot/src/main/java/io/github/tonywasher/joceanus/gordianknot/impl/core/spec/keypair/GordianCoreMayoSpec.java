@@ -23,7 +23,6 @@ import org.bouncycastle.asn1.bc.BCObjectIdentifiers;
 import org.bouncycastle.pqc.crypto.mayo.MayoParameters;
 import org.bouncycastle.pqc.jcajce.spec.MayoParameterSpec;
 
-import java.util.Collection;
 import java.util.EnumMap;
 import java.util.Map;
 
@@ -35,6 +34,11 @@ public final class GordianCoreMayoSpec {
      * The specMap.
      */
     private static final Map<GordianNewMayoSpec, GordianCoreMayoSpec> SPECMAP = newSpecMap();
+
+    /**
+     * The specArray.
+     */
+    private static final GordianCoreMayoSpec[] VALUES = SPECMAP.values().toArray(new GordianCoreMayoSpec[0]);
 
     /**
      * The Spec.
@@ -172,7 +176,7 @@ public final class GordianCoreMayoSpec {
      *
      * @return the values
      */
-    public static Collection<GordianCoreMayoSpec> values() {
-        return SPECMAP.values();
+    public static GordianCoreMayoSpec[] values() {
+        return VALUES;
     }
 }

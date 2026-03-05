@@ -49,8 +49,8 @@ public interface GordianNewStreamCipherSpecBuilder {
      * @param pKeySpec the keySpec
      * @return the cipherSpec
      */
-    default GordianNewStreamCipherSpec generic(final GordianNewStreamKeySpec pKeySpec) {
-        return generic(pKeySpec, false);
+    default GordianNewStreamCipherSpec streamCipher(final GordianNewStreamKeySpec pKeySpec) {
+        return streamCipher(pKeySpec, false);
     }
 
     /**
@@ -60,8 +60,8 @@ public interface GordianNewStreamCipherSpecBuilder {
      * @param pAAD     is this an AAD cipher?
      * @return the cipherSpec
      */
-    default GordianNewStreamCipherSpec generic(final GordianNewStreamKeySpec pKeySpec,
-                                               final boolean pAAD) {
+    default GordianNewStreamCipherSpec streamCipher(final GordianNewStreamKeySpec pKeySpec,
+                                                    final boolean pAAD) {
         withKeySpec(pKeySpec);
         if (pAAD) {
             asAEAD();

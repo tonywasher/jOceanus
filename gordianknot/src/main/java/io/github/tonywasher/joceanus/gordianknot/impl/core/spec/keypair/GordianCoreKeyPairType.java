@@ -20,7 +20,6 @@ package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianRequired;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairType;
 
-import java.util.Collection;
 import java.util.EnumMap;
 import java.util.Map;
 
@@ -32,6 +31,11 @@ public final class GordianCoreKeyPairType {
      * The keyPairTypeMap.
      */
     private static final Map<GordianNewKeyPairType, GordianCoreKeyPairType> TYPEMAP = newTypeMap();
+
+    /**
+     * The keyPairTypeArray.
+     */
+    private static final GordianCoreKeyPairType[] VALUES = TYPEMAP.values().toArray(new GordianCoreKeyPairType[0]);
 
     /**
      * The keyPairType.
@@ -208,7 +212,7 @@ public final class GordianCoreKeyPairType {
      *
      * @return the values
      */
-    public static Collection<GordianCoreKeyPairType> values() {
-        return TYPEMAP.values();
+    public static GordianCoreKeyPairType[] values() {
+        return VALUES;
     }
 }

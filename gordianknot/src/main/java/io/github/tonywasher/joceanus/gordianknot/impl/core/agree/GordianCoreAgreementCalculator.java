@@ -336,7 +336,7 @@ public class GordianCoreAgreementCalculator {
         try {
             /* Customise the HKDF parameters */
             final GordianNewDigestSpecBuilder myBuilder = GordianCoreDigestSpecBuilder.newInstance();
-            final GordianNewDigestSpec myDigestSpec = myBuilder.generic(pId.getDigestType());
+            final GordianNewDigestSpec myDigestSpec = myBuilder.digest(pId.getDigestType());
             final byte[] myBytes = new byte[Long.BYTES];
             myRandom.nextBytes(myBytes);
             myParams.withIKM(pSecret).withIKM(pId.getId())

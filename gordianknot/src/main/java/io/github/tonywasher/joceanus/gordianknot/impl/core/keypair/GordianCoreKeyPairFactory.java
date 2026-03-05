@@ -17,43 +17,19 @@
 package io.github.tonywasher.joceanus.gordianknot.impl.core.keypair;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianBIKESpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianCMCESpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianDHGroup;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianDSAElliptic;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianDSAKeyType;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianDSTU4145Elliptic;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianFRODOSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianFalconSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianGOSTElliptic;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianHQCSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairGenerator;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairSpecBuilder;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairType;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianLMSKeySpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianLMSKeySpec.GordianHSSKeySpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianMLDSASpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianMLKEMSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianMayoSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianNTRUPrimeSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianNTRUSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianPicnicSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianRSAModulus;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianSABERSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianSLHDSASpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianSM2Elliptic;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianSnovaSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianXMSSKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairType;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseData;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairSpecBuilder;
 
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
-import java.util.ArrayList;
-import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -72,7 +48,7 @@ public abstract class GordianCoreKeyPairFactory
     /**
      * KeyPairGenerator Cache.
      */
-    private final Map<GordianKeyPairSpec, GordianCompositeKeyPairGenerator> theCache;
+    private final Map<GordianNewKeyPairSpec, GordianCompositeKeyPairGenerator> theCache;
 
     /**
      * Constructor.
@@ -84,7 +60,12 @@ public abstract class GordianCoreKeyPairFactory
     }
 
     @Override
-    public GordianKeyPairGenerator getKeyPairGenerator(final GordianKeyPairSpec pKeySpec) throws GordianException {
+    public GordianNewKeyPairSpecBuilder newKeyPairSpecBuilder() {
+        return GordianCoreKeyPairSpecBuilder.newInstance();
+    }
+
+    @Override
+    public GordianKeyPairGenerator getKeyPairGenerator(final GordianNewKeyPairSpec pKeySpec) throws GordianException {
         /* Look up in the cache */
         GordianCompositeKeyPairGenerator myGenerator = theCache.get(pKeySpec);
         if (myGenerator == null) {
@@ -92,7 +73,7 @@ public abstract class GordianCoreKeyPairFactory
             checkAsymKeySpec(pKeySpec);
 
             /* Create the new generator */
-            myGenerator = new GordianCompositeKeyPairGenerator(this, pKeySpec);
+            myGenerator = new GordianCompositeKeyPairGenerator(this, (GordianCoreKeyPairSpec) pKeySpec);
 
             /* Add to cache */
             theCache.put(pKeySpec, myGenerator);
@@ -101,12 +82,12 @@ public abstract class GordianCoreKeyPairFactory
     }
 
     @Override
-    public GordianKeyPairSpec determineKeyPairSpec(final PKCS8EncodedKeySpec pEncoded) throws GordianException {
+    public GordianNewKeyPairSpec determineKeyPairSpec(final PKCS8EncodedKeySpec pEncoded) throws GordianException {
         return KEYPAIR_ALG_ID.determineKeyPairSpec(pEncoded);
     }
 
     @Override
-    public GordianKeyPairSpec determineKeyPairSpec(final X509EncodedKeySpec pEncoded) throws GordianException {
+    public GordianNewKeyPairSpec determineKeyPairSpec(final X509EncodedKeySpec pEncoded) throws GordianException {
         return KEYPAIR_ALG_ID.determineKeyPairSpec(pEncoded);
     }
 
@@ -116,7 +97,7 @@ public abstract class GordianCoreKeyPairFactory
      * @param pKeySpec the asymKeySpec
      * @throws GordianException on error
      */
-    protected void checkAsymKeySpec(final GordianKeyPairSpec pKeySpec) throws GordianException {
+    protected void checkAsymKeySpec(final GordianNewKeyPairSpec pKeySpec) throws GordianException {
         /* Check validity of keySpec */
         if (pKeySpec == null || !pKeySpec.isValid()) {
             throw new GordianDataException(GordianBaseData.getInvalidText(pKeySpec));
@@ -124,7 +105,7 @@ public abstract class GordianCoreKeyPairFactory
     }
 
     @Override
-    public Predicate<GordianKeyPairSpec> supportedKeyPairSpecs() {
+    public Predicate<GordianNewKeyPairSpec> supportedKeyPairSpecs() {
         return this::validAsymKeySpec;
     }
 
@@ -134,12 +115,12 @@ public abstract class GordianCoreKeyPairFactory
      * @param pKeySpec the asymKeySpec
      * @return true/false
      */
-    public boolean validAsymKeySpec(final GordianKeyPairSpec pKeySpec) {
+    public boolean validAsymKeySpec(final GordianNewKeyPairSpec pKeySpec) {
         return pKeySpec != null && pKeySpec.isValid();
     }
 
     @Override
-    public List<GordianKeyPairSpec> listAllSupportedKeyPairSpecs() {
+    public List<GordianNewKeyPairSpec> listAllSupportedKeyPairSpecs() {
         return listPossibleKeySpecs()
                 .stream()
                 .filter(supportedKeyPairSpecs())
@@ -147,7 +128,7 @@ public abstract class GordianCoreKeyPairFactory
     }
 
     @Override
-    public List<GordianKeyPairSpec> listAllSupportedKeyPairSpecs(final GordianKeyPairType pKeyPairType) {
+    public List<GordianNewKeyPairSpec> listAllSupportedKeyPairSpecs(final GordianNewKeyPairType pKeyPairType) {
         return listPossibleKeySpecs()
                 .stream()
                 .filter(s -> pKeyPairType.equals(s.getKeyPairType()))
@@ -156,76 +137,8 @@ public abstract class GordianCoreKeyPairFactory
     }
 
     @Override
-    public List<GordianKeyPairSpec> listPossibleKeySpecs() {
-        /* Create the list */
-        final List<GordianKeyPairSpec> mySpecs = new ArrayList<>();
-
-        /* Add RSA */
-        EnumSet.allOf(GordianRSAModulus.class).forEach(m -> mySpecs.add(GordianKeyPairSpecBuilder.rsa(m)));
-
-        /* Add DSA */
-        EnumSet.allOf(GordianDSAKeyType.class).forEach(t -> mySpecs.add(GordianKeyPairSpecBuilder.dsa(t)));
-
-        /* Add DH  */
-        EnumSet.allOf(GordianDHGroup.class).forEach(g -> mySpecs.add(GordianKeyPairSpecBuilder.dh(g)));
-
-        /* Add ElGamal  */
-        EnumSet.allOf(GordianDHGroup.class).forEach(g -> mySpecs.add(GordianKeyPairSpecBuilder.elGamal(g)));
-
-        /* Add EC */
-        EnumSet.allOf(GordianDSAElliptic.class).forEach(c -> mySpecs.add(GordianKeyPairSpecBuilder.ec(c)));
-
-        /* Add SM2 */
-        EnumSet.allOf(GordianSM2Elliptic.class).forEach(c -> mySpecs.add(GordianKeyPairSpecBuilder.sm2(c)));
-
-        /* Add GOST2012 */
-        EnumSet.allOf(GordianGOSTElliptic.class).forEach(c -> mySpecs.add(GordianKeyPairSpecBuilder.gost2012(c)));
-
-        /* Add DSTU4145 */
-        EnumSet.allOf(GordianDSTU4145Elliptic.class).forEach(c -> mySpecs.add(GordianKeyPairSpecBuilder.dstu4145(c)));
-
-        /* Add Ed25519/Ed448 */
-        mySpecs.add(GordianKeyPairSpecBuilder.ed448());
-        mySpecs.add(GordianKeyPairSpecBuilder.ed25519());
-
-        /* Add X25519/X448 */
-        mySpecs.add(GordianKeyPairSpecBuilder.x448());
-        mySpecs.add(GordianKeyPairSpecBuilder.x25519());
-
-        /* Add NewHope */
-        mySpecs.add(GordianKeyPairSpecBuilder.newHope());
-
-        /* Add XMSS/XMSSMT */
-        GordianXMSSKeySpec.listPossibleKeySpecs().forEach(t -> mySpecs.add(new GordianKeyPairSpec(GordianKeyPairType.XMSS, t)));
-
-        /* Add LMS */
-        GordianLMSKeySpec.listPossibleKeySpecs().forEach(t -> {
-            mySpecs.add(GordianKeyPairSpecBuilder.lms(t));
-            for (int i = 2; i < GordianHSSKeySpec.MAX_DEPTH; i++) {
-                mySpecs.add(GordianKeyPairSpecBuilder.hss(t, i));
-            }
-        });
-
-        /* Add SPHINCSPlus/CMCE/Frodo/Saber */
-        EnumSet.allOf(GordianSLHDSASpec.class).forEach(t -> mySpecs.add(GordianKeyPairSpecBuilder.slhdsa(t)));
-        EnumSet.allOf(GordianCMCESpec.class).forEach(t -> mySpecs.add(GordianKeyPairSpecBuilder.cmce(t)));
-        EnumSet.allOf(GordianFRODOSpec.class).forEach(t -> mySpecs.add(GordianKeyPairSpecBuilder.frodo(t)));
-        EnumSet.allOf(GordianSABERSpec.class).forEach(t -> mySpecs.add(GordianKeyPairSpecBuilder.saber(t)));
-        EnumSet.allOf(GordianMLKEMSpec.class).forEach(t -> mySpecs.add(GordianKeyPairSpecBuilder.mlkem(t)));
-        EnumSet.allOf(GordianMLDSASpec.class).forEach(t -> mySpecs.add(GordianKeyPairSpecBuilder.mldsa(t)));
-        EnumSet.allOf(GordianHQCSpec.class).forEach(t -> mySpecs.add(GordianKeyPairSpecBuilder.hqc(t)));
-        EnumSet.allOf(GordianBIKESpec.class).forEach(t -> mySpecs.add(GordianKeyPairSpecBuilder.bike(t)));
-        EnumSet.allOf(GordianNTRUSpec.class).forEach(t -> mySpecs.add(GordianKeyPairSpecBuilder.ntru(t)));
-        EnumSet.allOf(GordianFalconSpec.class).forEach(t -> mySpecs.add(GordianKeyPairSpecBuilder.falcon(t)));
-        EnumSet.allOf(GordianMayoSpec.class).forEach(t -> mySpecs.add(GordianKeyPairSpecBuilder.mayo(t)));
-        EnumSet.allOf(GordianSnovaSpec.class).forEach(t -> mySpecs.add(GordianKeyPairSpecBuilder.snova(t)));
-        EnumSet.allOf(GordianPicnicSpec.class).forEach(t -> mySpecs.add(GordianKeyPairSpecBuilder.picnic(t)));
-
-        /* Add NTRUPrime */
-        GordianNTRUPrimeSpec.listPossibleKeySpecs().forEach(t -> mySpecs.add(GordianKeyPairSpecBuilder.ntruprime(t)));
-
-        /* Return the list */
-        return mySpecs;
+    public List<GordianNewKeyPairSpec> listPossibleKeySpecs() {
+        return GordianCoreKeyPairSpecBuilder.listPossibleKeySpecs();
     }
 }
 

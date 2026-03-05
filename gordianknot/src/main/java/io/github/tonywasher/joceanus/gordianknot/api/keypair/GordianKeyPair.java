@@ -16,6 +16,8 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.api.keypair;
 
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairSpec;
+
 /**
  * Asymmetric KeyPair.
  */
@@ -25,7 +27,7 @@ public interface GordianKeyPair {
      *
      * @return the keyPairSpec
      */
-    GordianKeyPairSpec getKeyPairSpec();
+    GordianNewKeyPairSpec getKeyPairSpec();
 
     /**
      * Is only the public key known?

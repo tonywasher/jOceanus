@@ -22,7 +22,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestSpecBui
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianEncryptorSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignParams;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignatureSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPrivateKey;
@@ -34,6 +34,7 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianCryptoExce
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianIOException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianKeyPairValidity;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.sign.GordianCoreSignature;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairSpec;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.bouncycastle.crypto.AsymmetricBlockCipher;
@@ -94,7 +95,7 @@ public final class BouncyRSAKeyPair {
          * @param pKeySpec   the keySpec
          * @param pPublicKey the public key
          */
-        BouncyRSAPublicKey(final GordianKeyPairSpec pKeySpec,
+        BouncyRSAPublicKey(final GordianNewKeyPairSpec pKeySpec,
                            final RSAKeyParameters pPublicKey) {
             super(pKeySpec, pPublicKey);
         }
@@ -146,7 +147,7 @@ public final class BouncyRSAKeyPair {
          * @param pKeySpec    the keySpec
          * @param pPrivateKey the private key
          */
-        BouncyRSAPrivateKey(final GordianKeyPairSpec pKeySpec,
+        BouncyRSAPrivateKey(final GordianNewKeyPairSpec pKeySpec,
                             final RSAPrivateCrtKeyParameters pPrivateKey) {
             super(pKeySpec, pPrivateKey);
         }
@@ -212,14 +213,15 @@ public final class BouncyRSAKeyPair {
          * @param pKeySpec the keySpec
          */
         BouncyRSAKeyPairGenerator(final GordianBaseFactory pFactory,
-                                  final GordianKeyPairSpec pKeySpec) {
+                                  final GordianNewKeyPairSpec pKeySpec) {
             /* Initialise underlying class */
             super(pFactory, pKeySpec);
 
             /* Create and initialise the generator */
             theGenerator = new RSAKeyPairGenerator();
+            final GordianCoreKeyPairSpec myKeySpec = (GordianCoreKeyPairSpec) pKeySpec;
             final RSAKeyGenerationParameters myParams
-                    = new RSAKeyGenerationParameters(RSA_EXPONENT, getRandom(), pKeySpec.getRSAModulus().getLength(), PRIME_CERTAINTY);
+                    = new RSAKeyGenerationParameters(RSA_EXPONENT, getRandom(), myKeySpec.getRSASpec().getLength(), PRIME_CERTAINTY);
             theGenerator.init(myParams);
         }
 

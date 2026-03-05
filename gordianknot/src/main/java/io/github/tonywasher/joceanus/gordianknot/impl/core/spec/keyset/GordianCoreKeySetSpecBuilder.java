@@ -42,18 +42,18 @@ public final class GordianCoreKeySetSpecBuilder
     }
 
     @Override
-    public GordianNewKeySetSpec keySetSpec() {
+    public GordianNewKeySetSpec keySet() {
         return new GordianCoreKeySetSpec();
     }
 
     @Override
-    public GordianNewKeySetSpec keySetSpec(final GordianLength pKeyLen) {
+    public GordianNewKeySetSpec keySet(final GordianLength pKeyLen) {
         return new GordianCoreKeySetSpec(pKeyLen);
     }
 
     @Override
-    public GordianNewKeySetSpec keySetSpec(final GordianLength pKeyLen,
-                                           final int pNumSteps) {
+    public GordianNewKeySetSpec keySet(final GordianLength pKeyLen,
+                                       final int pNumSteps) {
         return new GordianCoreKeySetSpec(pKeyLen, pNumSteps);
     }
 }

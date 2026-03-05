@@ -52,8 +52,6 @@ import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewXMSS
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewXMSSSpec.GordianNewXMSSDigestType;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewXMSSSpec.GordianNewXMSSHeight;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewXMSSSpec.GordianNewXMSSMTLayers;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreLMSSpec.GordianCoreHSSSpec;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreXMSSSpec.GordianCoreXMSSMTSpec;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
@@ -62,7 +60,7 @@ import java.util.List;
 /**
  * Asymmetric KeyPair Specification Builder.
  */
-public class GordianCoreKeyPairSpecBuilder
+public final class GordianCoreKeyPairSpecBuilder
         implements GordianNewKeyPairSpecBuilder {
     /**
      * The keyPairType.
@@ -73,6 +71,21 @@ public class GordianCoreKeyPairSpecBuilder
      * The subSpec.
      */
     private Object theSubSpec;
+
+    /**
+     * Private constructor.
+     */
+    private GordianCoreKeyPairSpecBuilder() {
+    }
+
+    /**
+     * Obtain new instance.
+     *
+     * @return the new instance
+     */
+    public static GordianCoreKeyPairSpecBuilder newInstance() {
+        return new GordianCoreKeyPairSpecBuilder();
+    }
 
     @Override
     public GordianNewKeyPairSpecBuilder withKeyPairType(final GordianNewKeyPairType pType) {
@@ -97,18 +110,17 @@ public class GordianCoreKeyPairSpecBuilder
     public GordianNewKeyPairSpecBuilder withXMSSMTSubSpec(final GordianNewXMSSDigestType pDigestType,
                                                           final GordianNewXMSSHeight pHeight,
                                                           final GordianNewXMSSMTLayers pLayers) {
-        theSubSpec = new GordianCoreXMSSMTSpec(pDigestType, pHeight, pLayers);
+        theSubSpec = new GordianCoreXMSSSpec(pDigestType, pHeight, pLayers);
         return this;
     }
 
     @Override
-    public GordianNewKeyPairSpecBuilder withHSSSubSpec(final GordianNewLMSHash pHashType,
+    public GordianNewKeyPairSpecBuilder withLMSSubSpec(final GordianNewLMSHash pHashType,
                                                        final GordianNewLMSHeight pHeight,
                                                        final GordianNewLMSWidth pWidth,
                                                        final GordianLength pLength,
                                                        final int pDepth) {
-        final GordianCoreLMSSpec myLMS = new GordianCoreLMSSpec(pHashType, pHeight, pWidth, pLength);
-        theSubSpec = new GordianCoreHSSSpec(myLMS, pDepth);
+        theSubSpec = new GordianCoreLMSSpec(pHashType, pHeight, pWidth, pLength, pDepth);
         return this;
     }
 

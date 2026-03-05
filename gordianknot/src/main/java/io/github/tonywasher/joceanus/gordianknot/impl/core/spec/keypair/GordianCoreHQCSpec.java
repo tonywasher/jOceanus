@@ -23,7 +23,6 @@ import org.bouncycastle.asn1.bc.BCObjectIdentifiers;
 import org.bouncycastle.pqc.crypto.hqc.HQCParameters;
 import org.bouncycastle.pqc.jcajce.spec.HQCParameterSpec;
 
-import java.util.Collection;
 import java.util.EnumMap;
 import java.util.Map;
 
@@ -35,6 +34,11 @@ public final class GordianCoreHQCSpec {
      * The specMap.
      */
     private static final Map<GordianNewHQCSpec, GordianCoreHQCSpec> SPECMAP = newSpecMap();
+
+    /**
+     * The specArray.
+     */
+    private static final GordianCoreHQCSpec[] VALUES = SPECMAP.values().toArray(new GordianCoreHQCSpec[0]);
 
     /**
      * The Spec.
@@ -166,7 +170,7 @@ public final class GordianCoreHQCSpec {
      *
      * @return the values
      */
-    public static Collection<GordianCoreHQCSpec> values() {
-        return SPECMAP.values();
+    public static GordianCoreHQCSpec[] values() {
+        return VALUES;
     }
 }

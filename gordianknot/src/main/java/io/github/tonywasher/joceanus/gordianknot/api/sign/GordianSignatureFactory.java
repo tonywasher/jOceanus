@@ -18,8 +18,8 @@ package io.github.tonywasher.joceanus.gordianknot.api.sign;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairType;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairType;
 
 import java.util.List;
 import java.util.function.Predicate;
@@ -50,7 +50,7 @@ public interface GordianSignatureFactory {
      * @param pKeyPairType the keyPairType
      * @return the list of supported signatureSpecs.
      */
-    default List<GordianSignatureSpec> listAllSupportedSignatures(final GordianKeyPairType pKeyPairType) {
+    default List<GordianSignatureSpec> listAllSupportedSignatures(final GordianNewKeyPairType pKeyPairType) {
         return listPossibleSignatures(pKeyPairType)
                 .stream()
                 .filter(supportedKeyPairSignatures())
@@ -76,7 +76,7 @@ public interface GordianSignatureFactory {
      * @param pSignSpec    the signSpec
      * @return true/false
      */
-    boolean validSignatureSpecForKeyPairSpec(GordianKeyPairSpec pKeyPairSpec,
+    boolean validSignatureSpecForKeyPairSpec(GordianNewKeyPairSpec pKeyPairSpec,
                                              GordianSignatureSpec pSignSpec);
 
     /**
@@ -93,7 +93,7 @@ public interface GordianSignatureFactory {
      * @param pKeySpec the keySpec
      * @return the list of supported signatureSpecs.
      */
-    List<GordianSignatureSpec> listAllSupportedSignatures(GordianKeyPairSpec pKeySpec);
+    List<GordianSignatureSpec> listAllSupportedSignatures(GordianNewKeyPairSpec pKeySpec);
 
     /**
      * Obtain a list of all possible signatures for the keyType.
@@ -101,7 +101,7 @@ public interface GordianSignatureFactory {
      * @param pKeyType the keyType
      * @return the list
      */
-    List<GordianSignatureSpec> listPossibleSignatures(GordianKeyPairType pKeyType);
+    List<GordianSignatureSpec> listPossibleSignatures(GordianNewKeyPairType pKeyType);
 
     /**
      * Create default signatureSpec for keyPair.
@@ -109,5 +109,5 @@ public interface GordianSignatureFactory {
      * @param pKeySpec the keyPairSpec
      * @return the SignatureSpec
      */
-    GordianSignatureSpec defaultForKeyPair(GordianKeyPairSpec pKeySpec);
+    GordianSignatureSpec defaultForKeyPair(GordianNewKeyPairSpec pKeySpec);
 }

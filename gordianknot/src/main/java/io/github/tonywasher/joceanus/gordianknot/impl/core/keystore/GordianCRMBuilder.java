@@ -26,7 +26,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianAsyncFactory
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairGenerator;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySet;
 import io.github.tonywasher.joceanus.gordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStorePair;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMac;
@@ -193,7 +193,7 @@ public class GordianCRMBuilder {
                                                              final CertRequest pCertRequest) throws GordianException {
         /* Try to send a signed proof */
         final GordianKeyPair myKeyPair = pKeyPair.getKeyPair();
-        final GordianKeyPairSpec mySpec = myKeyPair.getKeyPairSpec();
+        final GordianNewKeyPairSpec mySpec = myKeyPair.getKeyPairSpec();
         final GordianSignatureSpec mySignSpec = theGateway.getFactory().getAsyncFactory().getSignatureFactory().defaultForKeyPair(mySpec);
         if (mySignSpec != null) {
             return createKeyPairSignedProof(myKeyPair, mySignSpec, pCertRequest);
@@ -218,7 +218,7 @@ public class GordianCRMBuilder {
                                                               final GordianCoreCertificate pCertificate) throws GordianException {
         /* Obtain the PKCS8Encoding of the private key */
         final GordianKeyPairFactory myFactory = theGateway.getFactory().getAsyncFactory().getKeyPairFactory();
-        final GordianKeyPairSpec mySpec = pKeyPair.getKeyPairSpec();
+        final GordianNewKeyPairSpec mySpec = pKeyPair.getKeyPairSpec();
         final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(mySpec);
         final PKCS8EncodedKeySpec myPKCS8Encoding = myGenerator.getPKCS8Encoding(pKeyPair);
 

@@ -69,7 +69,7 @@ public interface GordianNewDigestSpecBuilder {
      * @param pType the digestType
      * @return the digestSpec
      */
-    default GordianNewDigestSpec generic(final GordianNewDigestType pType) {
+    default GordianNewDigestSpec digest(final GordianNewDigestType pType) {
         return withType(pType).build();
     }
 
@@ -80,8 +80,8 @@ public interface GordianNewDigestSpecBuilder {
      * @param pLength the length
      * @return the digestSpec
      */
-    default GordianNewDigestSpec generic(final GordianNewDigestType pType,
-                                         final GordianLength pLength) {
+    default GordianNewDigestSpec digest(final GordianNewDigestType pType,
+                                        final GordianLength pLength) {
         return withType(pType).withLength(pLength).build();
     }
 
@@ -94,10 +94,10 @@ public interface GordianNewDigestSpecBuilder {
      * @param pXofMode asXof
      * @return the digestSpec
      */
-    default GordianNewDigestSpec generic(final GordianNewDigestType pType,
-                                         final GordianNewDigestState pState,
-                                         final GordianLength pLength,
-                                         final boolean pXofMode) {
+    default GordianNewDigestSpec digest(final GordianNewDigestType pType,
+                                        final GordianNewDigestState pState,
+                                        final GordianLength pLength,
+                                        final boolean pXofMode) {
         withType(pType).withState(pState).withLength(pLength);
         if (pXofMode) {
             asXof();

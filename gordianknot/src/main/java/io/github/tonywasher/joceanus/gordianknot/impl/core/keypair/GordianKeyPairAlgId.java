@@ -17,37 +17,38 @@
 package io.github.tonywasher.joceanus.gordianknot.impl.core.keypair;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianBIKESpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianCMCESpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianDHGroup;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianDSAElliptic;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianDSAKeyType;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianDSTU4145Elliptic;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianFRODOSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianFalconSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianGOSTElliptic;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianHQCSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairSpecBuilder;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianLMSKeySpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianMLDSASpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianMLKEMSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianMayoSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianNTRUPrimeSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianNTRUPrimeSpec.GordianNTRUPrimeParams;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianNTRUPrimeSpec.GordianNTRUPrimeType;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianNTRUSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianPicnicSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianRSAModulus;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianSABERSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianSLHDSASpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianSM2Elliptic;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianSnovaSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianXMSSKeySpec.GordianXMSSDigestType;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianXMSSKeySpec.GordianXMSSHeight;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianXMSSKeySpec.GordianXMSSMTLayers;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewLMSSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewNTRUPrimeSpec.GordianNewNTRUPrimeType;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewXMSSSpec.GordianNewXMSSDigestType;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewXMSSSpec.GordianNewXMSSHeight;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewXMSSSpec.GordianNewXMSSMTLayers;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianIOException;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreBIKESpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreCMCESpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreDHSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreDSASpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreDSTUSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreECSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreFRODOSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreFalconSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreGOSTSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreHQCSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreLMSSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreMLDSASpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreMLKEMSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreMayoSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreNTRUPrimeSpec.GordianCoreNTRUPrimeParams;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreNTRUSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCorePicnicSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreRSASpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreSABERSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreSLHDSASpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreSM2Spec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreSnovaSpec;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.ASN1OctetString;
 import org.bouncycastle.asn1.ASN1Sequence;
@@ -83,8 +84,6 @@ import org.bouncycastle.pqc.asn1.XMSSKeyParams;
 import org.bouncycastle.pqc.asn1.XMSSMTKeyParams;
 import org.bouncycastle.pqc.crypto.lms.HSSPrivateKeyParameters;
 import org.bouncycastle.pqc.crypto.lms.HSSPublicKeyParameters;
-import org.bouncycastle.pqc.crypto.lms.LMSKeyParameters;
-import org.bouncycastle.pqc.crypto.lms.LMSPrivateKeyParameters;
 import org.bouncycastle.pqc.crypto.lms.LMSPublicKeyParameters;
 import org.bouncycastle.pqc.crypto.util.PrivateKeyFactory;
 import org.bouncycastle.pqc.crypto.util.PublicKeyFactory;
@@ -186,7 +185,7 @@ public class GordianKeyPairAlgId {
      * @return the keySpec
      * @throws GordianException on error
      */
-    public GordianKeyPairSpec determineKeyPairSpec(final PKCS8EncodedKeySpec pEncoded) throws GordianException {
+    public GordianNewKeyPairSpec determineKeyPairSpec(final PKCS8EncodedKeySpec pEncoded) throws GordianException {
         /* Determine the algorithm Id. */
         final PrivateKeyInfo myInfo = PrivateKeyInfo.getInstance(pEncoded.getEncoded());
         final AlgorithmIdentifier myId = myInfo.getPrivateKeyAlgorithm();
@@ -207,7 +206,7 @@ public class GordianKeyPairAlgId {
      * @return the keySpec
      * @throws GordianException on error
      */
-    public GordianKeyPairSpec determineKeyPairSpec(final X509EncodedKeySpec pEncoded) throws GordianException {
+    public GordianNewKeyPairSpec determineKeyPairSpec(final X509EncodedKeySpec pEncoded) throws GordianException {
         /* Determine the algorithm Id. */
         final SubjectPublicKeyInfo myInfo = SubjectPublicKeyInfo.getInstance(pEncoded.getEncoded());
         final AlgorithmIdentifier myId = myInfo.getAlgorithm();
@@ -243,7 +242,7 @@ public class GordianKeyPairAlgId {
          * @return the keySpec
          * @throws GordianException on error
          */
-        GordianKeyPairSpec determineKeyPairSpec(SubjectPublicKeyInfo pInfo) throws GordianException;
+        GordianNewKeyPairSpec determineKeyPairSpec(SubjectPublicKeyInfo pInfo) throws GordianException;
 
         /**
          * Obtain KeySpec from SubjectPublicKeyInfo.
@@ -252,7 +251,7 @@ public class GordianKeyPairAlgId {
          * @return the keySpec
          * @throws GordianException on error
          */
-        GordianKeyPairSpec determineKeyPairSpec(PrivateKeyInfo pInfo) throws GordianException;
+        GordianNewKeyPairSpec determineKeyPairSpec(PrivateKeyInfo pInfo) throws GordianException;
     }
 
     /**
@@ -269,7 +268,7 @@ public class GordianKeyPairAlgId {
         }
 
         @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws GordianException {
+        public GordianNewKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws GordianException {
             /* Protect against exceptions */
             try {
                 /* Parse the publicKey */
@@ -283,7 +282,7 @@ public class GordianKeyPairAlgId {
         }
 
         @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws GordianException {
+        public GordianNewKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws GordianException {
             /* Protect against exceptions */
             try {
                 /* Parse the publicKey */
@@ -303,12 +302,13 @@ public class GordianKeyPairAlgId {
          * @return the keySpec
          * @throws GordianException on error
          */
-        private static GordianKeyPairSpec determineKeyPairSpec(final BigInteger pModulus) throws GordianException {
-            final GordianRSAModulus myModulus = GordianRSAModulus.getModulusForInteger(pModulus);
-            if (myModulus == null) {
+        private static GordianNewKeyPairSpec determineKeyPairSpec(final BigInteger pModulus) throws GordianException {
+            final GordianCoreRSASpec mySpec = GordianCoreRSASpec.getRSASpecForInteger(pModulus);
+            if (mySpec == null) {
                 throw new GordianDataException("RSA strength not supported: " + pModulus.bitLength());
             }
-            return GordianKeyPairSpecBuilder.rsa(myModulus);
+            final GordianCoreKeyPairSpecBuilder myBuilder = GordianCoreKeyPairSpecBuilder.newInstance();
+            return myBuilder.rsa(mySpec.getSpec());
         }
     }
 
@@ -326,14 +326,14 @@ public class GordianKeyPairAlgId {
         }
 
         @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws GordianException {
+        public GordianNewKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws GordianException {
             final AlgorithmIdentifier myId = pInfo.getAlgorithm();
             final DSAParameter myParms = DSAParameter.getInstance(myId.getParameters());
             return determineKeyPairSpec(myParms);
         }
 
         @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws GordianException {
+        public GordianNewKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws GordianException {
             final AlgorithmIdentifier myId = pInfo.getPrivateKeyAlgorithm();
             final DSAParameter myParms = DSAParameter.getInstance(myId.getParameters());
             return determineKeyPairSpec(myParms);
@@ -346,13 +346,14 @@ public class GordianKeyPairAlgId {
          * @return the keySpec
          * @throws GordianException on error
          */
-        private static GordianKeyPairSpec determineKeyPairSpec(final DSAParameter pParms) throws GordianException {
-            final GordianDSAKeyType myKeyType = GordianDSAKeyType.getDSATypeForParms(pParms);
-            if (myKeyType == null) {
+        private static GordianNewKeyPairSpec determineKeyPairSpec(final DSAParameter pParms) throws GordianException {
+            final GordianCoreDSASpec mySpec = GordianCoreDSASpec.getDSASpecForParms(pParms);
+            if (mySpec == null) {
                 throw new GordianDataException("Unsupported DSA parameters: "
                         + pParms.getP().bitLength() + ":" + pParms.getQ().bitLength());
             }
-            return GordianKeyPairSpecBuilder.dsa(myKeyType);
+            final GordianCoreKeyPairSpecBuilder myBuilder = GordianCoreKeyPairSpecBuilder.newInstance();
+            return myBuilder.dsa(mySpec.getSpec());
         }
     }
 
@@ -371,13 +372,13 @@ public class GordianKeyPairAlgId {
         }
 
         @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws GordianException {
+        public GordianNewKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws GordianException {
             final DHParameters myParms = determineParameters(pInfo.getAlgorithm());
             return determineKeyPairSpec(myParms);
         }
 
         @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws GordianException {
+        public GordianNewKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws GordianException {
             final DHParameters myParms = determineParameters(pInfo.getPrivateKeyAlgorithm());
             return determineKeyPairSpec(myParms);
         }
@@ -419,13 +420,14 @@ public class GordianKeyPairAlgId {
          * @return the keySpec
          * @throws GordianException on error
          */
-        private static GordianKeyPairSpec determineKeyPairSpec(final DHParameters pParms) throws GordianException {
-            final GordianDHGroup myGroup = GordianDHGroup.getGroupForParams(pParms);
+        private static GordianNewKeyPairSpec determineKeyPairSpec(final DHParameters pParms) throws GordianException {
+            final GordianCoreDHSpec myGroup = GordianCoreDHSpec.getSpecForParams(pParms);
             if (myGroup == null) {
                 throw new GordianDataException("Unsupported DH parameters: "
                         + pParms.getP().bitLength());
             }
-            return GordianKeyPairSpecBuilder.dh(myGroup);
+            final GordianCoreKeyPairSpecBuilder myBuilder = GordianCoreKeyPairSpecBuilder.newInstance();
+            return myBuilder.dh(myGroup.getSpec());
         }
     }
 
@@ -443,13 +445,13 @@ public class GordianKeyPairAlgId {
         }
 
         @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws GordianException {
+        public GordianNewKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws GordianException {
             final DHParameters myParms = determineParameters(pInfo.getAlgorithm());
             return determineKeyPairSpec(myParms);
         }
 
         @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws GordianException {
+        public GordianNewKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws GordianException {
             final DHParameters myParms = determineParameters(pInfo.getPrivateKeyAlgorithm());
             return determineKeyPairSpec(myParms);
         }
@@ -475,13 +477,14 @@ public class GordianKeyPairAlgId {
          * @return the keySpec
          * @throws GordianException on error
          */
-        private static GordianKeyPairSpec determineKeyPairSpec(final DHParameters pParms) throws GordianException {
-            final GordianDHGroup myGroup = GordianDHGroup.getGroupForParams(pParms);
+        private static GordianNewKeyPairSpec determineKeyPairSpec(final DHParameters pParms) throws GordianException {
+            final GordianCoreDHSpec myGroup = GordianCoreDHSpec.getSpecForParams(pParms);
             if (myGroup == null) {
                 throw new GordianDataException("Unsupported DH parameters: "
                         + pParms.getP().bitLength());
             }
-            return GordianKeyPairSpecBuilder.elGamal(myGroup);
+            final GordianCoreKeyPairSpecBuilder myBuilder = GordianCoreKeyPairSpecBuilder.newInstance();
+            return myBuilder.elGamal(myGroup.getSpec());
         }
     }
 
@@ -499,14 +502,14 @@ public class GordianKeyPairAlgId {
         }
 
         @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws GordianException {
+        public GordianNewKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws GordianException {
             final AlgorithmIdentifier myId = pInfo.getAlgorithm();
             final X962Parameters myParms = X962Parameters.getInstance(myId.getParameters());
             return determineKeyPairSpec(myParms);
         }
 
         @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws GordianException {
+        public GordianNewKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws GordianException {
             final AlgorithmIdentifier myId = pInfo.getPrivateKeyAlgorithm();
             final X962Parameters myParms = X962Parameters.getInstance(myId.getParameters());
             return determineKeyPairSpec(myParms);
@@ -519,7 +522,7 @@ public class GordianKeyPairAlgId {
          * @return the keySpec
          * @throws GordianException on error
          */
-        private static GordianKeyPairSpec determineKeyPairSpec(final X962Parameters pParms) throws GordianException {
+        private static GordianNewKeyPairSpec determineKeyPairSpec(final X962Parameters pParms) throws GordianException {
             /* Reject if not a named curve */
             if (!pParms.isNamedCurve()) {
                 throw new GordianDataException(ERROR_NAMEDCURVE);
@@ -532,13 +535,14 @@ public class GordianKeyPairAlgId {
                 myName = ECNamedCurveTable.getName(myId);
             }
             if (myName != null) {
-                final GordianDSAElliptic myDSACurve = GordianDSAElliptic.getCurveForName(myName);
-                if (myDSACurve != null) {
-                    return GordianKeyPairSpecBuilder.ec(myDSACurve);
+                final GordianCoreKeyPairSpecBuilder myBuilder = GordianCoreKeyPairSpecBuilder.newInstance();
+                final GordianCoreECSpec myECCurve = GordianCoreECSpec.getCurveForName(myName);
+                if (myECCurve != null) {
+                    return myBuilder.ec(myECCurve.getSpec());
                 }
-                final GordianSM2Elliptic mySM2Curve = GordianSM2Elliptic.getCurveForName(myName);
+                final GordianCoreSM2Spec mySM2Curve = GordianCoreSM2Spec.getCurveForName(myName);
                 if (mySM2Curve != null) {
-                    return GordianKeyPairSpecBuilder.sm2(mySM2Curve);
+                    return myBuilder.sm2(mySM2Curve.getSpec());
                 }
                 throw new GordianDataException(ERROR_UNSUPCURVE + myName);
             }
@@ -562,14 +566,14 @@ public class GordianKeyPairAlgId {
         }
 
         @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws GordianException {
+        public GordianNewKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws GordianException {
             final AlgorithmIdentifier myId = pInfo.getAlgorithm();
             final DSTU4145Params myParms = DSTU4145Params.getInstance(myId.getParameters());
             return determineKeyPairSpec(myParms);
         }
 
         @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws GordianException {
+        public GordianNewKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws GordianException {
             final AlgorithmIdentifier myId = pInfo.getPrivateKeyAlgorithm();
             final X962Parameters myParms = X962Parameters.getInstance(myId.getParameters());
             return determineKeyPairSpec(myParms);
@@ -582,7 +586,7 @@ public class GordianKeyPairAlgId {
          * @return the keySpec
          * @throws GordianException on error
          */
-        private static GordianKeyPairSpec determineKeyPairSpec(final DSTU4145Params pParms) throws GordianException {
+        private static GordianNewKeyPairSpec determineKeyPairSpec(final DSTU4145Params pParms) throws GordianException {
             /* Reject if not a named curve */
             if (!pParms.isNamedCurve()) {
                 throw new GordianDataException(ERROR_NAMEDCURVE);
@@ -597,7 +601,7 @@ public class GordianKeyPairAlgId {
          * @return the keySpec
          * @throws GordianException on error
          */
-        private static GordianKeyPairSpec determineKeyPairSpec(final X962Parameters pParms) throws GordianException {
+        private static GordianNewKeyPairSpec determineKeyPairSpec(final X962Parameters pParms) throws GordianException {
             /* Reject if not a named curve */
             if (!pParms.isNamedCurve()) {
                 throw new GordianDataException(ERROR_NAMEDCURVE);
@@ -612,15 +616,16 @@ public class GordianKeyPairAlgId {
          * @return the keySpec
          * @throws GordianException on error
          */
-        private static GordianKeyPairSpec determineKeyPairSpec(final ASN1ObjectIdentifier pId) throws GordianException {
+        private static GordianNewKeyPairSpec determineKeyPairSpec(final ASN1ObjectIdentifier pId) throws GordianException {
             /* Check for EC named surve */
             final String myName = pId.toString();
             final ECDomainParameters myParms = DSTU4145NamedCurves.getByOID(pId);
-            final GordianDSTU4145Elliptic myCurve = GordianDSTU4145Elliptic.getCurveForName(myName);
+            final GordianCoreDSTUSpec myCurve = GordianCoreDSTUSpec.getCurveForName(myName);
             if (myParms == null || myCurve == null) {
                 throw new GordianDataException(ERROR_UNSUPCURVE + myName);
             }
-            return GordianKeyPairSpecBuilder.dstu4145(myCurve);
+            final GordianCoreKeyPairSpecBuilder myBuilder = GordianCoreKeyPairSpecBuilder.newInstance();
+            return myBuilder.dstu4145(myCurve.getSpec());
         }
     }
 
@@ -640,12 +645,12 @@ public class GordianKeyPairAlgId {
         }
 
         @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws GordianException {
+        public GordianNewKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws GordianException {
             return determineKeyPairSpec(pInfo.getAlgorithm());
         }
 
         @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws GordianException {
+        public GordianNewKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws GordianException {
             return determineKeyPairSpec(pInfo.getPrivateKeyAlgorithm());
         }
 
@@ -656,7 +661,7 @@ public class GordianKeyPairAlgId {
          * @return the keySpec
          * @throws GordianException on error
          */
-        private static GordianKeyPairSpec determineKeyPairSpec(final AlgorithmIdentifier pId) throws GordianException {
+        private static GordianNewKeyPairSpec determineKeyPairSpec(final AlgorithmIdentifier pId) throws GordianException {
             /* Determine the curve name */
             final GOST3410PublicKeyAlgParameters myParms = GOST3410PublicKeyAlgParameters.getInstance(pId.getParameters());
             final ASN1ObjectIdentifier myId = myParms.getPublicKeyParamSet();
@@ -664,11 +669,12 @@ public class GordianKeyPairAlgId {
 
             /* Determine curve */
             if (myName != null) {
-                final GordianGOSTElliptic myCurve = GordianGOSTElliptic.getCurveForName(myName);
+                final GordianCoreGOSTSpec myCurve = GordianCoreGOSTSpec.getCurveForName(myName);
                 if (myCurve == null) {
                     throw new GordianDataException(ERROR_UNSUPCURVE + myName);
                 }
-                return GordianKeyPairSpecBuilder.gost2012(myCurve);
+                final GordianCoreKeyPairSpecBuilder myBuilder = GordianCoreKeyPairSpecBuilder.newInstance();
+                return myBuilder.gost2012(myCurve.getSpec());
             }
 
             /* Curve is not supported */
@@ -683,14 +689,14 @@ public class GordianKeyPairAlgId {
         /**
          * AsymKeySpec.
          */
-        private final GordianKeyPairSpec theKeySpec;
+        private final GordianNewKeyPairSpec theKeySpec;
 
         /**
          * Constructor.
          *
          * @param pKeySpec the keySpec
          */
-        GordianSLHDSAEncodedParser(final GordianKeyPairSpec pKeySpec) {
+        GordianSLHDSAEncodedParser(final GordianNewKeyPairSpec pKeySpec) {
             theKeySpec = pKeySpec;
         }
 
@@ -700,18 +706,19 @@ public class GordianKeyPairAlgId {
          * @param pIdManager the idManager
          */
         static void register(final GordianKeyPairAlgId pIdManager) {
-            for (GordianSLHDSASpec mySpec : GordianSLHDSASpec.values()) {
-                pIdManager.registerParser(mySpec.getIdentifier(), new GordianSLHDSAEncodedParser(GordianKeyPairSpecBuilder.slhdsa(mySpec)));
+            final GordianCoreKeyPairSpecBuilder myBuilder = GordianCoreKeyPairSpecBuilder.newInstance();
+            for (GordianCoreSLHDSASpec mySpec : GordianCoreSLHDSASpec.values()) {
+                pIdManager.registerParser(mySpec.getIdentifier(), new GordianSLHDSAEncodedParser(myBuilder.slhdsa(mySpec.getSpec())));
             }
         }
 
         @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws GordianException {
+        public GordianNewKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws GordianException {
             return theKeySpec;
         }
 
         @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws GordianException {
+        public GordianNewKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws GordianException {
             return theKeySpec;
         }
     }
@@ -723,14 +730,14 @@ public class GordianKeyPairAlgId {
         /**
          * AsymKeySpec.
          */
-        private final GordianKeyPairSpec theKeySpec;
+        private final GordianNewKeyPairSpec theKeySpec;
 
         /**
          * Constructor.
          *
          * @param pKeySpec the keySpec
          */
-        GordianCMCEEncodedParser(final GordianKeyPairSpec pKeySpec) {
+        GordianCMCEEncodedParser(final GordianNewKeyPairSpec pKeySpec) {
             theKeySpec = pKeySpec;
         }
 
@@ -740,18 +747,19 @@ public class GordianKeyPairAlgId {
          * @param pIdManager the idManager
          */
         static void register(final GordianKeyPairAlgId pIdManager) {
-            for (GordianCMCESpec mySpec : GordianCMCESpec.values()) {
-                pIdManager.registerParser(mySpec.getIdentifier(), new GordianCMCEEncodedParser(GordianKeyPairSpecBuilder.cmce(mySpec)));
+            final GordianCoreKeyPairSpecBuilder myBuilder = GordianCoreKeyPairSpecBuilder.newInstance();
+            for (GordianCoreCMCESpec mySpec : GordianCoreCMCESpec.values()) {
+                pIdManager.registerParser(mySpec.getIdentifier(), new GordianCMCEEncodedParser(myBuilder.cmce(mySpec.getSpec())));
             }
         }
 
         @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws GordianException {
+        public GordianNewKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws GordianException {
             return theKeySpec;
         }
 
         @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws GordianException {
+        public GordianNewKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws GordianException {
             return theKeySpec;
         }
     }
@@ -763,14 +771,14 @@ public class GordianKeyPairAlgId {
         /**
          * AsymKeySpec.
          */
-        private final GordianKeyPairSpec theKeySpec;
+        private final GordianNewKeyPairSpec theKeySpec;
 
         /**
          * Constructor.
          *
          * @param pKeySpec the keySpec
          */
-        GordianFrodoEncodedParser(final GordianKeyPairSpec pKeySpec) {
+        GordianFrodoEncodedParser(final GordianNewKeyPairSpec pKeySpec) {
             theKeySpec = pKeySpec;
         }
 
@@ -780,18 +788,19 @@ public class GordianKeyPairAlgId {
          * @param pIdManager the idManager
          */
         static void register(final GordianKeyPairAlgId pIdManager) {
-            for (GordianFRODOSpec mySpec : GordianFRODOSpec.values()) {
-                pIdManager.registerParser(mySpec.getIdentifier(), new GordianFrodoEncodedParser(GordianKeyPairSpecBuilder.frodo(mySpec)));
+            final GordianCoreKeyPairSpecBuilder myBuilder = GordianCoreKeyPairSpecBuilder.newInstance();
+            for (GordianCoreFRODOSpec mySpec : GordianCoreFRODOSpec.values()) {
+                pIdManager.registerParser(mySpec.getIdentifier(), new GordianFrodoEncodedParser(myBuilder.frodo(mySpec.getSpec())));
             }
         }
 
         @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws GordianException {
+        public GordianNewKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws GordianException {
             return theKeySpec;
         }
 
         @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws GordianException {
+        public GordianNewKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws GordianException {
             return theKeySpec;
         }
     }
@@ -803,14 +812,14 @@ public class GordianKeyPairAlgId {
         /**
          * AsymKeySpec.
          */
-        private final GordianKeyPairSpec theKeySpec;
+        private final GordianNewKeyPairSpec theKeySpec;
 
         /**
          * Constructor.
          *
          * @param pKeySpec the keySpec
          */
-        GordianSABEREncodedParser(final GordianKeyPairSpec pKeySpec) {
+        GordianSABEREncodedParser(final GordianNewKeyPairSpec pKeySpec) {
             theKeySpec = pKeySpec;
         }
 
@@ -820,18 +829,19 @@ public class GordianKeyPairAlgId {
          * @param pIdManager the idManager
          */
         static void register(final GordianKeyPairAlgId pIdManager) {
-            for (GordianSABERSpec mySpec : GordianSABERSpec.values()) {
-                pIdManager.registerParser(mySpec.getIdentifier(), new GordianSABEREncodedParser(GordianKeyPairSpecBuilder.saber(mySpec)));
+            final GordianCoreKeyPairSpecBuilder myBuilder = GordianCoreKeyPairSpecBuilder.newInstance();
+            for (GordianCoreSABERSpec mySpec : GordianCoreSABERSpec.values()) {
+                pIdManager.registerParser(mySpec.getIdentifier(), new GordianSABEREncodedParser(myBuilder.saber(mySpec.getSpec())));
             }
         }
 
         @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws GordianException {
+        public GordianNewKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws GordianException {
             return theKeySpec;
         }
 
         @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws GordianException {
+        public GordianNewKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws GordianException {
             return theKeySpec;
         }
     }
@@ -843,14 +853,14 @@ public class GordianKeyPairAlgId {
         /**
          * AsymKeySpec.
          */
-        private final GordianKeyPairSpec theKeySpec;
+        private final GordianNewKeyPairSpec theKeySpec;
 
         /**
          * Constructor.
          *
          * @param pKeySpec the keySpec
          */
-        GordianMLKEMEncodedParser(final GordianKeyPairSpec pKeySpec) {
+        GordianMLKEMEncodedParser(final GordianNewKeyPairSpec pKeySpec) {
             theKeySpec = pKeySpec;
         }
 
@@ -860,18 +870,19 @@ public class GordianKeyPairAlgId {
          * @param pIdManager the idManager
          */
         static void register(final GordianKeyPairAlgId pIdManager) {
-            for (GordianMLKEMSpec mySpec : GordianMLKEMSpec.values()) {
-                pIdManager.registerParser(mySpec.getIdentifier(), new GordianMLKEMEncodedParser(GordianKeyPairSpecBuilder.mlkem(mySpec)));
+            final GordianCoreKeyPairSpecBuilder myBuilder = GordianCoreKeyPairSpecBuilder.newInstance();
+            for (GordianCoreMLKEMSpec mySpec : GordianCoreMLKEMSpec.values()) {
+                pIdManager.registerParser(mySpec.getIdentifier(), new GordianMLKEMEncodedParser(myBuilder.mlkem(mySpec.getSpec())));
             }
         }
 
         @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws GordianException {
+        public GordianNewKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws GordianException {
             return theKeySpec;
         }
 
         @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws GordianException {
+        public GordianNewKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws GordianException {
             return theKeySpec;
         }
     }
@@ -883,14 +894,14 @@ public class GordianKeyPairAlgId {
         /**
          * AsymKeySpec.
          */
-        private final GordianKeyPairSpec theKeySpec;
+        private final GordianNewKeyPairSpec theKeySpec;
 
         /**
          * Constructor.
          *
          * @param pKeySpec the keySpec
          */
-        GordianMLDSAEncodedParser(final GordianKeyPairSpec pKeySpec) {
+        GordianMLDSAEncodedParser(final GordianNewKeyPairSpec pKeySpec) {
             theKeySpec = pKeySpec;
         }
 
@@ -900,18 +911,19 @@ public class GordianKeyPairAlgId {
          * @param pIdManager the idManager
          */
         static void register(final GordianKeyPairAlgId pIdManager) {
-            for (GordianMLDSASpec mySpec : GordianMLDSASpec.values()) {
-                pIdManager.registerParser(mySpec.getIdentifier(), new GordianMLDSAEncodedParser(GordianKeyPairSpecBuilder.mldsa(mySpec)));
+            final GordianCoreKeyPairSpecBuilder myBuilder = GordianCoreKeyPairSpecBuilder.newInstance();
+            for (GordianCoreMLDSASpec mySpec : GordianCoreMLDSASpec.values()) {
+                pIdManager.registerParser(mySpec.getIdentifier(), new GordianMLDSAEncodedParser(myBuilder.mldsa(mySpec.getSpec())));
             }
         }
 
         @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws GordianException {
+        public GordianNewKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws GordianException {
             return theKeySpec;
         }
 
         @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws GordianException {
+        public GordianNewKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws GordianException {
             return theKeySpec;
         }
     }
@@ -923,14 +935,14 @@ public class GordianKeyPairAlgId {
         /**
          * AsymKeySpec.
          */
-        private final GordianKeyPairSpec theKeySpec;
+        private final GordianNewKeyPairSpec theKeySpec;
 
         /**
          * Constructor.
          *
          * @param pKeySpec the keySpec
          */
-        GordianHQCEncodedParser(final GordianKeyPairSpec pKeySpec) {
+        GordianHQCEncodedParser(final GordianNewKeyPairSpec pKeySpec) {
             theKeySpec = pKeySpec;
         }
 
@@ -940,18 +952,19 @@ public class GordianKeyPairAlgId {
          * @param pIdManager the idManager
          */
         static void register(final GordianKeyPairAlgId pIdManager) {
-            for (GordianHQCSpec mySpec : GordianHQCSpec.values()) {
-                pIdManager.registerParser(mySpec.getIdentifier(), new GordianHQCEncodedParser(GordianKeyPairSpecBuilder.hqc(mySpec)));
+            final GordianCoreKeyPairSpecBuilder myBuilder = GordianCoreKeyPairSpecBuilder.newInstance();
+            for (GordianCoreHQCSpec mySpec : GordianCoreHQCSpec.values()) {
+                pIdManager.registerParser(mySpec.getIdentifier(), new GordianHQCEncodedParser(myBuilder.hqc(mySpec.getSpec())));
             }
         }
 
         @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws GordianException {
+        public GordianNewKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws GordianException {
             return theKeySpec;
         }
 
         @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws GordianException {
+        public GordianNewKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws GordianException {
             return theKeySpec;
         }
     }
@@ -963,14 +976,14 @@ public class GordianKeyPairAlgId {
         /**
          * AsymKeySpec.
          */
-        private final GordianKeyPairSpec theKeySpec;
+        private final GordianNewKeyPairSpec theKeySpec;
 
         /**
          * Constructor.
          *
          * @param pKeySpec the keySpec
          */
-        GordianBIKEEncodedParser(final GordianKeyPairSpec pKeySpec) {
+        GordianBIKEEncodedParser(final GordianNewKeyPairSpec pKeySpec) {
             theKeySpec = pKeySpec;
         }
 
@@ -980,18 +993,19 @@ public class GordianKeyPairAlgId {
          * @param pIdManager the idManager
          */
         static void register(final GordianKeyPairAlgId pIdManager) {
-            for (GordianBIKESpec mySpec : GordianBIKESpec.values()) {
-                pIdManager.registerParser(mySpec.getIdentifier(), new GordianBIKEEncodedParser(GordianKeyPairSpecBuilder.bike(mySpec)));
+            final GordianCoreKeyPairSpecBuilder myBuilder = GordianCoreKeyPairSpecBuilder.newInstance();
+            for (GordianCoreBIKESpec mySpec : GordianCoreBIKESpec.values()) {
+                pIdManager.registerParser(mySpec.getIdentifier(), new GordianBIKEEncodedParser(myBuilder.bike(mySpec.getSpec())));
             }
         }
 
         @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws GordianException {
+        public GordianNewKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws GordianException {
             return theKeySpec;
         }
 
         @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws GordianException {
+        public GordianNewKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws GordianException {
             return theKeySpec;
         }
     }
@@ -1003,14 +1017,14 @@ public class GordianKeyPairAlgId {
         /**
          * AsymKeySpec.
          */
-        private final GordianKeyPairSpec theKeySpec;
+        private final GordianNewKeyPairSpec theKeySpec;
 
         /**
          * Constructor.
          *
          * @param pKeySpec the keySpec
          */
-        GordianNTRUEncodedParser(final GordianKeyPairSpec pKeySpec) {
+        GordianNTRUEncodedParser(final GordianNewKeyPairSpec pKeySpec) {
             theKeySpec = pKeySpec;
         }
 
@@ -1020,18 +1034,19 @@ public class GordianKeyPairAlgId {
          * @param pIdManager the idManager
          */
         static void register(final GordianKeyPairAlgId pIdManager) {
-            for (GordianNTRUSpec mySpec : GordianNTRUSpec.values()) {
-                pIdManager.registerParser(mySpec.getIdentifier(), new GordianNTRUEncodedParser(GordianKeyPairSpecBuilder.ntru(mySpec)));
+            final GordianCoreKeyPairSpecBuilder myBuilder = GordianCoreKeyPairSpecBuilder.newInstance();
+            for (GordianCoreNTRUSpec mySpec : GordianCoreNTRUSpec.values()) {
+                pIdManager.registerParser(mySpec.getIdentifier(), new GordianNTRUEncodedParser(myBuilder.ntru(mySpec.getSpec())));
             }
         }
 
         @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws GordianException {
+        public GordianNewKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws GordianException {
             return theKeySpec;
         }
 
         @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws GordianException {
+        public GordianNewKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws GordianException {
             return theKeySpec;
         }
     }
@@ -1043,14 +1058,14 @@ public class GordianKeyPairAlgId {
         /**
          * AsymKeySpec.
          */
-        private final GordianKeyPairSpec theKeySpec;
+        private final GordianNewKeyPairSpec theKeySpec;
 
         /**
          * Constructor.
          *
          * @param pKeySpec the keySpec
          */
-        GordianNTRUPrimeEncodedParser(final GordianKeyPairSpec pKeySpec) {
+        GordianNTRUPrimeEncodedParser(final GordianNewKeyPairSpec pKeySpec) {
             theKeySpec = pKeySpec;
         }
 
@@ -1060,21 +1075,22 @@ public class GordianKeyPairAlgId {
          * @param pIdManager the idManager
          */
         static void register(final GordianKeyPairAlgId pIdManager) {
-            for (GordianNTRUPrimeParams myParams : GordianNTRUPrimeParams.values()) {
+            final GordianCoreKeyPairSpecBuilder myBuilder = GordianCoreKeyPairSpecBuilder.newInstance();
+            for (GordianCoreNTRUPrimeParams myParams : GordianCoreNTRUPrimeParams.values()) {
                 pIdManager.registerParser(myParams.getNTRULIdentifier(),
-                        new GordianNTRUPrimeEncodedParser(GordianKeyPairSpecBuilder.ntruprime(new GordianNTRUPrimeSpec(GordianNTRUPrimeType.NTRUL, myParams))));
+                        new GordianNTRUPrimeEncodedParser(myBuilder.ntruprime(GordianNewNTRUPrimeType.NTRUL, myParams.getParams())));
                 pIdManager.registerParser(myParams.getSNTRUIdentifier(),
-                        new GordianNTRUPrimeEncodedParser(GordianKeyPairSpecBuilder.ntruprime(new GordianNTRUPrimeSpec(GordianNTRUPrimeType.SNTRU, myParams))));
+                        new GordianNTRUPrimeEncodedParser(myBuilder.ntruprime(GordianNewNTRUPrimeType.SNTRU, myParams.getParams())));
             }
         }
 
         @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws GordianException {
+        public GordianNewKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws GordianException {
             return theKeySpec;
         }
 
         @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws GordianException {
+        public GordianNewKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws GordianException {
             return theKeySpec;
         }
     }
@@ -1086,14 +1102,14 @@ public class GordianKeyPairAlgId {
         /**
          * AsymKeySpec.
          */
-        private final GordianKeyPairSpec theKeySpec;
+        private final GordianNewKeyPairSpec theKeySpec;
 
         /**
          * Constructor.
          *
          * @param pKeySpec the keySpec
          */
-        GordianFalconEncodedParser(final GordianKeyPairSpec pKeySpec) {
+        GordianFalconEncodedParser(final GordianNewKeyPairSpec pKeySpec) {
             theKeySpec = pKeySpec;
         }
 
@@ -1103,18 +1119,19 @@ public class GordianKeyPairAlgId {
          * @param pIdManager the idManager
          */
         static void register(final GordianKeyPairAlgId pIdManager) {
-            for (GordianFalconSpec mySpec : GordianFalconSpec.values()) {
-                pIdManager.registerParser(mySpec.getIdentifier(), new GordianFalconEncodedParser(GordianKeyPairSpecBuilder.falcon(mySpec)));
+            final GordianCoreKeyPairSpecBuilder myBuilder = GordianCoreKeyPairSpecBuilder.newInstance();
+            for (GordianCoreFalconSpec mySpec : GordianCoreFalconSpec.values()) {
+                pIdManager.registerParser(mySpec.getIdentifier(), new GordianFalconEncodedParser(myBuilder.falcon(mySpec.getSpec())));
             }
         }
 
         @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws GordianException {
+        public GordianNewKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws GordianException {
             return theKeySpec;
         }
 
         @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws GordianException {
+        public GordianNewKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws GordianException {
             return theKeySpec;
         }
     }
@@ -1126,14 +1143,14 @@ public class GordianKeyPairAlgId {
         /**
          * AsymKeySpec.
          */
-        private final GordianKeyPairSpec theKeySpec;
+        private final GordianNewKeyPairSpec theKeySpec;
 
         /**
          * Constructor.
          *
          * @param pKeySpec the keySpec
          */
-        GordianMayoEncodedParser(final GordianKeyPairSpec pKeySpec) {
+        GordianMayoEncodedParser(final GordianNewKeyPairSpec pKeySpec) {
             theKeySpec = pKeySpec;
         }
 
@@ -1143,18 +1160,19 @@ public class GordianKeyPairAlgId {
          * @param pIdManager the idManager
          */
         static void register(final GordianKeyPairAlgId pIdManager) {
-            for (GordianMayoSpec mySpec : GordianMayoSpec.values()) {
-                pIdManager.registerParser(mySpec.getIdentifier(), new GordianMayoEncodedParser(GordianKeyPairSpecBuilder.mayo(mySpec)));
+            final GordianCoreKeyPairSpecBuilder myBuilder = GordianCoreKeyPairSpecBuilder.newInstance();
+            for (GordianCoreMayoSpec mySpec : GordianCoreMayoSpec.values()) {
+                pIdManager.registerParser(mySpec.getIdentifier(), new GordianMayoEncodedParser(myBuilder.mayo(mySpec.getSpec())));
             }
         }
 
         @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws GordianException {
+        public GordianNewKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws GordianException {
             return theKeySpec;
         }
 
         @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws GordianException {
+        public GordianNewKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws GordianException {
             return theKeySpec;
         }
     }
@@ -1166,14 +1184,14 @@ public class GordianKeyPairAlgId {
         /**
          * AsymKeySpec.
          */
-        private final GordianKeyPairSpec theKeySpec;
+        private final GordianNewKeyPairSpec theKeySpec;
 
         /**
          * Constructor.
          *
          * @param pKeySpec the keySpec
          */
-        GordianSnovaEncodedParser(final GordianKeyPairSpec pKeySpec) {
+        GordianSnovaEncodedParser(final GordianNewKeyPairSpec pKeySpec) {
             theKeySpec = pKeySpec;
         }
 
@@ -1183,18 +1201,19 @@ public class GordianKeyPairAlgId {
          * @param pIdManager the idManager
          */
         static void register(final GordianKeyPairAlgId pIdManager) {
-            for (GordianSnovaSpec mySpec : GordianSnovaSpec.values()) {
-                pIdManager.registerParser(mySpec.getIdentifier(), new GordianSnovaEncodedParser(GordianKeyPairSpecBuilder.snova(mySpec)));
+            final GordianCoreKeyPairSpecBuilder myBuilder = GordianCoreKeyPairSpecBuilder.newInstance();
+            for (GordianCoreSnovaSpec mySpec : GordianCoreSnovaSpec.values()) {
+                pIdManager.registerParser(mySpec.getIdentifier(), new GordianSnovaEncodedParser(myBuilder.snova(mySpec.getSpec())));
             }
         }
 
         @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws GordianException {
+        public GordianNewKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws GordianException {
             return theKeySpec;
         }
 
         @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws GordianException {
+        public GordianNewKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws GordianException {
             return theKeySpec;
         }
     }
@@ -1206,14 +1225,14 @@ public class GordianKeyPairAlgId {
         /**
          * AsymKeySpec.
          */
-        private final GordianKeyPairSpec theKeySpec;
+        private final GordianNewKeyPairSpec theKeySpec;
 
         /**
          * Constructor.
          *
          * @param pKeySpec the keySpec
          */
-        GordianPicnicEncodedParser(final GordianKeyPairSpec pKeySpec) {
+        GordianPicnicEncodedParser(final GordianNewKeyPairSpec pKeySpec) {
             theKeySpec = pKeySpec;
         }
 
@@ -1223,18 +1242,19 @@ public class GordianKeyPairAlgId {
          * @param pIdManager the idManager
          */
         static void register(final GordianKeyPairAlgId pIdManager) {
-            for (GordianPicnicSpec mySpec : GordianPicnicSpec.values()) {
-                pIdManager.registerParser(mySpec.getIdentifier(), new GordianPicnicEncodedParser(GordianKeyPairSpecBuilder.picnic(mySpec)));
+            final GordianCoreKeyPairSpecBuilder myBuilder = GordianCoreKeyPairSpecBuilder.newInstance();
+            for (GordianCorePicnicSpec mySpec : GordianCorePicnicSpec.values()) {
+                pIdManager.registerParser(mySpec.getIdentifier(), new GordianPicnicEncodedParser(myBuilder.picnic(mySpec.getSpec())));
             }
         }
 
         @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws GordianException {
+        public GordianNewKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws GordianException {
             return theKeySpec;
         }
 
         @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws GordianException {
+        public GordianNewKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws GordianException {
             return theKeySpec;
         }
     }
@@ -1253,13 +1273,15 @@ public class GordianKeyPairAlgId {
         }
 
         @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) {
-            return GordianKeyPairSpecBuilder.newHope();
+        public GordianNewKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) {
+            final GordianCoreKeyPairSpecBuilder myBuilder = GordianCoreKeyPairSpecBuilder.newInstance();
+            return myBuilder.newHope();
         }
 
         @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) {
-            return GordianKeyPairSpecBuilder.newHope();
+        public GordianNewKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) {
+            final GordianCoreKeyPairSpecBuilder myBuilder = GordianCoreKeyPairSpecBuilder.newInstance();
+            return myBuilder.newHope();
         }
     }
 
@@ -1279,7 +1301,7 @@ public class GordianKeyPairAlgId {
 
 
         @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws GordianException {
+        public GordianNewKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws GordianException {
             final AlgorithmIdentifier myId = pInfo.getAlgorithm();
             final XMSSKeyParams myParms = XMSSKeyParams.getInstance(myId.getParameters());
             if (myParms != null) {
@@ -1299,7 +1321,7 @@ public class GordianKeyPairAlgId {
         }
 
         @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws GordianException {
+        public GordianNewKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws GordianException {
             final AlgorithmIdentifier myId = pInfo.getPrivateKeyAlgorithm();
             final XMSSKeyParams myParms = XMSSKeyParams.getInstance(myId.getParameters());
             return determineKeyPairSpec(myParms);
@@ -1312,9 +1334,9 @@ public class GordianKeyPairAlgId {
          * @return the keySpec
          * @throws GordianException on error
          */
-        private static GordianKeyPairSpec determineKeyPairSpec(final XMSSKeyParams pParms) throws GordianException {
+        private static GordianNewKeyPairSpec determineKeyPairSpec(final XMSSKeyParams pParms) throws GordianException {
             final ASN1ObjectIdentifier myDigest = pParms.getTreeDigest().getAlgorithm();
-            final GordianXMSSHeight myHeight = determineHeight(pParms.getHeight());
+            final GordianNewXMSSHeight myHeight = determineHeight(pParms.getHeight());
             return GordianKeyPairSpecBuilder.xmss(determineKeyType(myDigest), myHeight);
         }
 
@@ -1325,18 +1347,18 @@ public class GordianKeyPairAlgId {
          * @return the keyType
          * @throws GordianException on error
          */
-        static GordianXMSSDigestType determineKeyType(final ASN1ObjectIdentifier pDigest) throws GordianException {
+        static GordianNewXMSSDigestType determineKeyType(final ASN1ObjectIdentifier pDigest) throws GordianException {
             if (pDigest.equals(NISTObjectIdentifiers.id_sha256)) {
-                return GordianXMSSDigestType.SHA256;
+                return GordianNewXMSSDigestType.SHA256;
             }
             if (pDigest.equals(NISTObjectIdentifiers.id_sha512)) {
-                return GordianXMSSDigestType.SHA512;
+                return GordianNewXMSSDigestType.SHA512;
             }
             if (pDigest.equals(NISTObjectIdentifiers.id_shake128)) {
-                return GordianXMSSDigestType.SHAKE128;
+                return GordianNewXMSSDigestType.SHAKE128;
             }
             if (pDigest.equals(NISTObjectIdentifiers.id_shake256)) {
-                return GordianXMSSDigestType.SHAKE256;
+                return GordianNewXMSSDigestType.SHAKE256;
             }
 
             /* Tree Digest is not supported */
@@ -1350,9 +1372,9 @@ public class GordianKeyPairAlgId {
          * @return the xmssHeight
          * @throws GordianException on error
          */
-        static GordianXMSSHeight determineHeight(final int pHeight) throws GordianException {
+        static GordianNewXMSSHeight determineHeight(final int pHeight) throws GordianException {
             /* Loo through the heights */
-            for (GordianXMSSHeight myHeight : GordianXMSSHeight.values()) {
+            for (GordianNewXMSSHeight myHeight : GordianNewXMSSHeight.values()) {
                 if (myHeight.getHeight() == pHeight) {
                     return myHeight;
                 }
@@ -1378,7 +1400,7 @@ public class GordianKeyPairAlgId {
         }
 
         @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws GordianException {
+        public GordianNewKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws GordianException {
             final AlgorithmIdentifier myId = pInfo.getAlgorithm();
             final XMSSMTKeyParams myParms = XMSSMTKeyParams.getInstance(myId.getParameters());
             if (myParms != null) {
@@ -1398,7 +1420,7 @@ public class GordianKeyPairAlgId {
         }
 
         @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws GordianException {
+        public GordianNewKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws GordianException {
             final AlgorithmIdentifier myId = pInfo.getPrivateKeyAlgorithm();
             final XMSSMTKeyParams myParms = XMSSMTKeyParams.getInstance(myId.getParameters());
             return determineKeyPairSpec(myParms);
@@ -1411,10 +1433,10 @@ public class GordianKeyPairAlgId {
          * @return the keySpec
          * @throws GordianException on error
          */
-        private static GordianKeyPairSpec determineKeyPairSpec(final XMSSMTKeyParams pParms) throws GordianException {
+        private static GordianNewKeyPairSpec determineKeyPairSpec(final XMSSMTKeyParams pParms) throws GordianException {
             final ASN1ObjectIdentifier myDigest = pParms.getTreeDigest().getAlgorithm();
-            final GordianXMSSHeight myHeight = GordianXMSSEncodedParser.determineHeight(pParms.getHeight());
-            final GordianXMSSMTLayers myLayers = determineLayers(pParms.getLayers());
+            final GordianNewXMSSHeight myHeight = GordianXMSSEncodedParser.determineHeight(pParms.getHeight());
+            final GordianNewXMSSMTLayers myLayers = determineLayers(pParms.getLayers());
             return GordianKeyPairSpecBuilder.xmssmt(GordianXMSSEncodedParser.determineKeyType(myDigest), myHeight, myLayers);
         }
 
@@ -1425,9 +1447,9 @@ public class GordianKeyPairAlgId {
          * @return the xmssMTLayers
          * @throws GordianException on error
          */
-        static GordianXMSSMTLayers determineLayers(final int pLayers) throws GordianException {
+        static GordianNewXMSSMTLayers determineLayers(final int pLayers) throws GordianException {
             /* Loo through the heights */
-            for (GordianXMSSMTLayers myLayers : GordianXMSSMTLayers.values()) {
+            for (GordianNewXMSSMTLayers myLayers : GordianNewXMSSMTLayers.values()) {
                 if (myLayers.getLayers() == pLayers) {
                     return myLayers;
                 }
@@ -1445,14 +1467,14 @@ public class GordianKeyPairAlgId {
         /**
          * AsymKeySpec.
          */
-        private final GordianKeyPairSpec theKeySpec;
+        private final GordianNewKeyPairSpec theKeySpec;
 
         /**
          * Constructor.
          *
          * @param pKeySpec the keySpec
          */
-        GordianEdwardsEncodedParser(final GordianKeyPairSpec pKeySpec) {
+        GordianEdwardsEncodedParser(final GordianNewKeyPairSpec pKeySpec) {
             theKeySpec = pKeySpec;
         }
 
@@ -1462,19 +1484,20 @@ public class GordianKeyPairAlgId {
          * @param pIdManager the idManager
          */
         static void register(final GordianKeyPairAlgId pIdManager) {
-            pIdManager.registerParser(EdECObjectIdentifiers.id_X25519, new GordianEdwardsEncodedParser(GordianKeyPairSpecBuilder.x25519()));
-            pIdManager.registerParser(EdECObjectIdentifiers.id_X448, new GordianEdwardsEncodedParser(GordianKeyPairSpecBuilder.x448()));
-            pIdManager.registerParser(EdECObjectIdentifiers.id_Ed25519, new GordianEdwardsEncodedParser(GordianKeyPairSpecBuilder.ed25519()));
-            pIdManager.registerParser(EdECObjectIdentifiers.id_Ed448, new GordianEdwardsEncodedParser(GordianKeyPairSpecBuilder.ed448()));
+            final GordianCoreKeyPairSpecBuilder myBuilder = GordianCoreKeyPairSpecBuilder.newInstance();
+            pIdManager.registerParser(EdECObjectIdentifiers.id_X25519, new GordianEdwardsEncodedParser(myBuilder.x25519()));
+            pIdManager.registerParser(EdECObjectIdentifiers.id_X448, new GordianEdwardsEncodedParser(myBuilder.x448()));
+            pIdManager.registerParser(EdECObjectIdentifiers.id_Ed25519, new GordianEdwardsEncodedParser(myBuilder.ed25519()));
+            pIdManager.registerParser(EdECObjectIdentifiers.id_Ed448, new GordianEdwardsEncodedParser(myBuilder.ed448()));
         }
 
         @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws GordianException {
+        public GordianNewKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws GordianException {
             return theKeySpec;
         }
 
         @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws GordianException {
+        public GordianNewKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws GordianException {
             return theKeySpec;
         }
     }
@@ -1493,22 +1516,16 @@ public class GordianKeyPairAlgId {
         }
 
         @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws GordianException {
+        public GordianNewKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws GordianException {
             /* Protect against exceptions */
             try {
                 /* Parse public key */
-                final LMSKeyParameters myParms = (LMSKeyParameters) PublicKeyFactory.createKey(pInfo);
-                if (myParms instanceof HSSPublicKeyParameters myPublic) {
-                    final int myDepth = myPublic.getL();
-                    final LMSPublicKeyParameters myLMSPublicKey = myPublic.getLMSPublicKey();
-                    final GordianLMSKeySpec myKeySpec = determineKeyPairSpec(myLMSPublicKey);
-                    return GordianKeyPairSpecBuilder.hss(myKeySpec, myDepth);
-
-                } else {
-                    final LMSPublicKeyParameters myPublic = (LMSPublicKeyParameters) myParms;
-                    final GordianLMSKeySpec myKeySpec = determineKeyPairSpec(myPublic);
-                    return GordianKeyPairSpecBuilder.lms(myKeySpec);
-                }
+                final GordianCoreKeyPairSpecBuilder myBuilder = GordianCoreKeyPairSpecBuilder.newInstance();
+                final HSSPublicKeyParameters myPublic = (HSSPublicKeyParameters) PublicKeyFactory.createKey(pInfo);
+                final int myDepth = myPublic.getL();
+                final LMSPublicKeyParameters myLMSPublicKey = myPublic.getLMSPublicKey();
+                final GordianNewLMSSpec myKeySpec = determineKeyPairSpec(myLMSPublicKey);
+                return myBuilder.hss(myKeySpec.getHash(), myKeySpec.getHeight(), myKeySpec.getWidth(), myKeySpec.getLength(), myDepth);
 
                 /* Handle exceptions */
             } catch (IOException e) {
@@ -1517,22 +1534,16 @@ public class GordianKeyPairAlgId {
         }
 
         @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws GordianException {
+        public GordianNewKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws GordianException {
             /* Protect against exceptions */
             try {
                 /* Parse public key */
-                final LMSKeyParameters myParms = (LMSKeyParameters) PrivateKeyFactory.createKey(pInfo);
-                if (myParms instanceof HSSPrivateKeyParameters) {
-                    final HSSPrivateKeyParameters myPrivate = (HSSPrivateKeyParameters) PrivateKeyFactory.createKey(pInfo);
-                    final int myDepth = myPrivate.getL();
-                    final LMSPublicKeyParameters myLMSPublicKey = myPrivate.getPublicKey().getLMSPublicKey();
-                    final GordianLMSKeySpec myKeySpec = determineKeyPairSpec(myLMSPublicKey);
-                    return GordianKeyPairSpecBuilder.hss(myKeySpec, myDepth);
-
-                } else {
-                    final LMSPrivateKeyParameters myPrivate = (LMSPrivateKeyParameters) PrivateKeyFactory.createKey(pInfo);
-                    return GordianKeyPairSpecBuilder.lms(GordianLMSKeySpec.determineKeySpec(myPrivate.getSigParameters(), myPrivate.getOtsParameters()));
-                }
+                final GordianCoreKeyPairSpecBuilder myBuilder = GordianCoreKeyPairSpecBuilder.newInstance();
+                final HSSPrivateKeyParameters myPrivate = (HSSPrivateKeyParameters) PrivateKeyFactory.createKey(pInfo);
+                final int myDepth = myPrivate.getL();
+                final LMSPublicKeyParameters myLMSPublicKey = myPrivate.getPublicKey().getLMSPublicKey();
+                final GordianNewLMSSpec myKeySpec = determineKeyPairSpec(myLMSPublicKey);
+                return myBuilder.hss(myKeySpec.getHash(), myKeySpec.getHeight(), myKeySpec.getWidth(), myKeySpec.getLength(), myDepth);
 
                 /* Handle exceptions */
             } catch (IOException e) {
@@ -1546,8 +1557,8 @@ public class GordianKeyPairAlgId {
          * @param pPublic the publicKeyParams
          * @return the LMSKeySpec
          */
-        static GordianLMSKeySpec determineKeyPairSpec(final LMSPublicKeyParameters pPublic) {
-            return GordianLMSKeySpec.determineKeySpec(pPublic.getSigParameters(), pPublic.getOtsParameters());
+        static GordianNewLMSSpec determineKeyPairSpec(final LMSPublicKeyParameters pPublic) {
+            return GordianCoreLMSSpec.determineSpec(pPublic.getSigParameters(), pPublic.getOtsParameters());
         }
     }
 
@@ -1579,11 +1590,11 @@ public class GordianKeyPairAlgId {
         }
 
         @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws GordianException {
+        public GordianNewKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws GordianException {
             /* Protect against exceptions */
             try {
                 final ASN1Sequence myKeys = ASN1Sequence.getInstance(pInfo.getPublicKeyData().getBytes());
-                final List<GordianKeyPairSpec> mySpecs = new ArrayList<>();
+                final List<GordianNewKeyPairSpec> mySpecs = new ArrayList<>();
 
                 /* Build the list from the keys sequence */
                 final Enumeration<?> en = myKeys.getObjects();
@@ -1600,11 +1611,11 @@ public class GordianKeyPairAlgId {
         }
 
         @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws GordianException {
+        public GordianNewKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws GordianException {
             /* Protect against exceptions */
             try {
                 final ASN1Sequence myKeys = ASN1Sequence.getInstance(pInfo.getPrivateKey().getOctets());
-                final List<GordianKeyPairSpec> mySpecs = new ArrayList<>();
+                final List<GordianNewKeyPairSpec> mySpecs = new ArrayList<>();
 
                 /* Build the list from the keys sequence */
                 final Enumeration<?> en = myKeys.getObjects();

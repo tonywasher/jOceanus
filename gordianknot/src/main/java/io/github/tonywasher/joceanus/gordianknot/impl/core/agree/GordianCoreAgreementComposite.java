@@ -23,7 +23,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.agree.GordianCoreAgreementCalculator.GordianDerivationId;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianDataConverter;
@@ -32,6 +32,7 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.kdf.GordianHKDFEngine
 import io.github.tonywasher.joceanus.gordianknot.impl.core.kdf.GordianHKDFParams;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianCompositeKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianCoreDigestSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairSpec;
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1OctetString;
 import org.bouncycastle.asn1.ASN1Sequence;
@@ -105,10 +106,10 @@ public class GordianCoreAgreementComposite extends GordianCoreAgreementEngine {
         final GordianAgreementKDF myKDF = pSpec.getKDFType();
 
         /* Loop through the keyPairs */
-        final GordianKeyPairSpec myKeyPairSpec = pSpec.getKeyPairSpec();
-        final Iterator<GordianKeyPairSpec> myIterator = myKeyPairSpec.keySpecIterator();
+        final GordianCoreKeyPairSpec myKeyPairSpec = (GordianCoreKeyPairSpec) pSpec.getKeyPairSpec();
+        final Iterator<GordianNewKeyPairSpec> myIterator = myKeyPairSpec.keySpecIterator();
         while (myIterator.hasNext()) {
-            final GordianKeyPairSpec mySpec = myIterator.next();
+            final GordianNewKeyPairSpec mySpec = myIterator.next();
             /* Determine the agreementType (note that we have no confirmation) */
             mySpecs.add(new GordianAgreementSpec(mySpec, myType, myKDF));
         }
@@ -269,7 +270,7 @@ public class GordianCoreAgreementComposite extends GordianCoreAgreementEngine {
         try {
             /* Create the HKDF parameters */
             final GordianNewDigestSpecBuilder myBuilder = GordianCoreDigestSpecBuilder.newInstance();
-            final GordianNewDigestSpec myDigestSpec = myBuilder.generic(GordianDerivationId.COMPOSITE.getDigestType());
+            final GordianNewDigestSpec myDigestSpec = myBuilder.digest(GordianDerivationId.COMPOSITE.getDigestType());
             Random myRandom = null;
 
             /* Loop through the engines */

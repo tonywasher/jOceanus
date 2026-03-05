@@ -182,7 +182,7 @@ public class GordianKeySetASN1
         final GordianNewSymKeySpecBuilder myBuilder = GordianCoreSymKeySpecBuilder.newInstance();
         for (Entry<Integer, byte[]> myEntry : theMap.entrySet()) {
             final GordianNewSymKeyType myKeyType = GordianNewSymKeyType.values()[myEntry.getKey() - 1];
-            final GordianNewSymKeySpec mySpec = myBuilder.generic(myKeyType, GordianLength.LEN_128, theSpec.getKeyLength());
+            final GordianNewSymKeySpec mySpec = myBuilder.symKey(myKeyType, GordianLength.LEN_128, theSpec.getKeyLength());
             final GordianCoreKeyGenerator<GordianNewSymKeySpec> myGenerator =
                     (GordianCoreKeyGenerator<GordianNewSymKeySpec>) myCipherFactory.getKeyGenerator(mySpec);
 

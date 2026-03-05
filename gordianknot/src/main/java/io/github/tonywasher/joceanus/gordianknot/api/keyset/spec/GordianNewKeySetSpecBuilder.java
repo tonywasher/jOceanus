@@ -28,7 +28,7 @@ public interface GordianNewKeySetSpecBuilder {
      *
      * @return the keySetSpec
      */
-    GordianNewKeySetSpec keySetSpec();
+    GordianNewKeySetSpec keySet();
 
     /**
      * Create keySetSpec.
@@ -36,7 +36,7 @@ public interface GordianNewKeySetSpecBuilder {
      * @param pKeyLen the keyLength.
      * @return the keySetSpec
      */
-    GordianNewKeySetSpec keySetSpec(GordianLength pKeyLen);
+    GordianNewKeySetSpec keySet(GordianLength pKeyLen);
 
     /**
      * Constructor.
@@ -45,6 +45,6 @@ public interface GordianNewKeySetSpecBuilder {
      * @param pNumSteps the number of cipherSteps
      * @return the keySetSpec
      */
-    GordianNewKeySetSpec keySetSpec(GordianLength pKeyLen,
-                                    int pNumSteps);
+    GordianNewKeySetSpec keySet(GordianLength pKeyLen,
+                                int pNumSteps);
 }

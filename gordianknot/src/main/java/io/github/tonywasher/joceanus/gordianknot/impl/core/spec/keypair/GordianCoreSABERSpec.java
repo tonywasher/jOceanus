@@ -23,7 +23,6 @@ import org.bouncycastle.asn1.bc.BCObjectIdentifiers;
 import org.bouncycastle.pqc.crypto.saber.SABERParameters;
 import org.bouncycastle.pqc.jcajce.spec.SABERParameterSpec;
 
-import java.util.Collection;
 import java.util.EnumMap;
 import java.util.Map;
 
@@ -35,6 +34,11 @@ public final class GordianCoreSABERSpec {
      * The specMap.
      */
     private static final Map<GordianNewSABERSpec, GordianCoreSABERSpec> SPECMAP = newSpecMap();
+
+    /**
+     * The specArray.
+     */
+    private static final GordianCoreSABERSpec[] VALUES = SPECMAP.values().toArray(new GordianCoreSABERSpec[0]);
 
     /**
      * The Spec.
@@ -202,7 +206,7 @@ public final class GordianCoreSABERSpec {
      *
      * @return the values
      */
-    public static Collection<GordianCoreSABERSpec> values() {
-        return SPECMAP.values();
+    public static GordianCoreSABERSpec[] values() {
+        return VALUES;
     }
 }

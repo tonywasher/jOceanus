@@ -60,9 +60,9 @@ public interface GordianNewSymCipherSpecBuilder {
      * @param pPadding the padding
      * @return the cipherSpec
      */
-    default GordianNewSymCipherSpec generic(final GordianNewSymKeySpec pKeySpec,
-                                            final GordianNewCipherMode pMode,
-                                            final GordianNewPadding pPadding) {
+    default GordianNewSymCipherSpec symCipher(final GordianNewSymKeySpec pKeySpec,
+                                              final GordianNewCipherMode pMode,
+                                              final GordianNewPadding pPadding) {
         return withKeySpec(pKeySpec).withMode(pMode).withPadding(pPadding).build();
     }
 

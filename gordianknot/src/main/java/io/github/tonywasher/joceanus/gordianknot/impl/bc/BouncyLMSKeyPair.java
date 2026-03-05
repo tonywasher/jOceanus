@@ -18,9 +18,7 @@ package io.github.tonywasher.joceanus.gordianknot.impl.bc;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianLMSKeySpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianLMSKeySpec.GordianHSSKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignParams;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignatureSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPublicKey;
@@ -30,6 +28,8 @@ import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncySignature.BouncyD
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianKeyPairValidity;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreLMSSpec;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.bouncycastle.crypto.AsymmetricCipherKeyPair;
@@ -45,7 +45,6 @@ import org.bouncycastle.pqc.crypto.lms.LMSKeyPairGenerator;
 import org.bouncycastle.pqc.crypto.lms.LMSParameters;
 import org.bouncycastle.pqc.crypto.lms.LMSPrivateKeyParameters;
 import org.bouncycastle.pqc.crypto.lms.LMSPublicKeyParameters;
-import org.bouncycastle.pqc.crypto.lms.LMSSigner;
 import org.bouncycastle.pqc.crypto.util.PrivateKeyFactory;
 import org.bouncycastle.pqc.crypto.util.PrivateKeyInfoFactory;
 import org.bouncycastle.pqc.crypto.util.PublicKeyFactory;
@@ -77,7 +76,7 @@ public final class BouncyLMSKeyPair {
          * @param pKeySpec   the keySpec
          * @param pPublicKey the public key
          */
-        BouncyLMSPublicKey(final GordianKeyPairSpec pKeySpec,
+        BouncyLMSPublicKey(final GordianNewKeyPairSpec pKeySpec,
                            final LMSPublicKeyParameters pPublicKey) {
             super(pKeySpec, pPublicKey);
         }
@@ -104,7 +103,7 @@ public final class BouncyLMSKeyPair {
          * @param pKeySpec    the keySpec
          * @param pPrivateKey the private key
          */
-        BouncyLMSPrivateKey(final GordianKeyPairSpec pKeySpec,
+        BouncyLMSPrivateKey(final GordianNewKeyPairSpec pKeySpec,
                             final LMSPrivateKeyParameters pPrivateKey) {
             super(pKeySpec, pPrivateKey);
         }
@@ -147,13 +146,14 @@ public final class BouncyLMSKeyPair {
          * @param pKeySpec the keySpec
          */
         BouncyLMSKeyPairGenerator(final GordianBaseFactory pFactory,
-                                  final GordianKeyPairSpec pKeySpec) {
+                                  final GordianNewKeyPairSpec pKeySpec) {
             /* Initialise underlying class */
             super(pFactory, pKeySpec);
 
             /* Create and initialise the generator */
             theGenerator = new LMSKeyPairGenerator();
-            final GordianLMSKeySpec mySpec = pKeySpec.getLMSKeySpec();
+            final GordianCoreKeyPairSpec myKeySpec = (GordianCoreKeyPairSpec) pKeySpec;
+            final GordianCoreLMSSpec mySpec = myKeySpec.getLMSSpec();
             final KeyGenerationParameters myParams = new LMSKeyGenerationParameters(mySpec.getParameters(), getRandom());
             theGenerator.init(myParams);
         }
@@ -272,7 +272,7 @@ public final class BouncyLMSKeyPair {
          * @param pKeySpec   the keySpec
          * @param pPublicKey the public key
          */
-        BouncyHSSPublicKey(final GordianKeyPairSpec pKeySpec,
+        BouncyHSSPublicKey(final GordianNewKeyPairSpec pKeySpec,
                            final HSSPublicKeyParameters pPublicKey) {
             super(pKeySpec, pPublicKey);
         }
@@ -299,7 +299,7 @@ public final class BouncyLMSKeyPair {
          * @param pKeySpec    the keySpec
          * @param pPrivateKey the private key
          */
-        BouncyHSSPrivateKey(final GordianKeyPairSpec pKeySpec,
+        BouncyHSSPrivateKey(final GordianNewKeyPairSpec pKeySpec,
                             final HSSPrivateKeyParameters pPrivateKey) {
             super(pKeySpec, pPrivateKey);
         }
@@ -342,14 +342,15 @@ public final class BouncyLMSKeyPair {
          * @param pKeySpec the keySpec
          */
         BouncyHSSKeyPairGenerator(final GordianBaseFactory pFactory,
-                                  final GordianKeyPairSpec pKeySpec) {
+                                  final GordianNewKeyPairSpec pKeySpec) {
             /* Initialise underlying class */
             super(pFactory, pKeySpec);
 
             /* Create and initialise the generator */
             theGenerator = new HSSKeyPairGenerator();
-            final GordianHSSKeySpec myKeySpec = pKeySpec.getHSSKeySpec();
-            final KeyGenerationParameters myParams = new HSSKeyGenerationParameters(deriveParameters(myKeySpec), getRandom());
+            final GordianCoreKeyPairSpec myKeySpec = (GordianCoreKeyPairSpec) pKeySpec;
+            final GordianCoreLMSSpec myHSSSpec = myKeySpec.getLMSSpec();
+            final KeyGenerationParameters myParams = new HSSKeyGenerationParameters(deriveParameters(myHSSSpec), getRandom());
             theGenerator.init(myParams);
         }
 
@@ -359,10 +360,9 @@ public final class BouncyLMSKeyPair {
          * @param pKeySpec the keySPec
          * @return the parameters.
          */
-        private static LMSParameters[] deriveParameters(final GordianHSSKeySpec pKeySpec) {
-            final GordianLMSKeySpec myKeySpec = pKeySpec.getKeySpec();
+        private static LMSParameters[] deriveParameters(final GordianCoreLMSSpec pKeySpec) {
             final LMSParameters[] myParams = new LMSParameters[pKeySpec.getTreeDepth()];
-            Arrays.fill(myParams, myKeySpec.getParameters());
+            Arrays.fill(myParams, pKeySpec.getParameters());
             return myParams;
         }
 
@@ -474,19 +474,9 @@ public final class BouncyLMSKeyPair {
     public static class BouncyLMSSignature
             extends BouncyDigestSignature {
         /**
-         * The LMS Signer.
-         */
-        private final LMSSigner theSigner;
-
-        /**
          * The HSS Signer.
          */
         private final HSSSigner theHSSSigner;
-
-        /**
-         * Are we using the HSS signer?
-         */
-        private boolean isHSS;
 
         /**
          * Constructor.
@@ -501,7 +491,6 @@ public final class BouncyLMSKeyPair {
             super(pFactory, pSpec);
 
             /* Create the signer */
-            theSigner = new LMSSigner();
             theHSSSigner = new HSSSigner();
         }
 
@@ -514,14 +503,8 @@ public final class BouncyLMSKeyPair {
             BouncyKeyPair.checkKeyPair(myPair);
 
             /* Initialise and set the signer */
-            isHSS = myPair.getKeyPairSpec().getSubKeyType() instanceof GordianHSSKeySpec;
-            if (isHSS) {
-                final BouncyHSSPrivateKey myPrivate = (BouncyHSSPrivateKey) myPair.getPrivateKey();
-                theHSSSigner.init(true, myPrivate.getPrivateKey());
-            } else {
-                final BouncyLMSPrivateKey myPrivate = (BouncyLMSPrivateKey) myPair.getPrivateKey();
-                theSigner.init(true, myPrivate.getPrivateKey());
-            }
+            final BouncyHSSPrivateKey myPrivate = (BouncyHSSPrivateKey) myPair.getPrivateKey();
+            theHSSSigner.init(true, myPrivate.getPrivateKey());
         }
 
         @Override
@@ -532,14 +515,8 @@ public final class BouncyLMSKeyPair {
             BouncyKeyPair.checkKeyPair(myPair);
 
             /* Initialise and set the signer */
-            isHSS = myPair.getKeyPairSpec().getSubKeyType() instanceof GordianHSSKeySpec;
-            if (isHSS) {
-                final BouncyHSSPublicKey myPublic = (BouncyHSSPublicKey) myPair.getPublicKey();
-                theHSSSigner.init(false, myPublic.getPublicKey());
-            } else {
-                final BouncyLMSPublicKey myPublic = (BouncyLMSPublicKey) myPair.getPublicKey();
-                theSigner.init(false, myPublic.getPublicKey());
-            }
+            final BouncyHSSPublicKey myPublic = (BouncyHSSPublicKey) myPair.getPublicKey();
+            theHSSSigner.init(false, myPublic.getPublicKey());
         }
 
         @Override
@@ -548,9 +525,7 @@ public final class BouncyLMSKeyPair {
             checkMode(GordianSignatureMode.SIGN);
 
             /* Sign the message */
-            return isHSS
-                    ? theHSSSigner.generateSignature(getDigest())
-                    : theSigner.generateSignature(getDigest());
+            return theHSSSigner.generateSignature(getDigest());
         }
 
         @Override
@@ -559,9 +534,7 @@ public final class BouncyLMSKeyPair {
             checkMode(GordianSignatureMode.VERIFY);
 
             /* Verify the message */
-            return isHSS
-                    ? theHSSSigner.verifySignature(getDigest(), pSignature)
-                    : theSigner.verifySignature(getDigest(), pSignature);
+            return theHSSSigner.verifySignature(getDigest(), pSignature);
         }
     }
 }

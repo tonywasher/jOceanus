@@ -21,7 +21,6 @@ import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewDHSp
 import org.bouncycastle.crypto.agreement.DHStandardGroups;
 import org.bouncycastle.crypto.params.DHParameters;
 
-import java.util.Collection;
 import java.util.EnumMap;
 import java.util.Map;
 
@@ -33,6 +32,11 @@ public final class GordianCoreDHSpec {
      * The specMap.
      */
     private static final Map<GordianNewDHSpec, GordianCoreDHSpec> SPECMAP = newSpecMap();
+
+    /**
+     * The specArray.
+     */
+    private static final GordianCoreDHSpec[] VALUES = SPECMAP.values().toArray(new GordianCoreDHSpec[0]);
 
     /**
      * The Spec.
@@ -163,7 +167,7 @@ public final class GordianCoreDHSpec {
      *
      * @return the values
      */
-    public static Collection<GordianCoreDHSpec> values() {
-        return SPECMAP.values();
+    public static GordianCoreDHSpec[] values() {
+        return VALUES;
     }
 }

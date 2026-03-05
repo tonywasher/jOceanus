@@ -21,7 +21,6 @@ import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewRSASpec;
 
 import java.math.BigInteger;
-import java.util.Collection;
 import java.util.EnumMap;
 import java.util.Map;
 
@@ -33,6 +32,11 @@ public final class GordianCoreRSASpec {
      * The specMap.
      */
     private static final Map<GordianNewRSASpec, GordianCoreRSASpec> SPECMAP = newSpecMap();
+
+    /**
+     * The specArray.
+     */
+    private static final GordianCoreRSASpec[] VALUES = SPECMAP.values().toArray(new GordianCoreRSASpec[0]);
 
     /**
      * The Spec.
@@ -62,22 +66,22 @@ public final class GordianCoreRSASpec {
      *
      * @return the length
      */
-    public GordianLength getLength() {
+    public int getLength() {
         switch (theSpec) {
             case MOD1024:
-                return GordianLength.LEN_1024;
+                return GordianLength.LEN_1024.getLength();
             case MOD1536:
-                return GordianLength.LEN_1536;
+                return GordianLength.LEN_1536.getLength();
             case MOD2048:
-                return GordianLength.LEN_2048;
+                return GordianLength.LEN_2048.getLength();
             case MOD3072:
-                return GordianLength.LEN_3072;
+                return GordianLength.LEN_3072.getLength();
             case MOD4096:
-                return GordianLength.LEN_4096;
+                return GordianLength.LEN_4096.getLength();
             case MOD6144:
-                return GordianLength.LEN_6144;
+                return GordianLength.LEN_6144.getLength();
             case MOD8192:
-                return GordianLength.LEN_8192;
+                return GordianLength.LEN_8192.getLength();
             default:
                 throw new IllegalArgumentException("Unknown GordianNewRSASpec");
         }
@@ -93,7 +97,7 @@ public final class GordianCoreRSASpec {
         /* Loop through the values */
         final int myLen = pValue.bitLength();
         for (GordianCoreRSASpec mySpec : values()) {
-            if (mySpec.getLength().getLength() == myLen) {
+            if (mySpec.getLength() == myLen) {
                 return mySpec;
             }
         }
@@ -153,7 +157,7 @@ public final class GordianCoreRSASpec {
      *
      * @return the values
      */
-    public static Collection<GordianCoreRSASpec> values() {
-        return SPECMAP.values();
+    public static GordianCoreRSASpec[] values() {
+        return VALUES;
     }
 }

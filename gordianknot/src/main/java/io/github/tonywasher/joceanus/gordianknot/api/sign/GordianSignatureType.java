@@ -16,7 +16,7 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.api.sign;
 
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairType;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairType;
 
 /**
  * Signature Type.
@@ -78,16 +78,16 @@ public enum GordianSignatureType {
      * @param pKeyType the asymKeyType
      * @return true/false
      */
-    public boolean isSupported(final GordianKeyPairType pKeyType) {
+    public boolean isSupported(final GordianNewKeyPairType pKeyType) {
         switch (this) {
             case ISO9796D2:
             case PSSMGF1:
             case PSS128:
             case PSS256:
             case X931:
-                return GordianKeyPairType.RSA == pKeyType;
+                return GordianNewKeyPairType.RSA == pKeyType;
             case NR:
-                return GordianKeyPairType.EC == pKeyType;
+                return GordianNewKeyPairType.EC == pKeyType;
             case PREHASH:
                 return hasPreHash(pKeyType);
             case NATIVE:
@@ -106,7 +106,7 @@ public enum GordianSignatureType {
      * @param pKeyType the asymKeyType
      * @return true/false
      */
-    public static boolean hasPreHash(final GordianKeyPairType pKeyType) {
+    public static boolean hasPreHash(final GordianNewKeyPairType pKeyType) {
         switch (pKeyType) {
             case XMSS:
             case RSA:
@@ -122,7 +122,7 @@ public enum GordianSignatureType {
      * @param pKeyType the asymKeyType
      * @return true/false
      */
-    public static boolean hasDSA(final GordianKeyPairType pKeyType) {
+    public static boolean hasDSA(final GordianNewKeyPairType pKeyType) {
         switch (pKeyType) {
             case EC:
             case DSA:
@@ -138,7 +138,7 @@ public enum GordianSignatureType {
      * @param pKeyType the asymKeyType
      * @return true/false
      */
-    public static boolean hasNative(final GordianKeyPairType pKeyType) {
+    public static boolean hasNative(final GordianNewKeyPairType pKeyType) {
         switch (pKeyType) {
             case SM2:
             case EDDSA:

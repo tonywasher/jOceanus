@@ -32,7 +32,7 @@ import java.util.List;
 /**
  * Signature Specification Builder.
  */
-public class GordianCoreSignatureSpecBuilder
+public final class GordianCoreSignatureSpecBuilder
         implements GordianNewSignatureSpecBuilder {
     /**
      * The digestSpec builder.
@@ -57,8 +57,17 @@ public class GordianCoreSignatureSpecBuilder
     /**
      * Constructor.
      */
-    public GordianCoreSignatureSpecBuilder() {
+    private GordianCoreSignatureSpecBuilder() {
         theBuilder = GordianCoreDigestSpecBuilder.newInstance();
+    }
+
+    /**
+     * Obtain new instance.
+     *
+     * @return the new instance
+     */
+    public static GordianCoreSignatureSpecBuilder newInstance() {
+        return new GordianCoreSignatureSpecBuilder();
     }
 
     @Override

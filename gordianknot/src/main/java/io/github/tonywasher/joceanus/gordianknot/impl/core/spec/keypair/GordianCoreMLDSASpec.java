@@ -23,7 +23,6 @@ import org.bouncycastle.asn1.nist.NISTObjectIdentifiers;
 import org.bouncycastle.jcajce.spec.MLDSAParameterSpec;
 import org.bouncycastle.pqc.crypto.mldsa.MLDSAParameters;
 
-import java.util.Collection;
 import java.util.EnumMap;
 import java.util.Map;
 
@@ -35,6 +34,11 @@ public final class GordianCoreMLDSASpec {
      * The specMap.
      */
     private static final Map<GordianNewMLDSASpec, GordianCoreMLDSASpec> SPECMAP = newSpecMap();
+
+    /**
+     * The specArray.
+     */
+    private static final GordianCoreMLDSASpec[] VALUES = SPECMAP.values().toArray(new GordianCoreMLDSASpec[0]);
 
     /**
      * The Spec.
@@ -203,7 +207,7 @@ public final class GordianCoreMLDSASpec {
      *
      * @return the values
      */
-    public static Collection<GordianCoreMLDSASpec> values() {
-        return SPECMAP.values();
+    public static GordianCoreMLDSASpec[] values() {
+        return VALUES;
     }
 }

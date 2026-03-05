@@ -50,7 +50,7 @@ public final class KeyStoreSymmetric {
     /**
      * The KeySetSpec.
      */
-    static final GordianNewKeySetSpec KEYSETSPEC = GordianUtilities.newKeySetSpecBuilder().keySetSpec(KEYLEN);
+    static final GordianNewKeySetSpec KEYSETSPEC = GordianUtilities.newKeySetSpecBuilder().keySet(KEYLEN);
 
     /**
      * The KeyStore Manager.

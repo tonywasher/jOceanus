@@ -19,10 +19,8 @@ package io.github.tonywasher.joceanus.gordianknot.impl.jca;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestType;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianEdwardsElliptic;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairType;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianXMSSKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairType;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignParams;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignatureSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignatureType;
@@ -30,6 +28,10 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFacto
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.sign.GordianCoreSignature;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianCoreDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreEdwardsSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairType;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreXMSSSpec;
 import org.bouncycastle.jcajce.spec.ContextParameterSpec;
 
 import java.security.InvalidAlgorithmParameterException;
@@ -168,7 +170,8 @@ public abstract class JcaSignature
         /* Initialise for signing */
         try {
             /* Determine whether we should use random for signatures */
-            final boolean useRandom = getSignatureSpec().getKeyPairType().useRandomForSignatures();
+            final GordianCoreKeyPairType myType = GordianCoreKeyPairType.mapCoreType(getSignatureSpec().getKeyPairType());
+            final boolean useRandom = myType.useRandomForSignatures();
 
             /* Initialise the signing */
             if (useRandom) {
@@ -306,12 +309,12 @@ public abstract class JcaSignature
      */
     static String getSignatureBase(final GordianSignatureSpec pSignatureSpec) {
         /* Handle SM2 explicitly */
-        if (GordianKeyPairType.SM2.equals(pSignatureSpec.getKeyPairType())) {
+        if (GordianNewKeyPairType.SM2.equals(pSignatureSpec.getKeyPairType())) {
             return EC_SM2_ALGOBASE;
         }
 
         /* Note if we are DSA */
-        final boolean isDSA = GordianKeyPairType.DSA.equals(pSignatureSpec.getKeyPairType());
+        final boolean isDSA = GordianNewKeyPairType.DSA.equals(pSignatureSpec.getKeyPairType());
         final boolean isSHAKE = GordianNewDigestType.SHAKE.equals(pSignatureSpec.getDigestSpec().getDigestType());
 
         /* Switch on signature type */
@@ -395,7 +398,7 @@ public abstract class JcaSignature
          */
         private static String getSignature(final GordianSignatureSpec pSignatureSpec) {
             /* Handle DSTU explicitly */
-            if (GordianKeyPairType.DSTU4145.equals(pSignatureSpec.getKeyPairType())) {
+            if (GordianNewKeyPairType.DSTU4145.equals(pSignatureSpec.getKeyPairType())) {
                 return DSTU_SIGN;
             }
 
@@ -464,7 +467,8 @@ public abstract class JcaSignature
          */
         private static String getAlgorithmForKeyPair(final GordianKeyPair pKeyPair) {
             /* Build the algorithm */
-            final boolean isHash = pKeyPair.getKeyPairSpec().getSLHDSAKeySpec().isHash();
+            final GordianCoreKeyPairSpec mySpec = (GordianCoreKeyPairSpec) pKeyPair.getKeyPairSpec();
+            final boolean isHash = mySpec.getSLHDSASpec().isHash();
             return isHash ? PQC_HASH_PFX + BASE_NAME : BASE_NAME;
         }
     }
@@ -523,7 +527,8 @@ public abstract class JcaSignature
          */
         private static String getAlgorithmForKeyPair(final GordianKeyPair pKeyPair) {
             /* Build the algorithm */
-            final boolean isHash = pKeyPair.getKeyPairSpec().getMLDSAKeySpec().isHash();
+            final GordianCoreKeyPairSpec mySpec = (GordianCoreKeyPairSpec) pKeyPair.getKeyPairSpec();
+            final boolean isHash = mySpec.getMLDSASpec().isHash();
             return isHash ? PQC_HASH_PFX + BASE_NAME : BASE_NAME;
         }
     }
@@ -706,8 +711,9 @@ public abstract class JcaSignature
          */
         private String getAlgorithmForKeyPair(final GordianKeyPair pKeyPair) throws GordianException {
             /* Determine the required signer */
-            final GordianXMSSKeySpec myXMSSKeySpec = pKeyPair.getKeyPairSpec().getXMSSKeySpec();
-            final GordianCoreDigestSpec myDigestSpec = (GordianCoreDigestSpec) myXMSSKeySpec.getDigestType().getDigestSpec();
+            final GordianCoreKeyPairSpec mySpec = (GordianCoreKeyPairSpec) pKeyPair.getKeyPairSpec();
+            final GordianCoreXMSSSpec myXMSSKeySpec = mySpec.getXMSSSpec();
+            final GordianCoreDigestSpec myDigestSpec = (GordianCoreDigestSpec) myXMSSKeySpec.getDigestSpec();
             final String myDigest = JcaDigest.getAlgorithm(myDigestSpec);
 
             /* Create builder */
@@ -774,7 +780,8 @@ public abstract class JcaSignature
          */
         private static String getAlgorithmForKeyPair(final GordianKeyPair pKeyPair) {
             /* Determine the required signer */
-            final GordianEdwardsElliptic myEdwards = pKeyPair.getKeyPairSpec().getEdwardsElliptic();
+            final GordianCoreKeyPairSpec mySpec = (GordianCoreKeyPairSpec) pKeyPair.getKeyPairSpec();
+            final GordianCoreEdwardsSpec myEdwards = mySpec.getEdwardsSpec();
             final boolean is25519 = myEdwards.is25519();
 
             /* Build the algorithm */

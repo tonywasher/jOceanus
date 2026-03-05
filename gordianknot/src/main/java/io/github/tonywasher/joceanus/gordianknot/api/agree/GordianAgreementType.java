@@ -16,7 +16,7 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.api.agree;
 
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairType;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairType;
 
 /**
  * Signature Type.
@@ -103,8 +103,8 @@ public enum GordianAgreementType {
      * @param pKeyPairType the keyPair
      * @return true/false
      */
-    public boolean isSupported(final GordianKeyPairType pKeyPairType) {
-        if (pKeyPairType == GordianKeyPairType.COMPOSITE) {
+    public boolean isSupported(final GordianNewKeyPairType pKeyPairType) {
+        if (pKeyPairType == GordianNewKeyPairType.COMPOSITE) {
             return true;
         }
         switch (this) {
@@ -132,7 +132,7 @@ public enum GordianAgreementType {
      * @param pKeyPairType the keyPairType
      * @return true/false
      */
-    public static boolean hasKEM(final GordianKeyPairType pKeyPairType) {
+    public static boolean hasKEM(final GordianNewKeyPairType pKeyPairType) {
         switch (pKeyPairType) {
             case RSA:
             case EC:
@@ -160,7 +160,7 @@ public enum GordianAgreementType {
      * @param pKeyPairType the keyPairType
      * @return true/false
      */
-    public static boolean hasAnon(final GordianKeyPairType pKeyPairType) {
+    public static boolean hasAnon(final GordianNewKeyPairType pKeyPairType) {
         switch (pKeyPairType) {
             case DH:
             case EC:
@@ -180,7 +180,7 @@ public enum GordianAgreementType {
      * @param pKeyPairType the keyPairType
      * @return true/false
      */
-    public static boolean hasSM2(final GordianKeyPairType pKeyPairType) {
+    public static boolean hasSM2(final GordianNewKeyPairType pKeyPairType) {
         switch (pKeyPairType) {
             case EC:
             case SM2:
@@ -197,7 +197,7 @@ public enum GordianAgreementType {
      * @param pKeyPairType the keyPairType
      * @return true/false
      */
-    public static boolean hasBasic(final GordianKeyPairType pKeyPairType) {
+    public static boolean hasBasic(final GordianNewKeyPairType pKeyPairType) {
         return isECorDH(pKeyPairType);
     }
 
@@ -207,8 +207,8 @@ public enum GordianAgreementType {
      * @param pKeyPairType the keyPairType
      * @return true/false
      */
-    public static boolean hasMQV(final GordianKeyPairType pKeyPairType) {
-        return pKeyPairType == GordianKeyPairType.DH || isEC(pKeyPairType);
+    public static boolean hasMQV(final GordianNewKeyPairType pKeyPairType) {
+        return pKeyPairType == GordianNewKeyPairType.DH || isEC(pKeyPairType);
     }
 
     /**
@@ -217,7 +217,7 @@ public enum GordianAgreementType {
      * @param pKeyPairType the keyPairType
      * @return true/false
      */
-    public static boolean hasUnified(final GordianKeyPairType pKeyPairType) {
+    public static boolean hasUnified(final GordianNewKeyPairType pKeyPairType) {
         return isECorDH(pKeyPairType);
     }
 
@@ -227,7 +227,7 @@ public enum GordianAgreementType {
      * @param pKeyPairType the keyPairType
      * @return true/false
      */
-    private static boolean isECorDH(final GordianKeyPairType pKeyPairType) {
+    private static boolean isECorDH(final GordianNewKeyPairType pKeyPairType) {
         switch (pKeyPairType) {
             case SM2:
             case EC:
@@ -247,7 +247,7 @@ public enum GordianAgreementType {
      * @param pKeyPairType the keyPairType
      * @return true/false
      */
-    private static boolean isEC(final GordianKeyPairType pKeyPairType) {
+    private static boolean isEC(final GordianNewKeyPairType pKeyPairType) {
         switch (pKeyPairType) {
             case SM2:
             case EC:

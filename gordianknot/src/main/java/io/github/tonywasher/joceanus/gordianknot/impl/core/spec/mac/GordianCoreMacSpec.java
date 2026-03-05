@@ -75,9 +75,9 @@ public class GordianCoreMacSpec
      * @param pKeyLength the keyLength
      * @param pSubSpec   the subSpec
      */
-    public GordianCoreMacSpec(final GordianNewMacType pMacType,
-                              final GordianLength pKeyLength,
-                              final Object pSubSpec) {
+    GordianCoreMacSpec(final GordianNewMacType pMacType,
+                       final GordianLength pKeyLength,
+                       final Object pSubSpec) {
         /* Store parameters */
         theMacType = GordianCoreMacType.mapCoreType(pMacType);
         theKeyLength = pKeyLength;

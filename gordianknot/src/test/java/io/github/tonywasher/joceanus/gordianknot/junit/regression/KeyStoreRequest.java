@@ -20,37 +20,35 @@ import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairUsage;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairUse;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianBIKESpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianCMCESpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianDHGroup;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianDSAElliptic;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianDSAKeyType;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianDSTU4145Elliptic;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianFRODOSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianFalconSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianGOSTElliptic;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianHQCSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairSpecBuilder;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianLMSKeySpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianLMSKeySpec.GordianLMSHash;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianLMSKeySpec.GordianLMSHeight;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianLMSKeySpec.GordianLMSWidth;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianMLDSASpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianMLKEMSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianMayoSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianNTRUPrimeSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianNTRUPrimeSpec.GordianNTRUPrimeParams;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianNTRUPrimeSpec.GordianNTRUPrimeType;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianNTRUSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianPicnicSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianRSAModulus;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianSABERSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianSLHDSASpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianSM2Elliptic;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianSnovaSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianXMSSKeySpec.GordianXMSSDigestType;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianXMSSKeySpec.GordianXMSSHeight;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewBIKESpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewCMCESpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewDHSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewDSASpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewDSTUSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewECSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewFRODOSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewFalconSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewGOSTSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewHQCSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewLMSSpec.GordianNewLMSHash;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewLMSSpec.GordianNewLMSHeight;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewLMSSpec.GordianNewLMSWidth;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewMLDSASpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewMLKEMSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewMayoSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewNTRUPrimeSpec.GordianNewNTRUPrimeParams;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewNTRUPrimeSpec.GordianNewNTRUPrimeType;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewNTRUSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewPicnicSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewRSASpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewSABERSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewSLHDSASpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewSM2Spec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewSnovaSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewXMSSSpec.GordianNewXMSSDigestType;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewXMSSSpec.GordianNewXMSSHeight;
 import io.github.tonywasher.joceanus.gordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStorePair;
 import io.github.tonywasher.joceanus.gordianknot.api.keystore.GordianKeyStoreGateway;
 import io.github.tonywasher.joceanus.gordianknot.api.keystore.GordianKeyStoreManager;
@@ -58,6 +56,7 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.keystore.GordianCoreK
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keystore.GordianCoreKeyStoreGateway;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keystore.GordianCoreKeyStoreManager;
 import io.github.tonywasher.joceanus.gordianknot.junit.regression.KeyStoreUtils.KeyStoreAlias;
+import io.github.tonywasher.joceanus.gordianknot.util.GordianUtilities;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DynamicContainer;
@@ -99,47 +98,48 @@ public final class KeyStoreRequest {
      * @return the test stream
      */
     DynamicNode keyPairRequestTest() {
+        final GordianNewKeyPairSpecBuilder myBuilder = GordianUtilities.newKeyPairSpecBuilder();
         return DynamicContainer.dynamicContainer("keyPairRequest", Stream.of(
                 DynamicTest.dynamicTest("Initialise", theState::initialise),
-                signedKeyPairRequestTest(GordianKeyPairSpecBuilder.rsa(GordianRSAModulus.MOD2048)),
-                signedKeyPairRequestTest(GordianKeyPairSpecBuilder.ec(GordianDSAElliptic.SECT571K1)),
-                signedKeyPairRequestTest(GordianKeyPairSpecBuilder.dsa(GordianDSAKeyType.MOD2048)),
-                signedKeyPairRequestTest(GordianKeyPairSpecBuilder.ed25519()),
-                signedKeyPairRequestTest(GordianKeyPairSpecBuilder.ed448()),
-                signedKeyPairRequestTest(GordianKeyPairSpecBuilder.gost2012(GordianGOSTElliptic.GOST512A)),
-                signedKeyPairRequestTest(GordianKeyPairSpecBuilder.dstu4145(GordianDSTU4145Elliptic.DSTU9)),
-                signedKeyPairRequestTest(GordianKeyPairSpecBuilder.sm2(GordianSM2Elliptic.SM2P256V1)),
-                signedKeyPairRequestTest(GordianKeyPairSpecBuilder.falcon(GordianFalconSpec.FALCON512)),
-                signedKeyPairRequestTest(GordianKeyPairSpecBuilder.mayo(GordianMayoSpec.MAYO1)),
-                signedKeyPairRequestTest(GordianKeyPairSpecBuilder.mldsa(GordianMLDSASpec.MLDSA44)),
-                signedKeyPairRequestTest(GordianKeyPairSpecBuilder.picnic(GordianPicnicSpec.L1FS)),
-                signedKeyPairRequestTest(GordianKeyPairSpecBuilder.slhdsa(GordianSLHDSASpec.SHA128F)),
-                signedKeyPairRequestTest(GordianKeyPairSpecBuilder.snova(GordianSnovaSpec.SNOVA24A_SSK)),
-                signedKeyPairRequestTest(GordianKeyPairSpecBuilder.xmss(GordianXMSSDigestType.SHA512, GordianXMSSHeight.H10)),
-                signedKeyPairRequestTest(GordianKeyPairSpecBuilder.lms(new GordianLMSKeySpec(GordianLMSHash.SHA256, GordianLMSHeight.H5,
-                        GordianLMSWidth.W1, GordianLength.LEN_256))),
-                signedKeyPairRequestTest(GordianKeyPairSpecBuilder.composite(GordianKeyPairSpecBuilder.rsa(GordianRSAModulus.MOD2048),
-                        GordianKeyPairSpecBuilder.ec(GordianDSAElliptic.SECP256R1),
-                        GordianKeyPairSpecBuilder.ed25519())),
-                encryptedKeyPairRequestTest(GordianKeyPairSpecBuilder.elGamal(GordianDHGroup.FFDHE2048)),
-                encryptedKeyPairRequestTest(GordianKeyPairSpecBuilder.composite(GordianKeyPairSpecBuilder.rsa(GordianRSAModulus.MOD2048),
-                        GordianKeyPairSpecBuilder.elGamal(GordianDHGroup.FFDHE2048),
-                        GordianKeyPairSpecBuilder.sm2(GordianSM2Elliptic.SM2P256V1))),
-                agreedKeyPairRequestTest(GordianKeyPairSpecBuilder.dh(GordianDHGroup.FFDHE2048)),
-                agreedKeyPairRequestTest(GordianKeyPairSpecBuilder.x25519()),
-                agreedKeyPairRequestTest(GordianKeyPairSpecBuilder.x448()),
-                agreedKeyPairRequestTest(GordianKeyPairSpecBuilder.newHope()),
-                agreedKeyPairRequestTest(GordianKeyPairSpecBuilder.bike(GordianBIKESpec.BIKE128)),
-                agreedKeyPairRequestTest(GordianKeyPairSpecBuilder.cmce(GordianCMCESpec.BASE3488)),
-                agreedKeyPairRequestTest(GordianKeyPairSpecBuilder.frodo(GordianFRODOSpec.AES640)),
-                agreedKeyPairRequestTest(GordianKeyPairSpecBuilder.hqc(GordianHQCSpec.HQC128)),
-                agreedKeyPairRequestTest(GordianKeyPairSpecBuilder.mlkem(GordianMLKEMSpec.MLKEM512)),
-                agreedKeyPairRequestTest(GordianKeyPairSpecBuilder.ntru(GordianNTRUSpec.HPS821)),
-                agreedKeyPairRequestTest(GordianKeyPairSpecBuilder.ntruprime(new GordianNTRUPrimeSpec(GordianNTRUPrimeType.NTRUL, GordianNTRUPrimeParams.PR653))),
-                agreedKeyPairRequestTest(GordianKeyPairSpecBuilder.saber(GordianSABERSpec.BASE128)),
-                agreedKeyPairRequestTest(GordianKeyPairSpecBuilder.composite(GordianKeyPairSpecBuilder.cmce(GordianCMCESpec.BASE3488),
-                        GordianKeyPairSpecBuilder.frodo(GordianFRODOSpec.AES640),
-                        GordianKeyPairSpecBuilder.saber(GordianSABERSpec.BASE128))),
+                signedKeyPairRequestTest(myBuilder.rsa(GordianNewRSASpec.MOD2048)),
+                signedKeyPairRequestTest(myBuilder.ec(GordianNewECSpec.SECT571K1)),
+                signedKeyPairRequestTest(myBuilder.dsa(GordianNewDSASpec.MOD2048)),
+                signedKeyPairRequestTest(myBuilder.ed25519()),
+                signedKeyPairRequestTest(myBuilder.ed448()),
+                signedKeyPairRequestTest(myBuilder.gost2012(GordianNewGOSTSpec.GOST512A)),
+                signedKeyPairRequestTest(myBuilder.dstu4145(GordianNewDSTUSpec.DSTU9)),
+                signedKeyPairRequestTest(myBuilder.sm2(GordianNewSM2Spec.SM2P256V1)),
+                signedKeyPairRequestTest(myBuilder.falcon(GordianNewFalconSpec.FALCON512)),
+                signedKeyPairRequestTest(myBuilder.mayo(GordianNewMayoSpec.MAYO1)),
+                signedKeyPairRequestTest(myBuilder.mldsa(GordianNewMLDSASpec.MLDSA44)),
+                signedKeyPairRequestTest(myBuilder.picnic(GordianNewPicnicSpec.L1FS)),
+                signedKeyPairRequestTest(myBuilder.slhdsa(GordianNewSLHDSASpec.SHA128F)),
+                signedKeyPairRequestTest(myBuilder.snova(GordianNewSnovaSpec.SNOVA24A_SSK)),
+                signedKeyPairRequestTest(myBuilder.xmss(GordianNewXMSSDigestType.SHA512, GordianNewXMSSHeight.H10)),
+                signedKeyPairRequestTest(myBuilder.lms(GordianNewLMSHash.SHA256, GordianNewLMSHeight.H5,
+                        GordianNewLMSWidth.W1, GordianLength.LEN_256)),
+                signedKeyPairRequestTest(myBuilder.composite(myBuilder.rsa(GordianNewRSASpec.MOD2048),
+                        myBuilder.ec(GordianNewECSpec.SECP256R1),
+                        myBuilder.ed25519())),
+                encryptedKeyPairRequestTest(myBuilder.elGamal(GordianNewDHSpec.FFDHE2048)),
+                encryptedKeyPairRequestTest(myBuilder.composite(myBuilder.rsa(GordianNewRSASpec.MOD2048),
+                        myBuilder.elGamal(GordianNewDHSpec.FFDHE2048),
+                        myBuilder.sm2(GordianNewSM2Spec.SM2P256V1))),
+                agreedKeyPairRequestTest(myBuilder.dh(GordianNewDHSpec.FFDHE2048)),
+                agreedKeyPairRequestTest(myBuilder.x25519()),
+                agreedKeyPairRequestTest(myBuilder.x448()),
+                agreedKeyPairRequestTest(myBuilder.newHope()),
+                agreedKeyPairRequestTest(myBuilder.bike(GordianNewBIKESpec.BIKE128)),
+                agreedKeyPairRequestTest(myBuilder.cmce(GordianNewCMCESpec.BASE3488)),
+                agreedKeyPairRequestTest(myBuilder.frodo(GordianNewFRODOSpec.AES640)),
+                agreedKeyPairRequestTest(myBuilder.hqc(GordianNewHQCSpec.HQC128)),
+                agreedKeyPairRequestTest(myBuilder.mlkem(GordianNewMLKEMSpec.MLKEM512)),
+                agreedKeyPairRequestTest(myBuilder.ntru(GordianNewNTRUSpec.HPS821)),
+                agreedKeyPairRequestTest(myBuilder.ntruprime(GordianNewNTRUPrimeType.NTRUL, GordianNewNTRUPrimeParams.PR653)),
+                agreedKeyPairRequestTest(myBuilder.saber(GordianNewSABERSpec.BASE128)),
+                agreedKeyPairRequestTest(myBuilder.composite(myBuilder.cmce(GordianNewCMCESpec.BASE3488),
+                        myBuilder.frodo(GordianNewFRODOSpec.AES640),
+                        myBuilder.saber(GordianNewSABERSpec.BASE128))),
                 DynamicTest.dynamicTest("Cleanup", theState::cleanUp)
         ));
     }
@@ -150,7 +150,7 @@ public final class KeyStoreRequest {
      * @param pSpec the keyPairSpec
      * @return the test
      */
-    private DynamicNode signedKeyPairRequestTest(final GordianKeyPairSpec pSpec) {
+    private DynamicNode signedKeyPairRequestTest(final GordianNewKeyPairSpec pSpec) {
         /* Create test */
         return DynamicTest.dynamicTest(pSpec.toString(), () -> signedKeyPairRequest(pSpec));
     }
@@ -161,7 +161,7 @@ public final class KeyStoreRequest {
      * @param pSpec the keyPairSpec
      * @return the test
      */
-    private DynamicNode encryptedKeyPairRequestTest(final GordianKeyPairSpec pSpec) {
+    private DynamicNode encryptedKeyPairRequestTest(final GordianNewKeyPairSpec pSpec) {
         /* Create test */
         final GordianKeyPairUsage myUsage = new GordianKeyPairUsage(GordianKeyPairUse.KEYENCRYPT, GordianKeyPairUse.DATAENCRYPT);
         return DynamicTest.dynamicTest(pSpec.toString(), () -> encryptedKeyPairRequest(pSpec, myUsage));
@@ -173,7 +173,7 @@ public final class KeyStoreRequest {
      * @param pSpec the keyPairSpec
      * @return the test
      */
-    private DynamicNode agreedKeyPairRequestTest(final GordianKeyPairSpec pSpec) {
+    private DynamicNode agreedKeyPairRequestTest(final GordianNewKeyPairSpec pSpec) {
         /* Create test */
         final GordianKeyPairUsage myUsage = new GordianKeyPairUsage(GordianKeyPairUse.AGREEMENT);
         return DynamicTest.dynamicTest(pSpec.toString(), () -> encryptedKeyPairRequest(pSpec, myUsage));
@@ -185,7 +185,7 @@ public final class KeyStoreRequest {
      * @param pKeyPairSpec the keyPairSpec
      * @throws GordianException on error
      */
-    private void signedKeyPairRequest(final GordianKeyPairSpec pKeyPairSpec) throws GordianException {
+    private void signedKeyPairRequest(final GordianNewKeyPairSpec pKeyPairSpec) throws GordianException {
         /* Access details */
         final GordianCoreKeyStoreManager myMgr = theState.getManager();
         final GordianCoreKeyStore myStore = theState.getStore();
@@ -233,7 +233,7 @@ public final class KeyStoreRequest {
      * @param pUsage       the keyUsage
      * @throws GordianException on error
      */
-    private void encryptedKeyPairRequest(final GordianKeyPairSpec pKeyPairSpec,
+    private void encryptedKeyPairRequest(final GordianNewKeyPairSpec pKeyPairSpec,
                                          final GordianKeyPairUsage pUsage) throws GordianException {
         /* Access details */
         final GordianCoreKeyStoreManager myMgr = theState.getManager();
@@ -352,8 +352,9 @@ public final class KeyStoreRequest {
             theManager.getKeyStore().reset();
 
             /* Create specs */
-            final GordianKeyPairSpec myRSASpec = GordianKeyPairSpecBuilder.rsa(GordianRSAModulus.MOD2048);
-            final GordianKeyPairSpec myECSpec = GordianKeyPairSpecBuilder.ec(GordianDSAElliptic.SECT571K1);
+            final GordianNewKeyPairSpecBuilder myBuilder = GordianUtilities.newKeyPairSpecBuilder();
+            final GordianNewKeyPairSpec myRSASpec = myBuilder.rsa(GordianNewRSASpec.MOD2048);
+            final GordianNewKeyPairSpec myECSpec = myBuilder.ec(GordianNewECSpec.SECT571K1);
 
             /* Create root certificate */
             final X500Name myRootName = KeyStoreUtils.buildX500Name(KeyStoreAlias.ROOT);

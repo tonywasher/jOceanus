@@ -20,7 +20,6 @@ package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewDSTUSpec;
 
-import java.util.Collection;
 import java.util.EnumMap;
 import java.util.Map;
 
@@ -38,6 +37,11 @@ public final class GordianCoreDSTUSpec
      * The specMap.
      */
     private static final Map<GordianNewDSTUSpec, GordianCoreDSTUSpec> SPECMAP = newSpecMap();
+
+    /**
+     * The specArray.
+     */
+    private static final GordianCoreDSTUSpec[] VALUES = SPECMAP.values().toArray(new GordianCoreDSTUSpec[0]);
 
     /**
      * The Spec.
@@ -77,14 +81,14 @@ public final class GordianCoreDSTUSpec
     }
 
     @Override
-    public GordianLength getKeySize() {
+    public int getKeySize() {
         switch (theSpec) {
             case DSTU9:
-                return GordianLength.LEN_431;
+                return GordianLength.LEN_431.getLength();
             case DSTU8:
-                return GordianLength.LEN_366;
+                return GordianLength.LEN_366.getLength();
             case DSTU7:
-                return GordianLength.LEN_306;
+                return GordianLength.LEN_306.getLength();
             default:
                 throw new IllegalArgumentException();
         }
@@ -159,7 +163,7 @@ public final class GordianCoreDSTUSpec
      *
      * @return the values
      */
-    public static Collection<GordianCoreDSTUSpec> values() {
-        return SPECMAP.values();
+    public static GordianCoreDSTUSpec[] values() {
+        return VALUES;
     }
 }

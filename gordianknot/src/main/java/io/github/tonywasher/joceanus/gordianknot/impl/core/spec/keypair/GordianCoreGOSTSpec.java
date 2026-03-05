@@ -20,7 +20,6 @@ package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewGOSTSpec;
 
-import java.util.Collection;
 import java.util.EnumMap;
 import java.util.Map;
 
@@ -34,6 +33,11 @@ public final class GordianCoreGOSTSpec
      * The specMap.
      */
     private static final Map<GordianNewGOSTSpec, GordianCoreGOSTSpec> SPECMAP = newSpecMap();
+
+    /**
+     * The specArray.
+     */
+    private static final GordianCoreGOSTSpec[] VALUES = SPECMAP.values().toArray(new GordianCoreGOSTSpec[0]);
 
     /**
      * The Spec.
@@ -75,8 +79,9 @@ public final class GordianCoreGOSTSpec
     }
 
     @Override
-    public GordianLength getKeySize() {
-        return theSpec == GordianNewGOSTSpec.GOST256A ? GordianLength.LEN_256 : GordianLength.LEN_512;
+    public int getKeySize() {
+        return theSpec == GordianNewGOSTSpec.GOST256A
+                ? GordianLength.LEN_256.getLength() : GordianLength.LEN_512.getLength();
     }
 
     /**
@@ -148,7 +153,7 @@ public final class GordianCoreGOSTSpec
      *
      * @return the values
      */
-    public static Collection<GordianCoreGOSTSpec> values() {
-        return SPECMAP.values();
+    public static GordianCoreGOSTSpec[] values() {
+        return VALUES;
     }
 }

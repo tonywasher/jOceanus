@@ -241,7 +241,7 @@ public final class GordianPasswordLockRecipe {
 
         /* Create the secretMac */
         final GordianNewDigestSpecBuilder myBuilder = GordianCoreDigestSpecBuilder.newInstance();
-        myMacSpec = myMacBuilder.hMac(myBuilder.generic(theParams.getSecretDigest(), GordianLength.LEN_512));
+        myMacSpec = myMacBuilder.hMac(myBuilder.digest(theParams.getSecretDigest(), GordianLength.LEN_512));
         final GordianMac mySecretMac = myMacs.createMac(myMacSpec);
         mySecretMac.initKeyBytes(pPassword);
 
@@ -256,7 +256,7 @@ public final class GordianPasswordLockRecipe {
         final byte[] mySecretHash = new byte[mySecretMac.getMacSize()];
 
         /* Access final digest */
-        final GordianNewDigestSpec myDigestSpec = myBuilder.generic(theParams.getExternalDigest(), GordianLength.LEN_512);
+        final GordianNewDigestSpec myDigestSpec = myBuilder.digest(theParams.getExternalDigest(), GordianLength.LEN_512);
         final GordianDigest myDigest = myDigests.createDigest(myDigestSpec);
 
         /* Initialise the hash input values as the salt bytes */

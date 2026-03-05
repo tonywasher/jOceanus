@@ -20,10 +20,11 @@ import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairGenerator;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianIOException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianCompositeKeyPair.GordianStateAwareCompositeKeyPair;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairSpec;
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.DERSequence;
@@ -48,7 +49,7 @@ public class GordianCompositeKeyPairGenerator
     /**
      * The keyPairSpec.
      */
-    private final GordianKeyPairSpec theSpec;
+    private final GordianCoreKeyPairSpec theSpec;
 
     /**
      * The keyPairFactory.
@@ -73,7 +74,7 @@ public class GordianCompositeKeyPairGenerator
      * @throws GordianException on error
      */
     GordianCompositeKeyPairGenerator(final GordianKeyPairFactory pFactory,
-                                     final GordianKeyPairSpec pSpec) throws GordianException {
+                                     final GordianCoreKeyPairSpec pSpec) throws GordianException {
         /* Store the spec. */
         theSpec = pSpec;
         theFactory = pFactory;
@@ -81,9 +82,9 @@ public class GordianCompositeKeyPairGenerator
         boolean stateAware = false;
 
         /* Loop through the asymKeySpecs */
-        final Iterator<GordianKeyPairSpec> myIterator = pSpec.keySpecIterator();
+        final Iterator<GordianNewKeyPairSpec> myIterator = pSpec.keySpecIterator();
         while (myIterator.hasNext()) {
-            final GordianKeyPairSpec mySpec = myIterator.next();
+            final GordianCoreKeyPairSpec mySpec = (GordianCoreKeyPairSpec) myIterator.next();
 
             /* create generator and add it to list */
             theGenerators.add(pFactory.getKeyPairGenerator(mySpec));
@@ -95,7 +96,7 @@ public class GordianCompositeKeyPairGenerator
     }
 
     @Override
-    public GordianKeyPairSpec getKeySpec() {
+    public GordianNewKeyPairSpec getKeySpec() {
         return theSpec;
     }
 
@@ -244,7 +245,7 @@ public class GordianCompositeKeyPairGenerator
      * @throws GordianException on error
      */
     private void checkKeySpec(final PKCS8EncodedKeySpec pKeySpec) throws GordianException {
-        final GordianKeyPairSpec myKeySpec = theFactory.determineKeyPairSpec(pKeySpec);
+        final GordianNewKeyPairSpec myKeySpec = theFactory.determineKeyPairSpec(pKeySpec);
         if (!theSpec.equals(myKeySpec)) {
             throw new GordianDataException("KeySpec not supported by this KeyPairGenerator");
         }
@@ -257,7 +258,7 @@ public class GordianCompositeKeyPairGenerator
      * @throws GordianException on error
      */
     private void checkKeySpec(final X509EncodedKeySpec pKeySpec) throws GordianException {
-        final GordianKeyPairSpec myKeySpec = theFactory.determineKeyPairSpec(pKeySpec);
+        final GordianNewKeyPairSpec myKeySpec = theFactory.determineKeyPairSpec(pKeySpec);
         if (!theSpec.equals(myKeySpec)) {
             throw new GordianDataException("KeySpec not supported by this KeyPairGenerator");
         }

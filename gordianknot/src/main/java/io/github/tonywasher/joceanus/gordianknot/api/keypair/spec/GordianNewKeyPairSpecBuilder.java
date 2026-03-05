@@ -82,7 +82,7 @@ public interface GordianNewKeyPairSpecBuilder {
      * @param pDepth    the treeDepth
      * @return the Builder
      */
-    GordianNewKeyPairSpecBuilder withHSSSubSpec(GordianNewLMSHash pHashType,
+    GordianNewKeyPairSpecBuilder withLMSSubSpec(GordianNewLMSHash pHashType,
                                                 GordianNewLMSHeight pHeight,
                                                 GordianNewLMSWidth pWidth,
                                                 GordianLength pLength,
@@ -286,7 +286,7 @@ public interface GordianNewKeyPairSpecBuilder {
                                       final GordianNewLMSWidth pWidth,
                                       final GordianLength pLength,
                                       final int pDepth) {
-        return withKeyPairType(GordianNewKeyPairType.LMS).withHSSSubSpec(pHashType, pHeight, pWidth, pLength, pDepth).build();
+        return withKeyPairType(GordianNewKeyPairType.LMS).withLMSSubSpec(pHashType, pHeight, pWidth, pLength, pDepth).build();
     }
 
     /**

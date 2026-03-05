@@ -20,7 +20,6 @@ package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewSM2Spec;
 
-import java.util.Collection;
 import java.util.EnumMap;
 import java.util.Map;
 
@@ -33,6 +32,11 @@ public final class GordianCoreSM2Spec
      * The specMap.
      */
     private static final Map<GordianNewSM2Spec, GordianCoreSM2Spec> SPECMAP = newSpecMap();
+
+    /**
+     * The specArray.
+     */
+    private static final GordianCoreSM2Spec[] VALUES = SPECMAP.values().toArray(new GordianCoreSM2Spec[0]);
 
     /**
      * The Spec.
@@ -70,12 +74,12 @@ public final class GordianCoreSM2Spec
     }
 
     @Override
-    public GordianLength getKeySize() {
+    public int getKeySize() {
         switch (theSpec) {
             case SM2P256V1:
-                return GordianLength.LEN_256;
+                return GordianLength.LEN_256.getLength();
             case WAPIP192V1:
-                return GordianLength.LEN_192;
+                return GordianLength.LEN_192.getLength();
             default:
                 throw new IllegalArgumentException();
         }
@@ -100,6 +104,12 @@ public final class GordianCoreSM2Spec
     @Override
     public String toString() {
         return theSpec.toString();
+    }
+
+
+    @Override
+    public boolean hasCustomCurve() {
+        return theSpec == GordianNewSM2Spec.SM2P256V1;
     }
 
     @Override
@@ -150,7 +160,7 @@ public final class GordianCoreSM2Spec
      *
      * @return the values
      */
-    public static Collection<GordianCoreSM2Spec> values() {
-        return SPECMAP.values();
+    public static GordianCoreSM2Spec[] values() {
+        return VALUES;
     }
 }

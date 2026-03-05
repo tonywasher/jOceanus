@@ -210,7 +210,7 @@ public final class GordianStreamManager {
         final GordianNewStreamKeySpec myStreamKeySpec = myIdMgr.generateRandomStreamKeySpec(myKeyLen, true);
         final GordianKeyGenerator<GordianNewStreamKeySpec> myStreamGenerator = myCiphers.getKeyGenerator(myStreamKeySpec);
         final GordianKey<GordianNewStreamKeySpec> myStreamKey = myStreamGenerator.generateKey();
-        final GordianStreamCipher myStreamCipher = myCiphers.createStreamKeyCipher(myStreamBuilder.generic(myStreamKey.getKeyType()));
+        final GordianStreamCipher myStreamCipher = myCiphers.createStreamKeyCipher(myStreamBuilder.streamCipher(myStreamKey.getKeyType()));
         myStreamCipher.initForEncrypt(GordianCipherParameters.keyWithRandomNonce(myStreamKey));
         myCurrent = new GordianCipherOutputStream<>(myStreamCipher, myCurrent);
 

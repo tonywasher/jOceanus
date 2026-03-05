@@ -25,7 +25,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianCertificate;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairGenerator;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairType;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairType;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMac;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianNewMacSpec;
@@ -618,7 +618,7 @@ public class GordianCoreAgreementBuilder {
      */
     void parseEncapsulated(final byte[] pEncapsulated) throws GordianException {
         if (pEncapsulated != null
-                && GordianKeyPairType.NEWHOPE.equals(theState.getSpec().getKeyPairSpec().getKeyPairType())) {
+                && GordianNewKeyPairType.NEWHOPE.equals(theState.getSpec().getKeyPairSpec().getKeyPairType())) {
             final GordianKeyPair myKeyPair
                     = theKeyPairGenerator.derivePublicOnlyKeyPair(new X509EncodedKeySpec(pEncapsulated));
             theState.getClient().setEphemeralKeyPair(myKeyPair);

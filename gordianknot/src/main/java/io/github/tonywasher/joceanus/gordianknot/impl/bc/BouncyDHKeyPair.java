@@ -18,9 +18,8 @@ package io.github.tonywasher.joceanus.gordianknot.impl.bc;
 
 import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianDHGroup;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPrivateKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPublicKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.agree.GordianCoreAgreementFactory;
@@ -28,6 +27,8 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFacto
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianKeyPairAlgId.GordianDHEncodedParser;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianKeyPairValidity;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreDHSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairSpec;
 import org.bouncycastle.asn1.ASN1Integer;
 import org.bouncycastle.asn1.pkcs.DHParameter;
 import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
@@ -81,7 +82,7 @@ public final class BouncyDHKeyPair {
          * @param pKeySpec   the keySpec
          * @param pPublicKey the public key
          */
-        BouncyDHPublicKey(final GordianKeyPairSpec pKeySpec,
+        BouncyDHPublicKey(final GordianNewKeyPairSpec pKeySpec,
                           final DHPublicKeyParameters pPublicKey) {
             super(pKeySpec, pPublicKey);
         }
@@ -132,7 +133,7 @@ public final class BouncyDHKeyPair {
          * @param pKeySpec    the keySpec
          * @param pPrivateKey the private key
          */
-        BouncyDHPrivateKey(final GordianKeyPairSpec pKeySpec,
+        BouncyDHPrivateKey(final GordianNewKeyPairSpec pKeySpec,
                            final DHPrivateKeyParameters pPrivateKey) {
             super(pKeySpec, pPrivateKey);
         }
@@ -178,12 +179,13 @@ public final class BouncyDHKeyPair {
          * @param pKeySpec the keySpec
          */
         BouncyDHKeyPairGenerator(final GordianBaseFactory pFactory,
-                                 final GordianKeyPairSpec pKeySpec) {
+                                 final GordianNewKeyPairSpec pKeySpec) {
             /* Initialize underlying class */
             super(pFactory, pKeySpec);
 
             /* Create the parameter generator */
-            final GordianDHGroup myGroup = pKeySpec.getDHGroup();
+            final GordianCoreKeyPairSpec myKeySpec = (GordianCoreKeyPairSpec) pKeySpec;
+            final GordianCoreDHSpec myGroup = myKeySpec.getDHSpec();
             final DHParameters myParms = myGroup.getParameters();
             final DHKeyGenerationParameters myParams = new DHKeyGenerationParameters(getRandom(), myParms);
 

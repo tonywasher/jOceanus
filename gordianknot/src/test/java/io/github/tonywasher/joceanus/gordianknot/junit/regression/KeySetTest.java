@@ -216,7 +216,7 @@ class KeySetTest {
             final GordianNewPasswordLockSpecBuilder myPLBuilder = GordianUtilities.newPasswordLockSpecBuilder();
             final int myMaxSteps = pMaxSteps ? GordianNewKeySetSpec.MAXIMUM_CIPHER_STEPS
                     : GordianNewKeySetSpec.MINIMUM_CIPHER_STEPS;
-            theSpec = myPLBuilder.passwordLock(myKSBuilder.keySetSpec(pKeyLen, myMaxSteps));
+            theSpec = myPLBuilder.passwordLock(myKSBuilder.keySet(pKeyLen, myMaxSteps));
 
             /* Generate the hash */
             final GordianFactory myFactory = theFactory.getFactory();

@@ -121,7 +121,7 @@ public class GordianPersonalisation {
         final GordianNewDigestSpecBuilder myBuilder = GordianCoreDigestSpecBuilder.newInstance();
         for (final GordianCoreDigestType myType : myTypes) {
             /* Add the digest if it is available as 256-bit and supports largeData */
-            final GordianNewDigestSpec mySpec = myBuilder.generic(myType.getType(), HASH_LEN);
+            final GordianNewDigestSpec mySpec = myBuilder.digest(myType.getType(), HASH_LEN);
             if (myType.supportsLargeData()
                     && myFactory.supportedDigestSpecs().test(mySpec)) {
                 myDigests[myLen++] = myFactory.createDigest(mySpec);
@@ -394,7 +394,7 @@ public class GordianPersonalisation {
 
         /* return the selected digestSpec */
         final GordianNewDigestSpecBuilder myBuilder = GordianCoreDigestSpecBuilder.newInstance();
-        return myBuilder.generic(myType, GordianLength.LEN_512);
+        return myBuilder.digest(myType, GordianLength.LEN_512);
     }
 
     /**

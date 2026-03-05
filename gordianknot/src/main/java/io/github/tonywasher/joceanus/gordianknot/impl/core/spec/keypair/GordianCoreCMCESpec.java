@@ -23,7 +23,6 @@ import org.bouncycastle.asn1.bc.BCObjectIdentifiers;
 import org.bouncycastle.pqc.crypto.cmce.CMCEParameters;
 import org.bouncycastle.pqc.jcajce.spec.CMCEParameterSpec;
 
-import java.util.Collection;
 import java.util.EnumMap;
 import java.util.Map;
 
@@ -36,6 +35,11 @@ public final class GordianCoreCMCESpec {
      * The specMap.
      */
     private static final Map<GordianNewCMCESpec, GordianCoreCMCESpec> SPECMAP = newSpecMap();
+
+    /**
+     * The specArray.
+     */
+    private static final GordianCoreCMCESpec[] VALUES = SPECMAP.values().toArray(new GordianCoreCMCESpec[0]);
 
     /**
      * The Spec.
@@ -209,7 +213,7 @@ public final class GordianCoreCMCESpec {
      *
      * @return the values
      */
-    public static Collection<GordianCoreCMCESpec> values() {
-        return SPECMAP.values();
+    public static GordianCoreCMCESpec[] values() {
+        return VALUES;
     }
 }

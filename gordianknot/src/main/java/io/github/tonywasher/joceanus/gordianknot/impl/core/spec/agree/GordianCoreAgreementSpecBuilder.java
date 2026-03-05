@@ -31,7 +31,7 @@ import java.util.List;
 /**
  * KeyPair Agreement Specification Builder.
  */
-public class GordianCoreAgreementSpecBuilder
+public final class GordianCoreAgreementSpecBuilder
         implements GordianNewAgreementSpecBuilder {
     /**
      * The keyPairSpec.
@@ -52,6 +52,21 @@ public class GordianCoreAgreementSpecBuilder
      * eith Confirm?
      */
     private boolean withConfirm;
+
+    /**
+     * Private constructor.
+     */
+    private GordianCoreAgreementSpecBuilder() {
+    }
+
+    /**
+     * Obtain new instance.
+     *
+     * @return the new instance
+     */
+    public static GordianCoreAgreementSpecBuilder newInstance() {
+        return new GordianCoreAgreementSpecBuilder();
+    }
 
     @Override
     public GordianNewAgreementSpecBuilder withKeyPairSpec(final GordianNewKeyPairSpec pSpec) {

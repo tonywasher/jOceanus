@@ -20,7 +20,6 @@ package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewECSpec;
 
-import java.util.Collection;
 import java.util.EnumMap;
 import java.util.Map;
 
@@ -33,6 +32,11 @@ public final class GordianCoreECSpec
      * The specMap.
      */
     private static final Map<GordianNewECSpec, GordianCoreECSpec> SPECMAP = newSpecMap();
+
+    /**
+     * The specArray.
+     */
+    private static final GordianCoreECSpec[] VALUES = SPECMAP.values().toArray(new GordianCoreECSpec[0]);
 
     /**
      * The Spec.
@@ -102,34 +106,34 @@ public final class GordianCoreECSpec
     }
 
     @Override
-    public GordianLength getKeySize() {
+    public int getKeySize() {
         switch (theSpec) {
             case SECT571K1:
             case SECT571R1:
-                return GordianLength.LEN_571;
+                return GordianLength.LEN_571.getLength();
             case SECP521R1:
-                return GordianLength.LEN_521;
+                return GordianLength.LEN_521.getLength();
             case BRAINPOOLP512R1:
             case BRAINPOOLP512T1:
-                return GordianLength.LEN_512;
+                return GordianLength.LEN_512.getLength();
             case SECT409K1:
             case SECT409R1:
-                return GordianLength.LEN_409;
+                return GordianLength.LEN_409.getLength();
             case SECP384R1:
             case BRAINPOOLP384R1:
             case BRAINPOOLP384T1:
-                return GordianLength.LEN_384;
+                return GordianLength.LEN_384.getLength();
             case BRAINPOOLP320R1:
             case BRAINPOOLP320T1:
-                return GordianLength.LEN_320;
+                return GordianLength.LEN_320.getLength();
             case SECT283K1:
             case SECT283R1:
-                return GordianLength.LEN_283;
+                return GordianLength.LEN_283.getLength();
             case SECP256K1:
             case SECP256R1:
             case BRAINPOOLP256R1:
             case BRAINPOOLP256T1:
-                return GordianLength.LEN_256;
+                return GordianLength.LEN_256.getLength();
             default:
                 throw new IllegalArgumentException();
         }
@@ -154,6 +158,25 @@ public final class GordianCoreECSpec
     @Override
     public String toString() {
         return theSpec.toString();
+    }
+
+    @Override
+    public boolean hasCustomCurve() {
+        switch (theSpec) {
+            case SECP256K1:
+            case SECP256R1:
+            case SECP384R1:
+            case SECP521R1:
+            case SECT283K1:
+            case SECT283R1:
+            case SECT409K1:
+            case SECT409R1:
+            case SECT571K1:
+            case SECT571R1:
+                return true;
+            default:
+                return false;
+        }
     }
 
     @Override
@@ -204,7 +227,7 @@ public final class GordianCoreECSpec
      *
      * @return the values
      */
-    public static Collection<GordianCoreECSpec> values() {
-        return SPECMAP.values();
+    public static GordianCoreECSpec[] values() {
+        return VALUES;
     }
 }

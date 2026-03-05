@@ -18,8 +18,7 @@ package io.github.tonywasher.joceanus.gordianknot.impl.bc;
 
 import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianNTRUPrimeSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianNTRUPrimeSpec.GordianNTRUPrimeType;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewNTRUPrimeSpec.GordianNewNTRUPrimeType;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyBIKEKeyPair.BouncyBIKEAgreementEngine;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyCMCEKeyPair.BouncyCMCEAgreementEngine;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyDHKeyPair.BouncyDHAnonAgreementEngine;
@@ -49,6 +48,8 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.agree.GordianCoreAgre
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseData;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreNTRUPrimeSpec;
 
 /**
  * Bouncy Agreement Factory.
@@ -93,8 +94,9 @@ public class BouncyAgreementFactory
             case NTRU:
                 return new BouncyNTRUAgreementEngine(this, pSpec);
             case NTRUPRIME:
-                final GordianNTRUPrimeSpec mySpec = pSpec.getKeyPairSpec().getNTRUPrimeKeySpec();
-                return mySpec.getType() == GordianNTRUPrimeType.NTRUL
+                final GordianCoreKeyPairSpec myKeySpec = (GordianCoreKeyPairSpec) pSpec.getKeyPairSpec();
+                final GordianCoreNTRUPrimeSpec mySpec = myKeySpec.getNTRUPrimeSpec();
+                return mySpec.getType() == GordianNewNTRUPrimeType.NTRUL
                         ? new BouncyNTRULPrimeAgreementEngine(this, pSpec)
                         : new BouncySNTRUPrimeAgreementEngine(this, pSpec);
             case XDH:

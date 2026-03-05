@@ -45,7 +45,7 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.key.GordianCoreKeyAlg
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keyset.GordianCoreKeySetFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.lock.GordianCoreLockFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.random.GordianCoreRandomFactory;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.lock.GordianCorePasswordLockSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.lock.GordianCorePasswordLockSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.zip.GordianCoreZipFactory;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 
@@ -353,7 +353,8 @@ public abstract class GordianCoreFactory
     public GordianFactoryLock newFactoryLock(final GordianFactory pFactoryToLock,
                                              final char[] pPassword) throws GordianException {
         /* Create the factoryLock */
-        return newFactoryLock(pFactoryToLock, new GordianCorePasswordLockSpec(), pPassword);
+        final GordianCorePasswordLockSpecBuilder myBuilder = GordianCorePasswordLockSpecBuilder.newInstance();
+        return newFactoryLock(pFactoryToLock, myBuilder.passwordLock(), pPassword);
     }
 
     @Override
@@ -367,7 +368,8 @@ public abstract class GordianCoreFactory
     public GordianFactoryLock newFactoryLock(final GordianFactoryType pFactoryType,
                                              final char[] pPassword) throws GordianException {
         /* Create the factoryLock */
-        return newFactoryLock(new GordianCorePasswordLockSpec(), pFactoryType, pPassword);
+        final GordianCorePasswordLockSpecBuilder myBuilder = GordianCorePasswordLockSpecBuilder.newInstance();
+        return newFactoryLock(myBuilder.passwordLock(), pFactoryType, pPassword);
     }
 
     @Override

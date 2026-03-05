@@ -17,7 +17,7 @@
 package io.github.tonywasher.joceanus.gordianknot.api.encrypt;
 
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairType;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairType;
 
 import java.util.Arrays;
 import java.util.List;
@@ -39,7 +39,7 @@ public final class GordianEncryptorSpecBuilder {
      * @return the encryptorSpec
      */
     public static GordianEncryptorSpec rsa(final GordianNewDigestSpec pSpec) {
-        return new GordianEncryptorSpec(GordianKeyPairType.RSA, pSpec);
+        return new GordianEncryptorSpec(GordianNewKeyPairType.RSA, pSpec);
     }
 
     /**
@@ -49,7 +49,7 @@ public final class GordianEncryptorSpecBuilder {
      * @return the encryptorSpec
      */
     public static GordianEncryptorSpec elGamal(final GordianNewDigestSpec pSpec) {
-        return new GordianEncryptorSpec(GordianKeyPairType.ELGAMAL, pSpec);
+        return new GordianEncryptorSpec(GordianNewKeyPairType.ELGAMAL, pSpec);
     }
 
     /**
@@ -58,7 +58,7 @@ public final class GordianEncryptorSpecBuilder {
      * @return the encryptorSpec
      */
     public static GordianEncryptorSpec ec() {
-        return new GordianEncryptorSpec(GordianKeyPairType.EC, null);
+        return new GordianEncryptorSpec(GordianNewKeyPairType.EC, null);
     }
 
     /**
@@ -67,7 +67,7 @@ public final class GordianEncryptorSpecBuilder {
      * @return the encryptorSpec
      */
     public static GordianEncryptorSpec gost2012() {
-        return new GordianEncryptorSpec(GordianKeyPairType.GOST2012, null);
+        return new GordianEncryptorSpec(GordianNewKeyPairType.GOST2012, null);
     }
 
     /**
@@ -76,7 +76,7 @@ public final class GordianEncryptorSpecBuilder {
      * @return the encryptorSpec
      */
     public static GordianEncryptorSpec sm2() {
-        return new GordianEncryptorSpec(GordianKeyPairType.SM2, null);
+        return new GordianEncryptorSpec(GordianNewKeyPairType.SM2, null);
     }
 
     /**
@@ -86,7 +86,7 @@ public final class GordianEncryptorSpecBuilder {
      * @return the encryptorSpec
      */
     public static GordianEncryptorSpec sm2(final GordianSM2EncryptionSpec pSpec) {
-        return new GordianEncryptorSpec(GordianKeyPairType.SM2, pSpec);
+        return new GordianEncryptorSpec(GordianNewKeyPairType.SM2, pSpec);
     }
 
     /**
@@ -106,6 +106,6 @@ public final class GordianEncryptorSpecBuilder {
      * @return the encryptorSpec
      */
     public static GordianEncryptorSpec composite(final List<GordianEncryptorSpec> pSpecs) {
-        return new GordianEncryptorSpec(GordianKeyPairType.COMPOSITE, pSpecs);
+        return new GordianEncryptorSpec(GordianNewKeyPairType.COMPOSITE, pSpecs);
     }
 }

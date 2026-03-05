@@ -66,9 +66,9 @@ public class GordianCoreRandomSpec
      * @param pSubSpec    the subSpec
      * @param pResistant  is the secureRandom predicationResistant?
      */
-    public GordianCoreRandomSpec(final GordianNewRandomType pRandomType,
-                                 final Object pSubSpec,
-                                 final boolean pResistant) {
+    GordianCoreRandomSpec(final GordianNewRandomType pRandomType,
+                          final Object pSubSpec,
+                          final boolean pResistant) {
         theType = GordianCoreRandomType.mapCoreType(pRandomType);
         theSubSpec = pSubSpec;
         isPredictionResistant = pResistant;

@@ -20,7 +20,6 @@ package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.sign;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairType;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianNewSignatureType;
 
-import java.util.Collection;
 import java.util.EnumMap;
 import java.util.Map;
 
@@ -29,6 +28,11 @@ public final class GordianCoreSignatureType {
      * The signatureTypeMap.
      */
     private static final Map<GordianNewSignatureType, GordianCoreSignatureType> TYPEMAP = newTypeMap();
+
+    /**
+     * The signatureTypeArray.
+     */
+    private static final GordianCoreSignatureType[] VALUES = TYPEMAP.values().toArray(new GordianCoreSignatureType[0]);
 
     /**
      * The signatureType.
@@ -209,7 +213,7 @@ public final class GordianCoreSignatureType {
      *
      * @return the values
      */
-    public static Collection<GordianCoreSignatureType> values() {
-        return TYPEMAP.values();
+    public static GordianCoreSignatureType[] values() {
+        return VALUES;
     }
 }

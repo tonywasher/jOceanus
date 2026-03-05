@@ -18,7 +18,7 @@ package io.github.tonywasher.joceanus.gordianknot.impl.bc;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignParams;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignatureSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPrivateKey;
@@ -27,6 +27,7 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFacto
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianKeyPairValidity;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.sign.GordianCoreSignature;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairSpec;
 import org.bouncycastle.asn1.ASN1Encoding;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
@@ -75,7 +76,7 @@ public final class BouncyEdDSAKeyPair {
          * @param pKeySpec   the keySpec
          * @param pPublicKey the public key
          */
-        BouncyEd25519PublicKey(final GordianKeyPairSpec pKeySpec,
+        BouncyEd25519PublicKey(final GordianNewKeyPairSpec pKeySpec,
                                final Ed25519PublicKeyParameters pPublicKey) {
             super(pKeySpec, pPublicKey);
         }
@@ -102,7 +103,7 @@ public final class BouncyEdDSAKeyPair {
          * @param pKeySpec    the keySpec
          * @param pPrivateKey the private key
          */
-        BouncyEd25519PrivateKey(final GordianKeyPairSpec pKeySpec,
+        BouncyEd25519PrivateKey(final GordianNewKeyPairSpec pKeySpec,
                                 final Ed25519PrivateKeyParameters pPrivateKey) {
             super(pKeySpec, pPrivateKey);
         }
@@ -130,7 +131,7 @@ public final class BouncyEdDSAKeyPair {
          * @param pKeySpec   the keySpec
          * @param pPublicKey the public key
          */
-        BouncyEd448PublicKey(final GordianKeyPairSpec pKeySpec,
+        BouncyEd448PublicKey(final GordianNewKeyPairSpec pKeySpec,
                              final Ed448PublicKeyParameters pPublicKey) {
             super(pKeySpec, pPublicKey);
         }
@@ -157,7 +158,7 @@ public final class BouncyEdDSAKeyPair {
          * @param pKeySpec    the keySpec
          * @param pPrivateKey the private key
          */
-        BouncyEd448PrivateKey(final GordianKeyPairSpec pKeySpec,
+        BouncyEd448PrivateKey(final GordianNewKeyPairSpec pKeySpec,
                               final Ed448PrivateKeyParameters pPrivateKey) {
             super(pKeySpec, pPrivateKey);
         }
@@ -191,7 +192,7 @@ public final class BouncyEdDSAKeyPair {
          * @param pKeySpec the keySpec
          */
         BouncyEd25519KeyPairGenerator(final GordianBaseFactory pFactory,
-                                      final GordianKeyPairSpec pKeySpec) {
+                                      final GordianNewKeyPairSpec pKeySpec) {
             /* Initialise underlying class */
             super(pFactory, pKeySpec);
 
@@ -322,7 +323,7 @@ public final class BouncyEdDSAKeyPair {
          * @param pKeySpec the keySpec
          */
         BouncyEd448KeyPairGenerator(final GordianBaseFactory pFactory,
-                                    final GordianKeyPairSpec pKeySpec) {
+                                    final GordianNewKeyPairSpec pKeySpec) {
             /* Initialise underlying class */
             super(pFactory, pKeySpec);
 
@@ -441,7 +442,8 @@ public final class BouncyEdDSAKeyPair {
          */
         private static Signer createSigner(final GordianKeyPair pKeyPair) {
             /* Determine the EdwardsCurve */
-            final boolean is25519 = pKeyPair.getKeyPairSpec().getEdwardsElliptic().is25519();
+            final GordianCoreKeyPairSpec myKeySpec = (GordianCoreKeyPairSpec) pKeyPair.getKeyPairSpec();
+            final boolean is25519 = myKeySpec.getEdwardsSpec().is25519();
             final byte[] myContext = new byte[0];
 
             /* Create the internal digests */
@@ -501,11 +503,6 @@ public final class BouncyEdDSAKeyPair {
         @Override
         protected BouncyKeyPair getKeyPair() {
             return (BouncyKeyPair) super.getKeyPair();
-        }
-
-        @Override
-        public GordianBaseFactory getFactory() {
-            return (GordianBaseFactory) super.getFactory();
         }
 
         @Override

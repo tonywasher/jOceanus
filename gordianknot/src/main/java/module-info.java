@@ -24,6 +24,7 @@ module io.github.tonywasher.joceanus.gordianknot {
     /* External libraries */
     requires org.bouncycastle.provider;
     requires org.bouncycastle.util;
+    requires java.desktop;
 
     /* Exports */
     exports io.github.tonywasher.joceanus.gordianknot.api.agree;
@@ -37,6 +38,7 @@ module io.github.tonywasher.joceanus.gordianknot {
     exports io.github.tonywasher.joceanus.gordianknot.api.factory;
     exports io.github.tonywasher.joceanus.gordianknot.api.key;
     exports io.github.tonywasher.joceanus.gordianknot.api.keypair;
+    exports io.github.tonywasher.joceanus.gordianknot.api.keypair.spec;
     exports io.github.tonywasher.joceanus.gordianknot.api.keyset;
     exports io.github.tonywasher.joceanus.gordianknot.api.keyset.spec;
     exports io.github.tonywasher.joceanus.gordianknot.api.keystore;

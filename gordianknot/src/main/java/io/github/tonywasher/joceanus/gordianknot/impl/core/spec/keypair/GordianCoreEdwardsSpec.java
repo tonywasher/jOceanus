@@ -19,7 +19,6 @@ package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair;
 
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewEdwardsSpec;
 
-import java.util.Collection;
 import java.util.EnumMap;
 import java.util.Map;
 
@@ -31,6 +30,11 @@ public final class GordianCoreEdwardsSpec {
      * The specMap.
      */
     private static final Map<GordianNewEdwardsSpec, GordianCoreEdwardsSpec> SPECMAP = newSpecMap();
+
+    /**
+     * The specArray.
+     */
+    private static final GordianCoreEdwardsSpec[] VALUES = SPECMAP.values().toArray(new GordianCoreEdwardsSpec[0]);
 
     /**
      * The Spec.
@@ -126,7 +130,7 @@ public final class GordianCoreEdwardsSpec {
      *
      * @return the values
      */
-    public static Collection<GordianCoreEdwardsSpec> values() {
-        return SPECMAP.values();
+    public static GordianCoreEdwardsSpec[] values() {
+        return VALUES;
     }
 }

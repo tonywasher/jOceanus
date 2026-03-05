@@ -24,7 +24,7 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianASN1Util.
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianIOException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keyset.GordianKeySetSpecASN1;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.lock.GordianCorePasswordLockSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.lock.GordianCorePasswordLockSpecBuilder;
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1Integer;
 import org.bouncycastle.asn1.ASN1Primitive;
@@ -80,7 +80,8 @@ public class GordianPasswordLockSpecASN1
             }
 
             /* Create the lockSpec */
-            theLockSpec = new GordianCorePasswordLockSpec(myIterations, mySpec);
+            final GordianCorePasswordLockSpecBuilder myBuilder = GordianCorePasswordLockSpecBuilder.newInstance();
+            theLockSpec = myBuilder.passwordLock(myIterations, mySpec);
 
             /* handle exceptions */
         } catch (IllegalArgumentException e) {

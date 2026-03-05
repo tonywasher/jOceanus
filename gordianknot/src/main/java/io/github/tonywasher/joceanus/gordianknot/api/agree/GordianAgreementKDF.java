@@ -16,7 +16,7 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.api.agree;
 
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairType;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairType;
 
 /**
  * KDF types.
@@ -79,7 +79,7 @@ public enum GordianAgreementKDF {
      * @param pAgreeType the agreement type
      * @return true/false
      */
-    public boolean isSupported(final GordianKeyPairType pKeyType,
+    public boolean isSupported(final GordianNewKeyPairType pKeyType,
                                final GordianAgreementType pAgreeType) {
         /* Switch on keyType */
         switch (pKeyType) {

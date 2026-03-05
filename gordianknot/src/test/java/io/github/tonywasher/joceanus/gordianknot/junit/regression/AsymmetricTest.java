@@ -21,11 +21,11 @@ import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactoryType;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianStateAwareKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySet;
 import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySetFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.factory.GordianCoreAsyncFactory;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.junit.regression.AsymmetricStore.FactoryKeyPairs;
 import io.github.tonywasher.joceanus.gordianknot.junit.regression.AsymmetricStore.FactoryKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.util.GordianGenerator;
@@ -135,7 +135,7 @@ class AsymmetricTest {
             if (!myKeySpec.getAgreements().isEmpty()) {
                 Stream<DynamicNode> myTests = myKeySpec.getAgreements().stream()
                         .map(x -> DynamicContainer.dynamicContainer(x.toString(), AsymmetricAgreeScripts.xAgreementTests(x)));
-                myTests = Stream.of(DynamicContainer.dynamicContainer("XAgreements", myTests));
+                myTests = Stream.of(DynamicContainer.dynamicContainer("Agreements", myTests));
                 myKeyStream = Stream.concat(myKeyStream, myTests);
             }
 
@@ -184,7 +184,7 @@ class AsymmetricTest {
         /* Access the keyPairs */
         final FactoryKeyPairs myPairs = pKeySpec.getKeyPairs();
         final GordianKeyPairFactory myFactory = pKeySpec.getFactory().getKeyPairFactory();
-        final GordianKeyPairSpec mySpec = pKeySpec.getKeySpec();
+        final GordianCoreKeyPairSpec mySpec = (GordianCoreKeyPairSpec) pKeySpec.getKeySpec();
 
         /* Check X509Encodings */
         final X509EncodedKeySpec myPublic = myPairs.getX509Encoding();

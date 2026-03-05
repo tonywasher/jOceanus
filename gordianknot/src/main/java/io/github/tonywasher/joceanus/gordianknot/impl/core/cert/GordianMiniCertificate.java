@@ -24,7 +24,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairGenerator;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairSpec;
 import org.bouncycastle.asn1.x500.X500Name;
 
 import java.security.spec.X509EncodedKeySpec;
@@ -117,7 +117,7 @@ public class GordianMiniCertificate
         /* Derive the keyPair */
         final GordianKeyPairFactory myFactory = pFactory.getAsyncFactory().getKeyPairFactory();
         final X509EncodedKeySpec myX509Spec = theASN1.getPublicKey();
-        final GordianKeyPairSpec myKeySpec = myFactory.determineKeyPairSpec(myX509Spec);
+        final GordianNewKeyPairSpec myKeySpec = myFactory.determineKeyPairSpec(myX509Spec);
         final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(myKeySpec);
         theKeyPair = myGenerator.derivePublicOnlyKeyPair(myX509Spec);
 

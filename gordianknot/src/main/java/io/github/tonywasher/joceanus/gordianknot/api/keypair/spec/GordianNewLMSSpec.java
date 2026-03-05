@@ -52,24 +52,18 @@ public interface GordianNewLMSSpec {
     GordianLength getLength();
 
     /**
+     * Obtain the treeDepth.
+     *
+     * @return the treeDepth.
+     */
+    int getTreeDepth();
+
+    /**
      * Is the keySpec valid?
      *
      * @return true/false.
      */
     boolean isValid();
-
-    /**
-     * HSS keySpec.
-     */
-    interface GordianNewHSSSpec
-            extends GordianNewLMSSpec {
-        /**
-         * Obtain the treeDepth.
-         *
-         * @return the treeDepth.
-         */
-        int getTreeDepth();
-    }
 
     /**
      * LMS hash.

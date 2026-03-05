@@ -30,7 +30,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianEncryptorSpe
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianAsyncFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySet;
 import io.github.tonywasher.joceanus.gordianknot.api.keyset.spec.GordianNewKeySetSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.agree.GordianCoreAgreementFactory;
@@ -107,7 +107,7 @@ public class GordianCRMEncryptor {
     GordianCRMResult prepareForEncryption(final GordianCoreCertificate pCertificate) throws GordianException {
         /* Try to send an encrypted proof */
         final GordianKeyPair myKeyPair = pCertificate.getKeyPair();
-        final GordianKeyPairSpec mySpec = myKeyPair.getKeyPairSpec();
+        final GordianNewKeyPairSpec mySpec = myKeyPair.getKeyPairSpec();
         final GordianEncryptorSpec myEncSpec = theFactory.getAsyncFactory().getEncryptorFactory().defaultForKeyPair(mySpec);
         if (myEncSpec != null) {
             return prepareForEncryption(myEncSpec, pCertificate);
@@ -139,7 +139,7 @@ public class GordianCRMEncryptor {
         final GordianCertificate myCert = myAgreeFactory.newMiniCertificate(SERVER, pCertificate.getKeyPair(),
                 new GordianKeyPairUsage(GordianKeyPairUse.AGREEMENT));
         final GordianNewKeySetSpecBuilder myBuilder = GordianUtilities.newKeySetSpecBuilder();
-        final GordianAgreementParams myParams = myAgreeFactory.newAgreementParams(pAgreeSpec, myBuilder.keySetSpec())
+        final GordianAgreementParams myParams = myAgreeFactory.newAgreementParams(pAgreeSpec, myBuilder.keySet())
                 .setServerCertificate(myCert);
         final GordianAgreement myAgree = myAgreeFactory.createAgreement(myParams);
         final byte[] myHello = myAgree.nextMessage();

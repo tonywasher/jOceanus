@@ -19,7 +19,7 @@ package io.github.tonywasher.joceanus.gordianknot.impl.bc;
 import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPrivateKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPublicKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.agree.GordianCoreAgreementFactory;
@@ -27,6 +27,7 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFacto
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianIOException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianKeyPairValidity;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairSpec;
 import org.bouncycastle.asn1.ASN1Encoding;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
@@ -72,7 +73,7 @@ public final class BouncySABERKeyPair {
          * @param pKeySpec   the keySpec
          * @param pPublicKey the public key
          */
-        BouncySABERPublicKey(final GordianKeyPairSpec pKeySpec,
+        BouncySABERPublicKey(final GordianNewKeyPairSpec pKeySpec,
                              final SABERPublicKeyParameters pPublicKey) {
             super(pKeySpec, pPublicKey);
         }
@@ -99,7 +100,7 @@ public final class BouncySABERKeyPair {
          * @param pKeySpec    the keySpec
          * @param pPrivateKey the private key
          */
-        BouncySABERPrivateKey(final GordianKeyPairSpec pKeySpec,
+        BouncySABERPrivateKey(final GordianNewKeyPairSpec pKeySpec,
                               final SABERPrivateKeyParameters pPrivateKey) {
             super(pKeySpec, pPrivateKey);
         }
@@ -134,7 +135,7 @@ public final class BouncySABERKeyPair {
          * @throws GordianException on error
          */
         BouncySABERKeyPairGenerator(final GordianBaseFactory pFactory,
-                                    final GordianKeyPairSpec pKeySpec) throws GordianException {
+                                    final GordianNewKeyPairSpec pKeySpec) throws GordianException {
             /* Initialise underlying class */
             super(pFactory, pKeySpec);
 
@@ -142,7 +143,8 @@ public final class BouncySABERKeyPair {
             theGenerator = new SABERKeyPairGenerator();
 
             /* Determine the parameters */
-            final SABERParameters myParms = pKeySpec.getSABERKeySpec().getParameters();
+            final GordianCoreKeyPairSpec myKeySpec = (GordianCoreKeyPairSpec) pKeySpec;
+            final SABERParameters myParms = myKeySpec.getSABERSpec().getParameters();
 
             /* Initialise the generator */
             final SABERKeyGenerationParameters myParams = new SABERKeyGenerationParameters(getRandom(), myParms);

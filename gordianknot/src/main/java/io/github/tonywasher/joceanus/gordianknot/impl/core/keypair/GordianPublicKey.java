@@ -16,7 +16,7 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.impl.core.keypair;
 
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairSpec;
 
 /**
  * Asymmetric PublicKey.
@@ -25,14 +25,14 @@ public abstract class GordianPublicKey {
     /**
      * The KeySpec.
      */
-    private final GordianKeyPairSpec theKeySpec;
+    private final GordianNewKeyPairSpec theKeySpec;
 
     /**
      * Constructor.
      *
      * @param pKeySpec the keySpec
      */
-    protected GordianPublicKey(final GordianKeyPairSpec pKeySpec) {
+    protected GordianPublicKey(final GordianNewKeyPairSpec pKeySpec) {
         theKeySpec = pKeySpec;
     }
 
@@ -41,7 +41,7 @@ public abstract class GordianPublicKey {
      *
      * @return the keySpec
      */
-    public GordianKeyPairSpec getKeySpec() {
+    public GordianNewKeyPairSpec getKeySpec() {
         return theKeySpec;
     }
 }

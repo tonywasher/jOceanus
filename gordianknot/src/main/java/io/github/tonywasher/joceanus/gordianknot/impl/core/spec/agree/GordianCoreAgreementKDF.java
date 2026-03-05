@@ -21,7 +21,6 @@ import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianNewAgreem
 import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianNewAgreementType;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairType;
 
-import java.util.Collection;
 import java.util.EnumMap;
 import java.util.Map;
 
@@ -33,6 +32,11 @@ public final class GordianCoreAgreementKDF {
      * The agreementKDFMap.
      */
     private static final Map<GordianNewAgreementKDF, GordianCoreAgreementKDF> KDFMAP = newKDFMap();
+
+    /**
+     * The kdfTypeArray.
+     */
+    private static final GordianCoreAgreementKDF[] VALUES = KDFMAP.values().toArray(new GordianCoreAgreementKDF[0]);
 
     /**
      * The KDF.
@@ -222,7 +226,7 @@ public final class GordianCoreAgreementKDF {
      *
      * @return the values
      */
-    public static Collection<GordianCoreAgreementKDF> values() {
-        return KDFMAP.values();
+    public static GordianCoreAgreementKDF[] values() {
+        return VALUES;
     }
 }

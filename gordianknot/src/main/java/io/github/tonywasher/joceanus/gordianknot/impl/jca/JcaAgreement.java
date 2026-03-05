@@ -23,9 +23,8 @@ import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeyType;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairType;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianNTRUPrimeSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairType;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.agree.GordianCoreAgreementEngine;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.agree.GordianCoreAgreementFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseData;
@@ -33,6 +32,8 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianCryptoExce
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianPrivateKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianPublicKey;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreNTRUPrimeSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaKeyPair.JcaPrivateKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaKeyPair.JcaPublicKey;
 import org.bouncycastle.asn1.nist.NISTObjectIdentifiers;
@@ -175,7 +176,7 @@ public final class JcaAgreement {
                 final PublicKey myKey = (PublicKey) theAgreement.doPhase(myTarget.getPublicKey(), true);
 
                 /* Store the ephemeral */
-                final GordianKeyPairSpec mySpec = getSpec().getKeyPairSpec();
+                final GordianNewKeyPairSpec mySpec = getSpec().getKeyPairSpec();
                 final JcaPublicKey myPublic = new JcaPublicKey(mySpec, myKey);
                 final JcaKeyPair myEphemeral = new JcaKeyPair(myPublic);
                 setClientEphemeralAsEncapsulated(myEphemeral);
@@ -582,7 +583,7 @@ public final class JcaAgreement {
         KeyAgreement adjustAgreement(final KeyAgreement pCurrent,
                                      final GordianKeyPair pKeyPair) throws GordianException {
             /* If we need to change agreement based on keySpec */
-            if (getSpec().getKeyPairSpec().getKeyPairType().equals(GordianKeyPairType.XDH)) {
+            if (getSpec().getKeyPairSpec().getKeyPairType().equals(GordianNewKeyPairType.XDH)) {
                 final String myBase = pKeyPair.getKeyPairSpec().toString();
                 final String myXtra = GordianAgreementType.UNIFIED.equals(getSpec().getAgreementType())
                         ? "U" : "";
@@ -634,14 +635,15 @@ public final class JcaAgreement {
      * @return the KeyFactory
      * @throws GordianException on error
      */
-    static KeyGenerator getJavaKeyGenerator(final GordianKeyPairSpec pSpec) throws GordianException {
+    static KeyGenerator getJavaKeyGenerator(final GordianNewKeyPairSpec pSpec) throws GordianException {
         /* Protect against exceptions */
         try {
             /* Determine the algorithm name */
             String myName = pSpec.getKeyPairType().toString();
+            final GordianCoreKeyPairSpec mySpec = (GordianCoreKeyPairSpec) pSpec;
             switch (pSpec.getKeyPairType()) {
                 case NTRUPRIME:
-                    final GordianNTRUPrimeSpec myNTRUSpec = pSpec.getNTRUPrimeKeySpec();
+                    final GordianCoreNTRUPrimeSpec myNTRUSpec = mySpec.getNTRUPrimeSpec();
                     myName = myNTRUSpec.getType() + "PRIME";
                     break;
                 case MLKEM:
@@ -652,7 +654,7 @@ public final class JcaAgreement {
             }
 
             /* Determine source of keyGenerator */
-            final Provider myProvider = pSpec.getKeyPairType().isStandardJca() ? JcaProvider.BCPROV : JcaProvider.BCPQPROV;
+            final Provider myProvider = mySpec.getCoreKeyPairType().isStandardJca() ? JcaProvider.BCPROV : JcaProvider.BCPQPROV;
 
             /* Return a KeyAgreement for the algorithm */
             return KeyGenerator.getInstance(myName, myProvider);

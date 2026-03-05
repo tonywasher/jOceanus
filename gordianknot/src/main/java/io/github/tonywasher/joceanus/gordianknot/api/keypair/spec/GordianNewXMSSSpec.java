@@ -43,24 +43,25 @@ public interface GordianNewXMSSSpec {
     GordianNewXMSSHeight getHeight();
 
     /**
+     * Obtain the layers.
+     *
+     * @return the layers
+     */
+    GordianNewXMSSMTLayers getLayers();
+
+    /**
+     * Is this an XMSSMT spec?
+     *
+     * @return true/false.
+     */
+    boolean isMT();
+
+    /**
      * Is the keySpec valid?
      *
      * @return true/false.
      */
     boolean isValid();
-
-    /**
-     * XMSSMT KeySpec.
-     */
-    interface GordianNewXMSSMTSpec
-            extends GordianNewXMSSSpec {
-        /**
-         * Obtain the layers.
-         *
-         * @return the layers
-         */
-        GordianNewXMSSMTLayers getLayers();
-    }
 
     /**
      * XMSS keyTypes.

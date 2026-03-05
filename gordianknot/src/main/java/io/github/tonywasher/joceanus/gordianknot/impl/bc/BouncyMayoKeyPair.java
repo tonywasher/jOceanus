@@ -18,7 +18,7 @@ package io.github.tonywasher.joceanus.gordianknot.impl.bc;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignParams;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignatureSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPrivateKey;
@@ -27,6 +27,7 @@ import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncySignature.BouncyD
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianKeyPairValidity;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairSpec;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.bouncycastle.crypto.AsymmetricCipherKeyPair;
@@ -70,7 +71,7 @@ public final class BouncyMayoKeyPair {
          * @param pKeySpec   the keySpec
          * @param pPublicKey the public key
          */
-        BouncyMayoPublicKey(final GordianKeyPairSpec pKeySpec,
+        BouncyMayoPublicKey(final GordianNewKeyPairSpec pKeySpec,
                             final MayoPublicKeyParameters pPublicKey) {
             super(pKeySpec, pPublicKey);
         }
@@ -109,7 +110,7 @@ public final class BouncyMayoKeyPair {
          * @param pKeySpec    the keySpec
          * @param pPrivateKey the private key
          */
-        BouncyMayoPrivateKey(final GordianKeyPairSpec pKeySpec,
+        BouncyMayoPrivateKey(final GordianNewKeyPairSpec pKeySpec,
                              final MayoPrivateKeyParameters pPrivateKey) {
             super(pKeySpec, pPrivateKey);
         }
@@ -155,12 +156,13 @@ public final class BouncyMayoKeyPair {
          * @param pKeySpec the keySpec
          */
         BouncyMayoKeyPairGenerator(final GordianBaseFactory pFactory,
-                                   final GordianKeyPairSpec pKeySpec) {
+                                   final GordianNewKeyPairSpec pKeySpec) {
             /* Initialise underlying class */
             super(pFactory, pKeySpec);
 
             /* Determine the parameters */
-            final MayoParameters myParms = pKeySpec.getMayoKeySpec().getParameters();
+            final GordianCoreKeyPairSpec myKeySpec = (GordianCoreKeyPairSpec) pKeySpec;
+            final MayoParameters myParms = myKeySpec.getMayoSpec().getParameters();
 
             /* Create and initialise the generator */
             theGenerator = new MayoKeyPairGenerator();

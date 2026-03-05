@@ -19,9 +19,8 @@ package io.github.tonywasher.joceanus.gordianknot.impl.bc;
 import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianEncryptorSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianElliptic;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignParams;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignatureSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPrivateKey;
@@ -35,6 +34,8 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianCryptoExce
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianIOException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianLogicException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianKeyPairValidity;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreElliptic;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.ext.engines.GordianEllipticEncryptor;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
@@ -96,7 +97,7 @@ public final class BouncyEllipticKeyPair {
          * @param pKeySpec   the keySpec
          * @param pPublicKey the public key
          */
-        BouncyECPublicKey(final GordianKeyPairSpec pKeySpec,
+        BouncyECPublicKey(final GordianNewKeyPairSpec pKeySpec,
                           final ECPublicKeyParameters pPublicKey) {
             super(pKeySpec, pPublicKey);
         }
@@ -147,7 +148,7 @@ public final class BouncyEllipticKeyPair {
          * @param pKeySpec    the keySpec
          * @param pPrivateKey the private key
          */
-        BouncyECPrivateKey(final GordianKeyPairSpec pKeySpec,
+        BouncyECPrivateKey(final GordianNewKeyPairSpec pKeySpec,
                            final ECPrivateKeyParameters pPrivateKey) {
             super(pKeySpec, pPrivateKey);
         }
@@ -194,7 +195,7 @@ public final class BouncyEllipticKeyPair {
          * @throws GordianException on error
          */
         BouncyECKeyPairGenerator(final GordianBaseFactory pFactory,
-                                 final GordianKeyPairSpec pKeySpec) throws GordianException {
+                                 final GordianNewKeyPairSpec pKeySpec) throws GordianException {
             /* Initialise underlying class */
             super(pFactory, pKeySpec);
 
@@ -202,7 +203,8 @@ public final class BouncyEllipticKeyPair {
             theGenerator = newGenerator();
 
             /* Lookup the parameters */
-            final GordianElliptic myElliptic = pKeySpec.getElliptic();
+            final GordianCoreKeyPairSpec myKeySpec = (GordianCoreKeyPairSpec) pKeySpec;
+            final GordianCoreElliptic myElliptic = myKeySpec.getElliptic();
             final String myCurve = myElliptic.getCurveName();
             final X9ECParameters x9 = myElliptic.hasCustomCurve()
                     ? ECUtil.getNamedCurveByName(myCurve)

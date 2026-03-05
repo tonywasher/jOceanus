@@ -23,7 +23,6 @@ import org.bouncycastle.asn1.nist.NISTObjectIdentifiers;
 import org.bouncycastle.jcajce.spec.MLKEMParameterSpec;
 import org.bouncycastle.pqc.crypto.mlkem.MLKEMParameters;
 
-import java.util.Collection;
 import java.util.EnumMap;
 import java.util.Map;
 
@@ -35,6 +34,11 @@ public final class GordianCoreMLKEMSpec {
      * The specMap.
      */
     private static final Map<GordianNewMLKEMSpec, GordianCoreMLKEMSpec> SPECMAP = newSpecMap();
+
+    /**
+     * The specArray.
+     */
+    private static final GordianCoreMLKEMSpec[] VALUES = SPECMAP.values().toArray(new GordianCoreMLKEMSpec[0]);
 
     /**
      * The Spec.
@@ -166,7 +170,7 @@ public final class GordianCoreMLKEMSpec {
      *
      * @return the values
      */
-    public static Collection<GordianCoreMLKEMSpec> values() {
-        return SPECMAP.values();
+    public static GordianCoreMLKEMSpec[] values() {
+        return VALUES;
     }
 }

@@ -542,7 +542,7 @@ public class SymmetricSymScripts {
         /* Build the cipher */
         byte[] myBytes = new byte[myLen];
         final GordianNewSymCipherSpecBuilder myBuilder = myCipherFactory.newSymCipherSpecBuilder();
-        final GordianNewSymCipherSpec myCipherSpec = myBuilder.generic(mySpec, GordianNewCipherMode.ECB, GordianNewPadding.NONE);
+        final GordianNewSymCipherSpec myCipherSpec = myBuilder.symCipher(mySpec, GordianNewCipherMode.ECB, GordianNewPadding.NONE);
         final GordianSymCipher myCipher = myCipherFactory.createSymKeyCipher(myCipherSpec);
 
         /* Start loop */

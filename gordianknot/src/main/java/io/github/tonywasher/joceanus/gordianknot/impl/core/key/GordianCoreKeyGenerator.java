@@ -143,8 +143,8 @@ public abstract class GordianCoreKeyGenerator<T extends GordianKeySpec>
             final GordianNewDigestSpecBuilder myBuilder = GordianCoreDigestSpecBuilder.newInstance();
             /* Create the HKDF and parameters */
             final GordianHKDFMulti myEngine = new GordianHKDFMulti(theFactory,
-                    myBuilder.generic(myDigestTypes[0], GordianLength.LEN_512),
-                    myBuilder.generic(myDigestTypes[1], GordianLength.LEN_512));
+                    myBuilder.digest(myDigestTypes[0], GordianLength.LEN_512),
+                    myBuilder.digest(myDigestTypes[1], GordianLength.LEN_512));
             myParams = GordianHKDFParams.expandOnly(pSecret, myKeyLen)
                     .withInfo(myAlgo).withInfo(myKeyLenBytes).withInfo(mySeed);
             theFactory.getPersonalisation().updateInfo(myParams);

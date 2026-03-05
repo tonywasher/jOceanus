@@ -23,7 +23,6 @@ import org.bouncycastle.asn1.bc.BCObjectIdentifiers;
 import org.bouncycastle.pqc.crypto.snova.SnovaParameters;
 import org.bouncycastle.pqc.jcajce.spec.SnovaParameterSpec;
 
-import java.util.Collection;
 import java.util.EnumMap;
 import java.util.Map;
 
@@ -35,6 +34,11 @@ public final class GordianCoreSnovaSpec {
      * The specMap.
      */
     private static final Map<GordianNewSnovaSpec, GordianCoreSnovaSpec> SPECMAP = newSpecMap();
+
+    /**
+     * The specArray.
+     */
+    private static final GordianCoreSnovaSpec[] VALUES = SPECMAP.values().toArray(new GordianCoreSnovaSpec[0]);
 
     /**
      * The Spec.
@@ -412,7 +416,7 @@ public final class GordianCoreSnovaSpec {
      *
      * @return the values
      */
-    public static Collection<GordianCoreSnovaSpec> values() {
-        return SPECMAP.values();
+    public static GordianCoreSnovaSpec[] values() {
+        return VALUES;
     }
 }

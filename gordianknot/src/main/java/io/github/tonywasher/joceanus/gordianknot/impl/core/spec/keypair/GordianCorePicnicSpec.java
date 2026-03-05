@@ -23,7 +23,6 @@ import org.bouncycastle.asn1.bc.BCObjectIdentifiers;
 import org.bouncycastle.pqc.crypto.picnic.PicnicParameters;
 import org.bouncycastle.pqc.jcajce.spec.PicnicParameterSpec;
 
-import java.util.Collection;
 import java.util.EnumMap;
 import java.util.Map;
 
@@ -35,6 +34,11 @@ public final class GordianCorePicnicSpec {
      * The specMap.
      */
     private static final Map<GordianNewPicnicSpec, GordianCorePicnicSpec> SPECMAP = newSpecMap();
+
+    /**
+     * The specArray.
+     */
+    private static final GordianCorePicnicSpec[] VALUES = SPECMAP.values().toArray(new GordianCorePicnicSpec[0]);
 
     /**
      * The Spec.
@@ -220,7 +224,7 @@ public final class GordianCorePicnicSpec {
      *
      * @return the values
      */
-    public static Collection<GordianCorePicnicSpec> values() {
-        return SPECMAP.values();
+    public static GordianCorePicnicSpec[] values() {
+        return VALUES;
     }
 }

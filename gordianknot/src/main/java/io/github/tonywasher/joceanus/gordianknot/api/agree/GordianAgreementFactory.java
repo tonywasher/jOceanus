@@ -20,7 +20,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianCertificate;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairUsage;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignatureSpec;
 import org.bouncycastle.asn1.x500.X500Name;
 
@@ -124,7 +124,7 @@ public interface GordianAgreementFactory {
      * @param pAgreementSpec the agreementSpec
      * @return true/false
      */
-    boolean validAgreementSpecForKeyPairSpec(GordianKeyPairSpec pKeyPairSpec,
+    boolean validAgreementSpecForKeyPairSpec(GordianNewKeyPairSpec pKeyPairSpec,
                                              GordianAgreementSpec pAgreementSpec);
 
     /**
@@ -141,7 +141,7 @@ public interface GordianAgreementFactory {
      * @param pKeyPairSpec the keySpec
      * @return the list of supported agreementSpecs.
      */
-    List<GordianAgreementSpec> listAllSupportedAgreements(GordianKeyPairSpec pKeyPairSpec);
+    List<GordianAgreementSpec> listAllSupportedAgreements(GordianNewKeyPairSpec pKeyPairSpec);
 
     /**
      * Create default agreementSpec for key.
@@ -149,5 +149,5 @@ public interface GordianAgreementFactory {
      * @param pKeySpec the keySpec
      * @return the AgreementSpec
      */
-    GordianAgreementSpec defaultForKeyPair(GordianKeyPairSpec pKeySpec);
+    GordianAgreementSpec defaultForKeyPair(GordianNewKeyPairSpec pKeySpec);
 }

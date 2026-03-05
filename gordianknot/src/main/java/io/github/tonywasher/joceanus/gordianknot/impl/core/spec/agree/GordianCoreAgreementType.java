@@ -20,7 +20,6 @@ package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.agree;
 import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianNewAgreementType;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairType;
 
-import java.util.Collection;
 import java.util.EnumMap;
 import java.util.Map;
 
@@ -32,6 +31,11 @@ public final class GordianCoreAgreementType {
      * The agreementTypeMap.
      */
     private static final Map<GordianNewAgreementType, GordianCoreAgreementType> TYPEMAP = newTypeMap();
+
+    /**
+     * The agreementTypeArray.
+     */
+    private static final GordianCoreAgreementType[] VALUES = TYPEMAP.values().toArray(new GordianCoreAgreementType[0]);
 
     /**
      * The type.
@@ -174,7 +178,7 @@ public final class GordianCoreAgreementType {
     }
 
     /**
-     * Does the kKeyPairType have an SM2 agreement?
+     * Does the keyPairType have an SM2 agreement?
      *
      * @param pKeyPairType the keyPairType
      * @return true/false
@@ -311,7 +315,7 @@ public final class GordianCoreAgreementType {
      *
      * @return the values
      */
-    public static Collection<GordianCoreAgreementType> values() {
-        return TYPEMAP.values();
+    public static GordianCoreAgreementType[] values() {
+        return VALUES;
     }
 }

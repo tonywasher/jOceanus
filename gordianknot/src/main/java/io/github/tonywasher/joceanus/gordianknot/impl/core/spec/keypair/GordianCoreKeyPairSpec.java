@@ -19,7 +19,6 @@ package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair;
 
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairType;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreLMSSpec.GordianCoreHSSSpec;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -62,8 +61,8 @@ public class GordianCoreKeyPairSpec
      * @param pKeyType the keyType
      * @param pSubSpec the subSpec
      */
-    public GordianCoreKeyPairSpec(final GordianNewKeyPairType pKeyType,
-                                  final Object pSubSpec) {
+    GordianCoreKeyPairSpec(final GordianNewKeyPairType pKeyType,
+                           final Object pSubSpec) {
         theKeyPairType = GordianCoreKeyPairType.mapCoreType(pKeyType);
         theSubSpec = wrapSubSpec(pSubSpec);
         isValid = checkValidity();
@@ -198,12 +197,12 @@ public class GordianCoreKeyPairSpec
     }
 
     /**
-     * Obtain the hss keySpec.
+     * Obtain the lms keySpec.
      *
      * @return the keySpec.
      */
-    public GordianCoreHSSSpec getHSSKeySpec() {
-        return castValue(GordianCoreHSSSpec.class);
+    public GordianCoreLMSSpec getLMSSpec() {
+        return castValue(GordianCoreLMSSpec.class);
     }
 
     /**
@@ -211,7 +210,7 @@ public class GordianCoreKeyPairSpec
      *
      * @return the keySpec.
      */
-    public GordianCoreXMSSSpec getXMSSKeySpec() {
+    public GordianCoreXMSSSpec getXMSSSpec() {
         return castValue(GordianCoreXMSSSpec.class);
     }
 

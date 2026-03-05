@@ -28,9 +28,9 @@ import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairUsage;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairUse;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianAsyncFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactoryType;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianEdwardsElliptic;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewEdwardsSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySet;
 import io.github.tonywasher.joceanus.gordianknot.api.lock.GordianKeyPairLock;
 import io.github.tonywasher.joceanus.gordianknot.api.lock.spec.GordianNewPasswordLockSpec;
@@ -41,6 +41,7 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianParameter
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianLogicException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keyset.GordianCoreKeySet;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keyset.GordianKeySetData;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairSpec;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x500.X500NameBuilder;
 import org.bouncycastle.asn1.x500.style.BCStyle;
@@ -233,9 +234,10 @@ public class GordianKeyPairLockImpl
      * @return the agreementSpec
      * @throws GordianException on error
      */
-    private static GordianAgreementSpec getAgreementSpec(final GordianKeyPairSpec pKeySpec) throws GordianException {
+    private static GordianAgreementSpec getAgreementSpec(final GordianNewKeyPairSpec pKeySpec) throws GordianException {
         /* Determine KDF type */
-        final GordianAgreementKDF myKDFType = GordianEdwardsElliptic.CURVE25519.equals(pKeySpec.getSubKeyType())
+        final GordianCoreKeyPairSpec myKeySpec = (GordianCoreKeyPairSpec) pKeySpec;
+        final GordianAgreementKDF myKDFType = GordianNewEdwardsSpec.CURVE25519.equals(myKeySpec.getSubSpec())
                 ? GordianAgreementKDF.SHA256KDF
                 : GordianAgreementKDF.SHA512KDF;
 

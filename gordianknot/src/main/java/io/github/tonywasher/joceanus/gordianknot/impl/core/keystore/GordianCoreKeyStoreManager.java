@@ -27,7 +27,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKeyGenerator;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairGenerator;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySet;
 import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySetFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.keyset.spec.GordianNewKeySetSpec;
@@ -106,7 +106,7 @@ public class GordianCoreKeyStoreManager
     }
 
     @Override
-    public GordianCoreKeyStorePair createRootKeyPair(final GordianKeyPairSpec pKeySpec,
+    public GordianCoreKeyStorePair createRootKeyPair(final GordianNewKeyPairSpec pKeySpec,
                                                      final X500Name pSubject,
                                                      final String pAlias,
                                                      final char[] pPassword) throws GordianException {
@@ -130,7 +130,7 @@ public class GordianCoreKeyStoreManager
     }
 
     @Override
-    public GordianCoreKeyStorePair createKeyPair(final GordianKeyPairSpec pKeySpec,
+    public GordianCoreKeyStorePair createKeyPair(final GordianNewKeyPairSpec pKeySpec,
                                                  final X500Name pSubject,
                                                  final GordianKeyPairUsage pUsage,
                                                  final GordianKeyStorePair pSigner,
@@ -201,7 +201,7 @@ public class GordianCoreKeyStoreManager
      * @param pUsage       the key usage
      * @throws GordianException on error
      */
-    private void checkKeyPairUsage(final GordianKeyPairSpec pKeyPairSpec,
+    private void checkKeyPairUsage(final GordianNewKeyPairSpec pKeyPairSpec,
                                    final GordianKeyPairUsage pUsage) throws GordianException {
         /* Determine the requirements */
         final boolean needsSign = pUsage.hasUse(GordianKeyPairUse.CERTIFICATE)

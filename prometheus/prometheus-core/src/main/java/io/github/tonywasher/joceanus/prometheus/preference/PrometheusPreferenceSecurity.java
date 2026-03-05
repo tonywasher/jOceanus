@@ -314,7 +314,7 @@ public class PrometheusPreferenceSecurity {
             final GordianLength myKeyLen = getEnumValue(PrometheusSecurityPreferenceKey.KEYLENGTH, GordianLength.class);
             final int mySteps = getIntegerValue(PrometheusSecurityPreferenceKey.CIPHERSTEPS);
             final GordianNewKeySetSpecBuilder myBuilder = GordianUtilities.newKeySetSpecBuilder();
-            return myBuilder.keySetSpec(myKeyLen, mySteps);
+            return myBuilder.keySet(myKeyLen, mySteps);
         }
 
         /**
