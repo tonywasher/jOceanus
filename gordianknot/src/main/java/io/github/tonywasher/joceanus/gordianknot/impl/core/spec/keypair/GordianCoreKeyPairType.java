@@ -132,8 +132,8 @@ public final class GordianCoreKeyPairType {
             case ELGAMAL:
             case DH:
             case SM2:
-            case GOST2012:
-            case DSTU4145:
+            case GOST:
+            case DSTU:
             case XDH:
             case EDDSA:
             case MLKEM:

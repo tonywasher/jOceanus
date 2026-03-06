@@ -136,8 +136,8 @@ public enum GordianAgreementType {
         switch (pKeyPairType) {
             case RSA:
             case EC:
-            case GOST2012:
-            case DSTU4145:
+            case GOST:
+            case DSTU:
             case SM2:
             case CMCE:
             case FRODO:
@@ -165,8 +165,8 @@ public enum GordianAgreementType {
             case DH:
             case EC:
             case SM2:
-            case GOST2012:
-            case DSTU4145:
+            case GOST:
+            case DSTU:
             case XDH:
                 return true;
             default:
@@ -184,7 +184,7 @@ public enum GordianAgreementType {
         switch (pKeyPairType) {
             case EC:
             case SM2:
-            case GOST2012:
+            case GOST:
                 return true;
             default:
                 return false;
@@ -231,8 +231,8 @@ public enum GordianAgreementType {
         switch (pKeyPairType) {
             case SM2:
             case EC:
-            case GOST2012:
-            case DSTU4145:
+            case GOST:
+            case DSTU:
             case DH:
             case XDH:
                 return true;
@@ -251,8 +251,8 @@ public enum GordianAgreementType {
         switch (pKeyPairType) {
             case SM2:
             case EC:
-            case GOST2012:
-            case DSTU4145:
+            case GOST:
+            case DSTU:
                 return true;
             default:
                 return false;

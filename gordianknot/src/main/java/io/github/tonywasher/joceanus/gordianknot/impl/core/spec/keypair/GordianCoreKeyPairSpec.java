@@ -448,9 +448,9 @@ public class GordianCoreKeyPairSpec
                 return theSubSpec instanceof GordianCoreECSpec;
             case SM2:
                 return theSubSpec instanceof GordianCoreSM2Spec;
-            case GOST2012:
+            case GOST:
                 return theSubSpec instanceof GordianCoreGOSTSpec;
-            case DSTU4145:
+            case DSTU:
                 return theSubSpec instanceof GordianCoreDSTUSpec;
             case XMSS:
                 return theSubSpec instanceof GordianCoreXMSSSpec s && s.isValid();
@@ -575,9 +575,9 @@ public class GordianCoreKeyPairSpec
                 return GordianCoreECSpec.mapCoreSpec(pSubSpec);
             case SM2:
                 return GordianCoreSM2Spec.mapCoreSpec(pSubSpec);
-            case GOST2012:
+            case GOST:
                 return GordianCoreGOSTSpec.mapCoreSpec(pSubSpec);
-            case DSTU4145:
+            case DSTU:
                 return GordianCoreDSTUSpec.mapCoreSpec(pSubSpec);
             case SLHDSA:
                 return GordianCoreSLHDSASpec.mapCoreSpec(pSubSpec);
@@ -637,9 +637,9 @@ public class GordianCoreKeyPairSpec
                 return getECSpec().getSpec();
             case SM2:
                 return getSM2Spec().getSpec();
-            case GOST2012:
+            case GOST:
                 return getGOSTSpec().getSpec();
-            case DSTU4145:
+            case DSTU:
                 return getDSTUSpec().getSpec();
             case SLHDSA:
                 return getSLHDSASpec().getSpec();

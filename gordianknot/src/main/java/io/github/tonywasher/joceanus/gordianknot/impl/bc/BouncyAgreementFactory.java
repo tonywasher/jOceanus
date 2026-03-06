@@ -71,8 +71,8 @@ public class BouncyAgreementFactory
             case RSA:
                 return new BouncyRSAAgreementEngine(this, pSpec);
             case EC:
-            case GOST2012:
-            case DSTU4145:
+            case GOST:
+            case DSTU:
             case SM2:
                 return getBCECEngine(pSpec);
             case DH:

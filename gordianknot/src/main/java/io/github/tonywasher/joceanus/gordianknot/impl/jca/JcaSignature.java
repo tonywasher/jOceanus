@@ -398,7 +398,7 @@ public abstract class JcaSignature
          */
         private static String getSignature(final GordianSignatureSpec pSignatureSpec) {
             /* Handle DSTU explicitly */
-            if (GordianNewKeyPairType.DSTU4145.equals(pSignatureSpec.getKeyPairType())) {
+            if (GordianNewKeyPairType.DSTU.equals(pSignatureSpec.getKeyPairType())) {
                 return DSTU_SIGN;
             }
 

@@ -99,7 +99,7 @@ public final class GordianCoreECSpec
             case BRAINPOOLP256R1:
                 return "brainpoolP256r1";
             case BRAINPOOLP256T1:
-                return "brainpoolP256r1";
+                return "brainpoolP256t1";
             default:
                 throw new IllegalArgumentException();
         }

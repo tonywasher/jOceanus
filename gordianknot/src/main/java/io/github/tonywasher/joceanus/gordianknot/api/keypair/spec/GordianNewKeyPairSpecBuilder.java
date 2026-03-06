@@ -150,7 +150,7 @@ public interface GordianNewKeyPairSpecBuilder {
      * @return the KeySpec
      */
     default GordianNewKeyPairSpec dstu4145(final GordianNewDSTUSpec pCurve) {
-        return withKeyPairType(GordianNewKeyPairType.DSTU4145).withEnumSubSpec(pCurve).build();
+        return withKeyPairType(GordianNewKeyPairType.DSTU).withEnumSubSpec(pCurve).build();
     }
 
     /**
@@ -160,7 +160,7 @@ public interface GordianNewKeyPairSpecBuilder {
      * @return the KeySpec
      */
     default GordianNewKeyPairSpec gost2012(final GordianNewGOSTSpec pCurve) {
-        return withKeyPairType(GordianNewKeyPairType.GOST2012).withEnumSubSpec(pCurve).build();
+        return withKeyPairType(GordianNewKeyPairType.GOST).withEnumSubSpec(pCurve).build();
     }
 
     /**

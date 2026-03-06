@@ -67,7 +67,7 @@ public final class GordianEncryptorSpecBuilder {
      * @return the encryptorSpec
      */
     public static GordianEncryptorSpec gost2012() {
-        return new GordianEncryptorSpec(GordianNewKeyPairType.GOST2012, null);
+        return new GordianEncryptorSpec(GordianNewKeyPairType.GOST, null);
     }
 
     /**

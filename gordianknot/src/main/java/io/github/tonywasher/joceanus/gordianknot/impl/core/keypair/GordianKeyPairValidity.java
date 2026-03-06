@@ -27,7 +27,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianCertificate;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairUsage;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairUse;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianEncryptor;
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianEncryptorFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianEncryptorSpec;
@@ -40,6 +40,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignatureSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianLogicException;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianCoreDigestSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairSpec;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x500.X500NameBuilder;
@@ -194,14 +195,15 @@ public final class GordianKeyPairValidity {
     private static Object getValidityCheck(final GordianBaseFactory pFactory,
                                            final GordianKeyPair pKeyPair) {
         /* Switch on keyType */
+        final GordianNewDigestSpecBuilder myBuilder = GordianCoreDigestSpecBuilder.newInstance();
         final GordianCoreKeyPairSpec mySpec = (GordianCoreKeyPairSpec) pKeyPair.getKeyPairSpec();
         switch (mySpec.getKeyPairType()) {
             case RSA:
             case DSA:
             case EDDSA:
             case EC:
-            case GOST2012:
-            case DSTU4145:
+            case GOST:
+            case DSTU:
             case SM2:
             case SLHDSA:
             case MLDSA:
@@ -213,7 +215,7 @@ public final class GordianKeyPairValidity {
             case LMS:
                 return pFactory.getAsyncFactory().getSignatureFactory().defaultForKeyPair(mySpec);
             case ELGAMAL:
-                return GordianEncryptorSpecBuilder.elGamal(GordianDigestSpecBuilder.sha2(GordianLength.LEN_512));
+                return GordianEncryptorSpecBuilder.elGamal(myBuilder.sha2(GordianLength.LEN_256));
             case DH:
                 return GordianAgreementSpecBuilder.anon(mySpec, GordianAgreementKDF.SHA256KDF);
             case XDH:

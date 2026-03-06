@@ -127,8 +127,8 @@ public final class GordianCoreSignatureType {
         switch (pKeyType) {
             case SM2:
             case EDDSA:
-            case DSTU4145:
-            case GOST2012:
+            case DSTU:
+            case GOST:
             case SLHDSA:
             case MLDSA:
             case FALCON:

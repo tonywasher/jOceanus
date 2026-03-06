@@ -190,8 +190,8 @@ public final class GordianSignatureSpec {
             case RSA:
             case DSA:
             case EC:
-            case DSTU4145:
-            case GOST2012:
+            case DSTU:
+            case GOST:
                 if (!(theSignatureSpec instanceof GordianNewDigestSpec)) {
                     return false;
                 }

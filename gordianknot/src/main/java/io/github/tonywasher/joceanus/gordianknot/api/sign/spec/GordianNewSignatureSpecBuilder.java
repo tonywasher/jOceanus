@@ -127,7 +127,7 @@ public interface GordianNewSignatureSpecBuilder {
      * @return the SignatureSpec
      */
     default GordianNewSignatureSpec dstu4145() {
-        return withKeyPairType(GordianNewKeyPairType.DSTU4145).withDigestSpec(usingDigestSpecBuilder().gost()).build();
+        return withKeyPairType(GordianNewKeyPairType.DSTU).withDigestSpec(usingDigestSpecBuilder().gost()).build();
     }
 
     /**
@@ -137,7 +137,7 @@ public interface GordianNewSignatureSpecBuilder {
      * @return the SignatureSpec
      */
     default GordianNewSignatureSpec gost2012(final GordianLength pLength) {
-        return withKeyPairType(GordianNewKeyPairType.GOST2012).withDigestSpec(usingDigestSpecBuilder().streebog(pLength)).build();
+        return withKeyPairType(GordianNewKeyPairType.GOST).withDigestSpec(usingDigestSpecBuilder().streebog(pLength)).build();
     }
 
     /**

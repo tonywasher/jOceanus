@@ -54,12 +54,12 @@ public enum GordianNewKeyPairType {
     /**
      * DSTU4145.
      */
-    DSTU4145,
+    DSTU,
 
     /**
      * GOST2012.
      */
-    GOST2012,
+    GOST,
 
     /**
      * EdwardsXDH.

@@ -86,7 +86,7 @@ public final class GordianSignatureSpecBuilder {
      * @return the SignatureSpec
      */
     public static GordianSignatureSpec dstu4145() {
-        return new GordianSignatureSpec(GordianNewKeyPairType.DSTU4145, GordianDigestSpecBuilder.gost());
+        return new GordianSignatureSpec(GordianNewKeyPairType.DSTU, GordianDigestSpecBuilder.gost());
     }
 
     /**
@@ -96,7 +96,7 @@ public final class GordianSignatureSpecBuilder {
      * @return the SignatureSpec
      */
     public static GordianSignatureSpec gost2012(final GordianLength pLength) {
-        return new GordianSignatureSpec(GordianNewKeyPairType.GOST2012, GordianDigestSpecBuilder.streebog(pLength));
+        return new GordianSignatureSpec(GordianNewKeyPairType.GOST, GordianDigestSpecBuilder.streebog(pLength));
     }
 
     /**

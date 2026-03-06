@@ -121,8 +121,8 @@ public class JcaKeyPairFactory
                 return new JcaElGamalKeyPairGenerator(theFactory, pKeySpec);
             case EC:
             case SM2:
-            case DSTU4145:
-            case GOST2012:
+            case DSTU:
+            case GOST:
                 return new JcaECKeyPairGenerator(theFactory, pKeySpec);
             case DSA:
                 return new JcaDSAKeyPairGenerator(theFactory, pKeySpec);

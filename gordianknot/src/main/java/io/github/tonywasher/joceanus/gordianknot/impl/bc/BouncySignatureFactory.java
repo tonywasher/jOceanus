@@ -84,9 +84,9 @@ public class BouncySignatureFactory
                 return new BouncyRSASignature(getFactory(), pSignatureSpec);
             case EC:
                 return new BouncyECSignature(getFactory(), pSignatureSpec);
-            case DSTU4145:
+            case DSTU:
                 return new BouncyDSTUSignature(getFactory(), pSignatureSpec);
-            case GOST2012:
+            case GOST:
                 return new BouncyGOSTSignature(getFactory(), pSignatureSpec);
             case SM2:
                 return new BouncySM2Signature(getFactory(), pSignatureSpec);

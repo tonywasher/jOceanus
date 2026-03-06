@@ -22,6 +22,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestSpecBui
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestType;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewGOSTSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairType;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignatureFactory;
@@ -112,7 +113,7 @@ public abstract class GordianCoreSignatureFactory
         }
 
         /* Disallow incorrectly sized digest for GOST */
-        if (GordianNewKeyPairType.GOST2012.equals(pKeyPairSpec.getKeyPairType())) {
+        if (GordianNewKeyPairType.GOST.equals(pKeyPairSpec.getKeyPairType())) {
             final int myDigestLen = pSignSpec.getDigestSpec().getDigestLength().getLength();
             return myKeyPairSpec.getElliptic().getKeySize() == myDigestLen;
         }
@@ -220,12 +221,12 @@ public abstract class GordianCoreSignatureFactory
         }
 
         /* Only allow GOST for DSTU signature */
-        if (GordianNewKeyPairType.DSTU4145.equals(myType)) {
+        if (GordianNewKeyPairType.DSTU.equals(myType)) {
             return GordianNewDigestType.GOST.equals(mySpec.getDigestType());
         }
 
         /* Only allow STREEBOG for GOST signature */
-        if (GordianNewKeyPairType.GOST2012.equals(myType)) {
+        if (GordianNewKeyPairType.GOST.equals(myType)) {
             return GordianNewDigestType.STREEBOG.equals(mySpec.getDigestType());
         }
 
@@ -275,7 +276,7 @@ public abstract class GordianCoreSignatureFactory
     }
 
     /**
-     * Check RSASignature.
+     * Check DDSASignature.
      *
      * @param pSpec the signatureSpec
      * @return true/false
@@ -378,17 +379,18 @@ public abstract class GordianCoreSignatureFactory
     public GordianSignatureSpec defaultForKeyPair(final GordianNewKeyPairSpec pKeySpec) {
         switch (pKeySpec.getKeyPairType()) {
             case RSA:
-                return GordianSignatureSpecBuilder.rsa(GordianSignatureType.PSSMGF1, GordianDigestSpecBuilder.sha3(GordianLength.LEN_512));
+                return GordianSignatureSpecBuilder.rsa(GordianSignatureType.PSSMGF1, GordianDigestSpecBuilder.sha3(GordianLength.LEN_256));
             case DSA:
                 return GordianSignatureSpecBuilder.dsa(GordianSignatureType.DSA, GordianDigestSpecBuilder.sha2(GordianLength.LEN_512));
             case EC:
                 return GordianSignatureSpecBuilder.ec(GordianSignatureType.DSA, GordianDigestSpecBuilder.sha3(GordianLength.LEN_512));
             case SM2:
                 return GordianSignatureSpecBuilder.sm2(GordianDigestSpecBuilder.sm3());
-            case DSTU4145:
+            case DSTU:
                 return GordianSignatureSpecBuilder.dstu4145();
-            case GOST2012:
-                return GordianSignatureSpecBuilder.gost2012(GordianLength.LEN_512);
+            case GOST:
+                return GordianSignatureSpecBuilder.gost2012(GordianNewGOSTSpec.GOST256A.equals(pKeySpec.getSubSpec())
+                        ? GordianLength.LEN_256 : GordianLength.LEN_512);
             case EDDSA:
                 return GordianSignatureSpecBuilder.edDSA();
             case SLHDSA:

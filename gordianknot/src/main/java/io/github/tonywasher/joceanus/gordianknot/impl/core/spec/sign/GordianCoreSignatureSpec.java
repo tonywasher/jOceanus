@@ -171,8 +171,8 @@ public class GordianCoreSignatureSpec
             case RSA:
             case DSA:
             case EC:
-            case DSTU4145:
-            case GOST2012:
+            case DSTU:
+            case GOST:
                 return theSignatureSpec instanceof GordianCoreDigestSpec mySpec
                         && mySpec.isValid()
                         && mySpec.getCoreDigestType().supportsLargeData();

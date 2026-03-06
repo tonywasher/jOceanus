@@ -376,7 +376,7 @@ public final class BouncyMLDSAKeyPair {
         protected BouncyKeyPair getKeyPair() {
             return (BouncyKeyPair) super.getKeyPair();
         }
-        
+
         @Override
         public byte[] sign() throws GordianException {
             /* Check that we are in signing mode */

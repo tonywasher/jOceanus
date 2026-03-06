@@ -82,8 +82,8 @@ public class JcaSignatureFactory
                 return new JcaDSASignature(getFactory(), pSignatureSpec);
             case EDDSA:
                 return new JcaEdDSASignature(getFactory(), pSignatureSpec);
-            case GOST2012:
-            case DSTU4145:
+            case GOST:
+            case DSTU:
                 return new JcaGOSTSignature(getFactory(), pSignatureSpec);
             case XMSS:
                 return new JcaXMSSSignature(getFactory(), pSignatureSpec);
@@ -121,8 +121,8 @@ public class JcaSignatureFactory
                 return validRSASignature(pSpec);
             case EC:
                 return validECSignature(pSpec);
-            case DSTU4145:
-            case GOST2012:
+            case DSTU:
+            case GOST:
             case SM2:
                 return true;
             case DSA:

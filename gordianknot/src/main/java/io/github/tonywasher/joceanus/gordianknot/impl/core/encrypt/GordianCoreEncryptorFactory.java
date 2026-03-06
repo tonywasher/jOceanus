@@ -132,7 +132,7 @@ public abstract class GordianCoreEncryptorFactory
             case SM2:
             case EC:
                 if (!GordianNewKeyPairType.EC.equals(myKeyType)
-                        && !GordianNewKeyPairType.GOST2012.equals(myKeyType)
+                        && !GordianNewKeyPairType.GOST.equals(myKeyType)
                         && !GordianNewKeyPairType.SM2.equals(myKeyType)) {
                     return false;
                 }
@@ -149,12 +149,20 @@ public abstract class GordianCoreEncryptorFactory
             return true;
         }
 
-        /* If this is a RSA encryption */
+        /* If this is an RSA encryption */
         if (GordianNewKeyPairType.RSA.equals(pKeyPairSpec.getKeyPairType())) {
             /* The digest length cannot be too large wrt to the modulus */
             int myLen = pEncryptorSpec.getDigestSpec().getDigestLength().getByteLength();
             myLen = (myLen + 1) * Byte.SIZE;
             return myKeySpec.getRSASpec().getLength() >= (myLen << 1);
+        }
+
+        /* If this is an ELGAMAL encryption */
+        if (GordianNewKeyPairType.ELGAMAL.equals(pKeyPairSpec.getKeyPairType())) {
+            /* The digest length cannot be too large wrt to the modulus */
+            int myLen = pEncryptorSpec.getDigestSpec().getDigestLength().getByteLength();
+            myLen = (myLen + 1) * Byte.SIZE;
+            return myKeySpec.getDHSpec().getLength() >= (myLen << 1);
         }
 
         /* For Composite EncryptorSpec */
@@ -244,7 +252,7 @@ public abstract class GordianCoreEncryptorFactory
                 break;
             case EC:
             case SM2:
-            case GOST2012:
+            case GOST:
                 /* Add EC-ElGamal */
                 myEncryptors.add(GordianEncryptorSpecBuilder.ec());
 
@@ -268,7 +276,7 @@ public abstract class GordianCoreEncryptorFactory
                 return GordianEncryptorSpecBuilder.rsa(GordianDigestSpecBuilder.sha2(GordianLength.LEN_512));
             case EC:
             case SM2:
-            case GOST2012:
+            case GOST:
                 return GordianEncryptorSpecBuilder.sm2(GordianSM2EncryptionSpec.c1c2c3(GordianDigestSpecBuilder.sm3()));
             case ELGAMAL:
                 return GordianEncryptorSpecBuilder.elGamal(GordianDigestSpecBuilder.sha2(GordianLength.LEN_512));

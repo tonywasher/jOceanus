@@ -372,9 +372,9 @@ public abstract class JcaKeyPairGenerator
          */
         private String getAlgorithm() {
             switch (this.getKeySpec().getKeyPairType()) {
-                case DSTU4145:
+                case DSTU:
                     return "DSTU4145";
-                case GOST2012:
+                case GOST:
                     return "ECGOST3410-2012";
                 default:
                     return "EC";

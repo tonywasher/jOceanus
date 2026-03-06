@@ -128,9 +128,9 @@ public class BouncyKeyPairFactory
             case EC:
             case SM2:
                 return new BouncyECKeyPairGenerator(theFactory, pKeySpec);
-            case DSTU4145:
+            case DSTU:
                 return new BouncyDSTUKeyPairGenerator(theFactory, pKeySpec);
-            case GOST2012:
+            case GOST:
                 return new BouncyGOSTKeyPairGenerator(theFactory, pKeySpec);
             case XDH:
                 return myKeySpec.getEdwardsSpec().is25519()

@@ -129,7 +129,7 @@ public final class GordianCoreEncryptorSpecBuilder
                 break;
             case EC:
             case SM2:
-            case GOST2012:
+            case GOST:
                 /* Add EC-ElGamal */
                 myEncryptors.add(myBuilder.ec());
 

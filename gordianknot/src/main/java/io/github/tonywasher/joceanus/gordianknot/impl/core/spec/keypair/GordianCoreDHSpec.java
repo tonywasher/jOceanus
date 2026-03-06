@@ -17,6 +17,7 @@
 
 package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair;
 
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewDHSpec;
 import org.bouncycastle.crypto.agreement.DHStandardGroups;
 import org.bouncycastle.crypto.params.DHParameters;
@@ -61,6 +62,36 @@ public final class GordianCoreDHSpec {
         return theSpec;
     }
 
+    /**
+     * Obtain the length for a spec.
+     *
+     * @return the length
+     */
+    public int getLength() {
+        switch (theSpec) {
+            case STD1024:
+                return GordianLength.LEN_1024.getLength();
+            case STD1536:
+                return GordianLength.LEN_1536.getLength();
+            case STD2048:
+            case FFDHE2048:
+                return GordianLength.LEN_2048.getLength();
+            case STD3072:
+            case FFDHE3072:
+                return GordianLength.LEN_3072.getLength();
+            case STD4096:
+            case FFDHE4096:
+                return GordianLength.LEN_4096.getLength();
+            case STD6144:
+            case FFDHE6144:
+                return GordianLength.LEN_6144.getLength();
+            case STD8192:
+            case FFDHE8192:
+                return GordianLength.LEN_8192.getLength();
+            default:
+                throw new IllegalArgumentException("Unknown GordianNewRSASpec");
+        }
+    }
 
     /**
      * Obtain the parameters.
@@ -94,7 +125,7 @@ public final class GordianCoreDHSpec {
             case FFDHE8192:
                 return DHStandardGroups.rfc7919_ffdhe8192;
             default:
-                throw new IllegalArgumentException("Unknown GordianNewDHSpec");
+                throw new IllegalArgumentException("Unknown GordianDHSpec");
         }
     }
 

@@ -414,13 +414,13 @@ public abstract class GordianCoreAgreementFactory
         /* Switch on keyPairType */
         switch (pKeyPairSpec.getKeyPairType()) {
             case RSA:
+            case MLKEM:
                 myAgreements.addAll(listAllKDFs(pKeyPairSpec, GordianAgreementType.KEM));
                 break;
             case NEWHOPE:
             case CMCE:
             case FRODO:
             case SABER:
-            case MLKEM:
             case HQC:
             case BIKE:
             case NTRU:
@@ -429,7 +429,7 @@ public abstract class GordianCoreAgreementFactory
                 break;
             case EC:
             case SM2:
-            case GOST2012:
+            case GOST:
                 myAgreements.addAll(listAllKDFs(pKeyPairSpec, GordianAgreementType.ANON));
                 myAgreements.addAll(listAllKDFs(pKeyPairSpec, GordianAgreementType.KEM));
                 myAgreements.addAll(listAllKDFs(pKeyPairSpec, GordianAgreementType.BASIC));
@@ -442,7 +442,7 @@ public abstract class GordianCoreAgreementFactory
                 myAgreements.addAll(listAllKDFs(pKeyPairSpec, GordianAgreementType.SM2, Boolean.TRUE));
                 break;
             case DH:
-            case DSTU4145:
+            case DSTU:
                 myAgreements.addAll(listAllKDFs(pKeyPairSpec, GordianAgreementType.ANON));
                 myAgreements.addAll(listAllKDFs(pKeyPairSpec, GordianAgreementType.KEM));
                 myAgreements.addAll(listAllKDFs(pKeyPairSpec, GordianAgreementType.BASIC));

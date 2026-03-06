@@ -18,8 +18,9 @@ package io.github.tonywasher.joceanus.gordianknot.impl.bc;
 
 import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianEncryptorSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairSpec;
@@ -392,7 +393,9 @@ public final class BouncyRSAKeyPair {
                                            final GordianSignatureSpec pSpec) throws GordianException {
             /* Create the digest */
             final GordianNewDigestSpec myDigestSpec = pSpec.getDigestSpec();
-            final BouncyDigest myDigest = (BouncyDigest) pFactory.getDigestFactory().createDigest(myDigestSpec);
+            final GordianDigestFactory myFactory = pFactory.getDigestFactory();
+            final BouncyDigest myDigest = (BouncyDigest) myFactory.createDigest(myDigestSpec);
+            final GordianNewDigestSpecBuilder myBuilder = myFactory.newDigestSpecBuilder();
             final int mySaltLength = myDigestSpec.getDigestLength().getByteLength();
 
             /* Access the signature type */
@@ -405,10 +408,10 @@ public final class BouncyRSAKeyPair {
                     return new RSADigestSigner(myDigest.getDigest());
                 case PSS128:
                     return new PSSSigner(new RSABlindedEngine(), myDigest.getDigest(),
-                            ((BouncyDigest) pFactory.getDigestFactory().createDigest(GordianDigestSpecBuilder.shake128())).getDigest(), mySaltLength);
+                            ((BouncyDigest) pFactory.getDigestFactory().createDigest(myBuilder.shake128())).getDigest(), mySaltLength);
                 case PSS256:
                     return new PSSSigner(new RSABlindedEngine(), myDigest.getDigest(),
-                            ((BouncyDigest) pFactory.getDigestFactory().createDigest(GordianDigestSpecBuilder.shake256())).getDigest(), mySaltLength);
+                            ((BouncyDigest) pFactory.getDigestFactory().createDigest(myBuilder.shake256())).getDigest(), mySaltLength);
                 case PSSMGF1:
                 default:
                     return new PSSSigner(new RSABlindedEngine(), myDigest.getDigest(), mySaltLength);

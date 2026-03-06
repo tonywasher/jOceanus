@@ -59,8 +59,8 @@ public class JcaAgreementFactory
     public GordianCoreAgreementEngine createEngine(final GordianAgreementSpec pSpec) throws GordianException {
         switch (pSpec.getKeyPairSpec().getKeyPairType()) {
             case EC:
-            case GOST2012:
-            case DSTU4145:
+            case GOST:
+            case DSTU:
             case SM2:
                 return getECEngine(pSpec);
             case DH:
@@ -208,8 +208,8 @@ public class JcaAgreementFactory
             case COMPOSITE:
                 return true;
             case EC:
-            case GOST2012:
-            case DSTU4145:
+            case GOST:
+            case DSTU:
             case SM2:
             case DH:
                 return !GordianAgreementType.KEM.equals(myType);

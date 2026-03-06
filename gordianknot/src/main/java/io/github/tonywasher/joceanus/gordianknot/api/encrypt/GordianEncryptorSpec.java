@@ -155,7 +155,7 @@ public final class GordianEncryptorSpec {
                         || (theEncryptorType instanceof GordianSM2EncryptionSpec s
                         && s.isValid());
             case EC:
-            case GOST2012:
+            case GOST:
                 return theEncryptorType == null;
             case COMPOSITE:
                 return theEncryptorType instanceof List && checkComposite();
@@ -176,7 +176,7 @@ public final class GordianEncryptorSpec {
                 final GordianCoreDigestSpec mySpec = (GordianCoreDigestSpec) getDigestSpec();
                 return GordianNewDigestType.SHA2.equals(mySpec.getDigestType()) && !mySpec.isSha2Hybrid();
             case EC:
-            case GOST2012:
+            case GOST:
             case SM2:
             case COMPOSITE:
                 return true;
@@ -216,7 +216,7 @@ public final class GordianEncryptorSpec {
                         theName += SEP + theEncryptorType;
                         break;
                     case EC:
-                    case GOST2012:
+                    case GOST:
                         theName += SEP + ECELGAMAL;
                         break;
                     case SM2:

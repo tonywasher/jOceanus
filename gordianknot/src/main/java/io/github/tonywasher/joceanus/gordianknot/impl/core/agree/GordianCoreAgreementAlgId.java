@@ -86,7 +86,7 @@ public class GordianCoreAgreementAlgId {
      * Null KeyPairSpec for Partial AgreementSpec.
      */
     private static final GordianNewKeyPairSpec NULLKEYPAIRSPEC = GordianCoreKeyPairSpecBuilder.newInstance().ed448();
- 
+
     /**
      * The factory.
      */
@@ -210,10 +210,10 @@ public class GordianCoreAgreementAlgId {
             case SM2:
                 myId = myId.branch(Integer.toString(mySpec.getSM2Spec().getSpec().ordinal() + 1));
                 break;
-            case GOST2012:
+            case GOST:
                 myId = myId.branch(Integer.toString(mySpec.getGOSTSpec().getSpec().ordinal() + 1));
                 break;
-            case DSTU4145:
+            case DSTU:
                 myId = myId.branch(Integer.toString(mySpec.getDSTUSpec().getSpec().ordinal() + 1));
                 break;
             case CMCE:

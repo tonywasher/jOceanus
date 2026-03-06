@@ -76,8 +76,8 @@ public final class GordianCoreAgreementKDF {
                 return !isCKDF();
             case EC:
             case SM2:
-            case DSTU4145:
-            case GOST2012:
+            case DSTU:
+            case GOST:
                 return isSupported4EC(pAgreeType);
             case DH:
                 return isSupported4DH(pAgreeType);

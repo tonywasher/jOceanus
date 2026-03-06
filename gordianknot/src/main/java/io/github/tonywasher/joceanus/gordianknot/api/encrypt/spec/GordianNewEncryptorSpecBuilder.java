@@ -103,7 +103,7 @@ public interface GordianNewEncryptorSpecBuilder {
      * @return the encryptorSpec
      */
     default GordianNewEncryptorSpec gost2012() {
-        return withKeyPairType(GordianNewKeyPairType.GOST2012).build();
+        return withKeyPairType(GordianNewKeyPairType.GOST).build();
     }
 
     /**
