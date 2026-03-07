@@ -19,7 +19,7 @@ package io.github.tonywasher.joceanus.gordianknot.impl.core.keystore;
 import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreement;
 import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementParams;
-import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianNewAgreementSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianCertificate;
@@ -114,7 +114,7 @@ public class GordianCRMEncryptor {
         }
 
         /* Try to send an agreed proof */
-        final GordianAgreementSpec myAgreeSpec = theFactory.getAsyncFactory().getAgreementFactory().defaultForKeyPair(mySpec);
+        final GordianNewAgreementSpec myAgreeSpec = theFactory.getAsyncFactory().getAgreementFactory().defaultForKeyPair(mySpec);
         if (myAgreeSpec != null) {
             return prepareAgreedEncryption(myAgreeSpec, pCertificate);
         }
@@ -131,7 +131,7 @@ public class GordianCRMEncryptor {
      * @return the CRM result
      * @throws GordianException on error
      */
-    private GordianCRMResult prepareAgreedEncryption(final GordianAgreementSpec pAgreeSpec,
+    private GordianCRMResult prepareAgreedEncryption(final GordianNewAgreementSpec pAgreeSpec,
                                                      final GordianCoreCertificate pCertificate) throws GordianException {
         /* Create the agreement */
         final GordianAsyncFactory myFactory = theFactory.getAsyncFactory();

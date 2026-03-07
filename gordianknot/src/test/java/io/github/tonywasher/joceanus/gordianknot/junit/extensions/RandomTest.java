@@ -20,11 +20,11 @@ import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymCipher;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymCipherSpecBuilder;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymKeySpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewPadding;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymCipherSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeySpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigest;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpecBuilder;
@@ -41,6 +41,7 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.random.GordianSP800HM
 import io.github.tonywasher.joceanus.gordianknot.impl.core.random.GordianSP800HashDRBG;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.random.GordianX931CipherDRBG;
 import io.github.tonywasher.joceanus.gordianknot.util.GordianGenerator;
+import io.github.tonywasher.joceanus.gordianknot.util.GordianUtilities;
 import org.bouncycastle.crypto.prng.EntropySource;
 import org.bouncycastle.crypto.prng.EntropySourceProvider;
 import org.bouncycastle.util.encoders.Hex;
@@ -925,7 +926,9 @@ class RandomTest {
 
         /* Create the cipher */
         final GordianCipherFactory myFactory = fcBCFACTORY.getCipherFactory();
-        final GordianNewSymCipherSpec mySpec = GordianSymCipherSpecBuilder.ecb(GordianSymKeySpecBuilder.aes(GordianLength.LEN_128), GordianNewPadding.NONE);
+        final GordianNewSymKeySpecBuilder myKeyBuilder = GordianUtilities.newSymKeySpecBuilder();
+        final GordianNewSymCipherSpecBuilder myCipherBuilder = GordianUtilities.newSymCipherSpecBuilder();
+        final GordianNewSymCipherSpec mySpec = myCipherBuilder.ecb(myKeyBuilder.aes(GordianLength.LEN_128), GordianNewPadding.NONE);
         final GordianCoreCipher<GordianNewSymKeySpec> myCipher = (GordianCoreCipher<GordianNewSymKeySpec>) myFactory.createSymKeyCipher(mySpec);
 
         /* Create a standard stream */
@@ -972,7 +975,9 @@ class RandomTest {
 
         /* Run the tests */
         final GordianCipherFactory myFactory = fcBCFACTORY.getCipherFactory();
-        final GordianNewSymCipherSpec mySpec = GordianSymCipherSpecBuilder.ecb(GordianSymKeySpecBuilder.aes(GordianLength.LEN_128), GordianNewPadding.NONE);
+        final GordianNewSymKeySpecBuilder myKeyBuilder = GordianUtilities.newSymKeySpecBuilder();
+        final GordianNewSymCipherSpecBuilder myCipherBuilder = GordianUtilities.newSymCipherSpecBuilder();
+        final GordianNewSymCipherSpec mySpec = myCipherBuilder.ecb(myKeyBuilder.aes(GordianLength.LEN_128), GordianNewPadding.NONE);
         final GordianCoreCipher<GordianNewSymKeySpec> myCipher = (GordianCoreCipher<GordianNewSymKeySpec>) myFactory.createSymKeyCipher(mySpec);
         testX931CipherDRBG(myCipher, "f7d36762b9915f1ed585eb8e91700eb2", myInitF, myTestsF);
 
@@ -1033,7 +1038,9 @@ class RandomTest {
 
         /* Create the cipher */
         final GordianCipherFactory myFactory = fcBCFACTORY.getCipherFactory();
-        final GordianNewSymCipherSpec mySpec = GordianSymCipherSpecBuilder.ecb(GordianSymKeySpecBuilder.aes(GordianLength.LEN_256), GordianNewPadding.NONE);
+        final GordianNewSymKeySpecBuilder myKeyBuilder = myFactory.newSymKeySpecBuilder();
+        final GordianNewSymCipherSpecBuilder myCipherBuilder = myFactory.newSymCipherSpecBuilder();
+        final GordianNewSymCipherSpec mySpec = myCipherBuilder.ecb(myKeyBuilder.aes(GordianLength.LEN_256), GordianNewPadding.NONE);
         final GordianCoreCipher<GordianNewSymKeySpec> myCipher = (GordianCoreCipher<GordianNewSymKeySpec>) myFactory.createSymKeyCipher(mySpec);
 
         /* Create a standard stream */

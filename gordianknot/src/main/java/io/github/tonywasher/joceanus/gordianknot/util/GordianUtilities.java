@@ -16,6 +16,7 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.util;
 
+import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianNewAgreementSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewPBESpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamCipherSpecBuilder;
@@ -33,6 +34,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianNewSignatu
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keyset.GordianCoreKeySet;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keyset.GordianKeySetData;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.lock.GordianFactoryLockImpl;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.agree.GordianCoreAgreementSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher.GordianCorePBESpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher.GordianCoreStreamCipherSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher.GordianCoreStreamKeySpecBuilder;
@@ -221,5 +223,14 @@ public final class GordianUtilities {
      */
     public static GordianNewEncryptorSpecBuilder newEncryptorSpecBuilder() {
         return GordianCoreEncryptorSpecBuilder.newInstance();
+    }
+
+    /**
+     * Obtain AgreementSpecBuilder instance.
+     *
+     * @return the specBuilder
+     */
+    public static GordianNewAgreementSpecBuilder newAgreementSpecBuilder() {
+        return GordianCoreAgreementSpecBuilder.newInstance();
     }
 }

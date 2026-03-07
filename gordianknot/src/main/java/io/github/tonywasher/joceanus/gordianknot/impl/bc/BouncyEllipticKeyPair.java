@@ -16,7 +16,6 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.impl.bc;
 
-import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairSpec;
@@ -33,6 +32,7 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianCryptoExce
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianIOException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianLogicException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianKeyPairValidity;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.agree.GordianCoreAgreementSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.encrypt.GordianCoreEncryptorSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreElliptic;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairSpec;
@@ -431,7 +431,7 @@ public final class BouncyEllipticKeyPair {
          * @throws GordianException on error
          */
         BouncyECIESAgreementEngine(final GordianCoreAgreementFactory pFactory,
-                                   final GordianAgreementSpec pSpec) throws GordianException {
+                                   final GordianCoreAgreementSpec pSpec) throws GordianException {
             /* Initialize underlying class */
             super(pFactory, pSpec);
 
@@ -490,7 +490,7 @@ public final class BouncyEllipticKeyPair {
          * @throws GordianException on error
          */
         BouncyECAnonAgreementEngine(final GordianCoreAgreementFactory pFactory,
-                                    final GordianAgreementSpec pSpec) throws GordianException {
+                                    final GordianCoreAgreementSpec pSpec) throws GordianException {
             /* Initialize underlying class */
             super(pFactory, pSpec);
 
@@ -547,7 +547,7 @@ public final class BouncyEllipticKeyPair {
          * @throws GordianException on error
          */
         BouncyECBasicAgreementEngine(final GordianCoreAgreementFactory pFactory,
-                                     final GordianAgreementSpec pSpec) throws GordianException {
+                                     final GordianCoreAgreementSpec pSpec) throws GordianException {
             /* Initialize underlying class */
             super(pFactory, pSpec);
 
@@ -604,7 +604,7 @@ public final class BouncyEllipticKeyPair {
          * @throws GordianException on error
          */
         BouncyECUnifiedAgreementEngine(final GordianCoreAgreementFactory pFactory,
-                                       final GordianAgreementSpec pSpec) throws GordianException {
+                                       final GordianCoreAgreementSpec pSpec) throws GordianException {
             /* Initialize underlying class */
             super(pFactory, pSpec);
 
@@ -667,7 +667,7 @@ public final class BouncyEllipticKeyPair {
          * @throws GordianException on error
          */
         BouncyECMQVAgreementEngine(final GordianCoreAgreementFactory pFactory,
-                                   final GordianAgreementSpec pSpec) throws GordianException {
+                                   final GordianCoreAgreementSpec pSpec) throws GordianException {
             /* Initialize underlying class */
             super(pFactory, pSpec);
 

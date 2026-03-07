@@ -16,14 +16,15 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.impl.jca;
 
-import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementType;
+import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianNewAgreementSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianNewAgreementType;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.agree.GordianCoreAgreementEngine;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.agree.GordianCoreAgreementFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseData;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.agree.GordianCoreAgreementSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaAgreement.JcaAnonEngine;
 import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaAgreement.JcaBasicEngine;
 import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaAgreement.JcaMQVEngine;
@@ -56,17 +57,18 @@ public class JcaAgreementFactory
     }
 
     @Override
-    public GordianCoreAgreementEngine createEngine(final GordianAgreementSpec pSpec) throws GordianException {
+    public GordianCoreAgreementEngine createEngine(final GordianNewAgreementSpec pSpec) throws GordianException {
+        final GordianCoreAgreementSpec mySpec = (GordianCoreAgreementSpec) pSpec;
         switch (pSpec.getKeyPairSpec().getKeyPairType()) {
             case EC:
             case GOST:
             case DSTU:
             case SM2:
-                return getECEngine(pSpec);
+                return getECEngine(mySpec);
             case DH:
-                return getDHEngine(pSpec);
+                return getDHEngine(mySpec);
             case NEWHOPE:
-                return getNHEngine(pSpec);
+                return getNHEngine(mySpec);
             case CMCE:
             case FRODO:
             case SABER:
@@ -75,9 +77,9 @@ public class JcaAgreementFactory
             case BIKE:
             case NTRU:
             case NTRUPRIME:
-                return getPostQuantumEngine(pSpec);
+                return getPostQuantumEngine(mySpec);
             case XDH:
-                return getXDHEngine(pSpec);
+                return getXDHEngine(mySpec);
             case COMPOSITE:
             default:
                 return super.createEngine(pSpec);
@@ -91,7 +93,7 @@ public class JcaAgreementFactory
      * @return the Agreement
      * @throws GordianException on error
      */
-    private GordianCoreAgreementEngine getPostQuantumEngine(final GordianAgreementSpec pAgreementSpec) throws GordianException {
+    private GordianCoreAgreementEngine getPostQuantumEngine(final GordianCoreAgreementSpec pAgreementSpec) throws GordianException {
         return new JcaPostQuantumEngine(this, pAgreementSpec, JcaAgreement.getJavaKeyGenerator(pAgreementSpec.getKeyPairSpec()));
     }
 
@@ -102,7 +104,7 @@ public class JcaAgreementFactory
      * @return the Agreement
      * @throws GordianException on error
      */
-    private GordianCoreAgreementEngine getNHEngine(final GordianAgreementSpec pAgreementSpec) throws GordianException {
+    private GordianCoreAgreementEngine getNHEngine(final GordianCoreAgreementSpec pAgreementSpec) throws GordianException {
         return new JcaNewHopeEngine(this, pAgreementSpec, JcaAgreement.getJavaKeyAgreement("NH", true));
     }
 
@@ -113,7 +115,7 @@ public class JcaAgreementFactory
      * @return the Agreement
      * @throws GordianException on error
      */
-    private GordianCoreAgreementEngine getDHEngine(final GordianAgreementSpec pAgreementSpec) throws GordianException {
+    private GordianCoreAgreementEngine getDHEngine(final GordianCoreAgreementSpec pAgreementSpec) throws GordianException {
         switch (pAgreementSpec.getAgreementType()) {
             case ANON:
                 return new JcaAnonEngine(this, pAgreementSpec,
@@ -140,7 +142,7 @@ public class JcaAgreementFactory
      * @return the Agreement
      * @throws GordianException on error
      */
-    private GordianCoreAgreementEngine getECEngine(final GordianAgreementSpec pAgreementSpec) throws GordianException {
+    private GordianCoreAgreementEngine getECEngine(final GordianCoreAgreementSpec pAgreementSpec) throws GordianException {
         switch (pAgreementSpec.getAgreementType()) {
             case ANON:
                 return new JcaAnonEngine(this, pAgreementSpec,
@@ -167,7 +169,7 @@ public class JcaAgreementFactory
      * @return the Agreement
      * @throws GordianException on error
      */
-    private GordianCoreAgreementEngine getXDHEngine(final GordianAgreementSpec pAgreementSpec) throws GordianException {
+    private GordianCoreAgreementEngine getXDHEngine(final GordianCoreAgreementSpec pAgreementSpec) throws GordianException {
         switch (pAgreementSpec.getAgreementType()) {
             case ANON:
                 return new JcaAnonEngine(this, pAgreementSpec, null);
@@ -182,15 +184,15 @@ public class JcaAgreementFactory
     }
 
     @Override
-    protected boolean validAgreementSpec(final GordianAgreementSpec pSpec) {
+    protected boolean validAgreementSpec(final GordianNewAgreementSpec pSpec) {
         /* validate the agreementSpec */
         if (!super.validAgreementSpec(pSpec)) {
             return false;
         }
 
         /* Disallow SM2 */
-        final GordianAgreementType myType = pSpec.getAgreementType();
-        if (GordianAgreementType.SM2.equals(myType)) {
+        final GordianNewAgreementType myType = pSpec.getAgreementType();
+        if (GordianNewAgreementType.SM2.equals(myType)) {
             return false;
         }
 
@@ -212,10 +214,10 @@ public class JcaAgreementFactory
             case DSTU:
             case SM2:
             case DH:
-                return !GordianAgreementType.KEM.equals(myType);
+                return !GordianNewAgreementType.KEM.equals(myType);
             case XDH:
-                return !GordianAgreementType.KEM.equals(myType)
-                        && !GordianAgreementType.MQV.equals(myType);
+                return !GordianNewAgreementType.KEM.equals(myType)
+                        && !GordianNewAgreementType.MQV.equals(myType);
             case RSA:
             default:
                 return false;

@@ -19,15 +19,12 @@ package io.github.tonywasher.joceanus.gordianknot.junit.regression;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamKeySpecBuilder;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymKeySpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.keyset.spec.GordianNewKeySetSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStoreKey;
 import io.github.tonywasher.joceanus.gordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStoreSet;
 import io.github.tonywasher.joceanus.gordianknot.api.keystore.GordianKeyStoreFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.keystore.GordianKeyStoreGateway;
 import io.github.tonywasher.joceanus.gordianknot.api.keystore.GordianKeyStoreManager;
-import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keystore.GordianCoreKeyStore;
 import io.github.tonywasher.joceanus.gordianknot.junit.regression.KeyStoreUtils.KeyStoreAlias;
 import io.github.tonywasher.joceanus.gordianknot.util.GordianUtilities;
@@ -88,9 +85,9 @@ public final class KeyStoreSymmetric {
         /* Create tests */
         return DynamicContainer.dynamicContainer("symmetric", Stream.of(
                 testSymmetricKeySet(),
-                testSymmetricKey(KeyStoreAlias.SYMKEY, GordianSymKeySpecBuilder.aes(KEYLEN)),
-                testSymmetricKey(KeyStoreAlias.STREAMKEY, GordianStreamKeySpecBuilder.hc(KEYLEN)),
-                testSymmetricKey(KeyStoreAlias.MACKEY, GordianMacSpecBuilder.vmpcMac(KEYLEN)),
+                testSymmetricKey(KeyStoreAlias.SYMKEY, GordianUtilities.newSymKeySpecBuilder().aes(KEYLEN)),
+                testSymmetricKey(KeyStoreAlias.STREAMKEY, GordianUtilities.newStreamKeySpecBuilder().hc(KEYLEN)),
+                testSymmetricKey(KeyStoreAlias.MACKEY, GordianUtilities.newMacSpecBuilder().vmpcMac(KEYLEN)),
                 KeyStoreUtils.testKeyStoreSave(theStore),
                 testSymmetricCleanup()
         ));

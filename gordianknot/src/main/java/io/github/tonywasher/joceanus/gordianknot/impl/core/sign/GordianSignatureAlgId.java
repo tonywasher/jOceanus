@@ -21,7 +21,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDiges
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSubSpec.GordianNewDigestState;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairType;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewXMSSSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewXMSSSpec.GordianNewXMSSDigestType;
@@ -408,9 +408,10 @@ public class GordianSignatureAlgId {
      */
     private void addEdDSASignatures() {
         final GordianNewSignatureSpecBuilder mySigBuilder = GordianCoreSignatureSpecBuilder.newInstance();
-        addToMaps(mySigBuilder.edDSA(), GordianKeyPairSpecBuilder.ed25519(),
+        final GordianNewKeyPairSpecBuilder myBuilder = GordianCoreKeyPairSpecBuilder.newInstance();
+        addToMaps(mySigBuilder.edDSA(), myBuilder.ed25519(),
                 new AlgorithmIdentifier(EdECObjectIdentifiers.id_Ed25519, DERNull.INSTANCE));
-        addToMaps(mySigBuilder.edDSA(), GordianKeyPairSpecBuilder.ed448(),
+        addToMaps(mySigBuilder.edDSA(), myBuilder.ed448(),
                 new AlgorithmIdentifier(EdECObjectIdentifiers.id_Ed448, DERNull.INSTANCE));
     }
 

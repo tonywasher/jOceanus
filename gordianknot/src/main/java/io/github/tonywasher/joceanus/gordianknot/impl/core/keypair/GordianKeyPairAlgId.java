@@ -17,8 +17,8 @@
 package io.github.tonywasher.joceanus.gordianknot.impl.core.keypair;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewLMSSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewNTRUPrimeSpec.GordianNewNTRUPrimeType;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewXMSSSpec.GordianNewXMSSDigestType;
@@ -1313,8 +1313,8 @@ public class GordianKeyPairAlgId {
                 final byte[] keyEnc = Objects.requireNonNull(ASN1OctetString.getInstance(pInfo.parsePublicKey())).getOctets();
                 final int myOID = Pack.bigEndianToInt(keyEnc, 0);
                 final XMSSParameters myParams = XMSSParameters.lookupByOID(myOID);
-                return GordianKeyPairSpecBuilder.xmss(determineKeyType(myParams.getTreeDigestOID()),
-                        determineHeight(myParams.getHeight()));
+                final GordianNewKeyPairSpecBuilder myBuilder = GordianCoreKeyPairSpecBuilder.newInstance();
+                return myBuilder.xmss(determineKeyType(myParams.getTreeDigestOID()), determineHeight(myParams.getHeight()));
             } catch (IOException e) {
                 throw new GordianIOException("Failed to resolve key", e);
             }
@@ -1337,7 +1337,8 @@ public class GordianKeyPairAlgId {
         private static GordianNewKeyPairSpec determineKeyPairSpec(final XMSSKeyParams pParms) throws GordianException {
             final ASN1ObjectIdentifier myDigest = pParms.getTreeDigest().getAlgorithm();
             final GordianNewXMSSHeight myHeight = determineHeight(pParms.getHeight());
-            return GordianKeyPairSpecBuilder.xmss(determineKeyType(myDigest), myHeight);
+            final GordianNewKeyPairSpecBuilder myBuilder = GordianCoreKeyPairSpecBuilder.newInstance();
+            return myBuilder.xmss(determineKeyType(myDigest), myHeight);
         }
 
         /**
@@ -1412,7 +1413,8 @@ public class GordianKeyPairAlgId {
                 final byte[] keyEnc = Objects.requireNonNull(ASN1OctetString.getInstance(pInfo.parsePublicKey())).getOctets();
                 final int myOID = Pack.bigEndianToInt(keyEnc, 0);
                 final XMSSMTParameters myParams = XMSSMTParameters.lookupByOID(myOID);
-                return GordianKeyPairSpecBuilder.xmssmt(GordianXMSSEncodedParser.determineKeyType(myParams.getTreeDigestOID()),
+                final GordianNewKeyPairSpecBuilder myBuilder = GordianCoreKeyPairSpecBuilder.newInstance();
+                return myBuilder.xmssmt(GordianXMSSEncodedParser.determineKeyType(myParams.getTreeDigestOID()),
                         GordianXMSSEncodedParser.determineHeight(myParams.getHeight()), determineLayers(myParams.getLayers()));
             } catch (IOException e) {
                 throw new GordianIOException("Failed to resolve key", e);
@@ -1437,7 +1439,8 @@ public class GordianKeyPairAlgId {
             final ASN1ObjectIdentifier myDigest = pParms.getTreeDigest().getAlgorithm();
             final GordianNewXMSSHeight myHeight = GordianXMSSEncodedParser.determineHeight(pParms.getHeight());
             final GordianNewXMSSMTLayers myLayers = determineLayers(pParms.getLayers());
-            return GordianKeyPairSpecBuilder.xmssmt(GordianXMSSEncodedParser.determineKeyType(myDigest), myHeight, myLayers);
+            final GordianNewKeyPairSpecBuilder myBuilder = GordianCoreKeyPairSpecBuilder.newInstance();
+            return myBuilder.xmssmt(GordianXMSSEncodedParser.determineKeyType(myDigest), myHeight, myLayers);
         }
 
         /**
@@ -1602,7 +1605,8 @@ public class GordianKeyPairAlgId {
                     final SubjectPublicKeyInfo myPKInfo = SubjectPublicKeyInfo.getInstance(en.nextElement());
                     mySpecs.add(theIdManager.determineKeyPairSpec(new X509EncodedKeySpec(myPKInfo.getEncoded())));
                 }
-                return GordianKeyPairSpecBuilder.composite(mySpecs);
+                final GordianNewKeyPairSpecBuilder myBuilder = GordianCoreKeyPairSpecBuilder.newInstance();
+                return myBuilder.composite(mySpecs);
 
                 /* Handle exceptions */
             } catch (IOException e) {
@@ -1623,7 +1627,8 @@ public class GordianKeyPairAlgId {
                     final PrivateKeyInfo myPKInfo = PrivateKeyInfo.getInstance(en.nextElement());
                     mySpecs.add(theIdManager.determineKeyPairSpec(new PKCS8EncodedKeySpec(myPKInfo.getEncoded())));
                 }
-                return GordianKeyPairSpecBuilder.composite(mySpecs);
+                final GordianNewKeyPairSpecBuilder myBuilder = GordianCoreKeyPairSpecBuilder.newInstance();
+                return myBuilder.composite(mySpecs);
 
                 /* Handle exceptions */
             } catch (IOException e) {

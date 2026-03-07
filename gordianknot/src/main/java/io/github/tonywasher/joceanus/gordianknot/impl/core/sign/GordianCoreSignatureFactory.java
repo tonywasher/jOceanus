@@ -18,7 +18,6 @@ package io.github.tonywasher.joceanus.gordianknot.impl.core.sign;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestType;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
@@ -373,7 +372,7 @@ public abstract class GordianCoreSignatureFactory
             case EC:
                 return myBuilder.ec(GordianNewSignatureType.DSA, myDigestBuilder.sha3(GordianLength.LEN_512));
             case SM2:
-                return myBuilder.sm2(GordianDigestSpecBuilder.sm3());
+                return myBuilder.sm2(myDigestBuilder.sm3());
             case DSTU:
                 return myBuilder.dstu4145();
             case GOST:

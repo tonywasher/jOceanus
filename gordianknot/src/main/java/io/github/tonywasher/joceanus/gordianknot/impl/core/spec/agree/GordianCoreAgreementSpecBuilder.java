@@ -83,7 +83,7 @@ public final class GordianCoreAgreementSpecBuilder
     @Override
     public GordianNewAgreementSpecBuilder withKDF(final GordianNewAgreementKDF pKDF) {
         theKDF = pKDF;
-        return null;
+        return this;
     }
 
     @Override
@@ -194,8 +194,8 @@ public final class GordianCoreAgreementSpecBuilder
      * @param pAgreementType the agreementType
      * @return the list
      */
-    private static List<GordianNewAgreementSpec> listAllKDFs(final GordianNewKeyPairSpec pKeyPairSpec,
-                                                             final GordianNewAgreementType pAgreementType) {
+    public static List<GordianNewAgreementSpec> listAllKDFs(final GordianNewKeyPairSpec pKeyPairSpec,
+                                                            final GordianNewAgreementType pAgreementType) {
         return listAllKDFs(pKeyPairSpec, pAgreementType, false);
     }
 
@@ -207,9 +207,9 @@ public final class GordianCoreAgreementSpecBuilder
      * @param pConfirm       with key confirmation
      * @return the list
      */
-    private static List<GordianNewAgreementSpec> listAllKDFs(final GordianNewKeyPairSpec pKeyPairSpec,
-                                                             final GordianNewAgreementType pAgreementType,
-                                                             final boolean pConfirm) {
+    public static List<GordianNewAgreementSpec> listAllKDFs(final GordianNewKeyPairSpec pKeyPairSpec,
+                                                            final GordianNewAgreementType pAgreementType,
+                                                            final boolean pConfirm) {
         /* Create list */
         final List<GordianNewAgreementSpec> myAgreements = new ArrayList<>();
 

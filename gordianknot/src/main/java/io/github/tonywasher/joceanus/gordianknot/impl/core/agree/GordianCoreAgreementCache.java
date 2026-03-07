@@ -17,7 +17,7 @@
 package io.github.tonywasher.joceanus.gordianknot.impl.core.agree;
 
 import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreement;
-import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianNewAgreementSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianRandomSource;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
@@ -73,7 +73,7 @@ public class GordianCoreAgreementCache {
      * @throws GordianException on error
      */
     GordianCoreAgreement lookUpAgreement(final Long pId,
-                                         final GordianAgreementSpec pSpec) throws GordianException {
+                                         final GordianNewAgreementSpec pSpec) throws GordianException {
         /* Look up the Agreement */
         final GordianCoreAgreement myAgreement = theMap.get(pId);
 

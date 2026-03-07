@@ -16,10 +16,9 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.impl.core.agree;
 
-import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementKDF;
 import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementParams;
-import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementType;
+import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianNewAgreementKDF;
+import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianNewAgreementSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianCertificate;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairUse;
@@ -36,6 +35,8 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.cipher.GordianCoreCip
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianLogicException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keyset.GordianCoreKeySetFactory;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.agree.GordianCoreAgreementSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.agree.GordianCoreAgreementType;
 
 import java.util.Arrays;
 import java.util.Objects;
@@ -63,7 +64,7 @@ public class GordianCoreAgreementParams
     /**
      * The Spec.
      */
-    private final GordianAgreementSpec theSpec;
+    private final GordianCoreAgreementSpec theSpec;
 
     /**
      * The ResultType.
@@ -104,11 +105,11 @@ public class GordianCoreAgreementParams
      * @throws GordianException on error
      */
     GordianCoreAgreementParams(final GordianCoreAgreementSupplier pSupplier,
-                               final GordianAgreementSpec pSpec,
+                               final GordianNewAgreementSpec pSpec,
                                final Object pResultType) throws GordianException {
         isClient = true;
         theFactory = pSupplier.getFactory();
-        theSpec = pSpec;
+        theSpec = (GordianCoreAgreementSpec) pSpec;
         checkResultType(pResultType);
         theResultType = pResultType;
     }
@@ -171,7 +172,7 @@ public class GordianCoreAgreementParams
     }
 
     @Override
-    public GordianAgreementSpec getAgreementSpec() {
+    public GordianCoreAgreementSpec getAgreementSpec() {
         return theSpec;
     }
 
@@ -261,8 +262,8 @@ public class GordianCoreAgreementParams
         }
 
         /* If we have a client certificate */
-        final GordianAgreementSpec mySpec = getAgreementSpec();
-        final GordianAgreementType myType = mySpec.getAgreementType();
+        final GordianCoreAgreementSpec mySpec = getAgreementSpec();
+        final GordianCoreAgreementType myType = mySpec.getCoreAgreementType();
         if (pClient != null) {
             /* Check that the keySpec matches the agreement and that we have a private key */
             final GordianKeyPair myKeyPair = pClient.getKeyPair();
@@ -291,11 +292,11 @@ public class GordianCoreAgreementParams
     @Override
     public GordianAgreementParams setServerCertificate(final GordianCertificate pServer) throws GordianException {
         /* If we have a server certificate */
-        final GordianAgreementSpec mySpec = getAgreementSpec();
+        final GordianCoreAgreementSpec mySpec = getAgreementSpec();
         if (pServer != null) {
             /* Check that the keySpec matches the agreement */
             final GordianKeyPair myKeyPair = pServer.getKeyPair();
-            if (mySpec.getAgreementType().isSigned()) {
+            if (mySpec.getCoreAgreementType().isSigned()) {
                 throw new GordianDataException("Server Certificate not supported for agreement");
             }
             if (!Objects.equals(mySpec.getKeyPairSpec(), myKeyPair.getKeyPairSpec())) {
@@ -318,7 +319,7 @@ public class GordianCoreAgreementParams
                 }
             }
 
-        } else if (!mySpec.getAgreementType().isSigned()) {
+        } else if (!mySpec.getCoreAgreementType().isSigned()) {
             throw new GordianDataException("Null Server Certificate not allowed");
         }
 
@@ -344,10 +345,10 @@ public class GordianCoreAgreementParams
         }
 
         /* If we have a signer certificate */
-        final GordianAgreementSpec mySpec = getAgreementSpec();
+        final GordianCoreAgreementSpec mySpec = getAgreementSpec();
         if (pSigner != null) {
             /* Check that we require a signer */
-            if (!mySpec.getAgreementType().isSigned()) {
+            if (!mySpec.getCoreAgreementType().isSigned()) {
                 throw new GordianDataException("Signer Certificate not allowed");
             }
 
@@ -362,7 +363,7 @@ public class GordianCoreAgreementParams
                 throw new GordianDataException(GordianBaseData.getInvalidText(pSignSpec));
             }
 
-        } else if (mySpec.getAgreementType().isSigned()) {
+        } else if (mySpec.getCoreAgreementType().isSigned()) {
             throw new GordianDataException("Null Signer Certificate not allowed");
         }
 
@@ -377,7 +378,7 @@ public class GordianCoreAgreementParams
     public GordianAgreementParams setAdditionalData(final byte[] pData) throws GordianException {
         /* Only allowed if KDFType is not NONE */
         if (pData != null
-                && GordianAgreementKDF.NONE.equals(theSpec.getKDFType())) {
+                && GordianNewAgreementKDF.NONE.equals(theSpec.getKDFType())) {
             throw new GordianDataException("Additional Data not allowed for KDFType NONE");
         }
 

@@ -62,6 +62,40 @@ public interface GordianNewAgreementSpecBuilder {
     GordianNewAgreementSpec build();
 
     /**
+     * Create generic agreement.
+     *
+     * @param pKeyPairSpec the keyPairSpec
+     * @param pAgreeType   the agreementType
+     * @param pKDFType     the KDF type
+     * @return the agreementSpec
+     */
+    default GordianNewAgreementSpec agree(final GordianNewKeyPairSpec pKeyPairSpec,
+                                          final GordianNewAgreementType pAgreeType,
+                                          final GordianNewAgreementKDF pKDFType) {
+        return withKeyPairSpec(pKeyPairSpec).withAgreementType(pAgreeType).withKDF(pKDFType).build();
+    }
+
+    /**
+     * Create generic agreement.
+     *
+     * @param pKeyPairSpec the keyPairSpec
+     * @param pAgreeType   the agreementType
+     * @param pKDFType     the KDF type
+     * @param pConfirm     withConfirm(true/false)
+     * @return the agreementSpec
+     */
+    default GordianNewAgreementSpec agree(final GordianNewKeyPairSpec pKeyPairSpec,
+                                          final GordianNewAgreementType pAgreeType,
+                                          final GordianNewAgreementKDF pKDFType,
+                                          final boolean pConfirm) {
+        withKeyPairSpec(pKeyPairSpec).withAgreementType(pAgreeType).withKDF(pKDFType);
+        if (pConfirm) {
+            withConfirm();
+        }
+        return build();
+    }
+
+    /**
      * Create the KEM agreementSpec.
      *
      * @param pKeyPairSpec the keyPairSpec

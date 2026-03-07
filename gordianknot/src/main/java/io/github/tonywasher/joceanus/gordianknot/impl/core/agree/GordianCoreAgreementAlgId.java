@@ -16,17 +16,18 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.impl.core.agree;
 
-import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementKDF;
-import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementType;
+import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianNewAgreementKDF;
+import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianNewAgreementSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianNewAgreementSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianNewAgreementType;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewCipherSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamCipherSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymCipherSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactoryType;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairType;
 import io.github.tonywasher.joceanus.gordianknot.api.keyset.spec.GordianNewKeySetSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianASN1Util;
@@ -34,6 +35,7 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseData;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.cipher.GordianCoreCipherFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keyset.GordianKeySetSpecASN1;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.agree.GordianCoreAgreementSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreNTRUPrimeSpec;
@@ -95,12 +97,12 @@ public class GordianCoreAgreementAlgId {
     /**
      * Map of AgreementSpec to ObjectIdentifier.
      */
-    private final Map<GordianAgreementSpec, ASN1ObjectIdentifier> theAgree2IdMap;
+    private final Map<GordianNewAgreementSpec, ASN1ObjectIdentifier> theAgree2IdMap;
 
     /**
      * Map of Identifier to AgreementSpec.
      */
-    private final Map<ASN1ObjectIdentifier, GordianAgreementSpec> theId2AgreeMap;
+    private final Map<ASN1ObjectIdentifier, GordianNewAgreementSpec> theId2AgreeMap;
 
     /**
      * Map of KeyPairSpec to ObjectIdentifier.
@@ -137,12 +139,13 @@ public class GordianCoreAgreementAlgId {
      */
     private void addAllAgreements() {
         /* Loop through all the Agreement types */
-        for (GordianAgreementType myType : GordianAgreementType.values()) {
+        final GordianNewAgreementSpecBuilder myBuilder = GordianCoreAgreementSpecBuilder.newInstance();
+        for (GordianNewAgreementType myType : GordianNewAgreementType.values()) {
             /* Loop through all the KDF types */
-            for (GordianAgreementKDF myKDF : GordianAgreementKDF.values()) {
+            for (GordianNewAgreementKDF myKDF : GordianNewAgreementKDF.values()) {
                 /* Add agreements */
-                addAgreement(new GordianAgreementSpec(NULLKEYPAIRSPEC, myType, myKDF));
-                addAgreement(new GordianAgreementSpec(NULLKEYPAIRSPEC, myType, myKDF, Boolean.TRUE));
+                addAgreement(myBuilder.agree(NULLKEYPAIRSPEC, myType, myKDF));
+                addAgreement(myBuilder.agree(NULLKEYPAIRSPEC, myType, myKDF, Boolean.TRUE));
             }
         }
     }
@@ -152,17 +155,17 @@ public class GordianCoreAgreementAlgId {
      *
      * @param pSpec the agreementSpec
      */
-    private void addAgreement(final GordianAgreementSpec pSpec) {
+    private void addAgreement(final GordianNewAgreementSpec pSpec) {
         /* Add branch for agreementType */
-        final GordianAgreementType myType = pSpec.getAgreementType();
+        final GordianNewAgreementType myType = pSpec.getAgreementType();
         ASN1ObjectIdentifier myId = AGREESPECOID.branch(Integer.toString(myType.ordinal() + 1));
 
         /* Add branch for kdfType */
-        final GordianAgreementKDF myKDFType = pSpec.getKDFType();
+        final GordianNewAgreementKDF myKDFType = pSpec.getKDFType();
         myId = myId.branch(Integer.toString(myKDFType.ordinal() + 1));
 
         /* Add branch for confirm (if present) */
-        if (Boolean.TRUE.equals(pSpec.withConfirm())) {
+        if (pSpec.withConfirm()) {
             myId = myId.branch("1");
         }
 
@@ -179,7 +182,8 @@ public class GordianCoreAgreementAlgId {
             /* Add agreements */
             addKeyPair(mySpec);
         }
-        addKeyPair(GordianKeyPairSpecBuilder.composite());
+        final GordianNewKeyPairSpecBuilder myBuilder = GordianCoreKeyPairSpecBuilder.newInstance();
+        addKeyPair(myBuilder.composite());
     }
 
     /**
@@ -258,9 +262,11 @@ public class GordianCoreAgreementAlgId {
      * @param pSpec the agreementSpec
      * @return the identifier
      */
-    public AlgorithmIdentifier determineIdentifier(final GordianAgreementSpec pSpec) {
+    public AlgorithmIdentifier determineIdentifier(final GordianNewAgreementSpec pSpec) {
         /* Add branch for agreementType */
-        final GordianAgreementSpec myPartial = new GordianAgreementSpec(NULLKEYPAIRSPEC, pSpec.getAgreementType(),
+        final GordianNewKeyPairSpecBuilder myKeyPairBuilder = GordianCoreKeyPairSpecBuilder.newInstance();
+        final GordianNewAgreementSpecBuilder myBuilder = GordianCoreAgreementSpecBuilder.newInstance();
+        final GordianNewAgreementSpec myPartial = myBuilder.agree(NULLKEYPAIRSPEC, pSpec.getAgreementType(),
                 pSpec.getKDFType(), pSpec.withConfirm());
         final ASN1ObjectIdentifier myAgreeId = theAgree2IdMap.get(myPartial);
 
@@ -268,7 +274,7 @@ public class GordianCoreAgreementAlgId {
         final GordianCoreKeyPairSpec mySpec = (GordianCoreKeyPairSpec) pSpec.getKeyPairSpec();
         if (mySpec.getKeyPairType() == GordianNewKeyPairType.COMPOSITE) {
             final ASN1EncodableVector v = new ASN1EncodableVector();
-            final ASN1ObjectIdentifier myId = theKeyPair2IdMap.get(GordianKeyPairSpecBuilder.composite());
+            final ASN1ObjectIdentifier myId = theKeyPair2IdMap.get(myKeyPairBuilder.composite());
             final Iterator<GordianNewKeyPairSpec> myIterator = mySpec.keySpecIterator();
             while (myIterator.hasNext()) {
                 final GordianNewKeyPairSpec myPair = myIterator.next();
@@ -288,13 +294,14 @@ public class GordianCoreAgreementAlgId {
      * @param pId the identifier
      * @return the agreementSpec
      */
-    public GordianAgreementSpec determineAgreementSpec(final AlgorithmIdentifier pId) {
+    public GordianNewAgreementSpec determineAgreementSpec(final AlgorithmIdentifier pId) {
         /* Obtain the ObjectIdentifiers */
         final ASN1ObjectIdentifier myId = pId.getAlgorithm();
         final AlgorithmIdentifier myPairId = AlgorithmIdentifier.getInstance(pId.getParameters());
 
         /* Derive the specs */
-        final GordianAgreementSpec mySpec = theId2AgreeMap.get(myId);
+        final GordianNewAgreementSpecBuilder myBuilder = GordianCoreAgreementSpecBuilder.newInstance();
+        final GordianNewAgreementSpec mySpec = theId2AgreeMap.get(myId);
         final GordianNewKeyPairSpec myPairSpec = theId2KeyPairMap.get(myPairId.getAlgorithm());
         if (myPairSpec.getKeyPairType() == GordianNewKeyPairType.COMPOSITE) {
             final ASN1Sequence myPairs = ASN1Sequence.getInstance(myPairId.getParameters());
@@ -303,11 +310,12 @@ public class GordianCoreAgreementAlgId {
             while (en.hasMoreElements()) {
                 mySpecs.add(theId2KeyPairMap.get(ASN1ObjectIdentifier.getInstance(en.nextElement())));
             }
-            return new GordianAgreementSpec(GordianKeyPairSpecBuilder.composite(mySpecs), mySpec.getAgreementType(), mySpec.getKDFType(), mySpec.withConfirm());
+            final GordianNewKeyPairSpecBuilder myKeyPairBuilder = GordianCoreKeyPairSpecBuilder.newInstance();
+            return myBuilder.agree(myKeyPairBuilder.composite(mySpecs), mySpec.getAgreementType(), mySpec.getKDFType(), mySpec.withConfirm());
         }
 
         /* Return the AgreementSpec */
-        return new GordianAgreementSpec(myPairSpec, mySpec.getAgreementType(), mySpec.getKDFType(), mySpec.withConfirm());
+        return myBuilder.agree(myPairSpec, mySpec.getAgreementType(), mySpec.getKDFType(), mySpec.withConfirm());
     }
 
     /**
@@ -316,7 +324,7 @@ public class GordianCoreAgreementAlgId {
      * @param pSpec       the agreementSpec
      * @param pIdentifier the identifier
      */
-    private void addToMaps(final GordianAgreementSpec pSpec,
+    private void addToMaps(final GordianNewAgreementSpec pSpec,
                            final ASN1ObjectIdentifier pIdentifier) {
         theAgree2IdMap.put(pSpec, pIdentifier);
         theId2AgreeMap.put(pIdentifier, pSpec);

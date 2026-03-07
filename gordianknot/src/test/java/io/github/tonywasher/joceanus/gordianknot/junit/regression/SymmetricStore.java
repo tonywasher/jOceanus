@@ -19,7 +19,6 @@ package io.github.tonywasher.joceanus.gordianknot.junit.regression;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamCipherSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewPBESpec;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewPBESpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamCipherSpec;
@@ -42,13 +41,12 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.key.GordianCoreKeyGen
 import io.github.tonywasher.joceanus.gordianknot.impl.core.mac.GordianCoreMacFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.random.GordianCoreRandomFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher.GordianCorePBESpec;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher.GordianCorePBESpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher.GordianCoreStreamCipherSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher.GordianCoreStreamKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher.GordianCoreSymCipherSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher.GordianCoreSymKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianCoreDigestSpec;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianCoreDigestSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.util.GordianUtilities;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -671,7 +669,7 @@ class SymmetricStore {
          */
         public boolean hasAADVersion() {
             if (((GordianCoreStreamKeySpec) theKeySpec).supportsAEAD()) {
-                final GordianNewStreamCipherSpec myAADSpec = GordianStreamCipherSpecBuilder.stream(theKeySpec, true);
+                final GordianNewStreamCipherSpec myAADSpec = GordianUtilities.newStreamCipherSpecBuilder().streamCipher(theKeySpec, true);
                 return theFactory.getCipherFactory().supportedStreamCipherSpecs().test(myAADSpec);
             }
             return false;
@@ -1047,8 +1045,8 @@ class SymmetricStore {
         final List<FactorySymPBECipherSpec> myResult = new ArrayList<>();
 
         /* Build the list */
-        final GordianNewDigestSpecBuilder myBuilder = GordianCoreDigestSpecBuilder.newInstance();
-        final GordianNewPBESpecBuilder myPBEBuilder = GordianCorePBESpecBuilder.newInstance();
+        final GordianNewDigestSpecBuilder myBuilder = GordianUtilities.newDigestSpecBuilder();
+        final GordianNewPBESpecBuilder myPBEBuilder = GordianUtilities.newPBESpecBuilder();
         GordianNewPBESpec myPBESpec = myPBEBuilder.pbKDF2(myBuilder.sha2(GordianLength.LEN_512), 2048);
         myResult.add(new FactorySymPBECipherSpec(pCipherSpec, myPBESpec));
         myPBESpec = myPBEBuilder.pkcs12(myBuilder.sha2(GordianLength.LEN_512), 2048);
@@ -1100,8 +1098,8 @@ class SymmetricStore {
         final List<FactoryStreamPBECipherSpec> myResult = new ArrayList<>();
 
         /* Build the list */
-        final GordianNewDigestSpecBuilder myBuilder = GordianCoreDigestSpecBuilder.newInstance();
-        final GordianNewPBESpecBuilder myPBEBuilder = GordianCorePBESpecBuilder.newInstance();
+        final GordianNewDigestSpecBuilder myBuilder = GordianUtilities.newDigestSpecBuilder();
+        final GordianNewPBESpecBuilder myPBEBuilder = GordianUtilities.newPBESpecBuilder();
         GordianNewPBESpec myPBESpec = myPBEBuilder.pbKDF2(myBuilder.sha2(GordianLength.LEN_512), 2048);
         myResult.add(new FactoryStreamPBECipherSpec(pCipherSpec, myPBESpec));
         myPBESpec = myPBEBuilder.pkcs12(myBuilder.sha2(GordianLength.LEN_512), 2048);

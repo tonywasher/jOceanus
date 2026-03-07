@@ -16,6 +16,8 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.api.agree;
 
+import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianNewAgreementSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianNewAgreementSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianCertificate;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairUsage;
@@ -46,7 +48,7 @@ public interface GordianAgreementFactory {
      * @return the Params
      * @throws GordianException on error
      */
-    GordianAgreementParams newAgreementParams(GordianAgreementSpec pSpec,
+    GordianAgreementParams newAgreementParams(GordianNewAgreementSpec pSpec,
                                               Object pResultType) throws GordianException;
 
     /**
@@ -66,6 +68,13 @@ public interface GordianAgreementFactory {
      * @throws GordianException on error
      */
     GordianAgreement parseAgreementMessage(byte[] pMessage) throws GordianException;
+
+    /**
+     * create new GordianAgreementSpecBuilder.
+     *
+     * @return the new AgreementSpecBuilder
+     */
+    GordianNewAgreementSpecBuilder newAgreementSpecBuilder();
 
     /**
      * Declare signer certificate.
@@ -103,7 +112,7 @@ public interface GordianAgreementFactory {
      *
      * @return the predicate
      */
-    Predicate<GordianAgreementSpec> supportedAgreements();
+    Predicate<GordianNewAgreementSpec> supportedAgreements();
 
     /**
      * Check AgreementSpec and KeyPair combination.
@@ -113,7 +122,7 @@ public interface GordianAgreementFactory {
      * @return true/false
      */
     default boolean validAgreementSpecForKeyPair(final GordianKeyPair pKeyPair,
-                                                 final GordianAgreementSpec pAgreementSpec) {
+                                                 final GordianNewAgreementSpec pAgreementSpec) {
         return validAgreementSpecForKeyPairSpec(pKeyPair.getKeyPairSpec(), pAgreementSpec);
     }
 
@@ -125,7 +134,7 @@ public interface GordianAgreementFactory {
      * @return true/false
      */
     boolean validAgreementSpecForKeyPairSpec(GordianNewKeyPairSpec pKeyPairSpec,
-                                             GordianAgreementSpec pAgreementSpec);
+                                             GordianNewAgreementSpec pAgreementSpec);
 
     /**
      * Obtain a list of supported agreementSpecs.
@@ -133,7 +142,7 @@ public interface GordianAgreementFactory {
      * @param pKeyPair the keyPair
      * @return the list of supported agreementSpecs.
      */
-    List<GordianAgreementSpec> listAllSupportedAgreements(GordianKeyPair pKeyPair);
+    List<GordianNewAgreementSpec> listAllSupportedAgreements(GordianKeyPair pKeyPair);
 
     /**
      * Obtain a list of supported agreementSpecs.
@@ -141,7 +150,7 @@ public interface GordianAgreementFactory {
      * @param pKeyPairSpec the keySpec
      * @return the list of supported agreementSpecs.
      */
-    List<GordianAgreementSpec> listAllSupportedAgreements(GordianNewKeyPairSpec pKeyPairSpec);
+    List<GordianNewAgreementSpec> listAllSupportedAgreements(GordianNewKeyPairSpec pKeyPairSpec);
 
     /**
      * Create default agreementSpec for key.
@@ -149,5 +158,5 @@ public interface GordianAgreementFactory {
      * @param pKeySpec the keySpec
      * @return the AgreementSpec
      */
-    GordianAgreementSpec defaultForKeyPair(GordianNewKeyPairSpec pKeySpec);
+    GordianNewAgreementSpec defaultForKeyPair(GordianNewKeyPairSpec pKeySpec);
 }

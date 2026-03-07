@@ -73,9 +73,9 @@ public class GordianCoreAgreementSpec
      * @param pAgreementType the agreement type
      * @param pKDFType       the KDF type
      */
-    public GordianCoreAgreementSpec(final GordianNewKeyPairSpec pKeyPairSpec,
-                                    final GordianNewAgreementType pAgreementType,
-                                    final GordianNewAgreementKDF pKDFType) {
+    GordianCoreAgreementSpec(final GordianNewKeyPairSpec pKeyPairSpec,
+                             final GordianNewAgreementType pAgreementType,
+                             final GordianNewAgreementKDF pKDFType) {
         this(pKeyPairSpec, pAgreementType, pKDFType, false);
     }
 
@@ -87,10 +87,10 @@ public class GordianCoreAgreementSpec
      * @param pKDFType       the KDF type
      * @param pConfirm       with key confirmation
      */
-    public GordianCoreAgreementSpec(final GordianNewKeyPairSpec pKeyPairSpec,
-                                    final GordianNewAgreementType pAgreementType,
-                                    final GordianNewAgreementKDF pKDFType,
-                                    final boolean pConfirm) {
+    GordianCoreAgreementSpec(final GordianNewKeyPairSpec pKeyPairSpec,
+                             final GordianNewAgreementType pAgreementType,
+                             final GordianNewAgreementKDF pKDFType,
+                             final boolean pConfirm) {
         theKeyPairSpec = (GordianCoreKeyPairSpec) pKeyPairSpec;
         theAgreementType = GordianCoreAgreementType.mapCoreType(pAgreementType);
         theKDFType = GordianCoreAgreementKDF.mapCoreKDF(pKDFType);

@@ -20,7 +20,6 @@ import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianEncryptorFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianEncryptorSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianNewEncryptorSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianNewEncryptorSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianNewSM2EncryptionType;
@@ -268,7 +267,7 @@ public abstract class GordianCoreEncryptorFactory
                     final GordianNewKeyPairSpec mySpec = myIterator.next();
                     mySpecs.add(defaultForKeyPair(mySpec));
                 }
-                final GordianNewEncryptorSpec mySpec = GordianEncryptorSpecBuilder.composite(mySpecs);
+                final GordianNewEncryptorSpec mySpec = myEncBuilder.composite(mySpecs);
                 return mySpec.isValid() ? mySpec : null;
             default:
                 return null;

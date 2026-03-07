@@ -28,6 +28,7 @@ module io.github.tonywasher.joceanus.gordianknot {
 
     /* Exports */
     exports io.github.tonywasher.joceanus.gordianknot.api.agree;
+    exports io.github.tonywasher.joceanus.gordianknot.api.agree.spec;
     exports io.github.tonywasher.joceanus.gordianknot.api.base;
     exports io.github.tonywasher.joceanus.gordianknot.api.cert;
     exports io.github.tonywasher.joceanus.gordianknot.api.cipher;

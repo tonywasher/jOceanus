@@ -20,7 +20,6 @@ import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianEncryptorFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianEncryptorSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianNewEncryptorSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianNewEncryptorSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianNewSM2EncryptionType;
@@ -124,13 +123,14 @@ public class GordianEncryptorAlgId {
     public GordianNewEncryptorSpec getSpecForIdentifier(final AlgorithmIdentifier pIdentifier) {
         /* Handle Composite keyPairs specially */
         if (MiscObjectIdentifiers.id_alg_composite.equals(pIdentifier.getAlgorithm())) {
+            final GordianNewEncryptorSpecBuilder myBuilder = GordianCoreEncryptorSpecBuilder.newInstance();
             final List<GordianNewEncryptorSpec> myList = new ArrayList<>();
             final ASN1Sequence myAlgs = ASN1Sequence.getInstance(pIdentifier.getParameters());
             final Enumeration<?> en = myAlgs.getObjects();
             while (en.hasMoreElements()) {
                 myList.add(getSpecForIdentifier(AlgorithmIdentifier.getInstance(en.nextElement())));
             }
-            return GordianEncryptorSpecBuilder.composite(myList);
+            return myBuilder.composite(myList);
         }
         return theIdentifierMap.get(pIdentifier);
     }
