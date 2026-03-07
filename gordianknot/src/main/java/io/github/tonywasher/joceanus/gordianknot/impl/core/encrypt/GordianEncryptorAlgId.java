@@ -17,16 +17,21 @@
 package io.github.tonywasher.joceanus.gordianknot.impl.core.encrypt;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianEncryptorFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianEncryptorSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianEncryptorSpecBuilder;
-import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianSM2EncryptionSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianNewEncryptorSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianNewEncryptorSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianNewSM2EncryptionType;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairType;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianASN1Util;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.digest.GordianCoreDigestAlgId;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianCoreDigestSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.encrypt.GordianCoreEncryptorSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.encrypt.GordianCoreEncryptorSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.encrypt.GordianCoreSM2EncryptionSpec;
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.ASN1Sequence;
@@ -55,12 +60,12 @@ public class GordianEncryptorAlgId {
     /**
      * Map of EncryptorSpec to Identifier.
      */
-    private final Map<GordianEncryptorSpec, AlgorithmIdentifier> theSpecMap;
+    private final Map<GordianNewEncryptorSpec, AlgorithmIdentifier> theSpecMap;
 
     /**
      * Map of Identifier to EncryptorSpec.
      */
-    private final Map<AlgorithmIdentifier, GordianEncryptorSpec> theIdentifierMap;
+    private final Map<AlgorithmIdentifier, GordianNewEncryptorSpec> theIdentifierMap;
 
     /**
      * The factory.
@@ -96,10 +101,11 @@ public class GordianEncryptorAlgId {
      * @param pSpec the encryptorSpec.
      * @return the Identifier
      */
-    public AlgorithmIdentifier getIdentifierForSpec(final GordianEncryptorSpec pSpec) {
+    public AlgorithmIdentifier getIdentifierForSpec(final GordianNewEncryptorSpec pSpec) {
         /* Handle Composite keyPairs specially */
         if (pSpec.getKeyPairType() == GordianNewKeyPairType.COMPOSITE) {
-            final Iterator<GordianEncryptorSpec> myIterator = pSpec.encryptorSpecIterator();
+            final GordianCoreEncryptorSpec mySpec = (GordianCoreEncryptorSpec) pSpec;
+            final Iterator<GordianNewEncryptorSpec> myIterator = mySpec.encryptorSpecIterator();
             final ASN1EncodableVector ks = new ASN1EncodableVector();
             while (myIterator.hasNext()) {
                 ks.add(getIdentifierForSpec(myIterator.next()));
@@ -115,10 +121,10 @@ public class GordianEncryptorAlgId {
      * @param pIdentifier the identifier.
      * @return the encryptorSpec (or null if not found)
      */
-    public GordianEncryptorSpec getSpecForIdentifier(final AlgorithmIdentifier pIdentifier) {
+    public GordianNewEncryptorSpec getSpecForIdentifier(final AlgorithmIdentifier pIdentifier) {
         /* Handle Composite keyPairs specially */
         if (MiscObjectIdentifiers.id_alg_composite.equals(pIdentifier.getAlgorithm())) {
-            final List<GordianEncryptorSpec> myList = new ArrayList<>();
+            final List<GordianNewEncryptorSpec> myList = new ArrayList<>();
             final ASN1Sequence myAlgs = ASN1Sequence.getInstance(pIdentifier.getParameters());
             final Enumeration<?> en = myAlgs.getObjects();
             while (en.hasMoreElements()) {
@@ -133,21 +139,23 @@ public class GordianEncryptorAlgId {
      * Add WellKnown encryptors.
      */
     private void addWellKnownEncryptors() {
-        addToMaps(GordianEncryptorSpecBuilder.sm2(GordianSM2EncryptionSpec.c1c2c3(GordianDigestSpecBuilder.sm3())),
+        final GordianNewEncryptorSpecBuilder myEncBuilder = GordianCoreEncryptorSpecBuilder.newInstance();
+        final GordianNewDigestSpecBuilder myDigestBuilder = GordianCoreDigestSpecBuilder.newInstance();
+        addToMaps(myEncBuilder.sm2(GordianNewSM2EncryptionType.C1C2C3, myDigestBuilder.sm3()),
                 new AlgorithmIdentifier(GMObjectIdentifiers.sm2encrypt_with_sm3, DERNull.INSTANCE));
-        addToMaps(GordianEncryptorSpecBuilder.sm2(GordianSM2EncryptionSpec.c1c2c3(GordianDigestSpecBuilder.sha2(GordianLength.LEN_224))),
+        addToMaps(myEncBuilder.sm2(GordianNewSM2EncryptionType.C1C2C3, myDigestBuilder.sha2(GordianLength.LEN_224)),
                 new AlgorithmIdentifier(GMObjectIdentifiers.sm2encrypt_with_sha224, DERNull.INSTANCE));
-        addToMaps(GordianEncryptorSpecBuilder.sm2(GordianSM2EncryptionSpec.c1c2c3(GordianDigestSpecBuilder.sha2(GordianLength.LEN_256))),
+        addToMaps(myEncBuilder.sm2(GordianNewSM2EncryptionType.C1C2C3, myDigestBuilder.sha2(GordianLength.LEN_256)),
                 new AlgorithmIdentifier(GMObjectIdentifiers.sm2encrypt_with_sha256, DERNull.INSTANCE));
-        addToMaps(GordianEncryptorSpecBuilder.sm2(GordianSM2EncryptionSpec.c1c2c3(GordianDigestSpecBuilder.sha2(GordianLength.LEN_384))),
+        addToMaps(myEncBuilder.sm2(GordianNewSM2EncryptionType.C1C2C3, myDigestBuilder.sha2(GordianLength.LEN_384)),
                 new AlgorithmIdentifier(GMObjectIdentifiers.sm2encrypt_with_sha384, DERNull.INSTANCE));
-        addToMaps(GordianEncryptorSpecBuilder.sm2(GordianSM2EncryptionSpec.c1c2c3(GordianDigestSpecBuilder.sha2(GordianLength.LEN_512))),
+        addToMaps(myEncBuilder.sm2(GordianNewSM2EncryptionType.C1C2C3, myDigestBuilder.sha2(GordianLength.LEN_512)),
                 new AlgorithmIdentifier(GMObjectIdentifiers.sm2encrypt_with_sha512, DERNull.INSTANCE));
-        addToMaps(GordianEncryptorSpecBuilder.sm2(GordianSM2EncryptionSpec.c1c2c3(GordianDigestSpecBuilder.whirlpool())),
+        addToMaps(myEncBuilder.sm2(GordianNewSM2EncryptionType.C1C2C3, myDigestBuilder.whirlpool()),
                 new AlgorithmIdentifier(GMObjectIdentifiers.sm2encrypt_with_whirlpool, DERNull.INSTANCE));
-        addToMaps(GordianEncryptorSpecBuilder.sm2(GordianSM2EncryptionSpec.c1c2c3(GordianDigestSpecBuilder.blake2s(GordianLength.LEN_256))),
+        addToMaps(myEncBuilder.sm2(GordianNewSM2EncryptionType.C1C2C3, myDigestBuilder.blake2s(GordianLength.LEN_256)),
                 new AlgorithmIdentifier(GMObjectIdentifiers.sm2encrypt_with_blake2s256, DERNull.INSTANCE));
-        addToMaps(GordianEncryptorSpecBuilder.sm2(GordianSM2EncryptionSpec.c1c2c3(GordianDigestSpecBuilder.blake2b(GordianLength.LEN_512))),
+        addToMaps(myEncBuilder.sm2(GordianNewSM2EncryptionType.C1C2C3, myDigestBuilder.blake2b(GordianLength.LEN_512)),
                 new AlgorithmIdentifier(GMObjectIdentifiers.sm2encrypt_with_blake2b512, DERNull.INSTANCE));
     }
 
@@ -157,7 +165,7 @@ public class GordianEncryptorAlgId {
      * @param pKeyType the keyType
      */
     private void addEncryptors(final GordianNewKeyPairType pKeyType) {
-        for (GordianEncryptorSpec mySpec : theFactory.listAllSupportedEncryptors(pKeyType)) {
+        for (GordianNewEncryptorSpec mySpec : theFactory.listAllSupportedEncryptors(pKeyType)) {
             ensureEncryptor(mySpec);
         }
     }
@@ -167,7 +175,7 @@ public class GordianEncryptorAlgId {
      *
      * @param pSpec the encryptorSpec
      */
-    private void ensureEncryptor(final GordianEncryptorSpec pSpec) {
+    private void ensureEncryptor(final GordianNewEncryptorSpec pSpec) {
         /* If the encryptor is not already known */
         if (!theSpecMap.containsKey(pSpec)) {
             addEncryptor(pSpec);
@@ -179,7 +187,7 @@ public class GordianEncryptorAlgId {
      *
      * @param pSpec the macSpec
      */
-    private void addEncryptor(final GordianEncryptorSpec pSpec) {
+    private void addEncryptor(final GordianNewEncryptorSpec pSpec) {
         /* Create a branch for encryptor based on the keyType */
         final GordianNewKeyPairType myKeyType = pSpec.getKeyPairType();
         ASN1ObjectIdentifier myId = ENCRYPTOID.branch(Integer.toString(myKeyType.ordinal() + 1));
@@ -188,7 +196,7 @@ public class GordianEncryptorAlgId {
         final Object myEncryptor = pSpec.getEncryptorType();
         if (myEncryptor instanceof GordianNewDigestSpec mySpec) {
             myId = GordianCoreDigestAlgId.appendDigestOID(myId.branch("2"), mySpec);
-        } else if (myEncryptor instanceof GordianSM2EncryptionSpec mySpec) {
+        } else if (myEncryptor instanceof GordianCoreSM2EncryptionSpec mySpec) {
             myId = myId.branch("4").branch(Integer.toString(mySpec.getEncryptionType().ordinal() + 1));
             myId = GordianCoreDigestAlgId.appendDigestOID(myId, mySpec.getDigestSpec());
         } else {
@@ -205,7 +213,7 @@ public class GordianEncryptorAlgId {
      * @param pSpec       the encryptorSpec
      * @param pIdentifier the identifier
      */
-    private void addToMaps(final GordianEncryptorSpec pSpec,
+    private void addToMaps(final GordianNewEncryptorSpec pSpec,
                            final AlgorithmIdentifier pIdentifier) {
         theSpecMap.put(pSpec, pIdentifier);
         theIdentifierMap.put(pIdentifier, pSpec);

@@ -18,17 +18,21 @@ package io.github.tonywasher.joceanus.gordianknot.impl.core.encrypt;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianEncryptorFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianEncryptorSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianEncryptorSpecBuilder;
-import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianSM2EncryptionSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianNewEncryptorSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianNewEncryptorSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianNewSM2EncryptionType;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairType;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseData;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianCoreDigestSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.encrypt.GordianCoreEncryptorSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.encrypt.GordianCoreEncryptorSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairSpec;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 
@@ -71,7 +75,12 @@ public abstract class GordianCoreEncryptorFactory
     }
 
     @Override
-    public Predicate<GordianEncryptorSpec> supportedEncryptors() {
+    public GordianNewEncryptorSpecBuilder newEncryptorSpecBuilder() {
+        return GordianCoreEncryptorSpecBuilder.newInstance();
+    }
+
+    @Override
+    public Predicate<GordianNewEncryptorSpec> supportedEncryptors() {
         return this::validEncryptorSpec;
     }
 
@@ -81,7 +90,7 @@ public abstract class GordianCoreEncryptorFactory
      * @param pEncryptorSpec the encryptorSpec
      * @throws GordianException on error
      */
-    protected void checkEncryptorSpec(final GordianEncryptorSpec pEncryptorSpec) throws GordianException {
+    protected void checkEncryptorSpec(final GordianNewEncryptorSpec pEncryptorSpec) throws GordianException {
         /* Check validity of encryptor */
         if (!validEncryptorSpec(pEncryptorSpec)) {
             throw new GordianDataException(GordianBaseData.getInvalidText(pEncryptorSpec));
@@ -94,18 +103,19 @@ public abstract class GordianCoreEncryptorFactory
      * @param pSpec the encryptorSpec
      * @return true/false
      */
-    protected boolean validEncryptorSpec(final GordianEncryptorSpec pSpec) {
+    protected boolean validEncryptorSpec(final GordianNewEncryptorSpec pSpec) {
         /* Reject invalid encryptorSpec */
         if (pSpec == null || !pSpec.isValid()) {
             return false;
         }
 
         /* For Composite EncryptorSpec */
+        final GordianCoreEncryptorSpec myEncSpec = (GordianCoreEncryptorSpec) pSpec;
         if (pSpec.getKeyPairType() == GordianNewKeyPairType.COMPOSITE) {
             /* Loop through the specs */
-            final Iterator<GordianEncryptorSpec> myIterator = pSpec.encryptorSpecIterator();
+            final Iterator<GordianNewEncryptorSpec> myIterator = myEncSpec.encryptorSpecIterator();
             while (myIterator.hasNext()) {
-                final GordianEncryptorSpec mySpec = myIterator.next();
+                final GordianNewEncryptorSpec mySpec = myIterator.next();
                 if (!validEncryptorSpec(mySpec)) {
                     return false;
                 }
@@ -113,18 +123,19 @@ public abstract class GordianCoreEncryptorFactory
         }
 
         /* Check that spec is supported */
-        return pSpec.isSupported();
+        return myEncSpec.isSupported();
     }
 
     @Override
     public boolean validEncryptorSpecForKeyPairSpec(final GordianNewKeyPairSpec pKeyPairSpec,
-                                                    final GordianEncryptorSpec pEncryptorSpec) {
+                                                    final GordianNewEncryptorSpec pEncryptorSpec) {
         /* Check that the encryptorSpec is supported */
         if (!validEncryptorSpec(pEncryptorSpec)) {
             return false;
         }
 
         /* Check encryptor matches keyPair */
+        final GordianCoreEncryptorSpec mySpec = (GordianCoreEncryptorSpec) pEncryptorSpec;
         final GordianNewKeyPairType myKeyType = pKeyPairSpec.getKeyPairType();
         final GordianNewKeyPairType myEncType = pEncryptorSpec.getKeyPairType();
         final GordianCoreKeyPairSpec myKeySpec = (GordianCoreKeyPairSpec) pKeyPairSpec;
@@ -152,7 +163,7 @@ public abstract class GordianCoreEncryptorFactory
         /* If this is an RSA encryption */
         if (GordianNewKeyPairType.RSA.equals(pKeyPairSpec.getKeyPairType())) {
             /* The digest length cannot be too large wrt to the modulus */
-            int myLen = pEncryptorSpec.getDigestSpec().getDigestLength().getByteLength();
+            int myLen = mySpec.getDigestSpec().getDigestLength().getByteLength();
             myLen = (myLen + 1) * Byte.SIZE;
             return myKeySpec.getRSASpec().getLength() >= (myLen << 1);
         }
@@ -160,7 +171,7 @@ public abstract class GordianCoreEncryptorFactory
         /* If this is an ELGAMAL encryption */
         if (GordianNewKeyPairType.ELGAMAL.equals(pKeyPairSpec.getKeyPairType())) {
             /* The digest length cannot be too large wrt to the modulus */
-            int myLen = pEncryptorSpec.getDigestSpec().getDigestLength().getByteLength();
+            int myLen = mySpec.getDigestSpec().getDigestLength().getByteLength();
             myLen = (myLen + 1) * Byte.SIZE;
             return myKeySpec.getDHSpec().getLength() >= (myLen << 1);
         }
@@ -169,10 +180,10 @@ public abstract class GordianCoreEncryptorFactory
         if (pKeyPairSpec.getKeyPairType() == GordianNewKeyPairType.COMPOSITE) {
             /* Loop through the keyPairs */
             final Iterator<GordianNewKeyPairSpec> pairIterator = myKeySpec.keySpecIterator();
-            final Iterator<GordianEncryptorSpec> encIterator = pEncryptorSpec.encryptorSpecIterator();
+            final Iterator<GordianNewEncryptorSpec> encIterator = mySpec.encryptorSpecIterator();
             while (pairIterator.hasNext() && encIterator.hasNext()) {
                 final GordianNewKeyPairSpec myPairSpec = pairIterator.next();
-                final GordianEncryptorSpec myEncSpec = encIterator.next();
+                final GordianNewEncryptorSpec myEncSpec = encIterator.next();
                 if (!validEncryptorSpecForKeyPairSpec(myPairSpec, myEncSpec)) {
                     return false;
                 }
@@ -192,7 +203,7 @@ public abstract class GordianCoreEncryptorFactory
      * @param pSpec the encryptorSpec.
      * @return the Identifier
      */
-    public AlgorithmIdentifier getIdentifierForSpec(final GordianEncryptorSpec pSpec) {
+    public AlgorithmIdentifier getIdentifierForSpec(final GordianNewEncryptorSpec pSpec) {
         return getAlgorithmIds().getIdentifierForSpec(pSpec);
     }
 
@@ -202,7 +213,7 @@ public abstract class GordianCoreEncryptorFactory
      * @param pIdentifier the identifier.
      * @return the encryptorSpec (or null if not found)
      */
-    public GordianEncryptorSpec getSpecForIdentifier(final AlgorithmIdentifier pIdentifier) {
+    public GordianNewEncryptorSpec getSpecForIdentifier(final AlgorithmIdentifier pIdentifier) {
         return getAlgorithmIds().getSpecForIdentifier(pIdentifier);
     }
 
@@ -219,12 +230,12 @@ public abstract class GordianCoreEncryptorFactory
     }
 
     @Override
-    public List<GordianEncryptorSpec> listAllSupportedEncryptors(final GordianKeyPair pKeyPair) {
+    public List<GordianNewEncryptorSpec> listAllSupportedEncryptors(final GordianKeyPair pKeyPair) {
         return listAllSupportedEncryptors(pKeyPair.getKeyPairSpec());
     }
 
     @Override
-    public List<GordianEncryptorSpec> listAllSupportedEncryptors(final GordianNewKeyPairSpec pKeyPairSpec) {
+    public List<GordianNewEncryptorSpec> listAllSupportedEncryptors(final GordianNewKeyPairSpec pKeyPairSpec) {
         return listPossibleEncryptors(pKeyPairSpec.getKeyPairType())
                 .stream()
                 .filter(s -> validEncryptorSpecForKeyPairSpec(pKeyPairSpec, s))
@@ -232,63 +243,32 @@ public abstract class GordianCoreEncryptorFactory
     }
 
     @Override
-    public List<GordianEncryptorSpec> listPossibleEncryptors(final GordianNewKeyPairType pKeyPairType) {
-        /* Create list */
-        final List<GordianEncryptorSpec> myEncryptors = new ArrayList<>();
-
-        /* Switch on keyPairType */
-        switch (pKeyPairType) {
-            case RSA:
-                myEncryptors.add(GordianEncryptorSpecBuilder.rsa(GordianDigestSpecBuilder.sha2(GordianLength.LEN_224)));
-                myEncryptors.add(GordianEncryptorSpecBuilder.rsa(GordianDigestSpecBuilder.sha2(GordianLength.LEN_256)));
-                myEncryptors.add(GordianEncryptorSpecBuilder.rsa(GordianDigestSpecBuilder.sha2(GordianLength.LEN_384)));
-                myEncryptors.add(GordianEncryptorSpecBuilder.rsa(GordianDigestSpecBuilder.sha2(GordianLength.LEN_512)));
-                break;
-            case ELGAMAL:
-                myEncryptors.add(GordianEncryptorSpecBuilder.elGamal(GordianDigestSpecBuilder.sha2(GordianLength.LEN_224)));
-                myEncryptors.add(GordianEncryptorSpecBuilder.elGamal(GordianDigestSpecBuilder.sha2(GordianLength.LEN_256)));
-                myEncryptors.add(GordianEncryptorSpecBuilder.elGamal(GordianDigestSpecBuilder.sha2(GordianLength.LEN_384)));
-                myEncryptors.add(GordianEncryptorSpecBuilder.elGamal(GordianDigestSpecBuilder.sha2(GordianLength.LEN_512)));
-                break;
-            case EC:
-            case SM2:
-            case GOST:
-                /* Add EC-ElGamal */
-                myEncryptors.add(GordianEncryptorSpecBuilder.ec());
-
-                /* Loop through the encryptionSpecs */
-                for (GordianSM2EncryptionSpec mySpec : GordianSM2EncryptionSpec.listPossibleSpecs()) {
-                    myEncryptors.add(GordianEncryptorSpecBuilder.sm2(mySpec));
-                }
-                break;
-            default:
-                break;
-        }
-
-        /* Return the list */
-        return myEncryptors;
+    public List<GordianNewEncryptorSpec> listPossibleEncryptors(final GordianNewKeyPairType pKeyPairType) {
+        return GordianCoreEncryptorSpecBuilder.listAllPossibleSpecs(pKeyPairType);
     }
 
     @Override
-    public GordianEncryptorSpec defaultForKeyPair(final GordianNewKeyPairSpec pKeySpec) {
+    public GordianNewEncryptorSpec defaultForKeyPair(final GordianNewKeyPairSpec pKeySpec) {
+        final GordianNewEncryptorSpecBuilder myEncBuilder = GordianCoreEncryptorSpecBuilder.newInstance();
+        final GordianNewDigestSpecBuilder myDigestBuilder = GordianCoreDigestSpecBuilder.newInstance();
         switch (pKeySpec.getKeyPairType()) {
             case RSA:
-                return GordianEncryptorSpecBuilder.rsa(GordianDigestSpecBuilder.sha2(GordianLength.LEN_512));
+                return myEncBuilder.rsa(myDigestBuilder.sha2(GordianLength.LEN_512));
             case EC:
             case SM2:
             case GOST:
-                return GordianEncryptorSpecBuilder.sm2(GordianSM2EncryptionSpec.c1c2c3(GordianDigestSpecBuilder.sm3()));
+                return myEncBuilder.sm2(GordianNewSM2EncryptionType.C1C2C3, myDigestBuilder.sm3());
             case ELGAMAL:
-                return GordianEncryptorSpecBuilder.elGamal(GordianDigestSpecBuilder.sha2(GordianLength.LEN_512));
+                return myEncBuilder.elGamal(myDigestBuilder.sha2(GordianLength.LEN_512));
             case COMPOSITE:
-                final List<GordianEncryptorSpec> mySpecs = new ArrayList<>();
+                final List<GordianNewEncryptorSpec> mySpecs = new ArrayList<>();
                 final GordianCoreKeyPairSpec myKeySpec = (GordianCoreKeyPairSpec) pKeySpec;
                 final Iterator<GordianNewKeyPairSpec> myIterator = myKeySpec.keySpecIterator();
                 while (myIterator.hasNext()) {
                     final GordianNewKeyPairSpec mySpec = myIterator.next();
                     mySpecs.add(defaultForKeyPair(mySpec));
                 }
-                final GordianEncryptorSpec mySpec = GordianEncryptorSpecBuilder.composite(mySpecs);
+                final GordianNewEncryptorSpec mySpec = GordianEncryptorSpecBuilder.composite(mySpecs);
                 return mySpec.isValid() ? mySpec : null;
             default:
                 return null;

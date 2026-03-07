@@ -21,7 +21,6 @@ import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpecBuilder;
-import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianEncryptorSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignParams;
@@ -35,6 +34,7 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianCryptoExce
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianIOException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianKeyPairValidity;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.sign.GordianCoreSignature;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.encrypt.GordianCoreEncryptorSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.sign.GordianCoreSignatureSpec;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
@@ -571,7 +571,7 @@ public final class BouncyRSAKeyPair {
          * @throws GordianException on error
          */
         BouncyRSAEncryptor(final GordianBaseFactory pFactory,
-                           final GordianEncryptorSpec pSpec) throws GordianException {
+                           final GordianCoreEncryptorSpec pSpec) throws GordianException {
             /* Initialise underlying cipher */
             super(pFactory, pSpec, new RSABlindedEngine());
         }
@@ -606,7 +606,7 @@ public final class BouncyRSAKeyPair {
          * @throws GordianException on error
          */
         protected BouncyCoreEncryptor(final GordianBaseFactory pFactory,
-                                      final GordianEncryptorSpec pSpec,
+                                      final GordianCoreEncryptorSpec pSpec,
                                       final AsymmetricBlockCipher pEngine) throws GordianException {
             /* Initialise underlying cipher */
             super(pFactory, pSpec);

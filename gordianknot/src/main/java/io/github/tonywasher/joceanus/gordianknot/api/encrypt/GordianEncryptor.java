@@ -17,6 +17,7 @@
 package io.github.tonywasher.joceanus.gordianknot.api.encrypt;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianNewEncryptorSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 
 /**
@@ -28,7 +29,7 @@ public interface GordianEncryptor {
      *
      * @return the spec
      */
-    GordianEncryptorSpec getEncryptorSpec();
+    GordianNewEncryptorSpec getEncryptorSpec();
 
     /**
      * Initialise for encrypt.

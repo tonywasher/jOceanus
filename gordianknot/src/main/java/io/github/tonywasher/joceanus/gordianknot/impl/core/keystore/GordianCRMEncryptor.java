@@ -26,7 +26,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianCertificate;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairUsage;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairUse;
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianEncryptor;
-import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianEncryptorSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianNewEncryptorSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianAsyncFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
@@ -108,7 +108,7 @@ public class GordianCRMEncryptor {
         /* Try to send an encrypted proof */
         final GordianKeyPair myKeyPair = pCertificate.getKeyPair();
         final GordianNewKeyPairSpec mySpec = myKeyPair.getKeyPairSpec();
-        final GordianEncryptorSpec myEncSpec = theFactory.getAsyncFactory().getEncryptorFactory().defaultForKeyPair(mySpec);
+        final GordianNewEncryptorSpec myEncSpec = theFactory.getAsyncFactory().getEncryptorFactory().defaultForKeyPair(mySpec);
         if (myEncSpec != null) {
             return prepareForEncryption(myEncSpec, pCertificate);
         }
@@ -163,7 +163,7 @@ public class GordianCRMEncryptor {
      * @return the CRM result
      * @throws GordianException on error
      */
-    private GordianCRMResult prepareForEncryption(final GordianEncryptorSpec pEncryptSpec,
+    private GordianCRMResult prepareForEncryption(final GordianNewEncryptorSpec pEncryptSpec,
                                                   final GordianCoreCertificate pCertificate) throws GordianException {
         /* Create the random key */
         final byte[] myKey = createKeyForKeySet();
@@ -214,7 +214,7 @@ public class GordianCRMEncryptor {
      */
     private RecipientInfo createRecipientInfo(final byte[] pKey,
                                               final GordianCoreCertificate pCertificate,
-                                              final GordianEncryptorSpec pSpec) throws GordianException {
+                                              final GordianNewEncryptorSpec pSpec) throws GordianException {
         /* Create the encrypted key */
         final GordianAsyncFactory myFactory = theFactory.getAsyncFactory();
         final GordianCoreEncryptorFactory myEncFactory = (GordianCoreEncryptorFactory) myFactory.getEncryptorFactory();
@@ -314,7 +314,7 @@ public class GordianCRMEncryptor {
         /* Handle decryption */
         final GordianAsyncFactory myFactory = theFactory.getAsyncFactory();
         final GordianCoreEncryptorFactory myEncFactory = (GordianCoreEncryptorFactory) myFactory.getEncryptorFactory();
-        final GordianEncryptorSpec myEncSpec = myEncFactory.getSpecForIdentifier(pAlgId);
+        final GordianNewEncryptorSpec myEncSpec = myEncFactory.getSpecForIdentifier(pAlgId);
         final GordianEncryptor myEncryptor = myEncFactory.createEncryptor(myEncSpec);
         myEncryptor.initForDecrypt(pKeyPair);
         final byte[] myKey = myEncryptor.decrypt(pEncryptedKey);

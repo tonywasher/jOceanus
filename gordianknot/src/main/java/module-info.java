@@ -35,6 +35,7 @@ module io.github.tonywasher.joceanus.gordianknot {
     exports io.github.tonywasher.joceanus.gordianknot.api.digest;
     exports io.github.tonywasher.joceanus.gordianknot.api.digest.spec;
     exports io.github.tonywasher.joceanus.gordianknot.api.encrypt;
+    exports io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec;
     exports io.github.tonywasher.joceanus.gordianknot.api.factory;
     exports io.github.tonywasher.joceanus.gordianknot.api.key;
     exports io.github.tonywasher.joceanus.gordianknot.api.keypair;

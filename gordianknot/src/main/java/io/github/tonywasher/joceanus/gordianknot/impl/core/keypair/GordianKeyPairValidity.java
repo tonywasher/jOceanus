@@ -30,8 +30,8 @@ import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairUse;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianEncryptor;
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianEncryptorFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianEncryptorSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianEncryptorSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianNewEncryptorSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianNewEncryptorSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignParams;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignature;
@@ -41,6 +41,7 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFacto
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianLogicException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianCoreDigestSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.encrypt.GordianCoreEncryptorSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairSpec;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x500.X500NameBuilder;
@@ -80,7 +81,7 @@ public final class GordianKeyPairValidity {
         final Object myCheck = getValidityCheck(pFactory, pKeyPair);
         if (myCheck instanceof GordianNewSignatureSpec mySpec) {
             checkValidity(pFactory, pKeyPair, mySpec);
-        } else if (myCheck instanceof GordianEncryptorSpec mySpec) {
+        } else if (myCheck instanceof GordianNewEncryptorSpec mySpec) {
             checkValidity(pFactory, pKeyPair, mySpec);
         } else if (myCheck instanceof GordianAgreementSpec mySpec) {
             checkValidity(pFactory, pKeyPair, mySpec);
@@ -131,7 +132,7 @@ public final class GordianKeyPairValidity {
      */
     private static void checkValidity(final GordianBaseFactory pFactory,
                                       final GordianKeyPair pKeyPair,
-                                      final GordianEncryptorSpec pEncryptSpec) throws GordianException {
+                                      final GordianNewEncryptorSpec pEncryptSpec) throws GordianException {
         /* Use default personalisation as the data to encrypt */
         final byte[] myData = pFactory.getRandomSource().defaultPersonalisation();
 
@@ -196,6 +197,7 @@ public final class GordianKeyPairValidity {
                                            final GordianKeyPair pKeyPair) {
         /* Switch on keyType */
         final GordianNewDigestSpecBuilder myBuilder = GordianCoreDigestSpecBuilder.newInstance();
+        final GordianNewEncryptorSpecBuilder myEncBuilder = GordianCoreEncryptorSpecBuilder.newInstance();
         final GordianCoreKeyPairSpec mySpec = (GordianCoreKeyPairSpec) pKeyPair.getKeyPairSpec();
         switch (mySpec.getKeyPairType()) {
             case RSA:
@@ -215,7 +217,7 @@ public final class GordianKeyPairValidity {
             case LMS:
                 return pFactory.getAsyncFactory().getSignatureFactory().defaultForKeyPair(mySpec);
             case ELGAMAL:
-                return GordianEncryptorSpecBuilder.elGamal(myBuilder.sha2(GordianLength.LEN_256));
+                return myEncBuilder.elGamal(myBuilder.sha2(GordianLength.LEN_256));
             case DH:
                 return GordianAgreementSpecBuilder.anon(mySpec, GordianAgreementKDF.SHA256KDF);
             case XDH:

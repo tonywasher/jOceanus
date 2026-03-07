@@ -19,7 +19,7 @@ package io.github.tonywasher.joceanus.gordianknot.impl.core.encrypt;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianEncryptor;
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianEncryptorFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianEncryptorSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianNewEncryptorSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianAsyncFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
@@ -43,7 +43,7 @@ public abstract class GordianCoreEncryptor
     /**
      * The encryptorSpec.
      */
-    private final GordianEncryptorSpec theSpec;
+    private final GordianNewEncryptorSpec theSpec;
 
     /**
      * The KeyPair.
@@ -62,7 +62,7 @@ public abstract class GordianCoreEncryptor
      * @param pSpec    the encryptorSpec
      */
     protected GordianCoreEncryptor(final GordianBaseFactory pFactory,
-                                   final GordianEncryptorSpec pSpec) {
+                                   final GordianNewEncryptorSpec pSpec) {
         theFactory = pFactory;
         theSpec = pSpec;
     }
@@ -86,7 +86,7 @@ public abstract class GordianCoreEncryptor
     }
 
     @Override
-    public GordianEncryptorSpec getEncryptorSpec() {
+    public GordianNewEncryptorSpec getEncryptorSpec() {
         return theSpec;
     }
 

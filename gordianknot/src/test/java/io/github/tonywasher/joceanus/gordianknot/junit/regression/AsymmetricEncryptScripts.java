@@ -19,7 +19,7 @@ package io.github.tonywasher.joceanus.gordianknot.junit.regression;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianEncryptor;
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianEncryptorFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianEncryptorSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianNewEncryptorSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianAsyncFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.encrypt.GordianCoreEncryptorFactory;
@@ -81,7 +81,7 @@ public final class AsymmetricEncryptScripts {
         final byte[] mySrc = new byte[AsymmetricTest.TESTLEN];
 
         /* Access the KeySpec */
-        final GordianEncryptorSpec mySpec = pEncryptor.getSpec();
+        final GordianNewEncryptorSpec mySpec = pEncryptor.getSpec();
         final FactoryKeyPairs myPairs = pEncryptor.getOwner().getKeyPairs();
         final GordianKeyPair myPair = myPairs.getKeyPair();
 
@@ -129,7 +129,7 @@ public final class AsymmetricEncryptScripts {
         final byte[] mySrc = new byte[AsymmetricTest.TESTLEN];
 
         /* Access the KeySpec */
-        final GordianEncryptorSpec mySpec = pEncryptor.getSpec();
+        final GordianNewEncryptorSpec mySpec = pEncryptor.getSpec();
         final FactoryKeyPairs myPairs = pEncryptor.getOwner().getKeyPairs();
         final GordianKeyPair myPair = myPairs.getKeyPair();
         final GordianKeyPair myPartnerSelf = myPairs.getPartnerSelfKeyPair();
@@ -178,7 +178,7 @@ public final class AsymmetricEncryptScripts {
         Assertions.assertNotNull(myId, "Unknown AlgorithmId for " + pEncryptor.getSpec());
 
         /* Check unique mapping */
-        final GordianEncryptorSpec mySpec = myFactory.getSpecForIdentifier(myId);
+        final GordianNewEncryptorSpec mySpec = myFactory.getSpecForIdentifier(myId);
         Assertions.assertEquals(pEncryptor.getSpec(), mySpec, "Invalid mapping for  " + pEncryptor.getSpec());
     }
 }

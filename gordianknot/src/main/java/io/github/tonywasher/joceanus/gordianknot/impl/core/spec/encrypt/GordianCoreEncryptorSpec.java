@@ -70,8 +70,8 @@ public class GordianCoreEncryptorSpec
      * @param pKeyPairType   the keyPairType
      * @param pEncryptorType the encryptor type
      */
-    public GordianCoreEncryptorSpec(final GordianNewKeyPairType pKeyPairType,
-                                    final Object pEncryptorType) {
+    GordianCoreEncryptorSpec(final GordianNewKeyPairType pKeyPairType,
+                             final Object pEncryptorType) {
         theKeyPairType = GordianCoreKeyPairType.mapCoreType(pKeyPairType);
         theEncryptorType = pEncryptorType;
         isValid = checkValidity();

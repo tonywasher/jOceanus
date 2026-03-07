@@ -27,7 +27,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairUsage;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairUse;
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianEncryptor;
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianEncryptorFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianEncryptorSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianNewEncryptorSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianAsyncFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairFactory;
@@ -396,7 +396,7 @@ public class GordianCRMParser {
         final GordianNewKeyPairSpec mySpec = pKeyPair.getKeyPairSpec();
 
         /* Check for encryption private key */
-        final GordianEncryptorSpec myEncSpec = myFactory.getEncryptorFactory().defaultForKeyPair(mySpec);
+        final GordianNewEncryptorSpec myEncSpec = myFactory.getEncryptorFactory().defaultForKeyPair(mySpec);
         if (myEncSpec != null) {
             checkEncryptionPrivateKey(pKeyPair);
             return;
@@ -428,7 +428,7 @@ public class GordianCRMParser {
         /* Access details */
         final GordianEncryptorFactory myEncFactory = myFactory.getAsyncFactory().getEncryptorFactory();
         final GordianNewKeyPairSpec mySpec = pKeyPair.getKeyPairSpec();
-        final GordianEncryptorSpec myEncSpec = myEncFactory.defaultForKeyPair(mySpec);
+        final GordianNewEncryptorSpec myEncSpec = myEncFactory.defaultForKeyPair(mySpec);
 
         /* Create and initialise encryptors */
         final GordianEncryptor mySender = myEncFactory.createEncryptor(myEncSpec);
