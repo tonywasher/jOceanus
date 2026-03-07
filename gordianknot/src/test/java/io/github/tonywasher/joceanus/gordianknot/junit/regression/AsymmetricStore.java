@@ -45,8 +45,8 @@ import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewSM2S
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewXMSSSpec.GordianNewXMSSDigestType;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewXMSSSpec.GordianNewXMSSHeight;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignatureFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignatureSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignatureType;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianNewSignatureSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianNewSignatureType;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.agree.GordianCoreAgreementFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianCoreKeyPairFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairSpec;
@@ -73,7 +73,7 @@ class AsymmetricStore {
     /**
      * The single signatureType to test.
      */
-    private static GordianSignatureType theSigType;
+    private static GordianNewSignatureType theSigType;
 
     /**
      * Do we process all specs.
@@ -110,8 +110,8 @@ class AsymmetricStore {
 
             /* Look for request to test a single keyType */
             String myPropSigType = System.getProperty("sigType");
-            GordianSignatureType mySigType = null;
-            for (final GordianSignatureType myType : GordianSignatureType.values()) {
+            GordianNewSignatureType mySigType = null;
+            for (final GordianNewSignatureType myType : GordianNewSignatureType.values()) {
                 if (myType.toString().equalsIgnoreCase(myPropSigType)) {
                     mySigType = myType;
                 }
@@ -541,7 +541,7 @@ class AsymmetricStore {
         /**
          * The Spec.
          */
-        private final GordianSignatureSpec theSignSpec;
+        private final GordianNewSignatureSpec theSignSpec;
 
         /**
          * Constructor.
@@ -550,7 +550,7 @@ class AsymmetricStore {
          * @param pSignSpec the signatureSpec
          */
         FactorySignature(final FactoryKeySpec pOwner,
-                         final GordianSignatureSpec pSignSpec) {
+                         final GordianNewSignatureSpec pSignSpec) {
             theOwner = pOwner;
             theSignSpec = pSignSpec;
         }
@@ -569,7 +569,7 @@ class AsymmetricStore {
          *
          * @return the spec
          */
-        GordianSignatureSpec getSpec() {
+        GordianNewSignatureSpec getSpec() {
             return theSignSpec;
         }
 
@@ -771,7 +771,7 @@ class AsymmetricStore {
         /* Access the list of possible signatures */
         final GordianAsyncFactory myFactory = pKeySpec.theFactory;
         final GordianSignatureFactory mySignFactory = myFactory.getSignatureFactory();
-        final List<GordianSignatureSpec> mySignSpecs = pKeySpec.getKeySpec().getKeyPairType() == GordianNewKeyPairType.COMPOSITE
+        final List<GordianNewSignatureSpec> mySignSpecs = pKeySpec.getKeySpec().getKeyPairType() == GordianNewKeyPairType.COMPOSITE
                 ? compositeSignatureSpecProvider(pKeySpec)
                 : mySignFactory.listAllSupportedSignatures(pKeySpec.theKeySpec.getKeyPairType());
 
@@ -781,7 +781,7 @@ class AsymmetricStore {
         }
 
         /* Loop through the possible signatures */
-        for (GordianSignatureSpec mySign : mySignSpecs) {
+        for (GordianNewSignatureSpec mySign : mySignSpecs) {
             /* If we are testing a single sigType, make sure this is the right one */
             if (theSigType != null
                     && !mySign.getSignatureType().equals(theSigType)) {
@@ -889,8 +889,8 @@ class AsymmetricStore {
      * @param pKeySpec the keySpec
      * @return the list
      */
-    private static List<GordianSignatureSpec> compositeSignatureSpecProvider(final FactoryKeySpec pKeySpec) {
-        final GordianSignatureSpec mySpec = pKeySpec.getFactory().getSignatureFactory().defaultForKeyPair(pKeySpec.getKeySpec());
+    private static List<GordianNewSignatureSpec> compositeSignatureSpecProvider(final FactoryKeySpec pKeySpec) {
+        final GordianNewSignatureSpec mySpec = pKeySpec.getFactory().getSignatureFactory().defaultForKeyPair(pKeySpec.getKeySpec());
         return mySpec != null && mySpec.isValid()
                 ? Collections.singletonList(mySpec)
                 : Collections.emptyList();

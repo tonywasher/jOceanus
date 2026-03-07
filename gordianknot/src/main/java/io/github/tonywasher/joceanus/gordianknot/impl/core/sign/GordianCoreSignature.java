@@ -22,10 +22,11 @@ import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignParams;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignature;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignatureFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignatureSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianNewSignatureSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.digest.GordianCoreDigestFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.sign.GordianCoreSignatureSpec;
 
 import java.security.SecureRandom;
 
@@ -42,7 +43,7 @@ public abstract class GordianCoreSignature
     /**
      * The Signature Spec.
      */
-    private final GordianSignatureSpec theSpec;
+    private final GordianCoreSignatureSpec theSpec;
 
     /**
      * Signature Mode.
@@ -66,9 +67,9 @@ public abstract class GordianCoreSignature
      * @param pSpec    the signature Spec
      */
     protected GordianCoreSignature(final GordianBaseFactory pFactory,
-                                   final GordianSignatureSpec pSpec) {
+                                   final GordianNewSignatureSpec pSpec) {
         theFactory = pFactory;
-        theSpec = pSpec;
+        theSpec = (GordianCoreSignatureSpec) pSpec;
     }
 
     /**
@@ -99,7 +100,7 @@ public abstract class GordianCoreSignature
     }
 
     @Override
-    public GordianSignatureSpec getSignatureSpec() {
+    public GordianCoreSignatureSpec getSignatureSpec() {
         return theSpec;
     }
 

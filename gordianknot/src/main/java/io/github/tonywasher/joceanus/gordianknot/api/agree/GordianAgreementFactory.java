@@ -21,7 +21,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianCertificate;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairUsage;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignatureSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianNewSignatureSpec;
 import org.bouncycastle.asn1.x500.X500Name;
 
 import java.util.List;
@@ -83,7 +83,7 @@ public interface GordianAgreementFactory {
      * @throws GordianException on error
      */
     void setSigner(GordianCertificate pSigner,
-                   GordianSignatureSpec pSignSpec) throws GordianException;
+                   GordianNewSignatureSpec pSignSpec) throws GordianException;
 
     /**
      * Create new miniCertificate.

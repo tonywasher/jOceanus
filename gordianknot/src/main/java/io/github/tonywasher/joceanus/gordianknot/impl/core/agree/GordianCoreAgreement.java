@@ -31,7 +31,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactoryType;
 import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySet;
 import io.github.tonywasher.joceanus.gordianknot.api.keyset.spec.GordianNewKeySetSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignatureSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianNewSignatureSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianLogicException;
 
@@ -252,7 +252,7 @@ public class GordianCoreAgreement
      * @param pSigner   the signer certificate
      * @throws GordianException on error
      */
-    void setSignerCertificate(final GordianSignatureSpec pSignSpec,
+    void setSignerCertificate(final GordianNewSignatureSpec pSignSpec,
                               final GordianCertificate pSigner) throws GordianException {
         theBuilder.setSignSpec(pSignSpec)
                 .setSignerCertificate(pSigner);

@@ -19,7 +19,7 @@ package io.github.tonywasher.joceanus.gordianknot.impl.core.agree;
 import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementStatus;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianCertificate;
-import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignatureSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianNewSignatureSpec;
 
 /**
  * Agreement State.
@@ -68,7 +68,7 @@ public class GordianCoreAgreementState {
     /**
      * The signatureSpec.
      */
-    private GordianSignatureSpec theSignSpec;
+    private GordianNewSignatureSpec theSignSpec;
 
     /**
      * The additional data.
@@ -221,7 +221,7 @@ public class GordianCoreAgreementState {
      *
      * @return the signatureSpec
      */
-    GordianSignatureSpec getSignSpec() {
+    GordianNewSignatureSpec getSignSpec() {
         return theSignSpec;
     }
 
@@ -231,7 +231,7 @@ public class GordianCoreAgreementState {
      * @param pSignSpec the signatureSpec
      * @return the state
      */
-    GordianCoreAgreementState setSignSpec(final GordianSignatureSpec pSignSpec) {
+    GordianCoreAgreementState setSignSpec(final GordianNewSignatureSpec pSignSpec) {
         theSignSpec = pSignSpec;
         return this;
     }

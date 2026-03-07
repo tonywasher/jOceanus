@@ -155,7 +155,7 @@ public interface GordianNewSignatureSpecBuilder {
      * @return the SignatureSpec
      */
     default GordianNewSignatureSpec slhdsa() {
-        return withKeyPairType(GordianNewKeyPairType.RSA).build();
+        return withKeyPairType(GordianNewKeyPairType.SLHDSA).build();
     }
 
     /**
@@ -228,7 +228,7 @@ public interface GordianNewSignatureSpecBuilder {
      * @return the SignatureSpec
      */
     default GordianNewSignatureSpec xmssph() {
-        return withKeyPairType(GordianNewKeyPairType.RSA).withSignatureType(GordianNewSignatureType.PREHASH).build();
+        return withKeyPairType(GordianNewKeyPairType.XMSS).withSignatureType(GordianNewSignatureType.PREHASH).build();
     }
 
     /**

@@ -28,6 +28,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.keyset.spec.GordianNewKeySe
 import io.github.tonywasher.joceanus.gordianknot.api.lock.spec.GordianNewPasswordLockSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianNewMacSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.random.spec.GordianNewRandomSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianNewSignatureSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keyset.GordianCoreKeySet;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keyset.GordianKeySetData;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.lock.GordianFactoryLockImpl;
@@ -42,6 +43,7 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keyset.GordianCo
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.lock.GordianCorePasswordLockSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.mac.GordianCoreMacSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.random.GordianCoreRandomSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.sign.GordianCoreSignatureSpecBuilder;
 
 /**
  * Utilities.
@@ -199,5 +201,14 @@ public final class GordianUtilities {
      */
     public static GordianNewKeyPairSpecBuilder newKeyPairSpecBuilder() {
         return GordianCoreKeyPairSpecBuilder.newInstance();
+    }
+
+    /**
+     * Obtain SignatureSpecBuilder instance.
+     *
+     * @return the specBuilder
+     */
+    public static GordianNewSignatureSpecBuilder newSignatureSpecBuilder() {
+        return GordianCoreSignatureSpecBuilder.newInstance();
     }
 }

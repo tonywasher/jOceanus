@@ -17,9 +17,11 @@
 package io.github.tonywasher.joceanus.gordianknot.api.sign;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairType;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianNewSignatureSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianNewSignatureSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianNewSignatureType;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.sign.GordianCoreSignatureSpecBuilder;
 
 import java.util.Arrays;
 import java.util.List;
@@ -28,6 +30,11 @@ import java.util.List;
  * Signature Specification Builder.
  */
 public final class GordianSignatureSpecBuilder {
+    /**
+     * SignatureSpecBuilder.
+     */
+    private static final GordianNewSignatureSpecBuilder BUILDER = GordianCoreSignatureSpecBuilder.newInstance();
+
     /**
      * Private constructor.
      */
@@ -41,9 +48,9 @@ public final class GordianSignatureSpecBuilder {
      * @param pDigestSpec    the digestSpec
      * @return the SignatureSpec
      */
-    public static GordianSignatureSpec rsa(final GordianSignatureType pSignatureType,
-                                           final GordianNewDigestSpec pDigestSpec) {
-        return new GordianSignatureSpec(GordianNewKeyPairType.RSA, pSignatureType, pDigestSpec);
+    public static GordianNewSignatureSpec rsa(final GordianNewSignatureType pSignatureType,
+                                              final GordianNewDigestSpec pDigestSpec) {
+        return BUILDER.rsa(pSignatureType, pDigestSpec);
     }
 
     /**
@@ -53,9 +60,9 @@ public final class GordianSignatureSpecBuilder {
      * @param pDigestSpec    the digestSpec
      * @return the SignatureSpec
      */
-    public static GordianSignatureSpec dsa(final GordianSignatureType pSignatureType,
-                                           final GordianNewDigestSpec pDigestSpec) {
-        return new GordianSignatureSpec(GordianNewKeyPairType.DSA, pSignatureType, pDigestSpec);
+    public static GordianNewSignatureSpec dsa(final GordianNewSignatureType pSignatureType,
+                                              final GordianNewDigestSpec pDigestSpec) {
+        return BUILDER.dsa(pSignatureType, pDigestSpec);
     }
 
     /**
@@ -65,9 +72,9 @@ public final class GordianSignatureSpecBuilder {
      * @param pDigestSpec    the digestSpec
      * @return the SignatureSpec
      */
-    public static GordianSignatureSpec ec(final GordianSignatureType pSignatureType,
-                                          final GordianNewDigestSpec pDigestSpec) {
-        return new GordianSignatureSpec(GordianNewKeyPairType.EC, pSignatureType, pDigestSpec);
+    public static GordianNewSignatureSpec ec(final GordianNewSignatureType pSignatureType,
+                                             final GordianNewDigestSpec pDigestSpec) {
+        return BUILDER.ec(pSignatureType, pDigestSpec);
     }
 
     /**
@@ -76,8 +83,8 @@ public final class GordianSignatureSpecBuilder {
      * @param pDigestSpec the digestSpec
      * @return the SignatureSpec
      */
-    public static GordianSignatureSpec sm2(final GordianNewDigestSpec pDigestSpec) {
-        return new GordianSignatureSpec(GordianNewKeyPairType.SM2, pDigestSpec);
+    public static GordianNewSignatureSpec sm2(final GordianNewDigestSpec pDigestSpec) {
+        return BUILDER.sm2(pDigestSpec);
     }
 
     /**
@@ -85,8 +92,8 @@ public final class GordianSignatureSpecBuilder {
      *
      * @return the SignatureSpec
      */
-    public static GordianSignatureSpec dstu4145() {
-        return new GordianSignatureSpec(GordianNewKeyPairType.DSTU, GordianDigestSpecBuilder.gost());
+    public static GordianNewSignatureSpec dstu4145() {
+        return BUILDER.dstu4145();
     }
 
     /**
@@ -95,8 +102,8 @@ public final class GordianSignatureSpecBuilder {
      * @param pLength the length
      * @return the SignatureSpec
      */
-    public static GordianSignatureSpec gost2012(final GordianLength pLength) {
-        return new GordianSignatureSpec(GordianNewKeyPairType.GOST, GordianDigestSpecBuilder.streebog(pLength));
+    public static GordianNewSignatureSpec gost2012(final GordianLength pLength) {
+        return BUILDER.gost2012(pLength);
     }
 
     /**
@@ -104,8 +111,8 @@ public final class GordianSignatureSpecBuilder {
      *
      * @return the SignatureSpec
      */
-    public static GordianSignatureSpec edDSA() {
-        return new GordianSignatureSpec(GordianNewKeyPairType.EDDSA, GordianSignatureType.NATIVE);
+    public static GordianNewSignatureSpec edDSA() {
+        return BUILDER.edDSA();
     }
 
     /**
@@ -113,8 +120,8 @@ public final class GordianSignatureSpecBuilder {
      *
      * @return the SignatureSpec
      */
-    public static GordianSignatureSpec slhdsa() {
-        return new GordianSignatureSpec(GordianNewKeyPairType.SLHDSA, GordianSignatureType.NATIVE);
+    public static GordianNewSignatureSpec slhdsa() {
+        return BUILDER.slhdsa();
     }
 
     /**
@@ -122,8 +129,8 @@ public final class GordianSignatureSpecBuilder {
      *
      * @return the SignatureSpec
      */
-    public static GordianSignatureSpec mldsa() {
-        return new GordianSignatureSpec(GordianNewKeyPairType.MLDSA, GordianSignatureType.NATIVE);
+    public static GordianNewSignatureSpec mldsa() {
+        return BUILDER.mldsa();
     }
 
     /**
@@ -131,8 +138,8 @@ public final class GordianSignatureSpecBuilder {
      *
      * @return the SignatureSpec
      */
-    public static GordianSignatureSpec falcon() {
-        return new GordianSignatureSpec(GordianNewKeyPairType.FALCON, GordianSignatureType.NATIVE);
+    public static GordianNewSignatureSpec falcon() {
+        return BUILDER.falcon();
     }
 
     /**
@@ -140,8 +147,8 @@ public final class GordianSignatureSpecBuilder {
      *
      * @return the SignatureSpec
      */
-    public static GordianSignatureSpec mayo() {
-        return new GordianSignatureSpec(GordianNewKeyPairType.MAYO, GordianSignatureType.NATIVE);
+    public static GordianNewSignatureSpec mayo() {
+        return BUILDER.mayo();
     }
 
     /**
@@ -149,8 +156,8 @@ public final class GordianSignatureSpecBuilder {
      *
      * @return the SignatureSpec
      */
-    public static GordianSignatureSpec snova() {
-        return new GordianSignatureSpec(GordianNewKeyPairType.SNOVA, GordianSignatureType.NATIVE);
+    public static GordianNewSignatureSpec snova() {
+        return BUILDER.snova();
     }
 
     /**
@@ -158,8 +165,8 @@ public final class GordianSignatureSpecBuilder {
      *
      * @return the SignatureSpec
      */
-    public static GordianSignatureSpec picnic() {
-        return new GordianSignatureSpec(GordianNewKeyPairType.PICNIC, GordianSignatureType.NATIVE);
+    public static GordianNewSignatureSpec picnic() {
+        return BUILDER.picnic();
     }
 
     /**
@@ -168,8 +175,8 @@ public final class GordianSignatureSpecBuilder {
      * @param pDigest the digestSpec
      * @return the SignatureSpec
      */
-    public static GordianSignatureSpec picnic(final GordianNewDigestSpec pDigest) {
-        return new GordianSignatureSpec(GordianNewKeyPairType.PICNIC, GordianSignatureType.NATIVE, pDigest);
+    public static GordianNewSignatureSpec picnic(final GordianNewDigestSpec pDigest) {
+        return BUILDER.picnic(pDigest);
     }
 
     /**
@@ -177,8 +184,8 @@ public final class GordianSignatureSpecBuilder {
      *
      * @return the SignatureSpec
      */
-    public static GordianSignatureSpec xmss() {
-        return new GordianSignatureSpec(GordianNewKeyPairType.XMSS, GordianSignatureType.NATIVE);
+    public static GordianNewSignatureSpec xmss() {
+        return BUILDER.xmss();
     }
 
     /**
@@ -186,8 +193,8 @@ public final class GordianSignatureSpecBuilder {
      *
      * @return the SignatureSpec
      */
-    public static GordianSignatureSpec xmssph() {
-        return new GordianSignatureSpec(GordianNewKeyPairType.XMSS, GordianSignatureType.PREHASH);
+    public static GordianNewSignatureSpec xmssph() {
+        return BUILDER.xmssph();
     }
 
     /**
@@ -195,8 +202,8 @@ public final class GordianSignatureSpecBuilder {
      *
      * @return the SignatureSpec
      */
-    public static GordianSignatureSpec lms() {
-        return new GordianSignatureSpec(GordianNewKeyPairType.LMS, GordianSignatureType.NATIVE);
+    public static GordianNewSignatureSpec lms() {
+        return BUILDER.lms();
     }
 
     /**
@@ -205,7 +212,7 @@ public final class GordianSignatureSpecBuilder {
      * @param pSpecs the list of encryptorSpecs
      * @return the encryptorSpec
      */
-    public static GordianSignatureSpec composite(final GordianSignatureSpec... pSpecs) {
+    public static GordianNewSignatureSpec composite(final GordianNewSignatureSpec... pSpecs) {
         return composite(Arrays.asList(pSpecs));
     }
 
@@ -215,7 +222,7 @@ public final class GordianSignatureSpecBuilder {
      * @param pSpecs the list of encryptorSpecs
      * @return the encryptorSpec
      */
-    public static GordianSignatureSpec composite(final List<GordianSignatureSpec> pSpecs) {
-        return new GordianSignatureSpec(GordianNewKeyPairType.COMPOSITE, pSpecs);
+    public static GordianNewSignatureSpec composite(final List<GordianNewSignatureSpec> pSpecs) {
+        return BUILDER.composite(pSpecs);
     }
 }

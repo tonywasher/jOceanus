@@ -22,10 +22,11 @@ import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignParams;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignature;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignatureFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignatureSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianNewSignatureSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianIOException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianLogicException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianCompositeKeyPair;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.sign.GordianCoreSignatureSpec;
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1OctetString;
 import org.bouncycastle.asn1.ASN1Sequence;
@@ -51,7 +52,7 @@ public class GordianCompositeSigner
     /**
      * The SignatureSpec.
      */
-    private final GordianSignatureSpec theSpec;
+    private final GordianCoreSignatureSpec theSpec;
 
     /**
      * The signers.
@@ -66,22 +67,22 @@ public class GordianCompositeSigner
      * @throws GordianException on error
      */
     public GordianCompositeSigner(final GordianFactory pFactory,
-                                  final GordianSignatureSpec pSignatureSpec) throws GordianException {
+                                  final GordianNewSignatureSpec pSignatureSpec) throws GordianException {
         /* Store parameters */
         theFactory = pFactory.getAsyncFactory().getSignatureFactory();
-        theSpec = pSignatureSpec;
+        theSpec = (GordianCoreSignatureSpec) pSignatureSpec;
         theSigners = new ArrayList<>();
 
         /* Create the signers */
-        final Iterator<GordianSignatureSpec> myIterator = theSpec.signatureSpecIterator();
+        final Iterator<GordianNewSignatureSpec> myIterator = theSpec.signatureSpecIterator();
         while (myIterator.hasNext()) {
-            final GordianSignatureSpec mySpec = myIterator.next();
+            final GordianNewSignatureSpec mySpec = myIterator.next();
             theSigners.add(theFactory.createSigner(mySpec));
         }
     }
 
     @Override
-    public GordianSignatureSpec getSignatureSpec() {
+    public GordianCoreSignatureSpec getSignatureSpec() {
         return theSpec;
     }
 

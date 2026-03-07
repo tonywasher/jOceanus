@@ -25,7 +25,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianEncryptorSpe
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignParams;
-import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignatureSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianNewSignatureSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPrivateKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPublicKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.agree.GordianCoreAgreementFactory;
@@ -36,6 +36,7 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianIOExceptio
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianKeyPairValidity;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.sign.GordianCoreSignature;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.sign.GordianCoreSignatureSpec;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.bouncycastle.crypto.AsymmetricBlockCipher;
@@ -345,9 +346,9 @@ public final class BouncyRSAKeyPair {
          * @throws GordianException on error
          */
         BouncyPSSSignature(final GordianBaseFactory pFactory,
-                           final GordianSignatureSpec pSpec) throws GordianException {
+                           final GordianNewSignatureSpec pSpec) throws GordianException {
             super(pFactory, pSpec);
-            theSigner = getRSASigner(pFactory, pSpec);
+            theSigner = getRSASigner(pFactory, (GordianCoreSignatureSpec) pSpec);
         }
 
         /**
@@ -390,7 +391,7 @@ public final class BouncyRSAKeyPair {
          * @throws GordianException on error
          */
         private static Signer getRSASigner(final GordianBaseFactory pFactory,
-                                           final GordianSignatureSpec pSpec) throws GordianException {
+                                           final GordianCoreSignatureSpec pSpec) throws GordianException {
             /* Create the digest */
             final GordianNewDigestSpec myDigestSpec = pSpec.getDigestSpec();
             final GordianDigestFactory myFactory = pFactory.getDigestFactory();
@@ -432,7 +433,7 @@ public final class BouncyRSAKeyPair {
          * @throws GordianException on error
          */
         BouncyRSASignature(final GordianBaseFactory pFactory,
-                           final GordianSignatureSpec pSpec) throws GordianException {
+                           final GordianNewSignatureSpec pSpec) throws GordianException {
             /* Initialise underlying class */
             super(pFactory, pSpec);
         }
@@ -451,7 +452,7 @@ public final class BouncyRSAKeyPair {
 
             /* Initialise and set the signer */
             final BouncyRSAPrivateKey myPrivate = (BouncyRSAPrivateKey) myPair.getPrivateKey();
-            final CipherParameters myParms = getSignatureSpec().getSignatureType().isPSS()
+            final CipherParameters myParms = getSignatureSpec().getCoreType().isPSS()
                     ? new ParametersWithRandom(myPrivate.getPrivateKey(), getRandom())
                     : myPrivate.getPrivateKey();
             getSigner().init(true, myParms);

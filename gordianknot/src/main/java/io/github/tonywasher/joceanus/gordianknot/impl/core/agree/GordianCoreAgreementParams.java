@@ -29,7 +29,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactoryType;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keyset.spec.GordianNewKeySetSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignatureFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignatureSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianNewSignatureSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseData;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.cipher.GordianCoreCipherFactory;
@@ -88,7 +88,7 @@ public class GordianCoreAgreementParams
     /**
      * The SignatureSpec.
      */
-    private GordianSignatureSpec theSignSpec;
+    private GordianNewSignatureSpec theSignSpec;
 
     /**
      * The Additional data.
@@ -244,7 +244,7 @@ public class GordianCoreAgreementParams
     }
 
     @Override
-    public GordianSignatureSpec getSignatureSpec() {
+    public GordianNewSignatureSpec getSignatureSpec() {
         return theSignSpec;
     }
 
@@ -331,13 +331,13 @@ public class GordianCoreAgreementParams
     @Override
     public GordianAgreementParams setSigner(final GordianCertificate pSigner) throws GordianException {
         final GordianSignatureFactory mySignFactory = theFactory.getAsyncFactory().getSignatureFactory();
-        final GordianSignatureSpec mySignSpec = pSigner == null ? null : mySignFactory.defaultForKeyPair(pSigner.getKeyPair().getKeyPairSpec());
+        final GordianNewSignatureSpec mySignSpec = pSigner == null ? null : mySignFactory.defaultForKeyPair(pSigner.getKeyPair().getKeyPairSpec());
         return setSigner(pSigner, mySignSpec);
     }
 
     @Override
     public GordianAgreementParams setSigner(final GordianCertificate pSigner,
-                                            final GordianSignatureSpec pSignSpec) throws GordianException {
+                                            final GordianNewSignatureSpec pSignSpec) throws GordianException {
         /* Not allowed for client parameters */
         if (isClient) {
             throw new GordianDataException("Signer Certificate cannot be set for client");

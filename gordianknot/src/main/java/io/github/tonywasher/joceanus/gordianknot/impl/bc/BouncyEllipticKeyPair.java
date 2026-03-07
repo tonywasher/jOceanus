@@ -22,7 +22,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianEncryptorSpe
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignParams;
-import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignatureSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianNewSignatureSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPrivateKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPublicKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncySignature.BouncyDERCoder;
@@ -353,7 +353,7 @@ public final class BouncyEllipticKeyPair {
          * @throws GordianException on error
          */
         BouncyECSignature(final GordianBaseFactory pFactory,
-                          final GordianSignatureSpec pSpec) throws GordianException {
+                          final GordianNewSignatureSpec pSpec) throws GordianException {
             /* Initialise underlying class */
             super(pFactory, pSpec);
 

@@ -22,8 +22,8 @@ import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDiges
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairType;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignParams;
-import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignatureSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignatureType;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianNewSignatureSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianNewSignatureType;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.sign.GordianCoreSignature;
@@ -32,6 +32,7 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianC
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairType;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreXMSSSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.sign.GordianCoreSignatureSpec;
 import org.bouncycastle.jcajce.spec.ContextParameterSpec;
 
 import java.security.InvalidAlgorithmParameterException;
@@ -137,7 +138,7 @@ public abstract class JcaSignature
      * @param pSpec    the signature Spec
      */
     JcaSignature(final GordianBaseFactory pFactory,
-                 final GordianSignatureSpec pSpec) {
+                 final GordianNewSignatureSpec pSpec) {
         super(pFactory, pSpec);
     }
 
@@ -291,12 +292,13 @@ public abstract class JcaSignature
          * @throws GordianException on error
          */
         JcaRSASignature(final GordianBaseFactory pFactory,
-                        final GordianSignatureSpec pSignatureSpec) throws GordianException {
+                        final GordianNewSignatureSpec pSignatureSpec) throws GordianException {
             /* Initialise class */
             super(pFactory, pSignatureSpec);
 
             /* Create the signature class */
-            final String myDigest = JcaDigest.getSignAlgorithm((GordianCoreDigestSpec) pSignatureSpec.getDigestSpec());
+            final GordianCoreSignatureSpec mySpec = (GordianCoreSignatureSpec) pSignatureSpec;
+            final String myDigest = JcaDigest.getSignAlgorithm((GordianCoreDigestSpec) mySpec.getDigestSpec());
             setSigner(getJavaSignature(myDigest + getSignatureBase(pSignatureSpec), false));
         }
     }
@@ -307,15 +309,16 @@ public abstract class JcaSignature
      * @param pSignatureSpec the signatureSpec
      * @return the base
      */
-    static String getSignatureBase(final GordianSignatureSpec pSignatureSpec) {
+    static String getSignatureBase(final GordianNewSignatureSpec pSignatureSpec) {
         /* Handle SM2 explicitly */
         if (GordianNewKeyPairType.SM2.equals(pSignatureSpec.getKeyPairType())) {
             return EC_SM2_ALGOBASE;
         }
 
         /* Note if we are DSA */
+        final GordianCoreSignatureSpec mySpec = (GordianCoreSignatureSpec) pSignatureSpec;
         final boolean isDSA = GordianNewKeyPairType.DSA.equals(pSignatureSpec.getKeyPairType());
-        final boolean isSHAKE = GordianNewDigestType.SHAKE.equals(pSignatureSpec.getDigestSpec().getDigestType());
+        final boolean isSHAKE = GordianNewDigestType.SHAKE.equals(mySpec.getDigestSpec().getDigestType());
 
         /* Switch on signature type */
         switch (pSignatureSpec.getSignatureType()) {
@@ -359,12 +362,13 @@ public abstract class JcaSignature
          * @throws GordianException on error
          */
         JcaDSASignature(final GordianBaseFactory pFactory,
-                        final GordianSignatureSpec pSignatureSpec) throws GordianException {
+                        final GordianNewSignatureSpec pSignatureSpec) throws GordianException {
             /* Initialise class */
             super(pFactory, pSignatureSpec);
 
             /* Create the signature class */
-            final String myDigest = JcaDigest.getSignAlgorithm((GordianCoreDigestSpec) pSignatureSpec.getDigestSpec());
+            final GordianCoreSignatureSpec mySpec = (GordianCoreSignatureSpec) pSignatureSpec;
+            final String myDigest = JcaDigest.getSignAlgorithm((GordianCoreDigestSpec) mySpec.getDigestSpec());
             setSigner(getJavaSignature(myDigest + getSignatureBase(pSignatureSpec), false));
         }
     }
@@ -382,7 +386,7 @@ public abstract class JcaSignature
          * @throws GordianException on error
          */
         JcaGOSTSignature(final GordianBaseFactory pFactory,
-                         final GordianSignatureSpec pSignatureSpec) throws GordianException {
+                         final GordianNewSignatureSpec pSignatureSpec) throws GordianException {
             /* Initialise class */
             super(pFactory, pSignatureSpec);
 
@@ -396,14 +400,15 @@ public abstract class JcaSignature
          * @param pSignatureSpec the signatureSpec
          * @return the base
          */
-        private static String getSignature(final GordianSignatureSpec pSignatureSpec) {
+        private static String getSignature(final GordianNewSignatureSpec pSignatureSpec) {
             /* Handle DSTU explicitly */
             if (GordianNewKeyPairType.DSTU.equals(pSignatureSpec.getKeyPairType())) {
                 return DSTU_SIGN;
             }
 
             /* Obtain the digest length */
-            final GordianLength myLength = pSignatureSpec.getDigestSpec().getDigestLength();
+            final GordianCoreSignatureSpec mySpec = (GordianCoreSignatureSpec) pSignatureSpec;
+            final GordianLength myLength = mySpec.getDigestSpec().getDigestLength();
 
             /* Build the algorithm */
             return "GOST3411-2012-"
@@ -430,7 +435,7 @@ public abstract class JcaSignature
          * @param pSignatureSpec the signatureSpec
          */
         JcaSLHDSASignature(final GordianBaseFactory pFactory,
-                           final GordianSignatureSpec pSignatureSpec) {
+                           final GordianNewSignatureSpec pSignatureSpec) {
             /* Initialise class */
             super(pFactory, pSignatureSpec);
         }
@@ -490,7 +495,7 @@ public abstract class JcaSignature
          * @param pSignatureSpec the signatureSpec
          */
         JcaMLDSASignature(final GordianBaseFactory pFactory,
-                          final GordianSignatureSpec pSignatureSpec) {
+                          final GordianNewSignatureSpec pSignatureSpec) {
             /* Initialise class */
             super(pFactory, pSignatureSpec);
         }
@@ -546,7 +551,7 @@ public abstract class JcaSignature
          * @throws GordianException on error
          */
         JcaFalconSignature(final GordianBaseFactory pFactory,
-                           final GordianSignatureSpec pSignatureSpec) throws GordianException {
+                           final GordianNewSignatureSpec pSignatureSpec) throws GordianException {
             /* Initialise class */
             super(pFactory, pSignatureSpec);
 
@@ -568,7 +573,7 @@ public abstract class JcaSignature
          * @throws GordianException on error
          */
         JcaMayoSignature(final GordianBaseFactory pFactory,
-                         final GordianSignatureSpec pSignatureSpec) throws GordianException {
+                         final GordianNewSignatureSpec pSignatureSpec) throws GordianException {
             /* Initialise class */
             super(pFactory, pSignatureSpec);
 
@@ -590,7 +595,7 @@ public abstract class JcaSignature
          * @throws GordianException on error
          */
         JcaSnovaSignature(final GordianBaseFactory pFactory,
-                          final GordianSignatureSpec pSignatureSpec) throws GordianException {
+                          final GordianNewSignatureSpec pSignatureSpec) throws GordianException {
             /* Initialise class */
             super(pFactory, pSignatureSpec);
 
@@ -617,7 +622,7 @@ public abstract class JcaSignature
          * @throws GordianException on error
          */
         JcaPicnicSignature(final GordianBaseFactory pFactory,
-                           final GordianSignatureSpec pSignatureSpec) throws GordianException {
+                           final GordianNewSignatureSpec pSignatureSpec) throws GordianException {
             /* Initialise class */
             super(pFactory, pSignatureSpec);
 
@@ -632,14 +637,15 @@ public abstract class JcaSignature
          * @param pSignatureSpec the signatureSpec
          * @return the algorithm name
          */
-        private static String determineSignatureName(final GordianSignatureSpec pSignatureSpec) {
+        private static String determineSignatureName(final GordianNewSignatureSpec pSignatureSpec) {
             /* If we do not have a digest */
             if (pSignatureSpec.getSignatureSpec() == null) {
                 return BASE_NAME;
             }
 
             /* Switch on digest Type */
-            switch (pSignatureSpec.getDigestSpec().getDigestType()) {
+            final GordianCoreSignatureSpec mySpec = (GordianCoreSignatureSpec) pSignatureSpec;
+            switch (mySpec.getDigestSpec().getDigestType()) {
                 case SHA2:
                     return "SHA512With" + BASE_NAME;
                 case SHA3:
@@ -670,12 +676,12 @@ public abstract class JcaSignature
          * @param pSignatureSpec the signatureSpec
          */
         JcaXMSSSignature(final GordianBaseFactory pFactory,
-                         final GordianSignatureSpec pSignatureSpec) {
+                         final GordianNewSignatureSpec pSignatureSpec) {
             /* Initialise class */
             super(pFactory, pSignatureSpec);
 
             /* Determine preHash */
-            preHash = GordianSignatureType.PREHASH.equals(pSignatureSpec.getSignatureType());
+            preHash = GordianNewSignatureType.PREHASH.equals(pSignatureSpec.getSignatureType());
         }
 
         @Override
@@ -743,7 +749,7 @@ public abstract class JcaSignature
          * @param pSignatureSpec the signatureSpec
          */
         JcaEdDSASignature(final GordianBaseFactory pFactory,
-                          final GordianSignatureSpec pSignatureSpec) {
+                          final GordianNewSignatureSpec pSignatureSpec) {
             /* Initialise class */
             super(pFactory, pSignatureSpec);
         }
@@ -802,7 +808,7 @@ public abstract class JcaSignature
          * @throws GordianException on error
          */
         JcaLMSSignature(final GordianBaseFactory pFactory,
-                        final GordianSignatureSpec pSignatureSpec) throws GordianException {
+                        final GordianNewSignatureSpec pSignatureSpec) throws GordianException {
             /* Initialise class */
             super(pFactory, pSignatureSpec);
 

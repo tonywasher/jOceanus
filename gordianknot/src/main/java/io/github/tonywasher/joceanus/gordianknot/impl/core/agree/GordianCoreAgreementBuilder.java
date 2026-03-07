@@ -32,7 +32,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianNewMacSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianNewMacSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignParams;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignature;
-import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignatureSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianNewSignatureSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.agree.GordianCoreAgreementCalculator.GordianDerivationId;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
@@ -271,7 +271,7 @@ public class GordianCoreAgreementBuilder {
      * @param pSpec the signSpec
      * @return the Builder
      */
-    GordianCoreAgreementBuilder setSignSpec(final GordianSignatureSpec pSpec) {
+    GordianCoreAgreementBuilder setSignSpec(final GordianNewSignatureSpec pSpec) {
         theState.setSignSpec(pSpec);
         return this;
     }
@@ -458,7 +458,7 @@ public class GordianCoreAgreementBuilder {
         if (mySignerCert != null) {
             /* Access details */
             final GordianCoreSignatureFactory mySigns = (GordianCoreSignatureFactory) theFactory.getAsyncFactory().getSignatureFactory();
-            final GordianSignatureSpec mySignSpec = theState.getSignSpec();
+            final GordianNewSignatureSpec mySignSpec = theState.getSignSpec();
             final GordianKeyPair mySignerPair = mySignerCert.getKeyPair();
             final AlgorithmIdentifier myAlgId = mySigns.getIdentifierForSpecAndKeyPair(mySignSpec, mySignerPair);
 
@@ -569,7 +569,7 @@ public class GordianCoreAgreementBuilder {
         if (mySignerCert != null) {
             /* Access details */
             final GordianCoreSignatureFactory mySigns = (GordianCoreSignatureFactory) theFactory.getAsyncFactory().getSignatureFactory();
-            final GordianSignatureSpec mySignSpec = mySigns.getSpecForIdentifier(pServerHello.getSignatureId());
+            final GordianNewSignatureSpec mySignSpec = mySigns.getSpecForIdentifier(pServerHello.getSignatureId());
             final GordianKeyPair mySignerPair = mySignerCert.getKeyPair();
             theState.setSignerCertificate(mySignerCert)
                     .setSignSpec(mySignSpec);

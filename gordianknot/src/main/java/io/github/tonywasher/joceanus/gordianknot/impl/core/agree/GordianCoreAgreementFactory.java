@@ -30,7 +30,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairType;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignatureFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignatureSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianNewSignatureSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseData;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.cert.GordianMiniCertificate;
@@ -73,7 +73,7 @@ public abstract class GordianCoreAgreementFactory
     /**
      * The signatureSpec.
      */
-    private GordianSignatureSpec theSignSpec;
+    private GordianNewSignatureSpec theSignSpec;
 
     /**
      * Constructor.
@@ -159,6 +159,7 @@ public abstract class GordianCoreAgreementFactory
 
         /* Parse the clientHello */
         myAgreement.parseClientHello(pClientHello);
+        myAgreement.setSignerCertificate(theSignSpec, theSignerCertificate);
 
         /* Return the agreement */
         return myAgreement;
@@ -257,13 +258,13 @@ public abstract class GordianCoreAgreementFactory
     @Override
     public void setSigner(final GordianCertificate pSigner) throws GordianException {
         final GordianSignatureFactory mySignFactory = theFactory.getAsyncFactory().getSignatureFactory();
-        final GordianSignatureSpec mySignSpec = pSigner == null ? null : mySignFactory.defaultForKeyPair(pSigner.getKeyPair().getKeyPairSpec());
+        final GordianNewSignatureSpec mySignSpec = pSigner == null ? null : mySignFactory.defaultForKeyPair(pSigner.getKeyPair().getKeyPairSpec());
         setSigner(pSigner, mySignSpec);
     }
 
     @Override
     public void setSigner(final GordianCertificate pSigner,
-                          final GordianSignatureSpec pSignSpec) throws GordianException {
+                          final GordianNewSignatureSpec pSignSpec) throws GordianException {
         /* Check that certificate can sign data */
         if (pSigner == null || !pSigner.getUsage().hasUse(GordianKeyPairUse.SIGNATURE)) {
             throw new GordianDataException("Certificate must be capable of signing data");

@@ -38,7 +38,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.keystore.GordianKeyStoreEnt
 import io.github.tonywasher.joceanus.gordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStorePair;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignParams;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignature;
-import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignatureSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianNewSignatureSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.cert.GordianCertUtils;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.cert.GordianCoreCertificate;
@@ -322,7 +322,7 @@ public class GordianCRMParser {
             final POPOSigningKey mySigning = (POPOSigningKey) pProof.getObject();
             final AlgorithmIdentifier myAlgId = mySigning.getAlgorithmIdentifier();
             final GordianCoreSignatureFactory mySignFactory = (GordianCoreSignatureFactory) myFactory.getSignatureFactory();
-            final GordianSignatureSpec mySignSpec = mySignFactory.getSpecForIdentifier(myAlgId);
+            final GordianNewSignatureSpec mySignSpec = mySignFactory.getSpecForIdentifier(myAlgId);
             final GordianSignature myVerifier = mySignFactory.createSigner(mySignSpec);
 
             /* Verify the signature */

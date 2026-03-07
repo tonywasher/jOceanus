@@ -26,7 +26,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianSM2Encryptio
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianSM2EncryptionSpec.GordianSM2EncryptionType;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignParams;
-import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignatureSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianNewSignatureSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyEllipticKeyPair.BouncyECPrivateKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyEllipticKeyPair.BouncyECPublicKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPrivateKey;
@@ -36,6 +36,7 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFacto
 import io.github.tonywasher.joceanus.gordianknot.impl.core.encrypt.GordianCoreEncryptor;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.sign.GordianCoreSignature;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.sign.GordianCoreSignatureSpec;
 import org.bouncycastle.crypto.CryptoException;
 import org.bouncycastle.crypto.InvalidCipherTextException;
 import org.bouncycastle.crypto.agreement.SM2KeyExchange;
@@ -74,12 +75,12 @@ public final class BouncySM2KeyPair {
          * @throws GordianException on error
          */
         BouncySM2Signature(final GordianBaseFactory pFactory,
-                           final GordianSignatureSpec pSpec) throws GordianException {
+                           final GordianNewSignatureSpec pSpec) throws GordianException {
             /* Initialise underlying class */
             super(pFactory, pSpec);
 
             /* Create the signer */
-            final GordianNewDigestSpec mySpec = pSpec.getDigestSpec();
+            final GordianNewDigestSpec mySpec = ((GordianCoreSignatureSpec) pSpec).getDigestSpec();
             if (GordianNewDigestType.SM3.equals(mySpec.getDigestType())) {
                 theSigner = new SM2Signer();
             } else {

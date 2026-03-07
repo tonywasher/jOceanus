@@ -70,9 +70,9 @@ public class GordianCoreSignatureSpec
      * @param pSignatureType the signatureType
      * @param pSignatureSpec the signatureSpec
      */
-    public GordianCoreSignatureSpec(final GordianNewKeyPairType pKeyPairType,
-                                    final GordianNewSignatureType pSignatureType,
-                                    final Object pSignatureSpec) {
+    GordianCoreSignatureSpec(final GordianNewKeyPairType pKeyPairType,
+                             final GordianNewSignatureType pSignatureType,
+                             final Object pSignatureSpec) {
         /* Store parameters */
         theKeyPairType = GordianCoreKeyPairType.mapCoreType(pKeyPairType);
         theSignatureType = GordianCoreSignatureType.mapCoreType(pSignatureType);

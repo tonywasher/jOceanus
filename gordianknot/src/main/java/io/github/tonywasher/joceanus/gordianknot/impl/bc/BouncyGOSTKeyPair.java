@@ -20,7 +20,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignParams;
-import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignatureSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianNewSignatureSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyEllipticKeyPair.BouncyECPrivateKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyEllipticKeyPair.BouncyECPublicKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncySignature.BouncyDSACoder;
@@ -30,6 +30,7 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianCryptoExce
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianIOException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianKeyPairValidity;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.sign.GordianCoreSignatureSpec;
 import org.bouncycastle.asn1.ASN1BitString;
 import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1Integer;
@@ -384,13 +385,13 @@ public final class BouncyGOSTKeyPair {
          * @throws GordianException on error
          */
         BouncyGOSTSignature(final GordianBaseFactory pFactory,
-                            final GordianSignatureSpec pSpec) throws GordianException {
+                            final GordianNewSignatureSpec pSpec) throws GordianException {
             /* Initialise underlying class */
             super(pFactory, pSpec);
 
             /* Create the signer and Coder */
             theSigner = new ECGOST3410Signer();
-            theCoder = new BouncyGOSTCoder(pSpec.getDigestSpec().getDigestLength().getByteLength() << 1);
+            theCoder = new BouncyGOSTCoder(((GordianCoreSignatureSpec) pSpec).getDigestSpec().getDigestLength().getByteLength() << 1);
         }
 
         @Override

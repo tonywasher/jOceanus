@@ -22,7 +22,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignParams;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignature;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignatureFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignatureSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianNewSignatureSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.sign.GordianCoreSignatureFactory;
 import io.github.tonywasher.joceanus.gordianknot.junit.regression.AsymmetricStore.FactoryKeyPairs;
 import io.github.tonywasher.joceanus.gordianknot.junit.regression.AsymmetricStore.FactorySignature;
@@ -78,7 +78,7 @@ public final class AsymmetricSignScripts {
      */
     private static void checkSelfSignature(final FactorySignature pSignature) throws GordianException {
         /* Access the KeySpec */
-        final GordianSignatureSpec mySpec = pSignature.getSpec();
+        final GordianNewSignatureSpec mySpec = pSignature.getSpec();
         final FactoryKeyPairs myPairs = pSignature.getOwner().getKeyPairs();
         final GordianKeyPair myPair = myPairs.getKeyPair();
         final GordianKeyPair myMirror = myPairs.getMirrorKeyPair();
@@ -103,7 +103,7 @@ public final class AsymmetricSignScripts {
      */
     private static void checkPartnerSignature(final FactorySignature pSignature) throws GordianException {
         /* Access the KeySpec */
-        final GordianSignatureSpec mySpec = pSignature.getSpec();
+        final GordianNewSignatureSpec mySpec = pSignature.getSpec();
         final FactoryKeyPairs myPairs = pSignature.getOwner().getKeyPairs();
         final GordianKeyPair myPair = myPairs.getKeyPair();
         final GordianKeyPair myPartnerSelf = myPairs.getPartnerSelfKeyPair();
@@ -148,7 +148,7 @@ public final class AsymmetricSignScripts {
         Assertions.assertNotNull(myId, "Unknown AlgorithmId for " + pSignature.getSpec());
 
         /* Check unique mapping */
-        final GordianSignatureSpec mySpec = myFactory.getSpecForIdentifier(myId);
+        final GordianNewSignatureSpec mySpec = myFactory.getSpecForIdentifier(myId);
         Assertions.assertEquals(pSignature.getSpec(), mySpec, "Invalid mapping for  " + pSignature.getSpec());
     }
 }

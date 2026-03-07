@@ -36,7 +36,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignParams;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignature;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignatureFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignatureSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianNewSignatureSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianLogicException;
@@ -78,7 +78,7 @@ public final class GordianKeyPairValidity {
     public static void checkValidity(final GordianBaseFactory pFactory,
                                      final GordianKeyPair pKeyPair) throws GordianException {
         final Object myCheck = getValidityCheck(pFactory, pKeyPair);
-        if (myCheck instanceof GordianSignatureSpec mySpec) {
+        if (myCheck instanceof GordianNewSignatureSpec mySpec) {
             checkValidity(pFactory, pKeyPair, mySpec);
         } else if (myCheck instanceof GordianEncryptorSpec mySpec) {
             checkValidity(pFactory, pKeyPair, mySpec);
@@ -99,7 +99,7 @@ public final class GordianKeyPairValidity {
      */
     private static void checkValidity(final GordianBaseFactory pFactory,
                                       final GordianKeyPair pKeyPair,
-                                      final GordianSignatureSpec pSignSpec) throws GordianException {
+                                      final GordianNewSignatureSpec pSignSpec) throws GordianException {
         /* Use default personalisation as the data to sign */
         final byte[] myData = pFactory.getRandomSource().defaultPersonalisation();
 
