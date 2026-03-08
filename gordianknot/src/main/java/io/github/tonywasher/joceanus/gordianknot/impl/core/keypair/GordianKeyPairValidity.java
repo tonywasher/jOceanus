@@ -19,24 +19,24 @@ package io.github.tonywasher.joceanus.gordianknot.impl.core.keypair;
 import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreement;
 import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementParams;
-import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianNewAgreementKDF;
-import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianNewAgreementSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianNewAgreementSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementKDF;
+import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianCertificate;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairUsage;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairUse;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianEncryptor;
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianEncryptorFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianNewEncryptorSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianNewEncryptorSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianEncryptorSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianEncryptorSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignParams;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignature;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignatureFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianNewSignatureSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianLogicException;
@@ -80,11 +80,11 @@ public final class GordianKeyPairValidity {
     public static void checkValidity(final GordianBaseFactory pFactory,
                                      final GordianKeyPair pKeyPair) throws GordianException {
         final Object myCheck = getValidityCheck(pFactory, pKeyPair);
-        if (myCheck instanceof GordianNewSignatureSpec mySpec) {
+        if (myCheck instanceof GordianSignatureSpec mySpec) {
             checkValidity(pFactory, pKeyPair, mySpec);
-        } else if (myCheck instanceof GordianNewEncryptorSpec mySpec) {
+        } else if (myCheck instanceof GordianEncryptorSpec mySpec) {
             checkValidity(pFactory, pKeyPair, mySpec);
-        } else if (myCheck instanceof GordianNewAgreementSpec mySpec) {
+        } else if (myCheck instanceof GordianAgreementSpec mySpec) {
             checkValidity(pFactory, pKeyPair, mySpec);
         } else {
             throw new GordianLogicException("Unexpected keyPairType");
@@ -101,7 +101,7 @@ public final class GordianKeyPairValidity {
      */
     private static void checkValidity(final GordianBaseFactory pFactory,
                                       final GordianKeyPair pKeyPair,
-                                      final GordianNewSignatureSpec pSignSpec) throws GordianException {
+                                      final GordianSignatureSpec pSignSpec) throws GordianException {
         /* Use default personalisation as the data to sign */
         final byte[] myData = pFactory.getRandomSource().defaultPersonalisation();
 
@@ -133,7 +133,7 @@ public final class GordianKeyPairValidity {
      */
     private static void checkValidity(final GordianBaseFactory pFactory,
                                       final GordianKeyPair pKeyPair,
-                                      final GordianNewEncryptorSpec pEncryptSpec) throws GordianException {
+                                      final GordianEncryptorSpec pEncryptSpec) throws GordianException {
         /* Use default personalisation as the data to encrypt */
         final byte[] myData = pFactory.getRandomSource().defaultPersonalisation();
 
@@ -165,7 +165,7 @@ public final class GordianKeyPairValidity {
      */
     private static void checkValidity(final GordianBaseFactory pFactory,
                                       final GordianKeyPair pKeyPair,
-                                      final GordianNewAgreementSpec pAgreeSpec) throws GordianException {
+                                      final GordianAgreementSpec pAgreeSpec) throws GordianException {
         /* Create agreement on client side */
         final GordianAgreementFactory myAgrees = pFactory.getAsyncFactory().getAgreementFactory();
         final GordianCertificate myCert = myAgrees.newMiniCertificate(SERVER, pKeyPair, new GordianKeyPairUsage(GordianKeyPairUse.AGREEMENT));
@@ -197,9 +197,9 @@ public final class GordianKeyPairValidity {
     private static Object getValidityCheck(final GordianBaseFactory pFactory,
                                            final GordianKeyPair pKeyPair) {
         /* Switch on keyType */
-        final GordianNewDigestSpecBuilder myBuilder = GordianCoreDigestSpecBuilder.newInstance();
-        final GordianNewEncryptorSpecBuilder myEncBuilder = GordianCoreEncryptorSpecBuilder.newInstance();
-        final GordianNewAgreementSpecBuilder myAgreeBuilder = GordianCoreAgreementSpecBuilder.newInstance();
+        final GordianDigestSpecBuilder myBuilder = GordianCoreDigestSpecBuilder.newInstance();
+        final GordianEncryptorSpecBuilder myEncBuilder = GordianCoreEncryptorSpecBuilder.newInstance();
+        final GordianAgreementSpecBuilder myAgreeBuilder = GordianCoreAgreementSpecBuilder.newInstance();
         final GordianCoreKeyPairSpec mySpec = (GordianCoreKeyPairSpec) pKeyPair.getKeyPairSpec();
         switch (mySpec.getKeyPairType()) {
             case RSA:
@@ -221,11 +221,11 @@ public final class GordianKeyPairValidity {
             case ELGAMAL:
                 return myEncBuilder.elGamal(myBuilder.sha2(GordianLength.LEN_256));
             case DH:
-                return myAgreeBuilder.anon(mySpec, GordianNewAgreementKDF.SHA256KDF);
+                return myAgreeBuilder.anon(mySpec, GordianAgreementKDF.SHA256KDF);
             case XDH:
                 return mySpec.getEdwardsSpec().is25519()
-                        ? myAgreeBuilder.anon(mySpec, GordianNewAgreementKDF.SHA256KDF)
-                        : myAgreeBuilder.anon(mySpec, GordianNewAgreementKDF.SHA512KDF);
+                        ? myAgreeBuilder.anon(mySpec, GordianAgreementKDF.SHA256KDF)
+                        : myAgreeBuilder.anon(mySpec, GordianAgreementKDF.SHA512KDF);
             case CMCE:
             case FRODO:
             case SABER:
@@ -235,7 +235,7 @@ public final class GordianKeyPairValidity {
             case NTRU:
             case NTRUPRIME:
             case NEWHOPE:
-                return myAgreeBuilder.kem(mySpec, GordianNewAgreementKDF.NONE);
+                return myAgreeBuilder.kem(mySpec, GordianAgreementKDF.NONE);
             default:
                 return null;
         }

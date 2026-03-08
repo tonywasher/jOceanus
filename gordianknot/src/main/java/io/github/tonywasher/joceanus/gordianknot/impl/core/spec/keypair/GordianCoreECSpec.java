@@ -18,7 +18,7 @@
 package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewECSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianECSpec;
 
 import java.util.EnumMap;
 import java.util.Map;
@@ -31,7 +31,7 @@ public final class GordianCoreECSpec
     /**
      * The specMap.
      */
-    private static final Map<GordianNewECSpec, GordianCoreECSpec> SPECMAP = newSpecMap();
+    private static final Map<GordianECSpec, GordianCoreECSpec> SPECMAP = newSpecMap();
 
     /**
      * The specArray.
@@ -41,14 +41,14 @@ public final class GordianCoreECSpec
     /**
      * The Spec.
      */
-    private final GordianNewECSpec theSpec;
+    private final GordianECSpec theSpec;
 
     /**
      * Constructor.
      *
      * @param pSpec the spec
      */
-    private GordianCoreECSpec(final GordianNewECSpec pSpec) {
+    private GordianCoreECSpec(final GordianECSpec pSpec) {
         theSpec = pSpec;
     }
 
@@ -57,7 +57,7 @@ public final class GordianCoreECSpec
      *
      * @return the spec
      */
-    public GordianNewECSpec getSpec() {
+    public GordianECSpec getSpec() {
         return theSpec;
     }
 
@@ -206,7 +206,7 @@ public final class GordianCoreECSpec
      * @return the core spec
      */
     public static GordianCoreECSpec mapCoreSpec(final Object pSpec) {
-        return pSpec instanceof GordianNewECSpec mySpec ? SPECMAP.get(mySpec) : null;
+        return pSpec instanceof GordianECSpec mySpec ? SPECMAP.get(mySpec) : null;
     }
 
     /**
@@ -214,9 +214,9 @@ public final class GordianCoreECSpec
      *
      * @return the type map
      */
-    private static Map<GordianNewECSpec, GordianCoreECSpec> newSpecMap() {
-        final Map<GordianNewECSpec, GordianCoreECSpec> myMap = new EnumMap<>(GordianNewECSpec.class);
-        for (GordianNewECSpec mySpec : GordianNewECSpec.values()) {
+    private static Map<GordianECSpec, GordianCoreECSpec> newSpecMap() {
+        final Map<GordianECSpec, GordianCoreECSpec> myMap = new EnumMap<>(GordianECSpec.class);
+        for (GordianECSpec mySpec : GordianECSpec.values()) {
             myMap.put(mySpec, new GordianCoreECSpec(mySpec));
         }
         return myMap;

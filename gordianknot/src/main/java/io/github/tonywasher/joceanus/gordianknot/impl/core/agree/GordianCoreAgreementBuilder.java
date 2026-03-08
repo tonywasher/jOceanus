@@ -17,21 +17,21 @@
 package io.github.tonywasher.joceanus.gordianknot.impl.core.agree;
 
 import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementStatus;
-import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianNewAgreementType;
+import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementType;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianCertificate;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairGenerator;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairType;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairType;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMac;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianNewMacSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianNewMacSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianMacSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianMacSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignParams;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignature;
-import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianNewSignatureSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.agree.GordianCoreAgreementCalculator.GordianDerivationId;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
@@ -205,7 +205,7 @@ public class GordianCoreAgreementBuilder {
         boolean bSuccess = true;
         final GordianCoreAgreementSpec mySpec = theState.getSpec();
         if (mySpec.withConfirm()
-                && mySpec.getAgreementType() != GordianNewAgreementType.SM2) {
+                && mySpec.getAgreementType() != GordianAgreementType.SM2) {
             /* calculate the confirmation tags */
             bSuccess = calculateConfirmationTags(pSecret);
         }
@@ -271,7 +271,7 @@ public class GordianCoreAgreementBuilder {
      * @param pSpec the signSpec
      * @return the Builder
      */
-    GordianCoreAgreementBuilder setSignSpec(final GordianNewSignatureSpec pSpec) {
+    GordianCoreAgreementBuilder setSignSpec(final GordianSignatureSpec pSpec) {
         theState.setSignSpec(pSpec);
         return this;
     }
@@ -458,7 +458,7 @@ public class GordianCoreAgreementBuilder {
         if (mySignerCert != null) {
             /* Access details */
             final GordianCoreSignatureFactory mySigns = (GordianCoreSignatureFactory) theFactory.getAsyncFactory().getSignatureFactory();
-            final GordianNewSignatureSpec mySignSpec = theState.getSignSpec();
+            final GordianSignatureSpec mySignSpec = theState.getSignSpec();
             final GordianKeyPair mySignerPair = mySignerCert.getKeyPair();
             final AlgorithmIdentifier myAlgId = mySigns.getIdentifierForSpecAndKeyPair(mySignSpec, mySignerPair);
 
@@ -569,7 +569,7 @@ public class GordianCoreAgreementBuilder {
         if (mySignerCert != null) {
             /* Access details */
             final GordianCoreSignatureFactory mySigns = (GordianCoreSignatureFactory) theFactory.getAsyncFactory().getSignatureFactory();
-            final GordianNewSignatureSpec mySignSpec = mySigns.getSpecForIdentifier(pServerHello.getSignatureId());
+            final GordianSignatureSpec mySignSpec = mySigns.getSpecForIdentifier(pServerHello.getSignatureId());
             final GordianKeyPair mySignerPair = mySignerCert.getKeyPair();
             theState.setSignerCertificate(mySignerCert)
                     .setSignSpec(mySignSpec);
@@ -618,7 +618,7 @@ public class GordianCoreAgreementBuilder {
      */
     void parseEncapsulated(final byte[] pEncapsulated) throws GordianException {
         if (pEncapsulated != null
-                && GordianNewKeyPairType.NEWHOPE.equals(theState.getSpec().getKeyPairSpec().getKeyPairType())) {
+                && GordianKeyPairType.NEWHOPE.equals(theState.getSpec().getKeyPairSpec().getKeyPairType())) {
             final GordianKeyPair myKeyPair
                     = theKeyPairGenerator.derivePublicOnlyKeyPair(new X509EncodedKeySpec(pEncapsulated));
             theState.getClient().setEphemeralKeyPair(myKeyPair);
@@ -644,8 +644,8 @@ public class GordianCoreAgreementBuilder {
 
         /* Create the hMac and initialize with the key */
         final GordianMacFactory myMacs = theFactory.getMacFactory();
-        final GordianNewMacSpecBuilder myMacBuilder = myMacs.newMacSpecBuilder();
-        final GordianNewMacSpec mySpec = myMacBuilder.hMac(GordianDerivationId.TAGS.getDigestType());
+        final GordianMacSpecBuilder myMacBuilder = myMacs.newMacSpecBuilder();
+        final GordianMacSpec mySpec = myMacBuilder.hMac(GordianDerivationId.TAGS.getDigestType());
         final GordianMac myMac = myMacs.createMac(mySpec);
         myMac.initKeyBytes(myKey);
 

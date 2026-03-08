@@ -17,7 +17,7 @@
 package io.github.tonywasher.joceanus.gordianknot.api.mac;
 
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKey;
-import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianNewMacSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianMacSpec;
 import org.bouncycastle.util.Arrays;
 
 /**
@@ -27,7 +27,7 @@ public final class GordianMacParameters {
     /**
      * The Key.
      */
-    private GordianKey<GordianNewMacSpec> theKey;
+    private GordianKey<GordianMacSpec> theKey;
 
     /**
      * The Nonce.
@@ -76,7 +76,7 @@ public final class GordianMacParameters {
      * @param pKey the key
      * @return the macParameters
      */
-    public static GordianMacParameters key(final GordianKey<GordianNewMacSpec> pKey) {
+    public static GordianMacParameters key(final GordianKey<GordianMacSpec> pKey) {
         final GordianMacParameters myParams = new GordianMacParameters();
         myParams.theKey = pKey;
         return myParams;
@@ -89,7 +89,7 @@ public final class GordianMacParameters {
      * @param pNonce the nonce
      * @return the macParameters
      */
-    public static GordianMacParameters keyAndNonce(final GordianKey<GordianNewMacSpec> pKey,
+    public static GordianMacParameters keyAndNonce(final GordianKey<GordianMacSpec> pKey,
                                                    final byte[] pNonce) {
         final GordianMacParameters myParams = new GordianMacParameters();
         myParams.theKey = pKey;
@@ -103,7 +103,7 @@ public final class GordianMacParameters {
      * @param pKey the key
      * @return the macParameters
      */
-    public static GordianMacParameters keyWithRandomNonce(final GordianKey<GordianNewMacSpec> pKey) {
+    public static GordianMacParameters keyWithRandomNonce(final GordianKey<GordianMacSpec> pKey) {
         final GordianMacParameters myParams = new GordianMacParameters();
         myParams.theKey = pKey;
         myParams.randomNonce = true;
@@ -115,7 +115,7 @@ public final class GordianMacParameters {
      *
      * @return the key
      */
-    public GordianKey<GordianNewMacSpec> getKey() {
+    public GordianKey<GordianMacSpec> getKey() {
         return theKey;
     }
 
@@ -189,7 +189,7 @@ public final class GordianMacParameters {
         /**
          * The Key.
          */
-        private GordianKey<GordianNewMacSpec> theKey;
+        private GordianKey<GordianMacSpec> theKey;
 
         /**
          * The Nonce.
@@ -238,7 +238,7 @@ public final class GordianMacParameters {
          * @param pKey the key
          * @return the Builder
          */
-        GordianMacParametersBuilder setKey(final GordianKey<GordianNewMacSpec> pKey) {
+        GordianMacParametersBuilder setKey(final GordianKey<GordianMacSpec> pKey) {
             theKey = pKey;
             return this;
         }

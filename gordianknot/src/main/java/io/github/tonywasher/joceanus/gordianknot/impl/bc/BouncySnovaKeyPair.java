@@ -18,9 +18,9 @@ package io.github.tonywasher.joceanus.gordianknot.impl.bc;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignParams;
-import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianNewSignatureSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPrivateKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPublicKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncySignature.BouncyDigestSignature;
@@ -71,7 +71,7 @@ public final class BouncySnovaKeyPair {
          * @param pKeySpec   the keySpec
          * @param pPublicKey the public key
          */
-        BouncySnovaPublicKey(final GordianNewKeyPairSpec pKeySpec,
+        BouncySnovaPublicKey(final GordianKeyPairSpec pKeySpec,
                              final SnovaPublicKeyParameters pPublicKey) {
             super(pKeySpec, pPublicKey);
         }
@@ -110,7 +110,7 @@ public final class BouncySnovaKeyPair {
          * @param pKeySpec    the keySpec
          * @param pPrivateKey the private key
          */
-        BouncySnovaPrivateKey(final GordianNewKeyPairSpec pKeySpec,
+        BouncySnovaPrivateKey(final GordianKeyPairSpec pKeySpec,
                               final SnovaPrivateKeyParameters pPrivateKey) {
             super(pKeySpec, pPrivateKey);
         }
@@ -156,7 +156,7 @@ public final class BouncySnovaKeyPair {
          * @param pKeySpec the keySpec
          */
         BouncySnovaKeyPairGenerator(final GordianBaseFactory pFactory,
-                                    final GordianNewKeyPairSpec pKeySpec) {
+                                    final GordianKeyPairSpec pKeySpec) {
             /* Initialise underlying class */
             super(pFactory, pKeySpec);
 
@@ -289,7 +289,7 @@ public final class BouncySnovaKeyPair {
          * @throws GordianException on error
          */
         BouncySnovaSignature(final GordianBaseFactory pFactory,
-                             final GordianNewSignatureSpec pSpec) throws GordianException {
+                             final GordianSignatureSpec pSpec) throws GordianException {
             /* Initialise underlying class */
             super(pFactory, pSpec);
             theSigner = new SnovaSigner();

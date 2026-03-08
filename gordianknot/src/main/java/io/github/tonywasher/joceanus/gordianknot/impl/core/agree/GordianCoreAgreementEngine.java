@@ -16,7 +16,7 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.impl.core.agree;
 
-import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianNewAgreementKDF;
+import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementKDF;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.agree.GordianCoreAgreementDerivation.GordianCoreNullKeyDerivation;
@@ -306,7 +306,7 @@ public abstract class GordianCoreAgreementEngine {
     protected void enableDerivation() {
         /* Only enable derivation if it is not none */
         final GordianCoreAgreementSpec mySpec = theState.getSpec();
-        if (!GordianNewAgreementKDF.NONE.equals(mySpec.getKDFType())) {
+        if (!GordianAgreementKDF.NONE.equals(mySpec.getKDFType())) {
             theKDF = new GordianCoreAgreementDerivation(theBuilder);
         }
     }

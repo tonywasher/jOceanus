@@ -17,7 +17,7 @@
 package io.github.tonywasher.joceanus.gordianknot.impl.core.keypair;
 
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
 
 import java.util.Objects;
 
@@ -29,7 +29,7 @@ public abstract class GordianCoreKeyPair
     /**
      * The KeySpec.
      */
-    private final GordianNewKeyPairSpec theKeySpec;
+    private final GordianKeyPairSpec theKeySpec;
 
     /**
      * The PrivateKey.
@@ -62,7 +62,7 @@ public abstract class GordianCoreKeyPair
     }
 
     @Override
-    public GordianNewKeyPairSpec getKeyPairSpec() {
+    public GordianKeyPairSpec getKeyPairSpec() {
         return theKeySpec;
     }
 

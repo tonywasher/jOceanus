@@ -17,11 +17,11 @@
 
 package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.encrypt;
 
-import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestType;
-import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianNewEncryptorSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianNewSM2EncryptionSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairType;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestType;
+import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianEncryptorSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianSM2EncryptionSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairType;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianCoreDigestSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairType;
 
@@ -33,7 +33,7 @@ import java.util.Objects;
  * Asymmetric Encryption Specification.
  */
 public class GordianCoreEncryptorSpec
-        implements GordianNewEncryptorSpec {
+        implements GordianEncryptorSpec {
     /**
      * The EC-ElGamal name.
      */
@@ -70,7 +70,7 @@ public class GordianCoreEncryptorSpec
      * @param pKeyPairType   the keyPairType
      * @param pEncryptorType the encryptor type
      */
-    GordianCoreEncryptorSpec(final GordianNewKeyPairType pKeyPairType,
+    GordianCoreEncryptorSpec(final GordianKeyPairType pKeyPairType,
                              final Object pEncryptorType) {
         theKeyPairType = GordianCoreKeyPairType.mapCoreType(pKeyPairType);
         theEncryptorType = pEncryptorType;
@@ -78,7 +78,7 @@ public class GordianCoreEncryptorSpec
     }
 
     @Override
-    public GordianNewKeyPairType getKeyPairType() {
+    public GordianKeyPairType getKeyPairType() {
         return theKeyPairType.getType();
     }
 
@@ -134,9 +134,9 @@ public class GordianCoreEncryptorSpec
      * @return the encryptorSpec iterator.
      */
     @SuppressWarnings("unchecked")
-    public Iterator<GordianNewEncryptorSpec> encryptorSpecIterator() {
+    public Iterator<GordianEncryptorSpec> encryptorSpecIterator() {
         if (theEncryptorType instanceof List) {
-            return ((List<GordianNewEncryptorSpec>) theEncryptorType).iterator();
+            return ((List<GordianEncryptorSpec>) theEncryptorType).iterator();
         }
         throw new IllegalArgumentException();
     }
@@ -158,11 +158,11 @@ public class GordianCoreEncryptorSpec
         switch (theKeyPairType.getType()) {
             case RSA:
             case ELGAMAL:
-                return theEncryptorType instanceof GordianNewDigestSpec s
+                return theEncryptorType instanceof GordianDigestSpec s
                         && s.isValid();
             case SM2:
                 return theEncryptorType == null
-                        || (theEncryptorType instanceof GordianNewSM2EncryptionSpec s
+                        || (theEncryptorType instanceof GordianSM2EncryptionSpec s
                         && s.isValid());
             case EC:
             case GOST:
@@ -187,7 +187,7 @@ public class GordianCoreEncryptorSpec
             case RSA:
             case ELGAMAL:
                 final GordianCoreDigestSpec mySpec = getDigestSpec();
-                return GordianNewDigestType.SHA2.equals(mySpec.getDigestType()) && !mySpec.isSha2Hybrid();
+                return GordianDigestType.SHA2.equals(mySpec.getDigestType()) && !mySpec.isSha2Hybrid();
             case EC:
             case GOST:
             case SM2:
@@ -204,10 +204,10 @@ public class GordianCoreEncryptorSpec
      * @return valid true/false
      */
     private boolean checkComposite() {
-        final Iterator<GordianNewEncryptorSpec> myIterator = encryptorSpecIterator();
+        final Iterator<GordianEncryptorSpec> myIterator = encryptorSpecIterator();
         while (myIterator.hasNext()) {
             /* Check that each spec is valid */
-            final GordianNewEncryptorSpec mySpec = myIterator.next();
+            final GordianEncryptorSpec mySpec = myIterator.next();
             if (mySpec == null || !mySpec.isValid()) {
                 return false;
             }
@@ -236,7 +236,7 @@ public class GordianCoreEncryptorSpec
                         theName += SEP + (theEncryptorType == null ? ECELGAMAL : theEncryptorType);
                         break;
                     case COMPOSITE:
-                        final Iterator<GordianNewEncryptorSpec> myIterator = encryptorSpecIterator();
+                        final Iterator<GordianEncryptorSpec> myIterator = encryptorSpecIterator();
                         final StringBuilder myBuilder = new StringBuilder(theName);
                         while (myIterator.hasNext()) {
                             myBuilder.append(SEP).append(myIterator.next().toString());

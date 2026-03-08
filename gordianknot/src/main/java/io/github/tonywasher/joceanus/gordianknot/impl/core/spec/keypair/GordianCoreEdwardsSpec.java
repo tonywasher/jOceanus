@@ -17,7 +17,7 @@
 
 package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair;
 
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewEdwardsSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianEdwardsSpec;
 
 import java.util.EnumMap;
 import java.util.Map;
@@ -29,7 +29,7 @@ public final class GordianCoreEdwardsSpec {
     /**
      * The specMap.
      */
-    private static final Map<GordianNewEdwardsSpec, GordianCoreEdwardsSpec> SPECMAP = newSpecMap();
+    private static final Map<GordianEdwardsSpec, GordianCoreEdwardsSpec> SPECMAP = newSpecMap();
 
     /**
      * The specArray.
@@ -39,14 +39,14 @@ public final class GordianCoreEdwardsSpec {
     /**
      * The Spec.
      */
-    private final GordianNewEdwardsSpec theSpec;
+    private final GordianEdwardsSpec theSpec;
 
     /**
      * Constructor.
      *
      * @param pSpec the spec
      */
-    private GordianCoreEdwardsSpec(final GordianNewEdwardsSpec pSpec) {
+    private GordianCoreEdwardsSpec(final GordianEdwardsSpec pSpec) {
         theSpec = pSpec;
     }
 
@@ -55,7 +55,7 @@ public final class GordianCoreEdwardsSpec {
      *
      * @return the spec
      */
-    public GordianNewEdwardsSpec getSpec() {
+    public GordianEdwardsSpec getSpec() {
         return theSpec;
     }
 
@@ -65,7 +65,7 @@ public final class GordianCoreEdwardsSpec {
      * @return true/false
      */
     public boolean is25519() {
-        return theSpec == GordianNewEdwardsSpec.CURVE25519;
+        return theSpec == GordianEdwardsSpec.CURVE25519;
     }
 
     /**
@@ -74,7 +74,7 @@ public final class GordianCoreEdwardsSpec {
      * @return the suffix
      */
     public String getSuffix() {
-        return theSpec == GordianNewEdwardsSpec.CURVE25519 ? "25519" : "448";
+        return theSpec == GordianEdwardsSpec.CURVE25519 ? "25519" : "448";
     }
 
     @Override
@@ -109,7 +109,7 @@ public final class GordianCoreEdwardsSpec {
      * @return the core spec
      */
     public static GordianCoreEdwardsSpec mapCoreSpec(final Object pSpec) {
-        return pSpec instanceof GordianNewEdwardsSpec mySpec ? SPECMAP.get(mySpec) : null;
+        return pSpec instanceof GordianEdwardsSpec mySpec ? SPECMAP.get(mySpec) : null;
     }
 
     /**
@@ -117,9 +117,9 @@ public final class GordianCoreEdwardsSpec {
      *
      * @return the type map
      */
-    private static Map<GordianNewEdwardsSpec, GordianCoreEdwardsSpec> newSpecMap() {
-        final Map<GordianNewEdwardsSpec, GordianCoreEdwardsSpec> myMap = new EnumMap<>(GordianNewEdwardsSpec.class);
-        for (GordianNewEdwardsSpec mySpec : GordianNewEdwardsSpec.values()) {
+    private static Map<GordianEdwardsSpec, GordianCoreEdwardsSpec> newSpecMap() {
+        final Map<GordianEdwardsSpec, GordianCoreEdwardsSpec> myMap = new EnumMap<>(GordianEdwardsSpec.class);
+        for (GordianEdwardsSpec mySpec : GordianEdwardsSpec.values()) {
             myMap.put(mySpec, new GordianCoreEdwardsSpec(mySpec));
         }
         return myMap;

@@ -18,8 +18,8 @@ package io.github.tonywasher.joceanus.gordianknot.impl.core.keyset;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySet;
-import io.github.tonywasher.joceanus.gordianknot.api.keyset.spec.GordianNewKeySetSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keyset.spec.GordianNewKeySetSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.keyset.spec.GordianKeySetSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keyset.spec.GordianKeySetSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseData;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory.GordianKeySetGenerate;
@@ -58,12 +58,12 @@ public class GordianCoreKeySetFactory
     }
 
     @Override
-    public GordianNewKeySetSpecBuilder newKeySetSpecBuilder() {
+    public GordianKeySetSpecBuilder newKeySetSpecBuilder() {
         return GordianCoreKeySetSpecBuilder.newInstance();
     }
 
     @Override
-    public GordianCoreKeySet createKeySet(final GordianNewKeySetSpec pSpec) throws GordianException {
+    public GordianCoreKeySet createKeySet(final GordianKeySetSpec pSpec) throws GordianException {
         /* Check Spec */
         checkKeySetSpec(pSpec);
 
@@ -72,7 +72,7 @@ public class GordianCoreKeySetFactory
     }
 
     @Override
-    public GordianCoreKeySet generateKeySet(final GordianNewKeySetSpec pSpec) throws GordianException {
+    public GordianCoreKeySet generateKeySet(final GordianKeySetSpec pSpec) throws GordianException {
         /* Check Spec */
         checkKeySetSpec(pSpec);
 
@@ -91,7 +91,7 @@ public class GordianCoreKeySetFactory
     }
 
     @Override
-    public Predicate<GordianNewKeySetSpec> supportedKeySetSpecs() {
+    public Predicate<GordianKeySetSpec> supportedKeySetSpecs() {
         return GordianCoreKeySetFactory::validKeySetSpec;
     }
 
@@ -101,7 +101,7 @@ public class GordianCoreKeySetFactory
      * @param pSpec the keySetSpec
      * @throws GordianException on error
      */
-    public void checkKeySetSpec(final GordianNewKeySetSpec pSpec) throws GordianException {
+    public void checkKeySetSpec(final GordianKeySetSpec pSpec) throws GordianException {
         /* Check validity of KeySet */
         if (!supportedKeySetSpecs().test(pSpec)) {
             throw new GordianDataException(GordianBaseData.getInvalidText(pSpec));
@@ -114,7 +114,7 @@ public class GordianCoreKeySetFactory
      * @param pSpec the keySetSpec
      * @return true/false
      */
-    public static boolean validKeySetSpec(final GordianNewKeySetSpec pSpec) {
+    public static boolean validKeySetSpec(final GordianKeySetSpec pSpec) {
         /* Check for invalid spec */
         if (pSpec == null || !pSpec.isValid()) {
             return false;

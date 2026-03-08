@@ -17,15 +17,15 @@
 
 package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.lock;
 
-import io.github.tonywasher.joceanus.gordianknot.api.keyset.spec.GordianNewKeySetSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.lock.spec.GordianNewPasswordLockSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.lock.spec.GordianNewPasswordLockSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.keyset.spec.GordianKeySetSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.lock.spec.GordianPasswordLockSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.lock.spec.GordianPasswordLockSpecBuilder;
 
 /**
  * PasswordLock Spec Builder.
  */
 public final class GordianCorePasswordLockSpecBuilder
-        implements GordianNewPasswordLockSpecBuilder {
+        implements GordianPasswordLockSpecBuilder {
     /**
      * Private Constructor.
      */
@@ -42,23 +42,23 @@ public final class GordianCorePasswordLockSpecBuilder
     }
 
     @Override
-    public GordianNewPasswordLockSpec passwordLock() {
+    public GordianPasswordLockSpec passwordLock() {
         return new GordianCorePasswordLockSpec();
     }
 
     @Override
-    public GordianNewPasswordLockSpec passwordLock(final int pKIterations) {
+    public GordianPasswordLockSpec passwordLock(final int pKIterations) {
         return new GordianCorePasswordLockSpec(pKIterations);
     }
 
     @Override
-    public GordianNewPasswordLockSpec passwordLock(final GordianNewKeySetSpec pKeySetSpec) {
+    public GordianPasswordLockSpec passwordLock(final GordianKeySetSpec pKeySetSpec) {
         return new GordianCorePasswordLockSpec(pKeySetSpec);
     }
 
     @Override
-    public GordianNewPasswordLockSpec passwordLock(final int pKIterations,
-                                                   final GordianNewKeySetSpec pKeySetSpec) {
+    public GordianPasswordLockSpec passwordLock(final int pKIterations,
+                                                final GordianKeySetSpec pKeySetSpec) {
         return new GordianCorePasswordLockSpec(pKIterations, pKeySetSpec);
     }
 }

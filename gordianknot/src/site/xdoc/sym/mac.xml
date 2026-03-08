@@ -21,6 +21,7 @@ final GordianFactory myBaseFactory = GordianGenerator.createFactory();
 final GordianMacFactory myMacFactory = myBaseFactory.getMacFactory();
 
 /* Create mac */
+final GordianMacBuilder myBuilder = myMacFactory.newMacSpecBuilder();
 final GordianMacSpec mySpec = GordianMacSpecBuilder.poly1305(GordianSymKeySpec.aes(GordianLength.LEN_256));
 final GordianMac myMac = myMacFactory.createMac(mySpec);
 

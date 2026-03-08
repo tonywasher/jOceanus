@@ -16,21 +16,21 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.util;
 
-import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianNewAgreementSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewPBESpecBuilder;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamCipherSpecBuilder;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeySpecBuilder;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymCipherSpecBuilder;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeySpecBuilder;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpecBuilder;
-import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianNewEncryptorSpecBuilder;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairSpecBuilder;
-import io.github.tonywasher.joceanus.gordianknot.api.keyset.spec.GordianNewKeySetSpecBuilder;
-import io.github.tonywasher.joceanus.gordianknot.api.lock.spec.GordianNewPasswordLockSpecBuilder;
-import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianNewMacSpecBuilder;
-import io.github.tonywasher.joceanus.gordianknot.api.random.spec.GordianNewRandomSpecBuilder;
-import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianNewSignatureSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianPBESpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamCipherSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymCipherSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeySpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianEncryptorSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.keyset.spec.GordianKeySetSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.lock.spec.GordianPasswordLockSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianMacSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.random.spec.GordianRandomSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keyset.GordianCoreKeySet;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keyset.GordianKeySetData;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.lock.GordianFactoryLockImpl;
@@ -113,7 +113,7 @@ public final class GordianUtilities {
      *
      * @return the specBuilder
      */
-    public static GordianNewDigestSpecBuilder newDigestSpecBuilder() {
+    public static GordianDigestSpecBuilder newDigestSpecBuilder() {
         return GordianCoreDigestSpecBuilder.newInstance();
     }
 
@@ -122,7 +122,7 @@ public final class GordianUtilities {
      *
      * @return the specBuilder
      */
-    public static GordianNewSymKeySpecBuilder newSymKeySpecBuilder() {
+    public static GordianSymKeySpecBuilder newSymKeySpecBuilder() {
         return GordianCoreSymKeySpecBuilder.newInstance();
     }
 
@@ -131,7 +131,7 @@ public final class GordianUtilities {
      *
      * @return the specBuilder
      */
-    public static GordianNewSymCipherSpecBuilder newSymCipherSpecBuilder() {
+    public static GordianSymCipherSpecBuilder newSymCipherSpecBuilder() {
         return GordianCoreSymCipherSpecBuilder.newInstance();
     }
 
@@ -140,7 +140,7 @@ public final class GordianUtilities {
      *
      * @return the specBuilder
      */
-    public static GordianNewStreamKeySpecBuilder newStreamKeySpecBuilder() {
+    public static GordianStreamKeySpecBuilder newStreamKeySpecBuilder() {
         return GordianCoreStreamKeySpecBuilder.newInstance();
     }
 
@@ -149,7 +149,7 @@ public final class GordianUtilities {
      *
      * @return the specBuilder
      */
-    public static GordianNewStreamCipherSpecBuilder newStreamCipherSpecBuilder() {
+    public static GordianStreamCipherSpecBuilder newStreamCipherSpecBuilder() {
         return GordianCoreStreamCipherSpecBuilder.newInstance();
     }
 
@@ -158,7 +158,7 @@ public final class GordianUtilities {
      *
      * @return the specBuilder
      */
-    public static GordianNewPBESpecBuilder newPBESpecBuilder() {
+    public static GordianPBESpecBuilder newPBESpecBuilder() {
         return GordianCorePBESpecBuilder.newInstance();
     }
 
@@ -167,7 +167,7 @@ public final class GordianUtilities {
      *
      * @return the specBuilder
      */
-    public static GordianNewMacSpecBuilder newMacSpecBuilder() {
+    public static GordianMacSpecBuilder newMacSpecBuilder() {
         return GordianCoreMacSpecBuilder.newInstance();
     }
 
@@ -176,7 +176,7 @@ public final class GordianUtilities {
      *
      * @return the specBuilder
      */
-    public static GordianNewRandomSpecBuilder newRandomSpecBuilder() {
+    public static GordianRandomSpecBuilder newRandomSpecBuilder() {
         return GordianCoreRandomSpecBuilder.newInstance();
     }
 
@@ -185,7 +185,7 @@ public final class GordianUtilities {
      *
      * @return the specBuilder
      */
-    public static GordianNewKeySetSpecBuilder newKeySetSpecBuilder() {
+    public static GordianKeySetSpecBuilder newKeySetSpecBuilder() {
         return GordianCoreKeySetSpecBuilder.newInstance();
     }
 
@@ -194,7 +194,7 @@ public final class GordianUtilities {
      *
      * @return the specBuilder
      */
-    public static GordianNewPasswordLockSpecBuilder newPasswordLockSpecBuilder() {
+    public static GordianPasswordLockSpecBuilder newPasswordLockSpecBuilder() {
         return GordianCorePasswordLockSpecBuilder.newInstance();
     }
 
@@ -203,7 +203,7 @@ public final class GordianUtilities {
      *
      * @return the specBuilder
      */
-    public static GordianNewKeyPairSpecBuilder newKeyPairSpecBuilder() {
+    public static GordianKeyPairSpecBuilder newKeyPairSpecBuilder() {
         return GordianCoreKeyPairSpecBuilder.newInstance();
     }
 
@@ -212,7 +212,7 @@ public final class GordianUtilities {
      *
      * @return the specBuilder
      */
-    public static GordianNewSignatureSpecBuilder newSignatureSpecBuilder() {
+    public static GordianSignatureSpecBuilder newSignatureSpecBuilder() {
         return GordianCoreSignatureSpecBuilder.newInstance();
     }
 
@@ -221,7 +221,7 @@ public final class GordianUtilities {
      *
      * @return the specBuilder
      */
-    public static GordianNewEncryptorSpecBuilder newEncryptorSpecBuilder() {
+    public static GordianEncryptorSpecBuilder newEncryptorSpecBuilder() {
         return GordianCoreEncryptorSpecBuilder.newInstance();
     }
 
@@ -230,7 +230,7 @@ public final class GordianUtilities {
      *
      * @return the specBuilder
      */
-    public static GordianNewAgreementSpecBuilder newAgreementSpecBuilder() {
+    public static GordianAgreementSpecBuilder newAgreementSpecBuilder() {
         return GordianCoreAgreementSpecBuilder.newInstance();
     }
 }

@@ -17,18 +17,18 @@
 package io.github.tonywasher.joceanus.gordianknot.impl.core.agree;
 
 import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementParams;
-import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianNewAgreementKDF;
-import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianNewAgreementSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementKDF;
+import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianCertificate;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairUse;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamCipherSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymCipherSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactoryType;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
-import io.github.tonywasher.joceanus.gordianknot.api.keyset.spec.GordianNewKeySetSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keyset.spec.GordianKeySetSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignatureFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianNewSignatureSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseData;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.cipher.GordianCoreCipherFactory;
@@ -89,7 +89,7 @@ public class GordianCoreAgreementParams
     /**
      * The SignatureSpec.
      */
-    private GordianNewSignatureSpec theSignSpec;
+    private GordianSignatureSpec theSignSpec;
 
     /**
      * The Additional data.
@@ -105,7 +105,7 @@ public class GordianCoreAgreementParams
      * @throws GordianException on error
      */
     GordianCoreAgreementParams(final GordianCoreAgreementSupplier pSupplier,
-                               final GordianNewAgreementSpec pSpec,
+                               final GordianAgreementSpec pSpec,
                                final Object pResultType) throws GordianException {
         isClient = true;
         theFactory = pSupplier.getFactory();
@@ -194,7 +194,7 @@ public class GordianCoreAgreementParams
         }
 
         /* Validate a keySetSpec */
-        if (pResultType instanceof GordianNewKeySetSpec mySpec) {
+        if (pResultType instanceof GordianKeySetSpec mySpec) {
             /* Check Spec */
             final GordianCoreKeySetFactory myKeySetFactory = (GordianCoreKeySetFactory) theFactory.getKeySetFactory();
             myKeySetFactory.checkKeySetSpec(mySpec);
@@ -202,7 +202,7 @@ public class GordianCoreAgreementParams
         }
 
         /* Validate a symCipherSpec */
-        if (pResultType instanceof GordianNewSymCipherSpec mySpec) {
+        if (pResultType instanceof GordianSymCipherSpec mySpec) {
             /* Check Spec */
             final GordianCoreCipherFactory myCipherFactory = (GordianCoreCipherFactory) theFactory.getCipherFactory();
             myCipherFactory.checkSymCipherSpec(mySpec);
@@ -210,7 +210,7 @@ public class GordianCoreAgreementParams
         }
 
         /* Validate a streamCipherSpec */
-        if (pResultType instanceof GordianNewStreamCipherSpec mySpec) {
+        if (pResultType instanceof GordianStreamCipherSpec mySpec) {
             /* Check Spec */
             final GordianCoreCipherFactory myCipherFactory = (GordianCoreCipherFactory) theFactory.getCipherFactory();
             myCipherFactory.checkStreamCipherSpec(mySpec);
@@ -245,7 +245,7 @@ public class GordianCoreAgreementParams
     }
 
     @Override
-    public GordianNewSignatureSpec getSignatureSpec() {
+    public GordianSignatureSpec getSignatureSpec() {
         return theSignSpec;
     }
 
@@ -332,13 +332,13 @@ public class GordianCoreAgreementParams
     @Override
     public GordianAgreementParams setSigner(final GordianCertificate pSigner) throws GordianException {
         final GordianSignatureFactory mySignFactory = theFactory.getAsyncFactory().getSignatureFactory();
-        final GordianNewSignatureSpec mySignSpec = pSigner == null ? null : mySignFactory.defaultForKeyPair(pSigner.getKeyPair().getKeyPairSpec());
+        final GordianSignatureSpec mySignSpec = pSigner == null ? null : mySignFactory.defaultForKeyPair(pSigner.getKeyPair().getKeyPairSpec());
         return setSigner(pSigner, mySignSpec);
     }
 
     @Override
     public GordianAgreementParams setSigner(final GordianCertificate pSigner,
-                                            final GordianNewSignatureSpec pSignSpec) throws GordianException {
+                                            final GordianSignatureSpec pSignSpec) throws GordianException {
         /* Not allowed for client parameters */
         if (isClient) {
             throw new GordianDataException("Signer Certificate cannot be set for client");
@@ -378,7 +378,7 @@ public class GordianCoreAgreementParams
     public GordianAgreementParams setAdditionalData(final byte[] pData) throws GordianException {
         /* Only allowed if KDFType is not NONE */
         if (pData != null
-                && GordianNewAgreementKDF.NONE.equals(theSpec.getKDFType())) {
+                && GordianAgreementKDF.NONE.equals(theSpec.getKDFType())) {
             throw new GordianDataException("Additional Data not allowed for KDFType NONE");
         }
 

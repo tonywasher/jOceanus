@@ -17,9 +17,9 @@
 package io.github.tonywasher.joceanus.gordianknot.api.digest;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpecBuilder;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestType;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestType;
 
 import java.util.List;
 import java.util.function.Predicate;
@@ -35,47 +35,47 @@ public interface GordianDigestFactory {
      * @return the new Digest
      * @throws GordianException on error
      */
-    GordianDigest createDigest(GordianNewDigestSpec pDigestSpec) throws GordianException;
+    GordianDigest createDigest(GordianDigestSpec pDigestSpec) throws GordianException;
 
     /**
      * create new GordianDigestSpecBuilder.
      *
      * @return the new DigestSpecBuilder
      */
-    GordianNewDigestSpecBuilder newDigestSpecBuilder();
+    GordianDigestSpecBuilder newDigestSpecBuilder();
 
     /**
      * Obtain predicate for supported digestSpecs.
      *
      * @return the predicate
      */
-    Predicate<GordianNewDigestSpec> supportedDigestSpecs();
+    Predicate<GordianDigestSpec> supportedDigestSpecs();
 
     /**
      * Obtain predicate for supported digestTypes.
      *
      * @return the predicate
      */
-    Predicate<GordianNewDigestType> supportedDigestTypes();
+    Predicate<GordianDigestType> supportedDigestTypes();
 
     /**
      * Obtain a list of supported digestSpecs.
      *
      * @return the list of supported digestSpecs.
      */
-    List<GordianNewDigestSpec> listAllSupportedSpecs();
+    List<GordianDigestSpec> listAllSupportedSpecs();
 
     /**
      * Obtain a list of supported digestTypes.
      *
      * @return the list of supported digestTypes.
      */
-    List<GordianNewDigestType> listAllSupportedTypes();
+    List<GordianDigestType> listAllSupportedTypes();
 
     /**
      * List all possible digestSpecs.
      *
      * @return the list
      */
-    List<GordianNewDigestSpec> listAllPossibleSpecs();
+    List<GordianDigestSpec> listAllPossibleSpecs();
 }

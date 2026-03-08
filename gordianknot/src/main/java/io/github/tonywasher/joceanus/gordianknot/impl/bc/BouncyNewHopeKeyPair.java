@@ -19,7 +19,7 @@ package io.github.tonywasher.joceanus.gordianknot.impl.bc;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPrivateKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPublicKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.agree.GordianCoreAgreementFactory;
@@ -69,7 +69,7 @@ public final class BouncyNewHopeKeyPair {
          * @param pKeySpec   the keySpec
          * @param pPublicKey the public key
          */
-        BouncyNewHopePublicKey(final GordianNewKeyPairSpec pKeySpec,
+        BouncyNewHopePublicKey(final GordianKeyPairSpec pKeySpec,
                                final NHPublicKeyParameters pPublicKey) {
             super(pKeySpec, pPublicKey);
         }
@@ -96,7 +96,7 @@ public final class BouncyNewHopeKeyPair {
          * @param pKeySpec    the keySpec
          * @param pPrivateKey the private key
          */
-        BouncyNewHopePrivateKey(final GordianNewKeyPairSpec pKeySpec,
+        BouncyNewHopePrivateKey(final GordianKeyPairSpec pKeySpec,
                                 final NHPrivateKeyParameters pPrivateKey) {
             super(pKeySpec, pPrivateKey);
         }
@@ -129,7 +129,7 @@ public final class BouncyNewHopeKeyPair {
          * @param pKeySpec the keySpec
          */
         BouncyNewHopeKeyPairGenerator(final GordianBaseFactory pFactory,
-                                      final GordianNewKeyPairSpec pKeySpec) {
+                                      final GordianKeyPairSpec pKeySpec) {
             /* Initialise underlying class */
             super(pFactory, pKeySpec);
 
@@ -266,7 +266,7 @@ public final class BouncyNewHopeKeyPair {
             final ExchangePair myPair = myGenerator.GenerateExchange(myTarget.getPublicKey());
 
             /* Store the ephemeral keyPair */
-            final GordianNewKeyPairSpec mySpec = getSpec().getKeyPairSpec();
+            final GordianKeyPairSpec mySpec = getSpec().getKeyPairSpec();
             final BouncyNewHopePublicKey myPublic = new BouncyNewHopePublicKey(mySpec, (NHPublicKeyParameters) myPair.getPublicKey());
             final BouncyKeyPair myEphemeral = new BouncyKeyPair(myPublic);
             setClientEphemeralAsEncapsulated(myEphemeral);

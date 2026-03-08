@@ -18,9 +18,9 @@ package io.github.tonywasher.joceanus.gordianknot.impl.bc;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignParams;
-import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianNewSignatureSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPrivateKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPublicKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
@@ -76,7 +76,7 @@ public final class BouncyEdDSAKeyPair {
          * @param pKeySpec   the keySpec
          * @param pPublicKey the public key
          */
-        BouncyEd25519PublicKey(final GordianNewKeyPairSpec pKeySpec,
+        BouncyEd25519PublicKey(final GordianKeyPairSpec pKeySpec,
                                final Ed25519PublicKeyParameters pPublicKey) {
             super(pKeySpec, pPublicKey);
         }
@@ -103,7 +103,7 @@ public final class BouncyEdDSAKeyPair {
          * @param pKeySpec    the keySpec
          * @param pPrivateKey the private key
          */
-        BouncyEd25519PrivateKey(final GordianNewKeyPairSpec pKeySpec,
+        BouncyEd25519PrivateKey(final GordianKeyPairSpec pKeySpec,
                                 final Ed25519PrivateKeyParameters pPrivateKey) {
             super(pKeySpec, pPrivateKey);
         }
@@ -131,7 +131,7 @@ public final class BouncyEdDSAKeyPair {
          * @param pKeySpec   the keySpec
          * @param pPublicKey the public key
          */
-        BouncyEd448PublicKey(final GordianNewKeyPairSpec pKeySpec,
+        BouncyEd448PublicKey(final GordianKeyPairSpec pKeySpec,
                              final Ed448PublicKeyParameters pPublicKey) {
             super(pKeySpec, pPublicKey);
         }
@@ -158,7 +158,7 @@ public final class BouncyEdDSAKeyPair {
          * @param pKeySpec    the keySpec
          * @param pPrivateKey the private key
          */
-        BouncyEd448PrivateKey(final GordianNewKeyPairSpec pKeySpec,
+        BouncyEd448PrivateKey(final GordianKeyPairSpec pKeySpec,
                               final Ed448PrivateKeyParameters pPrivateKey) {
             super(pKeySpec, pPrivateKey);
         }
@@ -192,7 +192,7 @@ public final class BouncyEdDSAKeyPair {
          * @param pKeySpec the keySpec
          */
         BouncyEd25519KeyPairGenerator(final GordianBaseFactory pFactory,
-                                      final GordianNewKeyPairSpec pKeySpec) {
+                                      final GordianKeyPairSpec pKeySpec) {
             /* Initialise underlying class */
             super(pFactory, pKeySpec);
 
@@ -323,7 +323,7 @@ public final class BouncyEdDSAKeyPair {
          * @param pKeySpec the keySpec
          */
         BouncyEd448KeyPairGenerator(final GordianBaseFactory pFactory,
-                                    final GordianNewKeyPairSpec pKeySpec) {
+                                    final GordianKeyPairSpec pKeySpec) {
             /* Initialise underlying class */
             super(pFactory, pKeySpec);
 
@@ -429,7 +429,7 @@ public final class BouncyEdDSAKeyPair {
          * @param pSpec    the signatureSpec.
          */
         BouncyEdDSASignature(final GordianBaseFactory pFactory,
-                             final GordianNewSignatureSpec pSpec) {
+                             final GordianSignatureSpec pSpec) {
             /* Initialise underlying class */
             super(pFactory, pSpec);
         }

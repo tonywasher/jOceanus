@@ -17,9 +17,9 @@
 
 package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.agree;
 
-import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianNewAgreementKDF;
-import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianNewAgreementType;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairType;
+import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementKDF;
+import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementType;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairType;
 
 import java.util.EnumMap;
 import java.util.Map;
@@ -31,7 +31,7 @@ public final class GordianCoreAgreementKDF {
     /**
      * The agreementKDFMap.
      */
-    private static final Map<GordianNewAgreementKDF, GordianCoreAgreementKDF> KDFMAP = newKDFMap();
+    private static final Map<GordianAgreementKDF, GordianCoreAgreementKDF> KDFMAP = newKDFMap();
 
     /**
      * The kdfTypeArray.
@@ -41,14 +41,14 @@ public final class GordianCoreAgreementKDF {
     /**
      * The KDF.
      */
-    private final GordianNewAgreementKDF theKDF;
+    private final GordianAgreementKDF theKDF;
 
     /**
      * Constructor.
      *
      * @param pKDF the agreementKDF
      */
-    private GordianCoreAgreementKDF(final GordianNewAgreementKDF pKDF) {
+    private GordianCoreAgreementKDF(final GordianAgreementKDF pKDF) {
         theKDF = pKDF;
     }
 
@@ -57,7 +57,7 @@ public final class GordianCoreAgreementKDF {
      *
      * @return the KDF
      */
-    public GordianNewAgreementKDF getKDF() {
+    public GordianAgreementKDF getKDF() {
         return theKDF;
     }
 
@@ -68,8 +68,8 @@ public final class GordianCoreAgreementKDF {
      * @param pAgreeType the agreement type
      * @return true/false
      */
-    public boolean isSupported(final GordianNewKeyPairType pKeyType,
-                               final GordianNewAgreementType pAgreeType) {
+    public boolean isSupported(final GordianKeyPairType pKeyType,
+                               final GordianAgreementType pAgreeType) {
         /* Switch on keyType */
         switch (pKeyType) {
             case RSA:
@@ -91,8 +91,8 @@ public final class GordianCoreAgreementKDF {
             case BIKE:
             case NTRU:
             case NTRUPRIME:
-                return pAgreeType == GordianNewAgreementType.KEM
-                        && theKDF == GordianNewAgreementKDF.NONE;
+                return pAgreeType == GordianAgreementType.KEM
+                        && theKDF == GordianAgreementKDF.NONE;
             default:
                 return true;
         }
@@ -104,7 +104,7 @@ public final class GordianCoreAgreementKDF {
      * @param pAgreeType the agreement type
      * @return true/false
      */
-    private boolean isSupported4DH(final GordianNewAgreementType pAgreeType) {
+    private boolean isSupported4DH(final GordianAgreementType pAgreeType) {
         /* Switch on kdfType */
         switch (theKDF) {
             case SHA256KDF:
@@ -112,9 +112,9 @@ public final class GordianCoreAgreementKDF {
                 return true;
             case SHA256CKDF:
             case SHA512CKDF:
-                return pAgreeType == GordianNewAgreementType.UNIFIED || pAgreeType == GordianNewAgreementType.MQV;
+                return pAgreeType == GordianAgreementType.UNIFIED || pAgreeType == GordianAgreementType.MQV;
             case NONE:
-                return pAgreeType == GordianNewAgreementType.BASIC || pAgreeType == GordianNewAgreementType.KEM;
+                return pAgreeType == GordianAgreementType.BASIC || pAgreeType == GordianAgreementType.KEM;
             default:
                 return false;
         }
@@ -126,7 +126,7 @@ public final class GordianCoreAgreementKDF {
      * @param pAgreeType the agreement type
      * @return true/false
      */
-    private boolean isSupported4XDH(final GordianNewAgreementType pAgreeType) {
+    private boolean isSupported4XDH(final GordianAgreementType pAgreeType) {
         /* Switch on kdfType */
         switch (theKDF) {
             case SHA512KDF:
@@ -137,7 +137,7 @@ public final class GordianCoreAgreementKDF {
             case SHA512HKDF:
             case SHA256HKDF:
             case NONE:
-                return pAgreeType != GordianNewAgreementType.UNIFIED;
+                return pAgreeType != GordianAgreementType.UNIFIED;
             default:
                 return false;
         }
@@ -149,7 +149,7 @@ public final class GordianCoreAgreementKDF {
      * @param pAgreeType the agreement type
      * @return true/false
      */
-    private boolean isSupported4EC(final GordianNewAgreementType pAgreeType) {
+    private boolean isSupported4EC(final GordianAgreementType pAgreeType) {
         /* Switch on kdfType */
         switch (theKDF) {
             case SHA512KDF:
@@ -158,7 +158,7 @@ public final class GordianCoreAgreementKDF {
                 return true;
             case SHA512CKDF:
             case SHA256CKDF:
-                return pAgreeType != GordianNewAgreementType.KEM;
+                return pAgreeType != GordianAgreementType.KEM;
             default:
                 return false;
         }
@@ -170,7 +170,7 @@ public final class GordianCoreAgreementKDF {
      * @return true/false
      */
     public boolean isCKDF() {
-        return theKDF == GordianNewAgreementKDF.SHA256CKDF || theKDF == GordianNewAgreementKDF.SHA512CKDF;
+        return theKDF == GordianAgreementKDF.SHA256CKDF || theKDF == GordianAgreementKDF.SHA512CKDF;
     }
 
     @Override
@@ -205,7 +205,7 @@ public final class GordianCoreAgreementKDF {
      * @return the core KDF
      */
     public static GordianCoreAgreementKDF mapCoreKDF(final Object pKDF) {
-        return pKDF instanceof GordianNewAgreementKDF myKDF ? KDFMAP.get(myKDF) : null;
+        return pKDF instanceof GordianAgreementKDF myKDF ? KDFMAP.get(myKDF) : null;
     }
 
     /**
@@ -213,9 +213,9 @@ public final class GordianCoreAgreementKDF {
      *
      * @return the KDF map
      */
-    private static Map<GordianNewAgreementKDF, GordianCoreAgreementKDF> newKDFMap() {
-        final Map<GordianNewAgreementKDF, GordianCoreAgreementKDF> myMap = new EnumMap<>(GordianNewAgreementKDF.class);
-        for (GordianNewAgreementKDF myKDF : GordianNewAgreementKDF.values()) {
+    private static Map<GordianAgreementKDF, GordianCoreAgreementKDF> newKDFMap() {
+        final Map<GordianAgreementKDF, GordianCoreAgreementKDF> myMap = new EnumMap<>(GordianAgreementKDF.class);
+        for (GordianAgreementKDF myKDF : GordianAgreementKDF.values()) {
             myMap.put(myKDF, new GordianCoreAgreementKDF(myKDF));
         }
         return myMap;

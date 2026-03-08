@@ -18,7 +18,7 @@
 package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeyType;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeyType;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKeyLengths;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.base.GordianBundleLoader.GordianBundleId;
 
@@ -32,7 +32,7 @@ public final class GordianCoreSymKeyType {
     /**
      * The symKeyTypeMap.
      */
-    private static final Map<GordianNewSymKeyType, GordianCoreSymKeyType> TYPEMAP = newTypeMap();
+    private static final Map<GordianSymKeyType, GordianCoreSymKeyType> TYPEMAP = newTypeMap();
 
     /**
      * The symKeyTypeArray.
@@ -42,7 +42,7 @@ public final class GordianCoreSymKeyType {
     /**
      * The SymKeyType.
      */
-    private final GordianNewSymKeyType theType;
+    private final GordianSymKeyType theType;
 
     /**
      * The Supported blockLengths.
@@ -59,7 +59,7 @@ public final class GordianCoreSymKeyType {
      *
      * @param pType the type
      */
-    private GordianCoreSymKeyType(final GordianNewSymKeyType pType) {
+    private GordianCoreSymKeyType(final GordianSymKeyType pType) {
         theType = pType;
         theLengths = blockLengthsForSymKeyType(pType);
         theName = bundleIdForSymKeyType(pType).getValue();
@@ -70,7 +70,7 @@ public final class GordianCoreSymKeyType {
      *
      * @return the type
      */
-    public GordianNewSymKeyType getType() {
+    public GordianSymKeyType getType() {
         return theType;
     }
 
@@ -94,7 +94,7 @@ public final class GordianCoreSymKeyType {
      * @param pType the type
      * @return the default length
      */
-    public static GordianLength getDefaultBlockLength(final GordianNewSymKeyType pType) {
+    public static GordianLength getDefaultBlockLength(final GordianSymKeyType pType) {
         final GordianCoreSymKeyType myType = mapCoreType(pType);
         return myType == null ? null : myType.getDefaultBlockLength();
     }
@@ -139,7 +139,7 @@ public final class GordianCoreSymKeyType {
      * @param pKeyLen  the key length
      * @return true/false
      */
-    public static boolean validForKeyLength(final GordianNewSymKeyType pKeyType,
+    public static boolean validForKeyLength(final GordianSymKeyType pKeyType,
                                             final GordianLength pKeyLen) {
         final GordianCoreSymKeyType myType = mapCoreType(pKeyType);
         return myType != null && myType.validForKeyLength(pKeyLen);
@@ -239,7 +239,7 @@ public final class GordianCoreSymKeyType {
      * @param pType the symKeyType
      * @return the resource bundleId
      */
-    private static GordianBundleId bundleIdForSymKeyType(final GordianNewSymKeyType pType) {
+    private static GordianBundleId bundleIdForSymKeyType(final GordianSymKeyType pType) {
         /* Create the map and return it */
         switch (pType) {
             case AES:
@@ -311,7 +311,7 @@ public final class GordianCoreSymKeyType {
      * @param pType the symKeyType
      * @return the block lengths
      */
-    private static GordianLength[] blockLengthsForSymKeyType(final GordianNewSymKeyType pType) {
+    private static GordianLength[] blockLengthsForSymKeyType(final GordianSymKeyType pType) {
         /* Create the map and return it */
         switch (pType) {
             case AES:
@@ -361,7 +361,7 @@ public final class GordianCoreSymKeyType {
      * @param pKeyLength the keyLength
      * @return the block lengths
      */
-    static GordianLength defaultBlockLengthForSymKeyTypeAndKeyLength(final GordianNewSymKeyType pType,
+    static GordianLength defaultBlockLengthForSymKeyTypeAndKeyLength(final GordianSymKeyType pType,
                                                                      final GordianLength pKeyLength) {
         /* Create the map and return it */
         switch (pType) {
@@ -410,7 +410,7 @@ public final class GordianCoreSymKeyType {
      * @param pType the symKeyType
      * @return the block lengths
      */
-    static GordianLength defaultKeyLengthForSymKeyType(final GordianNewSymKeyType pType) {
+    static GordianLength defaultKeyLengthForSymKeyType(final GordianSymKeyType pType) {
         /* Create the map and return it */
         switch (pType) {
             case AES:
@@ -476,7 +476,7 @@ public final class GordianCoreSymKeyType {
      * @return the core type
      */
     public static GordianCoreSymKeyType mapCoreType(final Object pType) {
-        return pType instanceof GordianNewSymKeyType myType ? TYPEMAP.get(myType) : null;
+        return pType instanceof GordianSymKeyType myType ? TYPEMAP.get(myType) : null;
     }
 
     /**
@@ -484,9 +484,9 @@ public final class GordianCoreSymKeyType {
      *
      * @return the type map
      */
-    private static Map<GordianNewSymKeyType, GordianCoreSymKeyType> newTypeMap() {
-        final Map<GordianNewSymKeyType, GordianCoreSymKeyType> myMap = new EnumMap<>(GordianNewSymKeyType.class);
-        for (GordianNewSymKeyType myType : GordianNewSymKeyType.values()) {
+    private static Map<GordianSymKeyType, GordianCoreSymKeyType> newTypeMap() {
+        final Map<GordianSymKeyType, GordianCoreSymKeyType> myMap = new EnumMap<>(GordianSymKeyType.class);
+        for (GordianSymKeyType myType : GordianSymKeyType.values()) {
             myMap.put(myType, new GordianCoreSymKeyType(myType));
         }
         return myMap;

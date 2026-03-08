@@ -17,7 +17,7 @@
 package io.github.tonywasher.joceanus.gordianknot.impl.jca;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.digest.GordianCoreDigestFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
@@ -42,7 +42,7 @@ public class JcaDigestFactory
     }
 
     @Override
-    public JcaDigest createDigest(final GordianNewDigestSpec pDigestSpec) throws GordianException {
+    public JcaDigest createDigest(final GordianDigestSpec pDigestSpec) throws GordianException {
         /* Check validity of DigestSpec */
         checkDigestSpec(pDigestSpec);
         final GordianCoreDigestSpec mySpec = (GordianCoreDigestSpec) pDigestSpec;

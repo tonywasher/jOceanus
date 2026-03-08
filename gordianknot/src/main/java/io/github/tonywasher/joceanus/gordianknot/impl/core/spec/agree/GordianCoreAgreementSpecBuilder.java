@@ -17,11 +17,11 @@
 
 package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.agree;
 
-import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianNewAgreementKDF;
-import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianNewAgreementSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianNewAgreementSpecBuilder;
-import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianNewAgreementType;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementKDF;
+import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementType;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairSpec;
 
 import java.util.ArrayList;
@@ -32,21 +32,21 @@ import java.util.List;
  * KeyPair Agreement Specification Builder.
  */
 public final class GordianCoreAgreementSpecBuilder
-        implements GordianNewAgreementSpecBuilder {
+        implements GordianAgreementSpecBuilder {
     /**
      * The keyPairSpec.
      */
-    private GordianNewKeyPairSpec theKeyPairSpec;
+    private GordianKeyPairSpec theKeyPairSpec;
 
     /**
      * The agreement type.
      */
-    private GordianNewAgreementType theAgreementType;
+    private GordianAgreementType theAgreementType;
 
     /**
      * The KDF type.
      */
-    private GordianNewAgreementKDF theKDF;
+    private GordianAgreementKDF theKDF;
 
     /**
      * eith Confirm?
@@ -69,31 +69,31 @@ public final class GordianCoreAgreementSpecBuilder
     }
 
     @Override
-    public GordianNewAgreementSpecBuilder withKeyPairSpec(final GordianNewKeyPairSpec pSpec) {
+    public GordianAgreementSpecBuilder withKeyPairSpec(final GordianKeyPairSpec pSpec) {
         theKeyPairSpec = pSpec;
         return this;
     }
 
     @Override
-    public GordianNewAgreementSpecBuilder withAgreementType(final GordianNewAgreementType pType) {
+    public GordianAgreementSpecBuilder withAgreementType(final GordianAgreementType pType) {
         theAgreementType = pType;
         return this;
     }
 
     @Override
-    public GordianNewAgreementSpecBuilder withKDF(final GordianNewAgreementKDF pKDF) {
+    public GordianAgreementSpecBuilder withKDF(final GordianAgreementKDF pKDF) {
         theKDF = pKDF;
         return this;
     }
 
     @Override
-    public GordianNewAgreementSpecBuilder withConfirm() {
+    public GordianAgreementSpecBuilder withConfirm() {
         withConfirm = true;
         return this;
     }
 
     @Override
-    public GordianNewAgreementSpec build() {
+    public GordianAgreementSpec build() {
         /* Create spec, reset and return */
         final GordianCoreAgreementSpec mySpec = new GordianCoreAgreementSpec(theKeyPairSpec, theAgreementType, theKDF, withConfirm);
         reset();
@@ -116,15 +116,15 @@ public final class GordianCoreAgreementSpecBuilder
      * @param pKeyPairSpec the keyPairSpec
      * @return the list
      */
-    public static List<GordianNewAgreementSpec> listAllPossibleSpecs(final GordianNewKeyPairSpec pKeyPairSpec) {
+    public static List<GordianAgreementSpec> listAllPossibleSpecs(final GordianKeyPairSpec pKeyPairSpec) {
         /* Create list */
-        final List<GordianNewAgreementSpec> myAgreements = new ArrayList<>();
+        final List<GordianAgreementSpec> myAgreements = new ArrayList<>();
 
         /* Switch on keyPairType */
         switch (pKeyPairSpec.getKeyPairType()) {
             case RSA:
             case MLKEM:
-                myAgreements.addAll(listAllKDFs(pKeyPairSpec, GordianNewAgreementType.KEM));
+                myAgreements.addAll(listAllKDFs(pKeyPairSpec, GordianAgreementType.KEM));
                 break;
             case NEWHOPE:
             case CMCE:
@@ -134,45 +134,45 @@ public final class GordianCoreAgreementSpecBuilder
             case BIKE:
             case NTRU:
             case NTRUPRIME:
-                myAgreements.add(new GordianCoreAgreementSpec(pKeyPairSpec, GordianNewAgreementType.KEM, GordianNewAgreementKDF.NONE));
+                myAgreements.add(new GordianCoreAgreementSpec(pKeyPairSpec, GordianAgreementType.KEM, GordianAgreementKDF.NONE));
                 break;
             case EC:
             case SM2:
             case GOST:
-                myAgreements.addAll(listAllKDFs(pKeyPairSpec, GordianNewAgreementType.ANON));
-                myAgreements.addAll(listAllKDFs(pKeyPairSpec, GordianNewAgreementType.KEM));
-                myAgreements.addAll(listAllKDFs(pKeyPairSpec, GordianNewAgreementType.BASIC));
-                myAgreements.addAll(listAllKDFs(pKeyPairSpec, GordianNewAgreementType.SIGNED));
-                myAgreements.addAll(listAllKDFs(pKeyPairSpec, GordianNewAgreementType.UNIFIED));
-                myAgreements.addAll(listAllKDFs(pKeyPairSpec, GordianNewAgreementType.UNIFIED, true));
-                myAgreements.addAll(listAllKDFs(pKeyPairSpec, GordianNewAgreementType.MQV));
-                myAgreements.addAll(listAllKDFs(pKeyPairSpec, GordianNewAgreementType.MQV, true));
-                myAgreements.addAll(listAllKDFs(pKeyPairSpec, GordianNewAgreementType.SM2));
-                myAgreements.addAll(listAllKDFs(pKeyPairSpec, GordianNewAgreementType.SM2, true));
+                myAgreements.addAll(listAllKDFs(pKeyPairSpec, GordianAgreementType.ANON));
+                myAgreements.addAll(listAllKDFs(pKeyPairSpec, GordianAgreementType.KEM));
+                myAgreements.addAll(listAllKDFs(pKeyPairSpec, GordianAgreementType.BASIC));
+                myAgreements.addAll(listAllKDFs(pKeyPairSpec, GordianAgreementType.SIGNED));
+                myAgreements.addAll(listAllKDFs(pKeyPairSpec, GordianAgreementType.UNIFIED));
+                myAgreements.addAll(listAllKDFs(pKeyPairSpec, GordianAgreementType.UNIFIED, true));
+                myAgreements.addAll(listAllKDFs(pKeyPairSpec, GordianAgreementType.MQV));
+                myAgreements.addAll(listAllKDFs(pKeyPairSpec, GordianAgreementType.MQV, true));
+                myAgreements.addAll(listAllKDFs(pKeyPairSpec, GordianAgreementType.SM2));
+                myAgreements.addAll(listAllKDFs(pKeyPairSpec, GordianAgreementType.SM2, true));
                 break;
             case DH:
             case DSTU:
-                myAgreements.addAll(listAllKDFs(pKeyPairSpec, GordianNewAgreementType.ANON));
-                myAgreements.addAll(listAllKDFs(pKeyPairSpec, GordianNewAgreementType.KEM));
-                myAgreements.addAll(listAllKDFs(pKeyPairSpec, GordianNewAgreementType.BASIC));
-                myAgreements.addAll(listAllKDFs(pKeyPairSpec, GordianNewAgreementType.SIGNED));
-                myAgreements.addAll(listAllKDFs(pKeyPairSpec, GordianNewAgreementType.UNIFIED));
-                myAgreements.addAll(listAllKDFs(pKeyPairSpec, GordianNewAgreementType.UNIFIED, true));
-                myAgreements.addAll(listAllKDFs(pKeyPairSpec, GordianNewAgreementType.MQV));
-                myAgreements.addAll(listAllKDFs(pKeyPairSpec, GordianNewAgreementType.MQV, true));
+                myAgreements.addAll(listAllKDFs(pKeyPairSpec, GordianAgreementType.ANON));
+                myAgreements.addAll(listAllKDFs(pKeyPairSpec, GordianAgreementType.KEM));
+                myAgreements.addAll(listAllKDFs(pKeyPairSpec, GordianAgreementType.BASIC));
+                myAgreements.addAll(listAllKDFs(pKeyPairSpec, GordianAgreementType.SIGNED));
+                myAgreements.addAll(listAllKDFs(pKeyPairSpec, GordianAgreementType.UNIFIED));
+                myAgreements.addAll(listAllKDFs(pKeyPairSpec, GordianAgreementType.UNIFIED, true));
+                myAgreements.addAll(listAllKDFs(pKeyPairSpec, GordianAgreementType.MQV));
+                myAgreements.addAll(listAllKDFs(pKeyPairSpec, GordianAgreementType.MQV, true));
                 break;
             case XDH:
-                myAgreements.addAll(listAllKDFs(pKeyPairSpec, GordianNewAgreementType.ANON));
-                myAgreements.addAll(listAllKDFs(pKeyPairSpec, GordianNewAgreementType.BASIC));
-                myAgreements.addAll(listAllKDFs(pKeyPairSpec, GordianNewAgreementType.SIGNED));
-                myAgreements.addAll(listAllKDFs(pKeyPairSpec, GordianNewAgreementType.UNIFIED));
-                myAgreements.addAll(listAllKDFs(pKeyPairSpec, GordianNewAgreementType.UNIFIED, true));
+                myAgreements.addAll(listAllKDFs(pKeyPairSpec, GordianAgreementType.ANON));
+                myAgreements.addAll(listAllKDFs(pKeyPairSpec, GordianAgreementType.BASIC));
+                myAgreements.addAll(listAllKDFs(pKeyPairSpec, GordianAgreementType.SIGNED));
+                myAgreements.addAll(listAllKDFs(pKeyPairSpec, GordianAgreementType.UNIFIED));
+                myAgreements.addAll(listAllKDFs(pKeyPairSpec, GordianAgreementType.UNIFIED, true));
                 break;
             case COMPOSITE:
                 /* Loop through the possible keySpecs for the first key */
-                final Iterator<GordianNewKeyPairSpec> myIterator = ((GordianCoreKeyPairSpec) pKeyPairSpec).keySpecIterator();
-                for (GordianNewAgreementSpec mySpec : listAllPossibleSpecs(myIterator.next())) {
-                    final GordianNewAgreementSpec myTest = new GordianCoreAgreementSpec(pKeyPairSpec,
+                final Iterator<GordianKeyPairSpec> myIterator = ((GordianCoreKeyPairSpec) pKeyPairSpec).keySpecIterator();
+                for (GordianAgreementSpec mySpec : listAllPossibleSpecs(myIterator.next())) {
+                    final GordianAgreementSpec myTest = new GordianCoreAgreementSpec(pKeyPairSpec,
                             mySpec.getAgreementType(), mySpec.getKDFType(), mySpec.withConfirm());
                     if (myTest.isValid()) {
                         myAgreements.add(myTest);
@@ -194,8 +194,8 @@ public final class GordianCoreAgreementSpecBuilder
      * @param pAgreementType the agreementType
      * @return the list
      */
-    public static List<GordianNewAgreementSpec> listAllKDFs(final GordianNewKeyPairSpec pKeyPairSpec,
-                                                            final GordianNewAgreementType pAgreementType) {
+    public static List<GordianAgreementSpec> listAllKDFs(final GordianKeyPairSpec pKeyPairSpec,
+                                                         final GordianAgreementType pAgreementType) {
         return listAllKDFs(pKeyPairSpec, pAgreementType, false);
     }
 
@@ -207,14 +207,14 @@ public final class GordianCoreAgreementSpecBuilder
      * @param pConfirm       with key confirmation
      * @return the list
      */
-    public static List<GordianNewAgreementSpec> listAllKDFs(final GordianNewKeyPairSpec pKeyPairSpec,
-                                                            final GordianNewAgreementType pAgreementType,
-                                                            final boolean pConfirm) {
+    public static List<GordianAgreementSpec> listAllKDFs(final GordianKeyPairSpec pKeyPairSpec,
+                                                         final GordianAgreementType pAgreementType,
+                                                         final boolean pConfirm) {
         /* Create list */
-        final List<GordianNewAgreementSpec> myAgreements = new ArrayList<>();
+        final List<GordianAgreementSpec> myAgreements = new ArrayList<>();
 
         /* Loop through the KDFs */
-        for (final GordianNewAgreementKDF myKDF : GordianNewAgreementKDF.values()) {
+        for (final GordianAgreementKDF myKDF : GordianAgreementKDF.values()) {
             myAgreements.add(new GordianCoreAgreementSpec(pKeyPairSpec, pAgreementType, myKDF, pConfirm));
         }
 

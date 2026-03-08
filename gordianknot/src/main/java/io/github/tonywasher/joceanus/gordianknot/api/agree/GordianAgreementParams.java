@@ -16,10 +16,10 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.api.agree;
 
-import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianNewAgreementSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianCertificate;
-import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianNewSignatureSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpec;
 
 /**
  * Key Agreement Parameters Specification.
@@ -30,7 +30,7 @@ public interface GordianAgreementParams {
      *
      * @return the spec
      */
-    GordianNewAgreementSpec getAgreementSpec();
+    GordianAgreementSpec getAgreementSpec();
 
     /**
      * Obtain the resultType.
@@ -65,7 +65,7 @@ public interface GordianAgreementParams {
      *
      * @return the signatureSpec
      */
-    GordianNewSignatureSpec getSignatureSpec();
+    GordianSignatureSpec getSignatureSpec();
 
     /**
      * Obtain the additionalData.
@@ -110,7 +110,7 @@ public interface GordianAgreementParams {
      * @throws GordianException on error
      */
     GordianAgreementParams setSigner(GordianCertificate pSigner,
-                                     GordianNewSignatureSpec pSignSpec) throws GordianException;
+                                     GordianSignatureSpec pSignSpec) throws GordianException;
 
     /**
      * Set additional data.

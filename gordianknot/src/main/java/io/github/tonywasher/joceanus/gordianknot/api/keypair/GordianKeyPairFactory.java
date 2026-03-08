@@ -17,9 +17,9 @@
 package io.github.tonywasher.joceanus.gordianknot.api.keypair;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairSpecBuilder;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairType;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairType;
 
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
@@ -37,14 +37,14 @@ public interface GordianKeyPairFactory {
      * @return the generator
      * @throws GordianException on error
      */
-    GordianKeyPairGenerator getKeyPairGenerator(GordianNewKeyPairSpec pKeySpec) throws GordianException;
+    GordianKeyPairGenerator getKeyPairGenerator(GordianKeyPairSpec pKeySpec) throws GordianException;
 
     /**
      * create new GordianKeyPairSpecBuilder.
      *
      * @return the new KeyPairSpecBuilder
      */
-    GordianNewKeyPairSpecBuilder newKeyPairSpecBuilder();
+    GordianKeyPairSpecBuilder newKeyPairSpecBuilder();
 
     /**
      * Determine KeySpec from PKCS8EncodedKeySpec.
@@ -53,7 +53,7 @@ public interface GordianKeyPairFactory {
      * @return the keySpec
      * @throws GordianException on error
      */
-    GordianNewKeyPairSpec determineKeyPairSpec(PKCS8EncodedKeySpec pEncoded) throws GordianException;
+    GordianKeyPairSpec determineKeyPairSpec(PKCS8EncodedKeySpec pEncoded) throws GordianException;
 
     /**
      * Determine KeySpec from X509EncodedKeySpec.
@@ -62,21 +62,21 @@ public interface GordianKeyPairFactory {
      * @return the keySpec
      * @throws GordianException on error
      */
-    GordianNewKeyPairSpec determineKeyPairSpec(X509EncodedKeySpec pEncoded) throws GordianException;
+    GordianKeyPairSpec determineKeyPairSpec(X509EncodedKeySpec pEncoded) throws GordianException;
 
     /**
      * Obtain predicate for keyPairSpecs.
      *
      * @return the predicate
      */
-    Predicate<GordianNewKeyPairSpec> supportedKeyPairSpecs();
+    Predicate<GordianKeyPairSpec> supportedKeyPairSpecs();
 
     /**
      * Obtain a list of supported keyPairSpecs.
      *
      * @return the list of supported keyPairSpecs.
      */
-    List<GordianNewKeyPairSpec> listAllSupportedKeyPairSpecs();
+    List<GordianKeyPairSpec> listAllSupportedKeyPairSpecs();
 
     /**
      * Obtain a list of supported KeyPairSpecs for a KeyPairType.
@@ -84,12 +84,12 @@ public interface GordianKeyPairFactory {
      * @param pKeyPairType the keyPairType
      * @return the list of supported asymKeySpecs.
      */
-    List<GordianNewKeyPairSpec> listAllSupportedKeyPairSpecs(GordianNewKeyPairType pKeyPairType);
+    List<GordianKeyPairSpec> listAllSupportedKeyPairSpecs(GordianKeyPairType pKeyPairType);
 
     /**
      * Obtain a list of all possible keyPairSpecs.
      *
      * @return the list
      */
-    List<GordianNewKeyPairSpec> listPossibleKeySpecs();
+    List<GordianKeyPairSpec> listPossibleKeySpecs();
 }

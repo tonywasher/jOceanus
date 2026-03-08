@@ -18,8 +18,8 @@ package io.github.tonywasher.joceanus.gordianknot.junit.regression;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeySpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactory.GordianFactoryLock;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactoryType;
@@ -27,14 +27,14 @@ import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKey;
 import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySet;
 import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySetAADCipher;
 import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySetCipher;
-import io.github.tonywasher.joceanus.gordianknot.api.keyset.spec.GordianNewKeySetSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keyset.spec.GordianNewKeySetSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.keyset.spec.GordianKeySetSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keyset.spec.GordianKeySetSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.lock.GordianKeySetLock;
 import io.github.tonywasher.joceanus.gordianknot.api.lock.GordianLockFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.lock.spec.GordianNewPasswordLockSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.lock.spec.GordianNewPasswordLockSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.lock.spec.GordianPasswordLockSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.lock.spec.GordianPasswordLockSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMac;
-import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianNewMacSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianMacSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.random.GordianRandomFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianDataConverter;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
@@ -164,7 +164,7 @@ class KeySetTest {
         /**
          * the KeySetSpec.
          */
-        private final GordianNewPasswordLockSpec theSpec;
+        private final GordianPasswordLockSpec theSpec;
 
         /**
          * The keyHash.
@@ -184,17 +184,17 @@ class KeySetTest {
         /**
          * The symKey.
          */
-        private final GordianKey<GordianNewSymKeySpec> theSymKey;
+        private final GordianKey<GordianSymKeySpec> theSymKey;
 
         /**
          * The streamKey.
          */
-        private final GordianKey<GordianNewStreamKeySpec> theStreamKey;
+        private final GordianKey<GordianStreamKeySpec> theStreamKey;
 
         /**
          * The macKey.
          */
-        private final GordianKey<GordianNewMacSpec> theMacKey;
+        private final GordianKey<GordianMacSpec> theMacKey;
 
         /**
          * Constructor.
@@ -212,10 +212,10 @@ class KeySetTest {
             maxSteps = pMaxSteps;
 
             /* Create the keySetHashSpec */
-            final GordianNewKeySetSpecBuilder myKSBuilder = GordianUtilities.newKeySetSpecBuilder();
-            final GordianNewPasswordLockSpecBuilder myPLBuilder = GordianUtilities.newPasswordLockSpecBuilder();
-            final int myMaxSteps = pMaxSteps ? GordianNewKeySetSpec.MAXIMUM_CIPHER_STEPS
-                    : GordianNewKeySetSpec.MINIMUM_CIPHER_STEPS;
+            final GordianKeySetSpecBuilder myKSBuilder = GordianUtilities.newKeySetSpecBuilder();
+            final GordianPasswordLockSpecBuilder myPLBuilder = GordianUtilities.newPasswordLockSpecBuilder();
+            final int myMaxSteps = pMaxSteps ? GordianKeySetSpec.MAXIMUM_CIPHER_STEPS
+                    : GordianKeySetSpec.MINIMUM_CIPHER_STEPS;
             theSpec = myPLBuilder.passwordLock(myKSBuilder.keySet(pKeyLen, myMaxSteps));
 
             /* Generate the hash */
@@ -249,7 +249,7 @@ class KeySetTest {
          *
          * @return the passwordLockSpec
          */
-        GordianNewPasswordLockSpec getPasswordLockSpec() {
+        GordianPasswordLockSpec getPasswordLockSpec() {
             return theSpec;
         }
 
@@ -294,7 +294,7 @@ class KeySetTest {
          *
          * @return the symKey
          */
-        GordianKey<GordianNewSymKeySpec> getSymKey() {
+        GordianKey<GordianSymKeySpec> getSymKey() {
             return theSymKey;
         }
 
@@ -303,7 +303,7 @@ class KeySetTest {
          *
          * @return the streamKey
          */
-        GordianKey<GordianNewStreamKeySpec> getStreamKey() {
+        GordianKey<GordianStreamKeySpec> getStreamKey() {
             return theStreamKey;
         }
 
@@ -312,7 +312,7 @@ class KeySetTest {
          *
          * @return the macKey
          */
-        GordianKey<GordianNewMacSpec> getMacKey() {
+        GordianKey<GordianMacSpec> getMacKey() {
             return theMacKey;
         }
 
@@ -790,26 +790,26 @@ class KeySetTest {
     private void checkWrap(final FactoryKeySet pKeySet) throws GordianException {
         /* Access the keys */
         final GordianCoreKeySet myKeySet = (GordianCoreKeySet) pKeySet.getKeySet();
-        final GordianKey<GordianNewSymKeySpec> mySymKey = pKeySet.getSymKey();
-        final GordianKey<GordianNewStreamKeySpec> myStreamKey = pKeySet.getStreamKey();
-        final GordianKey<GordianNewMacSpec> myMacKey = pKeySet.getMacKey();
+        final GordianKey<GordianSymKeySpec> mySymKey = pKeySet.getSymKey();
+        final GordianKey<GordianStreamKeySpec> myStreamKey = pKeySet.getStreamKey();
+        final GordianKey<GordianMacSpec> myMacKey = pKeySet.getMacKey();
         final GordianLength myKeyLen = pKeySet.getPasswordLockSpec().getKeySetSpec().getKeyLength();
 
         /* Check wrap of symKey */
         final byte[] mySymSafe = myKeySet.secureKey(mySymKey);
-        final GordianKey<GordianNewSymKeySpec> mySymResult = myKeySet.deriveKey(mySymSafe, mySymKey.getKeyType());
+        final GordianKey<GordianSymKeySpec> mySymResult = myKeySet.deriveKey(mySymSafe, mySymKey.getKeyType());
         Assertions.assertEquals(mySymKey, mySymResult, "Failed to wrap/unwrap symKey");
         Assertions.assertEquals(myKeySet.getKeyWrapLength(myKeyLen), mySymSafe.length, "Incorrect wrapped symLength");
 
         /* Check wrap of streamKey */
         final byte[] myStreamSafe = myKeySet.secureKey(myStreamKey);
-        final GordianKey<GordianNewStreamKeySpec> myStreamResult = myKeySet.deriveKey(myStreamSafe, myStreamKey.getKeyType());
+        final GordianKey<GordianStreamKeySpec> myStreamResult = myKeySet.deriveKey(myStreamSafe, myStreamKey.getKeyType());
         Assertions.assertEquals(myStreamKey, myStreamResult, "Failed to wrap/unwrap streamKey");
         Assertions.assertEquals(myKeySet.getKeyWrapLength(myKeyLen), myStreamSafe.length, "Incorrect wrapped streamLength");
 
         /* Check wrap of macKey */
         final byte[] myMacSafe = myKeySet.secureKey(myMacKey);
-        final GordianKey<GordianNewMacSpec> myMacResult = myKeySet.deriveKey(myMacSafe, myMacKey.getKeyType());
+        final GordianKey<GordianMacSpec> myMacResult = myKeySet.deriveKey(myMacSafe, myMacKey.getKeyType());
         Assertions.assertEquals(myMacKey, myMacResult, "Failed to wrap/unwrap macKey");
         Assertions.assertEquals(myKeySet.getKeyWrapLength(myKeyLen), myMacSafe.length, "Incorrect wrapped macLength: " + myMacKey.getKeyType());
 

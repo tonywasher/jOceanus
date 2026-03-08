@@ -20,24 +20,24 @@ import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreement;
 import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementParams;
 import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementStatus;
-import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianNewAgreementKDF;
-import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianNewAgreementSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementKDF;
+import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianCertificate;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairUsage;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairUse;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamCipherSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymCipherSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianAsyncFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactoryType;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairGenerator;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySet;
-import io.github.tonywasher.joceanus.gordianknot.api.keyset.spec.GordianNewKeySetSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keyset.spec.GordianKeySetSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.agree.GordianCoreAgreement;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.agree.GordianCoreAgreementFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.agree.GordianCoreAgreementSpec;
@@ -66,18 +66,18 @@ public final class AsymmetricAgreeScripts {
     /**
      * KeySetSpec.
      */
-    static final GordianNewKeySetSpec KEYSETSPEC = GordianUtilities.newKeySetSpecBuilder().keySet();
+    static final GordianKeySetSpec KEYSETSPEC = GordianUtilities.newKeySetSpecBuilder().keySet();
 
     /**
      * SymCipherSpec.
      */
-    private static final GordianNewSymCipherSpec SYMKEYSPEC
+    private static final GordianSymCipherSpec SYMKEYSPEC
             = GordianUtilities.newSymCipherSpecBuilder().sic(GordianUtilities.newSymKeySpecBuilder().aes(GordianLength.LEN_256));
 
     /**
      * StreamCipherSpec.
      */
-    private static final GordianNewStreamCipherSpec STREAMKEYSPEC
+    private static final GordianStreamCipherSpec STREAMKEYSPEC
             = GordianUtilities.newStreamCipherSpecBuilder().streamCipher(GordianUtilities.newStreamKeySpecBuilder().chacha(GordianLength.LEN_256));
 
     /**
@@ -131,7 +131,7 @@ public final class AsymmetricAgreeScripts {
     static void createSecuritySigners(final GordianFactory pBCFactory,
                                       final GordianFactory pJCAFactory) throws GordianException {
         /* Create the BC Signer */
-        final GordianNewKeyPairSpec mySpec = GordianUtilities.newKeyPairSpecBuilder().ed448();
+        final GordianKeyPairSpec mySpec = GordianUtilities.newKeyPairSpecBuilder().ed448();
         GordianAsyncFactory myFactory = pBCFactory.getAsyncFactory();
         GordianKeyPairFactory myKPFactory = myFactory.getKeyPairFactory();
         GordianAgreementFactory myAgreeFactory = myFactory.getAgreementFactory();
@@ -247,7 +247,7 @@ public final class AsymmetricAgreeScripts {
         final FactoryKeyPairs myPairs = pAgreement.getOwner().getKeyPairs();
         final GordianKeyPair myPair = myPairs.getKeyPair();
         final GordianKeyPair myTarget = myType.isAnonymous() ? myPair : myPairs.getTargetKeyPair();
-        final byte[] myAdditional = GordianNewAgreementKDF.NONE.equals(mySpec.getKDFType()) ? null : "HelloThere".getBytes();
+        final byte[] myAdditional = GordianAgreementKDF.NONE.equals(mySpec.getKDFType()) ? null : "HelloThere".getBytes();
 
         /* Create mini-certificates */
         final GordianAgreementFactory myAgrees = pAgreement.getOwner().getFactory().getAgreementFactory();
@@ -619,7 +619,7 @@ public final class AsymmetricAgreeScripts {
         Assertions.assertNotNull(myId, "Unknown AlgorithmId for " + pAgreement.getSpec());
 
         /* Check unique mapping */
-        final GordianNewAgreementSpec mySpec = myFactory.getSpecForIdentifier(myId);
+        final GordianAgreementSpec mySpec = myFactory.getSpecForIdentifier(myId);
         Assertions.assertEquals(pAgreement.getSpec(), mySpec, "Invalid mapping for  " + pAgreement.getSpec());
     }
 }

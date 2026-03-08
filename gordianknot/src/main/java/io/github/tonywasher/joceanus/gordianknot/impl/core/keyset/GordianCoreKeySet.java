@@ -20,20 +20,20 @@ import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeySpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeySpecBuilder;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeyType;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeySpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeyType;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKey;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKeyGenerator;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairGenerator;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySet;
 import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySetAADCipher;
 import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySetCipher;
-import io.github.tonywasher.joceanus.gordianknot.api.keyset.spec.GordianNewKeySetSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keyset.spec.GordianKeySetSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianParameters;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianPersonalisation.GordianPersonalId;
@@ -69,12 +69,12 @@ public final class GordianCoreKeySet
     /**
      * The keySetSpec.
      */
-    private final GordianNewKeySetSpec theSpec;
+    private final GordianKeySetSpec theSpec;
 
     /**
      * Map of KeySpec to symKey.
      */
-    private final Map<GordianNewSymKeySpec, GordianKey<GordianNewSymKeySpec>> theSymKeyMap;
+    private final Map<GordianSymKeySpec, GordianKey<GordianSymKeySpec>> theSymKeyMap;
 
     /**
      * The underlying Cipher.
@@ -89,7 +89,7 @@ public final class GordianCoreKeySet
      * @throws GordianException on error
      */
     GordianCoreKeySet(final GordianBaseFactory pFactory,
-                      final GordianNewKeySetSpec pSpec) throws GordianException {
+                      final GordianKeySetSpec pSpec) throws GordianException {
         /* Store parameters */
         theFactory = pFactory;
         theSpec = pSpec;
@@ -129,12 +129,12 @@ public final class GordianCoreKeySet
     }
 
     @Override
-    public GordianNewKeySetSpec getKeySetSpec() {
+    public GordianKeySetSpec getKeySetSpec() {
         return theSpec;
     }
 
     @Override
-    public Map<GordianNewSymKeySpec, GordianKey<GordianNewSymKeySpec>> getSymKeyMap() {
+    public Map<GordianSymKeySpec, GordianKey<GordianSymKeySpec>> getSymKeyMap() {
         return theSymKeyMap;
     }
 
@@ -179,7 +179,7 @@ public final class GordianCoreKeySet
     public static int getKeySetWrapLength(final GordianLength pKeyLen) {
         /* Count the number of KeySetSymTypes for 256 bit keys */
         int myCount = 0;
-        for (GordianNewSymKeyType myType : GordianNewSymKeyType.values()) {
+        for (GordianSymKeyType myType : GordianSymKeyType.values()) {
             if (GordianValidator.validStdBlockSymKeyTypeForKeyLength(myType, pKeyLen)) {
                 myCount++;
             }
@@ -203,8 +203,8 @@ public final class GordianCoreKeySet
     public int getKeySetWrapLength() {
         /* Obtain the count of valid symKeyTypes */
         final GordianValidator myValidator = theFactory.getValidator();
-        final Predicate<GordianNewSymKeyType> myPredicate = myValidator.supportedKeySetSymKeyTypes(theSpec.getKeyLength());
-        final int myCount = (int) Arrays.stream(GordianNewSymKeyType.values()).filter(myPredicate).count();
+        final Predicate<GordianSymKeyType> myPredicate = myValidator.supportedKeySetSymKeyTypes(theSpec.getKeyLength());
+        final int myCount = (int) Arrays.stream(GordianSymKeyType.values()).filter(myPredicate).count();
 
         /* Determine the size of the encoded ASN1 keySet */
         final int mySize = GordianKeySetASN1.getEncodedLength(theSpec.getKeyLength().getByteLength(), myCount);
@@ -361,7 +361,7 @@ public final class GordianCoreKeySet
 
         /* Determine and check the keySpec */
         final GordianKeyPairFactory myFactory = theFactory.getAsyncFactory().getKeyPairFactory();
-        final GordianNewKeyPairSpec myKeySpec = myFactory.determineKeyPairSpec(pPublicKeySpec);
+        final GordianKeyPairSpec myKeySpec = myFactory.determineKeyPairSpec(pPublicKeySpec);
         if (!myKeySpec.equals(myFactory.determineKeyPairSpec(myPrivate))) {
             throw new GordianLogicException("Mismatch on keySpecs");
         }
@@ -483,9 +483,9 @@ public final class GordianCoreKeySet
     }
 
     @Override
-    public void declareSymKey(final GordianKey<GordianNewSymKeySpec> pKey) throws GordianException {
+    public void declareSymKey(final GordianKey<GordianSymKeySpec> pKey) throws GordianException {
         /* Access keyType */
-        final GordianNewSymKeySpec myKeyType = pKey.getKeyType();
+        final GordianSymKeySpec myKeyType = pKey.getKeyType();
 
         /* Check that the key is supported */
         final GordianValidator myValidator = theFactory.getValidator();
@@ -494,7 +494,7 @@ public final class GordianCoreKeySet
         }
 
         /* Look for existing key of this type */
-        final GordianKey<GordianNewSymKeySpec> myExisting = theSymKeyMap.get(myKeyType);
+        final GordianKey<GordianSymKeySpec> myExisting = theSymKeyMap.get(myKeyType);
         if (myExisting != null) {
             /* Must be some mistake */
             throw new GordianDataException("keyType already declared");
@@ -516,16 +516,16 @@ public final class GordianCoreKeySet
         /* Loop through the symmetricKeys values */
         final GordianLength myKeyLen = theSpec.getKeyLength();
         final GordianValidator myValidator = theFactory.getValidator();
-        final Predicate<GordianNewSymKeyType> mySymPredicate = myValidator.supportedKeySetSymKeyTypes(myKeyLen);
-        final GordianNewSymKeySpecBuilder myBuilder = GordianCoreSymKeySpecBuilder.newInstance();
-        for (final GordianNewSymKeyType myType : GordianNewSymKeyType.values()) {
+        final Predicate<GordianSymKeyType> mySymPredicate = myValidator.supportedKeySetSymKeyTypes(myKeyLen);
+        final GordianSymKeySpecBuilder myBuilder = GordianCoreSymKeySpecBuilder.newInstance();
+        for (final GordianSymKeyType myType : GordianSymKeyType.values()) {
             /* If this is supported for a keySet */
             if (mySymPredicate.test(myType)) {
                 /* Generate the key */
-                final GordianNewSymKeySpec mySpec = myBuilder.symKey(myType, myKeyLen);
+                final GordianSymKeySpec mySpec = myBuilder.symKey(myType, myKeyLen);
                 final GordianCipherFactory myCipherFactory = theFactory.getCipherFactory();
-                final GordianKeyGenerator<GordianNewSymKeySpec> myGenerator = myCipherFactory.getKeyGenerator(mySpec);
-                final GordianKey<GordianNewSymKeySpec> myKey = myGenerator.generateKey();
+                final GordianKeyGenerator<GordianSymKeySpec> myGenerator = myCipherFactory.getKeyGenerator(mySpec);
+                final GordianKey<GordianSymKeySpec> myKey = myGenerator.generateKey();
 
                 /* Add to map and cipher */
                 theSymKeyMap.put(mySpec, myKey);
@@ -549,15 +549,15 @@ public final class GordianCoreKeySet
         /* Loop through the symmetricKeys values */
         final GordianLength myKeyLen = theSpec.getKeyLength();
         final GordianValidator myValidator = theFactory.getValidator();
-        final Predicate<GordianNewSymKeyType> mySymPredicate = myValidator.supportedKeySetSymKeyTypes(myKeyLen);
+        final Predicate<GordianSymKeyType> mySymPredicate = myValidator.supportedKeySetSymKeyTypes(myKeyLen);
         final Random mySeededRandom = theFactory.getPersonalisation().getSeededRandom(GordianPersonalId.KEYSETGENRANDOM, pSecret);
-        final GordianNewSymKeySpecBuilder myBuilder = GordianCoreSymKeySpecBuilder.newInstance();
-        for (final GordianNewSymKeyType myType : GordianNewSymKeyType.values()) {
+        final GordianSymKeySpecBuilder myBuilder = GordianCoreSymKeySpecBuilder.newInstance();
+        for (final GordianSymKeyType myType : GordianSymKeyType.values()) {
             /* If this is supported for a keySet */
             if (mySymPredicate.test(myType)) {
                 /* Generate the key and add to map */
-                final GordianNewSymKeySpec mySpec = myBuilder.symKey(myType, myKeyLen);
-                final GordianKey<GordianNewSymKeySpec> myKey = generateKey(mySpec, pSecret, mySeededRandom);
+                final GordianSymKeySpec mySpec = myBuilder.symKey(myType, myKeyLen);
+                final GordianKey<GordianSymKeySpec> myKey = generateKey(mySpec, pSecret, mySeededRandom);
                 theSymKeyMap.put(mySpec, myKey);
                 theCipher.declareSymKey(myKey);
             }

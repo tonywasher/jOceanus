@@ -25,7 +25,8 @@ final GordianFactory myBaseFactory = GordianGenerator.createFactory();
 final GordianCipherFactory myCipherFactory = myBaseFactory.getCipherFactory();
 
 /* Access keyGenerator */
-final GordianSymKeySpec mySpec = GordianSymKeySpecBuilder.aes(GordianLength.LEN_256);
+final GordianSymKeySpecBuilder myBuilder = myCipherFactory.newSymKeySpecBuilder();
+final GordianSymKeySpec mySpec = myBuilder.aes(GordianLength.LEN_256);
 final GordianKeyGenerator&lt;GordianSymKeySpec&gt; myGenerator = myCipherFactory.getKeyGenerator(mySpec);
 final GordianKey&lt;GordianSymKeySpec&gt; myKey = myGenerator.generateKey();
                     </source>
@@ -79,12 +80,14 @@ final GordianFactory myBaseFactory = GordianGenerator.createFactory();
 final GordianCipherFactory myCipherFactory = myBaseFactory.getCipherFactory();
 
 /* Create key */
-final GordianSymKeySpec myKeySpec = GordianSymKeySpecBuilder.aes(GordianLength.LEN_256);
+final GordianSymKeySpecBuilder myKeyBuilder = myCipherFactory.newSymKeySpecBuilder();
+final GordianSymKeySpec myKeySpec = myKeyBuilder.aes(GordianLength.LEN_256);
 final GordianKeyGenerator&lt;GordianSymKeySpec&gt; myGenerator = myCipherFactory.getKeyGenerator(myKeySpec);
 final GordianKey&lt;GordianSymKeySpec&gt; myKey = myGenerator.generateKey();
 
 /* Create cipher */
-final GordianSymCipherSpec myCipherSpec = GordianSymCipherSpecBuilder.cbc(myKeySpec, GordianPadding.PKCS7);
+final GordianSymCipherSpecBuilder myCipherBuilder = myCipherFactory.newSymCipherSpecBuilder();
+final GordianSymCipherSpec myCipherSpec = myCipherBuilder.cbc(myKeySpec, GordianPadding.PKCS7);
 final GordianSymCipher myCipher = myCipherFactory.createSymKeyCipher(myCipherSpec);
 
 /* Encrypt message with random nonce */
@@ -161,7 +164,8 @@ final GordianFactory myBaseFactory = GordianGenerator.createFactory();
 final GordianCipherFactory myCipherFactory = myBaseFactory.getCipherFactory();
 
 /* Create keys */
-final GordianSymKeySpec myKeySpec = GordianSymKeySpecBuilder.aes(GordianLength.LEN_256);
+final GordianSymKeySpecBuilder myBuilder = myCipherFactory.newSymKeySpecBuilder();
+final GordianSymKeySpec myKeySpec = myBuilder.aes(GordianLength.LEN_256);
 final GordianKeyGenerator&lt;GordianSymKeySpec&gt; myGenerator = myCipherFactory.getKeyGenerator(myKeySpec);
 final GordianKey&lt;GordianSymKeySpec&gt; myKey = myGenerator.generateKey();
 final GordianKey&lt;GordianSymKeySpec&gt; myKeyToWrap = myGenerator.generateKey();

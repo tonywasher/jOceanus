@@ -25,7 +25,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.lock.GordianKeyPairLock;
 import io.github.tonywasher.joceanus.gordianknot.api.lock.GordianKeySetLock;
 import io.github.tonywasher.joceanus.gordianknot.api.lock.GordianLock;
 import io.github.tonywasher.joceanus.gordianknot.api.lock.GordianLockFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.lock.spec.GordianNewPasswordLockSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.lock.spec.GordianPasswordLockSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.zip.GordianZipFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.zip.GordianZipLock;
 import io.github.tonywasher.joceanus.gordianknot.api.zip.GordianZipReadFile;
@@ -72,7 +72,7 @@ public class GordianCoreZipFactory
     }
 
     @Override
-    public GordianZipLock keySetZipLock(final GordianNewPasswordLockSpec pLockSpec,
+    public GordianZipLock keySetZipLock(final GordianPasswordLockSpec pLockSpec,
                                         final char[] pPassword) throws GordianException {
         final GordianLockFactory myLockFactory = theFactory.getLockFactory();
         final GordianKeySetLock myLock = myLockFactory.newKeySetLock(pLockSpec, pPassword);
@@ -86,7 +86,7 @@ public class GordianCoreZipFactory
     }
 
     @Override
-    public GordianZipLock factoryZipLock(final GordianNewPasswordLockSpec pLockSpec,
+    public GordianZipLock factoryZipLock(final GordianPasswordLockSpec pLockSpec,
                                          final char[] pPassword) throws GordianException {
         final GordianFactoryLock myLock = theFactory.newFactoryLock(pLockSpec, GordianFactoryType.BC, pPassword);
         return zipLock(myLock);
@@ -100,7 +100,7 @@ public class GordianCoreZipFactory
     }
 
     @Override
-    public GordianZipLock keyPairZipLock(final GordianNewPasswordLockSpec pLockSpec,
+    public GordianZipLock keyPairZipLock(final GordianPasswordLockSpec pLockSpec,
                                          final GordianKeyPair pKeyPair,
                                          final char[] pPassword) throws GordianException {
         final GordianLockFactory myLockFactory = theFactory.getLockFactory();

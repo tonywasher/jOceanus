@@ -20,7 +20,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKey;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacParameters;
-import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianNewMacSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianMacSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianRandomSource;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.key.GordianCoreKeyGenerator;
@@ -38,7 +38,7 @@ public class GordianCoreMacParameters {
     /**
      * The macSpec.
      */
-    private final GordianNewMacSpec theSpec;
+    private final GordianMacSpec theSpec;
 
     /**
      * The secureRandom.
@@ -48,12 +48,12 @@ public class GordianCoreMacParameters {
     /**
      * The KeyGenerator.
      */
-    private GordianCoreKeyGenerator<GordianNewMacSpec> theGenerator;
+    private GordianCoreKeyGenerator<GordianMacSpec> theGenerator;
 
     /**
      * Key.
      */
-    private GordianKey<GordianNewMacSpec> theKey;
+    private GordianKey<GordianMacSpec> theKey;
 
     /**
      * InitialisationVector.
@@ -67,7 +67,7 @@ public class GordianCoreMacParameters {
      * @param pMacSpec the CipherSpec
      */
     GordianCoreMacParameters(final GordianBaseFactory pFactory,
-                             final GordianNewMacSpec pMacSpec) {
+                             final GordianMacSpec pMacSpec) {
         theFactory = pFactory;
         theSpec = pMacSpec;
         theRandom = theFactory.getRandomSource();
@@ -78,7 +78,7 @@ public class GordianCoreMacParameters {
      *
      * @return the key
      */
-    public GordianKey<GordianNewMacSpec> getKey() {
+    public GordianKey<GordianMacSpec> getKey() {
         return theKey;
     }
 
@@ -110,11 +110,11 @@ public class GordianCoreMacParameters {
      * @return the key
      * @throws GordianException on error
      */
-    GordianKey<GordianNewMacSpec> buildKeyFromBytes(final byte[] pKeyBytes) throws GordianException {
+    GordianKey<GordianMacSpec> buildKeyFromBytes(final byte[] pKeyBytes) throws GordianException {
         /* Create generator if needed */
         if (theGenerator == null) {
             final GordianMacFactory myFactory = theFactory.getMacFactory();
-            theGenerator = (GordianCoreKeyGenerator<GordianNewMacSpec>) myFactory.getKeyGenerator(theSpec);
+            theGenerator = (GordianCoreKeyGenerator<GordianMacSpec>) myFactory.getKeyGenerator(theSpec);
         }
 
         /* Create the key */

@@ -17,8 +17,8 @@
 
 package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.sign;
 
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairType;
-import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianNewSignatureType;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairType;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureType;
 
 import java.util.EnumMap;
 import java.util.Map;
@@ -27,7 +27,7 @@ public final class GordianCoreSignatureType {
     /**
      * The signatureTypeMap.
      */
-    private static final Map<GordianNewSignatureType, GordianCoreSignatureType> TYPEMAP = newTypeMap();
+    private static final Map<GordianSignatureType, GordianCoreSignatureType> TYPEMAP = newTypeMap();
 
     /**
      * The signatureTypeArray.
@@ -37,14 +37,14 @@ public final class GordianCoreSignatureType {
     /**
      * The signatureType.
      */
-    private final GordianNewSignatureType theType;
+    private final GordianSignatureType theType;
 
     /**
      * Constructor.
      *
      * @param pType the type
      */
-    private GordianCoreSignatureType(final GordianNewSignatureType pType) {
+    private GordianCoreSignatureType(final GordianSignatureType pType) {
         theType = pType;
     }
 
@@ -53,7 +53,7 @@ public final class GordianCoreSignatureType {
      *
      * @return the type
      */
-    public GordianNewSignatureType getType() {
+    public GordianSignatureType getType() {
         return theType;
     }
 
@@ -63,16 +63,16 @@ public final class GordianCoreSignatureType {
      * @param pKeyType the asymKeyType
      * @return true/false
      */
-    public boolean isSupported(final GordianNewKeyPairType pKeyType) {
+    public boolean isSupported(final GordianKeyPairType pKeyType) {
         switch (theType) {
             case ISO9796D2:
             case PSSMGF1:
             case PSS128:
             case PSS256:
             case X931:
-                return GordianNewKeyPairType.RSA == pKeyType;
+                return GordianKeyPairType.RSA == pKeyType;
             case NR:
-                return GordianNewKeyPairType.EC == pKeyType;
+                return GordianKeyPairType.EC == pKeyType;
             case PREHASH:
                 return hasPreHash(pKeyType);
             case NATIVE:
@@ -91,7 +91,7 @@ public final class GordianCoreSignatureType {
      * @param pKeyType the asymKeyType
      * @return true/false
      */
-    public static boolean hasPreHash(final GordianNewKeyPairType pKeyType) {
+    public static boolean hasPreHash(final GordianKeyPairType pKeyType) {
         switch (pKeyType) {
             case XMSS:
             case RSA:
@@ -107,7 +107,7 @@ public final class GordianCoreSignatureType {
      * @param pKeyType the asymKeyType
      * @return true/false
      */
-    public static boolean hasDSA(final GordianNewKeyPairType pKeyType) {
+    public static boolean hasDSA(final GordianKeyPairType pKeyType) {
         switch (pKeyType) {
             case EC:
             case DSA:
@@ -123,7 +123,7 @@ public final class GordianCoreSignatureType {
      * @param pKeyType the asymKeyType
      * @return true/false
      */
-    public static boolean hasNative(final GordianNewKeyPairType pKeyType) {
+    public static boolean hasNative(final GordianKeyPairType pKeyType) {
         switch (pKeyType) {
             case SM2:
             case EDDSA:
@@ -192,7 +192,7 @@ public final class GordianCoreSignatureType {
      * @return the core type
      */
     public static GordianCoreSignatureType mapCoreType(final Object pType) {
-        return pType instanceof GordianNewSignatureType myType ? TYPEMAP.get(myType) : null;
+        return pType instanceof GordianSignatureType myType ? TYPEMAP.get(myType) : null;
     }
 
     /**
@@ -200,9 +200,9 @@ public final class GordianCoreSignatureType {
      *
      * @return the type map
      */
-    private static Map<GordianNewSignatureType, GordianCoreSignatureType> newTypeMap() {
-        final Map<GordianNewSignatureType, GordianCoreSignatureType> myMap = new EnumMap<>(GordianNewSignatureType.class);
-        for (GordianNewSignatureType myType : GordianNewSignatureType.values()) {
+    private static Map<GordianSignatureType, GordianCoreSignatureType> newTypeMap() {
+        final Map<GordianSignatureType, GordianCoreSignatureType> myMap = new EnumMap<>(GordianSignatureType.class);
+        for (GordianSignatureType myType : GordianSignatureType.values()) {
             myMap.put(myType, new GordianCoreSignatureType(myType));
         }
         return myMap;

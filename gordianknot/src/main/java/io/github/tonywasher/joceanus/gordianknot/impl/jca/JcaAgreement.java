@@ -16,14 +16,14 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.impl.jca;
 
-import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianNewAgreementKDF;
-import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianNewAgreementType;
+import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementKDF;
+import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementType;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeyType;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeyType;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairType;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairType;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.agree.GordianCoreAgreementEngine;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.agree.GordianCoreAgreementFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseData;
@@ -104,7 +104,7 @@ public final class JcaAgreement {
                 /* Create encapsulation */
                 final JcaPublicKey myPublic = (JcaPublicKey) getPublicKey(getServerKeyPair());
                 final KEMGenerateSpec mySpec = new KEMGenerateSpec.Builder(myPublic.getPublicKey(),
-                        GordianNewSymKeyType.AES.toString(), GordianLength.LEN_256.getLength()).withKdfAlgorithm(derivationAlgorithmId()).build();
+                        GordianSymKeyType.AES.toString(), GordianLength.LEN_256.getLength()).withKdfAlgorithm(derivationAlgorithmId()).build();
                 theGenerator.init(mySpec, getRandom());
                 final SecretKeyWithEncapsulation mySecret = (SecretKeyWithEncapsulation) theGenerator.generateKey();
 
@@ -126,7 +126,7 @@ public final class JcaAgreement {
                 /* Create extractor */
                 final JcaPrivateKey myPrivate = (JcaPrivateKey) getPrivateKey(getServerKeyPair());
                 final KEMExtractSpec mySpec = new KEMExtractSpec.Builder(myPrivate.getPrivateKey(), getEncapsulated(),
-                        GordianNewSymKeyType.AES.toString(), GordianLength.LEN_256.getLength()).withKdfAlgorithm(derivationAlgorithmId()).build();
+                        GordianSymKeyType.AES.toString(), GordianLength.LEN_256.getLength()).withKdfAlgorithm(derivationAlgorithmId()).build();
                 theGenerator.init(mySpec);
 
                 /* Store secret */
@@ -176,7 +176,7 @@ public final class JcaAgreement {
                 final PublicKey myKey = (PublicKey) theAgreement.doPhase(myTarget.getPublicKey(), true);
 
                 /* Store the ephemeral */
-                final GordianNewKeyPairSpec mySpec = getSpec().getKeyPairSpec();
+                final GordianKeyPairSpec mySpec = getSpec().getKeyPairSpec();
                 final JcaPublicKey myPublic = new JcaPublicKey(mySpec, myKey);
                 final JcaKeyPair myEphemeral = new JcaKeyPair(myPublic);
                 setClientEphemeralAsEncapsulated(myEphemeral);
@@ -551,7 +551,7 @@ public final class JcaAgreement {
                            final JcaPrivateKey pPrivate) throws GordianException {
             /* Protect against exceptions */
             try {
-                if (getSpec().getKDFType() == GordianNewAgreementKDF.NONE) {
+                if (getSpec().getKDFType() == GordianAgreementKDF.NONE) {
                     pAgreement.init(pPrivate.getPrivateKey(), getRandom());
                 } else {
                     pAgreement.init(pPrivate.getPrivateKey(), new UserKeyingMaterialSpec(getAdditional()), getRandom());
@@ -583,9 +583,9 @@ public final class JcaAgreement {
         KeyAgreement adjustAgreement(final KeyAgreement pCurrent,
                                      final GordianKeyPair pKeyPair) throws GordianException {
             /* If we need to change agreement based on keySpec */
-            if (getSpec().getKeyPairSpec().getKeyPairType().equals(GordianNewKeyPairType.XDH)) {
+            if (getSpec().getKeyPairSpec().getKeyPairType().equals(GordianKeyPairType.XDH)) {
                 final String myBase = pKeyPair.getKeyPairSpec().toString();
-                final String myXtra = GordianNewAgreementType.UNIFIED.equals(getSpec().getAgreementType())
+                final String myXtra = GordianAgreementType.UNIFIED.equals(getSpec().getAgreementType())
                         ? "U" : "";
                 final String myName = getFullAgreementName(myBase + myXtra, getSpec());
                 return getJavaKeyAgreement(myName, false);
@@ -635,7 +635,7 @@ public final class JcaAgreement {
      * @return the KeyFactory
      * @throws GordianException on error
      */
-    static KeyGenerator getJavaKeyGenerator(final GordianNewKeyPairSpec pSpec) throws GordianException {
+    static KeyGenerator getJavaKeyGenerator(final GordianKeyPairSpec pSpec) throws GordianException {
         /* Protect against exceptions */
         try {
             /* Determine the algorithm name */

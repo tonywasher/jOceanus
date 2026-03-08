@@ -18,7 +18,7 @@
 package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestType;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestType;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.base.GordianBundleLoader.GordianBundleId;
 
 import java.util.EnumMap;
@@ -31,7 +31,7 @@ public final class GordianCoreDigestType {
     /**
      * The digestTypeMap.
      */
-    private static final Map<GordianNewDigestType, GordianCoreDigestType> TYPEMAP = newTypeMap();
+    private static final Map<GordianDigestType, GordianCoreDigestType> TYPEMAP = newTypeMap();
 
     /**
      * The digestTypeArray.
@@ -41,7 +41,7 @@ public final class GordianCoreDigestType {
     /**
      * The DigestType.
      */
-    private final GordianNewDigestType theType;
+    private final GordianDigestType theType;
 
     /**
      * The Supported lengths.
@@ -58,7 +58,7 @@ public final class GordianCoreDigestType {
      *
      * @param pType the type
      */
-    private GordianCoreDigestType(final GordianNewDigestType pType) {
+    private GordianCoreDigestType(final GordianDigestType pType) {
         theType = pType;
         theLengths = lengthsForDigestType(pType);
         theName = bundleIdForDigestType(pType).getValue();
@@ -69,7 +69,7 @@ public final class GordianCoreDigestType {
      *
      * @return the type
      */
-    public GordianNewDigestType getType() {
+    public GordianDigestType getType() {
         return theType;
     }
 
@@ -84,7 +84,7 @@ public final class GordianCoreDigestType {
      * @param pType the digestType
      * @return the default length
      */
-    public static GordianLength getDefaultLength(final GordianNewDigestType pType) {
+    public static GordianLength getDefaultLength(final GordianDigestType pType) {
         switch (pType) {
             case MD2:
             case MD4:
@@ -116,7 +116,7 @@ public final class GordianCoreDigestType {
      * @param pType the type
      * @return the supported lengths (first is default)
      */
-    public static GordianLength[] getSupportedLengths(final GordianNewDigestType pType) {
+    public static GordianLength[] getSupportedLengths(final GordianDigestType pType) {
         final GordianCoreDigestType myType = mapCoreType(pType);
         return myType == null ? new GordianLength[0] : myType.getSupportedLengths();
     }
@@ -138,7 +138,7 @@ public final class GordianCoreDigestType {
      * @param pLength the length
      * @return true/false
      */
-    public static boolean isLengthValid(final GordianNewDigestType pType,
+    public static boolean isLengthValid(final GordianDigestType pType,
                                         final GordianLength pLength) {
         for (final GordianLength myLength : getSupportedLengths(pType)) {
             if (myLength.equals(pLength)) {
@@ -163,8 +163,8 @@ public final class GordianCoreDigestType {
      * @param pType the digestType
      * @return true/false
      */
-    public static boolean supportsLargeData(final GordianNewDigestType pType) {
-        return pType != GordianNewDigestType.HARAKA;
+    public static boolean supportsLargeData(final GordianDigestType pType) {
+        return pType != GordianDigestType.HARAKA;
     }
 
     /**
@@ -189,7 +189,7 @@ public final class GordianCoreDigestType {
      * @param pType the digestType
      * @return the resource bundleId
      */
-    private static GordianBundleId bundleIdForDigestType(final GordianNewDigestType pType) {
+    private static GordianBundleId bundleIdForDigestType(final GordianDigestType pType) {
         /* Create the map and return it */
         switch (pType) {
             case SHA2:
@@ -259,7 +259,7 @@ public final class GordianCoreDigestType {
      * @param pType the digestType
      * @return the available lengths
      */
-    private static GordianLength[] lengthsForDigestType(final GordianNewDigestType pType) {
+    private static GordianLength[] lengthsForDigestType(final GordianDigestType pType) {
         /* Create the map and return it */
         switch (pType) {
             case SHA2:
@@ -350,7 +350,7 @@ public final class GordianCoreDigestType {
      * @return the core type
      */
     public static GordianCoreDigestType mapCoreType(final Object pType) {
-        return pType instanceof GordianNewDigestType myType ? TYPEMAP.get(myType) : null;
+        return pType instanceof GordianDigestType myType ? TYPEMAP.get(myType) : null;
     }
 
     /**
@@ -358,9 +358,9 @@ public final class GordianCoreDigestType {
      *
      * @return the type map
      */
-    private static Map<GordianNewDigestType, GordianCoreDigestType> newTypeMap() {
-        final Map<GordianNewDigestType, GordianCoreDigestType> myMap = new EnumMap<>(GordianNewDigestType.class);
-        for (GordianNewDigestType myType : GordianNewDigestType.values()) {
+    private static Map<GordianDigestType, GordianCoreDigestType> newTypeMap() {
+        final Map<GordianDigestType, GordianCoreDigestType> myMap = new EnumMap<>(GordianDigestType.class);
+        for (GordianDigestType myType : GordianDigestType.values()) {
             myMap.put(myType, new GordianCoreDigestType(myType));
         }
         return myMap;

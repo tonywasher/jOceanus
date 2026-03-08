@@ -18,7 +18,7 @@
 package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewSM2Spec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianSM2Spec;
 
 import java.util.EnumMap;
 import java.util.Map;
@@ -31,7 +31,7 @@ public final class GordianCoreSM2Spec
     /**
      * The specMap.
      */
-    private static final Map<GordianNewSM2Spec, GordianCoreSM2Spec> SPECMAP = newSpecMap();
+    private static final Map<GordianSM2Spec, GordianCoreSM2Spec> SPECMAP = newSpecMap();
 
     /**
      * The specArray.
@@ -41,14 +41,14 @@ public final class GordianCoreSM2Spec
     /**
      * The Spec.
      */
-    private final GordianNewSM2Spec theSpec;
+    private final GordianSM2Spec theSpec;
 
     /**
      * Constructor.
      *
      * @param pSpec the spec
      */
-    private GordianCoreSM2Spec(final GordianNewSM2Spec pSpec) {
+    private GordianCoreSM2Spec(final GordianSM2Spec pSpec) {
         theSpec = pSpec;
     }
 
@@ -57,7 +57,7 @@ public final class GordianCoreSM2Spec
      *
      * @return the spec
      */
-    public GordianNewSM2Spec getSpec() {
+    public GordianSM2Spec getSpec() {
         return theSpec;
     }
 
@@ -109,7 +109,7 @@ public final class GordianCoreSM2Spec
 
     @Override
     public boolean hasCustomCurve() {
-        return theSpec == GordianNewSM2Spec.SM2P256V1;
+        return theSpec == GordianSM2Spec.SM2P256V1;
     }
 
     @Override
@@ -139,7 +139,7 @@ public final class GordianCoreSM2Spec
      * @return the core spec
      */
     public static GordianCoreSM2Spec mapCoreSpec(final Object pSpec) {
-        return pSpec instanceof GordianNewSM2Spec mySpec ? SPECMAP.get(mySpec) : null;
+        return pSpec instanceof GordianSM2Spec mySpec ? SPECMAP.get(mySpec) : null;
     }
 
     /**
@@ -147,9 +147,9 @@ public final class GordianCoreSM2Spec
      *
      * @return the type map
      */
-    private static Map<GordianNewSM2Spec, GordianCoreSM2Spec> newSpecMap() {
-        final Map<GordianNewSM2Spec, GordianCoreSM2Spec> myMap = new EnumMap<>(GordianNewSM2Spec.class);
-        for (GordianNewSM2Spec mySpec : GordianNewSM2Spec.values()) {
+    private static Map<GordianSM2Spec, GordianCoreSM2Spec> newSpecMap() {
+        final Map<GordianSM2Spec, GordianCoreSM2Spec> myMap = new EnumMap<>(GordianSM2Spec.class);
+        for (GordianSM2Spec mySpec : GordianSM2Spec.values()) {
             myMap.put(mySpec, new GordianCoreSM2Spec(mySpec));
         }
         return myMap;

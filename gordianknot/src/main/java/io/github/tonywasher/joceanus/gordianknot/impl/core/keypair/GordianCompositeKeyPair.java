@@ -18,7 +18,7 @@ package io.github.tonywasher.joceanus.gordianknot.impl.core.keypair;
 
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianStateAwareKeyPair;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
 
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -33,12 +33,12 @@ public class GordianCompositeKeyPair
     /**
      * The KeySpec.
      */
-    private final GordianNewKeyPairSpec theSpec;
+    private final GordianKeyPairSpec theSpec;
 
     /**
      * The keyPairs.
      */
-    private final Map<GordianNewKeyPairSpec, GordianKeyPair> theKeyPairs;
+    private final Map<GordianKeyPairSpec, GordianKeyPair> theKeyPairs;
 
     /**
      * is the keyPair public only?
@@ -50,13 +50,13 @@ public class GordianCompositeKeyPair
      *
      * @param pSpec the spec
      */
-    public GordianCompositeKeyPair(final GordianNewKeyPairSpec pSpec) {
+    public GordianCompositeKeyPair(final GordianKeyPairSpec pSpec) {
         theSpec = pSpec;
         theKeyPairs = new LinkedHashMap<>();
     }
 
     @Override
-    public GordianNewKeyPairSpec getKeyPairSpec() {
+    public GordianKeyPairSpec getKeyPairSpec() {
         return theSpec;
     }
 
@@ -160,7 +160,7 @@ public class GordianCompositeKeyPair
          *
          * @param pSpec the spec
          */
-        GordianStateAwareCompositeKeyPair(final GordianNewKeyPairSpec pSpec) {
+        GordianStateAwareCompositeKeyPair(final GordianKeyPairSpec pSpec) {
             super(pSpec);
         }
 

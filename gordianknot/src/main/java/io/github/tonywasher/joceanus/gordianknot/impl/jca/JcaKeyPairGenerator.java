@@ -19,8 +19,8 @@ package io.github.tonywasher.joceanus.gordianknot.impl.jca;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewXMSSSpec.GordianNewXMSSDigestType;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianXMSSSpec.GordianXMSSDigestType;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianLogicException;
@@ -101,7 +101,7 @@ public abstract class JcaKeyPairGenerator
      * @param pKeySpec the keySpec
      */
     JcaKeyPairGenerator(final GordianBaseFactory pFactory,
-                        final GordianNewKeyPairSpec pKeySpec) {
+                        final GordianKeyPairSpec pKeySpec) {
         super(pFactory, pKeySpec);
     }
 
@@ -237,7 +237,7 @@ public abstract class JcaKeyPairGenerator
          * @throws GordianException on error
          */
         JcaRSAKeyPairGenerator(final GordianBaseFactory pFactory,
-                               final GordianNewKeyPairSpec pKeySpec) throws GordianException {
+                               final GordianKeyPairSpec pKeySpec) throws GordianException {
             /* initialize underlying class */
             super(pFactory, pKeySpec);
 
@@ -283,7 +283,7 @@ public abstract class JcaKeyPairGenerator
          * @throws GordianException on error
          */
         JcaElGamalKeyPairGenerator(final GordianBaseFactory pFactory,
-                                   final GordianNewKeyPairSpec pKeySpec) throws GordianException {
+                                   final GordianKeyPairSpec pKeySpec) throws GordianException {
             /* initialize underlying class */
             super(pFactory, pKeySpec);
 
@@ -335,7 +335,7 @@ public abstract class JcaKeyPairGenerator
          * @throws GordianException on error
          */
         JcaECKeyPairGenerator(final GordianBaseFactory pFactory,
-                              final GordianNewKeyPairSpec pKeySpec) throws GordianException {
+                              final GordianKeyPairSpec pKeySpec) throws GordianException {
             /* initialize underlying class */
             super(pFactory, pKeySpec);
 
@@ -405,7 +405,7 @@ public abstract class JcaKeyPairGenerator
          * @throws GordianException on error
          */
         JcaDSAKeyPairGenerator(final GordianBaseFactory pFactory,
-                               final GordianNewKeyPairSpec pKeySpec) throws GordianException {
+                               final GordianKeyPairSpec pKeySpec) throws GordianException {
             /* initialize underlying class */
             super(pFactory, pKeySpec);
 
@@ -452,7 +452,7 @@ public abstract class JcaKeyPairGenerator
          * @throws GordianException on error
          */
         JcaDHKeyPairGenerator(final GordianBaseFactory pFactory,
-                              final GordianNewKeyPairSpec pKeySpec) throws GordianException {
+                              final GordianKeyPairSpec pKeySpec) throws GordianException {
             /* initialize underlying class */
             super(pFactory, pKeySpec);
 
@@ -524,7 +524,7 @@ public abstract class JcaKeyPairGenerator
          * @throws GordianException on error
          */
         JcaSLHDSAKeyPairGenerator(final GordianBaseFactory pFactory,
-                                  final GordianNewKeyPairSpec pKeySpec) throws GordianException {
+                                  final GordianKeyPairSpec pKeySpec) throws GordianException {
             /* initialize underlying class */
             super(pFactory, pKeySpec);
 
@@ -580,7 +580,7 @@ public abstract class JcaKeyPairGenerator
          * @throws GordianException on error
          */
         JcaCMCEKeyPairGenerator(final GordianBaseFactory pFactory,
-                                final GordianNewKeyPairSpec pKeySpec) throws GordianException {
+                                final GordianKeyPairSpec pKeySpec) throws GordianException {
             /* initialize underlying class */
             super(pFactory, pKeySpec);
 
@@ -633,7 +633,7 @@ public abstract class JcaKeyPairGenerator
          * @throws GordianException on error
          */
         JcaFrodoKeyPairGenerator(final GordianBaseFactory pFactory,
-                                 final GordianNewKeyPairSpec pKeySpec) throws GordianException {
+                                 final GordianKeyPairSpec pKeySpec) throws GordianException {
             /* initialize underlying class */
             super(pFactory, pKeySpec);
 
@@ -686,7 +686,7 @@ public abstract class JcaKeyPairGenerator
          * @throws GordianException on error
          */
         JcaSABERKeyPairGenerator(final GordianBaseFactory pFactory,
-                                 final GordianNewKeyPairSpec pKeySpec) throws GordianException {
+                                 final GordianKeyPairSpec pKeySpec) throws GordianException {
             /* initialize underlying class */
             super(pFactory, pKeySpec);
 
@@ -739,7 +739,7 @@ public abstract class JcaKeyPairGenerator
          * @throws GordianException on error
          */
         JcaMLKEMKeyPairGenerator(final GordianBaseFactory pFactory,
-                                 final GordianNewKeyPairSpec pKeySpec) throws GordianException {
+                                 final GordianKeyPairSpec pKeySpec) throws GordianException {
             /* initialize underlying class */
             super(pFactory, pKeySpec);
 
@@ -797,7 +797,7 @@ public abstract class JcaKeyPairGenerator
          * @throws GordianException on error
          */
         JcaMLDSAKeyPairGenerator(final GordianBaseFactory pFactory,
-                                 final GordianNewKeyPairSpec pKeySpec) throws GordianException {
+                                 final GordianKeyPairSpec pKeySpec) throws GordianException {
             /* initialize underlying class */
             super(pFactory, pKeySpec);
 
@@ -853,7 +853,7 @@ public abstract class JcaKeyPairGenerator
          * @throws GordianException on error
          */
         JcaHQCKeyPairGenerator(final GordianBaseFactory pFactory,
-                               final GordianNewKeyPairSpec pKeySpec) throws GordianException {
+                               final GordianKeyPairSpec pKeySpec) throws GordianException {
             /* initialize underlying class */
             super(pFactory, pKeySpec);
 
@@ -906,7 +906,7 @@ public abstract class JcaKeyPairGenerator
          * @throws GordianException on error
          */
         JcaBIKEKeyPairGenerator(final GordianBaseFactory pFactory,
-                                final GordianNewKeyPairSpec pKeySpec) throws GordianException {
+                                final GordianKeyPairSpec pKeySpec) throws GordianException {
             /* initialize underlying class */
             super(pFactory, pKeySpec);
 
@@ -959,7 +959,7 @@ public abstract class JcaKeyPairGenerator
          * @throws GordianException on error
          */
         JcaNTRUKeyPairGenerator(final GordianBaseFactory pFactory,
-                                final GordianNewKeyPairSpec pKeySpec) throws GordianException {
+                                final GordianKeyPairSpec pKeySpec) throws GordianException {
             /* initialize underlying class */
             super(pFactory, pKeySpec);
 
@@ -1012,7 +1012,7 @@ public abstract class JcaKeyPairGenerator
          * @throws GordianException on error
          */
         JcaFalconKeyPairGenerator(final GordianBaseFactory pFactory,
-                                  final GordianNewKeyPairSpec pKeySpec) throws GordianException {
+                                  final GordianKeyPairSpec pKeySpec) throws GordianException {
             /* initialize underlying class */
             super(pFactory, pKeySpec);
 
@@ -1065,7 +1065,7 @@ public abstract class JcaKeyPairGenerator
          * @throws GordianException on error
          */
         JcaMayoKeyPairGenerator(final GordianBaseFactory pFactory,
-                                final GordianNewKeyPairSpec pKeySpec) throws GordianException {
+                                final GordianKeyPairSpec pKeySpec) throws GordianException {
             /* initialize underlying class */
             super(pFactory, pKeySpec);
 
@@ -1118,7 +1118,7 @@ public abstract class JcaKeyPairGenerator
          * @throws GordianException on error
          */
         JcaSnovaKeyPairGenerator(final GordianBaseFactory pFactory,
-                                 final GordianNewKeyPairSpec pKeySpec) throws GordianException {
+                                 final GordianKeyPairSpec pKeySpec) throws GordianException {
             /* initialize underlying class */
             super(pFactory, pKeySpec);
 
@@ -1171,7 +1171,7 @@ public abstract class JcaKeyPairGenerator
          * @throws GordianException on error
          */
         JcaNTRULPrimeKeyPairGenerator(final GordianBaseFactory pFactory,
-                                      final GordianNewKeyPairSpec pKeySpec) throws GordianException {
+                                      final GordianKeyPairSpec pKeySpec) throws GordianException {
             /* initialize underlying class */
             super(pFactory, pKeySpec);
 
@@ -1224,7 +1224,7 @@ public abstract class JcaKeyPairGenerator
          * @throws GordianException on error
          */
         JcaSNTRUPrimeKeyPairGenerator(final GordianBaseFactory pFactory,
-                                      final GordianNewKeyPairSpec pKeySpec) throws GordianException {
+                                      final GordianKeyPairSpec pKeySpec) throws GordianException {
             /* initialize underlying class */
             super(pFactory, pKeySpec);
 
@@ -1277,7 +1277,7 @@ public abstract class JcaKeyPairGenerator
          * @throws GordianException on error
          */
         JcaPicnicKeyPairGenerator(final GordianBaseFactory pFactory,
-                                  final GordianNewKeyPairSpec pKeySpec) throws GordianException {
+                                  final GordianKeyPairSpec pKeySpec) throws GordianException {
             /* initialize underlying class */
             super(pFactory, pKeySpec);
 
@@ -1325,7 +1325,7 @@ public abstract class JcaKeyPairGenerator
          * @throws GordianException on error
          */
         JcaXMSSKeyPairGenerator(final GordianBaseFactory pFactory,
-                                final GordianNewKeyPairSpec pKeySpec) throws GordianException {
+                                final GordianKeyPairSpec pKeySpec) throws GordianException {
             /* initialize underlying class */
             super(pFactory, pKeySpec);
 
@@ -1335,7 +1335,7 @@ public abstract class JcaKeyPairGenerator
                 final GordianCoreKeyPairSpec myKeySpec = (GordianCoreKeyPairSpec) pKeySpec;
                 final GordianCoreXMSSSpec myXMSSKeySpec = myKeySpec.getXMSSSpec();
                 final boolean isXMSSMT = myXMSSKeySpec.isMT();
-                final GordianNewXMSSDigestType myType = myXMSSKeySpec.getDigestType();
+                final GordianXMSSDigestType myType = myXMSSKeySpec.getDigestType();
 
                 /* Create the parameters */
                 final AlgorithmParameterSpec myAlgo = isXMSSMT
@@ -1414,7 +1414,7 @@ public abstract class JcaKeyPairGenerator
          * @throws GordianException on error
          */
         protected JcaEdKeyPairGenerator(final GordianBaseFactory pFactory,
-                                        final GordianNewKeyPairSpec pKeySpec) throws GordianException {
+                                        final GordianKeyPairSpec pKeySpec) throws GordianException {
             /* initialize underlying class */
             super(pFactory, pKeySpec);
 
@@ -1485,7 +1485,7 @@ public abstract class JcaKeyPairGenerator
          * @throws GordianException on error
          */
         JcaNewHopeKeyPairGenerator(final GordianBaseFactory pFactory,
-                                   final GordianNewKeyPairSpec pKeySpec) throws GordianException {
+                                   final GordianKeyPairSpec pKeySpec) throws GordianException {
             /* initialize underlying class */
             super(pFactory, pKeySpec);
 
@@ -1525,7 +1525,7 @@ public abstract class JcaKeyPairGenerator
          * @throws GordianException on error
          */
         JcaLMSKeyPairGenerator(final GordianBaseFactory pFactory,
-                               final GordianNewKeyPairSpec pKeySpec) throws GordianException {
+                               final GordianKeyPairSpec pKeySpec) throws GordianException {
             /* initialize underlying class */
             super(pFactory, pKeySpec);
 

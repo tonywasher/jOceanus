@@ -18,9 +18,9 @@
 package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.sign;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairType;
-import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianNewSignatureSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianNewSignatureType;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairType;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureType;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianCoreDigestSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairType;
 
@@ -32,7 +32,7 @@ import java.util.Objects;
  * Signature Specification.
  */
 public class GordianCoreSignatureSpec
-        implements GordianNewSignatureSpec {
+        implements GordianSignatureSpec {
     /**
      * The Separator.
      */
@@ -70,8 +70,8 @@ public class GordianCoreSignatureSpec
      * @param pSignatureType the signatureType
      * @param pSignatureSpec the signatureSpec
      */
-    GordianCoreSignatureSpec(final GordianNewKeyPairType pKeyPairType,
-                             final GordianNewSignatureType pSignatureType,
+    GordianCoreSignatureSpec(final GordianKeyPairType pKeyPairType,
+                             final GordianSignatureType pSignatureType,
                              final Object pSignatureSpec) {
         /* Store parameters */
         theKeyPairType = GordianCoreKeyPairType.mapCoreType(pKeyPairType);
@@ -81,7 +81,7 @@ public class GordianCoreSignatureSpec
     }
 
     @Override
-    public GordianNewKeyPairType getKeyPairType() {
+    public GordianKeyPairType getKeyPairType() {
         return theKeyPairType.getType();
     }
 
@@ -95,7 +95,7 @@ public class GordianCoreSignatureSpec
     }
 
     @Override
-    public GordianNewSignatureType getSignatureType() {
+    public GordianSignatureType getSignatureType() {
         return theSignatureType.getType();
     }
 
@@ -131,9 +131,9 @@ public class GordianCoreSignatureSpec
      * @return the signatureSpec iterator.
      */
     @SuppressWarnings("unchecked")
-    public Iterator<GordianNewSignatureSpec> signatureSpecIterator() {
+    public Iterator<GordianSignatureSpec> signatureSpecIterator() {
         if (theSignatureSpec instanceof List) {
-            return ((List<GordianNewSignatureSpec>) theSignatureSpec).iterator();
+            return ((List<GordianSignatureSpec>) theSignatureSpec).iterator();
         }
         throw new IllegalArgumentException();
     }
@@ -202,7 +202,7 @@ public class GordianCoreSignatureSpec
      * @return valid true/false
      */
     private boolean checkComposite() {
-        final Iterator<GordianNewSignatureSpec> myIterator = signatureSpecIterator();
+        final Iterator<GordianSignatureSpec> myIterator = signatureSpecIterator();
         while (myIterator.hasNext()) {
             /* Check that each spec is valid */
             final GordianCoreSignatureSpec mySpec = (GordianCoreSignatureSpec) myIterator.next();
@@ -263,12 +263,12 @@ public class GordianCoreSignatureSpec
         if (theName == null) {
             /* Load the name */
             theName = theKeyPairType.toString();
-            if (theSignatureType.getType() != GordianNewSignatureType.NATIVE) {
+            if (theSignatureType.getType() != GordianSignatureType.NATIVE) {
                 theName += SEP + theSignatureType;
             }
             if (theSignatureSpec != null) {
-                if (theKeyPairType.getType() == GordianNewKeyPairType.COMPOSITE) {
-                    final Iterator<GordianNewSignatureSpec> myIterator = signatureSpecIterator();
+                if (theKeyPairType.getType() == GordianKeyPairType.COMPOSITE) {
+                    final Iterator<GordianSignatureSpec> myIterator = signatureSpecIterator();
                     final StringBuilder myBuilder = new StringBuilder(theName);
                     while (myIterator.hasNext()) {
                         myBuilder.append(SEP).append(myIterator.next().toString());

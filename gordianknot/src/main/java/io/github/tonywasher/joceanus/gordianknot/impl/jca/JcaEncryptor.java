@@ -18,8 +18,8 @@ package io.github.tonywasher.joceanus.gordianknot.impl.jca;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestType;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestType;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.encrypt.GordianCoreEncryptor;
@@ -325,8 +325,8 @@ public final class JcaEncryptor {
         private static String getAlgorithmName(final GordianCoreEncryptorSpec pSpec) {
             /* Switch on encryptor type */
             final GordianCoreSM2EncryptionSpec mySpec = pSpec.getSM2EncryptionSpec();
-            final GordianNewDigestSpec myDigestSpec = mySpec.getDigestSpec();
-            final GordianNewDigestType myDigestType = myDigestSpec.getDigestType();
+            final GordianDigestSpec myDigestSpec = mySpec.getDigestSpec();
+            final GordianDigestType myDigestType = myDigestSpec.getDigestType();
             switch (myDigestType) {
                 case SHA2:
                     return "SM2withSHA" + myDigestSpec.getDigestLength();

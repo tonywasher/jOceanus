@@ -17,11 +17,11 @@
 package io.github.tonywasher.joceanus.gordianknot.impl.jca;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSubSpec.GordianNewDigestState;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSubSpec.GordianDigestState;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignature;
-import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianNewSignatureSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianNewSignatureType;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureType;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseData;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
@@ -58,7 +58,7 @@ public class JcaSignatureFactory
     }
 
     @Override
-    public GordianSignature createSigner(final GordianNewSignatureSpec pSignatureSpec) throws GordianException {
+    public GordianSignature createSigner(final GordianSignatureSpec pSignatureSpec) throws GordianException {
         /* Check validity of Signature */
         checkSignatureSpec(pSignatureSpec);
 
@@ -73,7 +73,7 @@ public class JcaSignatureFactory
      * @return the Signer
      * @throws GordianException on error
      */
-    private GordianSignature getJcaSigner(final GordianNewSignatureSpec pSignatureSpec) throws GordianException {
+    private GordianSignature getJcaSigner(final GordianSignatureSpec pSignatureSpec) throws GordianException {
         switch (pSignatureSpec.getKeyPairType()) {
             case RSA:
                 return new JcaRSASignature(getFactory(), pSignatureSpec);
@@ -110,7 +110,7 @@ public class JcaSignatureFactory
     }
 
     @Override
-    protected boolean validSignatureSpec(final GordianNewSignatureSpec pSpec) {
+    protected boolean validSignatureSpec(final GordianSignatureSpec pSpec) {
         /* validate the signatureSpec */
         if (!super.validSignatureSpec(pSpec)) {
             return false;
@@ -155,14 +155,14 @@ public class JcaSignatureFactory
      */
     private static boolean validRSASignature(final GordianCoreSignatureSpec pSpec) {
         /* Switch on DigestType */
-        final GordianNewDigestSpec myDigest = pSpec.getDigestSpec();
+        final GordianDigestSpec myDigest = pSpec.getDigestSpec();
         switch (myDigest.getDigestType()) {
             case SHA1:
             case SHA2:
                 return true;
             case SHA3:
                 return pSpec.getCoreType().isPSS()
-                        || GordianNewSignatureType.PREHASH.equals(pSpec.getSignatureType());
+                        || GordianSignatureType.PREHASH.equals(pSpec.getSignatureType());
             case SHAKE:
                 return validRSASHAKESignature(pSpec);
             case WHIRLPOOL:
@@ -171,7 +171,7 @@ public class JcaSignatureFactory
             case MD2:
             case MD4:
             case MD5:
-                return GordianNewSignatureType.PREHASH.equals(pSpec.getSignatureType());
+                return GordianSignatureType.PREHASH.equals(pSpec.getSignatureType());
             default:
                 return false;
         }
@@ -185,7 +185,7 @@ public class JcaSignatureFactory
      */
     private static boolean validRSASHAKESignature(final GordianCoreSignatureSpec pSpec) {
         /* Must be pure SHAKE */
-        final GordianNewDigestSpec myDigest = pSpec.getDigestSpec();
+        final GordianDigestSpec myDigest = pSpec.getDigestSpec();
         if (!pSpec.getCoreType().isPSS()) {
             return false;
         }
@@ -193,9 +193,9 @@ public class JcaSignatureFactory
         /* Switch on SignatureType */
         switch (pSpec.getSignatureType()) {
             case PSS128:
-                return GordianNewDigestState.STATE128.equals(myDigest.getDigestState());
+                return GordianDigestState.STATE128.equals(myDigest.getDigestState());
             case PSS256:
-                return GordianNewDigestState.STATE256.equals(myDigest.getDigestState());
+                return GordianDigestState.STATE256.equals(myDigest.getDigestState());
             default:
                 return false;
         }
@@ -214,9 +214,9 @@ public class JcaSignatureFactory
             case SHA2:
                 return !myDigest.isSha2Hybrid();
             case SHA3:
-                return !GordianNewSignatureType.NR.equals(pSpec.getSignatureType());
+                return !GordianSignatureType.NR.equals(pSpec.getSignatureType());
             case SHAKE:
-                return GordianNewSignatureType.DSA.equals(pSpec.getSignatureType());
+                return GordianSignatureType.DSA.equals(pSpec.getSignatureType());
             default:
                 return false;
         }

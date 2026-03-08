@@ -17,9 +17,9 @@
 
 package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher;
 
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewPBESpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewPBEType;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianPBESpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianPBEType;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpec;
 
 import java.util.Objects;
 
@@ -27,7 +27,7 @@ import java.util.Objects;
  * PBE Specification.
  */
 public class GordianCorePBESpec
-        implements GordianNewPBESpec {
+        implements GordianPBESpec {
     /**
      * The Separator.
      */
@@ -36,7 +36,7 @@ public class GordianCorePBESpec
     /**
      * The PBEType.
      */
-    private final GordianNewPBEType theType;
+    private final GordianPBEType theType;
 
     /**
      * is the Spec valid?
@@ -48,12 +48,12 @@ public class GordianCorePBESpec
      *
      * @param pPBEType the PBEType.
      */
-    GordianCorePBESpec(final GordianNewPBEType pPBEType) {
+    GordianCorePBESpec(final GordianPBEType pPBEType) {
         theType = pPBEType;
     }
 
     @Override
-    public GordianNewPBEType getPBEType() {
+    public GordianPBEType getPBEType() {
         return theType;
     }
 
@@ -74,11 +74,11 @@ public class GordianCorePBESpec
      */
     static class GordianCorePBEDigestAndCountSpec
             extends GordianCorePBESpec
-            implements GordianNewPBEDigestAndCountSpec {
+            implements GordianPBEDigestAndCountSpec {
         /**
          * The DigestSpec.
          */
-        private final GordianNewDigestSpec theDigestSpec;
+        private final GordianDigestSpec theDigestSpec;
 
         /**
          * The count.
@@ -92,8 +92,8 @@ public class GordianCorePBESpec
          * @param pDigestSpec the digestSpec.
          * @param pCount      the iteration count
          */
-        GordianCorePBEDigestAndCountSpec(final GordianNewPBEType pPBEType,
-                                         final GordianNewDigestSpec pDigestSpec,
+        GordianCorePBEDigestAndCountSpec(final GordianPBEType pPBEType,
+                                         final GordianDigestSpec pDigestSpec,
                                          final int pCount) {
             /* Init underlying class and store params */
             super(pPBEType);
@@ -105,7 +105,7 @@ public class GordianCorePBESpec
         }
 
         @Override
-        public GordianNewDigestSpec getDigestSpec() {
+        public GordianDigestSpec getDigestSpec() {
             return theDigestSpec;
         }
 
@@ -119,8 +119,8 @@ public class GordianCorePBESpec
          */
         private void checkValidity() {
             /* Check PBEType */
-            if (getPBEType() != GordianNewPBEType.PBKDF2
-                    && getPBEType() != GordianNewPBEType.PKCS12) {
+            if (getPBEType() != GordianPBEType.PBKDF2
+                    && getPBEType() != GordianPBEType.PKCS12) {
                 return;
             }
 
@@ -165,7 +165,7 @@ public class GordianCorePBESpec
      */
     static class GordianCorePBESCryptSpec
             extends GordianCorePBESpec
-            implements GordianNewPBESCryptSpec {
+            implements GordianPBESCryptSpec {
         /**
          * Max Small Block Cost.
          */
@@ -202,7 +202,7 @@ public class GordianCorePBESpec
                                  final int pBlockSize,
                                  final int pParallel) {
             /* Init underlying class and store params */
-            super(GordianNewPBEType.SCRYPT);
+            super(GordianPBEType.SCRYPT);
             theCost = pCost;
             theBlockSize = pBlockSize;
             theParallel = pParallel;
@@ -289,7 +289,7 @@ public class GordianCorePBESpec
      */
     static class GordianCorePBEArgon2Spec
             extends GordianCorePBESpec
-            implements GordianNewPBEArgon2Spec {
+            implements GordianPBEArgon2Spec {
         /**
          * The Memory.
          */
@@ -316,7 +316,7 @@ public class GordianCorePBESpec
                                  final int pMemory,
                                  final int pIterations) {
             /* Init underlying class and store params */
-            super(GordianNewPBEType.ARGON2);
+            super(GordianPBEType.ARGON2);
             theLanes = pLanes;
             theMemory = pMemory;
             theIterations = pIterations;

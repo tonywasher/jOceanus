@@ -18,9 +18,9 @@
 package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewCipherMode;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeySpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeyType;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianCipherMode;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeyType;
 
 import java.util.Collection;
 import java.util.EnumMap;
@@ -33,19 +33,19 @@ public final class GordianCoreCipherMode {
     /**
      * The modeMap.
      */
-    private static final Map<GordianNewCipherMode, GordianCoreCipherMode> MODEMAP = newModeMap();
+    private static final Map<GordianCipherMode, GordianCoreCipherMode> MODEMAP = newModeMap();
 
     /**
      * The CipherMode.
      */
-    private final GordianNewCipherMode theMode;
+    private final GordianCipherMode theMode;
 
     /**
      * Constructor.
      *
      * @param pMode the mode
      */
-    private GordianCoreCipherMode(final GordianNewCipherMode pMode) {
+    private GordianCoreCipherMode(final GordianCipherMode pMode) {
         theMode = pMode;
     }
 
@@ -54,7 +54,7 @@ public final class GordianCoreCipherMode {
      *
      * @return the mode
      */
-    public GordianNewCipherMode getMode() {
+    public GordianCipherMode getMode() {
         return theMode;
     }
 
@@ -134,22 +134,22 @@ public final class GordianCoreCipherMode {
      * @param pKeySpec the keySpec
      * @return true/false
      */
-    public boolean validForSymKey(final GordianNewSymKeySpec pKeySpec) {
-        final GordianNewSymKeyType myKeyType = pKeySpec.getSymKeyType();
+    public boolean validForSymKey(final GordianSymKeySpec pKeySpec) {
+        final GordianSymKeyType myKeyType = pKeySpec.getSymKeyType();
         final GordianLength myKeyLen = pKeySpec.getKeyLength();
         switch (theMode) {
             case G3413OFB:
             case G3413CFB:
             case G3413CBC:
             case G3413CTR:
-                return GordianNewSymKeyType.KUZNYECHIK.equals(myKeyType);
+                return GordianSymKeyType.KUZNYECHIK.equals(myKeyType);
             case GOFB:
             case GCFB:
-                return GordianNewSymKeyType.GOST.equals(myKeyType);
+                return GordianSymKeyType.GOST.equals(myKeyType);
             case KCTR:
             case KGCM:
             case KCCM:
-                return GordianNewSymKeyType.KALYNA.equals(myKeyType);
+                return GordianSymKeyType.KALYNA.equals(myKeyType);
             case GCMSIV:
                 return GordianLength.LEN_128.equals(myKeyLen)
                         || GordianLength.LEN_256.equals(myKeyLen);
@@ -164,7 +164,7 @@ public final class GordianCoreCipherMode {
      * @return true/false
      */
     public boolean needsIV() {
-        return theMode != GordianNewCipherMode.ECB;
+        return theMode != GordianCipherMode.ECB;
     }
 
     /**
@@ -173,7 +173,7 @@ public final class GordianCoreCipherMode {
      * @return true/false
      */
     public boolean needsReInitialisation() {
-        return theMode == GordianNewCipherMode.GCM;
+        return theMode == GordianCipherMode.GCM;
     }
 
     @Override
@@ -206,9 +206,9 @@ public final class GordianCoreCipherMode {
      *
      * @return the mode map
      */
-    private static Map<GordianNewCipherMode, GordianCoreCipherMode> newModeMap() {
-        final Map<GordianNewCipherMode, GordianCoreCipherMode> myMap = new EnumMap<>(GordianNewCipherMode.class);
-        for (GordianNewCipherMode myMode : GordianNewCipherMode.values()) {
+    private static Map<GordianCipherMode, GordianCoreCipherMode> newModeMap() {
+        final Map<GordianCipherMode, GordianCoreCipherMode> myMap = new EnumMap<>(GordianCipherMode.class);
+        for (GordianCipherMode myMode : GordianCipherMode.values()) {
             myMap.put(myMode, new GordianCoreCipherMode(myMode));
         }
         return myMap;
@@ -220,7 +220,7 @@ public final class GordianCoreCipherMode {
      * @param pMode the base mode
      * @return the core mode
      */
-    public static GordianCoreCipherMode mapCoreMode(final GordianNewCipherMode pMode) {
+    public static GordianCoreCipherMode mapCoreMode(final GordianCipherMode pMode) {
         return MODEMAP.get(pMode);
     }
 

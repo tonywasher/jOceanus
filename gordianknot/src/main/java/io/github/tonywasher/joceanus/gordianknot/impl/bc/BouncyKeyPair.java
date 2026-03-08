@@ -19,7 +19,7 @@ package io.github.tonywasher.joceanus.gordianknot.impl.bc;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianStateAwareKeyPair;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianCoreKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianPrivateKey;
@@ -91,7 +91,7 @@ public class BouncyKeyPair
      * @throws GordianException on error
      */
     public static void checkKeyPair(final GordianKeyPair pKeyPair,
-                                    final GordianNewKeyPairSpec pSpec) throws GordianException {
+                                    final GordianKeyPairSpec pSpec) throws GordianException {
         /* Check the keyPair */
         checkKeyPair(pKeyPair);
 
@@ -120,7 +120,7 @@ public class BouncyKeyPair
          * @param pKeySpec the key spec
          * @param pKey     the key
          */
-        protected BouncyPublicKey(final GordianNewKeyPairSpec pKeySpec,
+        protected BouncyPublicKey(final GordianKeyPairSpec pKeySpec,
                                   final T pKey) {
             super(pKeySpec);
             theKey = pKey;
@@ -190,7 +190,7 @@ public class BouncyKeyPair
          * @param pKeySpec the key spec
          * @param pKey     the key
          */
-        protected BouncyPrivateKey(final GordianNewKeyPairSpec pKeySpec,
+        protected BouncyPrivateKey(final GordianKeyPairSpec pKeySpec,
                                    final T pKey) {
             super(pKeySpec);
             theKey = pKey;
@@ -261,7 +261,7 @@ public class BouncyKeyPair
          * @param pKeySpec the key spec
          * @param pKey     the key
          */
-        protected BouncyStateAwarePrivateKey(final GordianNewKeyPairSpec pKeySpec,
+        protected BouncyStateAwarePrivateKey(final GordianKeyPairSpec pKeySpec,
                                              final T pKey) {
             super(pKeySpec, pKey);
             thePrivateKey = pKey;

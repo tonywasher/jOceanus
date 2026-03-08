@@ -18,7 +18,7 @@ package io.github.tonywasher.joceanus.gordianknot.impl.bc;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPrivateKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPublicKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyRSAKeyPair.BouncyCoreEncryptor;
@@ -71,7 +71,7 @@ public final class BouncyElGamalKeyPair {
          * @param pKeySpec   the keySpec
          * @param pPublicKey the public key
          */
-        BouncyElGamalPublicKey(final GordianNewKeyPairSpec pKeySpec,
+        BouncyElGamalPublicKey(final GordianKeyPairSpec pKeySpec,
                                final ElGamalPublicKeyParameters pPublicKey) {
             super(pKeySpec, pPublicKey);
         }
@@ -121,7 +121,7 @@ public final class BouncyElGamalKeyPair {
          * @param pKeySpec    the keySpec
          * @param pPrivateKey the private key
          */
-        BouncyElGamalPrivateKey(final GordianNewKeyPairSpec pKeySpec,
+        BouncyElGamalPrivateKey(final GordianKeyPairSpec pKeySpec,
                                 final ElGamalPrivateKeyParameters pPrivateKey) {
             super(pKeySpec, pPrivateKey);
         }
@@ -166,7 +166,7 @@ public final class BouncyElGamalKeyPair {
          * @param pKeySpec the keySpec
          */
         BouncyElGamalKeyPairGenerator(final GordianBaseFactory pFactory,
-                                      final GordianNewKeyPairSpec pKeySpec) {
+                                      final GordianKeyPairSpec pKeySpec) {
             /* Initialise underlying class */
             super(pFactory, pKeySpec);
 

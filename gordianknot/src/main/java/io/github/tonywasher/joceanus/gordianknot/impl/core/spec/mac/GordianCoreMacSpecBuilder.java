@@ -18,16 +18,16 @@
 package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.mac;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeySpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeyType;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpecBuilder;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSubSpec.GordianNewDigestState;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestType;
-import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianNewMacSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianNewMacSpecBuilder;
-import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianNewMacType;
-import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianNewSipHashType;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeyType;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSubSpec.GordianDigestState;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestType;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianMacSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianMacSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianMacType;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianSipHashType;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher.GordianCoreSymKeySpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianCoreDigestSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianCoreDigestSubSpec.GordianCoreDigestState;
@@ -40,16 +40,16 @@ import java.util.List;
  * Mac Specification Builder.
  */
 public final class GordianCoreMacSpecBuilder
-        implements GordianNewMacSpecBuilder {
+        implements GordianMacSpecBuilder {
     /**
      * The digestSpec builder.
      */
-    private final GordianNewDigestSpecBuilder theBuilder;
+    private final GordianDigestSpecBuilder theBuilder;
 
     /**
      * The type.
      */
-    private GordianNewMacType theType;
+    private GordianMacType theType;
 
     /**
      * The subSpec.
@@ -78,48 +78,48 @@ public final class GordianCoreMacSpecBuilder
     }
 
     @Override
-    public GordianNewMacSpecBuilder withType(final GordianNewMacType pType) {
+    public GordianMacSpecBuilder withType(final GordianMacType pType) {
         theType = pType;
         return this;
     }
 
     @Override
-    public GordianNewMacSpecBuilder withKeyLength(final GordianLength pKeyLength) {
+    public GordianMacSpecBuilder withKeyLength(final GordianLength pKeyLength) {
         theKeyLength = pKeyLength;
         return this;
     }
 
     @Override
-    public GordianNewMacSpecBuilder withDigestSubSpec(final GordianNewDigestSpec pDigest) {
+    public GordianMacSpecBuilder withDigestSubSpec(final GordianDigestSpec pDigest) {
         theSubSpec = pDigest;
         return this;
     }
 
     @Override
-    public GordianNewMacSpecBuilder withSymKeySubSpec(final GordianNewSymKeySpec pSymKey) {
+    public GordianMacSpecBuilder withSymKeySubSpec(final GordianSymKeySpec pSymKey) {
         theSubSpec = pSymKey;
         return this;
     }
 
     @Override
-    public GordianNewMacSpecBuilder withSipHashSubSpec(final GordianNewSipHashType pSipHash) {
+    public GordianMacSpecBuilder withSipHashSubSpec(final GordianSipHashType pSipHash) {
         theSubSpec = pSipHash;
         return this;
     }
 
     @Override
-    public GordianNewMacSpecBuilder withLengthSubSpec(final GordianLength pLength) {
+    public GordianMacSpecBuilder withLengthSubSpec(final GordianLength pLength) {
         theSubSpec = pLength;
         return this;
     }
 
     @Override
-    public GordianNewDigestSpecBuilder usingDigestSpecBuilder() {
+    public GordianDigestSpecBuilder usingDigestSpecBuilder() {
         return theBuilder;
     }
 
     @Override
-    public GordianNewMacSpec build() {
+    public GordianMacSpec build() {
         /* Handle defaults */
         theKeyLength = determineKeyLength(theKeyLength);
 
@@ -151,16 +151,16 @@ public final class GordianCoreMacSpecBuilder
         }
 
         /* Handle sipHashType */
-        if (theSubSpec instanceof GordianNewSipHashType) {
+        if (theSubSpec instanceof GordianSipHashType) {
             return GordianLength.LEN_128;
 
             /* Handle symKeySpec */
-        } else if (theSubSpec instanceof GordianNewDigestSpec myDigest) {
+        } else if (theSubSpec instanceof GordianDigestSpec myDigest) {
             return myDigest.getDigestLength();
 
             /* Handle symKeySpec */
-        } else if (theSubSpec instanceof GordianNewSymKeySpec mySym) {
-            return GordianNewMacType.POLY1305 == theType
+        } else if (theSubSpec instanceof GordianSymKeySpec mySym) {
+            return GordianMacType.POLY1305 == theType
                     ? GordianLength.LEN_256
                     : mySym.getKeyLength();
         }
@@ -175,25 +175,25 @@ public final class GordianCoreMacSpecBuilder
      * @param pKeyLen the keyLength
      * @return the list
      */
-    public static List<GordianNewMacSpec> listAllPossibleSpecs(final GordianLength pKeyLen) {
+    public static List<GordianMacSpec> listAllPossibleSpecs(final GordianLength pKeyLen) {
         /* Create the array list */
-        final List<GordianNewMacSpec> myList = new ArrayList<>();
+        final List<GordianMacSpec> myList = new ArrayList<>();
         final GordianCoreMacSpecBuilder myBuilder = new GordianCoreMacSpecBuilder();
         final GordianCoreDigestSpecBuilder myDigestBuilder = GordianCoreDigestSpecBuilder.newInstance();
 
         /* For each digestSpec */
-        for (final GordianNewDigestSpec mySpec : GordianCoreDigestSpecBuilder.listAllPossibleSpecs()) {
+        for (final GordianDigestSpec mySpec : GordianCoreDigestSpecBuilder.listAllPossibleSpecs()) {
             /* Add the hMacSpec */
             myList.add(myBuilder.hMac(mySpec, pKeyLen));
 
             /* Add KMAC for digestType of SHAKE */
-            if (GordianNewDigestType.SHAKE == mySpec.getDigestType()) {
+            if (GordianDigestType.SHAKE == mySpec.getDigestType()) {
                 myList.add(myBuilder.kMac(pKeyLen, mySpec));
             }
         }
 
         /* For each SymKey */
-        for (final GordianNewSymKeySpec mySymKeySpec : GordianCoreSymKeySpecBuilder.listAllPossibleSymKeySpecs(pKeyLen)) {
+        for (final GordianSymKeySpec mySymKeySpec : GordianCoreSymKeySpecBuilder.listAllPossibleSymKeySpecs(pKeyLen)) {
             /* Add gMac/cMac/cfbMac/cbcMac */
             myList.add(myBuilder.gMac(mySymKeySpec));
             myList.add(myBuilder.cMac(mySymKeySpec));
@@ -201,7 +201,7 @@ public final class GordianCoreMacSpecBuilder
             myList.add(myBuilder.cfbMac(mySymKeySpec));
 
             /* Add kalynaMac for keyType of Kalyna */
-            if (GordianNewSymKeyType.KALYNA == mySymKeySpec.getSymKeyType()) {
+            if (GordianSymKeyType.KALYNA == mySymKeySpec.getSymKeyType()) {
                 myList.add(myBuilder.kalynaMac(mySymKeySpec));
             }
         }
@@ -209,7 +209,7 @@ public final class GordianCoreMacSpecBuilder
         /* Only add poly1305 for 256bit keyLengths */
         if (GordianLength.LEN_256 == pKeyLen) {
             /* For each SymKey at 128 bits*/
-            for (final GordianNewSymKeySpec mySymKeySpec : GordianCoreSymKeySpecBuilder.listAllPossibleSymKeySpecs(GordianLength.LEN_128)) {
+            for (final GordianSymKeySpec mySymKeySpec : GordianCoreSymKeySpecBuilder.listAllPossibleSymKeySpecs(GordianLength.LEN_128)) {
                 myList.add(myBuilder.poly1305Mac(mySymKeySpec));
             }
 
@@ -217,40 +217,40 @@ public final class GordianCoreMacSpecBuilder
             myList.add(myBuilder.poly1305Mac());
 
             /* Add Blake3 macs */
-            for (final GordianLength myLength : GordianCoreDigestType.getSupportedLengths(GordianNewDigestType.BLAKE3)) {
+            for (final GordianLength myLength : GordianCoreDigestType.getSupportedLengths(GordianDigestType.BLAKE3)) {
                 myList.add(myBuilder.blake3Mac(myLength));
             }
         }
 
         /* Add kupynaMac */
-        for (final GordianLength myLength : GordianCoreDigestType.getSupportedLengths(GordianNewDigestType.KUPYNA)) {
+        for (final GordianLength myLength : GordianCoreDigestType.getSupportedLengths(GordianDigestType.KUPYNA)) {
             myList.add(myBuilder.kupynaMac(pKeyLen, myLength));
         }
 
         /* Loop through states */
         for (final GordianCoreDigestState myState : GordianCoreDigestState.values()) {
-            final GordianNewDigestState myBaseState = myState.getState();
+            final GordianDigestState myBaseState = myState.getState();
             /* Add SkeinMacs */
-            for (final GordianLength myLength : GordianCoreDigestType.getSupportedLengths(GordianNewDigestType.SKEIN)) {
-                final GordianNewMacSpec mySkeinSpec = myBuilder.skeinMac(pKeyLen, myBaseState, myLength);
+            for (final GordianLength myLength : GordianCoreDigestType.getSupportedLengths(GordianDigestType.SKEIN)) {
+                final GordianMacSpec mySkeinSpec = myBuilder.skeinMac(pKeyLen, myBaseState, myLength);
                 if (mySkeinSpec.isValid()) {
                     myList.add(mySkeinSpec);
                 }
             }
-            final GordianNewMacSpec mySkeinSpec = myBuilder.skeinXMac(pKeyLen, myBaseState);
+            final GordianMacSpec mySkeinSpec = myBuilder.skeinXMac(pKeyLen, myBaseState);
             if (mySkeinSpec.isValid()) {
                 myList.add(mySkeinSpec);
             }
 
             /* Add blake2Macs */
-            for (final GordianLength myLength : GordianCoreDigestType.getSupportedLengths(GordianNewDigestType.BLAKE2)) {
-                final GordianNewMacSpec myBlakeSpec = myBuilder.blake2Mac(pKeyLen, myDigestBuilder.blake2(myBaseState, myLength));
+            for (final GordianLength myLength : GordianCoreDigestType.getSupportedLengths(GordianDigestType.BLAKE2)) {
+                final GordianMacSpec myBlakeSpec = myBuilder.blake2Mac(pKeyLen, myDigestBuilder.blake2(myBaseState, myLength));
                 if (myBlakeSpec.isValid()) {
                     myList.add(myBlakeSpec);
                 }
             }
 
-            final GordianNewMacSpec myBlakeSpec = myBuilder.blake2XMac(pKeyLen, myBaseState);
+            final GordianMacSpec myBlakeSpec = myBuilder.blake2XMac(pKeyLen, myBaseState);
             if (myBlakeSpec.isValid()) {
                 myList.add(myBlakeSpec);
             }
@@ -261,7 +261,7 @@ public final class GordianCoreMacSpecBuilder
 
         /* Add sipHash for 128bit keys */
         if (GordianLength.LEN_128 == pKeyLen) {
-            for (final GordianNewSipHashType myType : GordianNewSipHashType.values()) {
+            for (final GordianSipHashType myType : GordianSipHashType.values()) {
                 myList.add(myBuilder.sipHash(myType));
             }
         }

@@ -17,7 +17,7 @@
 
 package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair;
 
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewHQCSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianHQCSpec;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.bc.BCObjectIdentifiers;
 import org.bouncycastle.pqc.crypto.hqc.HQCParameters;
@@ -33,7 +33,7 @@ public final class GordianCoreHQCSpec {
     /**
      * The specMap.
      */
-    private static final Map<GordianNewHQCSpec, GordianCoreHQCSpec> SPECMAP = newSpecMap();
+    private static final Map<GordianHQCSpec, GordianCoreHQCSpec> SPECMAP = newSpecMap();
 
     /**
      * The specArray.
@@ -43,14 +43,14 @@ public final class GordianCoreHQCSpec {
     /**
      * The Spec.
      */
-    private final GordianNewHQCSpec theSpec;
+    private final GordianHQCSpec theSpec;
 
     /**
      * Constructor.
      *
      * @param pSpec the spec
      */
-    private GordianCoreHQCSpec(final GordianNewHQCSpec pSpec) {
+    private GordianCoreHQCSpec(final GordianHQCSpec pSpec) {
         theSpec = pSpec;
     }
 
@@ -59,7 +59,7 @@ public final class GordianCoreHQCSpec {
      *
      * @return the spec
      */
-    public GordianNewHQCSpec getSpec() {
+    public GordianHQCSpec getSpec() {
         return theSpec;
     }
 
@@ -149,7 +149,7 @@ public final class GordianCoreHQCSpec {
      * @return the core spec
      */
     public static GordianCoreHQCSpec mapCoreSpec(final Object pSpec) {
-        return pSpec instanceof GordianNewHQCSpec mySpec ? SPECMAP.get(mySpec) : null;
+        return pSpec instanceof GordianHQCSpec mySpec ? SPECMAP.get(mySpec) : null;
     }
 
     /**
@@ -157,9 +157,9 @@ public final class GordianCoreHQCSpec {
      *
      * @return the type map
      */
-    private static Map<GordianNewHQCSpec, GordianCoreHQCSpec> newSpecMap() {
-        final Map<GordianNewHQCSpec, GordianCoreHQCSpec> myMap = new EnumMap<>(GordianNewHQCSpec.class);
-        for (GordianNewHQCSpec mySpec : GordianNewHQCSpec.values()) {
+    private static Map<GordianHQCSpec, GordianCoreHQCSpec> newSpecMap() {
+        final Map<GordianHQCSpec, GordianCoreHQCSpec> myMap = new EnumMap<>(GordianHQCSpec.class);
+        for (GordianHQCSpec mySpec : GordianHQCSpec.values()) {
             myMap.put(mySpec, new GordianCoreHQCSpec(mySpec));
         }
         return myMap;

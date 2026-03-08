@@ -16,9 +16,9 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.impl.bc;
 
-import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianNewAgreementSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewNTRUPrimeSpec.GordianNewNTRUPrimeType;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNTRUPrimeSpec.GordianNTRUPrimeType;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyBIKEKeyPair.BouncyBIKEAgreementEngine;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyCMCEKeyPair.BouncyCMCEAgreementEngine;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyDHKeyPair.BouncyDHAnonAgreementEngine;
@@ -67,7 +67,7 @@ public class BouncyAgreementFactory
     }
 
     @Override
-    public GordianCoreAgreementEngine createEngine(final GordianNewAgreementSpec pSpec) throws GordianException {
+    public GordianCoreAgreementEngine createEngine(final GordianAgreementSpec pSpec) throws GordianException {
         final GordianCoreAgreementSpec mySpec = (GordianCoreAgreementSpec) pSpec;
         switch (pSpec.getKeyPairSpec().getKeyPairType()) {
             case RSA:
@@ -98,7 +98,7 @@ public class BouncyAgreementFactory
             case NTRUPRIME:
                 final GordianCoreKeyPairSpec myKeySpec = (GordianCoreKeyPairSpec) pSpec.getKeyPairSpec();
                 final GordianCoreNTRUPrimeSpec myPrimeSpec = myKeySpec.getNTRUPrimeSpec();
-                return myPrimeSpec.getType() == GordianNewNTRUPrimeType.NTRUL
+                return myPrimeSpec.getType() == GordianNTRUPrimeType.NTRUL
                         ? new BouncyNTRULPrimeAgreementEngine(this, mySpec)
                         : new BouncySNTRUPrimeAgreementEngine(this, mySpec);
             case XDH:

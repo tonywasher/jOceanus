@@ -18,7 +18,7 @@
 package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianRequired;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairType;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairType;
 
 import java.util.EnumMap;
 import java.util.Map;
@@ -30,7 +30,7 @@ public final class GordianCoreKeyPairType {
     /**
      * The keyPairTypeMap.
      */
-    private static final Map<GordianNewKeyPairType, GordianCoreKeyPairType> TYPEMAP = newTypeMap();
+    private static final Map<GordianKeyPairType, GordianCoreKeyPairType> TYPEMAP = newTypeMap();
 
     /**
      * The keyPairTypeArray.
@@ -40,14 +40,14 @@ public final class GordianCoreKeyPairType {
     /**
      * The keyPairType.
      */
-    private final GordianNewKeyPairType theType;
+    private final GordianKeyPairType theType;
 
     /**
      * Constructor.
      *
      * @param pType the type
      */
-    private GordianCoreKeyPairType(final GordianNewKeyPairType pType) {
+    private GordianCoreKeyPairType(final GordianKeyPairType pType) {
         theType = pType;
     }
 
@@ -56,7 +56,7 @@ public final class GordianCoreKeyPairType {
      *
      * @return the type
      */
-    public GordianNewKeyPairType getType() {
+    public GordianKeyPairType getType() {
         return theType;
     }
 
@@ -191,7 +191,7 @@ public final class GordianCoreKeyPairType {
      * @return the core type
      */
     public static GordianCoreKeyPairType mapCoreType(final Object pType) {
-        return pType instanceof GordianNewKeyPairType myType ? TYPEMAP.get(myType) : null;
+        return pType instanceof GordianKeyPairType myType ? TYPEMAP.get(myType) : null;
     }
 
     /**
@@ -199,9 +199,9 @@ public final class GordianCoreKeyPairType {
      *
      * @return the type map
      */
-    private static Map<GordianNewKeyPairType, GordianCoreKeyPairType> newTypeMap() {
-        final Map<GordianNewKeyPairType, GordianCoreKeyPairType> myMap = new EnumMap<>(GordianNewKeyPairType.class);
-        for (GordianNewKeyPairType myType : GordianNewKeyPairType.values()) {
+    private static Map<GordianKeyPairType, GordianCoreKeyPairType> newTypeMap() {
+        final Map<GordianKeyPairType, GordianCoreKeyPairType> myMap = new EnumMap<>(GordianKeyPairType.class);
+        for (GordianKeyPairType myType : GordianKeyPairType.values()) {
             myMap.put(myType, new GordianCoreKeyPairType(myType));
         }
         return myMap;

@@ -18,8 +18,8 @@
 package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.mac;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeyType;
-import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianNewMacType;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeyType;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianMacType;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.base.GordianBundleLoader.GordianBundleId;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher.GordianCipherResource;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher.GordianCoreSymKeyType;
@@ -34,7 +34,7 @@ public final class GordianCoreMacType {
     /**
      * The macTypeMap.
      */
-    private static final Map<GordianNewMacType, GordianCoreMacType> TYPEMAP = newTypeMap();
+    private static final Map<GordianMacType, GordianCoreMacType> TYPEMAP = newTypeMap();
 
     /**
      * The macTypeArray.
@@ -44,7 +44,7 @@ public final class GordianCoreMacType {
     /**
      * The MacType.
      */
-    private final GordianNewMacType theType;
+    private final GordianMacType theType;
 
     /**
      * The Name.
@@ -56,7 +56,7 @@ public final class GordianCoreMacType {
      *
      * @param pType the type
      */
-    private GordianCoreMacType(final GordianNewMacType pType) {
+    private GordianCoreMacType(final GordianMacType pType) {
         theType = pType;
         theName = bundleIdForMacType(pType).getValue();
     }
@@ -66,7 +66,7 @@ public final class GordianCoreMacType {
      *
      * @return the type
      */
-    public GordianNewMacType getType() {
+    public GordianMacType getType() {
         return theType;
     }
 
@@ -90,8 +90,8 @@ public final class GordianCoreMacType {
      * @param pMacType the macType
      * @return true/false
      */
-    public static boolean needsReInitialisation(final GordianNewMacType pMacType) {
-        return pMacType == GordianNewMacType.GMAC;
+    public static boolean needsReInitialisation(final GordianMacType pMacType) {
+        return pMacType == GordianMacType.GMAC;
     }
 
     /**
@@ -109,8 +109,8 @@ public final class GordianCoreMacType {
      * @param pMacType the macType
      * @return true/false
      */
-    public static boolean supportsLargeData(final GordianNewMacType pMacType) {
-        return pMacType != GordianNewMacType.ZUC;
+    public static boolean supportsLargeData(final GordianMacType pMacType) {
+        return pMacType != GordianMacType.ZUC;
     }
 
     /**
@@ -129,7 +129,7 @@ public final class GordianCoreMacType {
                 return GordianLength.LEN_128 == pKeyLen
                         || GordianLength.LEN_256 == pKeyLen;
             case KALYNA:
-                return GordianCoreSymKeyType.validForKeyLength(GordianNewSymKeyType.KALYNA, pKeyLen);
+                return GordianCoreSymKeyType.validForKeyLength(GordianSymKeyType.KALYNA, pKeyLen);
             case SIPHASH:
                 return GordianLength.LEN_128 == pKeyLen;
             default:
@@ -143,7 +143,7 @@ public final class GordianCoreMacType {
      * @param pType the macType
      * @return the resource bundleId
      */
-    private static GordianBundleId bundleIdForMacType(final GordianNewMacType pType) {
+    private static GordianBundleId bundleIdForMacType(final GordianMacType pType) {
         /* Create the map and return it */
         switch (pType) {
             case HMAC:
@@ -210,7 +210,7 @@ public final class GordianCoreMacType {
      * @return the core type
      */
     public static GordianCoreMacType mapCoreType(final Object pType) {
-        return pType instanceof GordianNewMacType myType ? TYPEMAP.get(myType) : null;
+        return pType instanceof GordianMacType myType ? TYPEMAP.get(myType) : null;
     }
 
     /**
@@ -218,9 +218,9 @@ public final class GordianCoreMacType {
      *
      * @return the type map
      */
-    private static Map<GordianNewMacType, GordianCoreMacType> newTypeMap() {
-        final Map<GordianNewMacType, GordianCoreMacType> myMap = new EnumMap<>(GordianNewMacType.class);
-        for (GordianNewMacType myType : GordianNewMacType.values()) {
+    private static Map<GordianMacType, GordianCoreMacType> newTypeMap() {
+        final Map<GordianMacType, GordianCoreMacType> myMap = new EnumMap<>(GordianMacType.class);
+        for (GordianMacType myType : GordianMacType.values()) {
             myMap.put(myType, new GordianCoreMacType(myType));
         }
         return myMap;

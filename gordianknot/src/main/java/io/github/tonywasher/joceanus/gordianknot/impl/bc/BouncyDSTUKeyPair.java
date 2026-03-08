@@ -18,9 +18,9 @@ package io.github.tonywasher.joceanus.gordianknot.impl.bc;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignParams;
-import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianNewSignatureSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyEllipticKeyPair.BouncyECPrivateKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyEllipticKeyPair.BouncyECPublicKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncySignature.BouncyDSACoder;
@@ -114,7 +114,7 @@ public final class BouncyDSTUKeyPair {
          * @param pKeySpec the keySpec
          */
         BouncyDSTUKeyPairGenerator(final GordianBaseFactory pFactory,
-                                   final GordianNewKeyPairSpec pKeySpec) {
+                                   final GordianKeyPairSpec pKeySpec) {
             /* Initialise underlying class */
             super(pFactory, pKeySpec);
 
@@ -340,7 +340,7 @@ public final class BouncyDSTUKeyPair {
          * @param pSpec    the signatureSpec.
          */
         BouncyDSTUSignature(final GordianBaseFactory pFactory,
-                            final GordianNewSignatureSpec pSpec) {
+                            final GordianSignatureSpec pSpec) {
             /* Initialise underlying class */
             super(pFactory, pSpec, newDigest());
 

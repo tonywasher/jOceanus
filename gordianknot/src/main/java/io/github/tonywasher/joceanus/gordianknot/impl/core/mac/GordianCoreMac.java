@@ -20,7 +20,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKey;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMac;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacParameters;
-import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianNewMacSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianMacSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianLogicException;
 
@@ -32,7 +32,7 @@ public abstract class GordianCoreMac
     /**
      * MacSpec.
      */
-    private final GordianNewMacSpec theMacSpec;
+    private final GordianMacSpec theMacSpec;
 
     /**
      * Parameters.
@@ -46,18 +46,18 @@ public abstract class GordianCoreMac
      * @param pMacSpec the macSpec
      */
     protected GordianCoreMac(final GordianBaseFactory pFactory,
-                             final GordianNewMacSpec pMacSpec) {
+                             final GordianMacSpec pMacSpec) {
         theMacSpec = pMacSpec;
         theParameters = new GordianCoreMacParameters(pFactory, theMacSpec);
     }
 
     @Override
-    public GordianNewMacSpec getMacSpec() {
+    public GordianMacSpec getMacSpec() {
         return theMacSpec;
     }
 
     @Override
-    public GordianKey<GordianNewMacSpec> getKey() {
+    public GordianKey<GordianMacSpec> getKey() {
         return theParameters.getKey();
     }
 
@@ -72,7 +72,7 @@ public abstract class GordianCoreMac
      * @param pKey the passed key.
      * @throws GordianException on error
      */
-    private void checkValidKey(final GordianKey<GordianNewMacSpec> pKey) throws GordianException {
+    private void checkValidKey(final GordianKey<GordianMacSpec> pKey) throws GordianException {
         if (!theMacSpec.equals(pKey.getKeyType())) {
             throw new GordianLogicException("MisMatch on macSpec");
         }
@@ -81,7 +81,7 @@ public abstract class GordianCoreMac
     @Override
     public void initKeyBytes(final byte[] pKeyBytes) throws GordianException {
         /* Create the key and initialise */
-        final GordianKey<GordianNewMacSpec> myKey = theParameters.buildKeyFromBytes(pKeyBytes);
+        final GordianKey<GordianMacSpec> myKey = theParameters.buildKeyFromBytes(pKeyBytes);
         init(GordianMacParameters.key(myKey));
     }
 

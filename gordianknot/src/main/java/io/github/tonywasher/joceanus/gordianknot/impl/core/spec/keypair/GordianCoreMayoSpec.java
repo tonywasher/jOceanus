@@ -17,7 +17,7 @@
 
 package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair;
 
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewMayoSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianMayoSpec;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.bc.BCObjectIdentifiers;
 import org.bouncycastle.pqc.crypto.mayo.MayoParameters;
@@ -33,7 +33,7 @@ public final class GordianCoreMayoSpec {
     /**
      * The specMap.
      */
-    private static final Map<GordianNewMayoSpec, GordianCoreMayoSpec> SPECMAP = newSpecMap();
+    private static final Map<GordianMayoSpec, GordianCoreMayoSpec> SPECMAP = newSpecMap();
 
     /**
      * The specArray.
@@ -43,14 +43,14 @@ public final class GordianCoreMayoSpec {
     /**
      * The Spec.
      */
-    private final GordianNewMayoSpec theSpec;
+    private final GordianMayoSpec theSpec;
 
     /**
      * Constructor.
      *
      * @param pSpec the spec
      */
-    private GordianCoreMayoSpec(final GordianNewMayoSpec pSpec) {
+    private GordianCoreMayoSpec(final GordianMayoSpec pSpec) {
         theSpec = pSpec;
     }
 
@@ -59,7 +59,7 @@ public final class GordianCoreMayoSpec {
      *
      * @return the spec
      */
-    public GordianNewMayoSpec getSpec() {
+    public GordianMayoSpec getSpec() {
         return theSpec;
     }
 
@@ -155,7 +155,7 @@ public final class GordianCoreMayoSpec {
      * @return the core spec
      */
     public static GordianCoreMayoSpec mapCoreSpec(final Object pSpec) {
-        return pSpec instanceof GordianNewMayoSpec mySpec ? SPECMAP.get(mySpec) : null;
+        return pSpec instanceof GordianMayoSpec mySpec ? SPECMAP.get(mySpec) : null;
     }
 
     /**
@@ -163,9 +163,9 @@ public final class GordianCoreMayoSpec {
      *
      * @return the type map
      */
-    private static Map<GordianNewMayoSpec, GordianCoreMayoSpec> newSpecMap() {
-        final Map<GordianNewMayoSpec, GordianCoreMayoSpec> myMap = new EnumMap<>(GordianNewMayoSpec.class);
-        for (GordianNewMayoSpec mySpec : GordianNewMayoSpec.values()) {
+    private static Map<GordianMayoSpec, GordianCoreMayoSpec> newSpecMap() {
+        final Map<GordianMayoSpec, GordianCoreMayoSpec> myMap = new EnumMap<>(GordianMayoSpec.class);
+        for (GordianMayoSpec mySpec : GordianMayoSpec.values()) {
             myMap.put(mySpec, new GordianCoreMayoSpec(mySpec));
         }
         return myMap;

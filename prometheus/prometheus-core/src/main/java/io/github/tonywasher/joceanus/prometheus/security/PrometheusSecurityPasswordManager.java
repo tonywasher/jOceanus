@@ -26,7 +26,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySet;
 import io.github.tonywasher.joceanus.gordianknot.api.lock.GordianKeyPairLock;
 import io.github.tonywasher.joceanus.gordianknot.api.lock.GordianKeySetLock;
 import io.github.tonywasher.joceanus.gordianknot.api.lock.GordianLockFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.lock.spec.GordianNewPasswordLockSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.lock.spec.GordianPasswordLockSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.zip.GordianZipLock;
 import io.github.tonywasher.joceanus.gordianknot.util.GordianGenerator;
 import io.github.tonywasher.joceanus.gordianknot.util.GordianUtilities;
@@ -62,7 +62,7 @@ public class PrometheusSecurityPasswordManager {
     /**
      * PasswordLockSpec.
      */
-    private final GordianNewPasswordLockSpec theLockSpec;
+    private final GordianPasswordLockSpec theLockSpec;
 
     /**
      * The Cache.
@@ -95,7 +95,7 @@ public class PrometheusSecurityPasswordManager {
      * @throws OceanusException on error
      */
     public PrometheusSecurityPasswordManager(final GordianFactory pFactory,
-                                             final GordianNewPasswordLockSpec pLockSpec,
+                                             final GordianPasswordLockSpec pLockSpec,
                                              final PrometheusSecurityDialogController pDialog) throws OceanusException {
         /* Allocate the factory */
         theFactory = pFactory;
@@ -121,7 +121,7 @@ public class PrometheusSecurityPasswordManager {
      *
      * @return the lockSpec
      */
-    public GordianNewPasswordLockSpec getLockSpec() {
+    public GordianPasswordLockSpec getLockSpec() {
         return theLockSpec;
     }
 

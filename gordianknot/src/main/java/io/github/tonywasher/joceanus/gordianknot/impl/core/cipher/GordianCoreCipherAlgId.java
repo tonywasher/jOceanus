@@ -18,13 +18,13 @@ package io.github.tonywasher.joceanus.gordianknot.impl.core.cipher;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewCipherSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewPadding;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamCipherSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymCipherSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymCipherSpecBuilder;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeySpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeySpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymCipherSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeySpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianPadding;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKeyLengths;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianASN1Util;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
@@ -60,12 +60,12 @@ public class GordianCoreCipherAlgId {
     /**
      * Map of cipherSpec to Identifier.
      */
-    private final Map<GordianNewCipherSpec<?>, AlgorithmIdentifier> theSpecMap;
+    private final Map<GordianCipherSpec<?>, AlgorithmIdentifier> theSpecMap;
 
     /**
      * Map of Identifier to cipherSpec.
      */
-    private final Map<AlgorithmIdentifier, GordianNewCipherSpec<?>> theIdentifierMap;
+    private final Map<AlgorithmIdentifier, GordianCipherSpec<?>> theIdentifierMap;
 
     /**
      * Constructor.
@@ -91,16 +91,16 @@ public class GordianCoreCipherAlgId {
             final GordianLength myKeyLen = myIterator.next();
 
             /* Loop through the possible SymKeySpecs */
-            for (GordianNewSymKeySpec mySymKey : myFactory.listAllSupportedSymKeySpecs(myKeyLen)) {
+            for (GordianSymKeySpec mySymKey : myFactory.listAllSupportedSymKeySpecs(myKeyLen)) {
                 /* Loop through the possible CipherSpecs */
-                for (GordianNewSymCipherSpec mySpec : myFactory.listAllSupportedSymCipherSpecs(mySymKey)) {
+                for (GordianSymCipherSpec mySpec : myFactory.listAllSupportedSymCipherSpecs(mySymKey)) {
                     /* Add any non-standard symCiphers */
                     ensureSymCipher(mySpec);
                 }
             }
 
             /* Loop through the possible StreamCipherSpecs */
-            for (GordianNewStreamCipherSpec mySpec : myFactory.listAllSupportedStreamCipherSpecs(myKeyLen)) {
+            for (GordianStreamCipherSpec mySpec : myFactory.listAllSupportedStreamCipherSpecs(myKeyLen)) {
                 /* Add any non-standard streamCiphers */
                 ensureStreamCipher(mySpec);
             }
@@ -113,7 +113,7 @@ public class GordianCoreCipherAlgId {
      * @param pSpec the cipherSpec.
      * @return the Identifier
      */
-    public AlgorithmIdentifier getIdentifierForSpec(final GordianNewCipherSpec<?> pSpec) {
+    public AlgorithmIdentifier getIdentifierForSpec(final GordianCipherSpec<?> pSpec) {
         return theSpecMap.get(pSpec);
     }
 
@@ -123,7 +123,7 @@ public class GordianCoreCipherAlgId {
      * @param pIdentifier the identifier.
      * @return the cipherSpec (or null if not found)
      */
-    GordianNewCipherSpec<?> getCipherSpecForIdentifier(final AlgorithmIdentifier pIdentifier) {
+    GordianCipherSpec<?> getCipherSpecForIdentifier(final AlgorithmIdentifier pIdentifier) {
         return theIdentifierMap.get(pIdentifier);
     }
 
@@ -131,19 +131,19 @@ public class GordianCoreCipherAlgId {
      * Add WellKnown Ciphers for 128bit keys.
      */
     private void addWellKnownCiphers128() {
-        final GordianNewSymKeySpecBuilder myKeyBuilder = GordianCoreSymKeySpecBuilder.newInstance();
-        final GordianNewSymCipherSpecBuilder myCipherBuilder = GordianCoreSymCipherSpecBuilder.newInstance();
-        addToMaps(myCipherBuilder.ecb(myKeyBuilder.sm4(), GordianNewPadding.NONE), new AlgorithmIdentifier(GMObjectIdentifiers.sms4_ecb, DERNull.INSTANCE));
-        addToMaps(myCipherBuilder.cbc(myKeyBuilder.sm4(), GordianNewPadding.NONE), new AlgorithmIdentifier(GMObjectIdentifiers.sms4_cbc, DERNull.INSTANCE));
+        final GordianSymKeySpecBuilder myKeyBuilder = GordianCoreSymKeySpecBuilder.newInstance();
+        final GordianSymCipherSpecBuilder myCipherBuilder = GordianCoreSymCipherSpecBuilder.newInstance();
+        addToMaps(myCipherBuilder.ecb(myKeyBuilder.sm4(), GordianPadding.NONE), new AlgorithmIdentifier(GMObjectIdentifiers.sms4_ecb, DERNull.INSTANCE));
+        addToMaps(myCipherBuilder.cbc(myKeyBuilder.sm4(), GordianPadding.NONE), new AlgorithmIdentifier(GMObjectIdentifiers.sms4_cbc, DERNull.INSTANCE));
         addToMaps(myCipherBuilder.sic(myKeyBuilder.sm4()), new AlgorithmIdentifier(GMObjectIdentifiers.sms4_ctr, DERNull.INSTANCE));
         addToMaps(myCipherBuilder.ofb(myKeyBuilder.sm4()), new AlgorithmIdentifier(GMObjectIdentifiers.sms4_ofb128, DERNull.INSTANCE));
         addToMaps(myCipherBuilder.cfb(myKeyBuilder.sm4()), new AlgorithmIdentifier(GMObjectIdentifiers.sms4_cfb8, DERNull.INSTANCE));
         addToMaps(myCipherBuilder.ccm(myKeyBuilder.sm4()), new AlgorithmIdentifier(GMObjectIdentifiers.sms4_ccm, DERNull.INSTANCE));
         addToMaps(myCipherBuilder.gcm(myKeyBuilder.sm4()), new AlgorithmIdentifier(GMObjectIdentifiers.sms4_gcm, DERNull.INSTANCE));
         addToMaps(myCipherBuilder.ocb(myKeyBuilder.sm4()), new AlgorithmIdentifier(GMObjectIdentifiers.sms4_ocb, DERNull.INSTANCE));
-        addToMaps(myCipherBuilder.ecb(myKeyBuilder.aes(GordianLength.LEN_128), GordianNewPadding.NONE),
+        addToMaps(myCipherBuilder.ecb(myKeyBuilder.aes(GordianLength.LEN_128), GordianPadding.NONE),
                 new AlgorithmIdentifier(NISTObjectIdentifiers.id_aes128_ECB, DERNull.INSTANCE));
-        addToMaps(myCipherBuilder.cbc(myKeyBuilder.aes(GordianLength.LEN_128), GordianNewPadding.NONE),
+        addToMaps(myCipherBuilder.cbc(myKeyBuilder.aes(GordianLength.LEN_128), GordianPadding.NONE),
                 new AlgorithmIdentifier(NISTObjectIdentifiers.id_aes128_CBC, DERNull.INSTANCE));
         addToMaps(myCipherBuilder.ofb(myKeyBuilder.aes(GordianLength.LEN_128)),
                 new AlgorithmIdentifier(NISTObjectIdentifiers.id_aes128_OFB, DERNull.INSTANCE));
@@ -153,9 +153,9 @@ public class GordianCoreCipherAlgId {
                 new AlgorithmIdentifier(NISTObjectIdentifiers.id_aes128_CCM, DERNull.INSTANCE));
         addToMaps(myCipherBuilder.gcm(myKeyBuilder.aes(GordianLength.LEN_128)),
                 new AlgorithmIdentifier(NISTObjectIdentifiers.id_aes128_GCM, DERNull.INSTANCE));
-        addToMaps(myCipherBuilder.ecb(myKeyBuilder.aria(GordianLength.LEN_128), GordianNewPadding.NONE),
+        addToMaps(myCipherBuilder.ecb(myKeyBuilder.aria(GordianLength.LEN_128), GordianPadding.NONE),
                 new AlgorithmIdentifier(NSRIObjectIdentifiers.id_aria128_ecb, DERNull.INSTANCE));
-        addToMaps(myCipherBuilder.cbc(myKeyBuilder.aria(GordianLength.LEN_128), GordianNewPadding.NONE),
+        addToMaps(myCipherBuilder.cbc(myKeyBuilder.aria(GordianLength.LEN_128), GordianPadding.NONE),
                 new AlgorithmIdentifier(NSRIObjectIdentifiers.id_aria128_cbc, DERNull.INSTANCE));
         addToMaps(myCipherBuilder.sic(myKeyBuilder.aria(GordianLength.LEN_128)),
                 new AlgorithmIdentifier(NSRIObjectIdentifiers.id_aria128_ctr, DERNull.INSTANCE));
@@ -167,11 +167,11 @@ public class GordianCoreCipherAlgId {
                 new AlgorithmIdentifier(NSRIObjectIdentifiers.id_aria128_ccm, DERNull.INSTANCE));
         addToMaps(myCipherBuilder.gcm(myKeyBuilder.aria(GordianLength.LEN_128)),
                 new AlgorithmIdentifier(NSRIObjectIdentifiers.id_aria128_gcm, DERNull.INSTANCE));
-        addToMaps(myCipherBuilder.cbc(myKeyBuilder.camellia(GordianLength.LEN_128), GordianNewPadding.NONE),
+        addToMaps(myCipherBuilder.cbc(myKeyBuilder.camellia(GordianLength.LEN_128), GordianPadding.NONE),
                 new AlgorithmIdentifier(NTTObjectIdentifiers.id_camellia128_cbc, DERNull.INSTANCE));
-        addToMaps(myCipherBuilder.ecb(myKeyBuilder.kalyna(GordianLength.LEN_128), GordianNewPadding.NONE),
+        addToMaps(myCipherBuilder.ecb(myKeyBuilder.kalyna(GordianLength.LEN_128), GordianPadding.NONE),
                 new AlgorithmIdentifier(UAObjectIdentifiers.dstu7624ecb_128, DERNull.INSTANCE));
-        addToMaps(myCipherBuilder.cbc(myKeyBuilder.kalyna(GordianLength.LEN_128), GordianNewPadding.NONE),
+        addToMaps(myCipherBuilder.cbc(myKeyBuilder.kalyna(GordianLength.LEN_128), GordianPadding.NONE),
                 new AlgorithmIdentifier(UAObjectIdentifiers.dstu7624cbc_128, DERNull.INSTANCE));
         addToMaps(myCipherBuilder.sic(myKeyBuilder.kalyna(GordianLength.LEN_128, GordianLength.LEN_128)),
                 new AlgorithmIdentifier(UAObjectIdentifiers.dstu7624ctr_128, DERNull.INSTANCE));
@@ -189,11 +189,11 @@ public class GordianCoreCipherAlgId {
      * Add WellKnown ciphers for 192bit keys.
      */
     private void addWellKnownCiphers192() {
-        final GordianNewSymKeySpecBuilder myKeyBuilder = GordianCoreSymKeySpecBuilder.newInstance();
-        final GordianNewSymCipherSpecBuilder myCipherBuilder = GordianCoreSymCipherSpecBuilder.newInstance();
-        addToMaps(myCipherBuilder.ecb(myKeyBuilder.aes(GordianLength.LEN_192), GordianNewPadding.NONE),
+        final GordianSymKeySpecBuilder myKeyBuilder = GordianCoreSymKeySpecBuilder.newInstance();
+        final GordianSymCipherSpecBuilder myCipherBuilder = GordianCoreSymCipherSpecBuilder.newInstance();
+        addToMaps(myCipherBuilder.ecb(myKeyBuilder.aes(GordianLength.LEN_192), GordianPadding.NONE),
                 new AlgorithmIdentifier(NISTObjectIdentifiers.id_aes192_ECB, DERNull.INSTANCE));
-        addToMaps(myCipherBuilder.cbc(myKeyBuilder.aes(GordianLength.LEN_192), GordianNewPadding.NONE),
+        addToMaps(myCipherBuilder.cbc(myKeyBuilder.aes(GordianLength.LEN_192), GordianPadding.NONE),
                 new AlgorithmIdentifier(NISTObjectIdentifiers.id_aes192_CBC, DERNull.INSTANCE));
         addToMaps(myCipherBuilder.ofb(myKeyBuilder.aes(GordianLength.LEN_192)),
                 new AlgorithmIdentifier(NISTObjectIdentifiers.id_aes192_OFB, DERNull.INSTANCE));
@@ -203,9 +203,9 @@ public class GordianCoreCipherAlgId {
                 new AlgorithmIdentifier(NISTObjectIdentifiers.id_aes192_CCM, DERNull.INSTANCE));
         addToMaps(myCipherBuilder.gcm(myKeyBuilder.aes(GordianLength.LEN_192)),
                 new AlgorithmIdentifier(NISTObjectIdentifiers.id_aes192_GCM, DERNull.INSTANCE));
-        addToMaps(myCipherBuilder.ecb(myKeyBuilder.aria(GordianLength.LEN_192), GordianNewPadding.NONE),
+        addToMaps(myCipherBuilder.ecb(myKeyBuilder.aria(GordianLength.LEN_192), GordianPadding.NONE),
                 new AlgorithmIdentifier(NSRIObjectIdentifiers.id_aria192_ecb, DERNull.INSTANCE));
-        addToMaps(myCipherBuilder.cbc(myKeyBuilder.aria(GordianLength.LEN_192), GordianNewPadding.NONE),
+        addToMaps(myCipherBuilder.cbc(myKeyBuilder.aria(GordianLength.LEN_192), GordianPadding.NONE),
                 new AlgorithmIdentifier(NSRIObjectIdentifiers.id_aria192_cbc, DERNull.INSTANCE));
         addToMaps(myCipherBuilder.sic(myKeyBuilder.aria(GordianLength.LEN_192)),
                 new AlgorithmIdentifier(NSRIObjectIdentifiers.id_aria192_ctr, DERNull.INSTANCE));
@@ -217,7 +217,7 @@ public class GordianCoreCipherAlgId {
                 new AlgorithmIdentifier(NSRIObjectIdentifiers.id_aria192_ccm, DERNull.INSTANCE));
         addToMaps(myCipherBuilder.gcm(myKeyBuilder.aria(GordianLength.LEN_192)),
                 new AlgorithmIdentifier(NSRIObjectIdentifiers.id_aria192_gcm, DERNull.INSTANCE));
-        addToMaps(myCipherBuilder.cbc(myKeyBuilder.camellia(GordianLength.LEN_192), GordianNewPadding.NONE),
+        addToMaps(myCipherBuilder.cbc(myKeyBuilder.camellia(GordianLength.LEN_192), GordianPadding.NONE),
                 new AlgorithmIdentifier(NTTObjectIdentifiers.id_camellia192_cbc, DERNull.INSTANCE));
     }
 
@@ -226,11 +226,11 @@ public class GordianCoreCipherAlgId {
      * Add WellKnown Ciphers for 256bit keys.
      */
     private void addWellKnownCiphers256() {
-        final GordianNewSymKeySpecBuilder myKeyBuilder = GordianCoreSymKeySpecBuilder.newInstance();
-        final GordianNewSymCipherSpecBuilder myCipherBuilder = GordianCoreSymCipherSpecBuilder.newInstance();
-        addToMaps(myCipherBuilder.ecb(myKeyBuilder.aes(GordianLength.LEN_256), GordianNewPadding.NONE),
+        final GordianSymKeySpecBuilder myKeyBuilder = GordianCoreSymKeySpecBuilder.newInstance();
+        final GordianSymCipherSpecBuilder myCipherBuilder = GordianCoreSymCipherSpecBuilder.newInstance();
+        addToMaps(myCipherBuilder.ecb(myKeyBuilder.aes(GordianLength.LEN_256), GordianPadding.NONE),
                 new AlgorithmIdentifier(NISTObjectIdentifiers.id_aes256_ECB, DERNull.INSTANCE));
-        addToMaps(myCipherBuilder.cbc(myKeyBuilder.aes(GordianLength.LEN_256), GordianNewPadding.NONE),
+        addToMaps(myCipherBuilder.cbc(myKeyBuilder.aes(GordianLength.LEN_256), GordianPadding.NONE),
                 new AlgorithmIdentifier(NISTObjectIdentifiers.id_aes256_CBC, DERNull.INSTANCE));
         addToMaps(myCipherBuilder.ofb(myKeyBuilder.aes(GordianLength.LEN_256)),
                 new AlgorithmIdentifier(NISTObjectIdentifiers.id_aes256_OFB, DERNull.INSTANCE));
@@ -240,9 +240,9 @@ public class GordianCoreCipherAlgId {
                 new AlgorithmIdentifier(NISTObjectIdentifiers.id_aes256_CCM, DERNull.INSTANCE));
         addToMaps(myCipherBuilder.gcm(myKeyBuilder.aes(GordianLength.LEN_256)),
                 new AlgorithmIdentifier(NISTObjectIdentifiers.id_aes256_GCM, DERNull.INSTANCE));
-        addToMaps(myCipherBuilder.ecb(myKeyBuilder.aria(GordianLength.LEN_256), GordianNewPadding.NONE),
+        addToMaps(myCipherBuilder.ecb(myKeyBuilder.aria(GordianLength.LEN_256), GordianPadding.NONE),
                 new AlgorithmIdentifier(NSRIObjectIdentifiers.id_aria256_ecb, DERNull.INSTANCE));
-        addToMaps(myCipherBuilder.cbc(myKeyBuilder.aria(GordianLength.LEN_256), GordianNewPadding.NONE),
+        addToMaps(myCipherBuilder.cbc(myKeyBuilder.aria(GordianLength.LEN_256), GordianPadding.NONE),
                 new AlgorithmIdentifier(NSRIObjectIdentifiers.id_aria256_cbc, DERNull.INSTANCE));
         addToMaps(myCipherBuilder.sic(myKeyBuilder.aria(GordianLength.LEN_256)),
                 new AlgorithmIdentifier(NSRIObjectIdentifiers.id_aria256_ctr, DERNull.INSTANCE));
@@ -254,11 +254,11 @@ public class GordianCoreCipherAlgId {
                 new AlgorithmIdentifier(NSRIObjectIdentifiers.id_aria256_ccm, DERNull.INSTANCE));
         addToMaps(myCipherBuilder.gcm(myKeyBuilder.aria(GordianLength.LEN_256)),
                 new AlgorithmIdentifier(NSRIObjectIdentifiers.id_aria256_gcm, DERNull.INSTANCE));
-        addToMaps(myCipherBuilder.cbc(myKeyBuilder.camellia(GordianLength.LEN_256), GordianNewPadding.NONE),
+        addToMaps(myCipherBuilder.cbc(myKeyBuilder.camellia(GordianLength.LEN_256), GordianPadding.NONE),
                 new AlgorithmIdentifier(NTTObjectIdentifiers.id_camellia256_cbc, DERNull.INSTANCE));
-        addToMaps(myCipherBuilder.ecb(myKeyBuilder.kalyna(GordianLength.LEN_256, GordianLength.LEN_256), GordianNewPadding.NONE),
+        addToMaps(myCipherBuilder.ecb(myKeyBuilder.kalyna(GordianLength.LEN_256, GordianLength.LEN_256), GordianPadding.NONE),
                 new AlgorithmIdentifier(UAObjectIdentifiers.dstu7624ecb_256, DERNull.INSTANCE));
-        addToMaps(myCipherBuilder.cbc(myKeyBuilder.kalyna(GordianLength.LEN_256, GordianLength.LEN_256), GordianNewPadding.NONE),
+        addToMaps(myCipherBuilder.cbc(myKeyBuilder.kalyna(GordianLength.LEN_256, GordianLength.LEN_256), GordianPadding.NONE),
                 new AlgorithmIdentifier(UAObjectIdentifiers.dstu7624cbc_256, DERNull.INSTANCE));
         addToMaps(myCipherBuilder.sic(myKeyBuilder.kalyna(GordianLength.LEN_256, GordianLength.LEN_256)),
                 new AlgorithmIdentifier(UAObjectIdentifiers.dstu7624ctr_256, DERNull.INSTANCE));
@@ -277,7 +277,7 @@ public class GordianCoreCipherAlgId {
      *
      * @param pSpec the symCipherSpec
      */
-    private void ensureSymCipher(final GordianNewSymCipherSpec pSpec) {
+    private void ensureSymCipher(final GordianSymCipherSpec pSpec) {
         /* If the cipher is not already known */
         if (!theSpecMap.containsKey(pSpec)) {
             addSymCipher(pSpec);
@@ -289,7 +289,7 @@ public class GordianCoreCipherAlgId {
      *
      * @param pSpec the cipherSpec
      */
-    private void addSymCipher(final GordianNewSymCipherSpec pSpec) {
+    private void addSymCipher(final GordianSymCipherSpec pSpec) {
         /* Build SymKey id */
         final GordianCoreSymCipherSpec mySpec = (GordianCoreSymCipherSpec) pSpec;
         final GordianCoreSymKeySpec myKeySpec = (GordianCoreSymKeySpec) mySpec.getKeySpec();
@@ -313,7 +313,7 @@ public class GordianCoreCipherAlgId {
      *
      * @param pSpec the streamCipherSpec
      */
-    private void ensureStreamCipher(final GordianNewStreamCipherSpec pSpec) {
+    private void ensureStreamCipher(final GordianStreamCipherSpec pSpec) {
         /* If the cipher is not already known */
         if (!theSpecMap.containsKey(pSpec)) {
             addStreamCipher(pSpec);
@@ -325,7 +325,7 @@ public class GordianCoreCipherAlgId {
      *
      * @param pSpec the cipherSpec
      */
-    private void addStreamCipher(final GordianNewStreamCipherSpec pSpec) {
+    private void addStreamCipher(final GordianStreamCipherSpec pSpec) {
         /* Create a branch for cipher based on the KeyType */
         final GordianCoreStreamKeySpec mySpec = (GordianCoreStreamKeySpec) pSpec.getKeySpec();
         ASN1ObjectIdentifier myId = GordianCoreKeyAlgId.appendStreamKeyOID(CIPHEROID.branch("2"), mySpec);
@@ -343,7 +343,7 @@ public class GordianCoreCipherAlgId {
      * @param pSpec       the cipherSpec
      * @param pIdentifier the identifier
      */
-    private void addToMaps(final GordianNewCipherSpec<?> pSpec,
+    private void addToMaps(final GordianCipherSpec<?> pSpec,
                            final AlgorithmIdentifier pIdentifier) {
         theSpecMap.put(pSpec, pIdentifier);
         theIdentifierMap.put(pIdentifier, pSpec);

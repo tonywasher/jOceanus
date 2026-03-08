@@ -17,10 +17,10 @@
 package io.github.tonywasher.joceanus.gordianknot.impl.core.base;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeyType;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeySpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeyType;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestType;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeyType;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeyType;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestType;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher.GordianCoreSymKeyType;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianCoreDigestType;
 
@@ -37,7 +37,7 @@ public class GordianValidator {
      *
      * @return the predicate
      */
-    public Predicate<GordianNewDigestType> supportedHMacDigestTypes() {
+    public Predicate<GordianDigestType> supportedHMacDigestTypes() {
         return this::validHMacDigestType;
     }
 
@@ -47,7 +47,7 @@ public class GordianValidator {
      * @param pDigestType the digestType
      * @return true/false
      */
-    protected boolean validHMacDigestType(final GordianNewDigestType pDigestType) {
+    protected boolean validHMacDigestType(final GordianDigestType pDigestType) {
         return validDigestType(pDigestType) && GordianCoreDigestType.supportsLargeData(pDigestType);
     }
 
@@ -57,7 +57,7 @@ public class GordianValidator {
      * @param pDigestType the digestType
      * @return true/false
      */
-    public boolean validDigestType(final GordianNewDigestType pDigestType) {
+    public boolean validDigestType(final GordianDigestType pDigestType) {
         return true;
     }
 
@@ -66,7 +66,7 @@ public class GordianValidator {
      *
      * @return the predicate
      */
-    public Predicate<GordianNewDigestType> supportedLockDigestTypes() {
+    public Predicate<GordianDigestType> supportedLockDigestTypes() {
         return supportedHMacDigestTypes().and(isCombinedHashDigest());
     }
 
@@ -75,7 +75,7 @@ public class GordianValidator {
      *
      * @return the predicate
      */
-    public Predicate<GordianNewDigestType> supportedKeyGenDigestTypes() {
+    public Predicate<GordianDigestType> supportedKeyGenDigestTypes() {
         return supportedHMacDigestTypes().and(isExternalHashDigest());
     }
 
@@ -84,7 +84,7 @@ public class GordianValidator {
      *
      * @return the predicate
      */
-    public Predicate<GordianNewDigestType> supportedAgreementDigestTypes() {
+    public Predicate<GordianDigestType> supportedAgreementDigestTypes() {
         return supportedHMacDigestTypes();
     }
 
@@ -93,7 +93,7 @@ public class GordianValidator {
      *
      * @return the predicate
      */
-    private Predicate<GordianNewDigestType> isCombinedHashDigest() {
+    private Predicate<GordianDigestType> isCombinedHashDigest() {
         return s -> GordianCoreDigestType.getDefaultLength(s).getLength() >= GordianLength.LEN_256.getLength()
                 && GordianCoreDigestType.supportsLargeData(s);
     }
@@ -103,7 +103,7 @@ public class GordianValidator {
      *
      * @return the predicate
      */
-    public Predicate<GordianNewDigestType> isExternalHashDigest() {
+    public Predicate<GordianDigestType> isExternalHashDigest() {
         return s -> GordianCoreDigestType.isLengthValid(s, GordianLength.LEN_512);
     }
 
@@ -112,8 +112,8 @@ public class GordianValidator {
      *
      * @return the list of supported digestTypes.
      */
-    public List<GordianNewDigestType> listAllExternalDigestTypes() {
-        return Arrays.stream(GordianNewDigestType.values())
+    public List<GordianDigestType> listAllExternalDigestTypes() {
+        return Arrays.stream(GordianDigestType.values())
                 .filter(supportedExternalDigestTypes())
                 .toList();
     }
@@ -123,7 +123,7 @@ public class GordianValidator {
      *
      * @return the predicate
      */
-    public Predicate<GordianNewDigestType> supportedExternalDigestTypes() {
+    public Predicate<GordianDigestType> supportedExternalDigestTypes() {
         return supportedHMacDigestTypes().and(isExternalHashDigest());
     }
 
@@ -133,7 +133,7 @@ public class GordianValidator {
      * @param pKeyLen the keyLength
      * @return the predicate
      */
-    public Predicate<GordianNewSymKeySpec> supportedKeySetSymKeySpecs(final GordianLength pKeyLen) {
+    public Predicate<GordianSymKeySpec> supportedKeySetSymKeySpecs(final GordianLength pKeyLen) {
         return s -> supportedKeySetSymKeyTypes(pKeyLen).test(s.getSymKeyType())
                 && s.getBlockLength() == GordianLength.LEN_128;
     }
@@ -144,7 +144,7 @@ public class GordianValidator {
      * @param pKeyLen the keyLength
      * @return the predicate
      */
-    public Predicate<GordianNewSymKeyType> supportedKeySetSymKeyTypes(final GordianLength pKeyLen) {
+    public Predicate<GordianSymKeyType> supportedKeySetSymKeyTypes(final GordianLength pKeyLen) {
         return t -> validKeySetSymKeyType(t, pKeyLen);
     }
 
@@ -155,7 +155,7 @@ public class GordianValidator {
      * @param pKeyLen  the keyLength
      * @return true/false
      */
-    private boolean validKeySetSymKeyType(final GordianNewSymKeyType pKeyType,
+    private boolean validKeySetSymKeyType(final GordianSymKeyType pKeyType,
                                           final GordianLength pKeyLen) {
         return validSymKeyType(pKeyType)
                 && validStdBlockSymKeyTypeForKeyLength(pKeyType, pKeyLen);
@@ -168,7 +168,7 @@ public class GordianValidator {
      * @param pKeyLen  the keyLength
      * @return true/false
      */
-    public static boolean validStdBlockSymKeyTypeForKeyLength(final GordianNewSymKeyType pKeyType,
+    public static boolean validStdBlockSymKeyTypeForKeyLength(final GordianSymKeyType pKeyType,
                                                               final GordianLength pKeyLen) {
         return validSymKeyTypeForKeyLength(pKeyType, pKeyLen)
                 && GordianLength.LEN_128.equals(GordianCoreSymKeyType.getDefaultBlockLength(pKeyType));
@@ -181,7 +181,7 @@ public class GordianValidator {
      * @param pKeyLen  the keyLength
      * @return true/false
      */
-    public static boolean validSymKeyTypeForKeyLength(final GordianNewSymKeyType pKeyType,
+    public static boolean validSymKeyTypeForKeyLength(final GordianSymKeyType pKeyType,
                                                       final GordianLength pKeyLen) {
         return GordianCoreSymKeyType.validForKeyLength(pKeyType, pKeyLen);
     }
@@ -192,7 +192,7 @@ public class GordianValidator {
      * @param pKeyType the symKeyType
      * @return true/false
      */
-    public boolean validSymKeyType(final GordianNewSymKeyType pKeyType) {
+    public boolean validSymKeyType(final GordianSymKeyType pKeyType) {
         return pKeyType != null;
     }
 
@@ -202,7 +202,7 @@ public class GordianValidator {
      * @param pKeyType the streamKeyType
      * @return true/false
      */
-    public boolean validStreamKeyType(final GordianNewStreamKeyType pKeyType) {
+    public boolean validStreamKeyType(final GordianStreamKeyType pKeyType) {
         return pKeyType != null;
     }
 

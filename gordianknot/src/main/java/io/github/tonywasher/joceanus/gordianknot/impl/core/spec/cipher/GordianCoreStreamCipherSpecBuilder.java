@@ -18,9 +18,9 @@
 package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamCipherSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamCipherSpecBuilder;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamCipherSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySpec;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +29,7 @@ import java.util.List;
  * The StreamCipherSpec Builder class.
  */
 public final class GordianCoreStreamCipherSpecBuilder
-        implements GordianNewStreamCipherSpecBuilder {
+        implements GordianStreamCipherSpecBuilder {
     /**
      * The keySpec.
      */
@@ -56,19 +56,19 @@ public final class GordianCoreStreamCipherSpecBuilder
     }
 
     @Override
-    public GordianNewStreamCipherSpecBuilder withKeySpec(final GordianNewStreamKeySpec pSpec) {
+    public GordianStreamCipherSpecBuilder withKeySpec(final GordianStreamKeySpec pSpec) {
         theKeySpec = (GordianCoreStreamKeySpec) pSpec;
         return this;
     }
 
     @Override
-    public GordianNewStreamCipherSpecBuilder asAEAD() {
+    public GordianStreamCipherSpecBuilder asAEAD() {
         asAEAD = true;
         return this;
     }
 
     @Override
-    public GordianNewStreamCipherSpec build() {
+    public GordianStreamCipherSpec build() {
         /* Create spec, reset and return */
         final GordianCoreStreamCipherSpec mySpec = new GordianCoreStreamCipherSpec(theKeySpec, asAEAD);
         reset();
@@ -89,9 +89,9 @@ public final class GordianCoreStreamCipherSpecBuilder
      * @param pKeyLen the keyLength
      * @return the list
      */
-    public static List<GordianNewStreamCipherSpec> listAllSupportedStreamCipherSpecs(final GordianLength pKeyLen) {
-        final List<GordianNewStreamCipherSpec> myResult = new ArrayList<>();
-        for (GordianNewStreamKeySpec mySpec : GordianCoreStreamKeySpecBuilder.listAllPossibleStreamKeySpecs(pKeyLen)) {
+    public static List<GordianStreamCipherSpec> listAllSupportedStreamCipherSpecs(final GordianLength pKeyLen) {
+        final List<GordianStreamCipherSpec> myResult = new ArrayList<>();
+        for (GordianStreamKeySpec mySpec : GordianCoreStreamKeySpecBuilder.listAllPossibleStreamKeySpecs(pKeyLen)) {
             /* Add the standard cipher */
             final GordianCoreStreamKeySpec myCoreSpec = (GordianCoreStreamKeySpec) mySpec;
             myResult.add(new GordianCoreStreamCipherSpec(myCoreSpec, false));

@@ -18,7 +18,7 @@ package io.github.tonywasher.joceanus.gordianknot.impl.bc;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPrivateKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPublicKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.agree.GordianCoreAgreementFactory;
@@ -73,7 +73,7 @@ public final class BouncyMLKEMKeyPair {
          * @param pKeySpec   the keySpec
          * @param pPublicKey the public key
          */
-        BouncyMLKEMPublicKey(final GordianNewKeyPairSpec pKeySpec,
+        BouncyMLKEMPublicKey(final GordianKeyPairSpec pKeySpec,
                              final MLKEMPublicKeyParameters pPublicKey) {
             super(pKeySpec, pPublicKey);
         }
@@ -100,7 +100,7 @@ public final class BouncyMLKEMKeyPair {
          * @param pKeySpec    the keySpec
          * @param pPrivateKey the private key
          */
-        BouncyMLKEMPrivateKey(final GordianNewKeyPairSpec pKeySpec,
+        BouncyMLKEMPrivateKey(final GordianKeyPairSpec pKeySpec,
                               final MLKEMPrivateKeyParameters pPrivateKey) {
             super(pKeySpec, pPrivateKey);
         }
@@ -135,7 +135,7 @@ public final class BouncyMLKEMKeyPair {
          * @throws GordianException on error
          */
         BouncyMLKEMKeyPairGenerator(final GordianBaseFactory pFactory,
-                                    final GordianNewKeyPairSpec pKeySpec) throws GordianException {
+                                    final GordianKeyPairSpec pKeySpec) throws GordianException {
             /* Initialise underlying class */
             super(pFactory, pKeySpec);
 

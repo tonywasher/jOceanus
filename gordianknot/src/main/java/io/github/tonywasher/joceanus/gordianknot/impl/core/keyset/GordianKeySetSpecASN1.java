@@ -19,7 +19,7 @@ package io.github.tonywasher.joceanus.gordianknot.impl.core.keyset;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKeyLengths;
-import io.github.tonywasher.joceanus.gordianknot.api.keyset.spec.GordianNewKeySetSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keyset.spec.GordianKeySetSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianASN1Util;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianASN1Util.GordianASN1Object;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
@@ -55,14 +55,14 @@ public class GordianKeySetSpecASN1
     /**
      * The KeySetSpec.
      */
-    private final GordianNewKeySetSpec theSpec;
+    private final GordianKeySetSpec theSpec;
 
     /**
      * Create the ASN1 sequence.
      *
      * @param pKeySetSpec the keySetSpec
      */
-    public GordianKeySetSpecASN1(final GordianNewKeySetSpec pKeySetSpec) {
+    public GordianKeySetSpecASN1(final GordianKeySetSpec pKeySetSpec) {
         /* Store the Spec */
         theSpec = pKeySetSpec;
     }
@@ -118,7 +118,7 @@ public class GordianKeySetSpecASN1
      *
      * @return the Spec
      */
-    public GordianNewKeySetSpec getSpec() {
+    public GordianKeySetSpec getSpec() {
         return theSpec;
     }
 

@@ -18,7 +18,7 @@
 package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewDHSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianDHSpec;
 import org.bouncycastle.crypto.agreement.DHStandardGroups;
 import org.bouncycastle.crypto.params.DHParameters;
 
@@ -32,7 +32,7 @@ public final class GordianCoreDHSpec {
     /**
      * The specMap.
      */
-    private static final Map<GordianNewDHSpec, GordianCoreDHSpec> SPECMAP = newSpecMap();
+    private static final Map<GordianDHSpec, GordianCoreDHSpec> SPECMAP = newSpecMap();
 
     /**
      * The specArray.
@@ -42,14 +42,14 @@ public final class GordianCoreDHSpec {
     /**
      * The Spec.
      */
-    private final GordianNewDHSpec theSpec;
+    private final GordianDHSpec theSpec;
 
     /**
      * Constructor.
      *
      * @param pSpec the spec
      */
-    private GordianCoreDHSpec(final GordianNewDHSpec pSpec) {
+    private GordianCoreDHSpec(final GordianDHSpec pSpec) {
         theSpec = pSpec;
     }
 
@@ -58,7 +58,7 @@ public final class GordianCoreDHSpec {
      *
      * @return the spec
      */
-    public GordianNewDHSpec getSpec() {
+    public GordianDHSpec getSpec() {
         return theSpec;
     }
 
@@ -177,7 +177,7 @@ public final class GordianCoreDHSpec {
      * @return the core spec
      */
     public static GordianCoreDHSpec mapCoreSpec(final Object pSpec) {
-        return pSpec instanceof GordianNewDHSpec mySpec ? SPECMAP.get(mySpec) : null;
+        return pSpec instanceof GordianDHSpec mySpec ? SPECMAP.get(mySpec) : null;
     }
 
     /**
@@ -185,9 +185,9 @@ public final class GordianCoreDHSpec {
      *
      * @return the type map
      */
-    private static Map<GordianNewDHSpec, GordianCoreDHSpec> newSpecMap() {
-        final Map<GordianNewDHSpec, GordianCoreDHSpec> myMap = new EnumMap<>(GordianNewDHSpec.class);
-        for (GordianNewDHSpec mySpec : GordianNewDHSpec.values()) {
+    private static Map<GordianDHSpec, GordianCoreDHSpec> newSpecMap() {
+        final Map<GordianDHSpec, GordianCoreDHSpec> myMap = new EnumMap<>(GordianDHSpec.class);
+        for (GordianDHSpec mySpec : GordianDHSpec.values()) {
             myMap.put(mySpec, new GordianCoreDHSpec(mySpec));
         }
         return myMap;

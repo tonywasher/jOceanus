@@ -19,8 +19,8 @@ package io.github.tonywasher.joceanus.gordianknot.junit.regression;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairUsage;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairUse;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewECSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianECSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keystore.GordianKeyStore;
 import io.github.tonywasher.joceanus.gordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStorePair;
 import io.github.tonywasher.joceanus.gordianknot.api.keystore.GordianKeyStoreFactory;
@@ -44,7 +44,7 @@ public final class KeyStorePairs {
     /**
      * KeyPairSpec.
      */
-    private static final GordianNewKeyPairSpec KEYPAIRSPEC = GordianUtilities.newKeyPairSpecBuilder().ec(GordianNewECSpec.SECT571K1);
+    private static final GordianKeyPairSpec KEYPAIRSPEC = GordianUtilities.newKeyPairSpecBuilder().ec(GordianECSpec.SECT571K1);
 
     /**
      * The KeyStore Manager.

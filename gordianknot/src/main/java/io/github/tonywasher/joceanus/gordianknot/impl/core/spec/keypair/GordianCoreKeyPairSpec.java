@@ -17,8 +17,8 @@
 
 package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair;
 
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairType;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairType;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -29,7 +29,7 @@ import java.util.Objects;
  * Asymmetric KeyPair Specification.
  */
 public class GordianCoreKeyPairSpec
-        implements GordianNewKeyPairSpec {
+        implements GordianKeyPairSpec {
     /**
      * The Separator.
      */
@@ -61,7 +61,7 @@ public class GordianCoreKeyPairSpec
      * @param pKeyType the keyType
      * @param pSubSpec the subSpec
      */
-    GordianCoreKeyPairSpec(final GordianNewKeyPairType pKeyType,
+    GordianCoreKeyPairSpec(final GordianKeyPairType pKeyType,
                            final Object pSubSpec) {
         theKeyPairType = GordianCoreKeyPairType.mapCoreType(pKeyType);
         theSubSpec = wrapSubSpec(pSubSpec);
@@ -69,7 +69,7 @@ public class GordianCoreKeyPairSpec
     }
 
     @Override
-    public GordianNewKeyPairType getKeyPairType() {
+    public GordianKeyPairType getKeyPairType() {
         return theKeyPairType.getType();
     }
 
@@ -346,9 +346,9 @@ public class GordianCoreKeyPairSpec
      * @return the keySpec iterator.
      */
     @SuppressWarnings("unchecked")
-    public Iterator<GordianNewKeyPairSpec> keySpecIterator() {
+    public Iterator<GordianKeyPairSpec> keySpecIterator() {
         if (theSubSpec instanceof List) {
-            return ((List<GordianNewKeyPairSpec>) theSubSpec).iterator();
+            return ((List<GordianKeyPairSpec>) theSubSpec).iterator();
         }
         throw new IllegalArgumentException();
     }
@@ -389,7 +389,7 @@ public class GordianCoreKeyPairSpec
                     theName = "X" + ((GordianCoreEdwardsSpec) theSubSpec).getSuffix();
                     break;
                 case COMPOSITE:
-                    final Iterator<GordianNewKeyPairSpec> myIterator = keySpecIterator();
+                    final Iterator<GordianKeyPairSpec> myIterator = keySpecIterator();
                     final StringBuilder myBuilder = new StringBuilder(theName);
                     while (myIterator.hasNext()) {
                         myBuilder.append(SEP).append(myIterator.next().toString());
@@ -503,8 +503,8 @@ public class GordianCoreKeyPairSpec
      */
     private boolean checkComposite() {
         Boolean stateAware = null;
-        final List<GordianNewKeyPairType> myExisting = new ArrayList<>();
-        final Iterator<GordianNewKeyPairSpec> myIterator = keySpecIterator();
+        final List<GordianKeyPairType> myExisting = new ArrayList<>();
+        final Iterator<GordianKeyPairSpec> myIterator = keySpecIterator();
         while (myIterator.hasNext()) {
             /* Check that we have not got a null */
             final GordianCoreKeyPairSpec mySpec = (GordianCoreKeyPairSpec) myIterator.next();
@@ -513,8 +513,8 @@ public class GordianCoreKeyPairSpec
             }
 
             /* Check that we have not got a duplicate or COMPOSITE */
-            final GordianNewKeyPairType myType = mySpec.getKeyPairType();
-            if (myExisting.contains(myType) || myType == GordianNewKeyPairType.COMPOSITE) {
+            final GordianKeyPairType myType = mySpec.getKeyPairType();
+            if (myExisting.contains(myType) || myType == GordianKeyPairType.COMPOSITE) {
                 return false;
             }
 

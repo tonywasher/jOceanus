@@ -19,8 +19,8 @@ package io.github.tonywasher.joceanus.gordianknot.impl.core.key;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpecBuilder;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestType;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestType;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKey;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKeyGenerator;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMac;
@@ -130,7 +130,7 @@ public abstract class GordianCoreKeyGenerator<T extends GordianKeySpec>
         GordianHKDFParams myParams = null;
 
         /* Derive the two digestTypes from the seededRandom */
-        final GordianNewDigestType[] myDigestTypes = theFactory.getIdManager().deriveKeyGenDigestTypesFromSeed(pSeededRandom, 2);
+        final GordianDigestType[] myDigestTypes = theFactory.getIdManager().deriveKeyGenDigestTypesFromSeed(pSeededRandom, 2);
 
         /* Determine info bytes */
         final byte[] myAlgo = GordianDataConverter.stringToByteArray(theKeyType.toString());
@@ -140,7 +140,7 @@ public abstract class GordianCoreKeyGenerator<T extends GordianKeySpec>
 
         /* Protect against exceptions */
         try {
-            final GordianNewDigestSpecBuilder myBuilder = GordianCoreDigestSpecBuilder.newInstance();
+            final GordianDigestSpecBuilder myBuilder = GordianCoreDigestSpecBuilder.newInstance();
             /* Create the HKDF and parameters */
             final GordianHKDFMulti myEngine = new GordianHKDFMulti(theFactory,
                     myBuilder.digest(myDigestTypes[0], GordianLength.LEN_512),

@@ -21,15 +21,15 @@ import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianCertificate;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianCertificateId;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairUsage;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairUse;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairGenerator;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStorePair;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignParams;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignature;
-import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianNewSignatureSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianIOException;
@@ -467,7 +467,7 @@ public class GordianCoreCertificate
      * @param pSigner the signer
      * @return the algorithmId
      */
-    AlgorithmIdentifier determineAlgIdForSignatureSpec(final GordianNewSignatureSpec pSpec,
+    AlgorithmIdentifier determineAlgIdForSignatureSpec(final GordianSignatureSpec pSpec,
                                                        final GordianKeyPair pSigner) {
         final GordianCoreSignatureFactory mySigns = (GordianCoreSignatureFactory) getFactory().getAsyncFactory().getSignatureFactory();
         return mySigns.getIdentifierForSpecAndKeyPair(pSpec, pSigner);
@@ -495,7 +495,7 @@ public class GordianCoreCertificate
         /* Derive the keyPair */
         final GordianKeyPairFactory myFactory = getFactory().getAsyncFactory().getKeyPairFactory();
         final X509EncodedKeySpec myX509 = getX509KeySpec();
-        final GordianNewKeyPairSpec myKeySpec = myFactory.determineKeyPairSpec(myX509);
+        final GordianKeyPairSpec myKeySpec = myFactory.determineKeyPairSpec(myX509);
         final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(myKeySpec);
         return myGenerator.derivePublicOnlyKeyPair(myX509);
     }
@@ -523,7 +523,7 @@ public class GordianCoreCertificate
      *
      * @return the digestSpec
      */
-    protected GordianNewDigestSpec getDigestSpec() {
+    protected GordianDigestSpec getDigestSpec() {
         return getSignatureSpec().getDigestSpec();
     }
 

@@ -22,7 +22,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactoryType;
 import io.github.tonywasher.joceanus.gordianknot.api.keystore.GordianKeyStore;
 import io.github.tonywasher.joceanus.gordianknot.api.keystore.GordianKeyStoreFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.keystore.GordianKeyStoreManager;
-import io.github.tonywasher.joceanus.gordianknot.api.lock.spec.GordianNewPasswordLockSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.lock.spec.GordianPasswordLockSpec;
 import io.github.tonywasher.joceanus.gordianknot.util.GordianGenerator;
 import io.github.tonywasher.joceanus.gordianknot.util.GordianUtilities;
 import org.junit.jupiter.api.DynamicNode;
@@ -37,7 +37,7 @@ class KeyStoreTest {
     /**
      * The KeySetHashSpec.
      */
-    private static final GordianNewPasswordLockSpec KEYSETLOCKSPEC = GordianUtilities.newPasswordLockSpecBuilder().passwordLock(KeyStoreSymmetric.KEYSETSPEC);
+    private static final GordianPasswordLockSpec KEYSETLOCKSPEC = GordianUtilities.newPasswordLockSpecBuilder().passwordLock(KeyStoreSymmetric.KEYSETSPEC);
 
     /**
      * Create the keyStore test suite.

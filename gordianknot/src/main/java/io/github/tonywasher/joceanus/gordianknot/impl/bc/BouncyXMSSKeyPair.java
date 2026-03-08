@@ -18,13 +18,13 @@ package io.github.tonywasher.joceanus.gordianknot.impl.bc;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewXMSSSpec.GordianNewXMSSDigestType;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianXMSSSpec.GordianXMSSDigestType;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignParams;
-import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianNewSignatureSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianNewSignatureType;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureType;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPublicKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyStateAwareKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyStateAwarePrivateKey;
@@ -86,7 +86,7 @@ public final class BouncyXMSSKeyPair {
          * @param pKeySpec   the keySpec
          * @param pPublicKey the public key
          */
-        BouncyXMSSPublicKey(final GordianNewKeyPairSpec pKeySpec,
+        BouncyXMSSPublicKey(final GordianKeyPairSpec pKeySpec,
                             final XMSSPublicKeyParameters pPublicKey) {
             super(pKeySpec, pPublicKey);
         }
@@ -140,7 +140,7 @@ public final class BouncyXMSSKeyPair {
          * @param pKeySpec    the keySpec
          * @param pPrivateKey the private key
          */
-        BouncyXMSSPrivateKey(final GordianNewKeyPairSpec pKeySpec,
+        BouncyXMSSPrivateKey(final GordianKeyPairSpec pKeySpec,
                              final XMSSPrivateKeyParameters pPrivateKey) {
             super(pKeySpec, pPrivateKey);
         }
@@ -199,7 +199,7 @@ public final class BouncyXMSSKeyPair {
          * @param pKeySpec the keySpec
          */
         BouncyXMSSKeyPairGenerator(final GordianBaseFactory pFactory,
-                                   final GordianNewKeyPairSpec pKeySpec) {
+                                   final GordianKeyPairSpec pKeySpec) {
             /* Initialise underlying class */
             super(pFactory, pKeySpec);
 
@@ -217,7 +217,7 @@ public final class BouncyXMSSKeyPair {
          *
          * @return the keyTypeType
          */
-        private GordianNewXMSSDigestType getKeyType() {
+        private GordianXMSSDigestType getKeyType() {
             final GordianCoreKeyPairSpec myKeySpec = (GordianCoreKeyPairSpec) getKeySpec();
             return myKeySpec.getXMSSSpec().getDigestType();
         }
@@ -331,7 +331,7 @@ public final class BouncyXMSSKeyPair {
      * @param pKeyType the key type
      * @return the digest
      */
-    static Digest createDigest(final GordianNewXMSSDigestType pKeyType) {
+    static Digest createDigest(final GordianXMSSDigestType pKeyType) {
         switch (pKeyType) {
             case SHAKE128:
                 return new SHAKEDigest(GordianLength.LEN_128.getLength());
@@ -356,7 +356,7 @@ public final class BouncyXMSSKeyPair {
          * @param pKeySpec   the keySpec
          * @param pPublicKey the public key
          */
-        BouncyXMSSMTPublicKey(final GordianNewKeyPairSpec pKeySpec,
+        BouncyXMSSMTPublicKey(final GordianKeyPairSpec pKeySpec,
                               final XMSSMTPublicKeyParameters pPublicKey) {
             super(pKeySpec, pPublicKey);
         }
@@ -411,7 +411,7 @@ public final class BouncyXMSSKeyPair {
          * @param pKeySpec    the keySpec
          * @param pPrivateKey the private key
          */
-        BouncyXMSSMTPrivateKey(final GordianNewKeyPairSpec pKeySpec,
+        BouncyXMSSMTPrivateKey(final GordianKeyPairSpec pKeySpec,
                                final XMSSMTPrivateKeyParameters pPrivateKey) {
             super(pKeySpec, pPrivateKey);
         }
@@ -470,7 +470,7 @@ public final class BouncyXMSSKeyPair {
          * @param pKeySpec the keySpec
          */
         BouncyXMSSMTKeyPairGenerator(final GordianBaseFactory pFactory,
-                                     final GordianNewKeyPairSpec pKeySpec) {
+                                     final GordianKeyPairSpec pKeySpec) {
             /* Initialise underlying class */
             super(pFactory, pKeySpec);
 
@@ -489,7 +489,7 @@ public final class BouncyXMSSKeyPair {
          *
          * @return the digestType
          */
-        private GordianNewXMSSDigestType getKeyType() {
+        private GordianXMSSDigestType getKeyType() {
             final GordianCoreKeyPairSpec myKeySpec = (GordianCoreKeyPairSpec) getKeySpec();
             return myKeySpec.getXMSSSpec().getDigestType();
         }
@@ -630,7 +630,7 @@ public final class BouncyXMSSKeyPair {
          * @throws GordianException on error
          */
         BouncyXMSSSignature(final GordianBaseFactory pFactory,
-                            final GordianNewSignatureSpec pSpec) throws GordianException {
+                            final GordianSignatureSpec pSpec) throws GordianException {
             /* Initialise underlying class */
             super(pFactory, pSpec);
 
@@ -639,7 +639,7 @@ public final class BouncyXMSSKeyPair {
             theMTSigner = new XMSSMTSigner();
 
             /* Determine preHash */
-            preHash = GordianNewSignatureType.PREHASH.equals(pSpec.getSignatureType());
+            preHash = GordianSignatureType.PREHASH.equals(pSpec.getSignatureType());
         }
 
         @Override
@@ -652,7 +652,7 @@ public final class BouncyXMSSKeyPair {
             /* Set the digest */
             final GordianCoreKeyPairSpec myKeyPairSpec = (GordianCoreKeyPairSpec) myPair.getKeyPairSpec();
             final GordianCoreXMSSSpec myKeySpec = myKeyPairSpec.getXMSSSpec();
-            final GordianNewDigestSpec myDigestSpec = myKeySpec.getDigestSpec();
+            final GordianDigestSpec myDigestSpec = myKeySpec.getDigestSpec();
             setDigest(preHash ? myDigestSpec : null);
 
             /* Initialise and set the signer */
@@ -676,7 +676,7 @@ public final class BouncyXMSSKeyPair {
             /* Set the digest */
             final GordianCoreKeyPairSpec myKeyPairSpec = (GordianCoreKeyPairSpec) myPair.getKeyPairSpec();
             final GordianCoreXMSSSpec myKeySpec = myKeyPairSpec.getXMSSSpec();
-            final GordianNewDigestSpec myDigestSpec = myKeySpec.getDigestSpec();
+            final GordianDigestSpec myDigestSpec = myKeySpec.getDigestSpec();
             setDigest(preHash ? myDigestSpec : null);
 
             /* Initialise and set the signer */

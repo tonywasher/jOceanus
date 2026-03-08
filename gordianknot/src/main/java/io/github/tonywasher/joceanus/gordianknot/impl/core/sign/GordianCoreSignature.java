@@ -22,7 +22,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignParams;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignature;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignatureFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianNewSignatureSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.digest.GordianCoreDigestFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
@@ -67,7 +67,7 @@ public abstract class GordianCoreSignature
      * @param pSpec    the signature Spec
      */
     protected GordianCoreSignature(final GordianBaseFactory pFactory,
-                                   final GordianNewSignatureSpec pSpec) {
+                                   final GordianSignatureSpec pSpec) {
         theFactory = pFactory;
         theSpec = (GordianCoreSignatureSpec) pSpec;
     }

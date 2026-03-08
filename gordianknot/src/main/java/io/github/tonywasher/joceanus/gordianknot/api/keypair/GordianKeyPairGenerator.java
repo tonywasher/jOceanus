@@ -17,7 +17,7 @@
 package io.github.tonywasher.joceanus.gordianknot.api.keypair;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
 
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
@@ -31,7 +31,7 @@ public interface GordianKeyPairGenerator {
      *
      * @return the keySpec
      */
-    GordianNewKeyPairSpec getKeySpec();
+    GordianKeyPairSpec getKeySpec();
 
     /**
      * Generate a new KeyPair.

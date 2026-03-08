@@ -18,13 +18,13 @@ package io.github.tonywasher.joceanus.gordianknot.impl.bc;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestType;
-import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianNewSM2EncryptionSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianNewSM2EncryptionType;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestType;
+import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianSM2EncryptionSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianSM2EncryptionType;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignParams;
-import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianNewSignatureSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyEllipticKeyPair.BouncyECPrivateKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyEllipticKeyPair.BouncyECPublicKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPrivateKey;
@@ -75,13 +75,13 @@ public final class BouncySM2KeyPair {
          * @throws GordianException on error
          */
         BouncySM2Signature(final GordianBaseFactory pFactory,
-                           final GordianNewSignatureSpec pSpec) throws GordianException {
+                           final GordianSignatureSpec pSpec) throws GordianException {
             /* Initialise underlying class */
             super(pFactory, pSpec);
 
             /* Create the signer */
-            final GordianNewDigestSpec mySpec = ((GordianCoreSignatureSpec) pSpec).getDigestSpec();
-            if (GordianNewDigestType.SM3.equals(mySpec.getDigestType())) {
+            final GordianDigestSpec mySpec = ((GordianCoreSignatureSpec) pSpec).getDigestSpec();
+            if (GordianDigestType.SM3.equals(mySpec.getDigestType())) {
                 theSigner = new SM2Signer();
             } else {
                 final BouncyDigest myDigest = (BouncyDigest) pFactory.getDigestFactory().createDigest(mySpec);
@@ -295,9 +295,9 @@ public final class BouncySM2KeyPair {
             /* Initialise underlying cipher */
             super(pFactory, pSpec);
             final GordianDigestFactory myFactory = pFactory.getDigestFactory();
-            final GordianNewSM2EncryptionSpec mySpec = pSpec.getSM2EncryptionSpec();
+            final GordianSM2EncryptionSpec mySpec = pSpec.getSM2EncryptionSpec();
             final BouncyDigest myDigest = (BouncyDigest) myFactory.createDigest(mySpec.getDigestSpec());
-            final Mode mySM2Mode = mySpec.getEncryptionType() == GordianNewSM2EncryptionType.C1C2C3
+            final Mode mySM2Mode = mySpec.getEncryptionType() == GordianSM2EncryptionType.C1C2C3
                     ? Mode.C1C2C3 : Mode.C1C3C2;
             theEncryptor = new SM2Engine(myDigest.getDigest(), mySM2Mode);
         }

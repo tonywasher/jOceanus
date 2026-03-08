@@ -17,8 +17,8 @@
 
 package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher;
 
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamCipherSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySpec;
 
 import java.util.Objects;
 
@@ -26,7 +26,7 @@ import java.util.Objects;
  * The StreamCipherSpec class.
  */
 public class GordianCoreStreamCipherSpec
-        implements GordianNewStreamCipherSpec {
+        implements GordianStreamCipherSpec {
     /**
      * The keySpec.
      */
@@ -70,7 +70,7 @@ public class GordianCoreStreamCipherSpec
     }
 
     @Override
-    public GordianNewStreamKeySpec getKeySpec() {
+    public GordianStreamKeySpec getKeySpec() {
         return theKeySpec;
     }
 

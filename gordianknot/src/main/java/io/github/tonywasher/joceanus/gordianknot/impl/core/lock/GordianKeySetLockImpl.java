@@ -19,7 +19,7 @@ package io.github.tonywasher.joceanus.gordianknot.impl.core.lock;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySet;
 import io.github.tonywasher.joceanus.gordianknot.api.lock.GordianKeySetLock;
-import io.github.tonywasher.joceanus.gordianknot.api.lock.spec.GordianNewPasswordLockSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.lock.spec.GordianPasswordLockSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianDataConverter;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keyset.GordianCoreKeySet;
@@ -58,7 +58,7 @@ public class GordianKeySetLockImpl
      */
     public GordianKeySetLockImpl(final GordianBaseFactory pLockingFactory,
                                  final GordianCoreKeySet pKeySetToLock,
-                                 final GordianNewPasswordLockSpec pLockSpec,
+                                 final GordianPasswordLockSpec pLockSpec,
                                  final char[] pPassword) throws GordianException {
         /* Protect from exceptions */
         byte[] myPassword = null;

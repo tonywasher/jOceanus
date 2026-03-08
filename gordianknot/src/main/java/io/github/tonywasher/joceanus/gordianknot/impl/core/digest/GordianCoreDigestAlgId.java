@@ -18,10 +18,10 @@ package io.github.tonywasher.joceanus.gordianknot.impl.core.digest;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpecBuilder;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSubSpec.GordianNewDigestState;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestType;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSubSpec.GordianDigestState;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestType;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianASN1Util;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianCoreDigestSpec;
@@ -54,12 +54,12 @@ public class GordianCoreDigestAlgId {
     /**
      * Map of DigestSpec to Identifier.
      */
-    private final Map<GordianNewDigestSpec, AlgorithmIdentifier> theSpecMap;
+    private final Map<GordianDigestSpec, AlgorithmIdentifier> theSpecMap;
 
     /**
      * Map of Identifier to DigestSpec.
      */
-    private final Map<AlgorithmIdentifier, GordianNewDigestSpec> theIdentifierMap;
+    private final Map<AlgorithmIdentifier, GordianDigestSpec> theIdentifierMap;
 
     /**
      * Constructor.
@@ -81,7 +81,7 @@ public class GordianCoreDigestAlgId {
         addSundryDigests();
 
         /* Loop through the possible DigestSpecs */
-        for (GordianNewDigestSpec mySpec : myFactory.listAllSupportedSpecs()) {
+        for (GordianDigestSpec mySpec : myFactory.listAllSupportedSpecs()) {
             /* Add any non-standard digests */
             ensureDigest(mySpec);
         }
@@ -93,7 +93,7 @@ public class GordianCoreDigestAlgId {
      * @param pSpec the digestSpec.
      * @return the Identifier
      */
-    public AlgorithmIdentifier getIdentifierForSpec(final GordianNewDigestSpec pSpec) {
+    public AlgorithmIdentifier getIdentifierForSpec(final GordianDigestSpec pSpec) {
         return theSpecMap.get(pSpec);
     }
 
@@ -111,15 +111,15 @@ public class GordianCoreDigestAlgId {
      * Add SHA digests.
      */
     private void addSHADigests() {
-        final GordianNewDigestSpecBuilder myBuilder = GordianCoreDigestSpecBuilder.newInstance();
+        final GordianDigestSpecBuilder myBuilder = GordianCoreDigestSpecBuilder.newInstance();
         addToMaps(myBuilder.sha1(), new AlgorithmIdentifier(OIWObjectIdentifiers.idSHA1));
         addToMaps(myBuilder.sha2(GordianLength.LEN_224), new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha224, DERNull.INSTANCE));
         addToMaps(myBuilder.sha2(GordianLength.LEN_256), new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha256, DERNull.INSTANCE));
         addToMaps(myBuilder.sha2(GordianLength.LEN_384), new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha384, DERNull.INSTANCE));
         addToMaps(myBuilder.sha2(GordianLength.LEN_512), new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha512, DERNull.INSTANCE));
-        addToMaps(myBuilder.sha2(GordianNewDigestState.STATE512, GordianLength.LEN_224),
+        addToMaps(myBuilder.sha2(GordianDigestState.STATE512, GordianLength.LEN_224),
                 new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha512_224, DERNull.INSTANCE));
-        addToMaps(myBuilder.sha2(GordianNewDigestState.STATE512, GordianLength.LEN_256),
+        addToMaps(myBuilder.sha2(GordianDigestState.STATE512, GordianLength.LEN_256),
                 new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha512_256, DERNull.INSTANCE));
         addToMaps(myBuilder.sha3(GordianLength.LEN_224), new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha3_224, DERNull.INSTANCE));
         addToMaps(myBuilder.sha3(GordianLength.LEN_256), new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha3_256, DERNull.INSTANCE));
@@ -133,7 +133,7 @@ public class GordianCoreDigestAlgId {
      * Add Blake digests.
      */
     private void addBlakeDigests() {
-        final GordianNewDigestSpecBuilder myBuilder = GordianCoreDigestSpecBuilder.newInstance();
+        final GordianDigestSpecBuilder myBuilder = GordianCoreDigestSpecBuilder.newInstance();
         addToMaps(myBuilder.blake2s(GordianLength.LEN_128), new AlgorithmIdentifier(MiscObjectIdentifiers.id_blake2s128, DERNull.INSTANCE));
         addToMaps(myBuilder.blake2b(GordianLength.LEN_160), new AlgorithmIdentifier(MiscObjectIdentifiers.id_blake2b160, DERNull.INSTANCE));
         addToMaps(myBuilder.blake2s(GordianLength.LEN_160), new AlgorithmIdentifier(MiscObjectIdentifiers.id_blake2s160, DERNull.INSTANCE));
@@ -148,7 +148,7 @@ public class GordianCoreDigestAlgId {
      * Add GOST digests.
      */
     private void addGOSTDigests() {
-        final GordianNewDigestSpecBuilder myBuilder = GordianCoreDigestSpecBuilder.newInstance();
+        final GordianDigestSpecBuilder myBuilder = GordianCoreDigestSpecBuilder.newInstance();
         addToMaps(myBuilder.gost(), new AlgorithmIdentifier(CryptoProObjectIdentifiers.gostR3411));
         addToMaps(myBuilder.streebog(GordianLength.LEN_256), new AlgorithmIdentifier(RosstandartObjectIdentifiers.id_tc26_gost_3411_12_256, DERNull.INSTANCE));
         addToMaps(myBuilder.streebog(GordianLength.LEN_512), new AlgorithmIdentifier(RosstandartObjectIdentifiers.id_tc26_gost_3411_12_512, DERNull.INSTANCE));
@@ -161,7 +161,7 @@ public class GordianCoreDigestAlgId {
      * Add Sundry digests.
      */
     private void addSundryDigests() {
-        final GordianNewDigestSpecBuilder myBuilder = GordianCoreDigestSpecBuilder.newInstance();
+        final GordianDigestSpecBuilder myBuilder = GordianCoreDigestSpecBuilder.newInstance();
         addToMaps(myBuilder.md2(), new AlgorithmIdentifier(PKCSObjectIdentifiers.md2, DERNull.INSTANCE));
         addToMaps(myBuilder.md4(), new AlgorithmIdentifier(PKCSObjectIdentifiers.md4, DERNull.INSTANCE));
         addToMaps(myBuilder.md5(), new AlgorithmIdentifier(PKCSObjectIdentifiers.md5, DERNull.INSTANCE));
@@ -178,7 +178,7 @@ public class GordianCoreDigestAlgId {
      *
      * @param pSpec the digestSpec
      */
-    private void ensureDigest(final GordianNewDigestSpec pSpec) {
+    private void ensureDigest(final GordianDigestSpec pSpec) {
         /* If the digest is not already known */
         if (!theSpecMap.containsKey(pSpec)) {
             addDigest(pSpec);
@@ -190,7 +190,7 @@ public class GordianCoreDigestAlgId {
      *
      * @param pSpec the digestSpec
      */
-    private void addDigest(final GordianNewDigestSpec pSpec) {
+    private void addDigest(final GordianDigestSpec pSpec) {
         final ASN1ObjectIdentifier myId = appendDigestOID(DIGESTOID, pSpec);
         addToMaps(pSpec, new AlgorithmIdentifier(myId, DERNull.INSTANCE));
     }
@@ -203,13 +203,13 @@ public class GordianCoreDigestAlgId {
      * @return the resulting OID
      */
     public static ASN1ObjectIdentifier appendDigestOID(final ASN1ObjectIdentifier pBaseOID,
-                                                       final GordianNewDigestSpec pSpec) {
+                                                       final GordianDigestSpec pSpec) {
         /* Create a branch for digest based on the DigestType */
-        final GordianNewDigestType myType = pSpec.getDigestType();
+        final GordianDigestType myType = pSpec.getDigestType();
         ASN1ObjectIdentifier myId = pBaseOID.branch(Integer.toString(myType.ordinal() + 1));
 
         /* Adjust for subSpec */
-        final GordianNewDigestState myState = pSpec.getDigestState();
+        final GordianDigestState myState = pSpec.getDigestState();
         if (myState != null) {
             myId = myId.branch("1").branch(Integer.toString(myState.ordinal() + 1));
         } else {
@@ -229,7 +229,7 @@ public class GordianCoreDigestAlgId {
      * @param pSpec       the digestSpec
      * @param pIdentifier the identifier
      */
-    private void addToMaps(final GordianNewDigestSpec pSpec,
+    private void addToMaps(final GordianDigestSpec pSpec,
                            final AlgorithmIdentifier pIdentifier) {
         theSpecMap.put(pSpec, pIdentifier);
         theIdentifierMap.put(pIdentifier, pSpec);

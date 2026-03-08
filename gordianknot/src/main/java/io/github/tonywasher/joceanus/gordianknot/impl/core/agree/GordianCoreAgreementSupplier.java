@@ -18,7 +18,7 @@ package io.github.tonywasher.joceanus.gordianknot.impl.core.agree;
 
 import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreement;
 import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianNewAgreementSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
@@ -41,7 +41,7 @@ public interface GordianCoreAgreementSupplier
      * @param pAgreementSpec the agreementSpec
      * @throws GordianException on error
      */
-    void checkAgreementSpec(GordianNewAgreementSpec pAgreementSpec) throws GordianException;
+    void checkAgreementSpec(GordianAgreementSpec pAgreementSpec) throws GordianException;
 
     /**
      * Obtain Identifier for AgreementSpec.
@@ -49,7 +49,7 @@ public interface GordianCoreAgreementSupplier
      * @param pSpec the agreementSpec.
      * @return the Identifier
      */
-    AlgorithmIdentifier getIdentifierForSpec(GordianNewAgreementSpec pSpec);
+    AlgorithmIdentifier getIdentifierForSpec(GordianAgreementSpec pSpec);
 
     /**
      * Obtain AgreementSpec for Identifier.
@@ -57,7 +57,7 @@ public interface GordianCoreAgreementSupplier
      * @param pIdentifier the identifier.
      * @return the agreementSpec (or null if not found)
      */
-    GordianNewAgreementSpec getSpecForIdentifier(AlgorithmIdentifier pIdentifier);
+    GordianAgreementSpec getSpecForIdentifier(AlgorithmIdentifier pIdentifier);
 
     /**
      * Obtain Identifier for ResultType.

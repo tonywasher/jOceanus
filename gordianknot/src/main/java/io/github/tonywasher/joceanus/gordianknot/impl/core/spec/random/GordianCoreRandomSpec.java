@@ -17,8 +17,8 @@
 
 package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.random;
 
-import io.github.tonywasher.joceanus.gordianknot.api.random.spec.GordianNewRandomSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.random.spec.GordianNewRandomType;
+import io.github.tonywasher.joceanus.gordianknot.api.random.spec.GordianRandomSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.random.spec.GordianRandomType;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher.GordianCoreSymKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianCoreDigestSpec;
 
@@ -28,7 +28,7 @@ import java.util.Objects;
  * SecureRandom Specification.
  */
 public class GordianCoreRandomSpec
-        implements GordianNewRandomSpec {
+        implements GordianRandomSpec {
     /**
      * The Separator.
      */
@@ -66,7 +66,7 @@ public class GordianCoreRandomSpec
      * @param pSubSpec    the subSpec
      * @param pResistant  is the secureRandom predicationResistant?
      */
-    GordianCoreRandomSpec(final GordianNewRandomType pRandomType,
+    GordianCoreRandomSpec(final GordianRandomType pRandomType,
                           final Object pSubSpec,
                           final boolean pResistant) {
         theType = GordianCoreRandomType.mapCoreType(pRandomType);
@@ -76,7 +76,7 @@ public class GordianCoreRandomSpec
     }
 
     @Override
-    public GordianNewRandomType getRandomType() {
+    public GordianRandomType getRandomType() {
         return theType.getType();
     }
 
@@ -127,7 +127,7 @@ public class GordianCoreRandomSpec
      * @param pSpec the randomSpec
      * @return the symKeySpec.
      */
-    public static GordianCoreSymKeySpec getSymKeySpec(final GordianNewRandomSpec pSpec) {
+    public static GordianCoreSymKeySpec getSymKeySpec(final GordianRandomSpec pSpec) {
         return ((GordianCoreRandomSpec) pSpec).getSymKeySpec();
     }
 

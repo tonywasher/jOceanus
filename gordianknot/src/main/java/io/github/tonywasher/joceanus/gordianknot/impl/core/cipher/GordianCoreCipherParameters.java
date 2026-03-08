@@ -25,11 +25,11 @@ import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherParamet
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherParameters.GordianKeyCipherParameters;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherParameters.GordianNonceParameters;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherParameters.GordianPBECipherParameters;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewCipherSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewPBESpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewPBESpec.GordianNewPBEArgon2Spec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewPBESpec.GordianNewPBEDigestAndCountSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewPBESpec.GordianNewPBESCryptSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianPBESpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianPBESpec.GordianPBEArgon2Spec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianPBESpec.GordianPBEDigestAndCountSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianPBESpec.GordianPBESCryptSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseData;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
@@ -68,7 +68,7 @@ public class GordianCoreCipherParameters<T extends GordianKeySpec> {
     /**
      * The cipherSpec.
      */
-    private final GordianNewCipherSpec<T> theSpec;
+    private final GordianCipherSpec<T> theSpec;
 
     /**
      * The secureRandom.
@@ -103,7 +103,7 @@ public class GordianCoreCipherParameters<T extends GordianKeySpec> {
     /**
      * PBESpec.
      */
-    private GordianNewPBESpec thePBESpec;
+    private GordianPBESpec thePBESpec;
 
     /**
      * Constructor.
@@ -112,7 +112,7 @@ public class GordianCoreCipherParameters<T extends GordianKeySpec> {
      * @param pCipherSpec the CipherSpec
      */
     GordianCoreCipherParameters(final GordianBaseFactory pFactory,
-                                final GordianNewCipherSpec<T> pCipherSpec) {
+                                final GordianCipherSpec<T> pCipherSpec) {
         theFactory = pFactory;
         theSpec = pCipherSpec;
         theRandom = theFactory.getRandomSource();
@@ -159,7 +159,7 @@ public class GordianCoreCipherParameters<T extends GordianKeySpec> {
      *
      * @return the pbeSpec
      */
-    GordianNewPBESpec getPBESpec() {
+    GordianPBESpec getPBESpec() {
         return thePBESpec;
     }
 
@@ -196,7 +196,7 @@ public class GordianCoreCipherParameters<T extends GordianKeySpec> {
      */
     private void processPBEParameters(final GordianPBECipherParameters pParams) throws GordianException {
         /* Check that the PBE parameters are supported */
-        final GordianNewPBESpec myPBESpec = pParams.getPBESpec();
+        final GordianPBESpec myPBESpec = pParams.getPBESpec();
         final GordianPBECipherSpec<T> myPBECipherSpec = new GordianPBECipherSpec<>(myPBESpec, theSpec);
         final GordianBaseCipherFactory myCipherFactory = (GordianBaseCipherFactory) theFactory.getCipherFactory();
         if (!myCipherFactory.supportedPBECipherSpecs().test(myPBECipherSpec)) {
@@ -332,7 +332,7 @@ public class GordianCoreCipherParameters<T extends GordianKeySpec> {
         byte[] myPassword = null;
         try {
             /* Create the digest */
-            final GordianNewPBEDigestAndCountSpec mySpec = (GordianNewPBEDigestAndCountSpec) thePBESpec;
+            final GordianPBEDigestAndCountSpec mySpec = (GordianPBEDigestAndCountSpec) thePBESpec;
             final Digest myDigest = new SHA512Digest();
 
             /* Create the generator and initialise it */
@@ -364,7 +364,7 @@ public class GordianCoreCipherParameters<T extends GordianKeySpec> {
         byte[] myPassword = null;
         try {
             /* Create the digest */
-            final GordianNewPBEDigestAndCountSpec mySpec = (GordianNewPBEDigestAndCountSpec) thePBESpec;
+            final GordianPBEDigestAndCountSpec mySpec = (GordianPBEDigestAndCountSpec) thePBESpec;
             final Digest myDigest = new SHA512Digest();
 
             /* Create the generator and initialise it */
@@ -396,7 +396,7 @@ public class GordianCoreCipherParameters<T extends GordianKeySpec> {
         byte[] myPassword = null;
         try {
             /* Access the password as bytes */
-            final GordianNewPBESCryptSpec mySpec = (GordianNewPBESCryptSpec) thePBESpec;
+            final GordianPBESCryptSpec mySpec = (GordianPBESCryptSpec) thePBESpec;
             myPassword = PBEParametersGenerator.PKCS5PasswordToUTF8Bytes(pPassword);
 
             /* Generate the bytes */
@@ -426,7 +426,7 @@ public class GordianCoreCipherParameters<T extends GordianKeySpec> {
      */
     private CipherParameters deriveArgon2Parameters(final char[] pPassword) {
         /* Create the parameters */
-        final GordianNewPBEArgon2Spec mySpec = (GordianNewPBEArgon2Spec) thePBESpec;
+        final GordianPBEArgon2Spec mySpec = (GordianPBEArgon2Spec) thePBESpec;
         final Argon2Parameters.Builder myBuilder = new Argon2Parameters.Builder();
         myBuilder.withSalt(thePBESalt);
         myBuilder.withIterations(mySpec.getIterationCount());

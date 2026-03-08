@@ -18,7 +18,7 @@
 package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewRSASpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianRSASpec;
 
 import java.math.BigInteger;
 import java.util.EnumMap;
@@ -31,7 +31,7 @@ public final class GordianCoreRSASpec {
     /**
      * The specMap.
      */
-    private static final Map<GordianNewRSASpec, GordianCoreRSASpec> SPECMAP = newSpecMap();
+    private static final Map<GordianRSASpec, GordianCoreRSASpec> SPECMAP = newSpecMap();
 
     /**
      * The specArray.
@@ -41,14 +41,14 @@ public final class GordianCoreRSASpec {
     /**
      * The Spec.
      */
-    private final GordianNewRSASpec theSpec;
+    private final GordianRSASpec theSpec;
 
     /**
      * Constructor.
      *
      * @param pSpec the spec
      */
-    private GordianCoreRSASpec(final GordianNewRSASpec pSpec) {
+    private GordianCoreRSASpec(final GordianRSASpec pSpec) {
         theSpec = pSpec;
     }
 
@@ -57,7 +57,7 @@ public final class GordianCoreRSASpec {
      *
      * @return the spec
      */
-    public GordianNewRSASpec getSpec() {
+    public GordianRSASpec getSpec() {
         return theSpec;
     }
 
@@ -136,7 +136,7 @@ public final class GordianCoreRSASpec {
      * @return the core spec
      */
     public static GordianCoreRSASpec mapCoreSpec(final Object pSpec) {
-        return pSpec instanceof GordianNewRSASpec mySpec ? SPECMAP.get(mySpec) : null;
+        return pSpec instanceof GordianRSASpec mySpec ? SPECMAP.get(mySpec) : null;
     }
 
     /**
@@ -144,9 +144,9 @@ public final class GordianCoreRSASpec {
      *
      * @return the type map
      */
-    private static Map<GordianNewRSASpec, GordianCoreRSASpec> newSpecMap() {
-        final Map<GordianNewRSASpec, GordianCoreRSASpec> myMap = new EnumMap<>(GordianNewRSASpec.class);
-        for (GordianNewRSASpec mySpec : GordianNewRSASpec.values()) {
+    private static Map<GordianRSASpec, GordianCoreRSASpec> newSpecMap() {
+        final Map<GordianRSASpec, GordianCoreRSASpec> myMap = new EnumMap<>(GordianRSASpec.class);
+        for (GordianRSASpec mySpec : GordianRSASpec.values()) {
             myMap.put(mySpec, new GordianCoreRSASpec(mySpec));
         }
         return myMap;

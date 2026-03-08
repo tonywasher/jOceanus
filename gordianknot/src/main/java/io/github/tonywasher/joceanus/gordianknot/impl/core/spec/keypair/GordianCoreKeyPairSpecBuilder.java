@@ -18,40 +18,40 @@
 package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewBIKESpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewCMCESpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewDHSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewDSASpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewDSTUSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewECSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewFRODOSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewFalconSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewGOSTSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewHQCSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairSpecBuilder;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairType;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewLMSSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewLMSSpec.GordianNewLMSHash;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewLMSSpec.GordianNewLMSHeight;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewLMSSpec.GordianNewLMSWidth;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewMLDSASpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewMLKEMSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewMayoSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewNTRUPrimeSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewNTRUPrimeSpec.GordianNewNTRUPrimeParams;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewNTRUPrimeSpec.GordianNewNTRUPrimeType;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewNTRUSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewPicnicSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewRSASpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewSABERSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewSLHDSASpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewSM2Spec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewSnovaSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewXMSSSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewXMSSSpec.GordianNewXMSSDigestType;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewXMSSSpec.GordianNewXMSSHeight;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewXMSSSpec.GordianNewXMSSMTLayers;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianBIKESpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianCMCESpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianDHSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianDSASpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianDSTUSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianECSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianFRODOSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianFalconSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianGOSTSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianHQCSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairType;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianLMSSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianLMSSpec.GordianLMSHash;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianLMSSpec.GordianLMSHeight;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianLMSSpec.GordianLMSWidth;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianMLDSASpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianMLKEMSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianMayoSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNTRUPrimeSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNTRUPrimeSpec.GordianNTRUPrimeParams;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNTRUPrimeSpec.GordianNTRUPrimeType;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNTRUSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianPicnicSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianRSASpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianSABERSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianSLHDSASpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianSM2Spec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianSnovaSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianXMSSSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianXMSSSpec.GordianXMSSDigestType;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianXMSSSpec.GordianXMSSHeight;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianXMSSSpec.GordianXMSSMTLayers;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
@@ -61,11 +61,11 @@ import java.util.List;
  * Asymmetric KeyPair Specification Builder.
  */
 public final class GordianCoreKeyPairSpecBuilder
-        implements GordianNewKeyPairSpecBuilder {
+        implements GordianKeyPairSpecBuilder {
     /**
      * The keyPairType.
      */
-    private GordianNewKeyPairType theKeyPairType;
+    private GordianKeyPairType theKeyPairType;
 
     /**
      * The subSpec.
@@ -88,57 +88,57 @@ public final class GordianCoreKeyPairSpecBuilder
     }
 
     @Override
-    public GordianNewKeyPairSpecBuilder withKeyPairType(final GordianNewKeyPairType pType) {
+    public GordianKeyPairSpecBuilder withKeyPairType(final GordianKeyPairType pType) {
         theKeyPairType = pType;
         return this;
     }
 
     @Override
-    public GordianNewKeyPairSpecBuilder withEnumSubSpec(final Enum<?> pSubSpec) {
+    public GordianKeyPairSpecBuilder withEnumSubSpec(final Enum<?> pSubSpec) {
         theSubSpec = pSubSpec;
         return this;
     }
 
     @Override
-    public GordianNewKeyPairSpecBuilder withXMSSSubSpec(final GordianNewXMSSDigestType pDigestType,
-                                                        final GordianNewXMSSHeight pHeight) {
+    public GordianKeyPairSpecBuilder withXMSSSubSpec(final GordianXMSSDigestType pDigestType,
+                                                     final GordianXMSSHeight pHeight) {
         theSubSpec = new GordianCoreXMSSSpec(pDigestType, pHeight);
         return this;
     }
 
     @Override
-    public GordianNewKeyPairSpecBuilder withXMSSMTSubSpec(final GordianNewXMSSDigestType pDigestType,
-                                                          final GordianNewXMSSHeight pHeight,
-                                                          final GordianNewXMSSMTLayers pLayers) {
+    public GordianKeyPairSpecBuilder withXMSSMTSubSpec(final GordianXMSSDigestType pDigestType,
+                                                       final GordianXMSSHeight pHeight,
+                                                       final GordianXMSSMTLayers pLayers) {
         theSubSpec = new GordianCoreXMSSSpec(pDigestType, pHeight, pLayers);
         return this;
     }
 
     @Override
-    public GordianNewKeyPairSpecBuilder withLMSSubSpec(final GordianNewLMSHash pHashType,
-                                                       final GordianNewLMSHeight pHeight,
-                                                       final GordianNewLMSWidth pWidth,
-                                                       final GordianLength pLength,
-                                                       final int pDepth) {
+    public GordianKeyPairSpecBuilder withLMSSubSpec(final GordianLMSHash pHashType,
+                                                    final GordianLMSHeight pHeight,
+                                                    final GordianLMSWidth pWidth,
+                                                    final GordianLength pLength,
+                                                    final int pDepth) {
         theSubSpec = new GordianCoreLMSSpec(pHashType, pHeight, pWidth, pLength, pDepth);
         return this;
     }
 
     @Override
-    public GordianNewKeyPairSpecBuilder withNTRUPrimeSubSpec(final GordianNewNTRUPrimeType pType,
-                                                             final GordianNewNTRUPrimeParams pParams) {
+    public GordianKeyPairSpecBuilder withNTRUPrimeSubSpec(final GordianNTRUPrimeType pType,
+                                                          final GordianNTRUPrimeParams pParams) {
         theSubSpec = new GordianCoreNTRUPrimeSpec(pType, pParams);
         return this;
     }
 
     @Override
-    public GordianNewKeyPairSpecBuilder withKeyPairSpecs(final List<GordianNewKeyPairSpec> pSpecs) {
+    public GordianKeyPairSpecBuilder withKeyPairSpecs(final List<GordianKeyPairSpec> pSpecs) {
         theSubSpec = pSpecs;
         return this;
     }
 
     @Override
-    public GordianNewKeyPairSpec build() {
+    public GordianKeyPairSpec build() {
         final GordianCoreKeyPairSpec mySpec = new GordianCoreKeyPairSpec(theKeyPairType, theSubSpec);
         reset();
         return mySpec;
@@ -158,8 +158,8 @@ public final class GordianCoreKeyPairSpecBuilder
      * @param pSpec the xmssSpec
      * @return the KeySpec
      */
-    public GordianNewKeyPairSpec xmss(final GordianNewXMSSSpec pSpec) {
-        return new GordianCoreKeyPairSpec(GordianNewKeyPairType.XMSS, pSpec);
+    public GordianKeyPairSpec xmss(final GordianXMSSSpec pSpec) {
+        return new GordianCoreKeyPairSpec(GordianKeyPairType.XMSS, pSpec);
     }
 
     /**
@@ -168,8 +168,8 @@ public final class GordianCoreKeyPairSpecBuilder
      * @param pSpec the lmsSpec
      * @return the KeySpec
      */
-    public GordianNewKeyPairSpec lms(final GordianNewLMSSpec pSpec) {
-        return new GordianCoreKeyPairSpec(GordianNewKeyPairType.LMS, pSpec);
+    public GordianKeyPairSpec lms(final GordianLMSSpec pSpec) {
+        return new GordianCoreKeyPairSpec(GordianKeyPairType.LMS, pSpec);
     }
 
     /**
@@ -178,8 +178,8 @@ public final class GordianCoreKeyPairSpecBuilder
      * @param pSpec the ntruPrimeSpec
      * @return the KeySpec
      */
-    public GordianNewKeyPairSpec ntruprime(final GordianNewNTRUPrimeSpec pSpec) {
-        return new GordianCoreKeyPairSpec(GordianNewKeyPairType.NTRUPRIME, pSpec);
+    public GordianKeyPairSpec ntruprime(final GordianNTRUPrimeSpec pSpec) {
+        return new GordianCoreKeyPairSpec(GordianKeyPairType.NTRUPRIME, pSpec);
     }
 
     /**
@@ -187,34 +187,34 @@ public final class GordianCoreKeyPairSpecBuilder
      *
      * @return the list
      */
-    public static List<GordianNewKeyPairSpec> listPossibleKeySpecs() {
+    public static List<GordianKeyPairSpec> listPossibleKeySpecs() {
         /* Create the list */
-        final List<GordianNewKeyPairSpec> mySpecs = new ArrayList<>();
+        final List<GordianKeyPairSpec> mySpecs = new ArrayList<>();
         final GordianCoreKeyPairSpecBuilder myBuilder = new GordianCoreKeyPairSpecBuilder();
 
         /* Add RSA */
-        EnumSet.allOf(GordianNewRSASpec.class).forEach(m -> mySpecs.add(myBuilder.rsa(m)));
+        EnumSet.allOf(GordianRSASpec.class).forEach(m -> mySpecs.add(myBuilder.rsa(m)));
 
         /* Add DSA */
-        EnumSet.allOf(GordianNewDSASpec.class).forEach(t -> mySpecs.add(myBuilder.dsa(t)));
+        EnumSet.allOf(GordianDSASpec.class).forEach(t -> mySpecs.add(myBuilder.dsa(t)));
 
         /* Add DH  */
-        EnumSet.allOf(GordianNewDHSpec.class).forEach(g -> mySpecs.add(myBuilder.dh(g)));
+        EnumSet.allOf(GordianDHSpec.class).forEach(g -> mySpecs.add(myBuilder.dh(g)));
 
         /* Add ElGamal  */
-        EnumSet.allOf(GordianNewDHSpec.class).forEach(g -> mySpecs.add(myBuilder.elGamal(g)));
+        EnumSet.allOf(GordianDHSpec.class).forEach(g -> mySpecs.add(myBuilder.elGamal(g)));
 
         /* Add EC */
-        EnumSet.allOf(GordianNewECSpec.class).forEach(c -> mySpecs.add(myBuilder.ec(c)));
+        EnumSet.allOf(GordianECSpec.class).forEach(c -> mySpecs.add(myBuilder.ec(c)));
 
         /* Add SM2 */
-        EnumSet.allOf(GordianNewSM2Spec.class).forEach(c -> mySpecs.add(myBuilder.sm2(c)));
+        EnumSet.allOf(GordianSM2Spec.class).forEach(c -> mySpecs.add(myBuilder.sm2(c)));
 
         /* Add GOST2012 */
-        EnumSet.allOf(GordianNewGOSTSpec.class).forEach(c -> mySpecs.add(myBuilder.gost2012(c)));
+        EnumSet.allOf(GordianGOSTSpec.class).forEach(c -> mySpecs.add(myBuilder.gost2012(c)));
 
         /* Add DSTU4145 */
-        EnumSet.allOf(GordianNewDSTUSpec.class).forEach(c -> mySpecs.add(myBuilder.dstu4145(c)));
+        EnumSet.allOf(GordianDSTUSpec.class).forEach(c -> mySpecs.add(myBuilder.dstu4145(c)));
 
         /* Add Ed25519/Ed448 */
         mySpecs.add(myBuilder.ed448());
@@ -234,19 +234,19 @@ public final class GordianCoreKeyPairSpecBuilder
         GordianCoreLMSSpec.listAllPossibleSpecs().forEach(t -> mySpecs.add(myBuilder.lms(t)));
 
         /* Add SPHINCSPlus/CMCE/Frodo/Saber */
-        EnumSet.allOf(GordianNewSLHDSASpec.class).forEach(t -> mySpecs.add(myBuilder.slhdsa(t)));
-        EnumSet.allOf(GordianNewCMCESpec.class).forEach(t -> mySpecs.add(myBuilder.cmce(t)));
-        EnumSet.allOf(GordianNewFRODOSpec.class).forEach(t -> mySpecs.add(myBuilder.frodo(t)));
-        EnumSet.allOf(GordianNewSABERSpec.class).forEach(t -> mySpecs.add(myBuilder.saber(t)));
-        EnumSet.allOf(GordianNewMLKEMSpec.class).forEach(t -> mySpecs.add(myBuilder.mlkem(t)));
-        EnumSet.allOf(GordianNewMLDSASpec.class).forEach(t -> mySpecs.add(myBuilder.mldsa(t)));
-        EnumSet.allOf(GordianNewHQCSpec.class).forEach(t -> mySpecs.add(myBuilder.hqc(t)));
-        EnumSet.allOf(GordianNewBIKESpec.class).forEach(t -> mySpecs.add(myBuilder.bike(t)));
-        EnumSet.allOf(GordianNewNTRUSpec.class).forEach(t -> mySpecs.add(myBuilder.ntru(t)));
-        EnumSet.allOf(GordianNewFalconSpec.class).forEach(t -> mySpecs.add(myBuilder.falcon(t)));
-        EnumSet.allOf(GordianNewMayoSpec.class).forEach(t -> mySpecs.add(myBuilder.mayo(t)));
-        EnumSet.allOf(GordianNewSnovaSpec.class).forEach(t -> mySpecs.add(myBuilder.snova(t)));
-        EnumSet.allOf(GordianNewPicnicSpec.class).forEach(t -> mySpecs.add(myBuilder.picnic(t)));
+        EnumSet.allOf(GordianSLHDSASpec.class).forEach(t -> mySpecs.add(myBuilder.slhdsa(t)));
+        EnumSet.allOf(GordianCMCESpec.class).forEach(t -> mySpecs.add(myBuilder.cmce(t)));
+        EnumSet.allOf(GordianFRODOSpec.class).forEach(t -> mySpecs.add(myBuilder.frodo(t)));
+        EnumSet.allOf(GordianSABERSpec.class).forEach(t -> mySpecs.add(myBuilder.saber(t)));
+        EnumSet.allOf(GordianMLKEMSpec.class).forEach(t -> mySpecs.add(myBuilder.mlkem(t)));
+        EnumSet.allOf(GordianMLDSASpec.class).forEach(t -> mySpecs.add(myBuilder.mldsa(t)));
+        EnumSet.allOf(GordianHQCSpec.class).forEach(t -> mySpecs.add(myBuilder.hqc(t)));
+        EnumSet.allOf(GordianBIKESpec.class).forEach(t -> mySpecs.add(myBuilder.bike(t)));
+        EnumSet.allOf(GordianNTRUSpec.class).forEach(t -> mySpecs.add(myBuilder.ntru(t)));
+        EnumSet.allOf(GordianFalconSpec.class).forEach(t -> mySpecs.add(myBuilder.falcon(t)));
+        EnumSet.allOf(GordianMayoSpec.class).forEach(t -> mySpecs.add(myBuilder.mayo(t)));
+        EnumSet.allOf(GordianSnovaSpec.class).forEach(t -> mySpecs.add(myBuilder.snova(t)));
+        EnumSet.allOf(GordianPicnicSpec.class).forEach(t -> mySpecs.add(myBuilder.picnic(t)));
 
         /* Add NTRUPrime */
         GordianCoreNTRUPrimeSpec.listAllPossibleSpecs().forEach(t -> mySpecs.add(myBuilder.ntruprime(t)));

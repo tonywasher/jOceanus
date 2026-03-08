@@ -79,9 +79,11 @@ final GordianFactory myBaseFactory = GordianGenerator.createFactory();
 final GordianAsyncFactory myAsyncFactory = myBase.getAsyncFactory();
 final GordianKeyPairFactory myKeyPairFactory = myAsyncFactory.getKeyPairFactory();
 final GordianAgreementFactory myAgreementFactory = myAsyncFactory.getAgreementFactory();
+final GordianKeyPairSpecBuilder myKeyPairBuilder = myKeyPairFactory.newKeyPairSpecBuilder()
+final GordianAgreementSpecBuilder myAgreementBuilder = myAgreementFactory.newAgreementSpecBuilder()
 
 /* Access keyPairGenerator and create pair */
-final GordianKeyPairSpec mySpec = GordianKeyPairSpecBuilder.dh(GordianDHGroup.FFDHE2048);
+final GordianKeyPairSpec mySpec = myKeyPairBuilder.dh(GordianDHSpec.FFDHE2048);
 final GordianKeyPairGenerator myGenerator = myKeyPairFactory.getKeyPairGenerator(mySpec);
 final GordianKeyPair myTarget = myGenerator.generateKeyPair();
 
@@ -91,7 +93,7 @@ final GordianCertificate myTargetCert = myAgreementFactory.newMiniCertificate(my
                                                    new GordianKeyPairUsage(GordianKeyPairUse.AGREEMENT));
 
 /* Create the client hello */
-final GordianAgreementSpec myAgreeSpec = GordianAgreementSpecBuilder.anon(mySpec, GordianKDFType.SHA256KDF);
+final GordianAgreementSpec myAgreeSpec = myAgreementBuilder.anon(mySpec, GordianAgreementKDF.SHA256KDF);
 final GordianKeySetSpec myKeySetSpec = new GordianKeySetSpec(GordianLength.LEN_256);
 GordianAgreementParams myParams = myAgreementFactory.newAgreementParams(mySpec, myKeySetSpec)
                                                     .setServerCertificate(myTargetCert);
@@ -137,9 +139,11 @@ final GordianFactory myBaseFactory = GordianGenerator.createFactory();
 final GordianAsyncFactory myAsyncFactory = myBase.getAsyncFactory();
 final GordianKeyPairFactory myKeyPairFactory = myAsyncFactory.getKeyPairFactory();
 final GordianAgreementFactory myAgreementFactory = myAsyncFactory.getAgreementFactory();
+final GordianKeyPairSpecBuilder myKeyPairBuilder = myKeyPairFactory.newKeyPairSpecBuilder()
+final GordianAgreementSpecBuilder myAgreementBuilder = myAgreementFactory.newAgreementSpecBuilder()
 
 /* Access keyPairGenerator and create pairs */
-final GordianKeyPairSpec mySpec = GordianKeyPairSpecBuilder.dh(GordianDHGroup.FFDHE2048);
+final GordianKeyPairSpec mySpec = myKeyPairBuilder.dh(GordianDHSpec.FFDHE2048);
 final GordianKeyPairGenerator myGenerator = myKeyPairFactory.getKeyPairGenerator(mySpec);
 final GordianKeyPair mySource = myGenerator.generateKeyPair();
 final GordianKeyPair myTarget = myGenerator.generateKeyPair();
@@ -153,7 +157,7 @@ final GordianCertificate myTargetCert = myAgreementFactory.newMiniCertificate(my
                                                    new GordianKeyPairUsage(GordianKeyPairUse.AGREEMENT));
 
 /* Create the client hello */
-final GordianAgreementSpec myAgreeSpec = GordianAgreementSpecBuilder.unified(mySpec, GordianKDFType.SHA256KDF);
+final GordianAgreementSpec myAgreeSpec = myAgreementBuilder.unified(mySpec, GordianAgreementKDF.SHA256KDF);
 final GordianKeySetSpec myKeySetSpec = new GordianKeySetSpec(GordianLength.LEN_256);
 GordianAgreementParams myParams = myAgreementFactory.newAgreementParams(mySpec, myKeySetSpec)
                                                     .setClientCertificate(mySourceCert)
@@ -205,9 +209,11 @@ final GordianFactory myBaseFactory = GordianGenerator.createFactory();
 final GordianAsyncFactory myAsyncFactory = myBase.getAsyncFactory();
 final GordianKeyPairFactory myKeyPairFactory = myAsyncFactory.getKeyPairFactory();
 final GordianAgreementFactory myAgreementFactory = myAsyncFactory.getAgreementFactory();
+final GordianKeyPairSpecBuilder myKeyPairBuilder = myKeyPairFactory.newKeyPairSpecBuilder()
+final GordianAgreementSpecBuilder myAgreementBuilder = myAgreementFactory.newAgreementSpecBuilder()
 
 /* Access keyPairGenerator and create pairs */
-final GordianKeyPairSpec mySpec = GordianKeyPairSpecBuilder.dh(GordianDHGroup.FFDHE2048);
+final GordianKeyPairSpec mySpec = myKeyPairBuilder.dh(GordianDHSpec.FFDHE2048);
 final GordianKeyPairGenerator myGenerator = myKeyPairFactory.getKeyPairGenerator(mySpec);
 final GordianKeyPair mySource = myGenerator.generateKeyPair();
 final GordianKeyPair myTarget = myGenerator.generateKeyPair();
@@ -221,7 +227,7 @@ final GordianCertificate myTargetCert = myAgreementFactory.newMiniCertificate(my
                                                    new GordianKeyPairUsage(GordianKeyPairUse.AGREEMENT));
 
 /* Create the client hello */
-final GordianAgreementSpec myAgreeSpec = GordianAgreementSpecBuilder.unifiedConfirm(mySpec, GordianKDFType.SHA256KDF);
+final GordianAgreementSpec myAgreeSpec = myAgreementBuilder.unifiedConfirm(mySpec, GordianAgreementKDF.SHA256KDF);
 final GordianKeySetSpec myKeySetSpec = new GordianKeySetSpec(GordianLength.LEN_256);
 GordianAgreementParams myParams = myAgreementFactory.newAgreementParams(mySpec, myKeySetSpec)
                                                     .setClientCertificate(mySourceCert)
@@ -272,9 +278,11 @@ final GordianFactory myBaseFactory = GordianGenerator.createFactory();
 final GordianAsyncFactory myAsyncFactory = myBase.getAsyncFactory();
 final GordianKeyPairFactory myKeyPairFactory = myAsyncFactory.getKeyPairFactory();
 final GordianAgreementFactory myAgreementFactory = myAsyncFactory.getAgreementFactory();
+final GordianKeyPairSpecBuilder myKeyPairBuilder = myKeyPairFactory.newKeyPairSpecBuilder()
+final GordianAgreementSpecBuilder myAgreementBuilder = myAgreementFactory.newAgreementSpecBuilder()
 
 /* Access keyPairGenerator and create pair */
-final GordianKeyPairSpec mySpec = GordianKeyPairSpecBuilder.ed25519();
+final GordianKeyPairSpec mySpec = myKeyPairBuilder.ed25519();
 final GordianKeyPairGenerator myGenerator = myKeyPairFactory.getKeyPairGenerator(mySpec);
 final GordianKeyPair mySigner = myGenerator.generateKeyPair();
 
@@ -284,7 +292,7 @@ final GordianCertificate mySignerCert = myAgreementFactory.newMiniCertificate(my
                                                    new GordianKeyPairUsage(GordianKeyPairUse.SIGNATURE));
 
 /* Create the client hello */
-final GordianAgreementSpec myAgreeSpec = GordianAgreementSpecBuilder.unified(mySpec, GordianKDFType.SHA256KDF);
+final GordianAgreementSpec myAgreeSpec = myAgreementBuilder.unified(mySpec, GordianAgreementKDF.SHA256KDF);
 final GordianKeySetSpec myKeySetSpec = new GordianKeySetSpec(GordianLength.LEN_256);
 GordianAgreementParams myParams = myAgreementFactory.newAgreementParams(mySpec, myKeySetSpec);
 final GordianAgreement mySender = myAgrees.createAgreement(myParams);
@@ -322,10 +330,12 @@ final GordianFactory myBaseFactory = GordianGenerator.createFactory();
 final GordianAsyncFactory myAsyncFactory = myBase.getAsyncFactory();
 final GordianKeyPairFactory myKeyPairFactory = myAsyncFactory.getKeyPairFactory();
 final GordianAgreementFactory myAgreementFactory = myAsyncFactory.getAgreementFactory();
+final GordianKeyPairSpecBuilder myKeyPairBuilder = myKeyPairFactory.newKeyPairSpecBuilder()
+final GordianAgreementSpecBuilder myAgreementBuilder = myAgreementFactory.newAgreementSpecBuilder()
 
 /* Access keyPairGenerator and create pair */
-final GordianKeyPairSpec mySpec = GordianKeyPairSpecBuilder.composite(GordianKeyPairSpec.dh(GordianDGroup.FFDHE2048),
-                                                                      GordianKeyPairSpec.ec(GordianDSAElliptic.SECP256R1));
+final GordianKeyPairSpec mySpec = myKeyPairBuilder.composite(myKeyPairBuilder.dh(GordianDHSpec.FFDHE2048),
+                                                             myKeyPairBuilder.ec(GordianECSpec.SECP256R1));
 final GordianKeyPairGenerator myGenerator = myKeyPairFactory.getKeyPairGenerator(mySpec);
 final GordianKeyPair myTarget = myGenerator.generateKeyPair();
 

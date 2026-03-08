@@ -17,7 +17,7 @@
 
 package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair;
 
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewFalconSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianFalconSpec;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.bc.BCObjectIdentifiers;
 import org.bouncycastle.pqc.crypto.falcon.FalconParameters;
@@ -33,7 +33,7 @@ public final class GordianCoreFalconSpec {
     /**
      * The specMap.
      */
-    private static final Map<GordianNewFalconSpec, GordianCoreFalconSpec> SPECMAP = newSpecMap();
+    private static final Map<GordianFalconSpec, GordianCoreFalconSpec> SPECMAP = newSpecMap();
 
     /**
      * The specArray.
@@ -43,14 +43,14 @@ public final class GordianCoreFalconSpec {
     /**
      * The Spec.
      */
-    private final GordianNewFalconSpec theSpec;
+    private final GordianFalconSpec theSpec;
 
     /**
      * Constructor.
      *
      * @param pSpec the spec
      */
-    private GordianCoreFalconSpec(final GordianNewFalconSpec pSpec) {
+    private GordianCoreFalconSpec(final GordianFalconSpec pSpec) {
         theSpec = pSpec;
     }
 
@@ -59,7 +59,7 @@ public final class GordianCoreFalconSpec {
      *
      * @return the spec
      */
-    public GordianNewFalconSpec getSpec() {
+    public GordianFalconSpec getSpec() {
         return theSpec;
     }
 
@@ -143,7 +143,7 @@ public final class GordianCoreFalconSpec {
      * @return the core spec
      */
     public static GordianCoreFalconSpec mapCoreSpec(final Object pSpec) {
-        return pSpec instanceof GordianNewFalconSpec mySpec ? SPECMAP.get(mySpec) : null;
+        return pSpec instanceof GordianFalconSpec mySpec ? SPECMAP.get(mySpec) : null;
     }
 
     /**
@@ -151,9 +151,9 @@ public final class GordianCoreFalconSpec {
      *
      * @return the type map
      */
-    private static Map<GordianNewFalconSpec, GordianCoreFalconSpec> newSpecMap() {
-        final Map<GordianNewFalconSpec, GordianCoreFalconSpec> myMap = new EnumMap<>(GordianNewFalconSpec.class);
-        for (GordianNewFalconSpec mySpec : GordianNewFalconSpec.values()) {
+    private static Map<GordianFalconSpec, GordianCoreFalconSpec> newSpecMap() {
+        final Map<GordianFalconSpec, GordianCoreFalconSpec> myMap = new EnumMap<>(GordianFalconSpec.class);
+        for (GordianFalconSpec mySpec : GordianFalconSpec.values()) {
             myMap.put(mySpec, new GordianCoreFalconSpec(mySpec));
         }
         return myMap;

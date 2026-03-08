@@ -17,7 +17,7 @@
 package io.github.tonywasher.joceanus.prometheus.toolkit;
 
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactoryType;
-import io.github.tonywasher.joceanus.gordianknot.api.lock.spec.GordianNewPasswordLockSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.lock.spec.GordianPasswordLockSpec;
 import io.github.tonywasher.joceanus.metis.toolkit.MetisToolkit;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.prometheus.preference.PrometheusPreferenceManager;
@@ -116,7 +116,7 @@ public class PrometheusToolkit {
      * @throws OceanusException on error
      */
     private PrometheusSecurityPasswordManager newPasswordManager(final GordianFactoryType pFactoryType,
-                                                                 final GordianNewPasswordLockSpec pLockSpec) throws OceanusException {
+                                                                 final GordianPasswordLockSpec pLockSpec) throws OceanusException {
         return PrometheusSecurityGenerator.newPasswordManager(getToolkit().getGuiFactory(), pFactoryType, pLockSpec);
     }
 

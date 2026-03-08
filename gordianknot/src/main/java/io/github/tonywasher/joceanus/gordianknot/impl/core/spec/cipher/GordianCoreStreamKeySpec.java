@@ -18,18 +18,18 @@
 package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeySpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeySubType;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeySubType.GordianNewBlakeXofKey;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeySubType.GordianNewChaCha20Key;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeySubType.GordianNewElephantKey;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeySubType.GordianNewISAPKey;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeySubType.GordianNewRomulusKey;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeySubType.GordianNewSalsa20Key;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeySubType.GordianNewSkeinXofKey;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeySubType.GordianNewSparkleKey;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeySubType.GordianNewVMPCKey;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeyType;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySubType;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySubType.GordianBlakeXofKey;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySubType.GordianChaCha20Key;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySubType.GordianElephantKey;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySubType.GordianISAPKey;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySubType.GordianRomulusKey;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySubType.GordianSalsa20Key;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySubType.GordianSkeinXofKey;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySubType.GordianSparkleKey;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySubType.GordianVMPCKey;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeyType;
 
 import java.util.Objects;
 
@@ -37,7 +37,7 @@ import java.util.Objects;
  * GordianKnot StreamKeySpec.
  */
 public class GordianCoreStreamKeySpec
-        implements GordianNewStreamKeySpec {
+        implements GordianStreamKeySpec {
     /**
      * The Separator.
      */
@@ -56,7 +56,7 @@ public class GordianCoreStreamKeySpec
     /**
      * SubKeyType.
      */
-    private final GordianNewStreamKeySubType theSubKeyType;
+    private final GordianStreamKeySubType theSubKeyType;
 
     /**
      * The Validity.
@@ -75,8 +75,8 @@ public class GordianCoreStreamKeySpec
      * @param pSubKeyType the subKeyTypeType
      * @param pKeyLength  the keyLength
      */
-    GordianCoreStreamKeySpec(final GordianNewStreamKeyType pType,
-                             final GordianNewStreamKeySubType pSubKeyType,
+    GordianCoreStreamKeySpec(final GordianStreamKeyType pType,
+                             final GordianStreamKeySubType pSubKeyType,
                              final GordianLength pKeyLength) {
         theType = GordianCoreStreamKeyType.mapCoreType(pType);
         theSubKeyType = pSubKeyType;
@@ -94,12 +94,12 @@ public class GordianCoreStreamKeySpec
     }
 
     @Override
-    public GordianNewStreamKeyType getStreamKeyType() {
+    public GordianStreamKeyType getStreamKeyType() {
         return theType.getType();
     }
 
     @Override
-    public GordianNewStreamKeySubType getSubKeyType() {
+    public GordianStreamKeySubType getSubKeyType() {
         return theSubKeyType;
     }
 
@@ -147,13 +147,13 @@ public class GordianCoreStreamKeySpec
             case BLAKE2XOF:
                 return checkBlake2Validity();
             case ELEPHANT:
-                return theSubKeyType instanceof GordianNewElephantKey
+                return theSubKeyType instanceof GordianElephantKey
                         && theType.validForKeyLength(theKeyLength);
             case ISAP:
-                return theSubKeyType instanceof GordianNewISAPKey
+                return theSubKeyType instanceof GordianISAPKey
                         && theType.validForKeyLength(theKeyLength);
             case ROMULUS:
-                return theSubKeyType instanceof GordianNewRomulusKey
+                return theSubKeyType instanceof GordianRomulusKey
                         && theType.validForKeyLength(theKeyLength);
             case SPARKLE:
                 return checkSparkleValidity();
@@ -170,12 +170,12 @@ public class GordianCoreStreamKeySpec
      */
     private boolean checkSalsaValidity() {
         /* SubKeyType must be a SalsaKey */
-        if (!(theSubKeyType instanceof GordianNewSalsa20Key)) {
+        if (!(theSubKeyType instanceof GordianSalsa20Key)) {
             return false;
         }
 
         /* Check keyLength validity */
-        return theSubKeyType != GordianNewSalsa20Key.STD
+        return theSubKeyType != GordianSalsa20Key.STD
                 ? theKeyLength == GordianLength.LEN_256
                 : theType.validForKeyLength(theKeyLength);
     }
@@ -187,12 +187,12 @@ public class GordianCoreStreamKeySpec
      */
     private boolean checkChaChaValidity() {
         /* SubKeyType must be a ChaChaKey */
-        if (!(theSubKeyType instanceof GordianNewChaCha20Key)) {
+        if (!(theSubKeyType instanceof GordianChaCha20Key)) {
             return false;
         }
 
         /* Check keyLength validity */
-        return theSubKeyType != GordianNewChaCha20Key.STD
+        return theSubKeyType != GordianChaCha20Key.STD
                 ? theKeyLength == GordianLength.LEN_256
                 : theType.validForKeyLength(theKeyLength);
     }
@@ -204,7 +204,7 @@ public class GordianCoreStreamKeySpec
      */
     private boolean checkVMPCValidity() {
         /* SubKeyType must be a GordianVMPCKey */
-        if (!(theSubKeyType instanceof GordianNewVMPCKey)) {
+        if (!(theSubKeyType instanceof GordianVMPCKey)) {
             return false;
         }
 
@@ -219,7 +219,7 @@ public class GordianCoreStreamKeySpec
      */
     private boolean checkSkeinValidity() {
         /* SubKeyType must be a GordianSkeinXofKey */
-        if (!(theSubKeyType instanceof GordianNewSkeinXofKey)) {
+        if (!(theSubKeyType instanceof GordianSkeinXofKey)) {
             return false;
         }
 
@@ -234,13 +234,13 @@ public class GordianCoreStreamKeySpec
      */
     private boolean checkBlake2Validity() {
         /* SubKeyType must be a GordianBlakeXofKey */
-        if (!(theSubKeyType instanceof GordianNewBlakeXofKey myType)) {
+        if (!(theSubKeyType instanceof GordianBlakeXofKey myType)) {
             return false;
         }
 
         /* Check keyLength validity */
         return theType.validForKeyLength(theKeyLength)
-                && (myType != GordianNewBlakeXofKey.BLAKE2XS
+                && (myType != GordianBlakeXofKey.BLAKE2XS
                 || theKeyLength != GordianLength.LEN_512);
     }
 
@@ -251,12 +251,12 @@ public class GordianCoreStreamKeySpec
      */
     private boolean checkSparkleValidity() {
         /* SubKeyType must be a GordianSparkleKey */
-        if (!(theSubKeyType instanceof GordianNewSparkleKey)) {
+        if (!(theSubKeyType instanceof GordianSparkleKey)) {
             return false;
         }
 
         /* Check keyLength validity */
-        return theKeyLength == GordianCoreStreamKeySubType.requiredSparkleKeyLength((GordianNewSparkleKey) theSubKeyType);
+        return theKeyLength == GordianCoreStreamKeySubType.requiredSparkleKeyLength((GordianSparkleKey) theSubKeyType);
     }
 
     @Override
@@ -286,11 +286,11 @@ public class GordianCoreStreamKeySpec
     private String getName() {
         switch (theType.getType()) {
             case VMPC:
-                return theSubKeyType == GordianNewVMPCKey.KSA ? theType + "KSA3" : theType.toString();
+                return theSubKeyType == GordianVMPCKey.KSA ? theType + "KSA3" : theType.toString();
             case SALSA20:
-                return theSubKeyType == GordianNewSalsa20Key.XSALSA ? "X" + theType : theType.toString();
+                return theSubKeyType == GordianSalsa20Key.XSALSA ? "X" + theType : theType.toString();
             case CHACHA20:
-                switch ((GordianNewChaCha20Key) theSubKeyType) {
+                switch ((GordianChaCha20Key) theSubKeyType) {
                     case XCHACHA:
                         return "X" + theType;
                     case ISO7539:
@@ -299,7 +299,7 @@ public class GordianCoreStreamKeySpec
                         return theType.toString();
                 }
             case SKEINXOF:
-                return theType + SEP + GordianCoreStreamKeySubType.getLengthForSkeinXofKey((GordianNewSkeinXofKey) theSubKeyType);
+                return theType + SEP + GordianCoreStreamKeySubType.getLengthForSkeinXofKey((GordianSkeinXofKey) theSubKeyType);
             case BLAKE2XOF:
             case ELEPHANT:
             case ISAP:
@@ -344,13 +344,13 @@ public class GordianCoreStreamKeySpec
             case VMPC:
                 return theKeyLength.getByteLength();
             case BLAKE2XOF:
-                return GordianCoreStreamKeySubType.requiredBlakeIVLength((GordianNewBlakeXofKey) theSubKeyType).getByteLength();
+                return GordianCoreStreamKeySubType.requiredBlakeIVLength((GordianBlakeXofKey) theSubKeyType).getByteLength();
             case CHACHA20:
-                return GordianCoreStreamKeySubType.requiredChaChaIVLength((GordianNewChaCha20Key) theSubKeyType).getByteLength();
+                return GordianCoreStreamKeySubType.requiredChaChaIVLength((GordianChaCha20Key) theSubKeyType).getByteLength();
             case SALSA20:
-                return GordianCoreStreamKeySubType.requiredSalsaIVLength((GordianNewSalsa20Key) theSubKeyType).getByteLength();
+                return GordianCoreStreamKeySubType.requiredSalsaIVLength((GordianSalsa20Key) theSubKeyType).getByteLength();
             case SPARKLE:
-                return GordianCoreStreamKeySubType.requiredSparkleIVLength((GordianNewSparkleKey) theSubKeyType).getByteLength();
+                return GordianCoreStreamKeySubType.requiredSparkleIVLength((GordianSparkleKey) theSubKeyType).getByteLength();
             case ISAAC:
             case RC4:
             default:
@@ -364,8 +364,8 @@ public class GordianCoreStreamKeySpec
      * @return true/false
      */
     public boolean supportsAEAD() {
-        return GordianNewStreamKeyType.CHACHA20.equals(theType.getType())
-                && theSubKeyType != GordianNewChaCha20Key.STD;
+        return GordianStreamKeyType.CHACHA20.equals(theType.getType())
+                && theSubKeyType != GordianChaCha20Key.STD;
     }
 
     /**

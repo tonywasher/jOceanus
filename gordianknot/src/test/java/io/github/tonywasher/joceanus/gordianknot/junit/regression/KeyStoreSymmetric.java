@@ -19,7 +19,7 @@ package io.github.tonywasher.joceanus.gordianknot.junit.regression;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
-import io.github.tonywasher.joceanus.gordianknot.api.keyset.spec.GordianNewKeySetSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keyset.spec.GordianKeySetSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStoreKey;
 import io.github.tonywasher.joceanus.gordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStoreSet;
 import io.github.tonywasher.joceanus.gordianknot.api.keystore.GordianKeyStoreFactory;
@@ -47,7 +47,7 @@ public final class KeyStoreSymmetric {
     /**
      * The KeySetSpec.
      */
-    static final GordianNewKeySetSpec KEYSETSPEC = GordianUtilities.newKeySetSpecBuilder().keySet(KEYLEN);
+    static final GordianKeySetSpec KEYSETSPEC = GordianUtilities.newKeySetSpecBuilder().keySet(KEYLEN);
 
     /**
      * The KeyStore Manager.

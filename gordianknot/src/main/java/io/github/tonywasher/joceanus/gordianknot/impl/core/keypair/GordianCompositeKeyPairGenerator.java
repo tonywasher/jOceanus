@@ -20,7 +20,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairGenerator;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianIOException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianCompositeKeyPair.GordianStateAwareCompositeKeyPair;
@@ -82,7 +82,7 @@ public class GordianCompositeKeyPairGenerator
         boolean stateAware = false;
 
         /* Loop through the asymKeySpecs */
-        final Iterator<GordianNewKeyPairSpec> myIterator = pSpec.keySpecIterator();
+        final Iterator<GordianKeyPairSpec> myIterator = pSpec.keySpecIterator();
         while (myIterator.hasNext()) {
             final GordianCoreKeyPairSpec mySpec = (GordianCoreKeyPairSpec) myIterator.next();
 
@@ -96,7 +96,7 @@ public class GordianCompositeKeyPairGenerator
     }
 
     @Override
-    public GordianNewKeyPairSpec getKeySpec() {
+    public GordianKeyPairSpec getKeySpec() {
         return theSpec;
     }
 
@@ -245,7 +245,7 @@ public class GordianCompositeKeyPairGenerator
      * @throws GordianException on error
      */
     private void checkKeySpec(final PKCS8EncodedKeySpec pKeySpec) throws GordianException {
-        final GordianNewKeyPairSpec myKeySpec = theFactory.determineKeyPairSpec(pKeySpec);
+        final GordianKeyPairSpec myKeySpec = theFactory.determineKeyPairSpec(pKeySpec);
         if (!theSpec.equals(myKeySpec)) {
             throw new GordianDataException("KeySpec not supported by this KeyPairGenerator");
         }
@@ -258,7 +258,7 @@ public class GordianCompositeKeyPairGenerator
      * @throws GordianException on error
      */
     private void checkKeySpec(final X509EncodedKeySpec pKeySpec) throws GordianException {
-        final GordianNewKeyPairSpec myKeySpec = theFactory.determineKeyPairSpec(pKeySpec);
+        final GordianKeyPairSpec myKeySpec = theFactory.determineKeyPairSpec(pKeySpec);
         if (!theSpec.equals(myKeySpec)) {
             throw new GordianDataException("KeySpec not supported by this KeyPairGenerator");
         }

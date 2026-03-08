@@ -19,9 +19,9 @@ package io.github.tonywasher.joceanus.gordianknot.impl.core.keypair;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairGenerator;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairSpecBuilder;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairType;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairType;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseData;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
@@ -43,12 +43,12 @@ public abstract class GordianCoreKeyPairFactory
     /**
      * KeyPairAlgId.
      */
-    private static final GordianKeyPairAlgId KEYPAIR_ALG_ID = new GordianKeyPairAlgId();
+    private static final GordianCoreKeyPairAlgId KEYPAIR_ALG_ID = new GordianCoreKeyPairAlgId();
 
     /**
      * KeyPairGenerator Cache.
      */
-    private final Map<GordianNewKeyPairSpec, GordianCompositeKeyPairGenerator> theCache;
+    private final Map<GordianKeyPairSpec, GordianCompositeKeyPairGenerator> theCache;
 
     /**
      * Constructor.
@@ -60,12 +60,12 @@ public abstract class GordianCoreKeyPairFactory
     }
 
     @Override
-    public GordianNewKeyPairSpecBuilder newKeyPairSpecBuilder() {
+    public GordianKeyPairSpecBuilder newKeyPairSpecBuilder() {
         return GordianCoreKeyPairSpecBuilder.newInstance();
     }
 
     @Override
-    public GordianKeyPairGenerator getKeyPairGenerator(final GordianNewKeyPairSpec pKeySpec) throws GordianException {
+    public GordianKeyPairGenerator getKeyPairGenerator(final GordianKeyPairSpec pKeySpec) throws GordianException {
         /* Look up in the cache */
         GordianCompositeKeyPairGenerator myGenerator = theCache.get(pKeySpec);
         if (myGenerator == null) {
@@ -82,12 +82,12 @@ public abstract class GordianCoreKeyPairFactory
     }
 
     @Override
-    public GordianNewKeyPairSpec determineKeyPairSpec(final PKCS8EncodedKeySpec pEncoded) throws GordianException {
+    public GordianKeyPairSpec determineKeyPairSpec(final PKCS8EncodedKeySpec pEncoded) throws GordianException {
         return KEYPAIR_ALG_ID.determineKeyPairSpec(pEncoded);
     }
 
     @Override
-    public GordianNewKeyPairSpec determineKeyPairSpec(final X509EncodedKeySpec pEncoded) throws GordianException {
+    public GordianKeyPairSpec determineKeyPairSpec(final X509EncodedKeySpec pEncoded) throws GordianException {
         return KEYPAIR_ALG_ID.determineKeyPairSpec(pEncoded);
     }
 
@@ -97,7 +97,7 @@ public abstract class GordianCoreKeyPairFactory
      * @param pKeySpec the asymKeySpec
      * @throws GordianException on error
      */
-    protected void checkAsymKeySpec(final GordianNewKeyPairSpec pKeySpec) throws GordianException {
+    protected void checkAsymKeySpec(final GordianKeyPairSpec pKeySpec) throws GordianException {
         /* Check validity of keySpec */
         if (pKeySpec == null || !pKeySpec.isValid()) {
             throw new GordianDataException(GordianBaseData.getInvalidText(pKeySpec));
@@ -105,7 +105,7 @@ public abstract class GordianCoreKeyPairFactory
     }
 
     @Override
-    public Predicate<GordianNewKeyPairSpec> supportedKeyPairSpecs() {
+    public Predicate<GordianKeyPairSpec> supportedKeyPairSpecs() {
         return this::validAsymKeySpec;
     }
 
@@ -115,12 +115,12 @@ public abstract class GordianCoreKeyPairFactory
      * @param pKeySpec the asymKeySpec
      * @return true/false
      */
-    public boolean validAsymKeySpec(final GordianNewKeyPairSpec pKeySpec) {
+    public boolean validAsymKeySpec(final GordianKeyPairSpec pKeySpec) {
         return pKeySpec != null && pKeySpec.isValid();
     }
 
     @Override
-    public List<GordianNewKeyPairSpec> listAllSupportedKeyPairSpecs() {
+    public List<GordianKeyPairSpec> listAllSupportedKeyPairSpecs() {
         return listPossibleKeySpecs()
                 .stream()
                 .filter(supportedKeyPairSpecs())
@@ -128,7 +128,7 @@ public abstract class GordianCoreKeyPairFactory
     }
 
     @Override
-    public List<GordianNewKeyPairSpec> listAllSupportedKeyPairSpecs(final GordianNewKeyPairType pKeyPairType) {
+    public List<GordianKeyPairSpec> listAllSupportedKeyPairSpecs(final GordianKeyPairType pKeyPairType) {
         return listPossibleKeySpecs()
                 .stream()
                 .filter(s -> pKeyPairType.equals(s.getKeyPairType()))
@@ -137,7 +137,7 @@ public abstract class GordianCoreKeyPairFactory
     }
 
     @Override
-    public List<GordianNewKeyPairSpec> listPossibleKeySpecs() {
+    public List<GordianKeyPairSpec> listPossibleKeySpecs() {
         return GordianCoreKeyPairSpecBuilder.listPossibleKeySpecs();
     }
 }

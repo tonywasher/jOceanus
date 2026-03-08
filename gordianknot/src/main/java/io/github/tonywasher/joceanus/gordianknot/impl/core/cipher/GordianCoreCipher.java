@@ -21,12 +21,12 @@ import io.github.tonywasher.joceanus.gordianknot.api.base.GordianKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherParameters;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianKeyedCipher;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewCipherSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewPBESpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamCipherSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeySpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeySubType.GordianNewElephantKey;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeySubType.GordianNewSparkleKey;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianPBESpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySubType.GordianElephantKey;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySubType.GordianSparkleKey;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianRandomSource;
@@ -47,7 +47,7 @@ public abstract class GordianCoreCipher<T extends GordianKeySpec>
     /**
      * CipherSpec.
      */
-    private final GordianNewCipherSpec<T> theCipherSpec;
+    private final GordianCipherSpec<T> theCipherSpec;
 
     /**
      * The Random Generator.
@@ -66,7 +66,7 @@ public abstract class GordianCoreCipher<T extends GordianKeySpec>
      * @param pCipherSpec the cipherSpec
      */
     protected GordianCoreCipher(final GordianBaseFactory pFactory,
-                                final GordianNewCipherSpec<T> pCipherSpec) {
+                                final GordianCipherSpec<T> pCipherSpec) {
         theCipherSpec = pCipherSpec;
         theRandom = pFactory.getRandomSource();
         theParameters = new GordianCoreCipherParameters<>(pFactory, theCipherSpec);
@@ -78,7 +78,7 @@ public abstract class GordianCoreCipher<T extends GordianKeySpec>
     }
 
     @Override
-    public GordianNewCipherSpec<T> getCipherSpec() {
+    public GordianCipherSpec<T> getCipherSpec() {
         return theCipherSpec;
     }
 
@@ -132,7 +132,7 @@ public abstract class GordianCoreCipher<T extends GordianKeySpec>
     }
 
     @Override
-    public GordianNewPBESpec getPBESpec() {
+    public GordianPBESpec getPBESpec() {
         return theParameters.getPBESpec();
     }
 
@@ -210,11 +210,11 @@ public abstract class GordianCoreCipher<T extends GordianKeySpec>
             }
 
             /* Stream Cipher uses Poly1305 */
-        } else if (theCipherSpec instanceof GordianNewStreamCipherSpec myCipherSpec) {
-            final GordianNewStreamKeySpec mySpec = myCipherSpec.getKeySpec();
+        } else if (theCipherSpec instanceof GordianStreamCipherSpec myCipherSpec) {
+            final GordianStreamKeySpec mySpec = myCipherSpec.getKeySpec();
             switch (mySpec.getStreamKeyType()) {
                 case SPARKLE:
-                    switch ((GordianNewSparkleKey) mySpec.getSubKeyType()) {
+                    switch ((GordianSparkleKey) mySpec.getSubKeyType()) {
                         case SPARKLE256_256:
                             return GordianLength.LEN_256.getLength();
                         case SPARKLE192_192:
@@ -223,7 +223,7 @@ public abstract class GordianCoreCipher<T extends GordianKeySpec>
                             return GordianLength.LEN_128.getLength();
                     }
                 case ELEPHANT:
-                    switch ((GordianNewElephantKey) mySpec.getSubKeyType()) {
+                    switch ((GordianElephantKey) mySpec.getSubKeyType()) {
                         case ELEPHANT160:
                         case ELEPHANT176:
                             return GordianLength.LEN_64.getLength();

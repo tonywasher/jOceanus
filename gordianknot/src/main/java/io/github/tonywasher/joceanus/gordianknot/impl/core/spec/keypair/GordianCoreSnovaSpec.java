@@ -17,7 +17,7 @@
 
 package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair;
 
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewSnovaSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianSnovaSpec;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.bc.BCObjectIdentifiers;
 import org.bouncycastle.pqc.crypto.snova.SnovaParameters;
@@ -33,7 +33,7 @@ public final class GordianCoreSnovaSpec {
     /**
      * The specMap.
      */
-    private static final Map<GordianNewSnovaSpec, GordianCoreSnovaSpec> SPECMAP = newSpecMap();
+    private static final Map<GordianSnovaSpec, GordianCoreSnovaSpec> SPECMAP = newSpecMap();
 
     /**
      * The specArray.
@@ -43,14 +43,14 @@ public final class GordianCoreSnovaSpec {
     /**
      * The Spec.
      */
-    private final GordianNewSnovaSpec theSpec;
+    private final GordianSnovaSpec theSpec;
 
     /**
      * Constructor.
      *
      * @param pSpec the spec
      */
-    private GordianCoreSnovaSpec(final GordianNewSnovaSpec pSpec) {
+    private GordianCoreSnovaSpec(final GordianSnovaSpec pSpec) {
         theSpec = pSpec;
     }
 
@@ -59,7 +59,7 @@ public final class GordianCoreSnovaSpec {
      *
      * @return the spec
      */
-    public GordianNewSnovaSpec getSpec() {
+    public GordianSnovaSpec getSpec() {
         return theSpec;
     }
 
@@ -395,7 +395,7 @@ public final class GordianCoreSnovaSpec {
      * @return the core spec
      */
     public static GordianCoreSnovaSpec mapCoreSpec(final Object pSpec) {
-        return pSpec instanceof GordianNewSnovaSpec mySpec ? SPECMAP.get(mySpec) : null;
+        return pSpec instanceof GordianSnovaSpec mySpec ? SPECMAP.get(mySpec) : null;
     }
 
     /**
@@ -403,9 +403,9 @@ public final class GordianCoreSnovaSpec {
      *
      * @return the type map
      */
-    private static Map<GordianNewSnovaSpec, GordianCoreSnovaSpec> newSpecMap() {
-        final Map<GordianNewSnovaSpec, GordianCoreSnovaSpec> myMap = new EnumMap<>(GordianNewSnovaSpec.class);
-        for (GordianNewSnovaSpec mySpec : GordianNewSnovaSpec.values()) {
+    private static Map<GordianSnovaSpec, GordianCoreSnovaSpec> newSpecMap() {
+        final Map<GordianSnovaSpec, GordianCoreSnovaSpec> myMap = new EnumMap<>(GordianSnovaSpec.class);
+        for (GordianSnovaSpec mySpec : GordianSnovaSpec.values()) {
             myMap.put(mySpec, new GordianCoreSnovaSpec(mySpec));
         }
         return myMap;

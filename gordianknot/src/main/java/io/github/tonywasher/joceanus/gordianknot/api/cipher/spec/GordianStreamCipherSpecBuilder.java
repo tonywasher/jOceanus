@@ -1,0 +1,71 @@
+/*
+ * GordianKnot: Security Suite
+ * Copyright 2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+package io.github.tonywasher.joceanus.gordianknot.api.cipher.spec;
+
+/**
+ * The StreamCipherSpec Builder class.
+ */
+public interface GordianStreamCipherSpecBuilder {
+    /**
+     * Define StreamKeySpec.
+     *
+     * @param pSpec the spec
+     * @return the Builder
+     */
+    GordianStreamCipherSpecBuilder withKeySpec(GordianStreamKeySpec pSpec);
+
+    /**
+     * Request AEAD variant.
+     *
+     * @return the Builder
+     */
+    GordianStreamCipherSpecBuilder asAEAD();
+
+    /**
+     * Build streamCipherSpec.
+     *
+     * @return the streamCipherSpec
+     */
+    GordianStreamCipherSpec build();
+
+    /**
+     * Create a generic streamCipherSpec.
+     *
+     * @param pKeySpec the keySpec
+     * @return the cipherSpec
+     */
+    default GordianStreamCipherSpec streamCipher(final GordianStreamKeySpec pKeySpec) {
+        return streamCipher(pKeySpec, false);
+    }
+
+    /**
+     * Create a generic streamCipherSpec.
+     *
+     * @param pKeySpec the keySpec
+     * @param pAAD     is this an AAD cipher?
+     * @return the cipherSpec
+     */
+    default GordianStreamCipherSpec streamCipher(final GordianStreamKeySpec pKeySpec,
+                                                 final boolean pAAD) {
+        withKeySpec(pKeySpec);
+        if (pAAD) {
+            asAEAD();
+        }
+        return build();
+    }
+}

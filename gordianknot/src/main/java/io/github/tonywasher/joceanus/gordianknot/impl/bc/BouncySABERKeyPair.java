@@ -18,7 +18,7 @@ package io.github.tonywasher.joceanus.gordianknot.impl.bc;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPrivateKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPublicKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.agree.GordianCoreAgreementFactory;
@@ -73,7 +73,7 @@ public final class BouncySABERKeyPair {
          * @param pKeySpec   the keySpec
          * @param pPublicKey the public key
          */
-        BouncySABERPublicKey(final GordianNewKeyPairSpec pKeySpec,
+        BouncySABERPublicKey(final GordianKeyPairSpec pKeySpec,
                              final SABERPublicKeyParameters pPublicKey) {
             super(pKeySpec, pPublicKey);
         }
@@ -100,7 +100,7 @@ public final class BouncySABERKeyPair {
          * @param pKeySpec    the keySpec
          * @param pPrivateKey the private key
          */
-        BouncySABERPrivateKey(final GordianNewKeyPairSpec pKeySpec,
+        BouncySABERPrivateKey(final GordianKeyPairSpec pKeySpec,
                               final SABERPrivateKeyParameters pPrivateKey) {
             super(pKeySpec, pPrivateKey);
         }
@@ -135,7 +135,7 @@ public final class BouncySABERKeyPair {
          * @throws GordianException on error
          */
         BouncySABERKeyPairGenerator(final GordianBaseFactory pFactory,
-                                    final GordianNewKeyPairSpec pKeySpec) throws GordianException {
+                                    final GordianKeyPairSpec pKeySpec) throws GordianException {
             /* Initialise underlying class */
             super(pFactory, pKeySpec);
 

@@ -15,14 +15,19 @@
 /* Access factory */
 final GordianFactory myBaseFactory = GordianGenerator.createFactory();
 final GordianCipherFactory myCipherFactory = myBaseFactory.getCipherFactory();
+final GordianDigestFactory myDigestFactory = myBaseFactory.getDigestFactory();
 
 /* Create cipher */
-final GordianSymKeySpec myKeySpec = GordianSymKeySpecBuilder.aes(GordianLength.LEN_256);
-final GordianSymCipherSpec myCipherSpec = GordianSymSpecBuilder.cbc(myKeySpec, GordianPadding.PKCS7);
+final GordianSymKeySpecBuilder myBuilder = myCipherFactory.newSymKeySpecBuilder();
+final GordianSymKeySpec myKeySpec = myBuilder.aes(GordianLength.LEN_256);
+final GordianSymCipherSpecBuilder myBuilder = myCipherFactory.newSymCipherSpecBuilder();
+final GordianSymCipherSpec myCipherSpec = myBuilder.cbc(myKeySpec, GordianPadding.PKCS7);
 final GordianSymCipher myCipher = myCipherFactory.createSymKeyCipher(myCipherSpec);
 
 /* Create pbeSpec */
-final GordianPBESpec myPBESpec = GordianPBESpecBuilder.pbKDF2(GordianDigestSpec.sha2(GordianLength.LEN_256), 2000);
+final GordianPBESpecBuilder myPBEBuilder = myCipherFactory.newPBESpecBuilder();
+final GordianDigestSpecBuilder myDigestBuilder = myDigestFactory.newDigestSpecBuilder();
+final GordianPBESpec myPBESpec = myPBEBuilder.pbKDF2(myDigestBuilder.sha2(GordianLength.LEN_256), 2000);
 final byte[] myPassword = ....
 
 /* Encrypt message with random nonce */

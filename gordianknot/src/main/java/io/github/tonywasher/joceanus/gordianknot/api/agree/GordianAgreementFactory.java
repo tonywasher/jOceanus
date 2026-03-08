@@ -16,14 +16,14 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.api.agree;
 
-import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianNewAgreementSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianNewAgreementSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianCertificate;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairUsage;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianNewSignatureSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpec;
 import org.bouncycastle.asn1.x500.X500Name;
 
 import java.util.List;
@@ -48,7 +48,7 @@ public interface GordianAgreementFactory {
      * @return the Params
      * @throws GordianException on error
      */
-    GordianAgreementParams newAgreementParams(GordianNewAgreementSpec pSpec,
+    GordianAgreementParams newAgreementParams(GordianAgreementSpec pSpec,
                                               Object pResultType) throws GordianException;
 
     /**
@@ -74,7 +74,7 @@ public interface GordianAgreementFactory {
      *
      * @return the new AgreementSpecBuilder
      */
-    GordianNewAgreementSpecBuilder newAgreementSpecBuilder();
+    GordianAgreementSpecBuilder newAgreementSpecBuilder();
 
     /**
      * Declare signer certificate.
@@ -92,7 +92,7 @@ public interface GordianAgreementFactory {
      * @throws GordianException on error
      */
     void setSigner(GordianCertificate pSigner,
-                   GordianNewSignatureSpec pSignSpec) throws GordianException;
+                   GordianSignatureSpec pSignSpec) throws GordianException;
 
     /**
      * Create new miniCertificate.
@@ -112,7 +112,7 @@ public interface GordianAgreementFactory {
      *
      * @return the predicate
      */
-    Predicate<GordianNewAgreementSpec> supportedAgreements();
+    Predicate<GordianAgreementSpec> supportedAgreements();
 
     /**
      * Check AgreementSpec and KeyPair combination.
@@ -122,7 +122,7 @@ public interface GordianAgreementFactory {
      * @return true/false
      */
     default boolean validAgreementSpecForKeyPair(final GordianKeyPair pKeyPair,
-                                                 final GordianNewAgreementSpec pAgreementSpec) {
+                                                 final GordianAgreementSpec pAgreementSpec) {
         return validAgreementSpecForKeyPairSpec(pKeyPair.getKeyPairSpec(), pAgreementSpec);
     }
 
@@ -133,8 +133,8 @@ public interface GordianAgreementFactory {
      * @param pAgreementSpec the agreementSpec
      * @return true/false
      */
-    boolean validAgreementSpecForKeyPairSpec(GordianNewKeyPairSpec pKeyPairSpec,
-                                             GordianNewAgreementSpec pAgreementSpec);
+    boolean validAgreementSpecForKeyPairSpec(GordianKeyPairSpec pKeyPairSpec,
+                                             GordianAgreementSpec pAgreementSpec);
 
     /**
      * Obtain a list of supported agreementSpecs.
@@ -142,7 +142,7 @@ public interface GordianAgreementFactory {
      * @param pKeyPair the keyPair
      * @return the list of supported agreementSpecs.
      */
-    List<GordianNewAgreementSpec> listAllSupportedAgreements(GordianKeyPair pKeyPair);
+    List<GordianAgreementSpec> listAllSupportedAgreements(GordianKeyPair pKeyPair);
 
     /**
      * Obtain a list of supported agreementSpecs.
@@ -150,7 +150,7 @@ public interface GordianAgreementFactory {
      * @param pKeyPairSpec the keySpec
      * @return the list of supported agreementSpecs.
      */
-    List<GordianNewAgreementSpec> listAllSupportedAgreements(GordianNewKeyPairSpec pKeyPairSpec);
+    List<GordianAgreementSpec> listAllSupportedAgreements(GordianKeyPairSpec pKeyPairSpec);
 
     /**
      * Create default agreementSpec for key.
@@ -158,5 +158,5 @@ public interface GordianAgreementFactory {
      * @param pKeySpec the keySpec
      * @return the AgreementSpec
      */
-    GordianNewAgreementSpec defaultForKeyPair(GordianNewKeyPairSpec pKeySpec);
+    GordianAgreementSpec defaultForKeyPair(GordianKeyPairSpec pKeySpec);
 }

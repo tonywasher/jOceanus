@@ -19,9 +19,9 @@ package io.github.tonywasher.joceanus.gordianknot.impl.core.keyset;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymCipher;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewPadding;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymCipherSpecBuilder;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymCipherSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianPadding;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher.GordianCoreSymCipherSpecBuilder;
@@ -33,7 +33,7 @@ final class GordianSymKeyCipherSet {
     /**
      * Key.
      */
-    private final GordianKey<GordianNewSymKeySpec> theKey;
+    private final GordianKey<GordianSymKeySpec> theKey;
 
     /**
      * ECB Cipher (padding).
@@ -58,16 +58,16 @@ final class GordianSymKeyCipherSet {
      * @throws GordianException on error
      */
     GordianSymKeyCipherSet(final GordianBaseFactory pFactory,
-                           final GordianKey<GordianNewSymKeySpec> pKey) throws GordianException {
+                           final GordianKey<GordianSymKeySpec> pKey) throws GordianException {
         /* Store parameters */
         theKey = pKey;
-        final GordianNewSymKeySpec myKeySpec = theKey.getKeyType();
+        final GordianSymKeySpec myKeySpec = theKey.getKeyType();
         final GordianCipherFactory myFactory = pFactory.getCipherFactory();
 
         /* Create the standard ciphers */
-        final GordianNewSymCipherSpecBuilder myBuilder = GordianCoreSymCipherSpecBuilder.newInstance();
-        thePaddingCipher = myFactory.createSymKeyCipher(myBuilder.ecb(myKeySpec, GordianNewPadding.PKCS7));
-        theStandardCipher = myFactory.createSymKeyCipher(myBuilder.ecb(myKeySpec, GordianNewPadding.NONE));
+        final GordianSymCipherSpecBuilder myBuilder = GordianCoreSymCipherSpecBuilder.newInstance();
+        thePaddingCipher = myFactory.createSymKeyCipher(myBuilder.ecb(myKeySpec, GordianPadding.PKCS7));
+        theStandardCipher = myFactory.createSymKeyCipher(myBuilder.ecb(myKeySpec, GordianPadding.NONE));
         theStreamCipher = myFactory.createSymKeyCipher(myBuilder.sic(myKeySpec));
     }
 
@@ -76,7 +76,7 @@ final class GordianSymKeyCipherSet {
      *
      * @return the Key
      */
-    GordianKey<GordianNewSymKeySpec> getKey() {
+    GordianKey<GordianSymKeySpec> getKey() {
         return theKey;
     }
 

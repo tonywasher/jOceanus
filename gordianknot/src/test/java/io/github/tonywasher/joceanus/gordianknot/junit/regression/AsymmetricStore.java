@@ -17,34 +17,34 @@
 package io.github.tonywasher.joceanus.gordianknot.junit.regression;
 
 import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianNewAgreementSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianEncryptorFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianNewEncryptorSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianEncryptorSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianAsyncFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactoryType;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairGenerator;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewDHSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewECSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewFalconSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairSpecBuilder;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairType;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewLMSSpec.GordianNewLMSHash;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewLMSSpec.GordianNewLMSHeight;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewLMSSpec.GordianNewLMSWidth;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewRSASpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewSABERSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewSM2Spec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewXMSSSpec.GordianNewXMSSDigestType;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewXMSSSpec.GordianNewXMSSHeight;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianDHSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianECSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianFalconSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairType;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianLMSSpec.GordianLMSHash;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianLMSSpec.GordianLMSHeight;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianLMSSpec.GordianLMSWidth;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianRSASpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianSABERSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianSM2Spec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianXMSSSpec.GordianXMSSDigestType;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianXMSSSpec.GordianXMSSHeight;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignatureFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianNewSignatureSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianNewSignatureType;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureType;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianCoreKeyPairFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.agree.GordianCoreAgreementSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairSpec;
@@ -66,12 +66,12 @@ class AsymmetricStore {
     /**
      * The single keyType to test.
      */
-    private static GordianNewKeyPairType theKeyType;
+    private static GordianKeyPairType theKeyType;
 
     /**
      * The single signatureType to test.
      */
-    private static GordianNewSignatureType theSigType;
+    private static GordianSignatureType theSigType;
 
     /**
      * Do we process all specs.
@@ -98,8 +98,8 @@ class AsymmetricStore {
 
             /* Look for request to test a single keyType */
             final String myPropKeyType = System.getProperty("keyType");
-            GordianNewKeyPairType myKeyType = null;
-            for (final GordianNewKeyPairType myType : GordianNewKeyPairType.values()) {
+            GordianKeyPairType myKeyType = null;
+            for (final GordianKeyPairType myType : GordianKeyPairType.values()) {
                 if (myType.toString().equalsIgnoreCase(myPropKeyType)) {
                     myKeyType = myType;
                 }
@@ -108,8 +108,8 @@ class AsymmetricStore {
 
             /* Look for request to test a single keyType */
             String myPropSigType = System.getProperty("sigType");
-            GordianNewSignatureType mySigType = null;
-            for (final GordianNewSignatureType myType : GordianNewSignatureType.values()) {
+            GordianSignatureType mySigType = null;
+            for (final GordianSignatureType myType : GordianSignatureType.values()) {
                 if (myType.toString().equalsIgnoreCase(myPropSigType)) {
                     mySigType = myType;
                 }
@@ -140,7 +140,7 @@ class AsymmetricStore {
         /**
          * The KeySpec.
          */
-        private final GordianNewKeyPairSpec theKeySpec;
+        private final GordianKeyPairSpec theKeySpec;
 
         /**
          * The list of signatures.
@@ -171,7 +171,7 @@ class AsymmetricStore {
          */
         FactoryKeySpec(final GordianFactory pFactory,
                        final GordianFactory pPartner,
-                       final GordianNewKeyPairSpec pKeySpec) {
+                       final GordianKeyPairSpec pKeySpec) {
             /* Store parameters */
             theFactoryType = pFactory.getFactoryType();
             theFactory = pFactory.getAsyncFactory();
@@ -221,7 +221,7 @@ class AsymmetricStore {
          *
          * @return the keySpec
          */
-        GordianNewKeyPairSpec getKeySpec() {
+        GordianKeyPairSpec getKeySpec() {
             return theKeySpec;
         }
 
@@ -539,7 +539,7 @@ class AsymmetricStore {
         /**
          * The Spec.
          */
-        private final GordianNewSignatureSpec theSignSpec;
+        private final GordianSignatureSpec theSignSpec;
 
         /**
          * Constructor.
@@ -548,7 +548,7 @@ class AsymmetricStore {
          * @param pSignSpec the signatureSpec
          */
         FactorySignature(final FactoryKeySpec pOwner,
-                         final GordianNewSignatureSpec pSignSpec) {
+                         final GordianSignatureSpec pSignSpec) {
             theOwner = pOwner;
             theSignSpec = pSignSpec;
         }
@@ -567,7 +567,7 @@ class AsymmetricStore {
          *
          * @return the spec
          */
-        GordianNewSignatureSpec getSpec() {
+        GordianSignatureSpec getSpec() {
             return theSignSpec;
         }
 
@@ -589,7 +589,7 @@ class AsymmetricStore {
         /**
          * The Spec.
          */
-        private final GordianNewAgreementSpec theAgreeSpec;
+        private final GordianAgreementSpec theAgreeSpec;
 
         /**
          * Constructor.
@@ -598,7 +598,7 @@ class AsymmetricStore {
          * @param pAgreeSpec the agreementSpec
          */
         FactoryAgreement(final FactoryKeySpec pOwner,
-                         final GordianNewAgreementSpec pAgreeSpec) {
+                         final GordianAgreementSpec pAgreeSpec) {
             theOwner = pOwner;
             theAgreeSpec = pAgreeSpec;
         }
@@ -617,7 +617,7 @@ class AsymmetricStore {
          *
          * @return the spec
          */
-        GordianNewAgreementSpec getSpec() {
+        GordianAgreementSpec getSpec() {
             return theAgreeSpec;
         }
 
@@ -639,7 +639,7 @@ class AsymmetricStore {
         /**
          * The Spec.
          */
-        private final GordianNewEncryptorSpec theEncryptSpec;
+        private final GordianEncryptorSpec theEncryptSpec;
 
         /**
          * Constructor.
@@ -648,7 +648,7 @@ class AsymmetricStore {
          * @param pEncryptSpec the encryptorSpec
          */
         FactoryEncryptor(final FactoryKeySpec pOwner,
-                         final GordianNewEncryptorSpec pEncryptSpec) {
+                         final GordianEncryptorSpec pEncryptSpec) {
             theOwner = pOwner;
             theEncryptSpec = pEncryptSpec;
         }
@@ -667,7 +667,7 @@ class AsymmetricStore {
          *
          * @return the spec
          */
-        GordianNewEncryptorSpec getSpec() {
+        GordianEncryptorSpec getSpec() {
             return theEncryptSpec;
         }
 
@@ -688,7 +688,7 @@ class AsymmetricStore {
                                                 final GordianFactory pPartner) {
         /* Loop through the possible keyTypes */
         final List<FactoryKeySpec> myResult = new ArrayList<>();
-        for (GordianNewKeyPairType myKeyType : GordianNewKeyPairType.values()) {
+        for (GordianKeyPairType myKeyType : GordianKeyPairType.values()) {
             /* If we are testing a single keyType, make sure this is the right one */
             if (theKeyType != null
                     && !myKeyType.equals(theKeyType)) {
@@ -713,17 +713,17 @@ class AsymmetricStore {
      */
     private static List<FactoryKeySpec> keySpecProvider(final GordianFactory pFactory,
                                                         final GordianFactory pPartner,
-                                                        final GordianNewKeyPairType pKeyType) {
+                                                        final GordianKeyPairType pKeyType) {
         /* Loop through all the possible specs for this keyType */
         final List<FactoryKeySpec> myResult = new ArrayList<>();
         final GordianCoreKeyPairFactory myFactory = (GordianCoreKeyPairFactory) pFactory.getAsyncFactory().getKeyPairFactory();
-        List<GordianNewKeyPairSpec> mySpecs = pKeyType == GordianNewKeyPairType.COMPOSITE
+        List<GordianKeyPairSpec> mySpecs = pKeyType == GordianKeyPairType.COMPOSITE
                 ? compositeKeySpecProvider()
                 : myFactory.listAllSupportedKeyPairSpecs(pKeyType);
-        for (GordianNewKeyPairSpec myKeySpec : mySpecs) {
+        for (GordianKeyPairSpec myKeySpec : mySpecs) {
             /* If the keyType is LMS */
             final GordianCoreKeyPairSpec mySpec = (GordianCoreKeyPairSpec) myKeySpec;
-            if (pKeyType == GordianNewKeyPairType.LMS) {
+            if (pKeyType == GordianKeyPairType.LMS) {
                 /* Access the keySpec */
                 final GordianCoreLMSSpec myLMSSpec = mySpec.getLMSSpec();
 
@@ -734,7 +734,7 @@ class AsymmetricStore {
             }
 
             /* If the keyType is XMSS */
-            if (pKeyType == GordianNewKeyPairType.XMSS) {
+            if (pKeyType == GordianKeyPairType.XMSS) {
                 /* Access the keySpec */
                 GordianCoreXMSSSpec myXMSSSpec = mySpec.getXMSSSpec();
 
@@ -748,7 +748,7 @@ class AsymmetricStore {
             myResult.add(new FactoryKeySpec(pFactory, pPartner, myKeySpec));
 
             /* If we are only testing one keySpec per type, break the loop */
-            if (!allSpecs && pKeyType != GordianNewKeyPairType.COMPOSITE) {
+            if (!allSpecs && pKeyType != GordianKeyPairType.COMPOSITE) {
                 break;
             }
         }
@@ -769,7 +769,7 @@ class AsymmetricStore {
         /* Access the list of possible signatures */
         final GordianAsyncFactory myFactory = pKeySpec.theFactory;
         final GordianSignatureFactory mySignFactory = myFactory.getSignatureFactory();
-        final List<GordianNewSignatureSpec> mySignSpecs = pKeySpec.getKeySpec().getKeyPairType() == GordianNewKeyPairType.COMPOSITE
+        final List<GordianSignatureSpec> mySignSpecs = pKeySpec.getKeySpec().getKeyPairType() == GordianKeyPairType.COMPOSITE
                 ? compositeSignatureSpecProvider(pKeySpec)
                 : mySignFactory.listAllSupportedSignatures(pKeySpec.theKeySpec.getKeyPairType());
 
@@ -779,7 +779,7 @@ class AsymmetricStore {
         }
 
         /* Loop through the possible signatures */
-        for (GordianNewSignatureSpec mySign : mySignSpecs) {
+        for (GordianSignatureSpec mySign : mySignSpecs) {
             /* If we are testing a single sigType, make sure this is the right one */
             if (theSigType != null
                     && !mySign.getSignatureType().equals(theSigType)) {
@@ -805,7 +805,7 @@ class AsymmetricStore {
         /* Access the list of possible agreements */
         final GordianAsyncFactory myFactory = pKeySpec.theFactory;
         final GordianAgreementFactory myAgreeFactory = myFactory.getAgreementFactory();
-        final List<GordianNewAgreementSpec> myAgreeSpecs = pKeySpec.getKeySpec().getKeyPairType() == GordianNewKeyPairType.COMPOSITE
+        final List<GordianAgreementSpec> myAgreeSpecs = pKeySpec.getKeySpec().getKeyPairType() == GordianKeyPairType.COMPOSITE
                 ? compositeAgreementSpecProvider(pKeySpec)
                 : myAgreeFactory.listAllSupportedAgreements(pKeySpec.theKeySpec);
 
@@ -815,7 +815,7 @@ class AsymmetricStore {
         }
 
         /* Loop through the possible agreements */
-        for (GordianNewAgreementSpec myAgree : myAgreeSpecs) {
+        for (GordianAgreementSpec myAgree : myAgreeSpecs) {
             /* Add the agreement if it is supported */
             if (myAgreeFactory.validAgreementSpecForKeyPairSpec(pKeySpec.getKeySpec(), myAgree)) {
                 myResult.add(new FactoryAgreement(pKeySpec, myAgree));
@@ -835,7 +835,7 @@ class AsymmetricStore {
         /* Access the list of possible encryptors */
         final GordianAsyncFactory myFactory = pKeySpec.theFactory;
         final GordianEncryptorFactory myEncryptFactory = myFactory.getEncryptorFactory();
-        final List<GordianNewEncryptorSpec> mySpecs = pKeySpec.getKeySpec().getKeyPairType() == GordianNewKeyPairType.COMPOSITE
+        final List<GordianEncryptorSpec> mySpecs = pKeySpec.getKeySpec().getKeyPairType() == GordianKeyPairType.COMPOSITE
                 ? compositeEncryptorSpecProvider(pKeySpec)
                 : myEncryptFactory.listAllSupportedEncryptors(pKeySpec.theKeySpec.getKeyPairType());
 
@@ -845,7 +845,7 @@ class AsymmetricStore {
         }
 
         /* Loop through the possible encryptors */
-        for (GordianNewEncryptorSpec myEncrypt : mySpecs) {
+        for (GordianEncryptorSpec myEncrypt : mySpecs) {
             /* Add the encryptor if it is supported */
             if (myEncryptFactory.validEncryptorSpecForKeyPairSpec(pKeySpec.getKeySpec(), myEncrypt)) {
                 myResult.add(new FactoryEncryptor(pKeySpec, myEncrypt));
@@ -858,26 +858,26 @@ class AsymmetricStore {
      *
      * @return the list
      */
-    private static List<GordianNewKeyPairSpec> compositeKeySpecProvider() {
-        final List<GordianNewKeyPairSpec> myResult = new ArrayList<>();
-        final GordianNewKeyPairSpecBuilder myBuilder = GordianUtilities.newKeyPairSpecBuilder();
-        myResult.add(myBuilder.composite(myBuilder.rsa(GordianNewRSASpec.MOD2048),
-                myBuilder.falcon(GordianNewFalconSpec.FALCON512),
+    private static List<GordianKeyPairSpec> compositeKeySpecProvider() {
+        final List<GordianKeyPairSpec> myResult = new ArrayList<>();
+        final GordianKeyPairSpecBuilder myBuilder = GordianUtilities.newKeyPairSpecBuilder();
+        myResult.add(myBuilder.composite(myBuilder.rsa(GordianRSASpec.MOD2048),
+                myBuilder.falcon(GordianFalconSpec.FALCON512),
                 myBuilder.ed25519()));
-        myResult.add(myBuilder.composite(myBuilder.dh(GordianNewDHSpec.FFDHE2048),
+        myResult.add(myBuilder.composite(myBuilder.dh(GordianDHSpec.FFDHE2048),
                 myBuilder.x25519(),
-                myBuilder.ec(GordianNewECSpec.SECP256R1)));
-        myResult.add(myBuilder.composite(myBuilder.sm2(GordianNewSM2Spec.SM2P256V1),
-                myBuilder.ec(GordianNewECSpec.SECP256R1)));
+                myBuilder.ec(GordianECSpec.SECP256R1)));
+        myResult.add(myBuilder.composite(myBuilder.sm2(GordianSM2Spec.SM2P256V1),
+                myBuilder.ec(GordianECSpec.SECP256R1)));
         myResult.add(myBuilder.composite(myBuilder.newHope(),
-                myBuilder.ec(GordianNewECSpec.SECP256R1),
-                myBuilder.saber(GordianNewSABERSpec.BASE128)));
-        myResult.add(myBuilder.composite(myBuilder.rsa(GordianNewRSASpec.MOD2048),
-                myBuilder.elGamal(GordianNewDHSpec.FFDHE2048),
-                myBuilder.sm2(GordianNewSM2Spec.SM2P256V1)));
-        myResult.add(myBuilder.composite(myBuilder.xmss(GordianNewXMSSDigestType.SHA256, GordianNewXMSSHeight.H10),
-                myBuilder.lms(GordianNewLMSHash.SHA256, GordianNewLMSHeight.H5,
-                        GordianNewLMSWidth.W1, GordianLength.LEN_256)));
+                myBuilder.ec(GordianECSpec.SECP256R1),
+                myBuilder.saber(GordianSABERSpec.BASE128)));
+        myResult.add(myBuilder.composite(myBuilder.rsa(GordianRSASpec.MOD2048),
+                myBuilder.elGamal(GordianDHSpec.FFDHE2048),
+                myBuilder.sm2(GordianSM2Spec.SM2P256V1)));
+        myResult.add(myBuilder.composite(myBuilder.xmss(GordianXMSSDigestType.SHA256, GordianXMSSHeight.H10),
+                myBuilder.lms(GordianLMSHash.SHA256, GordianLMSHeight.H5,
+                        GordianLMSWidth.W1, GordianLength.LEN_256)));
         return myResult;
     }
 
@@ -887,8 +887,8 @@ class AsymmetricStore {
      * @param pKeySpec the keySpec
      * @return the list
      */
-    private static List<GordianNewSignatureSpec> compositeSignatureSpecProvider(final FactoryKeySpec pKeySpec) {
-        final GordianNewSignatureSpec mySpec = pKeySpec.getFactory().getSignatureFactory().defaultForKeyPair(pKeySpec.getKeySpec());
+    private static List<GordianSignatureSpec> compositeSignatureSpecProvider(final FactoryKeySpec pKeySpec) {
+        final GordianSignatureSpec mySpec = pKeySpec.getFactory().getSignatureFactory().defaultForKeyPair(pKeySpec.getKeySpec());
         return mySpec != null && mySpec.isValid()
                 ? Collections.singletonList(mySpec)
                 : Collections.emptyList();
@@ -900,8 +900,8 @@ class AsymmetricStore {
      * @param pKeySpec the keySpec
      * @return the list
      */
-    private static List<GordianNewAgreementSpec> compositeAgreementSpecProvider(final FactoryKeySpec pKeySpec) {
-        final List<GordianNewAgreementSpec> mySpecs = new ArrayList<>();
+    private static List<GordianAgreementSpec> compositeAgreementSpecProvider(final FactoryKeySpec pKeySpec) {
+        final List<GordianAgreementSpec> mySpecs = new ArrayList<>();
         mySpecs.addAll(GordianCoreAgreementSpecBuilder.listAllPossibleSpecs(pKeySpec.getKeySpec()));
         mySpecs.removeIf(s -> s == null || !s.isValid());
         return mySpecs;
@@ -913,8 +913,8 @@ class AsymmetricStore {
      * @param pKeySpec the keySpec
      * @return the list
      */
-    private static List<GordianNewEncryptorSpec> compositeEncryptorSpecProvider(final FactoryKeySpec pKeySpec) {
-        final GordianNewEncryptorSpec mySpec = pKeySpec.getFactory().getEncryptorFactory().defaultForKeyPair(pKeySpec.getKeySpec());
+    private static List<GordianEncryptorSpec> compositeEncryptorSpecProvider(final FactoryKeySpec pKeySpec) {
+        final GordianEncryptorSpec mySpec = pKeySpec.getFactory().getEncryptorFactory().defaultForKeyPair(pKeySpec.getKeySpec());
         return mySpec != null && mySpec.isValid()
                 ? Collections.singletonList(mySpec)
                 : Collections.emptyList();

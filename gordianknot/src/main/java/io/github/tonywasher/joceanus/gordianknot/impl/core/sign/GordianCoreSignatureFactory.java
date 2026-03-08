@@ -18,16 +18,16 @@ package io.github.tonywasher.joceanus.gordianknot.impl.core.sign;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestType;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestType;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewGOSTSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairType;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianGOSTSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairType;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignatureFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianNewSignatureSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianNewSignatureSpecBuilder;
-import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianNewSignatureType;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureType;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseData;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.digest.GordianCoreDigestFactory;
@@ -58,7 +58,7 @@ public abstract class GordianCoreSignatureFactory
     /**
      * The algorithm Ids.
      */
-    private GordianSignatureAlgId theAlgIds;
+    private GordianCoreSignatureAlgId theAlgIds;
 
     /**
      * Constructor.
@@ -70,7 +70,7 @@ public abstract class GordianCoreSignatureFactory
     }
 
     @Override
-    public GordianNewSignatureSpecBuilder newSignatureSpecBuilder() {
+    public GordianSignatureSpecBuilder newSignatureSpecBuilder() {
         return GordianCoreSignatureSpecBuilder.newInstance();
     }
 
@@ -84,7 +84,7 @@ public abstract class GordianCoreSignatureFactory
     }
 
     @Override
-    public Predicate<GordianNewSignatureSpec> supportedKeyPairSignatures() {
+    public Predicate<GordianSignatureSpec> supportedKeyPairSignatures() {
         return this::validSignatureSpec;
     }
 
@@ -94,7 +94,7 @@ public abstract class GordianCoreSignatureFactory
      * @param pSignatureSpec the signatureSpec
      * @throws GordianException on error
      */
-    protected void checkSignatureSpec(final GordianNewSignatureSpec pSignatureSpec) throws GordianException {
+    protected void checkSignatureSpec(final GordianSignatureSpec pSignatureSpec) throws GordianException {
         /* Check validity of signature */
         if (!validSignatureSpec(pSignatureSpec)) {
             throw new GordianDataException(GordianBaseData.getInvalidText(pSignatureSpec));
@@ -102,8 +102,8 @@ public abstract class GordianCoreSignatureFactory
     }
 
     @Override
-    public boolean validSignatureSpecForKeyPairSpec(final GordianNewKeyPairSpec pKeyPairSpec,
-                                                    final GordianNewSignatureSpec pSignSpec) {
+    public boolean validSignatureSpecForKeyPairSpec(final GordianKeyPairSpec pKeyPairSpec,
+                                                    final GordianSignatureSpec pSignSpec) {
         /* Check signature matches keySpec */
         if (pSignSpec.getKeyPairType() != pKeyPairSpec.getKeyPairType()) {
             return false;
@@ -117,18 +117,18 @@ public abstract class GordianCoreSignatureFactory
         /* Disallow ECNR if keySize is smaller than digestSize */
         final GordianCoreSignatureSpec mySpec = (GordianCoreSignatureSpec) pSignSpec;
         final GordianCoreKeyPairSpec myKeyPairSpec = (GordianCoreKeyPairSpec) pKeyPairSpec;
-        if (GordianNewSignatureType.NR.equals(pSignSpec.getSignatureType())) {
+        if (GordianSignatureType.NR.equals(pSignSpec.getSignatureType())) {
             return myKeyPairSpec.getElliptic().getKeySize() > mySpec.getDigestSpec().getDigestLength().getLength();
         }
 
         /* Disallow incorrectly sized digest for GOST */
-        if (GordianNewKeyPairType.GOST.equals(pKeyPairSpec.getKeyPairType())) {
+        if (GordianKeyPairType.GOST.equals(pKeyPairSpec.getKeyPairType())) {
             final int myDigestLen = mySpec.getDigestSpec().getDigestLength().getLength();
             return myKeyPairSpec.getElliptic().getKeySize() == myDigestLen;
         }
 
         /* If this is a RSA Signature */
-        if (GordianNewKeyPairType.RSA.equals(pKeyPairSpec.getKeyPairType())) {
+        if (GordianKeyPairType.RSA.equals(pKeyPairSpec.getKeyPairType())) {
             /* If this is a PSS signature */
             if (mySpec.getCoreType().isPSS()) {
                 /* The digest length cannot be too large wrt to the modulus */
@@ -150,13 +150,13 @@ public abstract class GordianCoreSignatureFactory
 
 
         /* For Composite EncryptorSpec */
-        if (pKeyPairSpec.getKeyPairType() == GordianNewKeyPairType.COMPOSITE) {
+        if (pKeyPairSpec.getKeyPairType() == GordianKeyPairType.COMPOSITE) {
             /* Loop through the keyPairs */
-            final Iterator<GordianNewKeyPairSpec> pairIterator = myKeyPairSpec.keySpecIterator();
-            final Iterator<GordianNewSignatureSpec> sigIterator = mySpec.signatureSpecIterator();
+            final Iterator<GordianKeyPairSpec> pairIterator = myKeyPairSpec.keySpecIterator();
+            final Iterator<GordianSignatureSpec> sigIterator = mySpec.signatureSpecIterator();
             while (pairIterator.hasNext() && sigIterator.hasNext()) {
-                final GordianNewKeyPairSpec myPairSpec = pairIterator.next();
-                final GordianNewSignatureSpec mySigSpec = sigIterator.next();
+                final GordianKeyPairSpec myPairSpec = pairIterator.next();
+                final GordianSignatureSpec mySigSpec = sigIterator.next();
                 if (!validSignatureSpecForKeyPairSpec(myPairSpec, mySigSpec)) {
                     return false;
                 }
@@ -176,7 +176,7 @@ public abstract class GordianCoreSignatureFactory
      * @param pSignSpec the macSpec
      * @return true/false
      */
-    protected boolean validSignatureSpec(final GordianNewSignatureSpec pSignSpec) {
+    protected boolean validSignatureSpec(final GordianSignatureSpec pSignSpec) {
         /* Reject invalid signatureSpec */
         if (pSignSpec == null || !pSignSpec.isValid()) {
             return false;
@@ -184,7 +184,7 @@ public abstract class GordianCoreSignatureFactory
 
         /* Check that the signatureType is supported */
         final GordianCoreSignatureSpec mySignSpec = (GordianCoreSignatureSpec) pSignSpec;
-        final GordianNewKeyPairType myType = pSignSpec.getKeyPairType();
+        final GordianKeyPairType myType = pSignSpec.getKeyPairType();
         final GordianCoreSignatureType mySignType = mySignSpec.getCoreType();
         if (!mySignType.isSupported(myType)) {
             return false;
@@ -201,11 +201,11 @@ public abstract class GordianCoreSignatureFactory
         }
 
         /* Composite signatures */
-        if (GordianNewKeyPairType.COMPOSITE.equals(myType)) {
+        if (GordianKeyPairType.COMPOSITE.equals(myType)) {
             /* Loop through the specs */
-            final Iterator<GordianNewSignatureSpec> myIterator = mySignSpec.signatureSpecIterator();
+            final Iterator<GordianSignatureSpec> myIterator = mySignSpec.signatureSpecIterator();
             while (myIterator.hasNext()) {
-                final GordianNewSignatureSpec mySpec = myIterator.next();
+                final GordianSignatureSpec mySpec = myIterator.next();
                 if (!validSignatureSpec(mySpec)) {
                     return false;
                 }
@@ -214,30 +214,30 @@ public abstract class GordianCoreSignatureFactory
         }
 
         /* Check that the digestSpec is supported */
-        final GordianNewDigestSpec mySpec = mySignSpec.getDigestSpec();
+        final GordianDigestSpec mySpec = mySignSpec.getDigestSpec();
         if (mySpec == null
                 || !validSignatureDigestSpec(mySpec)) {
             return false;
         }
 
         /* Check RSA signatures */
-        if (GordianNewKeyPairType.RSA.equals(myType)) {
+        if (GordianKeyPairType.RSA.equals(myType)) {
             return validRSASignature(pSignSpec);
         }
 
         /* Check DDSA signatures */
-        if (GordianNewSignatureType.DDSA.equals(pSignSpec.getSignatureType())) {
+        if (GordianSignatureType.DDSA.equals(pSignSpec.getSignatureType())) {
             return validDDSASignature(pSignSpec);
         }
 
         /* Only allow GOST for DSTU signature */
-        if (GordianNewKeyPairType.DSTU.equals(myType)) {
-            return GordianNewDigestType.GOST.equals(mySpec.getDigestType());
+        if (GordianKeyPairType.DSTU.equals(myType)) {
+            return GordianDigestType.GOST.equals(mySpec.getDigestType());
         }
 
         /* Only allow STREEBOG for GOST signature */
-        if (GordianNewKeyPairType.GOST.equals(myType)) {
-            return GordianNewDigestType.STREEBOG.equals(mySpec.getDigestType());
+        if (GordianKeyPairType.GOST.equals(myType)) {
+            return GordianDigestType.STREEBOG.equals(mySpec.getDigestType());
         }
 
         /* OK */
@@ -250,7 +250,7 @@ public abstract class GordianCoreSignatureFactory
      * @param pDigestSpec the digestSpec
      * @return true/false
      */
-    protected boolean validSignatureDigestSpec(final GordianNewDigestSpec pDigestSpec) {
+    protected boolean validSignatureDigestSpec(final GordianDigestSpec pDigestSpec) {
         final GordianCoreDigestFactory myDigests = (GordianCoreDigestFactory) theFactory.getDigestFactory();
         return myDigests.validDigestSpec(pDigestSpec);
     }
@@ -261,12 +261,12 @@ public abstract class GordianCoreSignatureFactory
      * @param pSpec the signatureSpec
      * @return true/false
      */
-    private static boolean validRSASignature(final GordianNewSignatureSpec pSpec) {
+    private static boolean validRSASignature(final GordianSignatureSpec pSpec) {
         /* Apply restrictions on PREHASH */
-        if (GordianNewSignatureType.PREHASH.equals(pSpec.getSignatureType())) {
+        if (GordianSignatureType.PREHASH.equals(pSpec.getSignatureType())) {
             /* Switch on DigestType */
             final GordianCoreSignatureSpec mySpec = (GordianCoreSignatureSpec) pSpec;
-            final GordianNewDigestSpec myDigest = mySpec.getDigestSpec();
+            final GordianDigestSpec myDigest = mySpec.getDigestSpec();
             switch (myDigest.getDigestType()) {
                 case SHA1:
                 case SHA2:
@@ -292,10 +292,10 @@ public abstract class GordianCoreSignatureFactory
      * @param pSpec the signatureSpec
      * @return true/false
      */
-    private static boolean validDDSASignature(final GordianNewSignatureSpec pSpec) {
+    private static boolean validDDSASignature(final GordianSignatureSpec pSpec) {
         /* Switch on DigestType */
         final GordianCoreSignatureSpec mySpec = (GordianCoreSignatureSpec) pSpec;
-        final GordianNewDigestSpec myDigest = mySpec.getDigestSpec();
+        final GordianDigestSpec myDigest = mySpec.getDigestSpec();
         switch (myDigest.getDigestType()) {
             case ASCON:
             case ISAP:
@@ -315,7 +315,7 @@ public abstract class GordianCoreSignatureFactory
      * @param pKeyPair the keyPair
      * @return the Identifier
      */
-    public AlgorithmIdentifier getIdentifierForSpecAndKeyPair(final GordianNewSignatureSpec pSpec,
+    public AlgorithmIdentifier getIdentifierForSpecAndKeyPair(final GordianSignatureSpec pSpec,
                                                               final GordianKeyPair pKeyPair) {
         return getAlgorithmIds().getIdentifierForSpecAndKeyPair(pSpec, pKeyPair);
     }
@@ -326,7 +326,7 @@ public abstract class GordianCoreSignatureFactory
      * @param pIdentifier the identifier.
      * @return the signatureSpec (or null if not found)
      */
-    public GordianNewSignatureSpec getSpecForIdentifier(final AlgorithmIdentifier pIdentifier) {
+    public GordianSignatureSpec getSpecForIdentifier(final AlgorithmIdentifier pIdentifier) {
         return getAlgorithmIds().getSpecForIdentifier(pIdentifier);
     }
 
@@ -335,20 +335,20 @@ public abstract class GordianCoreSignatureFactory
      *
      * @return the signature Algorithm Ids
      */
-    private GordianSignatureAlgId getAlgorithmIds() {
+    private GordianCoreSignatureAlgId getAlgorithmIds() {
         if (theAlgIds == null) {
-            theAlgIds = new GordianSignatureAlgId(theFactory);
+            theAlgIds = new GordianCoreSignatureAlgId(theFactory);
         }
         return theAlgIds;
     }
 
     @Override
-    public List<GordianNewSignatureSpec> listAllSupportedSignatures(final GordianKeyPair pKeyPair) {
+    public List<GordianSignatureSpec> listAllSupportedSignatures(final GordianKeyPair pKeyPair) {
         return listAllSupportedSignatures(pKeyPair.getKeyPairSpec());
     }
 
     @Override
-    public List<GordianNewSignatureSpec> listAllSupportedSignatures(final GordianNewKeyPairSpec pKeySpec) {
+    public List<GordianSignatureSpec> listAllSupportedSignatures(final GordianKeyPairSpec pKeySpec) {
         return listPossibleSignatures(pKeySpec.getKeyPairType())
                 .stream()
                 .filter(s -> validSignatureSpecForKeyPairSpec(pKeySpec, s))
@@ -356,27 +356,27 @@ public abstract class GordianCoreSignatureFactory
     }
 
     @Override
-    public List<GordianNewSignatureSpec> listPossibleSignatures(final GordianNewKeyPairType pKeyType) {
+    public List<GordianSignatureSpec> listPossibleSignatures(final GordianKeyPairType pKeyType) {
         return GordianCoreSignatureSpecBuilder.listAllPossibleSpecs(pKeyType);
     }
 
     @Override
-    public GordianNewSignatureSpec defaultForKeyPair(final GordianNewKeyPairSpec pKeySpec) {
+    public GordianSignatureSpec defaultForKeyPair(final GordianKeyPairSpec pKeySpec) {
         final GordianCoreSignatureSpecBuilder myBuilder = GordianCoreSignatureSpecBuilder.newInstance();
         final GordianCoreDigestSpecBuilder myDigestBuilder = GordianCoreDigestSpecBuilder.newInstance();
         switch (pKeySpec.getKeyPairType()) {
             case RSA:
-                return myBuilder.rsa(GordianNewSignatureType.PSSMGF1, myDigestBuilder.sha3(GordianLength.LEN_256));
+                return myBuilder.rsa(GordianSignatureType.PSSMGF1, myDigestBuilder.sha3(GordianLength.LEN_256));
             case DSA:
-                return myBuilder.dsa(GordianNewSignatureType.DSA, myDigestBuilder.sha2(GordianLength.LEN_512));
+                return myBuilder.dsa(GordianSignatureType.DSA, myDigestBuilder.sha2(GordianLength.LEN_512));
             case EC:
-                return myBuilder.ec(GordianNewSignatureType.DSA, myDigestBuilder.sha3(GordianLength.LEN_512));
+                return myBuilder.ec(GordianSignatureType.DSA, myDigestBuilder.sha3(GordianLength.LEN_512));
             case SM2:
                 return myBuilder.sm2(myDigestBuilder.sm3());
             case DSTU:
                 return myBuilder.dstu4145();
             case GOST:
-                return myBuilder.gost2012(GordianNewGOSTSpec.GOST256A.equals(pKeySpec.getSubSpec())
+                return myBuilder.gost2012(GordianGOSTSpec.GOST256A.equals(pKeySpec.getSubSpec())
                         ? GordianLength.LEN_256 : GordianLength.LEN_512);
             case EDDSA:
                 return myBuilder.edDSA();
@@ -397,14 +397,14 @@ public abstract class GordianCoreSignatureFactory
             case LMS:
                 return myBuilder.lms();
             case COMPOSITE:
-                final List<GordianNewSignatureSpec> mySpecs = new ArrayList<>();
+                final List<GordianSignatureSpec> mySpecs = new ArrayList<>();
                 final GordianCoreKeyPairSpec myKeySpec = (GordianCoreKeyPairSpec) pKeySpec;
-                final Iterator<GordianNewKeyPairSpec> myIterator = myKeySpec.keySpecIterator();
+                final Iterator<GordianKeyPairSpec> myIterator = myKeySpec.keySpecIterator();
                 while (myIterator.hasNext()) {
-                    final GordianNewKeyPairSpec mySpec = myIterator.next();
+                    final GordianKeyPairSpec mySpec = myIterator.next();
                     mySpecs.add(defaultForKeyPair(mySpec));
                 }
-                final GordianNewSignatureSpec mySpec = myBuilder.composite(mySpecs);
+                final GordianSignatureSpec mySpec = myBuilder.composite(mySpecs);
                 return mySpec.isValid() ? mySpec : null;
             default:
                 return null;

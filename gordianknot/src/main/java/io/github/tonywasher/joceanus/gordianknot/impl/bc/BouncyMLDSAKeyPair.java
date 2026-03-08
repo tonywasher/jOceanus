@@ -18,9 +18,9 @@ package io.github.tonywasher.joceanus.gordianknot.impl.bc;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignParams;
-import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianNewSignatureSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPrivateKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPublicKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
@@ -75,7 +75,7 @@ public final class BouncyMLDSAKeyPair {
          * @param pKeySpec   the keySpec
          * @param pPublicKey the public key
          */
-        BouncyMLDSAPublicKey(final GordianNewKeyPairSpec pKeySpec,
+        BouncyMLDSAPublicKey(final GordianKeyPairSpec pKeySpec,
                              final MLDSAPublicKeyParameters pPublicKey) {
             super(pKeySpec, pPublicKey);
         }
@@ -114,7 +114,7 @@ public final class BouncyMLDSAKeyPair {
          * @param pKeySpec    the keySpec
          * @param pPrivateKey the private key
          */
-        BouncyMLDSAPrivateKey(final GordianNewKeyPairSpec pKeySpec,
+        BouncyMLDSAPrivateKey(final GordianKeyPairSpec pKeySpec,
                               final MLDSAPrivateKeyParameters pPrivateKey) {
             super(pKeySpec, pPrivateKey);
         }
@@ -160,7 +160,7 @@ public final class BouncyMLDSAKeyPair {
          * @param pKeySpec the keySpec
          */
         BouncyMLDSAKeyPairGenerator(final GordianBaseFactory pFactory,
-                                    final GordianNewKeyPairSpec pKeySpec) {
+                                    final GordianKeyPairSpec pKeySpec) {
             /* Initialise underlying class */
             super(pFactory, pKeySpec);
 
@@ -292,7 +292,7 @@ public final class BouncyMLDSAKeyPair {
          * @param pSpec    the signatureSpec.
          */
         BouncyMLDSASignature(final GordianBaseFactory pFactory,
-                             final GordianNewSignatureSpec pSpec) {
+                             final GordianSignatureSpec pSpec) {
             /* Initialise underlying class */
             super(pFactory, pSpec);
         }

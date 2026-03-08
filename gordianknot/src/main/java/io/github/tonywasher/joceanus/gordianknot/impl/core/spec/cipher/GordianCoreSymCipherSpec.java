@@ -18,10 +18,10 @@
 package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewCipherMode;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewPadding;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymCipherSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianCipherMode;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianPadding;
 
 import java.util.Objects;
 
@@ -30,7 +30,7 @@ import java.util.Objects;
  */
 
 public class GordianCoreSymCipherSpec
-        implements GordianNewSymCipherSpec {
+        implements GordianSymCipherSpec {
     /**
      * The AAD IV length.
      */
@@ -54,7 +54,7 @@ public class GordianCoreSymCipherSpec
     /**
      * The padding.
      */
-    private final GordianNewPadding thePadding;
+    private final GordianPadding thePadding;
 
     /**
      * is the spec valid?.
@@ -74,8 +74,8 @@ public class GordianCoreSymCipherSpec
      * @param pPadding the padding
      */
     GordianCoreSymCipherSpec(final GordianCoreSymKeySpec pKeySpec,
-                             final GordianNewCipherMode pMode,
-                             final GordianNewPadding pPadding) {
+                             final GordianCipherMode pMode,
+                             final GordianPadding pPadding) {
         theKeySpec = pKeySpec;
         theMode = GordianCoreCipherMode.mapCoreMode(pMode);
         thePadding = pPadding;
@@ -92,7 +92,7 @@ public class GordianCoreSymCipherSpec
     }
 
     @Override
-    public GordianNewSymKeySpec getKeySpec() {
+    public GordianSymKeySpec getKeySpec() {
         return theKeySpec;
     }
 
@@ -106,12 +106,12 @@ public class GordianCoreSymCipherSpec
     }
 
     @Override
-    public GordianNewCipherMode getCipherMode() {
+    public GordianCipherMode getCipherMode() {
         return theMode.getMode();
     }
 
     @Override
-    public GordianNewPadding getPadding() {
+    public GordianPadding getPadding() {
         return thePadding;
     }
 
@@ -140,7 +140,7 @@ public class GordianCoreSymCipherSpec
             return AADIVLEN;
         }
         final int myBlockLen = theKeySpec.getBlockLength().getByteLength();
-        return GordianNewCipherMode.G3413CTR.equals(theMode.getMode())
+        return GordianCipherMode.G3413CTR.equals(theMode.getMode())
                 ? myBlockLen >> 1
                 : myBlockLen;
     }
@@ -163,7 +163,7 @@ public class GordianCoreSymCipherSpec
                 /* Load the name */
                 theName = theKeySpec.toString();
                 theName += SEP + theMode;
-                if (!GordianNewPadding.NONE.equals(thePadding)) {
+                if (!GordianPadding.NONE.equals(thePadding)) {
                     theName += SEP + thePadding;
                 }
             } else {

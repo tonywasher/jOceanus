@@ -18,8 +18,8 @@ package io.github.tonywasher.joceanus.gordianknot.impl.jca;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacParameters;
-import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianNewMacSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianNewMacType;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianMacSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianMacType;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.mac.GordianCoreMac;
@@ -50,22 +50,22 @@ public final class JcaMac
      * @param pMac     the MAC
      */
     JcaMac(final GordianBaseFactory pFactory,
-           final GordianNewMacSpec pMacSpec,
+           final GordianMacSpec pMacSpec,
            final Mac pMac) {
         super(pFactory, pMacSpec);
         theMac = pMac;
     }
 
     @Override
-    public JcaKey<GordianNewMacSpec> getKey() {
-        return (JcaKey<GordianNewMacSpec>) super.getKey();
+    public JcaKey<GordianMacSpec> getKey() {
+        return (JcaKey<GordianMacSpec>) super.getKey();
     }
 
     @Override
     public void init(final GordianMacParameters pParams) throws GordianException {
         /* Process the parameters and access the key */
         processParameters(pParams);
-        final JcaKey<GordianNewMacSpec> myKey = JcaKey.accessKey(getKey());
+        final JcaKey<GordianMacSpec> myKey = JcaKey.accessKey(getKey());
 
         /* Protect against exceptions */
         try {
@@ -98,7 +98,7 @@ public final class JcaMac
      */
     private AlgorithmParameterSpec buildInitParams(final byte[] pIV) {
         /* Handle Skein Parameters */
-        if (GordianNewMacType.SKEIN.equals(getMacSpec().getMacType())) {
+        if (GordianMacType.SKEIN.equals(getMacSpec().getMacType())) {
             final Builder myBuilder = new Builder();
             myBuilder.setNonce(pIV);
             return myBuilder.build();

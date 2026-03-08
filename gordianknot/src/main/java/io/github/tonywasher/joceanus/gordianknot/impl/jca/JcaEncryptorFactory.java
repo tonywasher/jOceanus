@@ -18,9 +18,9 @@ package io.github.tonywasher.joceanus.gordianknot.impl.jca;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianEncryptor;
-import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianNewEncryptorSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianNewSM2EncryptionSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianNewSM2EncryptionType;
+import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianEncryptorSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianSM2EncryptionSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianSM2EncryptionType;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseData;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.encrypt.GordianCompositeEncryptor;
@@ -46,7 +46,7 @@ public class JcaEncryptorFactory
     }
 
     @Override
-    public GordianEncryptor createEncryptor(final GordianNewEncryptorSpec pEncryptorSpec) throws GordianException {
+    public GordianEncryptor createEncryptor(final GordianEncryptorSpec pEncryptorSpec) throws GordianException {
         /* Check validity of encryptor */
         checkEncryptorSpec(pEncryptorSpec);
 
@@ -76,7 +76,7 @@ public class JcaEncryptorFactory
     }
 
     @Override
-    protected boolean validEncryptorSpec(final GordianNewEncryptorSpec pSpec) {
+    protected boolean validEncryptorSpec(final GordianEncryptorSpec pSpec) {
         /* validate the encryptorSpec */
         if (!super.validEncryptorSpec(pSpec)) {
             return false;
@@ -90,8 +90,8 @@ public class JcaEncryptorFactory
             case COMPOSITE:
                 return true;
             case SM2:
-                final GordianNewSM2EncryptionSpec mySpec = myEncSpec.getSM2EncryptionSpec();
-                return mySpec != null && mySpec.getEncryptionType() == GordianNewSM2EncryptionType.C1C2C3;
+                final GordianSM2EncryptionSpec mySpec = myEncSpec.getSM2EncryptionSpec();
+                return mySpec != null && mySpec.getEncryptionType() == GordianSM2EncryptionType.C1C2C3;
             default:
                 return false;
         }

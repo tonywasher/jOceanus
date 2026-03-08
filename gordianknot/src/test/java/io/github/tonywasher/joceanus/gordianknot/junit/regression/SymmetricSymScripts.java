@@ -24,13 +24,13 @@ import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherParamet
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianKeyedCipher;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymAEADCipher;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymCipher;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewCipherMode;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewCipherSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewPBESpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewPadding;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymCipherSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymCipherSpecBuilder;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianCipherMode;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianPBESpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymCipherSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianPadding;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKey;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKeyLengths;
@@ -210,7 +210,7 @@ public class SymmetricSymScripts {
         final GordianFactory myFactory = pCipherSpec.getFactory();
         final GordianCoreSymCipherSpec mySpec = pCipherSpec.getSpec();
         final GordianCipherFactory myCipherFactory = myFactory.getCipherFactory();
-        final GordianKey<GordianNewSymKeySpec> myKey = pCipherSpec.getKey();
+        final GordianKey<GordianSymKeySpec> myKey = pCipherSpec.getKey();
 
         /* Access Data */
         final byte[] myTestData = getSymCipherTestData(mySpec);
@@ -244,7 +244,7 @@ public class SymmetricSymScripts {
 
         /* If we need to process in blocks but have no padding */
         if (pSpec.getCoreCipherMode().hasPadding()
-                && GordianNewPadding.NONE.equals(pSpec.getPadding())) {
+                && GordianPadding.NONE.equals(pSpec.getPadding())) {
             /* Limit test data to multiple of blocks */
             final int myBlockLen = pSpec.getBlockLength().getByteLength();
             final int myDataLen = myBlockLen * (myTestData.length / myBlockLen);
@@ -267,7 +267,7 @@ public class SymmetricSymScripts {
         final GordianCipherFactory myCipherFactory = myFactory.getCipherFactory();
         final GordianSymCipher myCipher1 = myCipherFactory.createSymKeyCipher(mySpec);
         final GordianSymCipher myCipher2 = myCipherFactory.createSymKeyCipher(mySpec);
-        final GordianKey<GordianNewSymKeySpec> myKey = pCipherSpec.getKey();
+        final GordianKey<GordianSymKeySpec> myKey = pCipherSpec.getKey();
 
         /* Access Data */
         final byte[] myBytes = getSymCipherTestData(mySpec);
@@ -327,7 +327,7 @@ public class SymmetricSymScripts {
         final GordianFactory myFactory = pCipherSpec.getFactory();
         final FactorySymCipherSpec myOwner = pCipherSpec.getOwner();
         final GordianCoreSymCipherSpec myCipherSpec = myOwner.getSpec();
-        final GordianNewPBESpec myPBESpec = pCipherSpec.getSpec();
+        final GordianPBESpec myPBESpec = pCipherSpec.getSpec();
         final GordianCipherFactory myCipherFactory = myFactory.getCipherFactory();
 
         /* Access Data */
@@ -367,23 +367,23 @@ public class SymmetricSymScripts {
         final GordianCoreSymCipherSpec mySpec = pCipherSpec.getSpec();
         final GordianCipherFactory myCipherFactory = myFactory.getCipherFactory();
         final GordianCipherFactory myPartnerFactory = myPartner.getCipherFactory();
-        final GordianKey<GordianNewSymKeySpec> myKey = pCipherSpec.getKey();
-        final GordianKey<GordianNewSymKeySpec> myPartnerKey = pCipherSpec.getPartnerKey();
+        final GordianKey<GordianSymKeySpec> myKey = pCipherSpec.getKey();
+        final GordianKey<GordianSymKeySpec> myPartnerKey = pCipherSpec.getPartnerKey();
 
         /* Access Data */
         final byte[] myTestData = SymmetricTest.getTestData();
 
         /* Create the Spec */
-        final GordianKeyedCipher<GordianNewSymKeySpec> myCipher = myCipherFactory.createSymKeyCipher(mySpec);
+        final GordianKeyedCipher<GordianSymKeySpec> myCipher = myCipherFactory.createSymKeyCipher(mySpec);
         GordianCipherParameters myParms = GordianCipherParameters.keyWithRandomNonce(myKey);
         myCipher.initForEncrypt(myParms);
         if (!mySpec.getCoreCipherMode().hasPadding()
-                || !GordianNewPadding.NONE.equals(mySpec.getPadding())) {
+                || !GordianPadding.NONE.equals(mySpec.getPadding())) {
             /* Check encryption */
             final byte[] myIV = myCipher.getInitVector();
             myParms = GordianCipherParameters.keyAndNonce(myPartnerKey, myIV);
             final byte[] myEncrypted = myCipher.finish(myTestData);
-            final GordianKeyedCipher<GordianNewSymKeySpec> myPartnerCipher = myPartnerFactory.createSymKeyCipher(mySpec);
+            final GordianKeyedCipher<GordianSymKeySpec> myPartnerCipher = myPartnerFactory.createSymKeyCipher(mySpec);
             myPartnerCipher.initForDecrypt(myParms);
             final byte[] myResult = myPartnerCipher.finish(myEncrypted);
             Assertions.assertArrayEquals(myTestData, myResult, "Failed to encrypt/decrypt");
@@ -401,7 +401,7 @@ public class SymmetricSymScripts {
         final GordianFactory myFactory = pCipherSpec.getFactory();
         final GordianCoreSymCipherSpec mySpec = pCipherSpec.getSpec();
         final GordianCipherFactory myCipherFactory = myFactory.getCipherFactory();
-        final GordianKey<GordianNewSymKeySpec> myKey = pCipherSpec.getKey();
+        final GordianKey<GordianSymKeySpec> myKey = pCipherSpec.getKey();
 
         /* Access Data */
         final byte[] myTestData = SymmetricTest.getTestData();
@@ -438,11 +438,11 @@ public class SymmetricSymScripts {
         /* Access details */
         final GordianFactory myFactory = pCipherSpec.getFactory();
         final GordianFactory myPartner = pCipherSpec.getPartner();
-        final GordianNewSymCipherSpec mySpec = pCipherSpec.getSpec();
+        final GordianSymCipherSpec mySpec = pCipherSpec.getSpec();
         final GordianCipherFactory myCipherFactory = myFactory.getCipherFactory();
         final GordianCipherFactory myPartnerFactory = myPartner.getCipherFactory();
-        final GordianKey<GordianNewSymKeySpec> myKey = pCipherSpec.getKey();
-        final GordianKey<GordianNewSymKeySpec> myPartnerKey = pCipherSpec.getPartnerKey();
+        final GordianKey<GordianSymKeySpec> myKey = pCipherSpec.getKey();
+        final GordianKey<GordianSymKeySpec> myPartnerKey = pCipherSpec.getPartnerKey();
 
         /* Encrypt Data */
         final byte[] myTestData = SymmetricTest.getTestData();
@@ -473,7 +473,7 @@ public class SymmetricSymScripts {
         /* Access details */
         final GordianFactory myFactory = pKeySpec.getFactory();
         final GordianCipherFactory myCipherFactory = myFactory.getCipherFactory();
-        final GordianKey<GordianNewSymKeySpec> mySymKey = pKeySpec.getKey();
+        final GordianKey<GordianSymKeySpec> mySymKey = pKeySpec.getKey();
 
         /* Access Data */
         final byte[] myTestData = SymmetricTest.getTestData();
@@ -487,7 +487,7 @@ public class SymmetricSymScripts {
 
         /* Check wrapping key */
         myWrapped = myWrapper.secureKey(mySymKey);
-        final GordianKey<GordianNewSymKeySpec> myResultKey = myWrapper.deriveKey(myWrapped, mySymKey.getKeyType());
+        final GordianKey<GordianSymKeySpec> myResultKey = myWrapper.deriveKey(myWrapped, mySymKey.getKeyType());
         Assertions.assertEquals(mySymKey, myResultKey, "Failed to wrap/unwrap key");
         Assertions.assertEquals(myWrapper.getKeyWrapLength(mySymKey), myWrapped.length, "Incorrect wrapped length");
     }
@@ -504,8 +504,8 @@ public class SymmetricSymScripts {
         final GordianFactory myPartner = pKeySpec.getPartner();
         final GordianCipherFactory myCipherFactory = myFactory.getCipherFactory();
         final GordianCipherFactory myPartnerFactory = myPartner.getCipherFactory();
-        final GordianKey<GordianNewSymKeySpec> mySymKey = pKeySpec.getKey();
-        final GordianKey<GordianNewSymKeySpec> myPartnerKey = pKeySpec.getPartnerKey();
+        final GordianKey<GordianSymKeySpec> mySymKey = pKeySpec.getKey();
+        final GordianKey<GordianSymKeySpec> myPartnerKey = pKeySpec.getPartnerKey();
 
         /* Access Data */
         final byte[] myTestData = SymmetricTest.getTestData();
@@ -520,7 +520,7 @@ public class SymmetricSymScripts {
 
         /* Check wrapping key */
         myWrapped = myWrapper.secureKey(mySymKey);
-        final GordianKey<GordianNewSymKeySpec> myResultKey = myPartnerWrapper.deriveKey(myWrapped, mySymKey.getKeyType());
+        final GordianKey<GordianSymKeySpec> myResultKey = myPartnerWrapper.deriveKey(myWrapped, mySymKey.getKeyType());
         Assertions.assertEquals(myPartnerKey, myResultKey, "Failed to wrap/unwrap key");
         Assertions.assertEquals(myWrapper.getKeyWrapLength(mySymKey), myWrapped.length, "Incorrect wrapped length");
     }
@@ -536,13 +536,13 @@ public class SymmetricSymScripts {
         final GordianFactory myFactory = pKeySpec.getFactory();
         final GordianCoreSymKeySpec mySpec = pKeySpec.getSpec();
         final GordianCipherFactory myCipherFactory = myFactory.getCipherFactory();
-        final GordianKey<GordianNewSymKeySpec> mySymKey = pKeySpec.getKey();
+        final GordianKey<GordianSymKeySpec> mySymKey = pKeySpec.getKey();
         final int myLen = mySpec.getBlockLength().getByteLength();
 
         /* Build the cipher */
         byte[] myBytes = new byte[myLen];
-        final GordianNewSymCipherSpecBuilder myBuilder = myCipherFactory.newSymCipherSpecBuilder();
-        final GordianNewSymCipherSpec myCipherSpec = myBuilder.symCipher(mySpec, GordianNewCipherMode.ECB, GordianNewPadding.NONE);
+        final GordianSymCipherSpecBuilder myBuilder = myCipherFactory.newSymCipherSpecBuilder();
+        final GordianSymCipherSpec myCipherSpec = myBuilder.symCipher(mySpec, GordianCipherMode.ECB, GordianPadding.NONE);
         final GordianSymCipher myCipher = myCipherFactory.createSymKeyCipher(myCipherSpec);
 
         /* Start loop */
@@ -591,7 +591,7 @@ public class SymmetricSymScripts {
         Assertions.assertNotNull(myId, "Unknown AlgorithmId for " + pSpec.getSpec());
 
         /* Check unique mapping */
-        final GordianNewCipherSpec<?> mySpec = myFactory.getCipherSpecForIdentifier(myId);
+        final GordianCipherSpec<?> mySpec = myFactory.getCipherSpecForIdentifier(myId);
         Assertions.assertEquals(pSpec.getSpec(), mySpec, "Invalid mapping for  " + pSpec.getSpec());
     }
 }

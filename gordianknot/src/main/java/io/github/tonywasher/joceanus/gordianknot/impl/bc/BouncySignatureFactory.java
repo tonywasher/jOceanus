@@ -18,7 +18,7 @@ package io.github.tonywasher.joceanus.gordianknot.impl.bc;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignature;
-import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianNewSignatureSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyDSAKeyPair.BouncyDSASignature;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyDSTUKeyPair.BouncyDSTUSignature;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyEdDSAKeyPair.BouncyEdDSASignature;
@@ -58,12 +58,12 @@ public class BouncySignatureFactory
     }
 
     @Override
-    public Predicate<GordianNewSignatureSpec> supportedKeyPairSignatures() {
+    public Predicate<GordianSignatureSpec> supportedKeyPairSignatures() {
         return this::validSignatureSpec;
     }
 
     @Override
-    public GordianSignature createSigner(final GordianNewSignatureSpec pSignatureSpec) throws GordianException {
+    public GordianSignature createSigner(final GordianSignatureSpec pSignatureSpec) throws GordianException {
         /* Check validity of Signature */
         checkSignatureSpec(pSignatureSpec);
 
@@ -78,7 +78,7 @@ public class BouncySignatureFactory
      * @return the Signer
      * @throws GordianException on error
      */
-    private GordianSignature getBCSigner(final GordianNewSignatureSpec pSignatureSpec) throws GordianException {
+    private GordianSignature getBCSigner(final GordianSignatureSpec pSignatureSpec) throws GordianException {
         switch (pSignatureSpec.getKeyPairType()) {
             case RSA:
                 return new BouncyRSASignature(getFactory(), pSignatureSpec);

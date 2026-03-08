@@ -16,11 +16,11 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.api.cipher;
 
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeySpec;
 
 /**
  * GordianKnot symKey Cipher.
  */
 public interface GordianSymCipher
-        extends GordianKeyedCipher<GordianNewSymKeySpec> {
+        extends GordianKeyedCipher<GordianSymKeySpec> {
 }

@@ -17,9 +17,11 @@ final GordianFactory myFactory = ...;
 final GordianKeyStore myStore = ...;
 
 /* Create a gateway for the store */
-final GordianKeyStoreFactory myKSFactory = myFactory.getAsyncFactory().getKeyStoreFactory();
-final GordianKeyStoreManager myMgr = myKSFactory.createKeyStoreManager(myStore);
-final GordianKeyStoreGateway myGateway = myKSFactory.createKeyStoreGateway(myMgr);
+final GordianKeyStoreFactory myKeyStoreFactory = myFactory.getAsyncFactory().getKeyStoreFactory();
+final GordianKeyPairFactory myKeyPairFactory = myFactory.getAsyncFactory().getKeyPairFactory();
+final GordianKeyStoreManager myMgr = myKeyStoreFactory.createKeyStoreManager(myStore);
+final GordianKeyStoreGateway myGateway = myKeyStoreFactory.createKeyStoreGateway(myMgr);
+final GordianKeyPairSpecBuilder myKeyPairBuilder = myKeyPairFactory.newKeyPairSpecBuilder()
 
 /* Configure gateway */
 myGateway.setPasswordResolver(name -> passwordForNameInStore);
@@ -27,7 +29,7 @@ myGateway.setCertifier(nameOfCertifierKeyPairInStore);
 myGateway.setMACSecretResolver(name -> "Some secret to be shared between gateways");
 
 /* Create a signature keyPair */
-final GordianKeyPairSpec mySpec = GordianKeyPairSpecBuilder.ed448();
+final GordianKeyPairSpec mySpec = myKeyPairBuilder.ed448();
 final X500Name myX500Name = ...;
 final String myName = ...;
 final byte[] myPassword = ...;
@@ -66,9 +68,11 @@ final GordianFactory myFactory = ...;
 final GordianKeyStore myStore = ...;
 
 /* Create a gateway for the store */
-final GordianKeyStoreFactory myKSFactory = myFactory.getAsyncFactory().getKeyStoreFactory();
-final GordianKeyStoreManager myMgr = myKSFactory.createKeyStoreManager(myStore);
-final GordianKeyStoreGateway myGateway = myKSFactory.createKeyStoreGateway(myMgr);
+final GordianKeyStoreFactory myKeyStoreFactory = myFactory.getAsyncFactory().getKeyStoreFactory();
+final GordianKeyPairFactory myKeyPairFactory = myFactory.getAsyncFactory().getKeyPairFactory();
+final GordianKeyStoreManager myMgr = myKeyStoreFactory.createKeyStoreManager(myStore);
+final GordianKeyStoreGateway myGateway = myKeyStoreFactory.createKeyStoreGateway(myMgr);
+final GordianKeyPairSpecBuilder myKeyPairBuilder = myKeyPairFactory.newKeyPairSpecBuilder()
 
 /* Configure gateway */
 myGateway.setPasswordResolver(name -> passwordForNameInStore);
@@ -76,7 +80,7 @@ myGateway.setCertifier(nameOfCertifierKeyPairInStore);
 myGateway.setMACSecretResolver(name -> "Some secret to be shared between gateways");
 
 /* Create an agreement keyPair */
-final GordianKeyPairSpec mySpec = GordianKeyPairSpecBuilder.x448();
+final GordianKeyPairSpec mySpec = myKeyPairBuilder.x448();
 final X500Name myX500Name = ...;
 final String myName = ...;
 final byte[] myPassword = ...;

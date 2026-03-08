@@ -17,11 +17,11 @@
 
 package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.agree;
 
-import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianNewAgreementKDF;
-import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianNewAgreementSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianNewAgreementType;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairType;
+import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementKDF;
+import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementType;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairType;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairSpec;
 
 import java.util.Objects;
@@ -30,7 +30,7 @@ import java.util.Objects;
  * KeyPair Agreement Specification.
  */
 public class GordianCoreAgreementSpec
-        implements GordianNewAgreementSpec {
+        implements GordianAgreementSpec {
     /**
      * The Separator.
      */
@@ -73,9 +73,9 @@ public class GordianCoreAgreementSpec
      * @param pAgreementType the agreement type
      * @param pKDFType       the KDF type
      */
-    GordianCoreAgreementSpec(final GordianNewKeyPairSpec pKeyPairSpec,
-                             final GordianNewAgreementType pAgreementType,
-                             final GordianNewAgreementKDF pKDFType) {
+    GordianCoreAgreementSpec(final GordianKeyPairSpec pKeyPairSpec,
+                             final GordianAgreementType pAgreementType,
+                             final GordianAgreementKDF pKDFType) {
         this(pKeyPairSpec, pAgreementType, pKDFType, false);
     }
 
@@ -87,9 +87,9 @@ public class GordianCoreAgreementSpec
      * @param pKDFType       the KDF type
      * @param pConfirm       with key confirmation
      */
-    GordianCoreAgreementSpec(final GordianNewKeyPairSpec pKeyPairSpec,
-                             final GordianNewAgreementType pAgreementType,
-                             final GordianNewAgreementKDF pKDFType,
+    GordianCoreAgreementSpec(final GordianKeyPairSpec pKeyPairSpec,
+                             final GordianAgreementType pAgreementType,
+                             final GordianAgreementKDF pKDFType,
                              final boolean pConfirm) {
         theKeyPairSpec = (GordianCoreKeyPairSpec) pKeyPairSpec;
         theAgreementType = GordianCoreAgreementType.mapCoreType(pAgreementType);
@@ -99,7 +99,7 @@ public class GordianCoreAgreementSpec
     }
 
     @Override
-    public GordianNewKeyPairSpec getKeyPairSpec() {
+    public GordianKeyPairSpec getKeyPairSpec() {
         return theKeyPairSpec;
     }
 
@@ -113,7 +113,7 @@ public class GordianCoreAgreementSpec
     }
 
     @Override
-    public GordianNewAgreementType getAgreementType() {
+    public GordianAgreementType getAgreementType() {
         return theAgreementType.getType();
     }
 
@@ -127,7 +127,7 @@ public class GordianCoreAgreementSpec
     }
 
     @Override
-    public GordianNewAgreementKDF getKDFType() {
+    public GordianAgreementKDF getKDFType() {
         return theKDFType.getKDF();
     }
 
@@ -155,7 +155,7 @@ public class GordianCoreAgreementSpec
      * @return true/false
      */
     public boolean isSupported() {
-        final GordianNewKeyPairType myType = theKeyPairSpec.getKeyPairType();
+        final GordianKeyPairType myType = theKeyPairSpec.getKeyPairType();
         return theAgreementType.isSupported(myType)
                 && theKDFType.isSupported(myType, theAgreementType.getType());
     }
@@ -209,7 +209,7 @@ public class GordianCoreAgreementSpec
                         + SEP + theAgreementType;
 
                 /* Add KDF type if present */
-                if (GordianNewAgreementKDF.NONE != theKDFType.getKDF()) {
+                if (GordianAgreementKDF.NONE != theKDFType.getKDF()) {
                     theName += SEP + theKDFType;
                 }
 

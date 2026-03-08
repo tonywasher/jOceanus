@@ -17,9 +17,9 @@
 package io.github.tonywasher.joceanus.gordianknot.impl.bc;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairType;
-import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianNewSignatureSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairType;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.sign.GordianCoreSignature;
@@ -79,7 +79,7 @@ public final class BouncySignature {
          * @throws GordianException on error
          */
         BouncyDigestSignature(final GordianBaseFactory pFactory,
-                              final GordianNewSignatureSpec pSpec) throws GordianException {
+                              final GordianSignatureSpec pSpec) throws GordianException {
             super(pFactory, pSpec);
             theDigest = pSpec.getSignatureSpec() == null
                     ? new BouncyDigest(null, new NullDigest())
@@ -94,7 +94,7 @@ public final class BouncySignature {
          * @param pDigest  the digest
          */
         BouncyDigestSignature(final GordianBaseFactory pFactory,
-                              final GordianNewSignatureSpec pSpec,
+                              final GordianSignatureSpec pSpec,
                               final Digest pDigest) {
             super(pFactory, pSpec);
             theDigest = new BouncyDigest(((GordianCoreSignatureSpec) pSpec).getDigestSpec(), pDigest);
@@ -106,7 +106,7 @@ public final class BouncySignature {
          * @param pSpec the digestSpec.
          * @throws GordianException on error
          */
-        protected void setDigest(final GordianNewDigestSpec pSpec) throws GordianException {
+        protected void setDigest(final GordianDigestSpec pSpec) throws GordianException {
             theDigest = pSpec == null
                     ? new BouncyDigest(null, new NullDigest())
                     : (BouncyDigest) getDigestFactory().createDigest(pSpec);
@@ -219,9 +219,9 @@ public final class BouncySignature {
      * @throws GordianException on error
      */
     static DSA getDSASigner(final GordianBaseFactory pFactory,
-                            final GordianNewSignatureSpec pSpec) throws GordianException {
+                            final GordianSignatureSpec pSpec) throws GordianException {
         /* Note if we are DSA */
-        final boolean isDSA = GordianNewKeyPairType.DSA.equals(pSpec.getKeyPairType());
+        final boolean isDSA = GordianKeyPairType.DSA.equals(pSpec.getKeyPairType());
 
         /* Switch on signature type */
         switch (pSpec.getSignatureType()) {

@@ -18,7 +18,7 @@ package io.github.tonywasher.joceanus.gordianknot.api.sign;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianConsumer;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
-import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianNewSignatureSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpec;
 
 /**
  * GordianKnot base for signature.
@@ -30,7 +30,7 @@ public interface GordianSignature
      *
      * @return the Spec
      */
-    GordianNewSignatureSpec getSignatureSpec();
+    GordianSignatureSpec getSignatureSpec();
 
     /**
      * Initialise for signature.

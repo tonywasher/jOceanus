@@ -23,13 +23,13 @@ import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianCertificate;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamCipher;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymCipher;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamCipherSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymCipherSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactoryType;
 import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySet;
-import io.github.tonywasher.joceanus.gordianknot.api.keyset.spec.GordianNewKeySetSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianNewSignatureSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keyset.spec.GordianKeySetSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianLogicException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.agree.GordianCoreAgreementSpec;
@@ -146,21 +146,21 @@ public class GordianCoreAgreement
     @Override
     public GordianKeySet getKeySetResult() {
         return GordianAgreementStatus.RESULT_AVAILABLE.equals(theState.getStatus())
-                && theState.getResultType() instanceof GordianNewKeySetSpec
+                && theState.getResultType() instanceof GordianKeySetSpec
                 ? (GordianKeySet) theState.getResult() : null;
     }
 
     @Override
     public GordianSymCipher[] getSymCipherPairResult() {
         return GordianAgreementStatus.RESULT_AVAILABLE.equals(theState.getStatus())
-                && theState.getResultType() instanceof GordianNewSymCipherSpec
+                && theState.getResultType() instanceof GordianSymCipherSpec
                 ? (GordianSymCipher[]) theState.getResult() : null;
     }
 
     @Override
     public GordianStreamCipher[] getStreamCipherPairResult() {
         return GordianAgreementStatus.RESULT_AVAILABLE.equals(theState.getStatus())
-                && theState.getResultType() instanceof GordianNewStreamCipherSpec
+                && theState.getResultType() instanceof GordianStreamCipherSpec
                 ? (GordianStreamCipher[]) theState.getResult() : null;
     }
 
@@ -252,7 +252,7 @@ public class GordianCoreAgreement
      * @param pSigner   the signer certificate
      * @throws GordianException on error
      */
-    void setSignerCertificate(final GordianNewSignatureSpec pSignSpec,
+    void setSignerCertificate(final GordianSignatureSpec pSignSpec,
                               final GordianCertificate pSigner) throws GordianException {
         theBuilder.setSignSpec(pSignSpec)
                 .setSignerCertificate(pSigner);

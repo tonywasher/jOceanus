@@ -18,9 +18,9 @@ package io.github.tonywasher.joceanus.gordianknot.impl.bc;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignParams;
-import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianNewSignatureSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPublicKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyStateAwareKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyStateAwarePrivateKey;
@@ -76,7 +76,7 @@ public final class BouncyLMSKeyPair {
          * @param pKeySpec   the keySpec
          * @param pPublicKey the public key
          */
-        BouncyLMSPublicKey(final GordianNewKeyPairSpec pKeySpec,
+        BouncyLMSPublicKey(final GordianKeyPairSpec pKeySpec,
                            final LMSPublicKeyParameters pPublicKey) {
             super(pKeySpec, pPublicKey);
         }
@@ -103,7 +103,7 @@ public final class BouncyLMSKeyPair {
          * @param pKeySpec    the keySpec
          * @param pPrivateKey the private key
          */
-        BouncyLMSPrivateKey(final GordianNewKeyPairSpec pKeySpec,
+        BouncyLMSPrivateKey(final GordianKeyPairSpec pKeySpec,
                             final LMSPrivateKeyParameters pPrivateKey) {
             super(pKeySpec, pPrivateKey);
         }
@@ -146,7 +146,7 @@ public final class BouncyLMSKeyPair {
          * @param pKeySpec the keySpec
          */
         BouncyLMSKeyPairGenerator(final GordianBaseFactory pFactory,
-                                  final GordianNewKeyPairSpec pKeySpec) {
+                                  final GordianKeyPairSpec pKeySpec) {
             /* Initialise underlying class */
             super(pFactory, pKeySpec);
 
@@ -272,7 +272,7 @@ public final class BouncyLMSKeyPair {
          * @param pKeySpec   the keySpec
          * @param pPublicKey the public key
          */
-        BouncyHSSPublicKey(final GordianNewKeyPairSpec pKeySpec,
+        BouncyHSSPublicKey(final GordianKeyPairSpec pKeySpec,
                            final HSSPublicKeyParameters pPublicKey) {
             super(pKeySpec, pPublicKey);
         }
@@ -299,7 +299,7 @@ public final class BouncyLMSKeyPair {
          * @param pKeySpec    the keySpec
          * @param pPrivateKey the private key
          */
-        BouncyHSSPrivateKey(final GordianNewKeyPairSpec pKeySpec,
+        BouncyHSSPrivateKey(final GordianKeyPairSpec pKeySpec,
                             final HSSPrivateKeyParameters pPrivateKey) {
             super(pKeySpec, pPrivateKey);
         }
@@ -342,7 +342,7 @@ public final class BouncyLMSKeyPair {
          * @param pKeySpec the keySpec
          */
         BouncyHSSKeyPairGenerator(final GordianBaseFactory pFactory,
-                                  final GordianNewKeyPairSpec pKeySpec) {
+                                  final GordianKeyPairSpec pKeySpec) {
             /* Initialise underlying class */
             super(pFactory, pKeySpec);
 
@@ -486,7 +486,7 @@ public final class BouncyLMSKeyPair {
          * @throws GordianException on error
          */
         BouncyLMSSignature(final GordianBaseFactory pFactory,
-                           final GordianNewSignatureSpec pSpec) throws GordianException {
+                           final GordianSignatureSpec pSpec) throws GordianException {
             /* Initialise underlying class */
             super(pFactory, pSpec);
 

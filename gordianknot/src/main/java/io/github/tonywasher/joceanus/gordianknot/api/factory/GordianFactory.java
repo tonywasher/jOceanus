@@ -23,7 +23,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySet;
 import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySetFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.lock.GordianLock;
 import io.github.tonywasher.joceanus.gordianknot.api.lock.GordianLockFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.lock.spec.GordianNewPasswordLockSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.lock.spec.GordianPasswordLockSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.random.GordianRandomFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.zip.GordianZipFactory;
@@ -135,7 +135,7 @@ public interface GordianFactory {
      * @throws GordianException on error
      */
     GordianFactoryLock newFactoryLock(GordianFactory pFactoryToLock,
-                                      GordianNewPasswordLockSpec pLockSpec,
+                                      GordianPasswordLockSpec pLockSpec,
                                       char[] pPassword) throws GordianException;
 
     /**
@@ -158,7 +158,7 @@ public interface GordianFactory {
      * @return the factoryLock
      * @throws GordianException on error
      */
-    GordianFactoryLock newFactoryLock(GordianNewPasswordLockSpec pLockSpec,
+    GordianFactoryLock newFactoryLock(GordianPasswordLockSpec pLockSpec,
                                       GordianFactoryType pFactoryType,
                                       char[] pPassword) throws GordianException;
 

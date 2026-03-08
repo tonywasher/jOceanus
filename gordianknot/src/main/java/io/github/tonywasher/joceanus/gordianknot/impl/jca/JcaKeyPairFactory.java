@@ -18,9 +18,9 @@ package io.github.tonywasher.joceanus.gordianknot.impl.jca;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairGenerator;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairType;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewNTRUPrimeSpec.GordianNewNTRUPrimeType;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairType;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNTRUPrimeSpec.GordianNTRUPrimeType;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseData;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
@@ -67,7 +67,7 @@ public class JcaKeyPairFactory
     /**
      * KeyPairGenerator Cache.
      */
-    private final Map<GordianNewKeyPairSpec, JcaKeyPairGenerator> theCache;
+    private final Map<GordianKeyPairSpec, JcaKeyPairGenerator> theCache;
 
     /**
      * Constructor.
@@ -84,9 +84,9 @@ public class JcaKeyPairFactory
     }
 
     @Override
-    public GordianKeyPairGenerator getKeyPairGenerator(final GordianNewKeyPairSpec pKeySpec) throws GordianException {
+    public GordianKeyPairGenerator getKeyPairGenerator(final GordianKeyPairSpec pKeySpec) throws GordianException {
         /* Handle composite keyPairGenerator */
-        if (GordianNewKeyPairType.COMPOSITE.equals(pKeySpec.getKeyPairType())) {
+        if (GordianKeyPairType.COMPOSITE.equals(pKeySpec.getKeyPairType())) {
             return super.getKeyPairGenerator(pKeySpec);
         }
 
@@ -112,7 +112,7 @@ public class JcaKeyPairFactory
      * @return the KeyGenerator
      * @throws GordianException on error
      */
-    private JcaKeyPairGenerator getJcaKeyPairGenerator(final GordianNewKeyPairSpec pKeySpec) throws GordianException {
+    private JcaKeyPairGenerator getJcaKeyPairGenerator(final GordianKeyPairSpec pKeySpec) throws GordianException {
         final GordianCoreKeyPairSpec myKeySpec = (GordianCoreKeyPairSpec) pKeySpec;
         switch (pKeySpec.getKeyPairType()) {
             case RSA:
@@ -152,7 +152,7 @@ public class JcaKeyPairFactory
             case NTRU:
                 return new JcaNTRUKeyPairGenerator(theFactory, pKeySpec);
             case NTRUPRIME:
-                return myKeySpec.getNTRUPrimeSpec().getType() == GordianNewNTRUPrimeType.NTRUL
+                return myKeySpec.getNTRUPrimeSpec().getType() == GordianNTRUPrimeType.NTRUL
                         ? new JcaNTRULPrimeKeyPairGenerator(theFactory, pKeySpec)
                         : new JcaSNTRUPrimeKeyPairGenerator(theFactory, pKeySpec);
             case FALCON:

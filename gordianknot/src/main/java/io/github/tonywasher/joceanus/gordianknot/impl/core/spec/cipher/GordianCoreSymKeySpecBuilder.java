@@ -18,9 +18,9 @@
 package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeySpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeySpecBuilder;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeyType;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeySpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeyType;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKeyLengths;
 
 import java.util.ArrayList;
@@ -30,11 +30,11 @@ import java.util.List;
  * SymKey specification Builder.
  */
 public final class GordianCoreSymKeySpecBuilder
-        implements GordianNewSymKeySpecBuilder {
+        implements GordianSymKeySpecBuilder {
     /**
      * The type.
      */
-    private GordianNewSymKeyType theType;
+    private GordianSymKeyType theType;
 
     /**
      * The subSpec.
@@ -62,25 +62,25 @@ public final class GordianCoreSymKeySpecBuilder
     }
 
     @Override
-    public GordianNewSymKeySpecBuilder withType(final GordianNewSymKeyType pType) {
+    public GordianSymKeySpecBuilder withType(final GordianSymKeyType pType) {
         theType = pType;
         return this;
     }
 
     @Override
-    public GordianNewSymKeySpecBuilder withBlockLength(final GordianLength pBlockLength) {
+    public GordianSymKeySpecBuilder withBlockLength(final GordianLength pBlockLength) {
         theBlockLength = pBlockLength;
         return this;
     }
 
     @Override
-    public GordianNewSymKeySpecBuilder withKeyLength(final GordianLength pKeyLength) {
+    public GordianSymKeySpecBuilder withKeyLength(final GordianLength pKeyLength) {
         theKeyLength = pKeyLength;
         return this;
     }
 
     @Override
-    public GordianNewSymKeySpec build() {
+    public GordianSymKeySpec build() {
         /* Handle null type */
         if (theType == null) {
             throw new NullPointerException("symKeyType is null");
@@ -112,9 +112,9 @@ public final class GordianCoreSymKeySpecBuilder
      * @param pKeyLen the keyLength
      * @return the list
      */
-    public static List<GordianNewSymKeySpec> listAllPossibleSymKeySpecs(final GordianLength pKeyLen) {
+    public static List<GordianSymKeySpec> listAllPossibleSymKeySpecs(final GordianLength pKeyLen) {
         /* Create the array list */
-        final List<GordianNewSymKeySpec> myList = new ArrayList<>();
+        final List<GordianSymKeySpec> myList = new ArrayList<>();
 
         /* Check that the keyLength is supported */
         if (!GordianKeyLengths.isSupportedLength(pKeyLen)) {

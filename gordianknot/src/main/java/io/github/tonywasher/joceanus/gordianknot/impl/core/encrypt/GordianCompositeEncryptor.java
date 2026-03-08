@@ -19,7 +19,7 @@ package io.github.tonywasher.joceanus.gordianknot.impl.core.encrypt;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianEncryptor;
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianEncryptorFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianNewEncryptorSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianEncryptorSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianLogicException;
@@ -66,9 +66,9 @@ public class GordianCompositeEncryptor
         theEncryptors = new ArrayList<>();
 
         /* Create the signers */
-        final Iterator<GordianNewEncryptorSpec> myIterator = theSpec.encryptorSpecIterator();
+        final Iterator<GordianEncryptorSpec> myIterator = theSpec.encryptorSpecIterator();
         while (myIterator.hasNext()) {
-            final GordianNewEncryptorSpec mySpec = myIterator.next();
+            final GordianEncryptorSpec mySpec = myIterator.next();
             theEncryptors.add(theFactory.createEncryptor(mySpec));
         }
     }

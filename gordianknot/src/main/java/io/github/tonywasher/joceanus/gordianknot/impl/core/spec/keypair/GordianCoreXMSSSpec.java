@@ -18,9 +18,9 @@
 package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpecBuilder;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewXMSSSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianXMSSSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianCoreDigestSpecBuilder;
 
 import java.util.ArrayList;
@@ -33,7 +33,7 @@ import java.util.Objects;
  * XMSS KeySpec.
  */
 public class GordianCoreXMSSSpec
-        implements GordianNewXMSSSpec {
+        implements GordianXMSSSpec {
     /**
      * The Separator.
      */
@@ -42,12 +42,12 @@ public class GordianCoreXMSSSpec
     /**
      * The key type.
      */
-    private final GordianNewXMSSKeyType theKeyType;
+    private final GordianXMSSKeyType theKeyType;
 
     /**
      * The digest type.
      */
-    private final GordianNewXMSSDigestType theDigestType;
+    private final GordianXMSSDigestType theDigestType;
 
     /**
      * The height.
@@ -57,7 +57,7 @@ public class GordianCoreXMSSSpec
     /**
      * The layers.
      */
-    private final GordianNewXMSSMTLayers theLayers;
+    private final GordianXMSSMTLayers theLayers;
 
     /**
      * The Validity.
@@ -75,9 +75,9 @@ public class GordianCoreXMSSSpec
      * @param pDigestType the digestType
      * @param pHeight     the height
      */
-    GordianCoreXMSSSpec(final GordianNewXMSSDigestType pDigestType,
-                        final GordianNewXMSSHeight pHeight) {
-        this(GordianNewXMSSKeyType.XMSS, pDigestType, pHeight, null);
+    GordianCoreXMSSSpec(final GordianXMSSDigestType pDigestType,
+                        final GordianXMSSHeight pHeight) {
+        this(GordianXMSSKeyType.XMSS, pDigestType, pHeight, null);
     }
 
     /**
@@ -87,10 +87,10 @@ public class GordianCoreXMSSSpec
      * @param pHeight     the height
      * @param pLayers     the layers
      */
-    GordianCoreXMSSSpec(final GordianNewXMSSDigestType pDigestType,
-                        final GordianNewXMSSHeight pHeight,
-                        final GordianNewXMSSMTLayers pLayers) {
-        this(GordianNewXMSSKeyType.XMSSMT, pDigestType, pHeight, pLayers);
+    GordianCoreXMSSSpec(final GordianXMSSDigestType pDigestType,
+                        final GordianXMSSHeight pHeight,
+                        final GordianXMSSMTLayers pLayers) {
+        this(GordianXMSSKeyType.XMSSMT, pDigestType, pHeight, pLayers);
     }
 
     /**
@@ -101,10 +101,10 @@ public class GordianCoreXMSSSpec
      * @param pHeight     the height
      * @param pLayers     the layers
      */
-    private GordianCoreXMSSSpec(final GordianNewXMSSKeyType pKeyType,
-                                final GordianNewXMSSDigestType pDigestType,
-                                final GordianNewXMSSHeight pHeight,
-                                final GordianNewXMSSMTLayers pLayers) {
+    private GordianCoreXMSSSpec(final GordianXMSSKeyType pKeyType,
+                                final GordianXMSSDigestType pDigestType,
+                                final GordianXMSSHeight pHeight,
+                                final GordianXMSSMTLayers pLayers) {
         theKeyType = pKeyType;
         theDigestType = pDigestType;
         theHeight = GordianCoreXMSSHeight.mapCoreHeight(pHeight);
@@ -113,17 +113,17 @@ public class GordianCoreXMSSSpec
     }
 
     @Override
-    public GordianNewXMSSKeyType getKeyType() {
+    public GordianXMSSKeyType getKeyType() {
         return theKeyType;
     }
 
     @Override
-    public GordianNewXMSSDigestType getDigestType() {
+    public GordianXMSSDigestType getDigestType() {
         return theDigestType;
     }
 
     @Override
-    public GordianNewXMSSHeight getHeight() {
+    public GordianXMSSHeight getHeight() {
         return theHeight.getHeight();
     }
 
@@ -137,7 +137,7 @@ public class GordianCoreXMSSSpec
     }
 
     @Override
-    public GordianNewXMSSMTLayers getLayers() {
+    public GordianXMSSMTLayers getLayers() {
         return theLayers;
     }
 
@@ -152,7 +152,7 @@ public class GordianCoreXMSSSpec
      * @return true/false
      */
     public boolean isMT() {
-        return theKeyType == GordianNewXMSSKeyType.XMSSMT;
+        return theKeyType == GordianXMSSKeyType.XMSSMT;
     }
 
     /**
@@ -190,8 +190,8 @@ public class GordianCoreXMSSSpec
      *
      * @return the digestSpec
      */
-    public GordianNewDigestSpec getDigestSpec() {
-        final GordianNewDigestSpecBuilder myBuilder = GordianCoreDigestSpecBuilder.newInstance();
+    public GordianDigestSpec getDigestSpec() {
+        final GordianDigestSpecBuilder myBuilder = GordianCoreDigestSpecBuilder.newInstance();
         switch (theDigestType) {
             case SHA256:
                 return myBuilder.sha2(GordianLength.LEN_256);
@@ -256,12 +256,12 @@ public class GordianCoreXMSSSpec
      *
      * @return the list
      */
-    public static List<GordianNewXMSSSpec> listAllPossibleSpecs() {
+    public static List<GordianXMSSSpec> listAllPossibleSpecs() {
         /* Create the list */
-        final List<GordianNewXMSSSpec> mySpecs = new ArrayList<>();
+        final List<GordianXMSSSpec> mySpecs = new ArrayList<>();
 
         /* Add the specs */
-        for (final GordianNewXMSSDigestType myType : GordianNewXMSSDigestType.values()) {
+        for (final GordianXMSSDigestType myType : GordianXMSSDigestType.values()) {
             mySpecs.addAll(listPossibleSpecs(myType));
         }
 
@@ -275,21 +275,21 @@ public class GordianCoreXMSSSpec
      * @param pDigestType the digestType
      * @return the list
      */
-    public static List<GordianNewXMSSSpec> listPossibleSpecs(final GordianNewXMSSDigestType pDigestType) {
+    public static List<GordianXMSSSpec> listPossibleSpecs(final GordianXMSSDigestType pDigestType) {
         /* Create the list */
-        final List<GordianNewXMSSSpec> mySpecs = new ArrayList<>();
+        final List<GordianXMSSSpec> mySpecs = new ArrayList<>();
 
         /* For all heights */
         for (final GordianCoreXMSSHeight myHeight : GordianCoreXMSSHeight.values()) {
             /* Add XMSS Spec if valid */
-            if (myHeight.validForKeyType(GordianNewXMSSKeyType.XMSS)) {
+            if (myHeight.validForKeyType(GordianXMSSKeyType.XMSS)) {
                 mySpecs.add(new GordianCoreXMSSSpec(pDigestType, myHeight.getHeight()));
             }
 
             /* Add XMSSMT Specs if valid */
-            if (myHeight.validForKeyType(GordianNewXMSSKeyType.XMSSMT)) {
+            if (myHeight.validForKeyType(GordianXMSSKeyType.XMSSMT)) {
                 /* For all layers */
-                for (final GordianNewXMSSMTLayers myLayers : myHeight.getValidLayers()) {
+                for (final GordianXMSSMTLayers myLayers : myHeight.getValidLayers()) {
                     mySpecs.add(new GordianCoreXMSSSpec(pDigestType, myHeight.getHeight(), myLayers));
                 }
             }
@@ -306,7 +306,7 @@ public class GordianCoreXMSSSpec
         /**
          * The specMap.
          */
-        private static final Map<GordianNewXMSSHeight, GordianCoreXMSSHeight> HEIGHTMAP = newHeightMap();
+        private static final Map<GordianXMSSHeight, GordianCoreXMSSHeight> HEIGHTMAP = newHeightMap();
 
         /**
          * The heightArray.
@@ -316,19 +316,19 @@ public class GordianCoreXMSSSpec
         /**
          * The Height.
          */
-        private final GordianNewXMSSHeight theHeight;
+        private final GordianXMSSHeight theHeight;
 
         /**
          * The Layers.
          */
-        private final GordianNewXMSSMTLayers[] theLayers;
+        private final GordianXMSSMTLayers[] theLayers;
 
         /**
          * Constructor.
          *
          * @param pHeight the height
          */
-        private GordianCoreXMSSHeight(final GordianNewXMSSHeight pHeight) {
+        private GordianCoreXMSSHeight(final GordianXMSSHeight pHeight) {
             theHeight = pHeight;
             theLayers = getValidLayers();
         }
@@ -338,7 +338,7 @@ public class GordianCoreXMSSSpec
          *
          * @return the spec
          */
-        public GordianNewXMSSHeight getHeight() {
+        public GordianXMSSHeight getHeight() {
             return theHeight;
         }
 
@@ -353,14 +353,14 @@ public class GordianCoreXMSSSpec
          * @param pKeyType the keyType
          * @return true/false
          */
-        boolean validForKeyType(final GordianNewXMSSKeyType pKeyType) {
+        boolean validForKeyType(final GordianXMSSKeyType pKeyType) {
             switch (theHeight) {
                 case H10:
                 case H16:
-                    return pKeyType == GordianNewXMSSKeyType.XMSS;
+                    return pKeyType == GordianXMSSKeyType.XMSS;
                 case H40:
                 case H60:
-                    return pKeyType == GordianNewXMSSKeyType.XMSSMT;
+                    return pKeyType == GordianXMSSKeyType.XMSSMT;
                 default:
                     return true;
             }
@@ -372,9 +372,9 @@ public class GordianCoreXMSSSpec
          * @param pLayers the layers
          * @return true/false
          */
-        boolean hasValidLayers(final GordianNewXMSSMTLayers pLayers) {
+        boolean hasValidLayers(final GordianXMSSMTLayers pLayers) {
             if (pLayers != null) {
-                for (GordianNewXMSSMTLayers myLayers : theLayers) {
+                for (GordianXMSSMTLayers myLayers : theLayers) {
                     if (myLayers == pLayers) {
                         return true;
                     }
@@ -389,17 +389,17 @@ public class GordianCoreXMSSSpec
          *
          * @return the height
          */
-        private GordianNewXMSSMTLayers[] getValidLayers() {
+        private GordianXMSSMTLayers[] getValidLayers() {
             switch (theHeight) {
                 case H10:
                 case H16:
-                    return new GordianNewXMSSMTLayers[]{};
+                    return new GordianXMSSMTLayers[]{};
                 case H20:
-                    return new GordianNewXMSSMTLayers[]{GordianNewXMSSMTLayers.L2, GordianNewXMSSMTLayers.L4};
+                    return new GordianXMSSMTLayers[]{GordianXMSSMTLayers.L2, GordianXMSSMTLayers.L4};
                 case H40:
-                    return new GordianNewXMSSMTLayers[]{GordianNewXMSSMTLayers.L2, GordianNewXMSSMTLayers.L4, GordianNewXMSSMTLayers.L8};
+                    return new GordianXMSSMTLayers[]{GordianXMSSMTLayers.L2, GordianXMSSMTLayers.L4, GordianXMSSMTLayers.L8};
                 case H60:
-                    return new GordianNewXMSSMTLayers[]{GordianNewXMSSMTLayers.L3, GordianNewXMSSMTLayers.L6, GordianNewXMSSMTLayers.L12};
+                    return new GordianXMSSMTLayers[]{GordianXMSSMTLayers.L3, GordianXMSSMTLayers.L6, GordianXMSSMTLayers.L12};
                 default:
                     throw new IllegalArgumentException();
             }
@@ -411,11 +411,11 @@ public class GordianCoreXMSSSpec
          * @param pKeyType the keyTypoe
          * @return true/false.
          */
-        public boolean isHigh(final GordianNewXMSSKeyType pKeyType) {
+        public boolean isHigh(final GordianXMSSKeyType pKeyType) {
             switch (theHeight) {
                 case H16:
                 case H20:
-                    return pKeyType == GordianNewXMSSKeyType.XMSS;
+                    return pKeyType == GordianXMSSKeyType.XMSS;
                 case H40:
                 case H60:
                     return true;
@@ -451,7 +451,7 @@ public class GordianCoreXMSSSpec
          * @return the core height
          */
         public static GordianCoreXMSSHeight mapCoreHeight(final Object pHeight) {
-            return pHeight instanceof GordianNewXMSSHeight myHeight ? HEIGHTMAP.get(myHeight) : null;
+            return pHeight instanceof GordianXMSSHeight myHeight ? HEIGHTMAP.get(myHeight) : null;
         }
 
         /**
@@ -459,9 +459,9 @@ public class GordianCoreXMSSSpec
          *
          * @return the type map
          */
-        private static Map<GordianNewXMSSHeight, GordianCoreXMSSHeight> newHeightMap() {
-            final Map<GordianNewXMSSHeight, GordianCoreXMSSHeight> myMap = new EnumMap<>(GordianNewXMSSHeight.class);
-            for (GordianNewXMSSHeight myHeight : GordianNewXMSSHeight.values()) {
+        private static Map<GordianXMSSHeight, GordianCoreXMSSHeight> newHeightMap() {
+            final Map<GordianXMSSHeight, GordianCoreXMSSHeight> myMap = new EnumMap<>(GordianXMSSHeight.class);
+            for (GordianXMSSHeight myHeight : GordianXMSSHeight.values()) {
                 myMap.put(myHeight, new GordianCoreXMSSHeight(myHeight));
             }
             return myMap;

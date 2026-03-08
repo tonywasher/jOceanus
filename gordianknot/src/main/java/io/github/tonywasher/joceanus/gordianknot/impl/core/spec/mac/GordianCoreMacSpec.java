@@ -18,12 +18,12 @@
 package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.mac;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeySpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeyType;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestType;
-import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianNewMacSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianNewMacType;
-import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianNewSipHashType;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeyType;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestType;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianMacSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianMacType;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianSipHashType;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher.GordianCoreSymKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher.GordianCoreSymKeyType;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianCoreDigestSpec;
@@ -37,7 +37,7 @@ import java.util.Objects;
  * MacSpec implementation.
  */
 public class GordianCoreMacSpec
-        implements GordianNewMacSpec {
+        implements GordianMacSpec {
     /**
      * The Separator.
      */
@@ -75,13 +75,13 @@ public class GordianCoreMacSpec
      * @param pKeyLength the keyLength
      * @param pSubSpec   the subSpec
      */
-    GordianCoreMacSpec(final GordianNewMacType pMacType,
+    GordianCoreMacSpec(final GordianMacType pMacType,
                        final GordianLength pKeyLength,
                        final Object pSubSpec) {
         /* Store parameters */
         theMacType = GordianCoreMacType.mapCoreType(pMacType);
         theKeyLength = pKeyLength;
-        theSubSpec = pSubSpec instanceof GordianNewSipHashType mySip ? GordianCoreSipHashType.mapCoreType(mySip) : pSubSpec;
+        theSubSpec = pSubSpec instanceof GordianSipHashType mySip ? GordianCoreSipHashType.mapCoreType(mySip) : pSubSpec;
         isValid = checkValidity();
     }
 
@@ -95,7 +95,7 @@ public class GordianCoreMacSpec
     }
 
     @Override
-    public GordianNewMacType getMacType() {
+    public GordianMacType getMacType() {
         return theMacType.getType();
     }
 
@@ -299,15 +299,15 @@ public class GordianCoreMacSpec
             case HMAC:
                 return checkDigestValidity(null);
             case KUPYNA:
-                return checkDigestValidity(GordianNewDigestType.KUPYNA);
+                return checkDigestValidity(GordianDigestType.KUPYNA);
             case SKEIN:
-                return checkDigestValidity(GordianNewDigestType.SKEIN);
+                return checkDigestValidity(GordianDigestType.SKEIN);
             case BLAKE2:
                 return checkBlake2Validity();
             case BLAKE3:
-                return checkDigestValidity(GordianNewDigestType.BLAKE3);
+                return checkDigestValidity(GordianDigestType.BLAKE3);
             case KALYNA:
-                return checkSymKeyValidity(GordianNewSymKeyType.KALYNA);
+                return checkSymKeyValidity(GordianSymKeyType.KALYNA);
             case KMAC:
                 return checkKMACValidity();
             case CMAC:
@@ -338,7 +338,7 @@ public class GordianCoreMacSpec
      * @param pDigestType required digestType (or null)
      * @return valid true/false
      */
-    private boolean checkDigestValidity(final GordianNewDigestType pDigestType) {
+    private boolean checkDigestValidity(final GordianDigestType pDigestType) {
         /* Check that the digestSpec is valid */
         if (!(theSubSpec instanceof GordianCoreDigestSpec mySpec)
                 || !mySpec.isValid()) {
@@ -358,9 +358,9 @@ public class GordianCoreMacSpec
      * @param pSymKeyType required symKeyType (or null)
      * @return valid true/false
      */
-    private boolean checkSymKeyValidity(final GordianNewSymKeyType pSymKeyType) {
+    private boolean checkSymKeyValidity(final GordianSymKeyType pSymKeyType) {
         /* Check that the symKeySpec is valid */
-        if (!(theSubSpec instanceof GordianNewSymKeySpec mySpec)
+        if (!(theSubSpec instanceof GordianSymKeySpec mySpec)
                 || !mySpec.isValid()) {
             return false;
         }
@@ -383,7 +383,7 @@ public class GordianCoreMacSpec
         }
 
         /* Restrict keyLengths */
-        final GordianNewSymKeySpec mySpec = (GordianNewSymKeySpec) theSubSpec;
+        final GordianSymKeySpec mySpec = (GordianSymKeySpec) theSubSpec;
         return theKeyLength == GordianLength.LEN_256
                 && (mySpec == null
                 || mySpec.getKeyLength() == GordianLength.LEN_128);
@@ -396,7 +396,7 @@ public class GordianCoreMacSpec
      */
     private boolean checkBlake2Validity() {
         /* Check that the spec is reasonable */
-        if (!checkDigestValidity(GordianNewDigestType.BLAKE2)) {
+        if (!checkDigestValidity(GordianDigestType.BLAKE2)) {
             return false;
         }
 
@@ -424,7 +424,7 @@ public class GordianCoreMacSpec
      */
     private boolean checkKMACValidity() {
         /* Check that the spec is reasonable */
-        if (!checkDigestValidity(GordianNewDigestType.SHAKE)) {
+        if (!checkDigestValidity(GordianDigestType.SHAKE)) {
             return false;
         }
 
@@ -518,7 +518,7 @@ public class GordianCoreMacSpec
                     break;
                 case SKEIN:
                     final boolean isSkeinXof = Objects.requireNonNull(getDigestSpec()).isXofMode();
-                    theName = GordianNewDigestType.SKEIN
+                    theName = GordianDigestType.SKEIN
                             + (isSkeinXof ? "X" : "")
                             + "Mac"
                             + SEP + getDigestState()
@@ -531,7 +531,7 @@ public class GordianCoreMacSpec
                     break;
                 case BLAKE2:
                     final boolean isBlakeXof = Objects.requireNonNull(getDigestSpec()).isXofMode();
-                    theName = GordianNewDigestType.BLAKE2
+                    theName = GordianDigestType.BLAKE2
                             + Objects.requireNonNull(getDigestState())
                             .getBlake2Algorithm(isBlakeXof)
                             + "Mac" + (isBlakeXof ? "" : SEP + getDigestLength())

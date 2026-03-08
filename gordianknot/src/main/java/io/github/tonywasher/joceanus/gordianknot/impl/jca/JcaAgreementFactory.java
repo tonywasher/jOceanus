@@ -16,8 +16,8 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.impl.jca;
 
-import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianNewAgreementSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianNewAgreementType;
+import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementType;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.agree.GordianCoreAgreementEngine;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.agree.GordianCoreAgreementFactory;
@@ -57,7 +57,7 @@ public class JcaAgreementFactory
     }
 
     @Override
-    public GordianCoreAgreementEngine createEngine(final GordianNewAgreementSpec pSpec) throws GordianException {
+    public GordianCoreAgreementEngine createEngine(final GordianAgreementSpec pSpec) throws GordianException {
         final GordianCoreAgreementSpec mySpec = (GordianCoreAgreementSpec) pSpec;
         switch (pSpec.getKeyPairSpec().getKeyPairType()) {
             case EC:
@@ -184,15 +184,15 @@ public class JcaAgreementFactory
     }
 
     @Override
-    protected boolean validAgreementSpec(final GordianNewAgreementSpec pSpec) {
+    protected boolean validAgreementSpec(final GordianAgreementSpec pSpec) {
         /* validate the agreementSpec */
         if (!super.validAgreementSpec(pSpec)) {
             return false;
         }
 
         /* Disallow SM2 */
-        final GordianNewAgreementType myType = pSpec.getAgreementType();
-        if (GordianNewAgreementType.SM2.equals(myType)) {
+        final GordianAgreementType myType = pSpec.getAgreementType();
+        if (GordianAgreementType.SM2.equals(myType)) {
             return false;
         }
 
@@ -214,10 +214,10 @@ public class JcaAgreementFactory
             case DSTU:
             case SM2:
             case DH:
-                return !GordianNewAgreementType.KEM.equals(myType);
+                return !GordianAgreementType.KEM.equals(myType);
             case XDH:
-                return !GordianNewAgreementType.KEM.equals(myType)
-                        && !GordianNewAgreementType.MQV.equals(myType);
+                return !GordianAgreementType.KEM.equals(myType)
+                        && !GordianAgreementType.MQV.equals(myType);
             case RSA:
             default:
                 return false;

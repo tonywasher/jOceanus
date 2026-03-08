@@ -18,9 +18,9 @@ package io.github.tonywasher.joceanus.gordianknot.impl.bc;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairGenerator;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairType;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewNTRUPrimeSpec.GordianNewNTRUPrimeType;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairType;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNTRUPrimeSpec.GordianNTRUPrimeType;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyBIKEKeyPair.BouncyBIKEKeyPairGenerator;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyCMCEKeyPair.BouncyCMCEKeyPairGenerator;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyDHKeyPair.BouncyDHKeyPairGenerator;
@@ -73,7 +73,7 @@ public class BouncyKeyPairFactory
     /**
      * KeyPairGenerator Cache.
      */
-    private final Map<GordianNewKeyPairSpec, BouncyKeyPairGenerator> theCache;
+    private final Map<GordianKeyPairSpec, BouncyKeyPairGenerator> theCache;
 
     /**
      * Constructor.
@@ -90,9 +90,9 @@ public class BouncyKeyPairFactory
     }
 
     @Override
-    public GordianKeyPairGenerator getKeyPairGenerator(final GordianNewKeyPairSpec pKeySpec) throws GordianException {
+    public GordianKeyPairGenerator getKeyPairGenerator(final GordianKeyPairSpec pKeySpec) throws GordianException {
         /* Handle composite keyPairGenerator */
-        if (GordianNewKeyPairType.COMPOSITE.equals(pKeySpec.getKeyPairType())) {
+        if (GordianKeyPairType.COMPOSITE.equals(pKeySpec.getKeyPairType())) {
             return super.getKeyPairGenerator(pKeySpec);
         }
 
@@ -118,7 +118,7 @@ public class BouncyKeyPairFactory
      * @return the KeyGenerator
      * @throws GordianException on error
      */
-    private BouncyKeyPairGenerator getBCKeyPairGenerator(final GordianNewKeyPairSpec pKeySpec) throws GordianException {
+    private BouncyKeyPairGenerator getBCKeyPairGenerator(final GordianKeyPairSpec pKeySpec) throws GordianException {
         final GordianCoreKeyPairSpec myKeySpec = (GordianCoreKeyPairSpec) pKeySpec;
         switch (pKeySpec.getKeyPairType()) {
             case RSA:
@@ -163,7 +163,7 @@ public class BouncyKeyPairFactory
             case NTRU:
                 return new BouncyNTRUKeyPairGenerator(theFactory, pKeySpec);
             case NTRUPRIME:
-                return myKeySpec.getNTRUPrimeSpec().getType() == GordianNewNTRUPrimeType.NTRUL
+                return myKeySpec.getNTRUPrimeSpec().getType() == GordianNTRUPrimeType.NTRUL
                         ? new BouncyNTRULPrimeKeyPairGenerator(theFactory, pKeySpec)
                         : new BouncySNTRUPrimeKeyPairGenerator(theFactory, pKeySpec);
             case FALCON:

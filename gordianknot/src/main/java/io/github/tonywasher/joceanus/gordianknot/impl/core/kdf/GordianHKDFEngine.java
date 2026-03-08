@@ -19,12 +19,12 @@ package io.github.tonywasher.joceanus.gordianknot.impl.core.kdf;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigest;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMac;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianNewMacSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianNewMacSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianMacSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianMacSpecBuilder;
 
 import java.util.Arrays;
 import java.util.Iterator;
@@ -51,15 +51,15 @@ public class GordianHKDFEngine {
      * @throws GordianException on error
      */
     public GordianHKDFEngine(final GordianFactory pFactory,
-                             final GordianNewDigestSpec pDigestSpec) throws GordianException {
+                             final GordianDigestSpec pDigestSpec) throws GordianException {
         /* Create the digest */
         final GordianDigestFactory myDigestFactory = pFactory.getDigestFactory();
         theDigest = myDigestFactory.createDigest(pDigestSpec);
 
         /* Create the hMac */
         final GordianMacFactory myMacFactory = pFactory.getMacFactory();
-        final GordianNewMacSpecBuilder myBuilder = myMacFactory.newMacSpecBuilder();
-        final GordianNewMacSpec myMacSpec = myBuilder.hMac(pDigestSpec);
+        final GordianMacSpecBuilder myBuilder = myMacFactory.newMacSpecBuilder();
+        final GordianMacSpec myMacSpec = myBuilder.hMac(pDigestSpec);
         theHMac = myMacFactory.createMac(myMacSpec);
     }
 

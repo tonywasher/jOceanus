@@ -18,10 +18,10 @@
 package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSubSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSubSpec.GordianNewDigestState;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestType;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSubSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSubSpec.GordianDigestState;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestType;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianCoreDigestSubSpec.GordianCoreDigestState;
 
 import java.util.Objects;
@@ -30,7 +30,7 @@ import java.util.Objects;
  * DataDigestSpec implementation.
  */
 public class GordianCoreDigestSpec
-        implements GordianNewDigestSpec {
+        implements GordianDigestSpec {
     /**
      * The Separator.
      */
@@ -74,8 +74,8 @@ public class GordianCoreDigestSpec
      * @param pLength  the length
      * @param pXofMode is this a XofMode?
      */
-    GordianCoreDigestSpec(final GordianNewDigestType pType,
-                          final GordianNewDigestSubSpec pSubSpec,
+    GordianCoreDigestSpec(final GordianDigestType pType,
+                          final GordianDigestSubSpec pSubSpec,
                           final GordianLength pLength,
                           final boolean pXofMode) {
         theType = GordianCoreDigestType.mapCoreType(pType);
@@ -95,12 +95,12 @@ public class GordianCoreDigestSpec
     }
 
     @Override
-    public GordianNewDigestType getDigestType() {
+    public GordianDigestType getDigestType() {
         return theType.getType();
     }
 
     @Override
-    public GordianNewDigestSubSpec getSubSpec() {
+    public GordianDigestSubSpec getSubSpec() {
         return theSubSpec instanceof GordianCoreDigestSubSpec myState ? myState.getSubSpec() : null;
     }
 
@@ -114,7 +114,7 @@ public class GordianCoreDigestSpec
     }
 
     @Override
-    public GordianNewDigestState getDigestState() {
+    public GordianDigestState getDigestState() {
         return theSubSpec instanceof GordianCoreDigestState myState ? myState.getState() : null;
     }
 
@@ -148,8 +148,8 @@ public class GordianCoreDigestSpec
      * @return true/false
      */
     public boolean isSha2Hybrid() {
-        return GordianNewDigestType.SHA2.equals(theType.getType())
-                && GordianNewDigestState.STATE512.equals(getSubSpec())
+        return GordianDigestType.SHA2.equals(theType.getType())
+                && GordianDigestState.STATE512.equals(getSubSpec())
                 && (GordianLength.LEN_224.equals(theLength)
                 || GordianLength.LEN_256.equals(theLength));
     }

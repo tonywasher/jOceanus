@@ -22,22 +22,22 @@ import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamCipher;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymCipher;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianWrapper;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewCipherMode;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewPadding;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamCipherSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeySubType.GordianNewBlakeXofKey;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeySubType.GordianNewChaCha20Key;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeySubType.GordianNewElephantKey;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeySubType.GordianNewISAPKey;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeySubType.GordianNewRomulusKey;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeySubType.GordianNewSalsa20Key;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeySubType.GordianNewSkeinXofKey;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeySubType.GordianNewSparkleKey;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeySubType.GordianNewVMPCKey;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymCipherSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymCipherSpecBuilder;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeySpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeyType;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianCipherMode;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySubType.GordianBlakeXofKey;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySubType.GordianChaCha20Key;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySubType.GordianElephantKey;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySubType.GordianISAPKey;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySubType.GordianRomulusKey;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySubType.GordianSalsa20Key;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySubType.GordianSkeinXofKey;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySubType.GordianSparkleKey;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySubType.GordianVMPCKey;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymCipherSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeyType;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianPadding;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseData;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
@@ -186,7 +186,7 @@ public class BouncyCipherFactory
     }
 
     @Override
-    public GordianSymCipher createSymKeyCipher(final GordianNewSymCipherSpec pCipherSpec) throws GordianException {
+    public GordianSymCipher createSymKeyCipher(final GordianSymCipherSpec pCipherSpec) throws GordianException {
         /* Check validity of SymKeySpec */
         checkSymCipherSpec(pCipherSpec);
         final GordianCoreSymCipherSpec mySpec = (GordianCoreSymCipherSpec) pCipherSpec;
@@ -206,7 +206,7 @@ public class BouncyCipherFactory
     }
 
     @Override
-    public GordianStreamCipher createStreamKeyCipher(final GordianNewStreamCipherSpec pCipherSpec) throws GordianException {
+    public GordianStreamCipher createStreamKeyCipher(final GordianStreamCipherSpec pCipherSpec) throws GordianException {
         /* Check validity of StreamKeySpec */
         checkStreamCipherSpec(pCipherSpec);
         final GordianCoreStreamCipherSpec mySpec = (GordianCoreStreamCipherSpec) pCipherSpec;
@@ -218,11 +218,11 @@ public class BouncyCipherFactory
     }
 
     @Override
-    public GordianWrapper createKeyWrapper(final GordianKey<GordianNewSymKeySpec> pKey) throws GordianException {
+    public GordianWrapper createKeyWrapper(final GordianKey<GordianSymKeySpec> pKey) throws GordianException {
         /* Create the cipher */
-        final BouncyKey<GordianNewSymKeySpec> myKey = BouncyKey.accessKey(pKey);
-        final GordianNewSymCipherSpecBuilder myBuilder = GordianCoreSymCipherSpecBuilder.newInstance();
-        final GordianNewSymCipherSpec mySpec = myBuilder.ecb(myKey.getKeyType(), GordianNewPadding.NONE);
+        final BouncyKey<GordianSymKeySpec> myKey = BouncyKey.accessKey(pKey);
+        final GordianSymCipherSpecBuilder myBuilder = GordianCoreSymCipherSpecBuilder.newInstance();
+        final GordianSymCipherSpec mySpec = myBuilder.ecb(myKey.getKeyType(), GordianPadding.NONE);
         final BouncySymKeyCipher myBCCipher = (BouncySymKeyCipher) createSymKeyCipher(mySpec);
         return createKeyWrapper(myKey, myBCCipher);
     }
@@ -236,8 +236,8 @@ public class BouncyCipherFactory
      */
     private CipherKeyGenerator getBCKeyGenerator(final GordianKeySpec pKeySpec) throws GordianException {
         checkKeySpec(pKeySpec);
-        return pKeySpec instanceof GordianNewSymKeySpec mySpec
-                && GordianNewSymKeyType.DESEDE.equals(mySpec.getSymKeyType())
+        return pKeySpec instanceof GordianSymKeySpec mySpec
+                && GordianSymKeyType.DESEDE.equals(mySpec.getSymKeyType())
                 ? new DESedeKeyGenerator()
                 : new CipherKeyGenerator();
     }
@@ -271,7 +271,7 @@ public class BouncyCipherFactory
                         ? new HC128Engine()
                         : new HC256Engine();
             case CHACHA20:
-                switch ((GordianNewChaCha20Key) mySpec.getSubKeyType()) {
+                switch ((GordianChaCha20Key) mySpec.getSubKeyType()) {
                     case XCHACHA:
                         return new GordianXChaCha20Engine();
                     case ISO7539:
@@ -280,11 +280,11 @@ public class BouncyCipherFactory
                         return new ChaChaEngine();
                 }
             case SALSA20:
-                return mySpec.getSubKeyType() == GordianNewSalsa20Key.STD
+                return mySpec.getSubKeyType() == GordianSalsa20Key.STD
                         ? new Salsa20Engine()
                         : new XSalsa20Engine();
             case VMPC:
-                return mySpec.getSubKeyType() == GordianNewVMPCKey.STD
+                return mySpec.getSubKeyType() == GordianVMPCKey.STD
                         ? new VMPCEngine()
                         : new VMPCKSA3Engine();
             case GRAIN:
@@ -304,11 +304,11 @@ public class BouncyCipherFactory
                         ? new GordianZuc128Engine()
                         : new GordianZuc256Engine();
             case SKEINXOF:
-                final GordianNewSkeinXofKey mySkeinKeyType = (GordianNewSkeinXofKey) mySpec.getSubKeyType();
+                final GordianSkeinXofKey mySkeinKeyType = (GordianSkeinXofKey) mySpec.getSubKeyType();
                 return new GordianSkeinXofEngine(GordianCoreStreamKeySubType.getLengthForSkeinXofKey(mySkeinKeyType).getLength());
             case BLAKE2XOF:
-                final GordianNewBlakeXofKey myBlakeKeyType = (GordianNewBlakeXofKey) mySpec.getSubKeyType();
-                return new GordianBlake2XEngine(GordianNewBlakeXofKey.BLAKE2XB == myBlakeKeyType
+                final GordianBlakeXofKey myBlakeKeyType = (GordianBlakeXofKey) mySpec.getSubKeyType();
+                return new GordianBlake2XEngine(GordianBlakeXofKey.BLAKE2XB == myBlakeKeyType
                         ? new GordianBlake2bDigest()
                         : new GordianBlake2sDigest());
             case BLAKE3XOF:
@@ -329,7 +329,7 @@ public class BouncyCipherFactory
         final GordianCoreStreamKeySpec mySpec = pCipherSpec.getCoreKeySpec();
         switch (mySpec.getStreamKeyType()) {
             case CHACHA20:
-                switch ((GordianNewChaCha20Key) mySpec.getSubKeyType()) {
+                switch ((GordianChaCha20Key) mySpec.getSubKeyType()) {
                     case XCHACHA:
                         return new GordianChaChaPoly1305(new GordianXChaCha20Engine());
                     case ISO7539:
@@ -339,15 +339,15 @@ public class BouncyCipherFactory
             case ASCON:
                 return new AsconAEAD128();
             case ELEPHANT:
-                return new ElephantEngine(GordianCoreStreamKeySubType.getParameters((GordianNewElephantKey) mySpec.getSubKeyType()));
+                return new ElephantEngine(GordianCoreStreamKeySubType.getParameters((GordianElephantKey) mySpec.getSubKeyType()));
             case ISAP:
-                return new ISAPEngine(GordianCoreStreamKeySubType.getISAPType((GordianNewISAPKey) mySpec.getSubKeyType()));
+                return new ISAPEngine(GordianCoreStreamKeySubType.getISAPType((GordianISAPKey) mySpec.getSubKeyType()));
             case PHOTONBEETLE:
                 return new PhotonBeetleEngine(PhotonBeetleParameters.pb128);
             case ROMULUS:
-                return new RomulusEngine(GordianCoreStreamKeySubType.getParameters((GordianNewRomulusKey) mySpec.getSubKeyType()));
+                return new RomulusEngine(GordianCoreStreamKeySubType.getParameters((GordianRomulusKey) mySpec.getSubKeyType()));
             case SPARKLE:
-                return new SparkleEngine(GordianCoreStreamKeySubType.getParameters((GordianNewSparkleKey) mySpec.getSubKeyType()));
+                return new SparkleEngine(GordianCoreStreamKeySubType.getParameters((GordianSparkleKey) mySpec.getSubKeyType()));
             case XOODYAK:
                 return new XoodyakEngine();
             default:
@@ -438,7 +438,7 @@ public class BouncyCipherFactory
      * @throws GordianException on error
      */
     private static BlockCipher getBCSymModeCipher(final BlockCipher pEngine,
-                                                  final GordianNewCipherMode pMode) throws GordianException {
+                                                  final GordianCipherMode pMode) throws GordianException {
         switch (pMode) {
             case ECB:
                 return pEngine;
@@ -510,7 +510,7 @@ public class BouncyCipherFactory
      * @return the Cipher
      */
     private static BufferedBlockCipher getBCSymBufferedCipher(final BlockCipher pEngine,
-                                                              final GordianNewPadding pPadding) {
+                                                              final GordianPadding pPadding) {
         switch (pPadding) {
             case CTS:
                 return new CTSBlockCipher(pEngine);

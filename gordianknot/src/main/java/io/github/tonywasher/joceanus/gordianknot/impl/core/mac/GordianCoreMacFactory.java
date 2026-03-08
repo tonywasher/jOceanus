@@ -19,15 +19,15 @@ package io.github.tonywasher.joceanus.gordianknot.impl.core.mac;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeySpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeyType;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeyType;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestType;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestType;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianNewMacSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianNewMacSpecBuilder;
-import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianNewMacType;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianMacSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianMacSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianMacType;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseData;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.cipher.GordianCoreCipherFactory;
@@ -70,17 +70,17 @@ public abstract class GordianCoreMacFactory
     }
 
     @Override
-    public GordianNewMacSpecBuilder newMacSpecBuilder() {
+    public GordianMacSpecBuilder newMacSpecBuilder() {
         return GordianCoreMacSpecBuilder.newInstance();
     }
 
     @Override
-    public Predicate<GordianNewMacSpec> supportedMacSpecs() {
+    public Predicate<GordianMacSpec> supportedMacSpecs() {
         return this::validMacSpec;
     }
 
     @Override
-    public Predicate<GordianNewMacType> supportedMacTypes() {
+    public Predicate<GordianMacType> supportedMacTypes() {
         return this::validMacType;
     }
 
@@ -89,7 +89,7 @@ public abstract class GordianCoreMacFactory
      *
      * @return the predicate
      */
-    public Predicate<GordianNewDigestSpec> supportedHMacDigestSpecs() {
+    public Predicate<GordianDigestSpec> supportedHMacDigestSpecs() {
         return this::validHMacSpec;
     }
 
@@ -98,7 +98,7 @@ public abstract class GordianCoreMacFactory
      *
      * @return the predicate
      */
-    private Predicate<GordianNewSymKeySpec> supportedPoly1305SymKeySpecs() {
+    private Predicate<GordianSymKeySpec> supportedPoly1305SymKeySpecs() {
         return p -> p == null
                 || (validPoly1305SymKeySpec(p)
                 && p.getBlockLength() == GordianLength.LEN_128);
@@ -109,7 +109,7 @@ public abstract class GordianCoreMacFactory
      *
      * @return the predicate
      */
-    private Predicate<GordianNewSymKeySpec> supportedGMacSymKeySpecs() {
+    private Predicate<GordianSymKeySpec> supportedGMacSymKeySpecs() {
         return p -> validGMacSymKeySpec(p)
                 && p.getBlockLength() == GordianLength.LEN_128;
     }
@@ -119,7 +119,7 @@ public abstract class GordianCoreMacFactory
      *
      * @return the predicate
      */
-    private Predicate<GordianNewSymKeySpec> supportedCMacSymKeySpecs() {
+    private Predicate<GordianSymKeySpec> supportedCMacSymKeySpecs() {
         return this::validCMacSymKeySpec;
     }
 
@@ -129,7 +129,7 @@ public abstract class GordianCoreMacFactory
      * @param pMacType the macType
      * @return true/false
      */
-    protected boolean validMacType(final GordianNewMacType pMacType) {
+    protected boolean validMacType(final GordianMacType pMacType) {
         return pMacType != null;
     }
 
@@ -141,7 +141,7 @@ public abstract class GordianCoreMacFactory
      */
     protected void checkMacSpec(final GordianKeySpec pMacSpec) throws GordianException {
         /* Check validity of MacSpec */
-        if (!(pMacSpec instanceof GordianNewMacSpec mySpec)
+        if (!(pMacSpec instanceof GordianMacSpec mySpec)
                 || !supportedMacSpecs().test(mySpec)) {
             throw new GordianDataException(GordianBaseData.getInvalidText(pMacSpec));
         }
@@ -153,9 +153,9 @@ public abstract class GordianCoreMacFactory
      * @param pDigestSpec the digestSpec
      * @return true/false
      */
-    public boolean validHMacSpec(final GordianNewDigestSpec pDigestSpec) {
+    public boolean validHMacSpec(final GordianDigestSpec pDigestSpec) {
         /* Access details */
-        final GordianNewDigestType myType = pDigestSpec.getDigestType();
+        final GordianDigestType myType = pDigestSpec.getDigestType();
         final GordianDigestFactory myDigests = theFactory.getDigestFactory();
 
         /* Check validity */
@@ -170,14 +170,14 @@ public abstract class GordianCoreMacFactory
      * @param pMacSpec the macSpec
      * @return true/false
      */
-    private boolean validMacSpec(final GordianNewMacSpec pMacSpec) {
+    private boolean validMacSpec(final GordianMacSpec pMacSpec) {
         /* Reject invalid macSpec */
         if (pMacSpec == null || !pMacSpec.isValid()) {
             return false;
         }
 
         /* Check that the macType is supported */
-        final GordianNewMacType myType = pMacSpec.getMacType();
+        final GordianMacType myType = pMacSpec.getMacType();
         if (!supportedMacTypes().test(myType)) {
             return false;
         }
@@ -186,8 +186,8 @@ public abstract class GordianCoreMacFactory
         final GordianDigestFactory myDigests = theFactory.getDigestFactory();
         final GordianCoreCipherFactory myCiphers = (GordianCoreCipherFactory) theFactory.getCipherFactory();
         final GordianCoreMacSpec myMacSpec = (GordianCoreMacSpec) pMacSpec;
-        final GordianNewDigestSpec myDigestSpec = myMacSpec.getDigestSpec();
-        final GordianNewSymKeySpec mySymSpec = myMacSpec.getSymKeySpec();
+        final GordianDigestSpec myDigestSpec = myMacSpec.getDigestSpec();
+        final GordianSymKeySpec mySymSpec = myMacSpec.getSymKeySpec();
         switch (myType) {
             case HMAC:
                 return supportedHMacDigestSpecs().test(myDigestSpec);
@@ -198,23 +198,23 @@ public abstract class GordianCoreMacFactory
             case POLY1305:
                 return supportedPoly1305SymKeySpecs().test(mySymSpec);
             case SKEIN:
-                return GordianNewDigestType.SKEIN.equals(Objects.requireNonNull(myDigestSpec).getDigestType())
+                return GordianDigestType.SKEIN.equals(Objects.requireNonNull(myDigestSpec).getDigestType())
                         && myDigests.supportedDigestSpecs().test(myDigestSpec);
             case BLAKE2:
-                return GordianNewDigestType.BLAKE2.equals(Objects.requireNonNull(myDigestSpec).getDigestType())
+                return GordianDigestType.BLAKE2.equals(Objects.requireNonNull(myDigestSpec).getDigestType())
                         && myDigests.supportedDigestSpecs().test(myDigestSpec);
             case BLAKE3:
-                return GordianNewDigestType.BLAKE3.equals(Objects.requireNonNull(myDigestSpec).getDigestType())
+                return GordianDigestType.BLAKE3.equals(Objects.requireNonNull(myDigestSpec).getDigestType())
                         && myDigests.supportedDigestSpecs().test(myDigestSpec);
             case KUPYNA:
-                return GordianNewDigestType.KUPYNA.equals(Objects.requireNonNull(myDigestSpec).getDigestType())
+                return GordianDigestType.KUPYNA.equals(Objects.requireNonNull(myDigestSpec).getDigestType())
                         && myDigests.supportedDigestSpecs().test(myDigestSpec);
             case KALYNA:
-                return GordianNewSymKeyType.KALYNA.equals(Objects.requireNonNull(mySymSpec).getSymKeyType())
+                return GordianSymKeyType.KALYNA.equals(Objects.requireNonNull(mySymSpec).getSymKeyType())
                         && myCiphers.validSymKeySpec(mySymSpec);
             case CBCMAC:
             case CFBMAC:
-                return (!GordianNewSymKeyType.RC5.equals(Objects.requireNonNull(mySymSpec).getSymKeyType())
+                return (!GordianSymKeyType.RC5.equals(Objects.requireNonNull(mySymSpec).getSymKeyType())
                         || !GordianLength.LEN_128.equals(mySymSpec.getBlockLength()))
                         && myCiphers.validSymKeySpec(mySymSpec);
             case ZUC:
@@ -234,7 +234,7 @@ public abstract class GordianCoreMacFactory
      * @param pKeySpec the keySpec
      * @return true/false
      */
-    protected boolean validPoly1305SymKeySpec(final GordianNewSymKeySpec pKeySpec) {
+    protected boolean validPoly1305SymKeySpec(final GordianSymKeySpec pKeySpec) {
         switch (pKeySpec.getSymKeyType()) {
             case KUZNYECHIK:
             case RC5:
@@ -251,8 +251,8 @@ public abstract class GordianCoreMacFactory
      * @param pKeySpec the keySpec
      * @return true/false
      */
-    protected boolean validGMacSymKeySpec(final GordianNewSymKeySpec pKeySpec) {
-        if (GordianNewSymKeyType.RC5.equals(pKeySpec.getSymKeyType())) {
+    protected boolean validGMacSymKeySpec(final GordianSymKeySpec pKeySpec) {
+        if (GordianSymKeyType.RC5.equals(pKeySpec.getSymKeyType())) {
             return false;
         }
         final GordianCoreCipherFactory myCiphers = (GordianCoreCipherFactory) theFactory.getCipherFactory();
@@ -265,8 +265,8 @@ public abstract class GordianCoreMacFactory
      * @param pKeySpec the keySpec
      * @return true/false
      */
-    protected boolean validCMacSymKeySpec(final GordianNewSymKeySpec pKeySpec) {
-        if (GordianNewSymKeyType.RC5.equals(pKeySpec.getSymKeyType())) {
+    protected boolean validCMacSymKeySpec(final GordianSymKeySpec pKeySpec) {
+        if (GordianSymKeyType.RC5.equals(pKeySpec.getSymKeyType())) {
             return false;
         }
         final GordianCoreCipherFactory myCiphers = (GordianCoreCipherFactory) theFactory.getCipherFactory();
@@ -274,7 +274,7 @@ public abstract class GordianCoreMacFactory
     }
 
     @Override
-    public List<GordianNewMacSpec> listAllSupportedSpecs(final GordianLength pKeyLen) {
+    public List<GordianMacSpec> listAllSupportedSpecs(final GordianLength pKeyLen) {
         return listAllPossibleSpecs(pKeyLen)
                 .stream()
                 .filter(supportedMacSpecs())
@@ -287,7 +287,7 @@ public abstract class GordianCoreMacFactory
      * @param pKeyLen the keyLength
      * @return the list
      */
-    public List<GordianNewMacSpec> listAllPossibleSpecs(final GordianLength pKeyLen) {
+    public List<GordianMacSpec> listAllPossibleSpecs(final GordianLength pKeyLen) {
         return GordianCoreMacSpecBuilder.listAllPossibleSpecs(pKeyLen);
     }
 }

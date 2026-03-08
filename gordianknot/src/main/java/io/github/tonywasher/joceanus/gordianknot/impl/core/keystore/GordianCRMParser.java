@@ -19,7 +19,7 @@ package io.github.tonywasher.joceanus.gordianknot.impl.core.keystore;
 import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreement;
 import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementParams;
-import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianNewAgreementSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianCertificate;
@@ -27,18 +27,18 @@ import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairUsage;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairUse;
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianEncryptor;
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianEncryptorFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianNewEncryptorSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianEncryptorSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianAsyncFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairGenerator;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySet;
 import io.github.tonywasher.joceanus.gordianknot.api.keystore.GordianKeyStoreEntry;
 import io.github.tonywasher.joceanus.gordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStorePair;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignParams;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignature;
-import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianNewSignatureSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.cert.GordianCertUtils;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.cert.GordianCoreCertificate;
@@ -314,7 +314,7 @@ public class GordianCRMParser {
             final GordianAsyncFactory myFactory = theGateway.getFactory().getAsyncFactory();
             final GordianKeyPairFactory myKPFactory = myFactory.getKeyPairFactory();
             final X509EncodedKeySpec myX509Spec = new X509EncodedKeySpec(pPublicKey.getEncoded());
-            final GordianNewKeyPairSpec myKeySpec = myKPFactory.determineKeyPairSpec(myX509Spec);
+            final GordianKeyPairSpec myKeySpec = myKPFactory.determineKeyPairSpec(myX509Spec);
             final GordianKeyPairGenerator myGenerator = myKPFactory.getKeyPairGenerator(myKeySpec);
             final GordianKeyPair myKeyPair = myGenerator.derivePublicOnlyKeyPair(myX509Spec);
 
@@ -322,7 +322,7 @@ public class GordianCRMParser {
             final POPOSigningKey mySigning = (POPOSigningKey) pProof.getObject();
             final AlgorithmIdentifier myAlgId = mySigning.getAlgorithmIdentifier();
             final GordianCoreSignatureFactory mySignFactory = (GordianCoreSignatureFactory) myFactory.getSignatureFactory();
-            final GordianNewSignatureSpec mySignSpec = mySignFactory.getSpecForIdentifier(myAlgId);
+            final GordianSignatureSpec mySignSpec = mySignFactory.getSpecForIdentifier(myAlgId);
             final GordianSignature myVerifier = mySignFactory.createSigner(mySignSpec);
 
             /* Verify the signature */
@@ -356,7 +356,7 @@ public class GordianCRMParser {
             /* Access the generator */
             final GordianKeyPairFactory myFactory = theGateway.getFactory().getAsyncFactory().getKeyPairFactory();
             final X509EncodedKeySpec myX509Spec = new X509EncodedKeySpec(pPublicKey.getEncoded());
-            final GordianNewKeyPairSpec myKeySpec = myFactory.determineKeyPairSpec(myX509Spec);
+            final GordianKeyPairSpec myKeySpec = myFactory.determineKeyPairSpec(myX509Spec);
             final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(myKeySpec);
 
             /* Determine type of proof of Possession */
@@ -393,17 +393,17 @@ public class GordianCRMParser {
     private void checkPrivateKey(final GordianKeyPair pKeyPair) throws GordianException {
         /* Access details */
         final GordianAsyncFactory myFactory = theGateway.getFactory().getAsyncFactory();
-        final GordianNewKeyPairSpec mySpec = pKeyPair.getKeyPairSpec();
+        final GordianKeyPairSpec mySpec = pKeyPair.getKeyPairSpec();
 
         /* Check for encryption private key */
-        final GordianNewEncryptorSpec myEncSpec = myFactory.getEncryptorFactory().defaultForKeyPair(mySpec);
+        final GordianEncryptorSpec myEncSpec = myFactory.getEncryptorFactory().defaultForKeyPair(mySpec);
         if (myEncSpec != null) {
             checkEncryptionPrivateKey(pKeyPair);
             return;
         }
 
         /* Check for agreement private key */
-        final GordianNewAgreementSpec myAgreeSpec = myFactory.getAgreementFactory().defaultForKeyPair(mySpec);
+        final GordianAgreementSpec myAgreeSpec = myFactory.getAgreementFactory().defaultForKeyPair(mySpec);
         if (myAgreeSpec != null) {
             checkAgreementPrivateKey(pKeyPair);
             return;
@@ -427,8 +427,8 @@ public class GordianCRMParser {
 
         /* Access details */
         final GordianEncryptorFactory myEncFactory = myFactory.getAsyncFactory().getEncryptorFactory();
-        final GordianNewKeyPairSpec mySpec = pKeyPair.getKeyPairSpec();
-        final GordianNewEncryptorSpec myEncSpec = myEncFactory.defaultForKeyPair(mySpec);
+        final GordianKeyPairSpec mySpec = pKeyPair.getKeyPairSpec();
+        final GordianEncryptorSpec myEncSpec = myEncFactory.defaultForKeyPair(mySpec);
 
         /* Create and initialise encryptors */
         final GordianEncryptor mySender = myEncFactory.createEncryptor(myEncSpec);
@@ -458,8 +458,8 @@ public class GordianCRMParser {
         /* Access details */
         final GordianBaseFactory myFactory = theGateway.getFactory();
         final GordianAgreementFactory myAgreeFactory = myFactory.getAsyncFactory().getAgreementFactory();
-        final GordianNewKeyPairSpec mySpec = pKeyPair.getKeyPairSpec();
-        final GordianNewAgreementSpec myAgreeSpec = myAgreeFactory.defaultForKeyPair(mySpec);
+        final GordianKeyPairSpec mySpec = pKeyPair.getKeyPairSpec();
+        final GordianAgreementSpec myAgreeSpec = myAgreeFactory.defaultForKeyPair(mySpec);
 
         /* Create agreement */
         final GordianCertificate myCert = myAgreeFactory.newMiniCertificate(GordianCRMEncryptor.SERVER, pKeyPair,

@@ -22,11 +22,11 @@ import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianAEADCipher;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherParameters;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamAEADCipher;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymAEADCipher;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewCipherSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamCipherSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeySpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymCipherSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.cipher.GordianCoreCipher;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
@@ -69,7 +69,7 @@ public class JcaAEADCipher<T extends GordianKeySpec>
      * @param pCipher     the cipher
      */
     JcaAEADCipher(final GordianBaseFactory pFactory,
-                  final GordianNewCipherSpec<T> pCipherSpec,
+                  final GordianCipherSpec<T> pCipherSpec,
                   final Cipher pCipher) {
         super(pFactory, pCipherSpec);
         theCipher = pCipher;
@@ -171,7 +171,7 @@ public class JcaAEADCipher<T extends GordianKeySpec>
      * JcaSymAADCipher.
      */
     public static class JcaSymAEADCipher
-            extends JcaAEADCipher<GordianNewSymKeySpec>
+            extends JcaAEADCipher<GordianSymKeySpec>
             implements GordianSymAEADCipher {
         /**
          * Constructor.
@@ -181,7 +181,7 @@ public class JcaAEADCipher<T extends GordianKeySpec>
          * @param pCipher     the cipher
          */
         JcaSymAEADCipher(final GordianBaseFactory pFactory,
-                         final GordianNewSymCipherSpec pCipherSpec,
+                         final GordianSymCipherSpec pCipherSpec,
                          final Cipher pCipher) {
             super(pFactory, pCipherSpec, pCipher);
         }
@@ -191,7 +191,7 @@ public class JcaAEADCipher<T extends GordianKeySpec>
      * JcaStreamAEADCipher.
      */
     public static class JcaStreamAEADCipher
-            extends JcaAEADCipher<GordianNewStreamKeySpec>
+            extends JcaAEADCipher<GordianStreamKeySpec>
             implements GordianStreamAEADCipher {
         /**
          * Constructor.
@@ -201,7 +201,7 @@ public class JcaAEADCipher<T extends GordianKeySpec>
          * @param pCipher     the cipher
          */
         JcaStreamAEADCipher(final GordianBaseFactory pFactory,
-                            final GordianNewStreamCipherSpec pCipherSpec,
+                            final GordianStreamCipherSpec pCipherSpec,
                             final Cipher pCipher) {
             super(pFactory, pCipherSpec, pCipher);
         }

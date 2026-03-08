@@ -18,7 +18,7 @@ package io.github.tonywasher.joceanus.gordianknot.impl.bc;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianEncryptor;
-import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianNewEncryptorSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianEncryptorSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyElGamalKeyPair.BouncyElGamalEncryptor;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyEllipticKeyPair.BouncyECEncryptor;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyRSAKeyPair.BouncyRSAEncryptor;
@@ -46,7 +46,7 @@ public class BouncyEncryptorFactory
     }
 
     @Override
-    public GordianEncryptor createEncryptor(final GordianNewEncryptorSpec pEncryptorSpec) throws GordianException {
+    public GordianEncryptor createEncryptor(final GordianEncryptorSpec pEncryptorSpec) throws GordianException {
         /* Check validity of Encryptor */
         checkEncryptorSpec(pEncryptorSpec);
 
