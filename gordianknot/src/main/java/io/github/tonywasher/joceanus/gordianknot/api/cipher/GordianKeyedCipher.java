@@ -18,8 +18,8 @@ package io.github.tonywasher.joceanus.gordianknot.api.cipher;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianKeySpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewCipherSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewPBESpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianPBESpec;
 
 /**
  * GordianKnot Keyed Cipher.
@@ -40,7 +40,7 @@ public interface GordianKeyedCipher<T extends GordianKeySpec>
      *
      * @return the spec
      */
-    GordianNewCipherSpec<T> getCipherSpec();
+    GordianCipherSpec<T> getCipherSpec();
 
     /**
      * Obtain the initVector.
@@ -68,7 +68,7 @@ public interface GordianKeyedCipher<T extends GordianKeySpec>
      *
      * @return the pbeSpec
      */
-    GordianNewPBESpec getPBESpec();
+    GordianPBESpec getPBESpec();
 
     /**
      * Initialise the cipher for encryption.

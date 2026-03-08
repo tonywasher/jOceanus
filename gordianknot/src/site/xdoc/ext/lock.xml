@@ -55,23 +55,6 @@
                         <li>Compare the calculated <strong>R<sub>X</sub></strong> with the one extracted from the hash. Only create the keySet if it matches.</li>
                     </ol>
                 </subsection>
-                <subsection name="Sample">
-                    <source>
-/* Access factory */
-final GordianFactory myBaseFactory = GordianGenerator.createFactory();
-final GordianKeySetFactory myKeySetFactory = myBaseFactory.getKeySetFactory();
-
-/* Create the hash and access the resultant keySet */
-final GordianKeySetSpec mySpec = new GordianKeySetHashSpec(new GordianKeySetSpec(GordianLength.LEN_256));
-final char[] myPassword = ...
-final GordianKeySetHash myKeySetHash = myKeySetFactory.generateKeySetHash(mySpec, myPassword);
-final GordianKeySet myKeySet = myKeySetHash.getKeySet();
-
-/* Access hash and derive keySet from hash and password */
-final byte[] myHash = myKeySetHash.getHash();
-final GordianKeySetHash myResolved = myKeySetFactory.deriveKeySetHash(myHash, myPassword);
-                    </source>
-                </subsection>
             </subsection>
             <subsection name="keySetLock">
                 <p>A keySetLock can be either be used to secure an existing keySet, or it can be used to create a new random keySet.</p>
@@ -100,17 +83,20 @@ final GordianKeySetLock myResolved = myLockFactory.resolveKeySetLock(myLockBytes
 /* Access factory */
 final GordianFactory myBaseFactory = GordianGenerator.createFactory();
 final GordianLockFactory myLockFactory = myBaseFactory.getLockFactory();
+final GordianKeySetFactory myKeySetFactory = myKeySetFactory.getKeySetFactory();
 
 /* Create a lock for a new factory */
-final GordianPasswordLockSpec mySpec = new GordianPasswordLockSpec(new GordianKeySetSpec(GordianLength.LEN_256));
+final GordianPasswordLockSpecBuilder myLockBuilder = myLockFactory.newPasswordLockSpecBuilder()
+final GordianKeySetSpecBuilder myKeySetBuilder = myKeySetFactory.newKeySetSpecBuilder()
+final GordianPasswordLockSpec mySpec = myLockBuilder.passwordLock(myKeySetBuilder.keySet(GordianLength.LEN_256));
 final char[] myPassword = ...
-final GordianFactoryLock myLock = myLockFactory.newFactoryLock(mySpec, myPassword);
+final GordianFactoryLock myLock = myBaseFactory.newFactoryLock(mySpec, myPassword);
 final GordianFactory myFactory = myLock.getFactory();
 final GordianKeySet myKeySet = myFactory.getEmbeddedKeySet();
 final byte[] myLockBytes = myLock.getLockBytes();
 
 /* Resolve the lock */
-final GordianFactpryLock myResolved = myLockFactory.resolveFactoryLock(myLockBytes, myPassword);
+final GordianFactoryLock myResolved = myBaseFactory.resolveFactoryLock(myLockBytes, myPassword);
                     </source>
                 </subsection>
             </subsection>
@@ -121,16 +107,21 @@ final GordianFactpryLock myResolved = myLockFactory.resolveFactoryLock(myLockByt
 /* Access factory */
 final GordianFactory myBaseFactory = GordianGenerator.createFactory();
 final GordianLockFactory myLockFactory = myBaseFactory.getLockFactory();
-final GordianKeyPairFactory myKeyPairFactory = myBase.getKeyPairFactory();
-final GordianAgreementFactory myAgreementFactory = myKeyPairFactory.getAgreementFactory();
+final GordianKeySetFactory myKeySetFactory = myBaseFactory.getKeySetFactory();
+final GordianAsyncFactory myAsyncFactory = myBaseFactory.getAsyncFactory();
+final GordianKeyPairFactory myKeyPairFactory = myAsyncFactory.getKeyPairFactory();
+final GordianAgreementFactory myAgreementFactory = myAsyncFactory.getAgreementFactory();
 
 /* Access keyPairGenerator and create sending/receiving pairs */
-final GordianKeyPairSpec mySpec = GordianKeyPairSpec.dh(GordianDHGroup.FFDHE2048);
+final GordianKeyPairSpecBuilder myKeyPairBuilder = myKeyPairFactory.newKeyPairkSpecBuilder()
+final GordianKeyPairSpec mySpec = myKeyPairBuilder.dh(GordianDHGroup.FFDHE2048);
 final GordianKeyPairGenerator myGenerator = myKeyPairFactory.getKeyPairGenerator(mySpec);
 final GordianKeyPair myKeyPair = myGenerator.generateKeyPair();
 
 /* Create a lock for a new keySet */
-final GordianPasswordLockSpec mySpec = new GordianPasswordLockSpec(new GordianKeySetSpec(GordianLength.LEN_256));
+final GordianKeySetSpecBuilder myKeySetBuilder = myKeySetFactory.newKeySetSpecBuilder()
+final GordianPasswordLockSpecBuilder myLockBuilder = myLockFactory.newPasswordLockSpecBuilder()
+final GordianPasswordLockSpec mySpec = myLockBuilder.keySet(myKeySetBuilder(GordianLength.LEN_256));
 final char[] myPassword = ...
 final GordianKeyPairLock myLock = myLockFactory.newKeyPairLock(mySpec, myKeyPair, myPassword);
 final GordianKeySet myKeySet = myLock.getKeySet();

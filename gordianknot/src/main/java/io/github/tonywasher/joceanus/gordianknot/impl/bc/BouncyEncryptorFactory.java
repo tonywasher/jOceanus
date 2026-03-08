@@ -18,7 +18,7 @@ package io.github.tonywasher.joceanus.gordianknot.impl.bc;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianEncryptor;
-import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianEncryptorSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianEncryptorSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyElGamalKeyPair.BouncyElGamalEncryptor;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyEllipticKeyPair.BouncyECEncryptor;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyRSAKeyPair.BouncyRSAEncryptor;
@@ -28,6 +28,7 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFacto
 import io.github.tonywasher.joceanus.gordianknot.impl.core.encrypt.GordianCompositeEncryptor;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.encrypt.GordianCoreEncryptorFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.encrypt.GordianCoreEncryptorSpec;
 
 /**
  * Bouncy Encryptor Factory.
@@ -50,7 +51,7 @@ public class BouncyEncryptorFactory
         checkEncryptorSpec(pEncryptorSpec);
 
         /* Create the encryptor */
-        return getBCEncryptor(pEncryptorSpec);
+        return getBCEncryptor((GordianCoreEncryptorSpec) pEncryptorSpec);
     }
 
     /**
@@ -60,7 +61,7 @@ public class BouncyEncryptorFactory
      * @return the Agreement
      * @throws GordianException on error
      */
-    private GordianEncryptor getBCEncryptor(final GordianEncryptorSpec pSpec) throws GordianException {
+    private GordianEncryptor getBCEncryptor(final GordianCoreEncryptorSpec pSpec) throws GordianException {
         switch (pSpec.getKeyPairType()) {
             case RSA:
                 return new BouncyRSAEncryptor(getFactory(), pSpec);

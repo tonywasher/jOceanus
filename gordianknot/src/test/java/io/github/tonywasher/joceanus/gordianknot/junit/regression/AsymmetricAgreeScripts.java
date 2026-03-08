@@ -18,34 +18,30 @@ package io.github.tonywasher.joceanus.gordianknot.junit.regression;
 
 import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreement;
 import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementKDF;
 import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementParams;
-import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementStatus;
-import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementType;
+import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementKDF;
+import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianCertificate;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairUsage;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairUse;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamCipherSpecBuilder;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamKeySpecBuilder;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymCipherSpecBuilder;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymKeySpecBuilder;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamCipherSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymCipherSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianAsyncFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactoryType;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairGenerator;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySet;
-import io.github.tonywasher.joceanus.gordianknot.api.keyset.spec.GordianNewKeySetSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keyset.spec.GordianKeySetSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.agree.GordianCoreAgreement;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.agree.GordianCoreAgreementFactory;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.agree.GordianCoreAgreementSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.agree.GordianCoreAgreementType;
 import io.github.tonywasher.joceanus.gordianknot.junit.regression.AsymmetricStore.FactoryAgreement;
 import io.github.tonywasher.joceanus.gordianknot.junit.regression.AsymmetricStore.FactoryKeyPairs;
 import io.github.tonywasher.joceanus.gordianknot.junit.regression.KeyStoreUtils.KeyStoreAlias;
@@ -70,17 +66,19 @@ public final class AsymmetricAgreeScripts {
     /**
      * KeySetSpec.
      */
-    static final GordianNewKeySetSpec KEYSETSPEC = GordianUtilities.newKeySetSpecBuilder().keySetSpec();
+    static final GordianKeySetSpec KEYSETSPEC = GordianUtilities.newKeySetSpecBuilder().keySet();
 
     /**
      * SymCipherSpec.
      */
-    private static final GordianNewSymCipherSpec SYMKEYSPEC = GordianSymCipherSpecBuilder.sic(GordianSymKeySpecBuilder.aes(GordianLength.LEN_256));
+    private static final GordianSymCipherSpec SYMKEYSPEC
+            = GordianUtilities.newSymCipherSpecBuilder().sic(GordianUtilities.newSymKeySpecBuilder().aes(GordianLength.LEN_256));
 
     /**
      * StreamCipherSpec.
      */
-    private static final GordianNewStreamCipherSpec STREAMKEYSPEC = GordianStreamCipherSpecBuilder.stream(GordianStreamKeySpecBuilder.chacha(GordianLength.LEN_256));
+    private static final GordianStreamCipherSpec STREAMKEYSPEC
+            = GordianUtilities.newStreamCipherSpecBuilder().streamCipher(GordianUtilities.newStreamKeySpecBuilder().chacha(GordianLength.LEN_256));
 
     /**
      * ByteArrayResult.
@@ -133,7 +131,7 @@ public final class AsymmetricAgreeScripts {
     static void createSecuritySigners(final GordianFactory pBCFactory,
                                       final GordianFactory pJCAFactory) throws GordianException {
         /* Create the BC Signer */
-        final GordianKeyPairSpec mySpec = GordianKeyPairSpecBuilder.ed448();
+        final GordianKeyPairSpec mySpec = GordianUtilities.newKeyPairSpecBuilder().ed448();
         GordianAsyncFactory myFactory = pBCFactory.getAsyncFactory();
         GordianKeyPairFactory myKPFactory = myFactory.getKeyPairFactory();
         GordianAgreementFactory myAgreeFactory = myFactory.getAgreementFactory();
@@ -202,7 +200,8 @@ public final class AsymmetricAgreeScripts {
         }
 
         /* Add rejection tests for non-anonymous agreements */
-        if (!pAgreement.getSpec().getAgreementType().isAnonymous()) {
+        final GordianCoreAgreementSpec mySpec = (GordianCoreAgreementSpec) pAgreement.getSpec();
+        if (!mySpec.getCoreAgreementType().isAnonymous()) {
             myTests = Stream.concat(myTests, Stream.of(DynamicContainer.dynamicContainer("Rejection", rejectionTests(pAgreement))));
         }
 
@@ -243,8 +242,8 @@ public final class AsymmetricAgreeScripts {
     private static void checkSelfAgreement(final FactoryAgreement pAgreement,
                                            final Object pResultType) throws GordianException {
         /* Access the KeySpec */
-        final GordianAgreementSpec mySpec = pAgreement.getSpec();
-        final GordianAgreementType myType = mySpec.getAgreementType();
+        final GordianCoreAgreementSpec mySpec = (GordianCoreAgreementSpec) pAgreement.getSpec();
+        final GordianCoreAgreementType myType = mySpec.getCoreAgreementType();
         final FactoryKeyPairs myPairs = pAgreement.getOwner().getKeyPairs();
         final GordianKeyPair myPair = myPairs.getKeyPair();
         final GordianKeyPair myTarget = myType.isAnonymous() ? myPair : myPairs.getTargetKeyPair();
@@ -311,8 +310,8 @@ public final class AsymmetricAgreeScripts {
      */
     private static void checkPartnerAgreement(final FactoryAgreement pAgreement) throws GordianException {
         /* Access the KeySpec */
-        final GordianAgreementSpec mySpec = pAgreement.getSpec();
-        final GordianAgreementType myType = mySpec.getAgreementType();
+        final GordianCoreAgreementSpec mySpec = (GordianCoreAgreementSpec) pAgreement.getSpec();
+        final GordianCoreAgreementType myType = mySpec.getCoreAgreementType();
         final FactoryKeyPairs myPairs = pAgreement.getOwner().getKeyPairs();
         final GordianKeyPair myPair = myPairs.getKeyPair();
         final GordianKeyPair myTarget = myPairs.getTargetKeyPair();
@@ -384,8 +383,8 @@ public final class AsymmetricAgreeScripts {
         Stream<DynamicNode> myTests = Stream.of(DynamicTest.dynamicTest("server", () -> checkServerRejection(pAgreement)));
 
         /* If we are signing */
-        final GordianAgreementSpec mySpec = pAgreement.getSpec();
-        if (mySpec.getAgreementType().isSigned()) {
+        final GordianCoreAgreementSpec mySpec = (GordianCoreAgreementSpec) pAgreement.getSpec();
+        if (mySpec.getCoreAgreementType().isSigned()) {
             myTests = Stream.concat(myTests, Stream.of(DynamicTest.dynamicTest("signature", () -> checkSignatureRejection(pAgreement))));
         }
 
@@ -408,8 +407,8 @@ public final class AsymmetricAgreeScripts {
      */
     private static void checkServerRejection(final FactoryAgreement pAgreement) throws GordianException {
         /* Access the KeySpec */
-        final GordianAgreementSpec mySpec = pAgreement.getSpec();
-        final GordianAgreementType myType = mySpec.getAgreementType();
+        final GordianCoreAgreementSpec mySpec = (GordianCoreAgreementSpec) pAgreement.getSpec();
+        final GordianCoreAgreementType myType = mySpec.getCoreAgreementType();
         final FactoryKeyPairs myPairs = pAgreement.getOwner().getKeyPairs();
         final GordianKeyPair myPair = myPairs.getKeyPair();
         final GordianKeyPair myTarget = myPairs.getTargetKeyPair();
@@ -457,7 +456,7 @@ public final class AsymmetricAgreeScripts {
      */
     private static void checkSignatureRejection(final FactoryAgreement pAgreement) throws GordianException {
         /* Access the KeySpec */
-        final GordianAgreementSpec mySpec = pAgreement.getSpec();
+        final GordianCoreAgreementSpec mySpec = (GordianCoreAgreementSpec) pAgreement.getSpec();
 
         /* Create mini-certificates */
         final GordianAgreementFactory myAgrees = pAgreement.getOwner().getFactory().getAgreementFactory();
@@ -500,8 +499,8 @@ public final class AsymmetricAgreeScripts {
      */
     private static void checkClientConfirmRejection(final FactoryAgreement pAgreement) throws GordianException {
         /* Access the KeySpec */
-        final GordianAgreementSpec mySpec = pAgreement.getSpec();
-        final GordianAgreementType myType = mySpec.getAgreementType();
+        final GordianCoreAgreementSpec mySpec = (GordianCoreAgreementSpec) pAgreement.getSpec();
+        final GordianCoreAgreementType myType = mySpec.getCoreAgreementType();
         final FactoryKeyPairs myPairs = pAgreement.getOwner().getKeyPairs();
         final GordianKeyPair myPair = myPairs.getKeyPair();
         final GordianKeyPair myTarget = myPairs.getTargetKeyPair();
@@ -557,8 +556,8 @@ public final class AsymmetricAgreeScripts {
      */
     private static void checkServerConfirmRejection(final FactoryAgreement pAgreement) throws GordianException {
         /* Access the KeySpec */
-        final GordianAgreementSpec mySpec = pAgreement.getSpec();
-        final GordianAgreementType myType = mySpec.getAgreementType();
+        final GordianCoreAgreementSpec mySpec = (GordianCoreAgreementSpec) pAgreement.getSpec();
+        final GordianCoreAgreementType myType = mySpec.getCoreAgreementType();
         final FactoryKeyPairs myPairs = pAgreement.getOwner().getKeyPairs();
         final GordianKeyPair myPair = myPairs.getKeyPair();
         final GordianKeyPair myTarget = myPairs.getTargetKeyPair();

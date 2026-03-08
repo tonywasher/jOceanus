@@ -18,22 +18,22 @@ package io.github.tonywasher.joceanus.gordianknot.impl.core.agree;
 
 import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreement;
 import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementParams;
-import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementStatus;
-import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementType;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianCertificate;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamCipher;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymCipher;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamCipherSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymCipherSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactoryType;
 import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySet;
-import io.github.tonywasher.joceanus.gordianknot.api.keyset.spec.GordianNewKeySetSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignatureSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keyset.spec.GordianKeySetSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianLogicException;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.agree.GordianCoreAgreementSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.agree.GordianCoreAgreementType;
 
 import java.util.Objects;
 
@@ -65,7 +65,7 @@ public class GordianCoreAgreement
     /**
      * The Agreement Spec.
      */
-    private final GordianAgreementSpec theSpec;
+    private final GordianCoreAgreementSpec theSpec;
 
     /**
      * The Parameters.
@@ -102,7 +102,7 @@ public class GordianCoreAgreement
      *
      * @return the spec
      */
-    GordianAgreementSpec getAgreementSpec() {
+    GordianCoreAgreementSpec getAgreementSpec() {
         return theSpec;
     }
 
@@ -146,21 +146,21 @@ public class GordianCoreAgreement
     @Override
     public GordianKeySet getKeySetResult() {
         return GordianAgreementStatus.RESULT_AVAILABLE.equals(theState.getStatus())
-                && theState.getResultType() instanceof GordianNewKeySetSpec
+                && theState.getResultType() instanceof GordianKeySetSpec
                 ? (GordianKeySet) theState.getResult() : null;
     }
 
     @Override
     public GordianSymCipher[] getSymCipherPairResult() {
         return GordianAgreementStatus.RESULT_AVAILABLE.equals(theState.getStatus())
-                && theState.getResultType() instanceof GordianNewSymCipherSpec
+                && theState.getResultType() instanceof GordianSymCipherSpec
                 ? (GordianSymCipher[]) theState.getResult() : null;
     }
 
     @Override
     public GordianStreamCipher[] getStreamCipherPairResult() {
         return GordianAgreementStatus.RESULT_AVAILABLE.equals(theState.getStatus())
-                && theState.getResultType() instanceof GordianNewStreamCipherSpec
+                && theState.getResultType() instanceof GordianStreamCipherSpec
                 ? (GordianStreamCipher[]) theState.getResult() : null;
     }
 
@@ -215,7 +215,7 @@ public class GordianCoreAgreement
     void setClientCertificate(final GordianCertificate pClient) throws GordianException {
         /* Handle null client certificate */
         if (pClient == null) {
-            final GordianAgreementType myType = theSpec.getAgreementType();
+            final GordianCoreAgreementType myType = theSpec.getCoreAgreementType();
             if (!myType.isAnonymous() && !myType.isSigned()) {
                 throw new GordianDataException("Client Certificate must be provided");
             }
@@ -235,7 +235,7 @@ public class GordianCoreAgreement
     void setServerCertificate(final GordianCertificate pServer) throws GordianException {
         /* Check that we have a certificate */
         if (pServer == null) {
-            final GordianAgreementType myType = theSpec.getAgreementType();
+            final GordianCoreAgreementType myType = theSpec.getCoreAgreementType();
             if (!myType.isSigned()) {
                 throw new GordianDataException("Server Certificate must be provided");
             }
@@ -269,8 +269,8 @@ public class GordianCoreAgreement
         }
 
         /* Determine agreement type */
-        final GordianAgreementSpec mySpec = theState.getSpec();
-        final boolean isSigned = mySpec.getAgreementType().isSigned();
+        final GordianCoreAgreementSpec mySpec = theState.getSpec();
+        final boolean isSigned = mySpec.getCoreAgreementType().isSigned();
 
         /* If this is a signed agreement */
         if (isSigned) {
@@ -311,7 +311,7 @@ public class GordianCoreAgreement
         theBuilder.setError(pError);
 
         /* If we are not anonymous */
-        if (!theSpec.getAgreementType().isAnonymous()) {
+        if (!theSpec.getCoreAgreementType().isAnonymous()) {
             /* Create the rejection serverHello */
             setNextMessage(theBuilder.newServerHello());
         }
@@ -359,7 +359,7 @@ public class GordianCoreAgreement
         theParams = new GordianCoreAgreementParams(theBuilder);
 
         /* Create ClientId and InitVector */
-        if (!theSpec.getAgreementType().isAnonymous()) {
+        if (!theSpec.getCoreAgreementType().isAnonymous()) {
             theBuilder.newClientId();
         }
         theBuilder.newClientIV();
@@ -375,12 +375,12 @@ public class GordianCoreAgreement
 
         /* Set next message and status */
         setNextMessage(myMsg);
-        theBuilder.setStatus(theSpec.getAgreementType().isAnonymous()
+        theBuilder.setStatus(theSpec.getCoreAgreementType().isAnonymous()
                 ? GordianAgreementStatus.RESULT_AVAILABLE
                 : GordianAgreementStatus.AWAITING_SERVERHELLO);
 
         /* Store into cache if required */
-        if (!theSpec.getAgreementType().isAnonymous()) {
+        if (!theSpec.getCoreAgreementType().isAnonymous()) {
             theSupplier.storeAgreement(myMsg.getClientId(), this);
         }
     }
@@ -405,7 +405,7 @@ public class GordianCoreAgreement
      */
     void processClientHello() throws GordianException {
         /* Create ServerId and InitVector */
-        if (!theSpec.getAgreementType().isAnonymous()) {
+        if (!theSpec.getCoreAgreementType().isAnonymous()) {
             theBuilder.newServerId();
             theBuilder.newServerIV();
         }
@@ -416,7 +416,7 @@ public class GordianCoreAgreement
         }
 
         /* Copy ephemerals to keyPairs for signed */
-        if (theSpec.getAgreementType().isSigned()) {
+        if (theSpec.getCoreAgreementType().isSigned()) {
             theBuilder.copyEphemerals();
         }
 
@@ -424,7 +424,7 @@ public class GordianCoreAgreement
         theEngine.processClientHello();
 
         /* If we are anonymous */
-        if (theSpec.getAgreementType().isAnonymous()) {
+        if (theSpec.getCoreAgreementType().isAnonymous()) {
             /* Set that the result is available */
             theBuilder.setStatus(GordianAgreementStatus.RESULT_AVAILABLE);
 
@@ -433,12 +433,12 @@ public class GordianCoreAgreement
             /* Build the new serverHello */
             final GordianCoreAgreementMessageASN1 myMsg = theBuilder.newServerHello();
             setNextMessage(myMsg);
-            theBuilder.setStatus(Boolean.TRUE.equals(theSpec.withConfirm())
+            theBuilder.setStatus(theSpec.withConfirm()
                     ? GordianAgreementStatus.AWAITING_CLIENTCONFIRM
                     : GordianAgreementStatus.RESULT_AVAILABLE);
 
             /* Store into cache if required */
-            if (Boolean.TRUE.equals(theSpec.withConfirm())) {
+            if (theSpec.withConfirm()) {
                 theSupplier.storeAgreement(myMsg.getServerId(), this);
             }
         }
@@ -458,7 +458,7 @@ public class GordianCoreAgreement
         final boolean bSuccess = theBuilder.parseServerHello(pServerHello);
         if (bSuccess) {
             /* Copy ephemerals to keyPairs for signed */
-            if (theSpec.getAgreementType().isSigned()) {
+            if (theSpec.getCoreAgreementType().isSigned()) {
                 theBuilder.copyEphemerals();
             }
 
@@ -467,7 +467,7 @@ public class GordianCoreAgreement
         }
 
         /* If we need to send confirm */
-        if (bSuccess && Boolean.TRUE.equals(theSpec.withConfirm())) {
+        if (bSuccess && theSpec.withConfirm()) {
             /* Build the new clientConfirm */
             setNextMessage(theBuilder.newClientConfirm());
         } else {

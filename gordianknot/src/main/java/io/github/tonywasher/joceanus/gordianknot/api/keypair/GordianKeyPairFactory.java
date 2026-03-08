@@ -17,6 +17,9 @@
 package io.github.tonywasher.joceanus.gordianknot.api.keypair;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairType;
 
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
@@ -35,6 +38,13 @@ public interface GordianKeyPairFactory {
      * @throws GordianException on error
      */
     GordianKeyPairGenerator getKeyPairGenerator(GordianKeyPairSpec pKeySpec) throws GordianException;
+
+    /**
+     * create new GordianKeyPairSpecBuilder.
+     *
+     * @return the new KeyPairSpecBuilder
+     */
+    GordianKeyPairSpecBuilder newKeyPairSpecBuilder();
 
     /**
      * Determine KeySpec from PKCS8EncodedKeySpec.

@@ -18,14 +18,15 @@ package io.github.tonywasher.joceanus.gordianknot.impl.jca;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianEncryptor;
-import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianEncryptorSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianSM2EncryptionSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianSM2EncryptionSpec.GordianSM2EncryptionType;
+import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianEncryptorSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianSM2EncryptionSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianSM2EncryptionType;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseData;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.encrypt.GordianCompositeEncryptor;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.encrypt.GordianCoreEncryptorFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.encrypt.GordianCoreEncryptorSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaEncryptor.JcaBlockEncryptor;
 import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaEncryptor.JcaHybridEncryptor;
 
@@ -50,7 +51,7 @@ public class JcaEncryptorFactory
         checkEncryptorSpec(pEncryptorSpec);
 
         /* Create the encryptor */
-        return getJcaEncryptor(pEncryptorSpec);
+        return getJcaEncryptor((GordianCoreEncryptorSpec) pEncryptorSpec);
     }
 
     /**
@@ -60,7 +61,7 @@ public class JcaEncryptorFactory
      * @return the Encryptor
      * @throws GordianException on error
      */
-    private GordianEncryptor getJcaEncryptor(final GordianEncryptorSpec pEncryptorSpec) throws GordianException {
+    private GordianEncryptor getJcaEncryptor(final GordianCoreEncryptorSpec pEncryptorSpec) throws GordianException {
         switch (pEncryptorSpec.getKeyPairType()) {
             case RSA:
             case ELGAMAL:
@@ -82,13 +83,14 @@ public class JcaEncryptorFactory
         }
 
         /* Switch on KeyType */
+        final GordianCoreEncryptorSpec myEncSpec = (GordianCoreEncryptorSpec) pSpec;
         switch (pSpec.getKeyPairType()) {
             case RSA:
             case ELGAMAL:
             case COMPOSITE:
                 return true;
             case SM2:
-                final GordianSM2EncryptionSpec mySpec = pSpec.getSM2EncryptionSpec();
+                final GordianSM2EncryptionSpec mySpec = myEncSpec.getSM2EncryptionSpec();
                 return mySpec != null && mySpec.getEncryptionType() == GordianSM2EncryptionType.C1C2C3;
             default:
                 return false;

@@ -19,9 +19,8 @@ package io.github.tonywasher.joceanus.gordianknot.junit.regression;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairUsage;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairUse;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianDSAElliptic;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianECSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keystore.GordianKeyStore;
 import io.github.tonywasher.joceanus.gordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStorePair;
 import io.github.tonywasher.joceanus.gordianknot.api.keystore.GordianKeyStoreFactory;
@@ -29,6 +28,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.keystore.GordianKeyStoreGat
 import io.github.tonywasher.joceanus.gordianknot.api.keystore.GordianKeyStoreManager;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keystore.GordianCoreKeyStore;
 import io.github.tonywasher.joceanus.gordianknot.junit.regression.KeyStoreUtils.KeyStoreAlias;
+import io.github.tonywasher.joceanus.gordianknot.util.GordianUtilities;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DynamicContainer;
@@ -44,7 +44,7 @@ public final class KeyStorePairs {
     /**
      * KeyPairSpec.
      */
-    private static final GordianKeyPairSpec KEYPAIRSPEC = GordianKeyPairSpecBuilder.ec(GordianDSAElliptic.SECT571K1);
+    private static final GordianKeyPairSpec KEYPAIRSPEC = GordianUtilities.newKeyPairSpecBuilder().ec(GordianECSpec.SECT571K1);
 
     /**
      * The KeyStore Manager.

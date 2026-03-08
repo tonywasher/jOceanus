@@ -19,37 +19,37 @@ package io.github.tonywasher.joceanus.gordianknot.impl.core.base;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianIdSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewCipherMode;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewPadding;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamCipherSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamCipherSpecBuilder;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeySpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeySpecBuilder;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeySubType;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeySubType.GordianNewBlakeXofKey;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeySubType.GordianNewChaCha20Key;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeySubType.GordianNewElephantKey;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeySubType.GordianNewISAPKey;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeySubType.GordianNewRomulusKey;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeySubType.GordianNewSalsa20Key;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeySubType.GordianNewSkeinXofKey;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeySubType.GordianNewSparkleKey;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeySubType.GordianNewVMPCKey;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeyType;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymCipherSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymCipherSpecBuilder;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeySpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeySpecBuilder;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeyType;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpecBuilder;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSubSpec.GordianNewDigestState;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestType;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianCipherMode;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamCipherSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySubType;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySubType.GordianBlakeXofKey;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySubType.GordianChaCha20Key;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySubType.GordianElephantKey;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySubType.GordianISAPKey;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySubType.GordianRomulusKey;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySubType.GordianSalsa20Key;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySubType.GordianSkeinXofKey;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySubType.GordianSparkleKey;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySubType.GordianVMPCKey;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeyType;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymCipherSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeySpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeyType;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianPadding;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSubSpec.GordianDigestState;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestType;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianKnuthObfuscater;
-import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianNewMacSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianNewMacSpecBuilder;
-import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianNewMacType;
-import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianNewSipHashType;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianMacSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianMacSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianMacType;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianSipHashType;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianPersonalisation.GordianPersonalId;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher.GordianCoreStreamCipherSpecBuilder;
@@ -252,27 +252,27 @@ public class GordianCoreKnuthObfuscater
      * @throws GordianException on error
      */
     private static <T extends GordianIdSpec> int deriveEncodedIdFromType(final T pType) throws GordianException {
-        if (pType instanceof GordianNewDigestSpec mySpec) {
+        if (pType instanceof GordianDigestSpec mySpec) {
             final int myId = deriveEncodedIdFromDigestSpec(mySpec);
             return GordianIdMarker.DIGEST.applyMarker(myId);
         }
-        if (pType instanceof GordianNewSymCipherSpec mySpec) {
+        if (pType instanceof GordianSymCipherSpec mySpec) {
             final int myId = deriveEncodedIdFromSymCipherSpec(mySpec);
             return GordianIdMarker.SYMCIPHER.applyMarker(myId);
         }
-        if (pType instanceof GordianNewStreamCipherSpec mySpec) {
+        if (pType instanceof GordianStreamCipherSpec mySpec) {
             final int myId = deriveEncodedIdFromStreamCipherSpec(mySpec);
             return GordianIdMarker.STREAMCIPHER.applyMarker(myId);
         }
-        if (pType instanceof GordianNewMacSpec mySpec) {
+        if (pType instanceof GordianMacSpec mySpec) {
             final int myId = deriveEncodedIdFromMacSpec(mySpec);
             return GordianIdMarker.MACKEY.applyMarker(myId);
         }
-        if (pType instanceof GordianNewSymKeySpec mySpec) {
+        if (pType instanceof GordianSymKeySpec mySpec) {
             final int myId = deriveEncodedIdFromSymKeySpec(mySpec);
             return GordianIdMarker.SYMKEY.applyMarker(myId);
         }
-        if (pType instanceof GordianNewStreamKeySpec mySpec) {
+        if (pType instanceof GordianStreamKeySpec mySpec) {
             final int myId = deriveEncodedIdFromStreamKeySpec(mySpec);
             return GordianIdMarker.STREAMKEY.applyMarker(myId);
         }
@@ -324,10 +324,10 @@ public class GordianCoreKnuthObfuscater
      * @param pDigestSpec the digestSpec
      * @return the encoded id
      */
-    private static int deriveEncodedIdFromDigestSpec(final GordianNewDigestSpec pDigestSpec) {
+    private static int deriveEncodedIdFromDigestSpec(final GordianDigestSpec pDigestSpec) {
         /* Build the encoded id */
         int myCode = deriveEncodedIdFromDigestType(pDigestSpec.getDigestType());
-        final GordianNewDigestState myState = pDigestSpec.getDigestState();
+        final GordianDigestState myState = pDigestSpec.getDigestState();
         myCode <<= determineShiftForDigestSubSpec();
         if (myState != null) {
             myCode += deriveEncodedIdFromDigestState(myState);
@@ -348,7 +348,7 @@ public class GordianCoreKnuthObfuscater
      * @return the digestSpec
      * @throws GordianException on error
      */
-    private static GordianNewDigestSpec deriveDigestSpecFromEncodedId(final int pEncodedId) throws GordianException {
+    private static GordianDigestSpec deriveDigestSpecFromEncodedId(final int pEncodedId) throws GordianException {
         /* Isolate id Components */
         final boolean isXof = (pEncodedId & 1) == 1;
         int myCode = pEncodedId >> 1;
@@ -358,16 +358,16 @@ public class GordianCoreKnuthObfuscater
         final int myId = myCode >> determineShiftForDigestSubSpec();
 
         /* Translate components */
-        final GordianNewDigestType myType = deriveDigestTypeFromEncodedId(myId);
+        final GordianDigestType myType = deriveDigestTypeFromEncodedId(myId);
         final GordianLength myLength = deriveLengthFromEncodedId(myLenCode);
-        GordianNewDigestState mySubSpec = null;
+        GordianDigestState mySubSpec = null;
         if (mySubSpecCode != 0) {
             mySubSpec = deriveDigestStateFromEncodedId(mySubSpecCode);
         }
 
         /* Create DigestSpec */
-        final GordianNewDigestSpecBuilder myBuilder = GordianCoreDigestSpecBuilder.newInstance();
-        return myBuilder.generic(myType, mySubSpec, myLength, isXof);
+        final GordianDigestSpecBuilder myBuilder = GordianCoreDigestSpecBuilder.newInstance();
+        return myBuilder.digest(myType, mySubSpec, myLength, isXof);
     }
 
     /**
@@ -376,7 +376,7 @@ public class GordianCoreKnuthObfuscater
      * @param pSymKeySpec the symKeySpec
      * @return the encoded id
      */
-    private static int deriveEncodedIdFromSymKeySpec(final GordianNewSymKeySpec pSymKeySpec) {
+    private static int deriveEncodedIdFromSymKeySpec(final GordianSymKeySpec pSymKeySpec) {
         /* Build the encoded id */
         int myCode = deriveEncodedIdFromSymKeyType(pSymKeySpec.getSymKeyType());
         myCode <<= determineShiftForEnum(GordianLength.class);
@@ -395,7 +395,7 @@ public class GordianCoreKnuthObfuscater
      * @return the symKeySpec
      * @throws GordianException on error
      */
-    private static GordianNewSymKeySpec deriveSymKeySpecFromEncodedId(final int pEncodedId) throws GordianException {
+    private static GordianSymKeySpec deriveSymKeySpecFromEncodedId(final int pEncodedId) throws GordianException {
         /* Isolate id Components */
         final int myKeyLenCode = pEncodedId & determineMaskForEnum(GordianLength.class);
         final int myCode = pEncodedId >> determineShiftForEnum(GordianLength.class);
@@ -403,13 +403,13 @@ public class GordianCoreKnuthObfuscater
         final int myId = myCode >> determineShiftForEnum(GordianLength.class);
 
         /* Translate components */
-        final GordianNewSymKeyType myType = deriveSymKeyTypeFromEncodedId(myId);
+        final GordianSymKeyType myType = deriveSymKeyTypeFromEncodedId(myId);
         final GordianLength myBlkLength = deriveLengthFromEncodedId(myBlkLenCode);
         final GordianLength myKeyLength = deriveLengthFromEncodedId(myKeyLenCode);
 
         /* Create SymKeySpec */
-        final GordianNewSymKeySpecBuilder myBuilder = GordianCoreSymKeySpecBuilder.newInstance();
-        return myBuilder.generic(myType, myBlkLength, myKeyLength);
+        final GordianSymKeySpecBuilder myBuilder = GordianCoreSymKeySpecBuilder.newInstance();
+        return myBuilder.symKey(myType, myBlkLength, myKeyLength);
     }
 
     /**
@@ -418,12 +418,12 @@ public class GordianCoreKnuthObfuscater
      * @param pCipherSpec the symCipherSpec
      * @return the external id
      */
-    private static int deriveEncodedIdFromSymCipherSpec(final GordianNewSymCipherSpec pCipherSpec) {
+    private static int deriveEncodedIdFromSymCipherSpec(final GordianSymCipherSpec pCipherSpec) {
         /* Derive the encoded id */
         int myCode = deriveEncodedIdFromSymKeySpec(pCipherSpec.getKeySpec());
-        myCode <<= determineShiftForEnum(GordianNewCipherMode.class);
+        myCode <<= determineShiftForEnum(GordianCipherMode.class);
         myCode += deriveEncodedIdFromCipherMode(pCipherSpec.getCipherMode());
-        myCode <<= determineShiftForEnum(GordianNewPadding.class);
+        myCode <<= determineShiftForEnum(GordianPadding.class);
         myCode += deriveEncodedIdFromPadding(pCipherSpec.getPadding());
 
         /* Return the code */
@@ -437,21 +437,21 @@ public class GordianCoreKnuthObfuscater
      * @return the symCipherSpec
      * @throws GordianException on error
      */
-    private static GordianNewSymCipherSpec deriveSymCipherSpecFromEncodedId(final int pEncodedId) throws GordianException {
+    private static GordianSymCipherSpec deriveSymCipherSpecFromEncodedId(final int pEncodedId) throws GordianException {
         /* Isolate id Components */
-        final int myPaddingCode = pEncodedId & determineMaskForEnum(GordianNewPadding.class);
-        final int myCode = pEncodedId >> determineShiftForEnum(GordianNewPadding.class);
-        final int myModeCode = myCode & determineMaskForEnum(GordianNewCipherMode.class);
-        final int myId = myCode >> determineShiftForEnum(GordianNewCipherMode.class);
+        final int myPaddingCode = pEncodedId & determineMaskForEnum(GordianPadding.class);
+        final int myCode = pEncodedId >> determineShiftForEnum(GordianPadding.class);
+        final int myModeCode = myCode & determineMaskForEnum(GordianCipherMode.class);
+        final int myId = myCode >> determineShiftForEnum(GordianCipherMode.class);
 
         /* Determine KeyType */
-        final GordianNewSymKeySpec mySpec = deriveSymKeySpecFromEncodedId(myId);
-        final GordianNewCipherMode myMode = deriveCipherModeFromEncodedId(myModeCode);
-        final GordianNewPadding myPadding = derivePaddingFromEncodedId(myPaddingCode);
+        final GordianSymKeySpec mySpec = deriveSymKeySpecFromEncodedId(myId);
+        final GordianCipherMode myMode = deriveCipherModeFromEncodedId(myModeCode);
+        final GordianPadding myPadding = derivePaddingFromEncodedId(myPaddingCode);
 
         /* Create the cipherSpec */
-        final GordianNewSymCipherSpecBuilder myBuilder = GordianCoreSymCipherSpecBuilder.newInstance();
-        return myBuilder.generic(mySpec, myMode, myPadding);
+        final GordianSymCipherSpecBuilder myBuilder = GordianCoreSymCipherSpecBuilder.newInstance();
+        return myBuilder.symCipher(mySpec, myMode, myPadding);
     }
 
     /**
@@ -460,7 +460,7 @@ public class GordianCoreKnuthObfuscater
      * @param pStreamKeySpec the streamKeySpec
      * @return the encoded id
      */
-    private static int deriveEncodedIdFromStreamKeySpec(final GordianNewStreamKeySpec pStreamKeySpec) {
+    private static int deriveEncodedIdFromStreamKeySpec(final GordianStreamKeySpec pStreamKeySpec) {
         /* Build the encoded id */
         int myCode = deriveEncodedIdFromStreamKeyType(pStreamKeySpec.getStreamKeyType());
         myCode <<= determineShiftForEnum(GordianLength.class);
@@ -479,7 +479,7 @@ public class GordianCoreKnuthObfuscater
      * @return the streamKeySpec
      * @throws GordianException on error
      */
-    private static GordianNewStreamKeySpec deriveStreamKeySpecFromEncodedId(final int pEncodedId) throws GordianException {
+    private static GordianStreamKeySpec deriveStreamKeySpecFromEncodedId(final int pEncodedId) throws GordianException {
         /* Isolate id Components */
         final int mySubKeyCode = pEncodedId & determineMaskForStreamKeySubType();
         final int myCode = pEncodedId >> determineShiftForStreamKeySubType();
@@ -487,13 +487,13 @@ public class GordianCoreKnuthObfuscater
         final int myId = myCode >> determineShiftForEnum(GordianLength.class);
 
         /* Translate components */
-        final GordianNewStreamKeyType myType = deriveStreamKeyTypeFromEncodedId(myId);
+        final GordianStreamKeyType myType = deriveStreamKeyTypeFromEncodedId(myId);
         final GordianLength myKeyLength = deriveLengthFromEncodedId(myKeyLenCode);
-        final GordianNewStreamKeySubType mySubKeyType = deriveStreamSubKeyTypeFromEncodedId(myType, mySubKeyCode);
+        final GordianStreamKeySubType mySubKeyType = deriveStreamSubKeyTypeFromEncodedId(myType, mySubKeyCode);
 
         /* Create StreamKeySpec */
-        final GordianNewStreamKeySpecBuilder myBuilder = GordianCoreStreamKeySpecBuilder.newInstance();
-        return myBuilder.generic(myType, myKeyLength, mySubKeyType);
+        final GordianStreamKeySpecBuilder myBuilder = GordianCoreStreamKeySpecBuilder.newInstance();
+        return myBuilder.streamKey(myType, myKeyLength, mySubKeyType);
     }
 
     /**
@@ -502,7 +502,7 @@ public class GordianCoreKnuthObfuscater
      * @param pCipherSpec the symCipherSpec
      * @return the external id
      */
-    private static int deriveEncodedIdFromStreamCipherSpec(final GordianNewStreamCipherSpec pCipherSpec) {
+    private static int deriveEncodedIdFromStreamCipherSpec(final GordianStreamCipherSpec pCipherSpec) {
         /* Build the encoded id */
         int myCode = deriveEncodedIdFromStreamKeySpec(pCipherSpec.getKeySpec());
         myCode <<= 1;
@@ -519,15 +519,15 @@ public class GordianCoreKnuthObfuscater
      * @return the symCipherSpec
      * @throws GordianException on error
      */
-    private static GordianNewStreamCipherSpec deriveStreamCipherSpecFromEncodedId(final int pEncodedId) throws GordianException {
+    private static GordianStreamCipherSpec deriveStreamCipherSpecFromEncodedId(final int pEncodedId) throws GordianException {
         /* Determine KeySpec */
         final int myAAD = pEncodedId & 1;
         final int myCode = pEncodedId >> 1;
-        final GordianNewStreamKeySpec mySpec = deriveStreamKeySpecFromEncodedId(myCode);
+        final GordianStreamKeySpec mySpec = deriveStreamKeySpecFromEncodedId(myCode);
 
         /* Create the cipherSpec */
-        final GordianNewStreamCipherSpecBuilder myBuilder = GordianCoreStreamCipherSpecBuilder.newInstance();
-        return myBuilder.generic(mySpec, myAAD != 0);
+        final GordianStreamCipherSpecBuilder myBuilder = GordianCoreStreamCipherSpecBuilder.newInstance();
+        return myBuilder.streamCipher(mySpec, myAAD != 0);
     }
 
     /**
@@ -536,27 +536,27 @@ public class GordianCoreKnuthObfuscater
      * @param pStreamKeySpec the streamKeySpec
      * @return the encoded id
      */
-    private static int deriveEncodedIdFromStreamKeySubType(final GordianNewStreamKeySpec pStreamKeySpec) {
+    private static int deriveEncodedIdFromStreamKeySubType(final GordianStreamKeySpec pStreamKeySpec) {
         /* Switch on keyType */
         switch (pStreamKeySpec.getStreamKeyType()) {
             case CHACHA20:
-                return deriveEncodedIdFromEnum((GordianNewChaCha20Key) pStreamKeySpec.getSubKeyType());
+                return deriveEncodedIdFromEnum((GordianChaCha20Key) pStreamKeySpec.getSubKeyType());
             case SALSA20:
-                return deriveEncodedIdFromEnum((GordianNewSalsa20Key) pStreamKeySpec.getSubKeyType());
+                return deriveEncodedIdFromEnum((GordianSalsa20Key) pStreamKeySpec.getSubKeyType());
             case VMPC:
-                return deriveEncodedIdFromEnum((GordianNewVMPCKey) pStreamKeySpec.getSubKeyType());
+                return deriveEncodedIdFromEnum((GordianVMPCKey) pStreamKeySpec.getSubKeyType());
             case SKEINXOF:
-                return deriveEncodedIdFromEnum((GordianNewSkeinXofKey) pStreamKeySpec.getSubKeyType());
+                return deriveEncodedIdFromEnum((GordianSkeinXofKey) pStreamKeySpec.getSubKeyType());
             case BLAKE2XOF:
-                return deriveEncodedIdFromEnum((GordianNewBlakeXofKey) pStreamKeySpec.getSubKeyType());
+                return deriveEncodedIdFromEnum((GordianBlakeXofKey) pStreamKeySpec.getSubKeyType());
             case ELEPHANT:
-                return deriveEncodedIdFromEnum((GordianNewElephantKey) pStreamKeySpec.getSubKeyType());
+                return deriveEncodedIdFromEnum((GordianElephantKey) pStreamKeySpec.getSubKeyType());
             case ISAP:
-                return deriveEncodedIdFromEnum((GordianNewISAPKey) pStreamKeySpec.getSubKeyType());
+                return deriveEncodedIdFromEnum((GordianISAPKey) pStreamKeySpec.getSubKeyType());
             case ROMULUS:
-                return deriveEncodedIdFromEnum((GordianNewRomulusKey) pStreamKeySpec.getSubKeyType());
+                return deriveEncodedIdFromEnum((GordianRomulusKey) pStreamKeySpec.getSubKeyType());
             case SPARKLE:
-                return deriveEncodedIdFromEnum((GordianNewSparkleKey) pStreamKeySpec.getSubKeyType());
+                return deriveEncodedIdFromEnum((GordianSparkleKey) pStreamKeySpec.getSubKeyType());
             default:
                 return 0;
         }
@@ -570,28 +570,28 @@ public class GordianCoreKnuthObfuscater
      * @return the subKeyType
      * @throws GordianException on error
      */
-    private static GordianNewStreamKeySubType deriveStreamSubKeyTypeFromEncodedId(final GordianNewStreamKeyType pKeyType,
-                                                                                  final int pEncodedId) throws GordianException {
+    private static GordianStreamKeySubType deriveStreamSubKeyTypeFromEncodedId(final GordianStreamKeyType pKeyType,
+                                                                               final int pEncodedId) throws GordianException {
         /* Switch on keyType */
         switch (pKeyType) {
             case CHACHA20:
-                return deriveEnumFromEncodedId(pEncodedId, GordianNewChaCha20Key.class);
+                return deriveEnumFromEncodedId(pEncodedId, GordianChaCha20Key.class);
             case SALSA20:
-                return deriveEnumFromEncodedId(pEncodedId, GordianNewSalsa20Key.class);
+                return deriveEnumFromEncodedId(pEncodedId, GordianSalsa20Key.class);
             case VMPC:
-                return deriveEnumFromEncodedId(pEncodedId, GordianNewVMPCKey.class);
+                return deriveEnumFromEncodedId(pEncodedId, GordianVMPCKey.class);
             case SKEINXOF:
-                return deriveEnumFromEncodedId(pEncodedId, GordianNewSkeinXofKey.class);
+                return deriveEnumFromEncodedId(pEncodedId, GordianSkeinXofKey.class);
             case BLAKE2XOF:
-                return deriveEnumFromEncodedId(pEncodedId, GordianNewBlakeXofKey.class);
+                return deriveEnumFromEncodedId(pEncodedId, GordianBlakeXofKey.class);
             case ELEPHANT:
-                return deriveEnumFromEncodedId(pEncodedId, GordianNewElephantKey.class);
+                return deriveEnumFromEncodedId(pEncodedId, GordianElephantKey.class);
             case ISAP:
-                return deriveEnumFromEncodedId(pEncodedId, GordianNewISAPKey.class);
+                return deriveEnumFromEncodedId(pEncodedId, GordianISAPKey.class);
             case ROMULUS:
-                return deriveEnumFromEncodedId(pEncodedId, GordianNewRomulusKey.class);
+                return deriveEnumFromEncodedId(pEncodedId, GordianRomulusKey.class);
             case SPARKLE:
-                return deriveEnumFromEncodedId(pEncodedId, GordianNewSparkleKey.class);
+                return deriveEnumFromEncodedId(pEncodedId, GordianSparkleKey.class);
             default:
                 return null;
         }
@@ -612,7 +612,7 @@ public class GordianCoreKnuthObfuscater
      * @return the bit shift
      */
     private static int determineShiftForDigestSubSpec() {
-        return determineShiftForEnum(GordianNewDigestState.class);
+        return determineShiftForEnum(GordianDigestState.class);
     }
 
     /**
@@ -630,15 +630,15 @@ public class GordianCoreKnuthObfuscater
      * @return the bit shift
      */
     private static int determineShiftForStreamKeySubType() {
-        int myShift = determineShiftForEnum(GordianNewVMPCKey.class);
-        myShift = Math.max(myShift, determineShiftForEnum(GordianNewSalsa20Key.class));
-        myShift = Math.max(myShift, determineShiftForEnum(GordianNewChaCha20Key.class));
-        myShift = Math.max(myShift, determineShiftForEnum(GordianNewSkeinXofKey.class));
-        myShift = Math.max(myShift, determineShiftForEnum(GordianNewBlakeXofKey.class));
-        myShift = Math.max(myShift, determineShiftForEnum(GordianNewElephantKey.class));
-        myShift = Math.max(myShift, determineShiftForEnum(GordianNewISAPKey.class));
-        myShift = Math.max(myShift, determineShiftForEnum(GordianNewRomulusKey.class));
-        return Math.max(myShift, determineShiftForEnum(GordianNewSparkleKey.class));
+        int myShift = determineShiftForEnum(GordianVMPCKey.class);
+        myShift = Math.max(myShift, determineShiftForEnum(GordianSalsa20Key.class));
+        myShift = Math.max(myShift, determineShiftForEnum(GordianChaCha20Key.class));
+        myShift = Math.max(myShift, determineShiftForEnum(GordianSkeinXofKey.class));
+        myShift = Math.max(myShift, determineShiftForEnum(GordianBlakeXofKey.class));
+        myShift = Math.max(myShift, determineShiftForEnum(GordianElephantKey.class));
+        myShift = Math.max(myShift, determineShiftForEnum(GordianISAPKey.class));
+        myShift = Math.max(myShift, determineShiftForEnum(GordianRomulusKey.class));
+        return Math.max(myShift, determineShiftForEnum(GordianSparkleKey.class));
     }
 
     /**
@@ -647,11 +647,11 @@ public class GordianCoreKnuthObfuscater
      * @param pMacSpec the macSpec
      * @return the external id
      */
-    private static int deriveEncodedIdFromMacSpec(final GordianNewMacSpec pMacSpec) {
+    private static int deriveEncodedIdFromMacSpec(final GordianMacSpec pMacSpec) {
         /* Build the encoded macId */
-        final GordianNewMacType myMacType = pMacSpec.getMacType();
+        final GordianMacType myMacType = pMacSpec.getMacType();
         int myCode = deriveEncodedIdFromMacType(myMacType);
-        int myShift = determineShiftForEnum(GordianNewMacType.class);
+        int myShift = determineShiftForEnum(GordianMacType.class);
         myCode += deriveEncodedIdFromLength(pMacSpec.getKeyLength()) << myShift;
         myShift += determineShiftForEnum(GordianLength.class);
 
@@ -699,17 +699,17 @@ public class GordianCoreKnuthObfuscater
      * @return the macSpec
      * @throws GordianException on error
      */
-    private static GordianNewMacSpec deriveMacSpecFromEncodedId(final int pEncodedId) throws GordianException {
+    private static GordianMacSpec deriveMacSpecFromEncodedId(final int pEncodedId) throws GordianException {
         /* Isolate id Components */
-        final int myMacId = pEncodedId & determineMaskForEnum(GordianNewMacType.class);
-        final int myCode = pEncodedId >> determineShiftForEnum(GordianNewMacType.class);
+        final int myMacId = pEncodedId & determineMaskForEnum(GordianMacType.class);
+        final int myCode = pEncodedId >> determineShiftForEnum(GordianMacType.class);
         final int myKeyLenId = myCode & determineMaskForEnum(GordianLength.class);
         final int myId = myCode >> determineShiftForEnum(GordianLength.class);
 
         /* Determine MacType and keyLength */
-        final GordianNewMacType myMacType = deriveMacTypeFromEncodedId(myMacId);
+        final GordianMacType myMacType = deriveMacTypeFromEncodedId(myMacId);
         final GordianLength myKeyLen = deriveLengthFromEncodedId(myKeyLenId);
-        final GordianNewMacSpecBuilder myBuilder = GordianCoreMacSpecBuilder.newInstance();
+        final GordianMacSpecBuilder myBuilder = GordianCoreMacSpecBuilder.newInstance();
 
         /* Switch on the MacType */
         switch (myMacType) {
@@ -720,25 +720,25 @@ public class GordianCoreKnuthObfuscater
             case KALYNA:
             case CFBMAC:
             case CBCMAC:
-                return myBuilder.generic(myMacType, deriveSymKeySpecFromEncodedId(myId));
+                return myBuilder.mac(myMacType, deriveSymKeySpecFromEncodedId(myId));
             case POLY1305:
                 return myId == 0
                         ? myBuilder.poly1305Mac()
-                        : myBuilder.generic(myMacType, deriveSymKeySpecFromEncodedId(myId));
+                        : myBuilder.mac(myMacType, deriveSymKeySpecFromEncodedId(myId));
             case SKEIN:
-                final GordianNewDigestSpec mySkeinSpec = deriveDigestSpecFromEncodedId(myId);
+                final GordianDigestSpec mySkeinSpec = deriveDigestSpecFromEncodedId(myId);
                 return myBuilder.skeinMac(myKeyLen, mySkeinSpec);
             case BLAKE2:
-                final GordianNewDigestSpec myBlake2Spec = deriveDigestSpecFromEncodedId(myId);
+                final GordianDigestSpec myBlake2Spec = deriveDigestSpecFromEncodedId(myId);
                 return myBuilder.blake2Mac(myKeyLen, myBlake2Spec);
             case BLAKE3:
-                final GordianNewDigestSpec myBlake3Spec = deriveDigestSpecFromEncodedId(myId);
+                final GordianDigestSpec myBlake3Spec = deriveDigestSpecFromEncodedId(myId);
                 return myBuilder.blake3Mac(myBlake3Spec.getDigestLength());
             case KMAC:
-                final GordianNewDigestSpec myKMACSpec = deriveDigestSpecFromEncodedId(myId);
+                final GordianDigestSpec myKMACSpec = deriveDigestSpecFromEncodedId(myId);
                 return myBuilder.kMac(myKeyLen, myKMACSpec);
             case KUPYNA:
-                final GordianNewDigestSpec myKupynaSpec = deriveDigestSpecFromEncodedId(myId);
+                final GordianDigestSpec myKupynaSpec = deriveDigestSpecFromEncodedId(myId);
                 return myBuilder.kupynaMac(myKeyLen, myKupynaSpec.getDigestLength());
             case ZUC:
                 final GordianLength myLength = deriveLengthFromEncodedId(myId);
@@ -746,7 +746,7 @@ public class GordianCoreKnuthObfuscater
             case SIPHASH:
                 return myBuilder.sipHash(deriveSipHashTypeFromEncodedId(myId));
             default:
-                return myBuilder.generic(myMacType, myKeyLen);
+                return myBuilder.mac(myMacType, myKeyLen);
         }
     }
 
@@ -767,8 +767,8 @@ public class GordianCoreKnuthObfuscater
      * @return the sipHashSpec
      * @throws GordianException on error
      */
-    private static GordianNewSipHashType deriveSipHashTypeFromEncodedId(final int pEncodedId) throws GordianException {
-        return deriveEnumFromEncodedId(pEncodedId, GordianNewSipHashType.class);
+    private static GordianSipHashType deriveSipHashTypeFromEncodedId(final int pEncodedId) throws GordianException {
+        return deriveEnumFromEncodedId(pEncodedId, GordianSipHashType.class);
     }
 
     /**
@@ -777,7 +777,7 @@ public class GordianCoreKnuthObfuscater
      * @param pDigest the digestType
      * @return the encoded id
      */
-    private static int deriveEncodedIdFromDigestType(final GordianNewDigestType pDigest) {
+    private static int deriveEncodedIdFromDigestType(final GordianDigestType pDigest) {
         return deriveEncodedIdFromEnum(pDigest);
     }
 
@@ -788,8 +788,8 @@ public class GordianCoreKnuthObfuscater
      * @return the digestType
      * @throws GordianException on error
      */
-    private static GordianNewDigestType deriveDigestTypeFromEncodedId(final int pEncodedId) throws GordianException {
-        return deriveEnumFromEncodedId(pEncodedId, GordianNewDigestType.class);
+    private static GordianDigestType deriveDigestTypeFromEncodedId(final int pEncodedId) throws GordianException {
+        return deriveEnumFromEncodedId(pEncodedId, GordianDigestType.class);
     }
 
     /**
@@ -798,7 +798,7 @@ public class GordianCoreKnuthObfuscater
      * @param pSymKey the symKeyType
      * @return the encoded id
      */
-    private static int deriveEncodedIdFromSymKeyType(final GordianNewSymKeyType pSymKey) {
+    private static int deriveEncodedIdFromSymKeyType(final GordianSymKeyType pSymKey) {
         return deriveEncodedIdFromEnum(pSymKey);
     }
 
@@ -809,8 +809,8 @@ public class GordianCoreKnuthObfuscater
      * @return the symKeyType
      * @throws GordianException on error
      */
-    private static GordianNewSymKeyType deriveSymKeyTypeFromEncodedId(final int pEncodedId) throws GordianException {
-        return deriveEnumFromEncodedId(pEncodedId, GordianNewSymKeyType.class);
+    private static GordianSymKeyType deriveSymKeyTypeFromEncodedId(final int pEncodedId) throws GordianException {
+        return deriveEnumFromEncodedId(pEncodedId, GordianSymKeyType.class);
     }
 
     /**
@@ -819,7 +819,7 @@ public class GordianCoreKnuthObfuscater
      * @param pStreamKey the streamKeyType
      * @return the encoded id
      */
-    private static int deriveEncodedIdFromStreamKeyType(final GordianNewStreamKeyType pStreamKey) {
+    private static int deriveEncodedIdFromStreamKeyType(final GordianStreamKeyType pStreamKey) {
         return deriveEncodedIdFromEnum(pStreamKey);
     }
 
@@ -830,8 +830,8 @@ public class GordianCoreKnuthObfuscater
      * @return the streamKeyType
      * @throws GordianException on error
      */
-    private static GordianNewStreamKeyType deriveStreamKeyTypeFromEncodedId(final int pEncodedId) throws GordianException {
-        return deriveEnumFromEncodedId(pEncodedId, GordianNewStreamKeyType.class);
+    private static GordianStreamKeyType deriveStreamKeyTypeFromEncodedId(final int pEncodedId) throws GordianException {
+        return deriveEnumFromEncodedId(pEncodedId, GordianStreamKeyType.class);
     }
 
     /**
@@ -840,7 +840,7 @@ public class GordianCoreKnuthObfuscater
      * @param pMac the macType
      * @return the encoded id
      */
-    private static int deriveEncodedIdFromMacType(final GordianNewMacType pMac) {
+    private static int deriveEncodedIdFromMacType(final GordianMacType pMac) {
         return deriveEncodedIdFromEnum(pMac);
     }
 
@@ -851,8 +851,8 @@ public class GordianCoreKnuthObfuscater
      * @return the macType
      * @throws GordianException on error
      */
-    private static GordianNewMacType deriveMacTypeFromEncodedId(final int pEncodedId) throws GordianException {
-        return deriveEnumFromEncodedId(pEncodedId, GordianNewMacType.class);
+    private static GordianMacType deriveMacTypeFromEncodedId(final int pEncodedId) throws GordianException {
+        return deriveEnumFromEncodedId(pEncodedId, GordianMacType.class);
     }
 
     /**
@@ -882,7 +882,7 @@ public class GordianCoreKnuthObfuscater
      * @param pState the state
      * @return the encoded id
      */
-    private static int deriveEncodedIdFromDigestState(final GordianNewDigestState pState) {
+    private static int deriveEncodedIdFromDigestState(final GordianDigestState pState) {
         return deriveEncodedIdFromEnum(pState);
     }
 
@@ -893,8 +893,8 @@ public class GordianCoreKnuthObfuscater
      * @return the state
      * @throws GordianException on error
      */
-    private static GordianNewDigestState deriveDigestStateFromEncodedId(final int pEncodedId) throws GordianException {
-        return deriveEnumFromEncodedId(pEncodedId, GordianNewDigestState.class);
+    private static GordianDigestState deriveDigestStateFromEncodedId(final int pEncodedId) throws GordianException {
+        return deriveEnumFromEncodedId(pEncodedId, GordianDigestState.class);
     }
 
     /**
@@ -903,7 +903,7 @@ public class GordianCoreKnuthObfuscater
      * @param pMode the cipherMode
      * @return the encoded id
      */
-    private static int deriveEncodedIdFromCipherMode(final GordianNewCipherMode pMode) {
+    private static int deriveEncodedIdFromCipherMode(final GordianCipherMode pMode) {
         return deriveEncodedIdFromEnum(pMode);
     }
 
@@ -914,8 +914,8 @@ public class GordianCoreKnuthObfuscater
      * @return the cipherMode
      * @throws GordianException on error
      */
-    private static GordianNewCipherMode deriveCipherModeFromEncodedId(final int pEncodedId) throws GordianException {
-        return deriveEnumFromEncodedId(pEncodedId, GordianNewCipherMode.class);
+    private static GordianCipherMode deriveCipherModeFromEncodedId(final int pEncodedId) throws GordianException {
+        return deriveEnumFromEncodedId(pEncodedId, GordianCipherMode.class);
     }
 
     /**
@@ -924,7 +924,7 @@ public class GordianCoreKnuthObfuscater
      * @param pPadding the padding
      * @return the encoded id
      */
-    private static int deriveEncodedIdFromPadding(final GordianNewPadding pPadding) {
+    private static int deriveEncodedIdFromPadding(final GordianPadding pPadding) {
         return deriveEncodedIdFromEnum(pPadding);
     }
 
@@ -935,8 +935,8 @@ public class GordianCoreKnuthObfuscater
      * @return the padding
      * @throws GordianException on error
      */
-    private static GordianNewPadding derivePaddingFromEncodedId(final int pEncodedId) throws GordianException {
-        return deriveEnumFromEncodedId(pEncodedId, GordianNewPadding.class);
+    private static GordianPadding derivePaddingFromEncodedId(final int pEncodedId) throws GordianException {
+        return deriveEnumFromEncodedId(pEncodedId, GordianPadding.class);
     }
 
     /**

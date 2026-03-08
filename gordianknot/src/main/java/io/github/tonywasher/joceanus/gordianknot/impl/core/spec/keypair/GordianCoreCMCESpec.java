@@ -17,13 +17,12 @@
 
 package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair;
 
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewCMCESpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianCMCESpec;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.bc.BCObjectIdentifiers;
 import org.bouncycastle.pqc.crypto.cmce.CMCEParameters;
 import org.bouncycastle.pqc.jcajce.spec.CMCEParameterSpec;
 
-import java.util.Collection;
 import java.util.EnumMap;
 import java.util.Map;
 
@@ -35,19 +34,24 @@ public final class GordianCoreCMCESpec {
     /**
      * The specMap.
      */
-    private static final Map<GordianNewCMCESpec, GordianCoreCMCESpec> SPECMAP = newSpecMap();
+    private static final Map<GordianCMCESpec, GordianCoreCMCESpec> SPECMAP = newSpecMap();
+
+    /**
+     * The specArray.
+     */
+    private static final GordianCoreCMCESpec[] VALUES = SPECMAP.values().toArray(new GordianCoreCMCESpec[0]);
 
     /**
      * The Spec.
      */
-    private final GordianNewCMCESpec theSpec;
+    private final GordianCMCESpec theSpec;
 
     /**
      * Constructor.
      *
      * @param pSpec the spec
      */
-    private GordianCoreCMCESpec(final GordianNewCMCESpec pSpec) {
+    private GordianCoreCMCESpec(final GordianCMCESpec pSpec) {
         theSpec = pSpec;
     }
 
@@ -56,7 +60,7 @@ public final class GordianCoreCMCESpec {
      *
      * @return the spec
      */
-    public GordianNewCMCESpec getSpec() {
+    public GordianCMCESpec getSpec() {
         return theSpec;
     }
 
@@ -188,7 +192,7 @@ public final class GordianCoreCMCESpec {
      * @return the core spec
      */
     public static GordianCoreCMCESpec mapCoreSpec(final Object pSpec) {
-        return pSpec instanceof GordianNewCMCESpec mySpec ? SPECMAP.get(mySpec) : null;
+        return pSpec instanceof GordianCMCESpec mySpec ? SPECMAP.get(mySpec) : null;
     }
 
     /**
@@ -196,9 +200,9 @@ public final class GordianCoreCMCESpec {
      *
      * @return the type map
      */
-    private static Map<GordianNewCMCESpec, GordianCoreCMCESpec> newSpecMap() {
-        final Map<GordianNewCMCESpec, GordianCoreCMCESpec> myMap = new EnumMap<>(GordianNewCMCESpec.class);
-        for (GordianNewCMCESpec mySpec : GordianNewCMCESpec.values()) {
+    private static Map<GordianCMCESpec, GordianCoreCMCESpec> newSpecMap() {
+        final Map<GordianCMCESpec, GordianCoreCMCESpec> myMap = new EnumMap<>(GordianCMCESpec.class);
+        for (GordianCMCESpec mySpec : GordianCMCESpec.values()) {
             myMap.put(mySpec, new GordianCoreCMCESpec(mySpec));
         }
         return myMap;
@@ -209,7 +213,7 @@ public final class GordianCoreCMCESpec {
      *
      * @return the values
      */
-    public static Collection<GordianCoreCMCESpec> values() {
-        return SPECMAP.values();
+    public static GordianCoreCMCESpec[] values() {
+        return VALUES;
     }
 }

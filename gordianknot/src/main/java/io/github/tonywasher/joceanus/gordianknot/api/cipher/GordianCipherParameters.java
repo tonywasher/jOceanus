@@ -17,7 +17,7 @@
 package io.github.tonywasher.joceanus.gordianknot.api.cipher;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianKeySpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewPBESpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianPBESpec;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKey;
 
 /**
@@ -94,7 +94,7 @@ public interface GordianCipherParameters {
      * @param pPassword the password
      * @return the keySpec
      */
-    static GordianPBECipherParameters pbe(final GordianNewPBESpec pPBESpec,
+    static GordianPBECipherParameters pbe(final GordianPBESpec pPBESpec,
                                           final char[] pPassword) {
         return new GordianPBECipherParameters(pPBESpec, pPassword);
     }
@@ -107,7 +107,7 @@ public interface GordianCipherParameters {
      * @param pNonce    the nonce
      * @return the keySpec
      */
-    static GordianPBECipherParameters pbeAndNonce(final GordianNewPBESpec pPBESpec,
+    static GordianPBECipherParameters pbeAndNonce(final GordianPBESpec pPBESpec,
                                                   final char[] pPassword,
                                                   final byte[] pNonce) {
         return new GordianPBECipherParameters(pPBESpec, pNonce, pPassword);
@@ -272,7 +272,7 @@ public interface GordianCipherParameters {
         /**
          * The PBESpec.
          */
-        private final GordianNewPBESpec thePBESpec;
+        private final GordianPBESpec thePBESpec;
 
         /**
          * The Nonce.
@@ -295,7 +295,7 @@ public interface GordianCipherParameters {
          * @param pPBESpec  the PBESpec
          * @param pPassword the password
          */
-        GordianPBECipherParameters(final GordianNewPBESpec pPBESpec,
+        GordianPBECipherParameters(final GordianPBESpec pPBESpec,
                                    final char[] pPassword) {
             thePBESpec = pPBESpec;
             theNonce = null;
@@ -310,7 +310,7 @@ public interface GordianCipherParameters {
          * @param pNonce    the nonce
          * @param pPassword the password
          */
-        GordianPBECipherParameters(final GordianNewPBESpec pPBESpec,
+        GordianPBECipherParameters(final GordianPBESpec pPBESpec,
                                    final byte[] pNonce,
                                    final char[] pPassword) {
             thePBESpec = pPBESpec;
@@ -324,7 +324,7 @@ public interface GordianCipherParameters {
          *
          * @return the PBESpec
          */
-        public GordianNewPBESpec getPBESpec() {
+        public GordianPBESpec getPBESpec() {
             return thePBESpec;
         }
 

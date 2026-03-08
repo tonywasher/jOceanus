@@ -20,23 +20,23 @@ import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianWrapper;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewCipherSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewPBESpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewPBESpec.GordianNewPBEDigestAndCountSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewPBESpecBuilder;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewPadding;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamCipherSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamCipherSpecBuilder;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeySpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeySpecBuilder;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeyType;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymCipherSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymCipherSpecBuilder;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeySpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeySpecBuilder;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeyType;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianPBESpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianPBESpec.GordianPBEDigestAndCountSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianPBESpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamCipherSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeyType;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymCipherSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeySpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeyType;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianPadding;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseData;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
@@ -92,57 +92,57 @@ public abstract class GordianCoreCipherFactory
     }
 
     @Override
-    public GordianNewSymKeySpecBuilder newSymKeySpecBuilder() {
+    public GordianSymKeySpecBuilder newSymKeySpecBuilder() {
         return GordianCoreSymKeySpecBuilder.newInstance();
     }
 
     @Override
-    public GordianNewStreamKeySpecBuilder newStreamKeySpecBuilder() {
+    public GordianStreamKeySpecBuilder newStreamKeySpecBuilder() {
         return GordianCoreStreamKeySpecBuilder.newInstance();
     }
 
     @Override
-    public GordianNewSymCipherSpecBuilder newSymCipherSpecBuilder() {
+    public GordianSymCipherSpecBuilder newSymCipherSpecBuilder() {
         return GordianCoreSymCipherSpecBuilder.newInstance();
     }
 
     @Override
-    public GordianNewStreamCipherSpecBuilder newStreamCipherSpecBuilder() {
+    public GordianStreamCipherSpecBuilder newStreamCipherSpecBuilder() {
         return GordianCoreStreamCipherSpecBuilder.newInstance();
     }
 
     @Override
-    public GordianNewPBESpecBuilder newPBESpecBuilder() {
+    public GordianPBESpecBuilder newPBESpecBuilder() {
         return GordianCorePBESpecBuilder.newInstance();
     }
 
     @Override
-    public Predicate<GordianNewSymKeySpec> supportedSymKeySpecs() {
+    public Predicate<GordianSymKeySpec> supportedSymKeySpecs() {
         return this::validSymKeySpec;
     }
 
     @Override
-    public Predicate<GordianNewSymCipherSpec> supportedSymCipherSpecs() {
+    public Predicate<GordianSymCipherSpec> supportedSymCipherSpecs() {
         return this::validSymCipherSpec;
     }
 
     @Override
-    public Predicate<GordianNewSymKeyType> supportedSymKeyTypes() {
+    public Predicate<GordianSymKeyType> supportedSymKeyTypes() {
         return t -> theFactory.getValidator().validSymKeyType(t);
     }
 
     @Override
-    public Predicate<GordianNewStreamKeySpec> supportedStreamKeySpecs() {
+    public Predicate<GordianStreamKeySpec> supportedStreamKeySpecs() {
         return this::validStreamKeySpec;
     }
 
     @Override
-    public Predicate<GordianNewStreamCipherSpec> supportedStreamCipherSpecs() {
+    public Predicate<GordianStreamCipherSpec> supportedStreamCipherSpecs() {
         return this::validStreamCipherSpec;
     }
 
     @Override
-    public Predicate<GordianNewStreamKeyType> supportedStreamKeyTypes() {
+    public Predicate<GordianStreamKeyType> supportedStreamKeyTypes() {
         return t -> theFactory.getValidator().validStreamKeyType(t);
     }
 
@@ -158,8 +158,8 @@ public abstract class GordianCoreCipherFactory
      * @param pBlockCipher the underlying block cipher
      * @return the wrapCipher
      */
-    protected GordianWrapper createKeyWrapper(final GordianKey<GordianNewSymKeySpec> pKey,
-                                              final GordianCoreCipher<GordianNewSymKeySpec> pBlockCipher) {
+    protected GordianWrapper createKeyWrapper(final GordianKey<GordianSymKeySpec> pKey,
+                                              final GordianCoreCipher<GordianSymKeySpec> pBlockCipher) {
         return new GordianCoreWrapper(theFactory, pKey, pBlockCipher);
     }
 
@@ -169,7 +169,7 @@ public abstract class GordianCoreCipherFactory
      * @param pSymKeySpec the symKeySpec
      * @return true/false
      */
-    public boolean validSymKeySpec(final GordianNewSymKeySpec pSymKeySpec) {
+    public boolean validSymKeySpec(final GordianSymKeySpec pSymKeySpec) {
         /* Reject invalid keySpec */
         if (pSymKeySpec == null
                 || !pSymKeySpec.isValid()) {
@@ -184,7 +184,7 @@ public abstract class GordianCoreCipherFactory
      * @param pCipherSpec the cipherSpec.
      * @return true/false
      */
-    protected boolean validSymCipherSpec(final GordianNewSymCipherSpec pCipherSpec) {
+    protected boolean validSymCipherSpec(final GordianSymCipherSpec pCipherSpec) {
         /* Reject invalid cipherSpec */
         if (pCipherSpec == null || !pCipherSpec.isValid()) {
             return false;
@@ -204,13 +204,13 @@ public abstract class GordianCoreCipherFactory
 
         /* Check that the mode is valid for the keyType */
         final GordianCoreSymKeySpec myKeySpec = myCipherSpec.getCoreKeySpec();
-        final GordianNewSymKeyType myKeyType = myKeySpec.getSymKeyType();
+        final GordianSymKeyType myKeyType = myKeySpec.getSymKeyType();
         if (!myMode.validForSymKey(myKeySpec)) {
             return false;
         }
 
         /* Disallow AAD for RC5-64 */
-        if (GordianNewSymKeyType.RC5.equals(myKeyType)
+        if (GordianSymKeyType.RC5.equals(myKeyType)
                 && GordianLength.LEN_128.equals(myKeySpec.getBlockLength())
                 && myMode.isAAD()) {
             return false;
@@ -232,10 +232,10 @@ public abstract class GordianCoreCipherFactory
         }
 
         /* Reject bad padding */
-        final GordianNewPadding myPadding = pCipherSpec.getPadding();
+        final GordianPadding myPadding = pCipherSpec.getPadding();
         return myMode.hasPadding()
                 ? myPadding != null
-                : GordianNewPadding.NONE.equals(myPadding);
+                : GordianPadding.NONE.equals(myPadding);
     }
 
     /**
@@ -249,12 +249,12 @@ public abstract class GordianCoreCipherFactory
         boolean bValid = false;
 
         /* If this is a streamKeySpec */
-        if (pKeySpec instanceof GordianNewStreamKeySpec mySpec) {
+        if (pKeySpec instanceof GordianStreamKeySpec mySpec) {
             /* Check validity of StreamKey */
             bValid = supportedStreamKeySpecs().test(mySpec);
 
             /* If this is a symKeySpec */
-        } else if (pKeySpec instanceof GordianNewSymKeySpec mySpec) {
+        } else if (pKeySpec instanceof GordianSymKeySpec mySpec) {
             /* Check validity of SymKey */
             bValid = supportedSymKeySpecs().test(mySpec);
         }
@@ -271,7 +271,7 @@ public abstract class GordianCoreCipherFactory
      * @param pKeySpec the symKeySpec
      * @throws GordianException on error
      */
-    public void checkSymKeySpec(final GordianNewSymKeySpec pKeySpec) throws GordianException {
+    public void checkSymKeySpec(final GordianSymKeySpec pKeySpec) throws GordianException {
         /* Check validity of SymKey */
         if (!supportedSymKeySpecs().test(pKeySpec)) {
             throw new GordianDataException(GordianBaseData.getInvalidText(pKeySpec));
@@ -284,14 +284,14 @@ public abstract class GordianCoreCipherFactory
      * @param pCipherSpec the cipherSpec
      * @throws GordianException on error
      */
-    public void checkSymCipherSpec(final GordianNewSymCipherSpec pCipherSpec) throws GordianException {
+    public void checkSymCipherSpec(final GordianSymCipherSpec pCipherSpec) throws GordianException {
         /* Reject invalid cipherSpec */
         if (pCipherSpec == null || !pCipherSpec.isValid()) {
             throw new GordianDataException(GordianBaseData.getInvalidText(pCipherSpec));
         }
 
         /* Check validity of SymKey */
-        final GordianNewSymKeySpec myKeySpec = pCipherSpec.getKeySpec();
+        final GordianSymKeySpec myKeySpec = pCipherSpec.getKeySpec();
         if (!supportedSymKeySpecs().test(myKeySpec)) {
             throw new GordianDataException(GordianBaseData.getInvalidText(pCipherSpec));
         }
@@ -308,14 +308,14 @@ public abstract class GordianCoreCipherFactory
      * @param pCipherSpec the cipherSpec
      * @throws GordianException on error
      */
-    public void checkStreamCipherSpec(final GordianNewStreamCipherSpec pCipherSpec) throws GordianException {
+    public void checkStreamCipherSpec(final GordianStreamCipherSpec pCipherSpec) throws GordianException {
         /* Reject invalid cipherSpec */
         if (pCipherSpec == null || !pCipherSpec.isValid()) {
             throw new GordianDataException(GordianBaseData.getInvalidText(pCipherSpec));
         }
 
         /* Check validity of StreamKey */
-        final GordianNewStreamKeySpec myKeySpec = pCipherSpec.getKeySpec();
+        final GordianStreamKeySpec myKeySpec = pCipherSpec.getKeySpec();
         if (!supportedStreamKeySpecs().test(myKeySpec)) {
             throw new GordianDataException(GordianBaseData.getInvalidText(myKeySpec));
         }
@@ -332,7 +332,7 @@ public abstract class GordianCoreCipherFactory
      * @param pCipherSpec the streamCipherSpec
      * @return true/false
      */
-    protected boolean validStreamCipherSpec(final GordianNewStreamCipherSpec pCipherSpec) {
+    protected boolean validStreamCipherSpec(final GordianStreamCipherSpec pCipherSpec) {
         return true;
     }
 
@@ -342,7 +342,7 @@ public abstract class GordianCoreCipherFactory
      * @param pKeySpec the streamKeySpec
      * @return true/false
      */
-    protected boolean validStreamKeySpec(final GordianNewStreamKeySpec pKeySpec) {
+    protected boolean validStreamKeySpec(final GordianStreamKeySpec pKeySpec) {
         /* Reject invalid keySpec */
         if (pKeySpec == null
                 || !pKeySpec.isValid()) {
@@ -357,7 +357,7 @@ public abstract class GordianCoreCipherFactory
      * @param pSpec the cipherSpec.
      * @return the Identifier
      */
-    public AlgorithmIdentifier getIdentifierForSpec(final GordianNewCipherSpec<?> pSpec) {
+    public AlgorithmIdentifier getIdentifierForSpec(final GordianCipherSpec<?> pSpec) {
         return getCipherAlgIds().getIdentifierForSpec(pSpec);
     }
 
@@ -367,7 +367,7 @@ public abstract class GordianCoreCipherFactory
      * @param pIdentifier the identifier.
      * @return the cipherSpec (or null if not found)
      */
-    public GordianNewCipherSpec<?> getCipherSpecForIdentifier(final AlgorithmIdentifier pIdentifier) {
+    public GordianCipherSpec<?> getCipherSpecForIdentifier(final AlgorithmIdentifier pIdentifier) {
         return getCipherAlgIds().getCipherSpecForIdentifier(pIdentifier);
     }
 
@@ -396,10 +396,10 @@ public abstract class GordianCoreCipherFactory
         }
 
         /* Digest if specified must be SHA512 currently */
-        final GordianNewPBESpec myPBESpec = pPBECipherSpec.getPBESpec();
-        if (myPBESpec instanceof GordianNewPBEDigestAndCountSpec myCountSpec) {
-            final GordianNewDigestSpec mySpec = myCountSpec.getDigestSpec();
-            final GordianNewDigestSpecBuilder myBuilder = GordianCoreDigestSpecBuilder.newInstance();
+        final GordianPBESpec myPBESpec = pPBECipherSpec.getPBESpec();
+        if (myPBESpec instanceof GordianPBEDigestAndCountSpec myCountSpec) {
+            final GordianDigestSpec mySpec = myCountSpec.getDigestSpec();
+            final GordianDigestSpecBuilder myBuilder = GordianCoreDigestSpecBuilder.newInstance();
             return myBuilder.sha2(GordianLength.LEN_512).equals(mySpec);
         }
 
@@ -408,7 +408,7 @@ public abstract class GordianCoreCipherFactory
     }
 
     @Override
-    public List<GordianNewSymCipherSpec> listAllSupportedSymCipherSpecs(final GordianNewSymKeySpec pSpec) {
+    public List<GordianSymCipherSpec> listAllSupportedSymCipherSpecs(final GordianSymKeySpec pSpec) {
         return listAllSymCipherSpecs(pSpec)
                 .stream()
                 .filter(s -> supportedSymCipherSpecs().test(s))
@@ -416,7 +416,7 @@ public abstract class GordianCoreCipherFactory
     }
 
     @Override
-    public List<GordianNewSymKeySpec> listAllSupportedSymKeySpecs(final GordianLength pKeyLen) {
+    public List<GordianSymKeySpec> listAllSupportedSymKeySpecs(final GordianLength pKeyLen) {
         return listAllSymKeySpecs(pKeyLen)
                 .stream()
                 .filter(supportedSymKeySpecs())
@@ -424,19 +424,19 @@ public abstract class GordianCoreCipherFactory
     }
 
     @Override
-    public List<GordianNewSymKeyType> listAllSupportedSymKeyTypes() {
-        return Arrays.stream(GordianNewSymKeyType.values())
+    public List<GordianSymKeyType> listAllSupportedSymKeyTypes() {
+        return Arrays.stream(GordianSymKeyType.values())
                 .filter(supportedSymKeyTypes())
                 .collect(Collectors.toCollection(ArrayList::new));
     }
 
     @Override
-    public List<GordianNewStreamCipherSpec> listAllSupportedStreamCipherSpecs(final GordianLength pKeyLen) {
+    public List<GordianStreamCipherSpec> listAllSupportedStreamCipherSpecs(final GordianLength pKeyLen) {
         return GordianCoreStreamCipherSpecBuilder.listAllSupportedStreamCipherSpecs(pKeyLen);
     }
 
     @Override
-    public List<GordianNewStreamKeySpec> listAllSupportedStreamKeySpecs(final GordianLength pKeyLen) {
+    public List<GordianStreamKeySpec> listAllSupportedStreamKeySpecs(final GordianLength pKeyLen) {
         return listAllStreamKeySpecs(pKeyLen)
                 .stream()
                 .filter(supportedStreamKeySpecs())
@@ -444,19 +444,19 @@ public abstract class GordianCoreCipherFactory
     }
 
     @Override
-    public List<GordianNewStreamKeyType> listAllSupportedStreamKeyTypes() {
-        return Arrays.stream(GordianNewStreamKeyType.values())
+    public List<GordianStreamKeyType> listAllSupportedStreamKeyTypes() {
+        return Arrays.stream(GordianStreamKeyType.values())
                 .filter(supportedStreamKeyTypes())
                 .collect(Collectors.toCollection(ArrayList::new));
     }
 
     @Override
-    public List<GordianNewSymKeySpec> listAllSymKeySpecs(final GordianLength pKeyLen) {
+    public List<GordianSymKeySpec> listAllSymKeySpecs(final GordianLength pKeyLen) {
         return GordianCoreSymKeySpecBuilder.listAllPossibleSymKeySpecs(pKeyLen);
     }
 
     @Override
-    public List<GordianNewSymCipherSpec> listAllSymCipherSpecs(final GordianNewSymKeySpec pSpec) {
+    public List<GordianSymCipherSpec> listAllSymCipherSpecs(final GordianSymKeySpec pSpec) {
         return GordianCoreSymCipherSpecBuilder.listAllPossibleSymCipherSpecs(pSpec);
     }
 
@@ -466,7 +466,7 @@ public abstract class GordianCoreCipherFactory
      * @param pKeyLen the keyLength
      * @return the list
      */
-    private static List<GordianNewStreamKeySpec> listAllStreamKeySpecs(final GordianLength pKeyLen) {
+    private static List<GordianStreamKeySpec> listAllStreamKeySpecs(final GordianLength pKeyLen) {
         return GordianCoreStreamKeySpecBuilder.listAllPossibleStreamKeySpecs(pKeyLen);
     }
 }

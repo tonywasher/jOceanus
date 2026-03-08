@@ -19,8 +19,8 @@ package io.github.tonywasher.joceanus.gordianknot.impl.bc;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherParameters;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamCipher;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamCipherSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.cipher.GordianCoreCipher;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
@@ -34,7 +34,7 @@ import org.bouncycastle.crypto.params.ParametersWithIV;
  * Cipher for BouncyCastle Stream Ciphers.
  */
 public class BouncyStreamKeyCipher
-        extends GordianCoreCipher<GordianNewStreamKeySpec>
+        extends GordianCoreCipher<GordianStreamKeySpec>
         implements GordianStreamCipher {
     /**
      * Cipher.
@@ -54,15 +54,15 @@ public class BouncyStreamKeyCipher
      * @param pCipher     the cipher
      */
     protected BouncyStreamKeyCipher(final GordianBaseFactory pFactory,
-                                    final GordianNewStreamCipherSpec pCipherSpec,
+                                    final GordianStreamCipherSpec pCipherSpec,
                                     final StreamCipher pCipher) {
         super(pFactory, pCipherSpec);
         theCipher = pCipher;
     }
 
     @Override
-    public BouncyKey<GordianNewStreamKeySpec> getKey() {
-        return (BouncyKey<GordianNewStreamKeySpec>) super.getKey();
+    public BouncyKey<GordianStreamKeySpec> getKey() {
+        return (BouncyKey<GordianStreamKeySpec>) super.getKey();
     }
 
     @Override
@@ -70,7 +70,7 @@ public class BouncyStreamKeyCipher
                      final GordianCipherParameters pParams) throws GordianException {
         /* Process the parameters and access the key */
         processParameters(pParams);
-        final BouncyKey<GordianNewStreamKeySpec> myKey = BouncyKey.accessKey(getKey());
+        final BouncyKey<GordianStreamKeySpec> myKey = BouncyKey.accessKey(getKey());
 
         /* Initialise the cipher */
         final CipherParameters myParms = generateParameters(myKey, getInitVector());
@@ -85,7 +85,7 @@ public class BouncyStreamKeyCipher
      * @param pIV  the initVector
      * @return the parameters
      */
-    private static CipherParameters generateParameters(final BouncyKey<GordianNewStreamKeySpec> pKey,
+    private static CipherParameters generateParameters(final BouncyKey<GordianStreamKeySpec> pKey,
                                                        final byte[] pIV) {
         /* Default parameter */
         CipherParameters myParams = new KeyParameter(pKey.getKey());

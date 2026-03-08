@@ -18,7 +18,7 @@
 package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.mac;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
-import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianNewSipHashType;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianSipHashType;
 
 import java.util.EnumMap;
 import java.util.Map;
@@ -30,7 +30,7 @@ public final class GordianCoreSipHashType {
     /**
      * The sipHashMap.
      */
-    private static final Map<GordianNewSipHashType, GordianCoreSipHashType> SIPMAP = newSipHashMap();
+    private static final Map<GordianSipHashType, GordianCoreSipHashType> SIPMAP = newSipHashMap();
 
     /**
      * The sipHashTypeArray.
@@ -50,7 +50,7 @@ public final class GordianCoreSipHashType {
     /**
      * The type.
      */
-    private final GordianNewSipHashType theType;
+    private final GordianSipHashType theType;
 
     /**
      * The output length.
@@ -72,7 +72,7 @@ public final class GordianCoreSipHashType {
      *
      * @param pType the SipHashType
      */
-    private GordianCoreSipHashType(final GordianNewSipHashType pType) {
+    private GordianCoreSipHashType(final GordianSipHashType pType) {
         theType = pType;
         theOutLen = determineOutLength();
         theCompression = determineCompression();
@@ -83,7 +83,7 @@ public final class GordianCoreSipHashType {
      *
      * @return the type
      */
-    public GordianNewSipHashType getType() {
+    public GordianSipHashType getType() {
         return theType;
     }
 
@@ -202,7 +202,7 @@ public final class GordianCoreSipHashType {
      * @return the core type
      */
     public static GordianCoreSipHashType mapCoreType(final Object pType) {
-        return pType instanceof GordianNewSipHashType myType ? SIPMAP.get(myType) : null;
+        return pType instanceof GordianSipHashType myType ? SIPMAP.get(myType) : null;
     }
 
     /**
@@ -210,9 +210,9 @@ public final class GordianCoreSipHashType {
      *
      * @return the sipHash map
      */
-    private static Map<GordianNewSipHashType, GordianCoreSipHashType> newSipHashMap() {
-        final Map<GordianNewSipHashType, GordianCoreSipHashType> myMap = new EnumMap<>(GordianNewSipHashType.class);
-        for (GordianNewSipHashType myType : GordianNewSipHashType.values()) {
+    private static Map<GordianSipHashType, GordianCoreSipHashType> newSipHashMap() {
+        final Map<GordianSipHashType, GordianCoreSipHashType> myMap = new EnumMap<>(GordianSipHashType.class);
+        for (GordianSipHashType myType : GordianSipHashType.values()) {
             myMap.put(myType, new GordianCoreSipHashType(myType));
         }
         return myMap;

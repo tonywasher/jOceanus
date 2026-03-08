@@ -21,7 +21,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.keystore.GordianKeyStore;
 import io.github.tonywasher.joceanus.gordianknot.api.keystore.GordianKeyStoreFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.keystore.GordianKeyStoreGateway;
 import io.github.tonywasher.joceanus.gordianknot.api.keystore.GordianKeyStoreManager;
-import io.github.tonywasher.joceanus.gordianknot.api.lock.spec.GordianNewPasswordLockSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.lock.spec.GordianPasswordLockSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.zip.GordianZipFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.zip.GordianZipFileEntry;
 import io.github.tonywasher.joceanus.gordianknot.api.zip.GordianZipLock;
@@ -56,7 +56,7 @@ public class GordianCoreKeyStoreFactory
     }
 
     @Override
-    public GordianKeyStore createKeyStore(final GordianNewPasswordLockSpec pSpec) {
+    public GordianKeyStore createKeyStore(final GordianPasswordLockSpec pSpec) {
         return new GordianCoreKeyStore(theFactory, pSpec);
     }
 

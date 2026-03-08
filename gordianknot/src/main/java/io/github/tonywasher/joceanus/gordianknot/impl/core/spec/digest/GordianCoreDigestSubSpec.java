@@ -18,21 +18,24 @@
 package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSubSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSubSpec.GordianNewDigestState;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestType;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSubSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSubSpec.GordianDigestState;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestType;
 
 import java.util.Collection;
 import java.util.EnumMap;
 import java.util.Map;
 
+/**
+ * Digest SubSpec.
+ */
 public interface GordianCoreDigestSubSpec {
     /**
      * Obtain the subSpec.
      *
      * @return the subSpec
      */
-    GordianNewDigestSubSpec getSubSpec();
+    GordianDigestSubSpec getSubSpec();
 
     /**
      * Obtain the possible subSpecTypes for the digestType.
@@ -40,19 +43,19 @@ public interface GordianCoreDigestSubSpec {
      * @param pType the digestType
      * @return the subSpec types
      */
-    static GordianNewDigestSubSpec[] getPossibleSubSpecsForType(final GordianNewDigestType pType) {
+    static GordianDigestSubSpec[] getPossibleSubSpecsForType(final GordianDigestType pType) {
         switch (pType) {
             case SHA2:
             case BLAKE2:
             case HARAKA:
-                return new GordianNewDigestState[]{GordianNewDigestState.STATE256, GordianNewDigestState.STATE512};
+                return new GordianDigestState[]{GordianDigestState.STATE256, GordianDigestState.STATE512};
             case SKEIN:
-                return new GordianNewDigestState[]{GordianNewDigestState.STATE256, GordianNewDigestState.STATE512, GordianNewDigestState.STATE1024};
+                return new GordianDigestState[]{GordianDigestState.STATE256, GordianDigestState.STATE512, GordianDigestState.STATE1024};
             case SHAKE:
             case KANGAROO:
-                return new GordianNewDigestState[]{GordianNewDigestState.STATE128, GordianNewDigestState.STATE256};
+                return new GordianDigestState[]{GordianDigestState.STATE128, GordianDigestState.STATE256};
             default:
-                return new GordianNewDigestState[]{null};
+                return new GordianDigestState[]{null};
         }
     }
 
@@ -63,34 +66,34 @@ public interface GordianCoreDigestSubSpec {
      * @param pLength the length
      * @return the subSpec
      */
-    static GordianNewDigestSubSpec getDefaultSubSpecForTypeAndLength(final GordianNewDigestType pType,
-                                                                     final GordianLength pLength) {
+    static GordianDigestSubSpec getDefaultSubSpecForTypeAndLength(final GordianDigestType pType,
+                                                                  final GordianLength pLength) {
         switch (pType) {
             case SHA2:
                 return pLength == GordianLength.LEN_224 || pLength == GordianLength.LEN_256
-                        ? GordianNewDigestState.STATE256
-                        : GordianNewDigestState.STATE512;
+                        ? GordianDigestState.STATE256
+                        : GordianDigestState.STATE512;
             case SKEIN:
                 switch (pLength) {
                     case LEN_1024:
-                        return GordianNewDigestState.STATE1024;
+                        return GordianDigestState.STATE1024;
                     case LEN_512:
                     case LEN_384:
-                        return GordianNewDigestState.STATE512;
+                        return GordianDigestState.STATE512;
                     default:
-                        return GordianNewDigestState.STATE256;
+                        return GordianDigestState.STATE256;
                 }
             case SHAKE:
             case KANGAROO:
                 return pLength == GordianLength.LEN_256
-                        ? GordianNewDigestState.STATE128
-                        : GordianNewDigestState.STATE256;
+                        ? GordianDigestState.STATE128
+                        : GordianDigestState.STATE256;
             case BLAKE2:
                 return pLength == GordianLength.LEN_128 || pLength == GordianLength.LEN_224
-                        ? GordianNewDigestState.STATE256
-                        : GordianNewDigestState.STATE512;
+                        ? GordianDigestState.STATE256
+                        : GordianDigestState.STATE512;
             case HARAKA:
-                return GordianNewDigestState.STATE256;
+                return GordianDigestState.STATE256;
             default:
                 return null;
         }
@@ -104,12 +107,12 @@ public interface GordianCoreDigestSubSpec {
         /**
          * The digestStateMap.
          */
-        private static final Map<GordianNewDigestState, GordianCoreDigestState> STATEMAP = newStateMap();
+        private static final Map<GordianDigestState, GordianCoreDigestState> STATEMAP = newStateMap();
 
         /**
          * The State.
          */
-        private final GordianNewDigestState theState;
+        private final GordianDigestState theState;
 
         /**
          * The length.
@@ -121,13 +124,13 @@ public interface GordianCoreDigestSubSpec {
          *
          * @param pState the state
          */
-        private GordianCoreDigestState(final GordianNewDigestState pState) {
+        private GordianCoreDigestState(final GordianDigestState pState) {
             theState = pState;
             theLength = lengthForDigestState();
         }
 
         @Override
-        public GordianNewDigestSubSpec getSubSpec() {
+        public GordianDigestSubSpec getSubSpec() {
             return getState();
         }
 
@@ -136,7 +139,7 @@ public interface GordianCoreDigestSubSpec {
          *
          * @return the state
          */
-        public GordianNewDigestState getState() {
+        public GordianDigestState getState() {
             return theState;
         }
 
@@ -161,7 +164,7 @@ public interface GordianCoreDigestSubSpec {
          * @return true/false
          */
         public boolean isSha2Hybrid(final GordianLength pLength) {
-            return theState == GordianNewDigestState.STATE512
+            return theState == GordianDigestState.STATE512
                     && (GordianLength.LEN_224.equals(pLength)
                     || GordianLength.LEN_256.equals(pLength));
         }
@@ -369,7 +372,7 @@ public interface GordianCoreDigestSubSpec {
          * @return true/false
          */
         public boolean isBlake2bState() {
-            return GordianNewDigestState.STATE512.equals(theState);
+            return GordianDigestState.STATE512.equals(theState);
         }
 
         /**
@@ -389,7 +392,7 @@ public interface GordianCoreDigestSubSpec {
          * @return the algorithmName
          */
         String getKangarooAlgorithm() {
-            return theState == GordianNewDigestState.STATE256
+            return theState == GordianDigestState.STATE256
                     ? GordianDigestResource.DIGEST_MARSUPILAMI.getValue()
                     : GordianDigestResource.DIGEST_KANGAROO.getValue();
         }
@@ -441,7 +444,7 @@ public interface GordianCoreDigestSubSpec {
          * @return the core state
          */
         public static GordianCoreDigestState mapCoreState(final Object pState) {
-            return pState instanceof GordianNewDigestState myState ? STATEMAP.get(myState) : null;
+            return pState instanceof GordianDigestState myState ? STATEMAP.get(myState) : null;
         }
 
         /**
@@ -449,9 +452,9 @@ public interface GordianCoreDigestSubSpec {
          *
          * @return the state map
          */
-        private static Map<GordianNewDigestState, GordianCoreDigestState> newStateMap() {
-            final Map<GordianNewDigestState, GordianCoreDigestState> myMap = new EnumMap<>(GordianNewDigestState.class);
-            for (GordianNewDigestState myState : GordianNewDigestState.values()) {
+        private static Map<GordianDigestState, GordianCoreDigestState> newStateMap() {
+            final Map<GordianDigestState, GordianCoreDigestState> myMap = new EnumMap<>(GordianDigestState.class);
+            for (GordianDigestState myState : GordianDigestState.values()) {
                 myMap.put(myState, new GordianCoreDigestState(myState));
             }
             return myMap;

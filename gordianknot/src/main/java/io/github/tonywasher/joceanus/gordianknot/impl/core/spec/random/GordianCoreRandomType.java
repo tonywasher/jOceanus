@@ -17,7 +17,7 @@
 
 package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.random;
 
-import io.github.tonywasher.joceanus.gordianknot.api.random.spec.GordianNewRandomType;
+import io.github.tonywasher.joceanus.gordianknot.api.random.spec.GordianRandomType;
 
 import java.util.Collection;
 import java.util.EnumMap;
@@ -30,19 +30,19 @@ public final class GordianCoreRandomType {
     /**
      * The randomTypeMap.
      */
-    private static final Map<GordianNewRandomType, GordianCoreRandomType> TYPEMAP = newTypeMap();
+    private static final Map<GordianRandomType, GordianCoreRandomType> TYPEMAP = newTypeMap();
 
     /**
      * The Random type.
      */
-    private final GordianNewRandomType theType;
+    private final GordianRandomType theType;
 
     /**
      * Constructor.
      *
      * @param pType the type
      */
-    private GordianCoreRandomType(final GordianNewRandomType pType) {
+    private GordianCoreRandomType(final GordianRandomType pType) {
         theType = pType;
     }
 
@@ -51,7 +51,7 @@ public final class GordianCoreRandomType {
      *
      * @return true/false
      */
-    public GordianNewRandomType getType() {
+    public GordianRandomType getType() {
         return theType;
     }
 
@@ -102,7 +102,7 @@ public final class GordianCoreRandomType {
      * @return the core type
      */
     public static GordianCoreRandomType mapCoreType(final Object pType) {
-        return pType instanceof GordianNewRandomType myType ? TYPEMAP.get(myType) : null;
+        return pType instanceof GordianRandomType myType ? TYPEMAP.get(myType) : null;
     }
 
     /**
@@ -110,9 +110,9 @@ public final class GordianCoreRandomType {
      *
      * @return the type map
      */
-    private static Map<GordianNewRandomType, GordianCoreRandomType> newTypeMap() {
-        final Map<GordianNewRandomType, GordianCoreRandomType> myMap = new EnumMap<>(GordianNewRandomType.class);
-        for (GordianNewRandomType myType : GordianNewRandomType.values()) {
+    private static Map<GordianRandomType, GordianCoreRandomType> newTypeMap() {
+        final Map<GordianRandomType, GordianCoreRandomType> myMap = new EnumMap<>(GordianRandomType.class);
+        for (GordianRandomType myType : GordianRandomType.values()) {
             myMap.put(myType, new GordianCoreRandomType(myType));
         }
         return myMap;

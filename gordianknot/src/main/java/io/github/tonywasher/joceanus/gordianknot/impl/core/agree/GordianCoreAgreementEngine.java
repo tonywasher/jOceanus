@@ -16,8 +16,7 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.impl.core.agree;
 
-import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementKDF;
-import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementKDF;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.agree.GordianCoreAgreementDerivation.GordianCoreNullKeyDerivation;
@@ -25,6 +24,7 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataExcept
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianCoreKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianPrivateKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianPublicKey;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.agree.GordianCoreAgreementSpec;
 import org.bouncycastle.crypto.DerivationFunction;
 import org.bouncycastle.crypto.agreement.kdf.ConcatenationKDFGenerator;
 import org.bouncycastle.crypto.digests.SHA256Digest;
@@ -76,7 +76,7 @@ public abstract class GordianCoreAgreementEngine {
      * @throws GordianException on error
      */
     protected GordianCoreAgreementEngine(final GordianCoreAgreementSupplier pSupplier,
-                                         final GordianAgreementSpec pSpec) throws GordianException {
+                                         final GordianCoreAgreementSpec pSpec) throws GordianException {
         theSupplier = pSupplier;
         theBuilder = new GordianCoreAgreementBuilder(pSupplier, pSpec);
         theState = theBuilder.getState();
@@ -107,7 +107,7 @@ public abstract class GordianCoreAgreementEngine {
      *
      * @return the spec
      */
-    public GordianAgreementSpec getSpec() {
+    public GordianCoreAgreementSpec getSpec() {
         return theState.getSpec();
     }
 
@@ -305,7 +305,7 @@ public abstract class GordianCoreAgreementEngine {
      */
     protected void enableDerivation() {
         /* Only enable derivation if it is not none */
-        final GordianAgreementSpec mySpec = theState.getSpec();
+        final GordianCoreAgreementSpec mySpec = theState.getSpec();
         if (!GordianAgreementKDF.NONE.equals(mySpec.getKDFType())) {
             theKDF = new GordianCoreAgreementDerivation(theBuilder);
         }
@@ -317,7 +317,7 @@ public abstract class GordianCoreAgreementEngine {
      * @return the derivation function
      */
     public DerivationFunction newDerivationFunction() {
-        final GordianAgreementSpec mySpec = theState.getSpec();
+        final GordianCoreAgreementSpec mySpec = theState.getSpec();
         switch (mySpec.getKDFType()) {
             case SHA256KDF:
                 return new KDF2BytesGenerator(new SHA256Digest());

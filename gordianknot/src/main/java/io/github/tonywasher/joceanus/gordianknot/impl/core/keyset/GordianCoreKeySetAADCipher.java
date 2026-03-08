@@ -18,18 +18,18 @@ package io.github.tonywasher.joceanus.gordianknot.impl.core.keyset;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeyType;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeyType;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigest;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKey;
 import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySetAADCipher;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMac;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacParameters;
-import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianNewMacSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianNewMacSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianMacSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianMacSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianLogicException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keyset.GordianKeySetRecipe.GordianKeySetParameters;
@@ -98,7 +98,7 @@ public class GordianCoreKeySetAADCipher
     /**
      * The SymKeyType.
      */
-    private GordianNewSymKeyType theSymKeyType;
+    private GordianSymKeyType theSymKeyType;
 
     /**
      * The cachedBytes.
@@ -122,7 +122,7 @@ public class GordianCoreKeySetAADCipher
 
         /* Create mac and buffers */
         final GordianMacFactory myMacFactory = pKeySet.getFactory().getMacFactory();
-        final GordianNewMacSpecBuilder myMacBuilder = myMacFactory.newMacSpecBuilder();
+        final GordianMacSpecBuilder myMacBuilder = myMacFactory.newMacSpecBuilder();
         theMac = myMacFactory.createMac(myMacBuilder.poly1305Mac());
         theAEAD = new ByteArrayOutputStream();
         cachedBytes = new byte[MACSIZE];
@@ -210,12 +210,12 @@ public class GordianCoreKeySetAADCipher
 
         /* Create the digest */
         final GordianDigestFactory myDigests = getFactory().getDigestFactory();
-        final GordianNewDigestSpecBuilder myBuilder = GordianCoreDigestSpecBuilder.newInstance();
-        final GordianNewDigestSpec myDigestSpec = myBuilder.generic(pParams.getDigestType(), GordianLength.LEN_512);
+        final GordianDigestSpecBuilder myBuilder = GordianCoreDigestSpecBuilder.newInstance();
+        final GordianDigestSpec myDigestSpec = myBuilder.digest(pParams.getDigestType(), GordianLength.LEN_512);
         theDigest = myDigests.createDigest(myDigestSpec);
 
         /* initialise the Mac */
-        final GordianKey<GordianNewMacSpec> myKey = getMultiCipher().derivePoly1305Key(pParams);
+        final GordianKey<GordianMacSpec> myKey = getMultiCipher().derivePoly1305Key(pParams);
         theMac.init(GordianMacParameters.key(myKey));
 
         /* Stash the symKeyType */

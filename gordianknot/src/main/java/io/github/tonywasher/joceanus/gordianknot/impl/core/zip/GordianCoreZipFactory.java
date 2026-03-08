@@ -25,14 +25,14 @@ import io.github.tonywasher.joceanus.gordianknot.api.lock.GordianKeyPairLock;
 import io.github.tonywasher.joceanus.gordianknot.api.lock.GordianKeySetLock;
 import io.github.tonywasher.joceanus.gordianknot.api.lock.GordianLock;
 import io.github.tonywasher.joceanus.gordianknot.api.lock.GordianLockFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.lock.spec.GordianNewPasswordLockSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.lock.spec.GordianPasswordLockSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.zip.GordianZipFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.zip.GordianZipLock;
 import io.github.tonywasher.joceanus.gordianknot.api.zip.GordianZipReadFile;
 import io.github.tonywasher.joceanus.gordianknot.api.zip.GordianZipWriteFile;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianIOException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianLogicException;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.lock.GordianCorePasswordLockSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.lock.GordianCorePasswordLockSpecBuilder;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -67,11 +67,12 @@ public class GordianCoreZipFactory
 
     @Override
     public GordianZipLock keySetZipLock(final char[] pPassword) throws GordianException {
-        return keySetZipLock(new GordianCorePasswordLockSpec(), pPassword);
+        final GordianCorePasswordLockSpecBuilder myBuilder = GordianCorePasswordLockSpecBuilder.newInstance();
+        return keySetZipLock(myBuilder.passwordLock(), pPassword);
     }
 
     @Override
-    public GordianZipLock keySetZipLock(final GordianNewPasswordLockSpec pLockSpec,
+    public GordianZipLock keySetZipLock(final GordianPasswordLockSpec pLockSpec,
                                         final char[] pPassword) throws GordianException {
         final GordianLockFactory myLockFactory = theFactory.getLockFactory();
         final GordianKeySetLock myLock = myLockFactory.newKeySetLock(pLockSpec, pPassword);
@@ -80,11 +81,12 @@ public class GordianCoreZipFactory
 
     @Override
     public GordianZipLock factoryZipLock(final char[] pPassword) throws GordianException {
-        return factoryZipLock(new GordianCorePasswordLockSpec(), pPassword);
+        final GordianCorePasswordLockSpecBuilder myBuilder = GordianCorePasswordLockSpecBuilder.newInstance();
+        return factoryZipLock(myBuilder.passwordLock(), pPassword);
     }
 
     @Override
-    public GordianZipLock factoryZipLock(final GordianNewPasswordLockSpec pLockSpec,
+    public GordianZipLock factoryZipLock(final GordianPasswordLockSpec pLockSpec,
                                          final char[] pPassword) throws GordianException {
         final GordianFactoryLock myLock = theFactory.newFactoryLock(pLockSpec, GordianFactoryType.BC, pPassword);
         return zipLock(myLock);
@@ -93,11 +95,12 @@ public class GordianCoreZipFactory
     @Override
     public GordianZipLock keyPairZipLock(final GordianKeyPair pKeyPair,
                                          final char[] pPassword) throws GordianException {
-        return keyPairZipLock(new GordianCorePasswordLockSpec(), pKeyPair, pPassword);
+        final GordianCorePasswordLockSpecBuilder myBuilder = GordianCorePasswordLockSpecBuilder.newInstance();
+        return keyPairZipLock(myBuilder.passwordLock(), pKeyPair, pPassword);
     }
 
     @Override
-    public GordianZipLock keyPairZipLock(final GordianNewPasswordLockSpec pLockSpec,
+    public GordianZipLock keyPairZipLock(final GordianPasswordLockSpec pLockSpec,
                                          final GordianKeyPair pKeyPair,
                                          final char[] pPassword) throws GordianException {
         final GordianLockFactory myLockFactory = theFactory.getLockFactory();

@@ -17,13 +17,12 @@
 
 package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair;
 
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewMLDSASpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianMLDSASpec;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.nist.NISTObjectIdentifiers;
 import org.bouncycastle.jcajce.spec.MLDSAParameterSpec;
 import org.bouncycastle.pqc.crypto.mldsa.MLDSAParameters;
 
-import java.util.Collection;
 import java.util.EnumMap;
 import java.util.Map;
 
@@ -34,19 +33,24 @@ public final class GordianCoreMLDSASpec {
     /**
      * The specMap.
      */
-    private static final Map<GordianNewMLDSASpec, GordianCoreMLDSASpec> SPECMAP = newSpecMap();
+    private static final Map<GordianMLDSASpec, GordianCoreMLDSASpec> SPECMAP = newSpecMap();
+
+    /**
+     * The specArray.
+     */
+    private static final GordianCoreMLDSASpec[] VALUES = SPECMAP.values().toArray(new GordianCoreMLDSASpec[0]);
 
     /**
      * The Spec.
      */
-    private final GordianNewMLDSASpec theSpec;
+    private final GordianMLDSASpec theSpec;
 
     /**
      * Constructor.
      *
      * @param pSpec the spec
      */
-    private GordianCoreMLDSASpec(final GordianNewMLDSASpec pSpec) {
+    private GordianCoreMLDSASpec(final GordianMLDSASpec pSpec) {
         theSpec = pSpec;
     }
 
@@ -55,7 +59,7 @@ public final class GordianCoreMLDSASpec {
      *
      * @return the spec
      */
-    public GordianNewMLDSASpec getSpec() {
+    public GordianMLDSASpec getSpec() {
         return theSpec;
     }
 
@@ -182,7 +186,7 @@ public final class GordianCoreMLDSASpec {
      * @return the core spec
      */
     public static GordianCoreMLDSASpec mapCoreSpec(final Object pSpec) {
-        return pSpec instanceof GordianNewMLDSASpec mySpec ? SPECMAP.get(mySpec) : null;
+        return pSpec instanceof GordianMLDSASpec mySpec ? SPECMAP.get(mySpec) : null;
     }
 
     /**
@@ -190,9 +194,9 @@ public final class GordianCoreMLDSASpec {
      *
      * @return the type map
      */
-    private static Map<GordianNewMLDSASpec, GordianCoreMLDSASpec> newSpecMap() {
-        final Map<GordianNewMLDSASpec, GordianCoreMLDSASpec> myMap = new EnumMap<>(GordianNewMLDSASpec.class);
-        for (GordianNewMLDSASpec mySpec : GordianNewMLDSASpec.values()) {
+    private static Map<GordianMLDSASpec, GordianCoreMLDSASpec> newSpecMap() {
+        final Map<GordianMLDSASpec, GordianCoreMLDSASpec> myMap = new EnumMap<>(GordianMLDSASpec.class);
+        for (GordianMLDSASpec mySpec : GordianMLDSASpec.values()) {
             myMap.put(mySpec, new GordianCoreMLDSASpec(mySpec));
         }
         return myMap;
@@ -203,7 +207,7 @@ public final class GordianCoreMLDSASpec {
      *
      * @return the values
      */
-    public static Collection<GordianCoreMLDSASpec> values() {
-        return SPECMAP.values();
+    public static GordianCoreMLDSASpec[] values() {
+        return VALUES;
     }
 }

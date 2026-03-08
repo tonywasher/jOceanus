@@ -19,12 +19,12 @@ package io.github.tonywasher.joceanus.gordianknot.impl.core.keyset;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKeyLengths;
-import io.github.tonywasher.joceanus.gordianknot.api.keyset.spec.GordianNewKeySetSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keyset.spec.GordianKeySetSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianASN1Util;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianASN1Util.GordianASN1Object;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianIOException;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keyset.GordianCoreKeySetSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keyset.GordianCoreKeySetSpecBuilder;
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1Integer;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
@@ -55,14 +55,14 @@ public class GordianKeySetSpecASN1
     /**
      * The KeySetSpec.
      */
-    private final GordianNewKeySetSpec theSpec;
+    private final GordianKeySetSpec theSpec;
 
     /**
      * Create the ASN1 sequence.
      *
      * @param pKeySetSpec the keySetSpec
      */
-    public GordianKeySetSpecASN1(final GordianNewKeySetSpec pKeySetSpec) {
+    public GordianKeySetSpecASN1(final GordianKeySetSpec pKeySetSpec) {
         /* Store the Spec */
         theSpec = pKeySetSpec;
     }
@@ -88,7 +88,8 @@ public class GordianKeySetSpecASN1
             }
 
             /* Create the keySpec */
-            theSpec = new GordianCoreKeySetSpec(myLen, myNumSteps);
+            final GordianCoreKeySetSpecBuilder myBuilder = GordianCoreKeySetSpecBuilder.newInstance();
+            theSpec = myBuilder.keySet(myLen, myNumSteps);
 
             /* handle exceptions */
         } catch (IllegalArgumentException e) {
@@ -117,7 +118,7 @@ public class GordianKeySetSpecASN1
      *
      * @return the Spec
      */
-    public GordianNewKeySetSpec getSpec() {
+    public GordianKeySetSpec getSpec() {
         return theSpec;
     }
 

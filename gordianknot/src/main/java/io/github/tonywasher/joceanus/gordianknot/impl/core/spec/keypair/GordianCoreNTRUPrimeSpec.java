@@ -17,7 +17,7 @@
 
 package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair;
 
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewNTRUPrimeSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNTRUPrimeSpec;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.bc.BCObjectIdentifiers;
 import org.bouncycastle.pqc.crypto.ntruprime.NTRULPRimeParameters;
@@ -26,7 +26,6 @@ import org.bouncycastle.pqc.jcajce.spec.NTRULPRimeParameterSpec;
 import org.bouncycastle.pqc.jcajce.spec.SNTRUPrimeParameterSpec;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
@@ -36,7 +35,7 @@ import java.util.Objects;
  * NTRUPRIME KeySpec.
  */
 public class GordianCoreNTRUPrimeSpec
-        implements GordianNewNTRUPrimeSpec {
+        implements GordianNTRUPrimeSpec {
     /**
      * The Separator.
      */
@@ -45,7 +44,7 @@ public class GordianCoreNTRUPrimeSpec
     /**
      * The type.
      */
-    private final GordianNewNTRUPrimeType theType;
+    private final GordianNTRUPrimeType theType;
 
     /**
      * The params.
@@ -68,8 +67,8 @@ public class GordianCoreNTRUPrimeSpec
      * @param pType   the Type
      * @param pParams the params
      */
-    public GordianCoreNTRUPrimeSpec(final GordianNewNTRUPrimeType pType,
-                                    final GordianNewNTRUPrimeParams pParams) {
+    GordianCoreNTRUPrimeSpec(final GordianNTRUPrimeType pType,
+                             final GordianNTRUPrimeParams pParams) {
         /* Store parameters */
         theType = pType;
         theParams = GordianCoreNTRUPrimeParams.mapCoreParams(pParams);
@@ -79,12 +78,12 @@ public class GordianCoreNTRUPrimeSpec
     }
 
     @Override
-    public GordianNewNTRUPrimeType getType() {
+    public GordianNTRUPrimeType getType() {
         return theType;
     }
 
     @Override
-    public GordianNewNTRUPrimeParams getParams() {
+    public GordianNTRUPrimeParams getParams() {
         return theParams.getParams();
     }
 
@@ -159,13 +158,13 @@ public class GordianCoreNTRUPrimeSpec
      *
      * @return the list
      */
-    public static List<GordianNewNTRUPrimeSpec> listAllPossibleSpecs() {
+    public static List<GordianNTRUPrimeSpec> listAllPossibleSpecs() {
         /* Create the list */
-        final List<GordianNewNTRUPrimeSpec> mySpecs = new ArrayList<>();
+        final List<GordianNTRUPrimeSpec> mySpecs = new ArrayList<>();
 
         /* Add the specs */
-        for (final GordianNewNTRUPrimeType myType : GordianNewNTRUPrimeType.values()) {
-            for (final GordianNewNTRUPrimeParams myParams : GordianNewNTRUPrimeParams.values()) {
+        for (final GordianNTRUPrimeType myType : GordianNTRUPrimeType.values()) {
+            for (final GordianNTRUPrimeParams myParams : GordianNTRUPrimeParams.values()) {
                 mySpecs.add(new GordianCoreNTRUPrimeSpec(myType, myParams));
             }
         }
@@ -181,19 +180,24 @@ public class GordianCoreNTRUPrimeSpec
         /**
          * The paramsMap.
          */
-        private static final Map<GordianNewNTRUPrimeParams, GordianCoreNTRUPrimeParams> PARMMAP = newParamsMap();
+        private static final Map<GordianNTRUPrimeParams, GordianCoreNTRUPrimeParams> PARMMAP = newParamsMap();
+
+        /**
+         * The parmArray.
+         */
+        private static final GordianCoreNTRUPrimeParams[] VALUES = PARMMAP.values().toArray(new GordianCoreNTRUPrimeParams[0]);
 
         /**
          * The Params.
          */
-        private final GordianNewNTRUPrimeParams theParams;
+        private final GordianNTRUPrimeParams theParams;
 
         /**
          * Constructor.
          *
          * @param pParams the params
          */
-        private GordianCoreNTRUPrimeParams(final GordianNewNTRUPrimeParams pParams) {
+        private GordianCoreNTRUPrimeParams(final GordianNTRUPrimeParams pParams) {
             theParams = pParams;
         }
 
@@ -202,7 +206,7 @@ public class GordianCoreNTRUPrimeSpec
          *
          * @return the spec
          */
-        public GordianNewNTRUPrimeParams getParams() {
+        public GordianNTRUPrimeParams getParams() {
             return theParams;
         }
 
@@ -382,7 +386,7 @@ public class GordianCoreNTRUPrimeSpec
          * @return the core params
          */
         public static GordianCoreNTRUPrimeParams mapCoreParams(final Object pParams) {
-            return pParams instanceof GordianNewNTRUPrimeParams myParams ? PARMMAP.get(myParams) : null;
+            return pParams instanceof GordianNTRUPrimeParams myParams ? PARMMAP.get(myParams) : null;
         }
 
         /**
@@ -390,9 +394,9 @@ public class GordianCoreNTRUPrimeSpec
          *
          * @return the type map
          */
-        private static Map<GordianNewNTRUPrimeParams, GordianCoreNTRUPrimeParams> newParamsMap() {
-            final Map<GordianNewNTRUPrimeParams, GordianCoreNTRUPrimeParams> myMap = new EnumMap<>(GordianNewNTRUPrimeParams.class);
-            for (GordianNewNTRUPrimeParams mySpec : GordianNewNTRUPrimeParams.values()) {
+        private static Map<GordianNTRUPrimeParams, GordianCoreNTRUPrimeParams> newParamsMap() {
+            final Map<GordianNTRUPrimeParams, GordianCoreNTRUPrimeParams> myMap = new EnumMap<>(GordianNTRUPrimeParams.class);
+            for (GordianNTRUPrimeParams mySpec : GordianNTRUPrimeParams.values()) {
                 myMap.put(mySpec, new GordianCoreNTRUPrimeParams(mySpec));
             }
             return myMap;
@@ -403,8 +407,8 @@ public class GordianCoreNTRUPrimeSpec
          *
          * @return the values
          */
-        public static Collection<GordianCoreNTRUPrimeParams> values() {
-            return PARMMAP.values();
+        public static GordianCoreNTRUPrimeParams[] values() {
+            return VALUES;
         }
     }
 }

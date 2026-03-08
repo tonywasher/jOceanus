@@ -18,9 +18,9 @@ package io.github.tonywasher.joceanus.gordianknot.impl.core.keyset;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeyType;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestType;
-import io.github.tonywasher.joceanus.gordianknot.api.keyset.spec.GordianNewKeySetSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeyType;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestType;
+import io.github.tonywasher.joceanus.gordianknot.api.keyset.spec.GordianKeySetSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianDataConverter;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianIdManager;
@@ -69,7 +69,7 @@ public final class GordianKeySetRecipe {
      * @param pAEAD    true/false is AEAD in use?
      */
     private GordianKeySetRecipe(final GordianBaseFactory pFactory,
-                                final GordianNewKeySetSpec pSpec,
+                                final GordianKeySetSpec pSpec,
                                 final boolean pAEAD) {
         /* Allocate new set of parameters */
         theParams = new GordianKeySetParameters(pFactory, pSpec, pAEAD);
@@ -85,7 +85,7 @@ public final class GordianKeySetRecipe {
      * @param pAEAD    true/false is AEAD in use?
      */
     private GordianKeySetRecipe(final GordianBaseFactory pFactory,
-                                final GordianNewKeySetSpec pSpec,
+                                final GordianKeySetSpec pSpec,
                                 final byte[] pHeader,
                                 final boolean pAEAD) {
         /* Allocate buffers */
@@ -109,7 +109,7 @@ public final class GordianKeySetRecipe {
      * @return the recipe
      */
     static GordianKeySetRecipe newRecipe(final GordianBaseFactory pFactory,
-                                         final GordianNewKeySetSpec pSpec,
+                                         final GordianKeySetSpec pSpec,
                                          final boolean pAEAD) {
         return new GordianKeySetRecipe(pFactory, pSpec, pAEAD);
     }
@@ -125,7 +125,7 @@ public final class GordianKeySetRecipe {
      * @throws GordianException on error
      */
     static GordianKeySetRecipe parseRecipe(final GordianBaseFactory pFactory,
-                                           final GordianNewKeySetSpec pSpec,
+                                           final GordianKeySetSpec pSpec,
                                            final byte[] pHeader,
                                            final boolean pAEAD) throws GordianException {
         /* Check that the input data is long enough */
@@ -174,17 +174,17 @@ public final class GordianKeySetRecipe {
         /**
          * The SymKeySet.
          */
-        private GordianNewSymKeyType[] theSymKeyTypes;
+        private GordianSymKeyType[] theSymKeyTypes;
 
         /**
          * The DigestType.
          */
-        private GordianNewDigestType theDigestType;
+        private GordianDigestType theDigestType;
 
         /**
          * The Poly1305 SymKeyType.
          */
-        private GordianNewSymKeyType thePoly1305SymKeyType;
+        private GordianSymKeyType thePoly1305SymKeyType;
 
         /**
          * The Initialisation Vector.
@@ -199,7 +199,7 @@ public final class GordianKeySetRecipe {
          * @param pAEAD    true/false is AEAD in use?
          */
         GordianKeySetParameters(final GordianBaseFactory pFactory,
-                                final GordianNewKeySetSpec pSpec,
+                                final GordianKeySetSpec pSpec,
                                 final boolean pAEAD) {
             /* Obtain random */
             final SecureRandom myRandom = pFactory.getRandomSource().getRandom();
@@ -226,7 +226,7 @@ public final class GordianKeySetRecipe {
          * @param pAEAD    true/false is AEAD in use?
          */
         GordianKeySetParameters(final GordianBaseFactory pFactory,
-                                final GordianNewKeySetSpec pSpec,
+                                final GordianKeySetSpec pSpec,
                                 final byte[] pRecipe,
                                 final byte[] pSalt,
                                 final boolean pAEAD) {
@@ -246,7 +246,7 @@ public final class GordianKeySetRecipe {
          * @param pAEAD    true/false is AEAD in use?
          */
         private void processRecipe(final GordianBaseFactory pFactory,
-                                   final GordianNewKeySetSpec pSpec,
+                                   final GordianKeySetSpec pSpec,
                                    final boolean pAEAD) {
             /* Obtain Id manager and random */
             final GordianIdManager myManager = pFactory.getIdManager();
@@ -284,7 +284,7 @@ public final class GordianKeySetRecipe {
          *
          * @return the symKeyTypes
          */
-        GordianNewSymKeyType[] getSymKeyTypes() {
+        GordianSymKeyType[] getSymKeyTypes() {
             return theSymKeyTypes;
         }
 
@@ -293,7 +293,7 @@ public final class GordianKeySetRecipe {
          *
          * @return the digestType
          */
-        GordianNewDigestType getDigestType() {
+        GordianDigestType getDigestType() {
             return theDigestType;
         }
 
@@ -302,7 +302,7 @@ public final class GordianKeySetRecipe {
          *
          * @return the symKeyType
          */
-        GordianNewSymKeyType getPoly1305SymKeyType() {
+        GordianSymKeyType getPoly1305SymKeyType() {
             return thePoly1305SymKeyType;
         }
 

@@ -17,20 +17,20 @@
 package io.github.tonywasher.joceanus.gordianknot.impl.jca;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianDHGroup;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianDSAKeyType;
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianLMSKeySpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianLMSKeySpec.GordianHSSKeySpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianRSAModulus;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianXMSSKeySpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianXMSSKeySpec.GordianXMSSDigestType;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianXMSSSpec.GordianXMSSDigestType;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianLogicException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianCoreKeyPairGenerator;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianKeyPairValidity;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreDHSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreDSASpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreLMSSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreXMSSSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaKeyPair.JcaDHPrivateKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaKeyPair.JcaDHPublicKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaKeyPair.JcaPrivateKey;
@@ -243,7 +243,8 @@ public abstract class JcaKeyPairGenerator
 
             /* Create and initialize the generator */
             theGenerator = getJavaKeyPairGenerator(RSA_ALGO, false);
-            theGenerator.initialize(pKeySpec.getRSAModulus().getLength(), getRandom());
+            final GordianCoreKeyPairSpec myKeySpec = (GordianCoreKeyPairSpec) pKeySpec;
+            theGenerator.initialize(myKeySpec.getRSASpec().getLength(), getRandom());
 
             /* Create the factory */
             setKeyFactory(getJavaKeyFactory(RSA_ALGO, false));
@@ -289,7 +290,8 @@ public abstract class JcaKeyPairGenerator
             /* Protect against exceptions */
             try {
                 /* Create the parameter generator */
-                final GordianDHGroup myGroup = pKeySpec.getDHGroup();
+                final GordianCoreKeyPairSpec myKeySpec = (GordianCoreKeyPairSpec) pKeySpec;
+                final GordianCoreDHSpec myGroup = myKeySpec.getDHSpec();
                 final DHParameters myParms = myGroup.getParameters();
                 final ElGamalParameterSpec mySpec = new ElGamalParameterSpec(myParms.getP(), myParms.getQ());
 
@@ -342,7 +344,8 @@ public abstract class JcaKeyPairGenerator
                 /* Create and initialize the generator */
                 final String myAlgo = getAlgorithm();
                 theGenerator = getJavaKeyPairGenerator(myAlgo, false);
-                final ECGenParameterSpec myParms = new ECGenParameterSpec(pKeySpec.getElliptic().getCurveName());
+                final GordianCoreKeyPairSpec myKeySpec = (GordianCoreKeyPairSpec) pKeySpec;
+                final ECGenParameterSpec myParms = new ECGenParameterSpec(myKeySpec.getElliptic().getCurveName());
                 theGenerator.initialize(myParms, getRandom());
 
                 /* Create the factory */
@@ -369,9 +372,9 @@ public abstract class JcaKeyPairGenerator
          */
         private String getAlgorithm() {
             switch (this.getKeySpec().getKeyPairType()) {
-                case DSTU4145:
+                case DSTU:
                     return "DSTU4145";
-                case GOST2012:
+                case GOST:
                     return "ECGOST3410-2012";
                 default:
                     return "EC";
@@ -407,7 +410,8 @@ public abstract class JcaKeyPairGenerator
             super(pFactory, pKeySpec);
 
             /* Create and initialize the generator */
-            final GordianDSAKeyType myKeyType = pKeySpec.getDSAKeyType();
+            final GordianCoreKeyPairSpec myKeySpec = (GordianCoreKeyPairSpec) pKeySpec;
+            final GordianCoreDSASpec myKeyType = myKeySpec.getDSASpec();
             theGenerator = getJavaKeyPairGenerator(DSA_ALGO, false);
             theGenerator.initialize(myKeyType.getKeySize(), getRandom());
 
@@ -455,7 +459,8 @@ public abstract class JcaKeyPairGenerator
             /* Protect against exceptions */
             try {
                 /* Create the parameter generator */
-                final GordianDHGroup myGroup = pKeySpec.getDHGroup();
+                final GordianCoreKeyPairSpec myKeySpec = (GordianCoreKeyPairSpec) pKeySpec;
+                final GordianCoreDHSpec myGroup = myKeySpec.getDHSpec();
                 final DHParameters myParms = myGroup.getParameters();
                 final DHDomainParameterSpec mySpec = new DHDomainParameterSpec(myParms);
 
@@ -526,11 +531,12 @@ public abstract class JcaKeyPairGenerator
             /* Protect against exceptions */
             try {
                 /* Determine algorithm */
-                final String myAlgo = pKeySpec.getSLHDSAKeySpec().isHash() ? SLHDSA_HASH : SLHDSA_ALGO;
+                final GordianCoreKeyPairSpec myKeySpec = (GordianCoreKeyPairSpec) pKeySpec;
+                final String myAlgo = myKeySpec.getSLHDSASpec().isHash() ? SLHDSA_HASH : SLHDSA_ALGO;
 
                 /* Create and initialize the generator */
                 theGenerator = getJavaKeyPairGenerator(myAlgo, false);
-                final SLHDSAParameterSpec myParms = pKeySpec.getSLHDSAKeySpec().getParameterSpec();
+                final SLHDSAParameterSpec myParms = myKeySpec.getSLHDSASpec().getParameterSpec();
                 theGenerator.initialize(myParms, getRandom());
 
                 /* Create the factory */
@@ -582,7 +588,8 @@ public abstract class JcaKeyPairGenerator
             try {
                 /* Create and initialize the generator */
                 theGenerator = getJavaKeyPairGenerator(CMCE_ALGO, true);
-                final CMCEParameterSpec myParms = pKeySpec.getCMCEKeySpec().getParameterSpec();
+                final GordianCoreKeyPairSpec myKeySpec = (GordianCoreKeyPairSpec) pKeySpec;
+                final CMCEParameterSpec myParms = myKeySpec.getCMCESpec().getParameterSpec();
                 theGenerator.initialize(myParms, getRandom());
 
                 /* Create the factory */
@@ -634,7 +641,8 @@ public abstract class JcaKeyPairGenerator
             try {
                 /* Create and initialize the generator */
                 theGenerator = getJavaKeyPairGenerator(FRODO_ALGO, true);
-                final FrodoParameterSpec myParms = pKeySpec.getFRODOKeySpec().getParameterSpec();
+                final GordianCoreKeyPairSpec myKeySpec = (GordianCoreKeyPairSpec) pKeySpec;
+                final FrodoParameterSpec myParms = myKeySpec.getFRODOSpec().getParameterSpec();
                 theGenerator.initialize(myParms, getRandom());
 
                 /* Create the factory */
@@ -686,7 +694,8 @@ public abstract class JcaKeyPairGenerator
             try {
                 /* Create and initialize the generator */
                 theGenerator = getJavaKeyPairGenerator(SABER_ALGO, true);
-                final SABERParameterSpec myParms = pKeySpec.getSABERKeySpec().getParameterSpec();
+                final GordianCoreKeyPairSpec myKeySpec = (GordianCoreKeyPairSpec) pKeySpec;
+                final SABERParameterSpec myParms = myKeySpec.getSABERSpec().getParameterSpec();
                 theGenerator.initialize(myParms, getRandom());
 
                 /* Create the factory */
@@ -738,7 +747,8 @@ public abstract class JcaKeyPairGenerator
             try {
                 /* Create and initialize the generator */
                 theGenerator = getJavaKeyPairGenerator(MLKEM_ALGO, false);
-                final MLKEMParameterSpec myParms = pKeySpec.getMLKEMKeySpec().getParameterSpec();
+                final GordianCoreKeyPairSpec myKeySpec = (GordianCoreKeyPairSpec) pKeySpec;
+                final MLKEMParameterSpec myParms = myKeySpec.getMLKEMSpec().getParameterSpec();
                 theGenerator.initialize(myParms, getRandom());
 
                 /* Create the factory */
@@ -794,11 +804,12 @@ public abstract class JcaKeyPairGenerator
             /* Protect against exceptions */
             try {
                 /* Determine algorithm */
-                final String myAlgo = pKeySpec.getMLDSAKeySpec().isHash() ? MLDSA_HASH : MLDSA_ALGO;
+                final GordianCoreKeyPairSpec myKeySpec = (GordianCoreKeyPairSpec) pKeySpec;
+                final String myAlgo = myKeySpec.getMLDSASpec().isHash() ? MLDSA_HASH : MLDSA_ALGO;
 
                 /* Create and initialize the generator */
                 theGenerator = getJavaKeyPairGenerator(myAlgo, false);
-                final MLDSAParameterSpec myParms = pKeySpec.getMLDSAKeySpec().getParameterSpec();
+                final MLDSAParameterSpec myParms = myKeySpec.getMLDSASpec().getParameterSpec();
                 theGenerator.initialize(myParms, getRandom());
 
                 /* Create the factory */
@@ -850,7 +861,8 @@ public abstract class JcaKeyPairGenerator
             try {
                 /* Create and initialize the generator */
                 theGenerator = getJavaKeyPairGenerator(HQC_ALGO, true);
-                final HQCParameterSpec myParms = pKeySpec.getHQCKeySpec().getParameterSpec();
+                final GordianCoreKeyPairSpec myKeySpec = (GordianCoreKeyPairSpec) pKeySpec;
+                final HQCParameterSpec myParms = myKeySpec.getHQCSpec().getParameterSpec();
                 theGenerator.initialize(myParms, getRandom());
 
                 /* Create the factory */
@@ -870,7 +882,6 @@ public abstract class JcaKeyPairGenerator
             return new JcaKeyPair(myPublic, myPrivate);
         }
     }
-
 
     /**
      * Jca BIKE KeyPair generator.
@@ -903,7 +914,8 @@ public abstract class JcaKeyPairGenerator
             try {
                 /* Create and initialize the generator */
                 theGenerator = getJavaKeyPairGenerator(BIKE_ALGO, true);
-                final BIKEParameterSpec myParms = pKeySpec.getBIKEKeySpec().getParameterSpec();
+                final GordianCoreKeyPairSpec myKeySpec = (GordianCoreKeyPairSpec) pKeySpec;
+                final BIKEParameterSpec myParms = myKeySpec.getBIKESpec().getParameterSpec();
                 theGenerator.initialize(myParms, getRandom());
 
                 /* Create the factory */
@@ -955,7 +967,8 @@ public abstract class JcaKeyPairGenerator
             try {
                 /* Create and initialize the generator */
                 theGenerator = getJavaKeyPairGenerator(NTRU_ALGO, true);
-                final NTRUParameterSpec myParms = pKeySpec.getNTRUKeySpec().getParameterSpec();
+                final GordianCoreKeyPairSpec myKeySpec = (GordianCoreKeyPairSpec) pKeySpec;
+                final NTRUParameterSpec myParms = myKeySpec.getNTRUSpec().getParameterSpec();
                 theGenerator.initialize(myParms, getRandom());
 
                 /* Create the factory */
@@ -1007,7 +1020,8 @@ public abstract class JcaKeyPairGenerator
             try {
                 /* Create and initialize the generator */
                 theGenerator = getJavaKeyPairGenerator(FALCON_ALGO, true);
-                final FalconParameterSpec myParms = pKeySpec.getFalconKeySpec().getParameterSpec();
+                final GordianCoreKeyPairSpec myKeySpec = (GordianCoreKeyPairSpec) pKeySpec;
+                final FalconParameterSpec myParms = myKeySpec.getFalconSpec().getParameterSpec();
                 theGenerator.initialize(myParms, getRandom());
 
                 /* Create the factory */
@@ -1059,7 +1073,8 @@ public abstract class JcaKeyPairGenerator
             try {
                 /* Create and initialize the generator */
                 theGenerator = getJavaKeyPairGenerator(MAYO_ALGO, true);
-                final MayoParameterSpec myParms = pKeySpec.getMayoKeySpec().getParameterSpec();
+                final GordianCoreKeyPairSpec myKeySpec = (GordianCoreKeyPairSpec) pKeySpec;
+                final MayoParameterSpec myParms = myKeySpec.getMayoSpec().getParameterSpec();
                 theGenerator.initialize(myParms, getRandom());
 
                 /* Create the factory */
@@ -1111,7 +1126,8 @@ public abstract class JcaKeyPairGenerator
             try {
                 /* Create and initialize the generator */
                 theGenerator = getJavaKeyPairGenerator(SNOVA_ALGO, true);
-                final SnovaParameterSpec myParms = pKeySpec.getSnovaKeySpec().getParameterSpec();
+                final GordianCoreKeyPairSpec myKeySpec = (GordianCoreKeyPairSpec) pKeySpec;
+                final SnovaParameterSpec myParms = myKeySpec.getSnovaSpec().getParameterSpec();
                 theGenerator.initialize(myParms, getRandom());
 
                 /* Create the factory */
@@ -1163,7 +1179,8 @@ public abstract class JcaKeyPairGenerator
             try {
                 /* Create and initialize the generator */
                 theGenerator = getJavaKeyPairGenerator(NTRU_ALGO, true);
-                final NTRULPRimeParameterSpec myParms = pKeySpec.getNTRUPrimeKeySpec().getParams().getNTRULParameterSpec();
+                final GordianCoreKeyPairSpec myKeySpec = (GordianCoreKeyPairSpec) pKeySpec;
+                final NTRULPRimeParameterSpec myParms = myKeySpec.getNTRUPrimeSpec().getCoreParams().getNTRULParameterSpec();
                 theGenerator.initialize(myParms, getRandom());
 
                 /* Create the factory */
@@ -1215,7 +1232,8 @@ public abstract class JcaKeyPairGenerator
             try {
                 /* Create and initialize the generator */
                 theGenerator = getJavaKeyPairGenerator(NTRU_ALGO, true);
-                final SNTRUPrimeParameterSpec myParms = pKeySpec.getNTRUPrimeKeySpec().getParams().getSNTRUParameterSpec();
+                final GordianCoreKeyPairSpec myKeySpec = (GordianCoreKeyPairSpec) pKeySpec;
+                final SNTRUPrimeParameterSpec myParms = myKeySpec.getNTRUPrimeSpec().getCoreParams().getSNTRUParameterSpec();
                 theGenerator.initialize(myParms, getRandom());
 
                 /* Create the factory */
@@ -1267,7 +1285,8 @@ public abstract class JcaKeyPairGenerator
             try {
                 /* Create and initialize the generator */
                 theGenerator = getJavaKeyPairGenerator(PICNIC_ALGO, true);
-                final PicnicParameterSpec myParms = pKeySpec.getPicnicKeySpec().getParameterSpec();
+                final GordianCoreKeyPairSpec myKeySpec = (GordianCoreKeyPairSpec) pKeySpec;
+                final PicnicParameterSpec myParms = myKeySpec.getPicnicSpec().getParameterSpec();
                 theGenerator.initialize(myParms, getRandom());
 
                 /* Create the factory */
@@ -1313,7 +1332,8 @@ public abstract class JcaKeyPairGenerator
             /* Protect against exceptions */
             try {
                 /* Access the algorithm */
-                final GordianXMSSKeySpec myXMSSKeySpec = pKeySpec.getXMSSKeySpec();
+                final GordianCoreKeyPairSpec myKeySpec = (GordianCoreKeyPairSpec) pKeySpec;
+                final GordianCoreXMSSSpec myXMSSKeySpec = myKeySpec.getXMSSSpec();
                 final boolean isXMSSMT = myXMSSKeySpec.isMT();
                 final GordianXMSSDigestType myType = myXMSSKeySpec.getDigestType();
 
@@ -1402,7 +1422,8 @@ public abstract class JcaKeyPairGenerator
             try {
                 /* Create the parameters */
                 final AlgorithmParameterSpec myAlgo;
-                final boolean is25519 = pKeySpec.getEdwardsElliptic().is25519();
+                final GordianCoreKeyPairSpec myKeySpec = (GordianCoreKeyPairSpec) pKeySpec;
+                final boolean is25519 = myKeySpec.getEdwardsSpec().is25519();
                 switch (pKeySpec.getKeyPairType()) {
                     case XDH:
                         myAlgo = is25519
@@ -1470,7 +1491,7 @@ public abstract class JcaKeyPairGenerator
 
             /* Create and initialize the generator */
             theGenerator = getJavaKeyPairGenerator(NEWHOPE_ALGO, true);
-            theGenerator.initialize(GordianRSAModulus.MOD1024.getLength(), getRandom());
+            theGenerator.initialize(GordianLength.LEN_1024.getLength(), getRandom());
 
             /* Create the factory */
             setKeyFactory(getJavaKeyFactory(NEWHOPE_ALGO, true));
@@ -1514,9 +1535,8 @@ public abstract class JcaKeyPairGenerator
 
             /* Protect against exceptions */
             try {
-                final AlgorithmParameterSpec myParms = pKeySpec.getSubKeyType() instanceof GordianHSSKeySpec
-                        ? deriveParameters(pKeySpec.getHSSKeySpec())
-                        : deriveParameters(pKeySpec.getLMSKeySpec());
+                final GordianCoreKeyPairSpec myKeySpec = (GordianCoreKeyPairSpec) pKeySpec;
+                final AlgorithmParameterSpec myParms = deriveParameters(myKeySpec.getLMSSpec());
                 theGenerator.initialize(myParms, getRandom());
 
             } catch (InvalidAlgorithmParameterException e) {
@@ -1533,23 +1553,13 @@ public abstract class JcaKeyPairGenerator
          * @param pKeySpec the keySPec
          * @return the parameters.
          */
-        private static LMSHSSKeyGenParameterSpec deriveParameters(final GordianHSSKeySpec pKeySpec) {
+        private static LMSHSSKeyGenParameterSpec deriveParameters(final GordianCoreLMSSpec pKeySpec) {
             /* Generate and return the keyPair */
-            final GordianLMSKeySpec myKeySpec = pKeySpec.getKeySpec();
             final LMSKeyGenParameterSpec[] myParams = new LMSKeyGenParameterSpec[pKeySpec.getTreeDepth()];
-            Arrays.fill(myParams, deriveParameters(myKeySpec));
-            return new LMSHSSKeyGenParameterSpec(myParams);
-        }
-
-        /**
-         * Derive the parameters.
-         *
-         * @param pKeySpec the keySpec
-         * @return the parameters.
-         */
-        private static LMSKeyGenParameterSpec deriveParameters(final GordianLMSKeySpec pKeySpec) {
             final LMSParameters myParms = pKeySpec.getParameters();
-            return new LMSKeyGenParameterSpec(myParms.getLMSigParam(), myParms.getLMOTSParam());
+            final LMSKeyGenParameterSpec myKeyGen = new LMSKeyGenParameterSpec(myParms.getLMSigParam(), myParms.getLMOTSParam());
+            Arrays.fill(myParams, myKeyGen);
+            return new LMSHSSKeyGenParameterSpec(myParams);
         }
 
         @Override

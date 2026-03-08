@@ -18,8 +18,8 @@
 package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeySpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeyType;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeyType;
 
 import java.util.Objects;
 
@@ -27,7 +27,7 @@ import java.util.Objects;
  * SymKey specification.
  */
 public class GordianCoreSymKeySpec
-        implements GordianNewSymKeySpec {
+        implements GordianSymKeySpec {
     /**
      * The Separator.
      */
@@ -65,7 +65,7 @@ public class GordianCoreSymKeySpec
      * @param pBlockLength the blockLength
      * @param pKeyLength   the keyLength
      */
-    GordianCoreSymKeySpec(final GordianNewSymKeyType pType,
+    GordianCoreSymKeySpec(final GordianSymKeyType pType,
                           final GordianLength pBlockLength,
                           final GordianLength pKeyLength) {
         theType = GordianCoreSymKeyType.mapCoreType(pType);
@@ -84,7 +84,7 @@ public class GordianCoreSymKeySpec
     }
 
     @Override
-    public GordianNewSymKeyType getSymKeyType() {
+    public GordianSymKeyType getSymKeyType() {
         return theType.getType();
     }
 
@@ -153,12 +153,12 @@ public class GordianCoreSymKeySpec
             /* If the keySpec is valid */
             if (isValid) {
                 /* Load the name */
-                final GordianNewSymKeyType myType = getSymKeyType();
+                final GordianSymKeyType myType = getSymKeyType();
                 theName = theType.toString();
                 if (theType.hasMultipleBlockLengths()
-                        && !GordianNewSymKeyType.THREEFISH.equals(myType)) {
+                        && !GordianSymKeyType.THREEFISH.equals(myType)) {
                     int myLen = theBlockLength.getLength();
-                    if (GordianNewSymKeyType.RC5.equals(myType)) {
+                    if (GordianSymKeyType.RC5.equals(myType)) {
                         myLen >>= 1;
                     }
                     theName += myLen;

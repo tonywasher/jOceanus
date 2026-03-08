@@ -17,8 +17,8 @@
 package io.github.tonywasher.joceanus.gordianknot.impl.core.cipher;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianKeySpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewCipherSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewPBESpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianPBESpec;
 
 import java.util.Objects;
 
@@ -31,12 +31,12 @@ public class GordianPBECipherSpec<T extends GordianKeySpec> {
     /**
      * The PBESpec.
      */
-    private final GordianNewPBESpec thePBESpec;
+    private final GordianPBESpec thePBESpec;
 
     /**
      * The CipherSpec.
      */
-    private final GordianNewCipherSpec<T> theCipherSpec;
+    private final GordianCipherSpec<T> theCipherSpec;
 
     /**
      * Is the Spec valid?
@@ -49,8 +49,8 @@ public class GordianPBECipherSpec<T extends GordianKeySpec> {
      * @param pPBESpec    the PBE Spec
      * @param pCipherSpec the CipherSpec
      */
-    public GordianPBECipherSpec(final GordianNewPBESpec pPBESpec,
-                                final GordianNewCipherSpec<T> pCipherSpec) {
+    public GordianPBECipherSpec(final GordianPBESpec pPBESpec,
+                                final GordianCipherSpec<T> pCipherSpec) {
         thePBESpec = pPBESpec;
         theCipherSpec = pCipherSpec;
         isValid = pPBESpec != null && pPBESpec.isValid()
@@ -62,7 +62,7 @@ public class GordianPBECipherSpec<T extends GordianKeySpec> {
      *
      * @return the pbeSpec
      */
-    public GordianNewPBESpec getPBESpec() {
+    public GordianPBESpec getPBESpec() {
         return thePBESpec;
     }
 
@@ -71,7 +71,7 @@ public class GordianPBECipherSpec<T extends GordianKeySpec> {
      *
      * @return the cipherSpec
      */
-    public GordianNewCipherSpec<T> getCipherSpec() {
+    public GordianCipherSpec<T> getCipherSpec() {
         return theCipherSpec;
     }
 

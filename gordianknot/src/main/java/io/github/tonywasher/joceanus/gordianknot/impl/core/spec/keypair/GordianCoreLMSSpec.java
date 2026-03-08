@@ -18,8 +18,7 @@
 package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianLMSKeySpec.GordianHSSKeySpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewLMSSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianLMSSpec;
 import org.bouncycastle.pqc.crypto.lms.LMOtsParameters;
 import org.bouncycastle.pqc.crypto.lms.LMSParameters;
 import org.bouncycastle.pqc.crypto.lms.LMSigParameters;
@@ -32,11 +31,16 @@ import java.util.Objects;
  * LMS KeyTypes.
  */
 public class GordianCoreLMSSpec
-        implements GordianNewLMSSpec {
+        implements GordianLMSSpec {
     /**
      * The Separator.
      */
     private static final String SEP = "-";
+
+    /**
+     * Max depth for HSS key.
+     */
+    public static final int MAX_DEPTH = 8;
 
     /**
      * Invalid length error.
@@ -46,22 +50,27 @@ public class GordianCoreLMSSpec
     /**
      * The hash.
      */
-    private final GordianNewLMSHash theHash;
+    private final GordianLMSHash theHash;
 
     /**
      * The width.
      */
-    private final GordianNewLMSWidth theWidth;
+    private final GordianLMSWidth theWidth;
 
     /**
      * The height.
      */
-    private final GordianNewLMSHeight theHeight;
+    private final GordianLMSHeight theHeight;
 
     /**
      * The length.
      */
     private final GordianLength theLength;
+
+    /**
+     * The tree depth.
+     */
+    private final int theDepth;
 
     /**
      * The Parameters.
@@ -86,15 +95,44 @@ public class GordianCoreLMSSpec
      * @param pWidth    the width
      * @param pLength   the length
      */
-    public GordianCoreLMSSpec(final GordianNewLMSHash pHashType,
-                              final GordianNewLMSHeight pHeight,
-                              final GordianNewLMSWidth pWidth,
-                              final GordianLength pLength) {
+    GordianCoreLMSSpec(final GordianLMSHash pHashType,
+                       final GordianLMSHeight pHeight,
+                       final GordianLMSWidth pWidth,
+                       final GordianLength pLength) {
+        this(pHashType, pHeight, pWidth, pLength, 1);
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param pLMSSpec   the LMSSpec
+     * @param pTreeDepth the treeDepth
+     */
+    private GordianCoreLMSSpec(final GordianLMSSpec pLMSSpec,
+                               final int pTreeDepth) {
+        this(pLMSSpec.getHash(), pLMSSpec.getHeight(), pLMSSpec.getWidth(), pLMSSpec.getLength(), pTreeDepth);
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param pHashType  the hashType
+     * @param pHeight    the height
+     * @param pWidth     the width
+     * @param pLength    the length
+     * @param pTreeDepth the treeDepth
+     */
+    GordianCoreLMSSpec(final GordianLMSHash pHashType,
+                       final GordianLMSHeight pHeight,
+                       final GordianLMSWidth pWidth,
+                       final GordianLength pLength,
+                       final int pTreeDepth) {
         /* Store parameters */
         theHash = pHashType;
         theWidth = pWidth;
         theHeight = pHeight;
         theLength = pLength;
+        theDepth = pTreeDepth;
 
         /* Check validity */
         isValid = checkValidity();
@@ -106,23 +144,28 @@ public class GordianCoreLMSSpec
     }
 
     @Override
-    public GordianNewLMSHash getHash() {
+    public GordianLMSHash getHash() {
         return theHash;
     }
 
     @Override
-    public GordianNewLMSHeight getHeight() {
+    public GordianLMSHeight getHeight() {
         return theHeight;
     }
 
     @Override
-    public GordianNewLMSWidth getWidth() {
+    public GordianLMSWidth getWidth() {
         return theWidth;
     }
 
     @Override
     public GordianLength getLength() {
         return theLength;
+    }
+
+    @Override
+    public int getTreeDepth() {
+        return theDepth;
     }
 
     /**
@@ -157,6 +200,9 @@ public class GordianCoreLMSSpec
         if (theWidth == null || theHeight == null || theHash == null || theLength == null) {
             return false;
         }
+        if (theDepth < 1 || theDepth > MAX_DEPTH) {
+            return false;
+        }
         switch (theLength) {
             case LEN_192:
             case LEN_256:
@@ -174,9 +220,15 @@ public class GordianCoreLMSSpec
             if (isValid) {
                 /* Load the name */
                 theName = theHash.toString() + SEP + theWidth.toString() + SEP + theHeight.toString() + SEP + theLength.toString();
+                if (theDepth > 1) {
+                    theName = "HSS-" + theDepth + SEP + theName;
+                }
             } else {
                 /* Report invalid spec */
                 theName = "InvalidLMSKeySpec: " + theHash + SEP + theWidth + SEP + theHeight + SEP + theLength;
+                if (theDepth != 1) {
+                    theName += SEP + theDepth;
+                }
             }
         }
 
@@ -199,12 +251,13 @@ public class GordianCoreLMSSpec
                 && theHash == myThat.theHash
                 && theLength == myThat.theLength
                 && theWidth == myThat.theWidth
-                && theHeight == myThat.theHeight;
+                && theHeight == myThat.theHeight
+                && theDepth == myThat.theDepth;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(theHash, theHeight, theWidth, theLength);
+        return Objects.hash(theHash, theHeight, theWidth, theLength, theDepth);
     }
 
     /**
@@ -213,7 +266,7 @@ public class GordianCoreLMSSpec
      * @param pHeight the height
      * @return true/false.
      */
-    private boolean isHigh(final GordianNewLMSHeight pHeight) {
+    private boolean isHigh(final GordianLMSHeight pHeight) {
         switch (pHeight) {
             case H15:
             case H20:
@@ -254,9 +307,9 @@ public class GordianCoreLMSSpec
     private LMSigParameters getH5Parameter() {
         switch (theLength) {
             case LEN_192:
-                return theHash == GordianNewLMSHash.SHA256 ? LMSigParameters.lms_sha256_n24_h5 : LMSigParameters.lms_shake256_n24_h5;
+                return theHash == GordianLMSHash.SHA256 ? LMSigParameters.lms_sha256_n24_h5 : LMSigParameters.lms_shake256_n24_h5;
             case LEN_256:
-                return theHash == GordianNewLMSHash.SHA256 ? LMSigParameters.lms_sha256_n32_h5 : LMSigParameters.lms_shake256_n32_h5;
+                return theHash == GordianLMSHash.SHA256 ? LMSigParameters.lms_sha256_n32_h5 : LMSigParameters.lms_shake256_n32_h5;
             default:
                 throw new IllegalArgumentException(INVALID_LENGTH + theLength);
         }
@@ -270,9 +323,9 @@ public class GordianCoreLMSSpec
     private LMSigParameters getH10Parameter() {
         switch (theLength) {
             case LEN_192:
-                return theHash == GordianNewLMSHash.SHA256 ? LMSigParameters.lms_sha256_n24_h10 : LMSigParameters.lms_shake256_n24_h10;
+                return theHash == GordianLMSHash.SHA256 ? LMSigParameters.lms_sha256_n24_h10 : LMSigParameters.lms_shake256_n24_h10;
             case LEN_256:
-                return theHash == GordianNewLMSHash.SHA256 ? LMSigParameters.lms_sha256_n32_h10 : LMSigParameters.lms_shake256_n32_h10;
+                return theHash == GordianLMSHash.SHA256 ? LMSigParameters.lms_sha256_n32_h10 : LMSigParameters.lms_shake256_n32_h10;
             default:
                 throw new IllegalArgumentException(INVALID_LENGTH + theLength);
         }
@@ -286,9 +339,9 @@ public class GordianCoreLMSSpec
     private LMSigParameters getH15Parameter() {
         switch (theLength) {
             case LEN_192:
-                return theHash == GordianNewLMSHash.SHA256 ? LMSigParameters.lms_sha256_n24_h15 : LMSigParameters.lms_shake256_n24_h15;
+                return theHash == GordianLMSHash.SHA256 ? LMSigParameters.lms_sha256_n24_h15 : LMSigParameters.lms_shake256_n24_h15;
             case LEN_256:
-                return theHash == GordianNewLMSHash.SHA256 ? LMSigParameters.lms_sha256_n32_h15 : LMSigParameters.lms_shake256_n32_h15;
+                return theHash == GordianLMSHash.SHA256 ? LMSigParameters.lms_sha256_n32_h15 : LMSigParameters.lms_shake256_n32_h15;
             default:
                 throw new IllegalArgumentException(INVALID_LENGTH + theLength);
         }
@@ -302,9 +355,9 @@ public class GordianCoreLMSSpec
     private LMSigParameters getH20Parameter() {
         switch (theLength) {
             case LEN_192:
-                return theHash == GordianNewLMSHash.SHA256 ? LMSigParameters.lms_sha256_n24_h20 : LMSigParameters.lms_shake256_n24_h20;
+                return theHash == GordianLMSHash.SHA256 ? LMSigParameters.lms_sha256_n24_h20 : LMSigParameters.lms_shake256_n24_h20;
             case LEN_256:
-                return theHash == GordianNewLMSHash.SHA256 ? LMSigParameters.lms_sha256_n32_h20 : LMSigParameters.lms_shake256_n32_h20;
+                return theHash == GordianLMSHash.SHA256 ? LMSigParameters.lms_sha256_n32_h20 : LMSigParameters.lms_shake256_n32_h20;
             default:
                 throw new IllegalArgumentException(INVALID_LENGTH + theLength);
         }
@@ -318,9 +371,9 @@ public class GordianCoreLMSSpec
     private LMSigParameters getH25Parameter() {
         switch (theLength) {
             case LEN_192:
-                return theHash == GordianNewLMSHash.SHA256 ? LMSigParameters.lms_sha256_n24_h25 : LMSigParameters.lms_shake256_n24_h25;
+                return theHash == GordianLMSHash.SHA256 ? LMSigParameters.lms_sha256_n24_h25 : LMSigParameters.lms_shake256_n24_h25;
             case LEN_256:
-                return theHash == GordianNewLMSHash.SHA256 ? LMSigParameters.lms_sha256_n32_h25 : LMSigParameters.lms_shake256_n32_h25;
+                return theHash == GordianLMSHash.SHA256 ? LMSigParameters.lms_sha256_n32_h25 : LMSigParameters.lms_shake256_n32_h25;
             default:
                 throw new IllegalArgumentException(INVALID_LENGTH + theLength);
         }
@@ -354,9 +407,9 @@ public class GordianCoreLMSSpec
     private LMOtsParameters getW1Parameter() {
         switch (theLength) {
             case LEN_192:
-                return theHash == GordianNewLMSHash.SHA256 ? LMOtsParameters.sha256_n24_w1 : LMOtsParameters.shake256_n24_w1;
+                return theHash == GordianLMSHash.SHA256 ? LMOtsParameters.sha256_n24_w1 : LMOtsParameters.shake256_n24_w1;
             case LEN_256:
-                return theHash == GordianNewLMSHash.SHA256 ? LMOtsParameters.sha256_n32_w1 : LMOtsParameters.shake256_n32_w1;
+                return theHash == GordianLMSHash.SHA256 ? LMOtsParameters.sha256_n32_w1 : LMOtsParameters.shake256_n32_w1;
             default:
                 throw new IllegalArgumentException(INVALID_LENGTH + theLength);
         }
@@ -370,9 +423,9 @@ public class GordianCoreLMSSpec
     private LMOtsParameters getW2Parameter() {
         switch (theLength) {
             case LEN_192:
-                return theHash == GordianNewLMSHash.SHA256 ? LMOtsParameters.sha256_n24_w2 : LMOtsParameters.shake256_n24_w2;
+                return theHash == GordianLMSHash.SHA256 ? LMOtsParameters.sha256_n24_w2 : LMOtsParameters.shake256_n24_w2;
             case LEN_256:
-                return theHash == GordianNewLMSHash.SHA256 ? LMOtsParameters.sha256_n32_w2 : LMOtsParameters.shake256_n32_w2;
+                return theHash == GordianLMSHash.SHA256 ? LMOtsParameters.sha256_n32_w2 : LMOtsParameters.shake256_n32_w2;
             default:
                 throw new IllegalArgumentException(INVALID_LENGTH + theLength);
         }
@@ -386,9 +439,9 @@ public class GordianCoreLMSSpec
     private LMOtsParameters getW4Parameter() {
         switch (theLength) {
             case LEN_192:
-                return theHash == GordianNewLMSHash.SHA256 ? LMOtsParameters.sha256_n24_w4 : LMOtsParameters.shake256_n24_w4;
+                return theHash == GordianLMSHash.SHA256 ? LMOtsParameters.sha256_n24_w4 : LMOtsParameters.shake256_n24_w4;
             case LEN_256:
-                return theHash == GordianNewLMSHash.SHA256 ? LMOtsParameters.sha256_n32_w4 : LMOtsParameters.shake256_n32_w4;
+                return theHash == GordianLMSHash.SHA256 ? LMOtsParameters.sha256_n32_w4 : LMOtsParameters.shake256_n32_w4;
             default:
                 throw new IllegalArgumentException(INVALID_LENGTH + theLength);
         }
@@ -402,111 +455,11 @@ public class GordianCoreLMSSpec
     private LMOtsParameters getW8Parameter() {
         switch (theLength) {
             case LEN_192:
-                return theHash == GordianNewLMSHash.SHA256 ? LMOtsParameters.sha256_n24_w8 : LMOtsParameters.shake256_n24_w8;
+                return theHash == GordianLMSHash.SHA256 ? LMOtsParameters.sha256_n24_w8 : LMOtsParameters.shake256_n24_w8;
             case LEN_256:
-                return theHash == GordianNewLMSHash.SHA256 ? LMOtsParameters.sha256_n32_w8 : LMOtsParameters.shake256_n32_w8;
+                return theHash == GordianLMSHash.SHA256 ? LMOtsParameters.sha256_n32_w8 : LMOtsParameters.shake256_n32_w8;
             default:
                 throw new IllegalArgumentException(INVALID_LENGTH + theLength);
-        }
-    }
-
-    /**
-     * HSS keySpec.
-     */
-    public static class GordianCoreHSSSpec
-            extends GordianCoreLMSSpec
-            implements GordianNewHSSSpec {
-        /**
-         * Max depth for HSS key.
-         */
-        public static final int MAX_DEPTH = 8;
-
-        /**
-         * The tree depth.
-         */
-        private final int theDepth;
-
-        /**
-         * The Validity.
-         */
-        private final boolean isValid;
-
-        /**
-         * The String name.
-         */
-        private String theName;
-
-        /**
-         * Constructor.
-         *
-         * @param pBase  the Base LMS
-         * @param pDepth the depth
-         */
-        public GordianCoreHSSSpec(final GordianNewLMSSpec pBase,
-                                  final int pDepth) {
-            super(pBase.getHash(), pBase.getHeight(), pBase.getWidth(), pBase.getLength());
-            theDepth = pDepth;
-            isValid = checkValidity();
-        }
-
-        @Override
-        public int getTreeDepth() {
-            return theDepth;
-        }
-
-        @Override
-        public boolean isValid() {
-            return isValid;
-        }
-
-        /**
-         * Check spec validity.
-         *
-         * @return valid true/false
-         */
-        protected boolean checkValidity() {
-            return super.checkValidity()
-                    && (theDepth < 1 || theDepth > MAX_DEPTH);
-        }
-
-        @Override
-        public String toString() {
-            /* If we have not yet loaded the name */
-            if (theName == null) {
-                /* If the keySpec is valid */
-                if (isValid) {
-                    /* Load the name */
-                    theName = "HSS-" + theDepth + "-" + super.toString();
-
-                } else {
-                    /* Report invalid spec */
-                    theName = "InvalidHSSKeySpec: " + theDepth + ":" + super.toString();
-                }
-            }
-
-            /* return the name */
-            return theName;
-        }
-
-        @Override
-        public boolean equals(final Object pThat) {
-            /* Handle the trivial cases */
-            if (this == pThat) {
-                return true;
-            }
-            if (pThat == null) {
-                return false;
-            }
-
-            /* Access the target hssSpec */
-            return pThat instanceof GordianCoreHSSSpec myThat
-                    && super.equals(pThat)
-                    && theDepth == myThat.getTreeDepth();
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(super.hashCode(), theDepth);
         }
     }
 
@@ -515,14 +468,14 @@ public class GordianCoreLMSSpec
      *
      * @return the list
      */
-    public static List<GordianNewLMSSpec> listAllPossibleSpecs() {
+    public static List<GordianLMSSpec> listAllPossibleSpecs() {
         /* Create the list */
-        final List<GordianNewLMSSpec> mySpecs = new ArrayList<>();
+        final List<GordianLMSSpec> mySpecs = new ArrayList<>();
 
         /* Add the specs */
-        for (final GordianNewLMSSpec mySpec : listPossibleLMSSpecs()) {
-            for (int i = 1; i < GordianHSSKeySpec.MAX_DEPTH; i++) {
-                mySpecs.add(new GordianCoreHSSSpec(mySpec, i));
+        for (final GordianLMSSpec mySpec : listPossibleLMSSpecs()) {
+            for (int i = 1; i < MAX_DEPTH; i++) {
+                mySpecs.add(new GordianCoreLMSSpec(mySpec, i));
             }
         }
 
@@ -535,17 +488,17 @@ public class GordianCoreLMSSpec
      *
      * @return the list
      */
-    public static List<GordianNewLMSSpec> listPossibleLMSSpecs() {
+    public static List<GordianLMSSpec> listPossibleLMSSpecs() {
         /* Create the list */
-        final List<GordianNewLMSSpec> mySpecs = new ArrayList<>();
+        final List<GordianLMSSpec> mySpecs = new ArrayList<>();
 
         /* Add the specs */
-        for (final GordianNewLMSHeight myHeight : GordianNewLMSHeight.values()) {
-            for (final GordianNewLMSWidth myWidth : GordianNewLMSWidth.values()) {
-                mySpecs.add(new GordianCoreLMSSpec(GordianNewLMSHash.SHA256, myHeight, myWidth, GordianLength.LEN_256));
-                mySpecs.add(new GordianCoreLMSSpec(GordianNewLMSHash.SHA256, myHeight, myWidth, GordianLength.LEN_192));
-                mySpecs.add(new GordianCoreLMSSpec(GordianNewLMSHash.SHAKE256, myHeight, myWidth, GordianLength.LEN_256));
-                mySpecs.add(new GordianCoreLMSSpec(GordianNewLMSHash.SHAKE256, myHeight, myWidth, GordianLength.LEN_192));
+        for (final GordianLMSHeight myHeight : GordianLMSHeight.values()) {
+            for (final GordianLMSWidth myWidth : GordianLMSWidth.values()) {
+                mySpecs.add(new GordianCoreLMSSpec(GordianLMSHash.SHA256, myHeight, myWidth, GordianLength.LEN_256));
+                mySpecs.add(new GordianCoreLMSSpec(GordianLMSHash.SHA256, myHeight, myWidth, GordianLength.LEN_192));
+                mySpecs.add(new GordianCoreLMSSpec(GordianLMSHash.SHAKE256, myHeight, myWidth, GordianLength.LEN_256));
+                mySpecs.add(new GordianCoreLMSSpec(GordianLMSHash.SHAKE256, myHeight, myWidth, GordianLength.LEN_192));
             }
         }
 
@@ -560,10 +513,10 @@ public class GordianCoreLMSSpec
      * @param pOtsParams the otsParameters
      * @return the matching keySpec
      */
-    public static GordianNewLMSSpec determineSpec(final LMSigParameters pSigParams,
-                                                  final LMOtsParameters pOtsParams) {
-        final List<GordianNewLMSSpec> mySpecs = listPossibleLMSSpecs();
-        for (GordianNewLMSSpec mySpec : mySpecs) {
+    public static GordianLMSSpec determineSpec(final LMSigParameters pSigParams,
+                                               final LMOtsParameters pOtsParams) {
+        final List<GordianLMSSpec> mySpecs = listPossibleLMSSpecs();
+        for (GordianLMSSpec mySpec : mySpecs) {
             final GordianCoreLMSSpec myCoreSpec = (GordianCoreLMSSpec) mySpec;
             if (pSigParams.equals(myCoreSpec.getParameters().getLMSigParam())
                     && pOtsParams.equals(myCoreSpec.getParameters().getLMOTSParam())) {

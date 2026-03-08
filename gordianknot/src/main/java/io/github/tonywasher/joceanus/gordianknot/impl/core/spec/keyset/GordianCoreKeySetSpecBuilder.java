@@ -18,14 +18,14 @@
 package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keyset;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
-import io.github.tonywasher.joceanus.gordianknot.api.keyset.spec.GordianNewKeySetSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keyset.spec.GordianNewKeySetSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.keyset.spec.GordianKeySetSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keyset.spec.GordianKeySetSpecBuilder;
 
 /**
  * KeySet Spec Builder.
  */
 public final class GordianCoreKeySetSpecBuilder
-        implements GordianNewKeySetSpecBuilder {
+        implements GordianKeySetSpecBuilder {
     /**
      * Private constructor.
      */
@@ -42,18 +42,18 @@ public final class GordianCoreKeySetSpecBuilder
     }
 
     @Override
-    public GordianNewKeySetSpec keySetSpec() {
+    public GordianKeySetSpec keySet() {
         return new GordianCoreKeySetSpec();
     }
 
     @Override
-    public GordianNewKeySetSpec keySetSpec(final GordianLength pKeyLen) {
+    public GordianKeySetSpec keySet(final GordianLength pKeyLen) {
         return new GordianCoreKeySetSpec(pKeyLen);
     }
 
     @Override
-    public GordianNewKeySetSpec keySetSpec(final GordianLength pKeyLen,
-                                           final int pNumSteps) {
+    public GordianKeySetSpec keySet(final GordianLength pKeyLen,
+                                    final int pNumSteps) {
         return new GordianCoreKeySetSpec(pKeyLen, pNumSteps);
     }
 }

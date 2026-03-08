@@ -16,27 +16,27 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.impl.core.agree;
 
-import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementStatus;
-import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementType;
+import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementType;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianCertificate;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairGenerator;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairType;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairType;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMac;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianNewMacSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianNewMacSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianMacSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianMacSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignParams;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignature;
-import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignatureSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.agree.GordianCoreAgreementCalculator.GordianDerivationId;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.sign.GordianCoreSignatureFactory;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.agree.GordianCoreAgreementSpec;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.util.Arrays;
 
@@ -100,7 +100,7 @@ public class GordianCoreAgreementBuilder {
      * @throws GordianException on error
      */
     GordianCoreAgreementBuilder(final GordianCoreAgreementSupplier pSupplier,
-                                final GordianAgreementSpec pSpec) throws GordianException {
+                                final GordianCoreAgreementSpec pSpec) throws GordianException {
         /* Store parameters and access factory and random */
         theSupplier = pSupplier;
         theFactory = pSupplier.getFactory();
@@ -203,8 +203,8 @@ public class GordianCoreAgreementBuilder {
     private void processSecret(final byte[] pSecret) throws GordianException {
         /* If we are using confirmation */
         boolean bSuccess = true;
-        final GordianAgreementSpec mySpec = theState.getSpec();
-        if (Boolean.TRUE.equals(mySpec.withConfirm())
+        final GordianCoreAgreementSpec mySpec = theState.getSpec();
+        if (mySpec.withConfirm()
                 && mySpec.getAgreementType() != GordianAgreementType.SM2) {
             /* calculate the confirmation tags */
             bSuccess = calculateConfirmationTags(pSecret);
@@ -644,8 +644,8 @@ public class GordianCoreAgreementBuilder {
 
         /* Create the hMac and initialize with the key */
         final GordianMacFactory myMacs = theFactory.getMacFactory();
-        final GordianNewMacSpecBuilder myMacBuilder = myMacs.newMacSpecBuilder();
-        final GordianNewMacSpec mySpec = myMacBuilder.hMac(GordianDerivationId.TAGS.getDigestType());
+        final GordianMacSpecBuilder myMacBuilder = myMacs.newMacSpecBuilder();
+        final GordianMacSpec mySpec = myMacBuilder.hMac(GordianDerivationId.TAGS.getDigestType());
         final GordianMac myMac = myMacs.createMac(mySpec);
         myMac.initKeyBytes(myKey);
 

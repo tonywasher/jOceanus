@@ -21,7 +21,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianCertificate;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianCertificateId;
 import io.github.tonywasher.joceanus.gordianknot.api.keystore.GordianKeyStore;
 import io.github.tonywasher.joceanus.gordianknot.api.keystore.GordianKeyStoreEntry;
-import io.github.tonywasher.joceanus.gordianknot.api.lock.spec.GordianNewPasswordLockSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.lock.spec.GordianPasswordLockSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import org.bouncycastle.asn1.cms.IssuerAndSerialNumber;
 
@@ -126,7 +126,7 @@ public interface GordianBaseKeyStore
      *
      * @return the passwordLockSpec
      */
-    GordianNewPasswordLockSpec getPasswordLockSpec();
+    GordianPasswordLockSpec getPasswordLockSpec();
 
     /**
      * Obtain the subjectMapOfMaps.

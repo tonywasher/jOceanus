@@ -22,10 +22,11 @@ import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignParams;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignature;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignatureFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignatureSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianIOException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianLogicException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianCompositeKeyPair;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.sign.GordianCoreSignatureSpec;
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1OctetString;
 import org.bouncycastle.asn1.ASN1Sequence;
@@ -51,7 +52,7 @@ public class GordianCompositeSigner
     /**
      * The SignatureSpec.
      */
-    private final GordianSignatureSpec theSpec;
+    private final GordianCoreSignatureSpec theSpec;
 
     /**
      * The signers.
@@ -69,7 +70,7 @@ public class GordianCompositeSigner
                                   final GordianSignatureSpec pSignatureSpec) throws GordianException {
         /* Store parameters */
         theFactory = pFactory.getAsyncFactory().getSignatureFactory();
-        theSpec = pSignatureSpec;
+        theSpec = (GordianCoreSignatureSpec) pSignatureSpec;
         theSigners = new ArrayList<>();
 
         /* Create the signers */
@@ -81,7 +82,7 @@ public class GordianCompositeSigner
     }
 
     @Override
-    public GordianSignatureSpec getSignatureSpec() {
+    public GordianCoreSignatureSpec getSignatureSpec() {
         return theSpec;
     }
 

@@ -249,8 +249,8 @@ public class GordianCoreAgreementDerivation {
     private void allocateResult(final byte[] pSecret) {
         switch (theState.getSpec().getKeyPairSpec().getKeyPairType()) {
             case EC:
-            case GOST2012:
-            case DSTU4145:
+            case GOST:
+            case DSTU:
             case SM2:
             case DH:
             case XDH:

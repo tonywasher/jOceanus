@@ -17,13 +17,12 @@
 
 package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair;
 
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewPicnicSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianPicnicSpec;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.bc.BCObjectIdentifiers;
 import org.bouncycastle.pqc.crypto.picnic.PicnicParameters;
 import org.bouncycastle.pqc.jcajce.spec.PicnicParameterSpec;
 
-import java.util.Collection;
 import java.util.EnumMap;
 import java.util.Map;
 
@@ -34,19 +33,24 @@ public final class GordianCorePicnicSpec {
     /**
      * The specMap.
      */
-    private static final Map<GordianNewPicnicSpec, GordianCorePicnicSpec> SPECMAP = newSpecMap();
+    private static final Map<GordianPicnicSpec, GordianCorePicnicSpec> SPECMAP = newSpecMap();
+
+    /**
+     * The specArray.
+     */
+    private static final GordianCorePicnicSpec[] VALUES = SPECMAP.values().toArray(new GordianCorePicnicSpec[0]);
 
     /**
      * The Spec.
      */
-    private final GordianNewPicnicSpec theSpec;
+    private final GordianPicnicSpec theSpec;
 
     /**
      * Constructor.
      *
      * @param pSpec the spec
      */
-    private GordianCorePicnicSpec(final GordianNewPicnicSpec pSpec) {
+    private GordianCorePicnicSpec(final GordianPicnicSpec pSpec) {
         theSpec = pSpec;
     }
 
@@ -55,7 +59,7 @@ public final class GordianCorePicnicSpec {
      *
      * @return the spec
      */
-    public GordianNewPicnicSpec getSpec() {
+    public GordianPicnicSpec getSpec() {
         return theSpec;
     }
 
@@ -199,7 +203,7 @@ public final class GordianCorePicnicSpec {
      * @return the core spec
      */
     public static GordianCorePicnicSpec mapCoreSpec(final Object pSpec) {
-        return pSpec instanceof GordianNewPicnicSpec mySpec ? SPECMAP.get(mySpec) : null;
+        return pSpec instanceof GordianPicnicSpec mySpec ? SPECMAP.get(mySpec) : null;
     }
 
     /**
@@ -207,9 +211,9 @@ public final class GordianCorePicnicSpec {
      *
      * @return the type map
      */
-    private static Map<GordianNewPicnicSpec, GordianCorePicnicSpec> newSpecMap() {
-        final Map<GordianNewPicnicSpec, GordianCorePicnicSpec> myMap = new EnumMap<>(GordianNewPicnicSpec.class);
-        for (GordianNewPicnicSpec mySpec : GordianNewPicnicSpec.values()) {
+    private static Map<GordianPicnicSpec, GordianCorePicnicSpec> newSpecMap() {
+        final Map<GordianPicnicSpec, GordianCorePicnicSpec> myMap = new EnumMap<>(GordianPicnicSpec.class);
+        for (GordianPicnicSpec mySpec : GordianPicnicSpec.values()) {
             myMap.put(mySpec, new GordianCorePicnicSpec(mySpec));
         }
         return myMap;
@@ -220,7 +224,7 @@ public final class GordianCorePicnicSpec {
      *
      * @return the values
      */
-    public static Collection<GordianCorePicnicSpec> values() {
-        return SPECMAP.values();
+    public static GordianCorePicnicSpec[] values() {
+        return VALUES;
     }
 }

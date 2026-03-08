@@ -17,13 +17,12 @@
 
 package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair;
 
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewBIKESpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianBIKESpec;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.bc.BCObjectIdentifiers;
 import org.bouncycastle.pqc.crypto.bike.BIKEParameters;
 import org.bouncycastle.pqc.jcajce.spec.BIKEParameterSpec;
 
-import java.util.Collection;
 import java.util.EnumMap;
 import java.util.Map;
 
@@ -31,19 +30,24 @@ public final class GordianCoreBIKESpec {
     /**
      * The specMap.
      */
-    private static final Map<GordianNewBIKESpec, GordianCoreBIKESpec> SPECMAP = newSpecMap();
+    private static final Map<GordianBIKESpec, GordianCoreBIKESpec> SPECMAP = newSpecMap();
+
+    /**
+     * The specArray.
+     */
+    private static final GordianCoreBIKESpec[] VALUES = SPECMAP.values().toArray(new GordianCoreBIKESpec[0]);
 
     /**
      * The Spec.
      */
-    private final GordianNewBIKESpec theSpec;
+    private final GordianBIKESpec theSpec;
 
     /**
      * Constructor.
      *
      * @param pSpec the spec
      */
-    private GordianCoreBIKESpec(final GordianNewBIKESpec pSpec) {
+    private GordianCoreBIKESpec(final GordianBIKESpec pSpec) {
         theSpec = pSpec;
     }
 
@@ -52,7 +56,7 @@ public final class GordianCoreBIKESpec {
      *
      * @return the spec
      */
-    public GordianNewBIKESpec getSpec() {
+    public GordianBIKESpec getSpec() {
         return theSpec;
     }
 
@@ -142,7 +146,7 @@ public final class GordianCoreBIKESpec {
      * @return the core spec
      */
     public static GordianCoreBIKESpec mapCoreSpec(final Object pSpec) {
-        return pSpec instanceof GordianNewBIKESpec mySpec ? SPECMAP.get(mySpec) : null;
+        return pSpec instanceof GordianBIKESpec mySpec ? SPECMAP.get(mySpec) : null;
     }
 
     /**
@@ -150,9 +154,9 @@ public final class GordianCoreBIKESpec {
      *
      * @return the type map
      */
-    private static Map<GordianNewBIKESpec, GordianCoreBIKESpec> newSpecMap() {
-        final Map<GordianNewBIKESpec, GordianCoreBIKESpec> myMap = new EnumMap<>(GordianNewBIKESpec.class);
-        for (GordianNewBIKESpec mySpec : GordianNewBIKESpec.values()) {
+    private static Map<GordianBIKESpec, GordianCoreBIKESpec> newSpecMap() {
+        final Map<GordianBIKESpec, GordianCoreBIKESpec> myMap = new EnumMap<>(GordianBIKESpec.class);
+        for (GordianBIKESpec mySpec : GordianBIKESpec.values()) {
             myMap.put(mySpec, new GordianCoreBIKESpec(mySpec));
         }
         return myMap;
@@ -163,7 +167,7 @@ public final class GordianCoreBIKESpec {
      *
      * @return the values
      */
-    public static Collection<GordianCoreBIKESpec> values() {
-        return SPECMAP.values();
+    public static GordianCoreBIKESpec[] values() {
+        return VALUES;
     }
 }

@@ -17,14 +17,14 @@
 package io.github.tonywasher.joceanus.gordianknot.impl.core.lock;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
-import io.github.tonywasher.joceanus.gordianknot.api.keyset.spec.GordianNewKeySetSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.lock.spec.GordianNewPasswordLockSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keyset.spec.GordianKeySetSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.lock.spec.GordianPasswordLockSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianASN1Util;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianASN1Util.GordianASN1Object;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianIOException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keyset.GordianKeySetSpecASN1;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.lock.GordianCorePasswordLockSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.lock.GordianCorePasswordLockSpecBuilder;
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1Integer;
 import org.bouncycastle.asn1.ASN1Primitive;
@@ -48,14 +48,14 @@ public class GordianPasswordLockSpecASN1
     /**
      * The PasswordLockSpec.
      */
-    private final GordianNewPasswordLockSpec theLockSpec;
+    private final GordianPasswordLockSpec theLockSpec;
 
     /**
      * Create the ASN1 sequence.
      *
      * @param pLockSpec the passwordLockSpec
      */
-    public GordianPasswordLockSpecASN1(final GordianNewPasswordLockSpec pLockSpec) {
+    public GordianPasswordLockSpecASN1(final GordianPasswordLockSpec pLockSpec) {
         /* Store the Spec */
         theLockSpec = pLockSpec;
     }
@@ -71,7 +71,7 @@ public class GordianPasswordLockSpecASN1
         try {
             /* Extract the parameters from the sequence */
             final Enumeration<?> en = pSequence.getObjects();
-            final GordianNewKeySetSpec mySpec = GordianKeySetSpecASN1.getInstance(en.nextElement()).getSpec();
+            final GordianKeySetSpec mySpec = GordianKeySetSpecASN1.getInstance(en.nextElement()).getSpec();
             final int myIterations = ASN1Integer.getInstance(en.nextElement()).getValue().intValue();
 
             /* Make sure that we have completed the sequence */
@@ -80,7 +80,8 @@ public class GordianPasswordLockSpecASN1
             }
 
             /* Create the lockSpec */
-            theLockSpec = new GordianCorePasswordLockSpec(myIterations, mySpec);
+            final GordianCorePasswordLockSpecBuilder myBuilder = GordianCorePasswordLockSpecBuilder.newInstance();
+            theLockSpec = myBuilder.passwordLock(myIterations, mySpec);
 
             /* handle exceptions */
         } catch (IllegalArgumentException e) {
@@ -109,7 +110,7 @@ public class GordianPasswordLockSpecASN1
      *
      * @return the lockSpec
      */
-    public GordianNewPasswordLockSpec getLockSpec() {
+    public GordianPasswordLockSpec getLockSpec() {
         return theLockSpec;
     }
 

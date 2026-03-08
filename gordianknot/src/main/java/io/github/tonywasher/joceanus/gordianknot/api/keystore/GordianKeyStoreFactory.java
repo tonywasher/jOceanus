@@ -17,7 +17,7 @@
 package io.github.tonywasher.joceanus.gordianknot.api.keystore;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
-import io.github.tonywasher.joceanus.gordianknot.api.lock.spec.GordianNewPasswordLockSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.lock.spec.GordianPasswordLockSpec;
 
 import java.io.File;
 import java.io.InputStream;
@@ -32,7 +32,7 @@ public interface GordianKeyStoreFactory {
      * @param pSpec the passwordLockSpec
      * @return the keyStore
      */
-    GordianKeyStore createKeyStore(GordianNewPasswordLockSpec pSpec);
+    GordianKeyStore createKeyStore(GordianPasswordLockSpec pSpec);
 
     /**
      * Load a keyStore from a File.

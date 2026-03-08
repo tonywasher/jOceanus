@@ -18,15 +18,16 @@ package io.github.tonywasher.joceanus.gordianknot.impl.bc;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignParams;
-import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignatureSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPrivateKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPublicKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncySignature.BouncyDigestSignature;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianKeyPairValidity;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairSpec;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.bouncycastle.crypto.AsymmetricCipherKeyPair;
@@ -165,7 +166,8 @@ public final class BouncySLHDSAKeyPair {
             super(pFactory, pKeySpec);
 
             /* Determine the parameters */
-            final SLHDSAParameters myParms = pKeySpec.getSLHDSAKeySpec().getParameters();
+            final GordianCoreKeyPairSpec myKeySpec = (GordianCoreKeyPairSpec) pKeySpec;
+            final SLHDSAParameters myParms = myKeySpec.getSLHDSASpec().getParameters();
 
             /* Create and initialise the generator */
             theGenerator = new SLHDSAKeyPairGenerator();
@@ -318,7 +320,8 @@ public final class BouncySLHDSAKeyPair {
             BouncyKeyPair.checkKeyPair(myPair);
 
             /* Determine whether this is a hashSigner */
-            isHash = myPair.getKeyPairSpec().getSLHDSAKeySpec().isHash();
+            final GordianCoreKeyPairSpec myKeySpec = (GordianCoreKeyPairSpec) myPair.getKeyPairSpec();
+            isHash = myKeySpec.getSLHDSASpec().isHash();
 
             /* Initialise and set the signer */
             final BouncySLHDSAPrivateKey myPrivate = (BouncySLHDSAPrivateKey) myPair.getPrivateKey();
@@ -342,7 +345,8 @@ public final class BouncySLHDSAKeyPair {
             BouncyKeyPair.checkKeyPair(myPair);
 
             /* Determine whether this is a hashSigner */
-            isHash = myPair.getKeyPairSpec().getSLHDSAKeySpec().isHash();
+            final GordianCoreKeyPairSpec myKeySpec = (GordianCoreKeyPairSpec) myPair.getKeyPairSpec();
+            isHash = myKeySpec.getSLHDSASpec().isHash();
 
             /* Initialise and set the signer */
             final BouncySLHDSAPublicKey myPublic = (BouncySLHDSAPublicKey) myPair.getPublicKey();

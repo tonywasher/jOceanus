@@ -19,17 +19,17 @@ package io.github.tonywasher.joceanus.gordianknot.api.cipher;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewPBESpecBuilder;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamCipherSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamCipherSpecBuilder;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeySpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeySpecBuilder;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeyType;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymCipherSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymCipherSpecBuilder;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeySpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeySpecBuilder;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeyType;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianPBESpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamCipherSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeyType;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymCipherSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeySpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeyType;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKey;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKeyGenerator;
 
@@ -57,7 +57,7 @@ public interface GordianCipherFactory {
      * @return the new Cipher
      * @throws GordianException on error
      */
-    GordianSymCipher createSymKeyCipher(GordianNewSymCipherSpec pCipherSpec) throws GordianException;
+    GordianSymCipher createSymKeyCipher(GordianSymCipherSpec pCipherSpec) throws GordianException;
 
     /**
      * create GordianStreamCipher.
@@ -66,84 +66,84 @@ public interface GordianCipherFactory {
      * @return the new Cipher
      * @throws GordianException on error
      */
-    GordianStreamCipher createStreamKeyCipher(GordianNewStreamCipherSpec pCipherSpec) throws GordianException;
+    GordianStreamCipher createStreamKeyCipher(GordianStreamCipherSpec pCipherSpec) throws GordianException;
 
     /**
      * create new GordianSymKeySpecBuilder.
      *
      * @return the new SymKeySpecBuilder
      */
-    GordianNewSymKeySpecBuilder newSymKeySpecBuilder();
+    GordianSymKeySpecBuilder newSymKeySpecBuilder();
 
     /**
      * create new GordianStreamKeySpecBuilder.
      *
      * @return the new StreamKeySpecBuilder
      */
-    GordianNewStreamKeySpecBuilder newStreamKeySpecBuilder();
+    GordianStreamKeySpecBuilder newStreamKeySpecBuilder();
 
     /**
      * create new GordianSymCipherSpecBuilder.
      *
      * @return the new SymCipherSpecBuilder
      */
-    GordianNewSymCipherSpecBuilder newSymCipherSpecBuilder();
+    GordianSymCipherSpecBuilder newSymCipherSpecBuilder();
 
     /**
      * create new GordianStreamCipherSpecBuilder.
      *
      * @return the new StreamCipherSpecBuilder
      */
-    GordianNewStreamCipherSpecBuilder newStreamCipherSpecBuilder();
+    GordianStreamCipherSpecBuilder newStreamCipherSpecBuilder();
 
     /**
      * create new GordianPBESpecBuilder.
      *
      * @return the new PBESpecBuilder
      */
-    GordianNewPBESpecBuilder newPBESpecBuilder();
+    GordianPBESpecBuilder newPBESpecBuilder();
 
     /**
      * Obtain predicate for supported symKeySpecs.
      *
      * @return the predicate
      */
-    Predicate<GordianNewSymKeySpec> supportedSymKeySpecs();
+    Predicate<GordianSymKeySpec> supportedSymKeySpecs();
 
     /**
      * Obtain predicate for supported symCipherSpecs.
      *
      * @return the predicate
      */
-    Predicate<GordianNewSymCipherSpec> supportedSymCipherSpecs();
+    Predicate<GordianSymCipherSpec> supportedSymCipherSpecs();
 
     /**
      * Obtain predicate for supported SymKeyTypes.
      *
      * @return the predicate
      */
-    Predicate<GordianNewSymKeyType> supportedSymKeyTypes();
+    Predicate<GordianSymKeyType> supportedSymKeyTypes();
 
     /**
      * Obtain predicate for supported streamKeySpecs.
      *
      * @return the predicate
      */
-    Predicate<GordianNewStreamKeySpec> supportedStreamKeySpecs();
+    Predicate<GordianStreamKeySpec> supportedStreamKeySpecs();
 
     /**
      * Obtain predicate for supported streamCipherSpecs.
      *
      * @return the predicate
      */
-    Predicate<GordianNewStreamCipherSpec> supportedStreamCipherSpecs();
+    Predicate<GordianStreamCipherSpec> supportedStreamCipherSpecs();
 
     /**
      * Obtain predicate for supported StreamKeyTypes.
      *
      * @return the predicate
      */
-    Predicate<GordianNewStreamKeyType> supportedStreamKeyTypes();
+    Predicate<GordianStreamKeyType> supportedStreamKeyTypes();
 
     /**
      * create GordianWrapper.
@@ -152,7 +152,7 @@ public interface GordianCipherFactory {
      * @return the new wrapper
      * @throws GordianException on error
      */
-    GordianWrapper createKeyWrapper(GordianKey<GordianNewSymKeySpec> pKey) throws GordianException;
+    GordianWrapper createKeyWrapper(GordianKey<GordianSymKeySpec> pKey) throws GordianException;
 
     /**
      * Obtain a list of supported symCipherSpecs.
@@ -160,7 +160,7 @@ public interface GordianCipherFactory {
      * @param pSpec the symKeySpec
      * @return the list of supported symCipherSpecs.
      */
-    List<GordianNewSymCipherSpec> listAllSupportedSymCipherSpecs(GordianNewSymKeySpec pSpec);
+    List<GordianSymCipherSpec> listAllSupportedSymCipherSpecs(GordianSymKeySpec pSpec);
 
     /**
      * Obtain a list of supported symKeySpecs for the keyLength.
@@ -168,7 +168,7 @@ public interface GordianCipherFactory {
      * @param pKeyLen the keyLength
      * @return the list of supported symKeySpecs.
      */
-    List<GordianNewSymKeySpec> listAllSupportedSymKeySpecs(GordianLength pKeyLen);
+    List<GordianSymKeySpec> listAllSupportedSymKeySpecs(GordianLength pKeyLen);
 
     /**
      * List all possible symKeySpecs for the keyLength.
@@ -176,14 +176,14 @@ public interface GordianCipherFactory {
      * @param pKeyLen the keyLength
      * @return the list
      */
-    List<GordianNewSymKeySpec> listAllSymKeySpecs(GordianLength pKeyLen);
+    List<GordianSymKeySpec> listAllSymKeySpecs(GordianLength pKeyLen);
 
     /**
      * Obtain a list of supported symKeyTypes.
      *
      * @return the list of supported symKeyTypes.
      */
-    List<GordianNewSymKeyType> listAllSupportedSymKeyTypes();
+    List<GordianSymKeyType> listAllSupportedSymKeyTypes();
 
     /**
      * Obtain a list of supported streamCipherSpecs for the keyLength.
@@ -191,7 +191,7 @@ public interface GordianCipherFactory {
      * @param pKeyLen the keyLength
      * @return the list of supported streamCipherSpecs.
      */
-    List<GordianNewStreamCipherSpec> listAllSupportedStreamCipherSpecs(GordianLength pKeyLen);
+    List<GordianStreamCipherSpec> listAllSupportedStreamCipherSpecs(GordianLength pKeyLen);
 
     /**
      * Obtain a list of supported streamKeySpecs for the keyLength.
@@ -199,14 +199,14 @@ public interface GordianCipherFactory {
      * @param pKeyLen the keyLength
      * @return the list of supported streamKeySpecs.
      */
-    List<GordianNewStreamKeySpec> listAllSupportedStreamKeySpecs(GordianLength pKeyLen);
+    List<GordianStreamKeySpec> listAllSupportedStreamKeySpecs(GordianLength pKeyLen);
 
     /**
      * Obtain a list of supported streamKeyTypes.
      *
      * @return the list of supported streamKeyTypes.
      */
-    List<GordianNewStreamKeyType> listAllSupportedStreamKeyTypes();
+    List<GordianStreamKeyType> listAllSupportedStreamKeyTypes();
 
     /**
      * List all possible cipherSpecs for a SymKeySpec.
@@ -214,5 +214,5 @@ public interface GordianCipherFactory {
      * @param pSpec the keySpec
      * @return the list
      */
-    List<GordianNewSymCipherSpec> listAllSymCipherSpecs(GordianNewSymKeySpec pSpec);
+    List<GordianSymCipherSpec> listAllSymCipherSpecs(GordianSymKeySpec pSpec);
 }

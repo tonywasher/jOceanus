@@ -16,12 +16,14 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.api.agree;
 
+import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianCertificate;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairUsage;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignatureSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpec;
 import org.bouncycastle.asn1.x500.X500Name;
 
 import java.util.List;
@@ -66,6 +68,13 @@ public interface GordianAgreementFactory {
      * @throws GordianException on error
      */
     GordianAgreement parseAgreementMessage(byte[] pMessage) throws GordianException;
+
+    /**
+     * create new GordianAgreementSpecBuilder.
+     *
+     * @return the new AgreementSpecBuilder
+     */
+    GordianAgreementSpecBuilder newAgreementSpecBuilder();
 
     /**
      * Declare signer certificate.

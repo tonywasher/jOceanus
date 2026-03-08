@@ -27,7 +27,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactoryType;
 import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySet;
 import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySetFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.lock.GordianLockFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.lock.spec.GordianNewPasswordLockSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.lock.spec.GordianPasswordLockSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.random.GordianRandomFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.zip.GordianZipFactory;
@@ -45,7 +45,7 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.key.GordianCoreKeyAlg
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keyset.GordianCoreKeySetFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.lock.GordianCoreLockFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.random.GordianCoreRandomFactory;
-import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.lock.GordianCorePasswordLockSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.lock.GordianCorePasswordLockSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.zip.GordianCoreZipFactory;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 
@@ -353,12 +353,13 @@ public abstract class GordianCoreFactory
     public GordianFactoryLock newFactoryLock(final GordianFactory pFactoryToLock,
                                              final char[] pPassword) throws GordianException {
         /* Create the factoryLock */
-        return newFactoryLock(pFactoryToLock, new GordianCorePasswordLockSpec(), pPassword);
+        final GordianCorePasswordLockSpecBuilder myBuilder = GordianCorePasswordLockSpecBuilder.newInstance();
+        return newFactoryLock(pFactoryToLock, myBuilder.passwordLock(), pPassword);
     }
 
     @Override
     public GordianFactoryLock newFactoryLock(final GordianFactory pFactoryToLock,
-                                             final GordianNewPasswordLockSpec pLockSpec,
+                                             final GordianPasswordLockSpec pLockSpec,
                                              final char[] pPassword) throws GordianException {
         return theLockFactory.newFactoryLock(pFactoryToLock, pLockSpec, pPassword);
     }
@@ -367,11 +368,12 @@ public abstract class GordianCoreFactory
     public GordianFactoryLock newFactoryLock(final GordianFactoryType pFactoryType,
                                              final char[] pPassword) throws GordianException {
         /* Create the factoryLock */
-        return newFactoryLock(new GordianCorePasswordLockSpec(), pFactoryType, pPassword);
+        final GordianCorePasswordLockSpecBuilder myBuilder = GordianCorePasswordLockSpecBuilder.newInstance();
+        return newFactoryLock(myBuilder.passwordLock(), pFactoryType, pPassword);
     }
 
     @Override
-    public GordianFactoryLock newFactoryLock(final GordianNewPasswordLockSpec pLockSpec,
+    public GordianFactoryLock newFactoryLock(final GordianPasswordLockSpec pLockSpec,
                                              final GordianFactoryType pFactoryType,
                                              final char[] pPassword) throws GordianException {
         return theLockFactory.newFactoryLock(pLockSpec, pFactoryType, pPassword);

@@ -18,8 +18,8 @@ package io.github.tonywasher.joceanus.gordianknot.impl.bc;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacParameters;
-import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianNewMacSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianNewMacType;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianMacSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianMacType;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.mac.GordianCoreMac;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.mac.GordianCoreMacSpec;
@@ -50,22 +50,22 @@ public class BouncyMac
      * @param pMac     the MAC
      */
     BouncyMac(final GordianBaseFactory pFactory,
-              final GordianNewMacSpec pMacSpec,
+              final GordianMacSpec pMacSpec,
               final Mac pMac) {
         super(pFactory, pMacSpec);
         theMac = pMac;
     }
 
     @Override
-    public BouncyKey<GordianNewMacSpec> getKey() {
-        return (BouncyKey<GordianNewMacSpec>) super.getKey();
+    public BouncyKey<GordianMacSpec> getKey() {
+        return (BouncyKey<GordianMacSpec>) super.getKey();
     }
 
     @Override
     public void init(final GordianMacParameters pParams) throws GordianException {
         /* Process the parameters and access the key */
         processParameters(pParams);
-        final BouncyKey<GordianNewMacSpec> myKey = BouncyKey.accessKey(getKey());
+        final BouncyKey<GordianMacSpec> myKey = BouncyKey.accessKey(getKey());
 
         /* Initialise the cipher */
         final CipherParameters myParms = buildInitParams(myKey, getInitVector());
@@ -84,10 +84,10 @@ public class BouncyMac
      * @param pIV  the initVector
      * @return the parameters
      */
-    private CipherParameters buildInitParams(final BouncyKey<GordianNewMacSpec> pKey,
+    private CipherParameters buildInitParams(final BouncyKey<GordianMacSpec> pKey,
                                              final byte[] pIV) {
         /* Handle Skein Parameters */
-        if (GordianNewMacType.SKEIN.equals(getMacSpec().getMacType())) {
+        if (GordianMacType.SKEIN.equals(getMacSpec().getMacType())) {
             final GordianSkeinParametersBuilder myBuilder = new GordianSkeinParametersBuilder();
             myBuilder.setKey(pKey.getKey());
             if (pIV != null) {
@@ -97,7 +97,7 @@ public class BouncyMac
         }
 
         /* Handle Blake Parameters */
-        if (GordianNewMacType.BLAKE2.equals(getMacSpec().getMacType())) {
+        if (GordianMacType.BLAKE2.equals(getMacSpec().getMacType())) {
             final GordianBlake2ParametersBuilder myBuilder = new GordianBlake2ParametersBuilder();
             myBuilder.setKey(pKey.getKey());
             if (pIV != null) {

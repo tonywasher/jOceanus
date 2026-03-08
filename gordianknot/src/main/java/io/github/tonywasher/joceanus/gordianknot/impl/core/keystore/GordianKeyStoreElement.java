@@ -25,7 +25,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySet;
 import io.github.tonywasher.joceanus.gordianknot.api.lock.GordianKeySetLock;
 import io.github.tonywasher.joceanus.gordianknot.api.lock.GordianLockFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.lock.spec.GordianNewPasswordLockSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.lock.spec.GordianPasswordLockSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.cert.GordianCoreCertificate;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keystore.GordianBaseKeyStore.GordianKeyStoreCertificateKey;
 
@@ -161,7 +161,7 @@ public interface GordianKeyStoreElement {
          * @throws GordianException on error
          */
         GordianKeyStorePairElement(final GordianFactory pFactory,
-                                   final GordianNewPasswordLockSpec pSpec,
+                                   final GordianPasswordLockSpec pSpec,
                                    final GordianKeyPair pKeyPair,
                                    final char[] pPassword,
                                    final List<GordianCertificate> pChain) throws GordianException {
@@ -456,7 +456,7 @@ public interface GordianKeyStoreElement {
          * @throws GordianException on error
          */
         GordianKeyStoreKeyElement(final GordianFactory pFactory,
-                                  final GordianNewPasswordLockSpec pSpec,
+                                  final GordianPasswordLockSpec pSpec,
                                   final GordianKey<T> pKey,
                                   final char[] pPassword) throws GordianException {
             /* Create a securing lock */
@@ -601,7 +601,7 @@ public interface GordianKeyStoreElement {
          * @throws GordianException on error
          */
         GordianKeyStoreSetElement(final GordianFactory pFactory,
-                                  final GordianNewPasswordLockSpec pSpec,
+                                  final GordianPasswordLockSpec pSpec,
                                   final GordianKeySet pKeySet,
                                   final char[] pPassword) throws GordianException {
             /* Create a securing hash */

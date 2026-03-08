@@ -22,12 +22,12 @@ import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherParameters;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamCipher;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymCipher;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewCipherSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamCipherSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeySpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymCipherSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeySpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeyType;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeyType;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseData;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.cipher.GordianCoreCipher;
@@ -71,7 +71,7 @@ public abstract class JcaCipher<T extends GordianKeySpec>
      * @param pCipher     the cipher
      */
     JcaCipher(final GordianBaseFactory pFactory,
-              final GordianNewCipherSpec<T> pCipherSpec,
+              final GordianCipherSpec<T> pCipherSpec,
               final Cipher pCipher) {
         super(pFactory, pCipherSpec);
         theCipher = pCipher;
@@ -100,8 +100,8 @@ public abstract class JcaCipher<T extends GordianKeySpec>
         try {
             /* Careful of RC5 */
             final T myKeyType = myJcaKey.getKeyType();
-            final boolean isRC5 = myKeyType instanceof GordianNewSymKeySpec
-                    && GordianNewSymKeyType.RC5.equals(((GordianNewSymKeySpec) myKeyType).getSymKeyType());
+            final boolean isRC5 = myKeyType instanceof GordianSymKeySpec
+                    && GordianSymKeyType.RC5.equals(((GordianSymKeySpec) myKeyType).getSymKeyType());
 
             /* Initialise as required */
             if (myIV != null || isRC5) {
@@ -127,14 +127,14 @@ public abstract class JcaCipher<T extends GordianKeySpec>
     static AlgorithmParameterSpec generateParameters(final JcaKey<?> pKey,
                                                      final byte[] pIV) {
         final Object myKeyType = pKey.getKeyType();
-        if (myKeyType instanceof GordianNewSymKeySpec) {
-            final GordianNewSymKeySpec mySpec = (GordianNewSymKeySpec) myKeyType;
-            final GordianNewSymKeyType myType = mySpec.getSymKeyType();
+        if (myKeyType instanceof GordianSymKeySpec) {
+            final GordianSymKeySpec mySpec = (GordianSymKeySpec) myKeyType;
+            final GordianSymKeyType myType = mySpec.getSymKeyType();
             final GordianLength myLen = mySpec.getBlockLength();
-            if (GordianNewSymKeyType.RC2.equals(myType)) {
+            if (GordianSymKeyType.RC2.equals(myType)) {
                 return new RC2ParameterSpec(pKey.getKeyBytes().length * Byte.SIZE, pIV);
             }
-            if (GordianNewSymKeyType.RC5.equals(myType)) {
+            if (GordianSymKeyType.RC5.equals(myType)) {
                 return pIV == null
                         ? new RC5ParameterSpec(1, GordianBaseData.RC5_ROUNDS, myLen.getLength() >> 1)
                         : new RC5ParameterSpec(1, GordianBaseData.RC5_ROUNDS, myLen.getLength() >> 1, pIV);
@@ -183,7 +183,7 @@ public abstract class JcaCipher<T extends GordianKeySpec>
 
     @Override
     public int getBlockSize() {
-        final GordianNewCipherSpec<T> mySpec = getCipherSpec();
+        final GordianCipherSpec<T> mySpec = getCipherSpec();
         return (mySpec instanceof GordianCoreSymCipherSpec
                 && ((GordianCoreSymCipherSpec) mySpec).getCoreCipherMode().hasPadding())
                 ? theCipher.getBlockSize() : 0;
@@ -193,7 +193,7 @@ public abstract class JcaCipher<T extends GordianKeySpec>
      * JcaSymCipher.
      */
     public static class JcaSymCipher
-            extends JcaCipher<GordianNewSymKeySpec>
+            extends JcaCipher<GordianSymKeySpec>
             implements GordianSymCipher {
         /**
          * Constructor.
@@ -203,7 +203,7 @@ public abstract class JcaCipher<T extends GordianKeySpec>
          * @param pCipher     the cipher
          */
         JcaSymCipher(final GordianBaseFactory pFactory,
-                     final GordianNewSymCipherSpec pCipherSpec,
+                     final GordianSymCipherSpec pCipherSpec,
                      final Cipher pCipher) {
             super(pFactory, pCipherSpec, pCipher);
         }
@@ -213,7 +213,7 @@ public abstract class JcaCipher<T extends GordianKeySpec>
      * JcaStreamCipher.
      */
     public static class JcaStreamCipher
-            extends JcaCipher<GordianNewStreamKeySpec>
+            extends JcaCipher<GordianStreamKeySpec>
             implements GordianStreamCipher {
         /**
          * Constructor.
@@ -223,7 +223,7 @@ public abstract class JcaCipher<T extends GordianKeySpec>
          * @param pCipher     the cipher
          */
         JcaStreamCipher(final GordianBaseFactory pFactory,
-                        final GordianNewStreamCipherSpec pCipherSpec,
+                        final GordianStreamCipherSpec pCipherSpec,
                         final Cipher pCipher) {
             super(pFactory, pCipherSpec, pCipher);
         }

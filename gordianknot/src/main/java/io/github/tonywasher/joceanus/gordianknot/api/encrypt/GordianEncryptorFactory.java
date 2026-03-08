@@ -17,9 +17,11 @@
 package io.github.tonywasher.joceanus.gordianknot.api.encrypt;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianEncryptorSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianEncryptorSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairType;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairType;
 
 import java.util.List;
 import java.util.function.Predicate;
@@ -36,6 +38,13 @@ public interface GordianEncryptorFactory {
      * @throws GordianException on error
      */
     GordianEncryptor createEncryptor(GordianEncryptorSpec pSpec) throws GordianException;
+
+    /**
+     * create new GordianEncryptorSpecBuilder.
+     *
+     * @return the new EncryptorSpecBuilder
+     */
+    GordianEncryptorSpecBuilder newEncryptorSpecBuilder();
 
     /**
      * Obtain predicate for Encryptor.

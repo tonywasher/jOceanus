@@ -18,11 +18,11 @@
 package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpecBuilder;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSubSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSubSpec.GordianNewDigestState;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestType;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSubSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSubSpec.GordianDigestState;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestType;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianCoreDigestSubSpec.GordianCoreDigestState;
 
 import java.util.ArrayList;
@@ -32,16 +32,16 @@ import java.util.List;
  * Digest Specification Builder.
  */
 public final class GordianCoreDigestSpecBuilder
-        implements GordianNewDigestSpecBuilder {
+        implements GordianDigestSpecBuilder {
     /**
      * The type.
      */
-    private GordianNewDigestType theType;
+    private GordianDigestType theType;
 
     /**
      * The subSpec.
      */
-    private GordianNewDigestSubSpec theSubSpec;
+    private GordianDigestSubSpec theSubSpec;
 
     /**
      * The length.
@@ -69,13 +69,13 @@ public final class GordianCoreDigestSpecBuilder
     }
 
     @Override
-    public GordianCoreDigestSpecBuilder withType(final GordianNewDigestType pType) {
+    public GordianCoreDigestSpecBuilder withType(final GordianDigestType pType) {
         theType = pType;
         return this;
     }
 
     @Override
-    public GordianCoreDigestSpecBuilder withState(final GordianNewDigestState pState) {
+    public GordianCoreDigestSpecBuilder withState(final GordianDigestState pState) {
         theSubSpec = pState;
         return this;
     }
@@ -124,19 +124,19 @@ public final class GordianCoreDigestSpecBuilder
      *
      * @return the possible digestSpecs
      */
-    public static List<GordianNewDigestSpec> listAllPossibleSpecs() {
+    public static List<GordianDigestSpec> listAllPossibleSpecs() {
         /* Create the array list */
-        final List<GordianNewDigestSpec> myList = new ArrayList<>();
+        final List<GordianDigestSpec> myList = new ArrayList<>();
 
         /* For each digest type */
         for (final GordianCoreDigestType myType : GordianCoreDigestType.values()) {
-            final GordianNewDigestType myBaseType = myType.getType();
+            final GordianDigestType myBaseType = myType.getType();
 
             /* For each subSpecType */
-            for (GordianNewDigestSubSpec mySubSpec : GordianCoreDigestSubSpec.getPossibleSubSpecsForType(myBaseType)) {
+            for (GordianDigestSubSpec mySubSpec : GordianCoreDigestSubSpec.getPossibleSubSpecsForType(myBaseType)) {
                 /* For each length */
                 for (final GordianLength myLength : myType.getSupportedLengths()) {
-                    final GordianNewDigestSpec mySpec = new GordianCoreDigestSpec(myBaseType, mySubSpec, myLength, false);
+                    final GordianDigestSpec mySpec = new GordianCoreDigestSpec(myBaseType, mySubSpec, myLength, false);
 
                     /* Add if valid */
                     if (mySpec.isValid()) {
@@ -145,9 +145,9 @@ public final class GordianCoreDigestSpecBuilder
                 }
 
                 /* If we have a possible Xof */
-                if (mySubSpec instanceof GordianNewDigestState myState) {
+                if (mySubSpec instanceof GordianDigestState myState) {
                     final GordianCoreDigestState myCoreState = GordianCoreDigestState.mapCoreState(myState);
-                    final GordianNewDigestSpec mySpec = new GordianCoreDigestSpec(myBaseType, myState, myCoreState.getLength(), Boolean.TRUE);
+                    final GordianDigestSpec mySpec = new GordianCoreDigestSpec(myBaseType, myState, myCoreState.getLength(), Boolean.TRUE);
 
                     /* Add if valid */
                     if (mySpec.isValid()) {
@@ -156,7 +156,7 @@ public final class GordianCoreDigestSpecBuilder
 
                     /* Else look for null Xof type */
                 } else {
-                    final GordianNewDigestSpec mySpec = new GordianCoreDigestSpec(myBaseType, null,
+                    final GordianDigestSpec mySpec = new GordianCoreDigestSpec(myBaseType, null,
                             GordianCoreDigestType.getDefaultLength(myBaseType), Boolean.TRUE);
 
                     /* Add if valid */

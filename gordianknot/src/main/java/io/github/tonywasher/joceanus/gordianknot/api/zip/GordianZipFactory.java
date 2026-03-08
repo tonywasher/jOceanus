@@ -19,7 +19,7 @@ package io.github.tonywasher.joceanus.gordianknot.api.zip;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.lock.GordianLock;
-import io.github.tonywasher.joceanus.gordianknot.api.lock.spec.GordianNewPasswordLockSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.lock.spec.GordianPasswordLockSpec;
 
 import java.io.File;
 import java.io.InputStream;
@@ -46,7 +46,7 @@ public interface GordianZipFactory {
      * @return the zipLock
      * @throws GordianException on error
      */
-    GordianZipLock keySetZipLock(GordianNewPasswordLockSpec pLockSpec,
+    GordianZipLock keySetZipLock(GordianPasswordLockSpec pLockSpec,
                                  char[] pPassword) throws GordianException;
 
     /**
@@ -66,7 +66,7 @@ public interface GordianZipFactory {
      * @return the zipLock
      * @throws GordianException on error
      */
-    GordianZipLock factoryZipLock(GordianNewPasswordLockSpec pLockSpec,
+    GordianZipLock factoryZipLock(GordianPasswordLockSpec pLockSpec,
                                   char[] pPassword) throws GordianException;
 
     /**
@@ -89,7 +89,7 @@ public interface GordianZipFactory {
      * @return the zipLock
      * @throws GordianException on error
      */
-    GordianZipLock keyPairZipLock(GordianNewPasswordLockSpec pLockSpec,
+    GordianZipLock keyPairZipLock(GordianPasswordLockSpec pLockSpec,
                                   GordianKeyPair pKeyPair,
                                   char[] pPassword) throws GordianException;
 

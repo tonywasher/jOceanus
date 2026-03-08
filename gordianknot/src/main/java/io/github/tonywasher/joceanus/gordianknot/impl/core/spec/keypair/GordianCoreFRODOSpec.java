@@ -17,13 +17,12 @@
 
 package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair;
 
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewFRODOSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianFRODOSpec;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.bc.BCObjectIdentifiers;
 import org.bouncycastle.pqc.crypto.frodo.FrodoParameters;
 import org.bouncycastle.pqc.jcajce.spec.FrodoParameterSpec;
 
-import java.util.Collection;
 import java.util.EnumMap;
 import java.util.Map;
 
@@ -34,19 +33,24 @@ public final class GordianCoreFRODOSpec {
     /**
      * The specMap.
      */
-    private static final Map<GordianNewFRODOSpec, GordianCoreFRODOSpec> SPECMAP = newSpecMap();
+    private static final Map<GordianFRODOSpec, GordianCoreFRODOSpec> SPECMAP = newSpecMap();
+
+    /**
+     * The specArray.
+     */
+    private static final GordianCoreFRODOSpec[] VALUES = SPECMAP.values().toArray(new GordianCoreFRODOSpec[0]);
 
     /**
      * The Spec.
      */
-    private final GordianNewFRODOSpec theSpec;
+    private final GordianFRODOSpec theSpec;
 
     /**
      * Constructor.
      *
      * @param pSpec the spec
      */
-    private GordianCoreFRODOSpec(final GordianNewFRODOSpec pSpec) {
+    private GordianCoreFRODOSpec(final GordianFRODOSpec pSpec) {
         theSpec = pSpec;
     }
 
@@ -55,7 +59,7 @@ public final class GordianCoreFRODOSpec {
      *
      * @return the spec
      */
-    public GordianNewFRODOSpec getSpec() {
+    public GordianFRODOSpec getSpec() {
         return theSpec;
     }
 
@@ -164,7 +168,7 @@ public final class GordianCoreFRODOSpec {
      * @return the core spec
      */
     public static GordianCoreFRODOSpec mapCoreSpec(final Object pSpec) {
-        return pSpec instanceof GordianNewFRODOSpec mySpec ? SPECMAP.get(mySpec) : null;
+        return pSpec instanceof GordianFRODOSpec mySpec ? SPECMAP.get(mySpec) : null;
     }
 
     /**
@@ -172,9 +176,9 @@ public final class GordianCoreFRODOSpec {
      *
      * @return the type map
      */
-    private static Map<GordianNewFRODOSpec, GordianCoreFRODOSpec> newSpecMap() {
-        final Map<GordianNewFRODOSpec, GordianCoreFRODOSpec> myMap = new EnumMap<>(GordianNewFRODOSpec.class);
-        for (GordianNewFRODOSpec mySpec : GordianNewFRODOSpec.values()) {
+    private static Map<GordianFRODOSpec, GordianCoreFRODOSpec> newSpecMap() {
+        final Map<GordianFRODOSpec, GordianCoreFRODOSpec> myMap = new EnumMap<>(GordianFRODOSpec.class);
+        for (GordianFRODOSpec mySpec : GordianFRODOSpec.values()) {
             myMap.put(mySpec, new GordianCoreFRODOSpec(mySpec));
         }
         return myMap;
@@ -185,7 +189,7 @@ public final class GordianCoreFRODOSpec {
      *
      * @return the values
      */
-    public static Collection<GordianCoreFRODOSpec> values() {
-        return SPECMAP.values();
+    public static GordianCoreFRODOSpec[] values() {
+        return VALUES;
     }
 }

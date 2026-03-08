@@ -17,7 +17,7 @@
 package io.github.tonywasher.joceanus.gordianknot.impl.core.keyset;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKey;
 import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySet;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
@@ -41,7 +41,7 @@ public interface GordianBaseKeySet
      *
      * @return the keySet
      */
-    Map<GordianNewSymKeySpec, GordianKey<GordianNewSymKeySpec>> getSymKeyMap();
+    Map<GordianSymKeySpec, GordianKey<GordianSymKeySpec>> getSymKeyMap();
 
     /**
      * Declare symmetricKey.
@@ -49,5 +49,5 @@ public interface GordianBaseKeySet
      * @param pKey the key
      * @throws GordianException on error
      */
-    void declareSymKey(GordianKey<GordianNewSymKeySpec> pKey) throws GordianException;
+    void declareSymKey(GordianKey<GordianSymKeySpec> pKey) throws GordianException;
 }

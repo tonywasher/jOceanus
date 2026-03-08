@@ -18,18 +18,21 @@ package io.github.tonywasher.joceanus.gordianknot.impl.jca;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestType;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianEdwardsElliptic;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestType;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairType;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianXMSSKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairType;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignParams;
-import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignatureSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignatureType;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureType;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.sign.GordianCoreSignature;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianCoreDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreEdwardsSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairType;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreXMSSSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.sign.GordianCoreSignatureSpec;
 import org.bouncycastle.jcajce.spec.ContextParameterSpec;
 
 import java.security.InvalidAlgorithmParameterException;
@@ -168,7 +171,8 @@ public abstract class JcaSignature
         /* Initialise for signing */
         try {
             /* Determine whether we should use random for signatures */
-            final boolean useRandom = getSignatureSpec().getKeyPairType().useRandomForSignatures();
+            final GordianCoreKeyPairType myType = GordianCoreKeyPairType.mapCoreType(getSignatureSpec().getKeyPairType());
+            final boolean useRandom = myType.useRandomForSignatures();
 
             /* Initialise the signing */
             if (useRandom) {
@@ -293,7 +297,8 @@ public abstract class JcaSignature
             super(pFactory, pSignatureSpec);
 
             /* Create the signature class */
-            final String myDigest = JcaDigest.getSignAlgorithm((GordianCoreDigestSpec) pSignatureSpec.getDigestSpec());
+            final GordianCoreSignatureSpec mySpec = (GordianCoreSignatureSpec) pSignatureSpec;
+            final String myDigest = JcaDigest.getSignAlgorithm((GordianCoreDigestSpec) mySpec.getDigestSpec());
             setSigner(getJavaSignature(myDigest + getSignatureBase(pSignatureSpec), false));
         }
     }
@@ -311,8 +316,9 @@ public abstract class JcaSignature
         }
 
         /* Note if we are DSA */
+        final GordianCoreSignatureSpec mySpec = (GordianCoreSignatureSpec) pSignatureSpec;
         final boolean isDSA = GordianKeyPairType.DSA.equals(pSignatureSpec.getKeyPairType());
-        final boolean isSHAKE = GordianNewDigestType.SHAKE.equals(pSignatureSpec.getDigestSpec().getDigestType());
+        final boolean isSHAKE = GordianDigestType.SHAKE.equals(mySpec.getDigestSpec().getDigestType());
 
         /* Switch on signature type */
         switch (pSignatureSpec.getSignatureType()) {
@@ -361,7 +367,8 @@ public abstract class JcaSignature
             super(pFactory, pSignatureSpec);
 
             /* Create the signature class */
-            final String myDigest = JcaDigest.getSignAlgorithm((GordianCoreDigestSpec) pSignatureSpec.getDigestSpec());
+            final GordianCoreSignatureSpec mySpec = (GordianCoreSignatureSpec) pSignatureSpec;
+            final String myDigest = JcaDigest.getSignAlgorithm((GordianCoreDigestSpec) mySpec.getDigestSpec());
             setSigner(getJavaSignature(myDigest + getSignatureBase(pSignatureSpec), false));
         }
     }
@@ -395,12 +402,13 @@ public abstract class JcaSignature
          */
         private static String getSignature(final GordianSignatureSpec pSignatureSpec) {
             /* Handle DSTU explicitly */
-            if (GordianKeyPairType.DSTU4145.equals(pSignatureSpec.getKeyPairType())) {
+            if (GordianKeyPairType.DSTU.equals(pSignatureSpec.getKeyPairType())) {
                 return DSTU_SIGN;
             }
 
             /* Obtain the digest length */
-            final GordianLength myLength = pSignatureSpec.getDigestSpec().getDigestLength();
+            final GordianCoreSignatureSpec mySpec = (GordianCoreSignatureSpec) pSignatureSpec;
+            final GordianLength myLength = mySpec.getDigestSpec().getDigestLength();
 
             /* Build the algorithm */
             return "GOST3411-2012-"
@@ -464,7 +472,8 @@ public abstract class JcaSignature
          */
         private static String getAlgorithmForKeyPair(final GordianKeyPair pKeyPair) {
             /* Build the algorithm */
-            final boolean isHash = pKeyPair.getKeyPairSpec().getSLHDSAKeySpec().isHash();
+            final GordianCoreKeyPairSpec mySpec = (GordianCoreKeyPairSpec) pKeyPair.getKeyPairSpec();
+            final boolean isHash = mySpec.getSLHDSASpec().isHash();
             return isHash ? PQC_HASH_PFX + BASE_NAME : BASE_NAME;
         }
     }
@@ -523,7 +532,8 @@ public abstract class JcaSignature
          */
         private static String getAlgorithmForKeyPair(final GordianKeyPair pKeyPair) {
             /* Build the algorithm */
-            final boolean isHash = pKeyPair.getKeyPairSpec().getMLDSAKeySpec().isHash();
+            final GordianCoreKeyPairSpec mySpec = (GordianCoreKeyPairSpec) pKeyPair.getKeyPairSpec();
+            final boolean isHash = mySpec.getMLDSASpec().isHash();
             return isHash ? PQC_HASH_PFX + BASE_NAME : BASE_NAME;
         }
     }
@@ -634,7 +644,8 @@ public abstract class JcaSignature
             }
 
             /* Switch on digest Type */
-            switch (pSignatureSpec.getDigestSpec().getDigestType()) {
+            final GordianCoreSignatureSpec mySpec = (GordianCoreSignatureSpec) pSignatureSpec;
+            switch (mySpec.getDigestSpec().getDigestType()) {
                 case SHA2:
                     return "SHA512With" + BASE_NAME;
                 case SHA3:
@@ -706,8 +717,9 @@ public abstract class JcaSignature
          */
         private String getAlgorithmForKeyPair(final GordianKeyPair pKeyPair) throws GordianException {
             /* Determine the required signer */
-            final GordianXMSSKeySpec myXMSSKeySpec = pKeyPair.getKeyPairSpec().getXMSSKeySpec();
-            final GordianCoreDigestSpec myDigestSpec = (GordianCoreDigestSpec) myXMSSKeySpec.getDigestType().getDigestSpec();
+            final GordianCoreKeyPairSpec mySpec = (GordianCoreKeyPairSpec) pKeyPair.getKeyPairSpec();
+            final GordianCoreXMSSSpec myXMSSKeySpec = mySpec.getXMSSSpec();
+            final GordianCoreDigestSpec myDigestSpec = (GordianCoreDigestSpec) myXMSSKeySpec.getDigestSpec();
             final String myDigest = JcaDigest.getAlgorithm(myDigestSpec);
 
             /* Create builder */
@@ -774,7 +786,8 @@ public abstract class JcaSignature
          */
         private static String getAlgorithmForKeyPair(final GordianKeyPair pKeyPair) {
             /* Determine the required signer */
-            final GordianEdwardsElliptic myEdwards = pKeyPair.getKeyPairSpec().getEdwardsElliptic();
+            final GordianCoreKeyPairSpec mySpec = (GordianCoreKeyPairSpec) pKeyPair.getKeyPairSpec();
+            final GordianCoreEdwardsSpec myEdwards = mySpec.getEdwardsSpec();
             final boolean is25519 = myEdwards.is25519();
 
             /* Build the algorithm */

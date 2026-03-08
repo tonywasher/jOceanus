@@ -15,16 +15,20 @@
 /* Access factory */
 final GordianFactory myBaseFactory = GordianGenerator.createFactory();
 final GordianAsyncFactory myAsyncFactory = myBase.getAsyncFactory();
+final GordianDigestFactory myDigestFactory = myBase.getDigestFactory();
 final GordianKeyPairFactory myKeyPairFactory = myAsyncFactory.getKeyPairFactory();
 final GordianEncryptorFactory myEncryptorFactory = myAsyncFactory.getEncryptorFactory();
+final GordianKeyPairSpecBuilder myKeyPairBuilder = myKeyPairFactory.newKeyPairSpecBuilder()
+final GordianEncryptorSpecBuilder myEncryptorBuilder = myEncryptorFactory.newEncryptorSpecBuilder()
+final GordianDigestSpecBuilder myDigestBuilder = myDigestFactory.newDigestSpecBuilder()
 
 /* Access keyPairGenerator */
-final GordianKeyPairSpec mySpec = GordianKeyPairSpecBuilder.rsa(GordianRSAModulus.MOD2048);
+final GordianKeyPairSpec mySpec = myKeyPairBuilder.rsa(GordianRSASpec.MOD2048);
 final GordianKeyPairGenerator myGenerator = myKeyPairFactory.getKeyPairGenerator(mySpec);
 final GordianKeyPair myPair = myGenerator.generateKeyPair();
 
 /* Access encryptor */
-final GordianEncryptorSpec myEncryptSpec = GordianEncryptorSpecBuilder.rsa(GordianDigestSpec.sha2(GordianLength.LEN_256));
+final GordianEncryptorSpec myEncryptSpec = myEncryptorBuilder.rsa(myDigestBuilder.sha2(GordianLength.LEN_256));
 final GordianEncryptor myEncryptor = myEncryptorFactory.createEncryptor(myEncryptSpec);
 
 /* Encrypt message */
@@ -46,16 +50,18 @@ final GordianFactory myBaseFactory = GordianGenerator.createFactory();
 final GordianAsyncFactory myAsyncFactory = myBase.getAsyncFactory();
 final GordianKeyPairFactory myKeyPairFactory = myAsyncFactory.getKeyPairFactory();
 final GordianEncryptorFactory myEncryptorFactory = myAsyncFactory.getEncryptorFactory();
+final GordianKeyPairSpecBuilder myKeyPairBuilder = myKeyPairFactory.newKeyPairSpecBuilder()
+final GordianEncryptorSpecBuilder myEncryptorBuilder = myEncryptorFactory.newEncryptorSpecBuilder()
 
 /* Access keyPairGenerator */
-final GordianKeyPairSpec mySpec = GordianKeyPairSpecBuilder.composite(GordianKeyPairSpecBuilder.rsa(GordianRSAModulus.MOD2048),
-                                                                      GordianKeyPairSpecBuilder.elGamal(GordianDHGroup.rfc7919_ffdhe2048));
+final GordianKeyPairSpec mySpec = GordianKeyPairSpecBuilder.composite(myKeyPairBuilder.rsa(GordianRSASpec.MOD2048),
+                                                                      myKeyPairBuilder.elGamal(GordianDHSpec.FFDHE2048));
 final GordianKeyPairGenerator myGenerator = myKeyPairFactory.getKeyPairGenerator(mySpec);
 final GordianKeyPair myPair = myGenerator.generateKeyPair();
 
 /* Access encryptor */
-final GordianEncryptorSpec myEncryptSpec = GordianEncryptorSpecBuilder.composite(GordianEncryptorSpecBuilder.rsa(GordianDigestSpec.sha2(GordianLength.LEN_256)),
-                                                                                 GordianEncryptorSpecBuilder.elGamal(GordianDigestSpec.sha2(GordianLength.LEN_256)));
+final GordianEncryptorSpec myEncryptSpec = myEncryptorBuilder.composite(myEncryptorBuilder.rsa(myDigestBuilder.sha2(GordianLength.LEN_256)),
+                                                                        myEncryptorBuilder.elGamal(myDigestBuilder.sha2(GordianLength.LEN_256)));
 final GordianEncryptor myEncryptor = myEncryptorFactory.createEncryptor(myEncryptSpec);
 
 /* Encrypt message */

@@ -18,10 +18,9 @@
 package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewDSASpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianDSASpec;
 import org.bouncycastle.asn1.x509.DSAParameter;
 
-import java.util.Collection;
 import java.util.EnumMap;
 import java.util.Map;
 
@@ -32,19 +31,24 @@ public final class GordianCoreDSASpec {
     /**
      * The specMap.
      */
-    private static final Map<GordianNewDSASpec, GordianCoreDSASpec> SPECMAP = newSpecMap();
+    private static final Map<GordianDSASpec, GordianCoreDSASpec> SPECMAP = newSpecMap();
+
+    /**
+     * The specArray.
+     */
+    private static final GordianCoreDSASpec[] VALUES = SPECMAP.values().toArray(new GordianCoreDSASpec[0]);
 
     /**
      * The Spec.
      */
-    private final GordianNewDSASpec theSpec;
+    private final GordianDSASpec theSpec;
 
     /**
      * Constructor.
      *
      * @param pSpec the spec
      */
-    private GordianCoreDSASpec(final GordianNewDSASpec pSpec) {
+    private GordianCoreDSASpec(final GordianDSASpec pSpec) {
         theSpec = pSpec;
     }
 
@@ -53,7 +57,7 @@ public final class GordianCoreDSASpec {
      *
      * @return the spec
      */
-    public GordianNewDSASpec getSpec() {
+    public GordianDSASpec getSpec() {
         return theSpec;
     }
 
@@ -62,13 +66,14 @@ public final class GordianCoreDSASpec {
      *
      * @return the keySize
      */
-    public GordianLength getKeySize() {
+    public int getKeySize() {
         switch (theSpec) {
             case MOD1024:
-                return GordianLength.LEN_160;
+                return GordianLength.LEN_1024.getLength();
             case MOD2048:
+                return GordianLength.LEN_2048.getLength();
             case MOD3072:
-                return GordianLength.LEN_256;
+                return GordianLength.LEN_3072.getLength();
             default:
                 throw new IllegalArgumentException();
         }
@@ -79,14 +84,13 @@ public final class GordianCoreDSASpec {
      *
      * @return the hashSize
      */
-    public GordianLength getHashSize() {
+    public int getHashSize() {
         switch (theSpec) {
             case MOD1024:
-                return GordianLength.LEN_1024;
+                return GordianLength.LEN_160.getLength();
             case MOD2048:
-                return GordianLength.LEN_2048;
             case MOD3072:
-                return GordianLength.LEN_3072;
+                return GordianLength.LEN_256.getLength();
             default:
                 throw new IllegalArgumentException();
         }
@@ -103,8 +107,8 @@ public final class GordianCoreDSASpec {
         final int myLen = pParams.getP().bitLength();
         final int myHashSize = pParams.getQ().bitLength();
         for (GordianCoreDSASpec mySpec : values()) {
-            if (mySpec.getKeySize().getLength() == myLen
-                    && mySpec.getHashSize().getLength() == myHashSize) {
+            if (mySpec.getKeySize() == myLen
+                    && mySpec.getHashSize() == myHashSize) {
                 return mySpec;
             }
         }
@@ -143,7 +147,7 @@ public final class GordianCoreDSASpec {
      * @return the core spec
      */
     public static GordianCoreDSASpec mapCoreSpec(final Object pSpec) {
-        return pSpec instanceof GordianNewDSASpec mySpec ? SPECMAP.get(mySpec) : null;
+        return pSpec instanceof GordianDSASpec mySpec ? SPECMAP.get(mySpec) : null;
     }
 
     /**
@@ -151,9 +155,9 @@ public final class GordianCoreDSASpec {
      *
      * @return the type map
      */
-    private static Map<GordianNewDSASpec, GordianCoreDSASpec> newSpecMap() {
-        final Map<GordianNewDSASpec, GordianCoreDSASpec> myMap = new EnumMap<>(GordianNewDSASpec.class);
-        for (GordianNewDSASpec mySpec : GordianNewDSASpec.values()) {
+    private static Map<GordianDSASpec, GordianCoreDSASpec> newSpecMap() {
+        final Map<GordianDSASpec, GordianCoreDSASpec> myMap = new EnumMap<>(GordianDSASpec.class);
+        for (GordianDSASpec mySpec : GordianDSASpec.values()) {
             myMap.put(mySpec, new GordianCoreDSASpec(mySpec));
         }
         return myMap;
@@ -164,7 +168,7 @@ public final class GordianCoreDSASpec {
      *
      * @return the values
      */
-    public static Collection<GordianCoreDSASpec> values() {
-        return SPECMAP.values();
+    public static GordianCoreDSASpec[] values() {
+        return VALUES;
     }
 }

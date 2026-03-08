@@ -18,14 +18,14 @@ package io.github.tonywasher.joceanus.gordianknot.api.random;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeySpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigest;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKey;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMac;
-import io.github.tonywasher.joceanus.gordianknot.api.random.spec.GordianNewRandomSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.random.spec.GordianNewRandomSpecBuilder;
-import io.github.tonywasher.joceanus.gordianknot.api.random.spec.GordianNewRandomType;
+import io.github.tonywasher.joceanus.gordianknot.api.random.spec.GordianRandomSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.random.spec.GordianRandomSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.random.spec.GordianRandomType;
 
 import java.security.SecureRandom;
 import java.util.List;
@@ -43,7 +43,7 @@ public interface GordianRandomFactory {
      * @return the new SecureRandom
      * @throws GordianException on error
      */
-    SecureRandom createRandom(GordianNewRandomSpec pRandomSpec) throws GordianException;
+    SecureRandom createRandom(GordianRandomSpec pRandomSpec) throws GordianException;
 
     /**
      * create CombinedRandom.
@@ -53,29 +53,29 @@ public interface GordianRandomFactory {
      * @return the new SecureRandom
      * @throws GordianException on error
      */
-    SecureRandom createRandom(GordianNewRandomSpec pCtrSpec,
-                              GordianNewRandomSpec pHashSpec) throws GordianException;
+    SecureRandom createRandom(GordianRandomSpec pCtrSpec,
+                              GordianRandomSpec pHashSpec) throws GordianException;
 
     /**
      * create new GordianRandomSpecBuilder.
      *
      * @return the new RandomSpecBuilder
      */
-    GordianNewRandomSpecBuilder newRandomSpecBuilder();
+    GordianRandomSpecBuilder newRandomSpecBuilder();
 
     /**
      * Obtain predicate for supported randomSpecs.
      *
      * @return the predicate
      */
-    Predicate<GordianNewRandomSpec> supportedRandomSpecs();
+    Predicate<GordianRandomSpec> supportedRandomSpecs();
 
     /**
      * Obtain predicate for supported combined randomSpecs.
      *
      * @return the predicate
      */
-    BiPredicate<GordianNewRandomSpec, GordianNewRandomSpec> supportedCombinedSpecs();
+    BiPredicate<GordianRandomSpec, GordianRandomSpec> supportedCombinedSpecs();
 
     /**
      * generate random GordianDigest.
@@ -104,7 +104,7 @@ public interface GordianRandomFactory {
      * @return the new key
      * @throws GordianException on error
      */
-    GordianKey<GordianNewSymKeySpec> generateRandomSymKey(GordianLength pKeyLen) throws GordianException;
+    GordianKey<GordianSymKeySpec> generateRandomSymKey(GordianLength pKeyLen) throws GordianException;
 
     /**
      * generate random GordianStreamKey.
@@ -114,15 +114,15 @@ public interface GordianRandomFactory {
      * @return the new StreamKey
      * @throws GordianException on error
      */
-    GordianKey<GordianNewStreamKeySpec> generateRandomStreamKey(GordianLength pKeyLen,
-                                                                boolean pLargeData) throws GordianException;
+    GordianKey<GordianStreamKeySpec> generateRandomStreamKey(GordianLength pKeyLen,
+                                                             boolean pLargeData) throws GordianException;
 
     /**
      * Obtain a list of supported randomSpecs.
      *
      * @return the list of supported randomSpecs.
      */
-    List<GordianNewRandomSpec> listAllSupportedRandomSpecs();
+    List<GordianRandomSpec> listAllSupportedRandomSpecs();
 
     /**
      * Obtain a list of supported randomSpecs of a given type.
@@ -130,7 +130,7 @@ public interface GordianRandomFactory {
      * @param pType the random type
      * @return the list of supported randomSpecs.
      */
-    List<GordianNewRandomSpec> listAllSupportedRandomSpecs(GordianNewRandomType pType);
+    List<GordianRandomSpec> listAllSupportedRandomSpecs(GordianRandomType pType);
 
     /**
      * Obtain a list of supported randomSpecs of a given type and keyLength.
@@ -140,6 +140,6 @@ public interface GordianRandomFactory {
      * @param pKeyLen the keyLength
      * @return the list of supported randomSpecs.
      */
-    List<GordianNewRandomSpec> listAllSupportedRandomSpecs(GordianNewRandomType pType,
-                                                           GordianLength pKeyLen);
+    List<GordianRandomSpec> listAllSupportedRandomSpecs(GordianRandomType pType,
+                                                        GordianLength pKeyLen);
 }

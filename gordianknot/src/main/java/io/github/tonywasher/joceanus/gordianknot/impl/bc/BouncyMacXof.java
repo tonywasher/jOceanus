@@ -17,7 +17,7 @@
 package io.github.tonywasher.joceanus.gordianknot.impl.bc;
 
 import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianXof;
-import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianNewMacSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianMacSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import org.bouncycastle.crypto.Mac;
 import org.bouncycastle.crypto.Xof;
@@ -40,7 +40,7 @@ public class BouncyMacXof
      * @param pXof     the MACXof
      */
     BouncyMacXof(final GordianBaseFactory pFactory,
-                 final GordianNewMacSpec pMacSpec,
+                 final GordianMacSpec pMacSpec,
                  final Xof pXof) {
         super(pFactory, pMacSpec, (Mac) pXof);
         theXof = pXof;

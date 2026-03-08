@@ -16,6 +16,8 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.api.keypair;
 
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
+
 /**
  * Asymmetric KeyPair.
  */

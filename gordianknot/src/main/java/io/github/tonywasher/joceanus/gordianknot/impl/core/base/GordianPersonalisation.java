@@ -20,9 +20,9 @@ import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigest;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpecBuilder;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestType;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestType;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMac;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
@@ -118,10 +118,10 @@ public class GordianPersonalisation {
         int myLen = 0;
 
         /* Loop through the digestTypes */
-        final GordianNewDigestSpecBuilder myBuilder = GordianCoreDigestSpecBuilder.newInstance();
+        final GordianDigestSpecBuilder myBuilder = GordianCoreDigestSpecBuilder.newInstance();
         for (final GordianCoreDigestType myType : myTypes) {
             /* Add the digest if it is available as 256-bit and supports largeData */
-            final GordianNewDigestSpec mySpec = myBuilder.generic(myType.getType(), HASH_LEN);
+            final GordianDigestSpec mySpec = myBuilder.digest(myType.getType(), HASH_LEN);
             if (myType.supportsLargeData()
                     && myFactory.supportedDigestSpecs().test(mySpec)) {
                 myDigests[myLen++] = myFactory.createDigest(mySpec);
@@ -210,7 +210,7 @@ public class GordianPersonalisation {
             final int numResults = myKeySetVec != null ? NUM_RESULTS - 1 : NUM_RESULTS;
 
             /* Use HKDF to expand to the required length */
-            final GordianNewDigestSpec mySpec = determineHKDFDigestSpec(pFactory, myConfig);
+            final GordianDigestSpec mySpec = determineHKDFDigestSpec(pFactory, myConfig);
             final GordianHKDFEngine myEngine = new GordianHKDFEngine(pFactory, mySpec);
             myParams = GordianHKDFParams.expandOnly(myConfig, RESULT_LEN * numResults).withInfo(BASE_PERSONAL);
             myExpanded = myEngine.deriveBytes(myParams);
@@ -378,23 +378,23 @@ public class GordianPersonalisation {
      * @param pBaseSeed the seed.
      * @return the digestSpec
      */
-    private static GordianNewDigestSpec determineHKDFDigestSpec(final GordianBaseSupplier pFactory,
-                                                                final byte[] pBaseSeed) {
+    private static GordianDigestSpec determineHKDFDigestSpec(final GordianBaseSupplier pFactory,
+                                                             final byte[] pBaseSeed) {
         /* Build the 64-bit seed and create the seeded random */
         final long mySeed = GordianDataConverter.byteArrayToLong(pBaseSeed);
         final Random myRandom = new Random(mySeed);
 
         /* Access the list to select from */
         final GordianValidator myValidator = pFactory.getValidator();
-        final List<GordianNewDigestType> myTypes = myValidator.listAllExternalDigestTypes();
+        final List<GordianDigestType> myTypes = myValidator.listAllExternalDigestTypes();
 
         /* Select from the list */
         final int myIndex = myRandom.nextInt(myTypes.size());
-        final GordianNewDigestType myType = myTypes.get(myIndex);
+        final GordianDigestType myType = myTypes.get(myIndex);
 
         /* return the selected digestSpec */
-        final GordianNewDigestSpecBuilder myBuilder = GordianCoreDigestSpecBuilder.newInstance();
-        return myBuilder.generic(myType, GordianLength.LEN_512);
+        final GordianDigestSpecBuilder myBuilder = GordianCoreDigestSpecBuilder.newInstance();
+        return myBuilder.digest(myType, GordianLength.LEN_512);
     }
 
     /**

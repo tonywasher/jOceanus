@@ -18,22 +18,25 @@
 package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeySubType;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeySubType.GordianNewBlakeXofKey;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeySubType.GordianNewChaCha20Key;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeySubType.GordianNewElephantKey;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeySubType.GordianNewISAPKey;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeySubType.GordianNewRomulusKey;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeySubType.GordianNewSalsa20Key;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeySubType.GordianNewSkeinXofKey;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeySubType.GordianNewSparkleKey;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeySubType.GordianNewVMPCKey;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeyType;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySubType;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySubType.GordianBlakeXofKey;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySubType.GordianChaCha20Key;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySubType.GordianElephantKey;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySubType.GordianISAPKey;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySubType.GordianRomulusKey;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySubType.GordianSalsa20Key;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySubType.GordianSkeinXofKey;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySubType.GordianSparkleKey;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySubType.GordianVMPCKey;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeyType;
 import org.bouncycastle.crypto.engines.ElephantEngine.ElephantParameters;
 import org.bouncycastle.crypto.engines.ISAPEngine.IsapType;
 import org.bouncycastle.crypto.engines.RomulusEngine.RomulusParameters;
 import org.bouncycastle.crypto.engines.SparkleEngine.SparkleParameters;
 
+/**
+ * Core StreamKey subType.
+ */
 public final class GordianCoreStreamKeySubType {
     /**
      * Private constructor.
@@ -47,27 +50,27 @@ public final class GordianCoreStreamKeySubType {
      * @param pKeyType the keyType
      * @return the default
      */
-    static GordianNewStreamKeySubType defaultSubKeyType(final GordianNewStreamKeyType pKeyType) {
+    static GordianStreamKeySubType defaultSubKeyType(final GordianStreamKeyType pKeyType) {
         /* Switch on keyType */
         switch (pKeyType) {
             case SALSA20:
-                return GordianNewSalsa20Key.STD;
+                return GordianSalsa20Key.STD;
             case CHACHA20:
-                return GordianNewChaCha20Key.STD;
+                return GordianChaCha20Key.STD;
             case VMPC:
-                return GordianNewVMPCKey.STD;
+                return GordianVMPCKey.STD;
             case SKEINXOF:
-                return GordianNewSkeinXofKey.STATE1024;
+                return GordianSkeinXofKey.STATE1024;
             case BLAKE2XOF:
-                return GordianNewBlakeXofKey.BLAKE2XB;
+                return GordianBlakeXofKey.BLAKE2XB;
             case ELEPHANT:
-                return GordianNewElephantKey.ELEPHANT160;
+                return GordianElephantKey.ELEPHANT160;
             case ISAP:
-                return GordianNewISAPKey.ISAPA128;
+                return GordianISAPKey.ISAPA128;
             case ROMULUS:
-                return GordianNewRomulusKey.ROMULUS_M;
+                return GordianRomulusKey.ROMULUS_M;
             case SPARKLE:
-                return GordianNewSparkleKey.SPARKLE128_128;
+                return GordianSparkleKey.SPARKLE128_128;
             default:
                 return null;
         }
@@ -80,8 +83,8 @@ public final class GordianCoreStreamKeySubType {
      * @param pSubType the subType
      * @return the name
      */
-    static String toSubTypeString(final GordianNewStreamKeyType pKeyType,
-                                  final GordianNewStreamKeySubType pSubType) {
+    static String toSubTypeString(final GordianStreamKeyType pKeyType,
+                                  final GordianStreamKeySubType pSubType) {
         switch (pKeyType) {
             case BLAKE2XOF:
                 return toBlake2String(pSubType);
@@ -104,7 +107,7 @@ public final class GordianCoreStreamKeySubType {
      * @param pType the type
      * @return the ivLength
      */
-    static GordianLength requiredSalsaIVLength(final GordianNewSalsa20Key pType) {
+    static GordianLength requiredSalsaIVLength(final GordianSalsa20Key pType) {
         switch (pType) {
             case STD:
                 return GordianLength.LEN_64;
@@ -120,7 +123,7 @@ public final class GordianCoreStreamKeySubType {
      * @param pType the type
      * @return the ivLength
      */
-    static GordianLength requiredChaChaIVLength(final GordianNewChaCha20Key pType) {
+    static GordianLength requiredChaChaIVLength(final GordianChaCha20Key pType) {
         switch (pType) {
             case STD:
                 return GordianLength.LEN_64;
@@ -138,7 +141,7 @@ public final class GordianCoreStreamKeySubType {
      * @param pKey the key
      * @return the length
      */
-    public static GordianLength getLengthForSkeinXofKey(final GordianNewSkeinXofKey pKey) {
+    public static GordianLength getLengthForSkeinXofKey(final GordianSkeinXofKey pKey) {
         switch (pKey) {
             case STATE256:
                 return GordianLength.LEN_256;
@@ -157,14 +160,14 @@ public final class GordianCoreStreamKeySubType {
      * @param pLength the length
      * @return the subKeyType
      */
-    public static GordianNewSkeinXofKey getSkeinXofKeyForLength(final GordianLength pLength) {
+    public static GordianSkeinXofKey getSkeinXofKeyForLength(final GordianLength pLength) {
         switch (pLength) {
             case LEN_256:
-                return GordianNewSkeinXofKey.STATE256;
+                return GordianSkeinXofKey.STATE256;
             case LEN_512:
-                return GordianNewSkeinXofKey.STATE512;
+                return GordianSkeinXofKey.STATE512;
             case LEN_1024:
-                return GordianNewSkeinXofKey.STATE1024;
+                return GordianSkeinXofKey.STATE1024;
             default:
                 throw new IllegalArgumentException();
         }
@@ -176,8 +179,8 @@ public final class GordianCoreStreamKeySubType {
      * @param pType the type
      * @return the name
      */
-    private static String toBlake2String(final GordianNewStreamKeySubType pType) {
-        return pType == GordianNewBlakeXofKey.BLAKE2XB ? "Blake2Xb" : "Blake2Xs";
+    private static String toBlake2String(final GordianStreamKeySubType pType) {
+        return pType == GordianBlakeXofKey.BLAKE2XB ? "Blake2Xb" : "Blake2Xs";
     }
 
     /**
@@ -186,7 +189,7 @@ public final class GordianCoreStreamKeySubType {
      * @param pType the type
      * @return the ivLength
      */
-    static GordianLength requiredBlakeIVLength(final GordianNewBlakeXofKey pType) {
+    static GordianLength requiredBlakeIVLength(final GordianBlakeXofKey pType) {
         switch (pType) {
             case BLAKE2XS:
                 return GordianLength.LEN_64;
@@ -202,9 +205,9 @@ public final class GordianCoreStreamKeySubType {
      * @param pType the type
      * @return the name
      */
-    private static String toElephantString(final GordianNewStreamKeySubType pType) {
-        final String myBase = GordianNewStreamKeyType.ELEPHANT.toString();
-        switch ((GordianNewElephantKey) pType) {
+    private static String toElephantString(final GordianStreamKeySubType pType) {
+        final String myBase = GordianStreamKeyType.ELEPHANT.toString();
+        switch ((GordianElephantKey) pType) {
             case ELEPHANT160:
                 return myBase + "160";
             case ELEPHANT176:
@@ -221,7 +224,7 @@ public final class GordianCoreStreamKeySubType {
      * @param pType the type
      * @return the parameters
      */
-    public static ElephantParameters getParameters(final GordianNewElephantKey pType) {
+    public static ElephantParameters getParameters(final GordianElephantKey pType) {
         switch (pType) {
             case ELEPHANT160:
                 return ElephantParameters.elephant160;
@@ -239,9 +242,9 @@ public final class GordianCoreStreamKeySubType {
      * @param pType the type
      * @return the name
      */
-    private static String toISAPString(final GordianNewStreamKeySubType pType) {
-        final String myBase = GordianNewStreamKeyType.ISAP.toString();
-        switch ((GordianNewISAPKey) pType) {
+    private static String toISAPString(final GordianStreamKeySubType pType) {
+        final String myBase = GordianStreamKeyType.ISAP.toString();
+        switch ((GordianISAPKey) pType) {
             case ISAPA128:
                 return myBase + "A128";
             case ISAPA128A:
@@ -260,7 +263,7 @@ public final class GordianCoreStreamKeySubType {
      * @param pType the type
      * @return the type
      */
-    public static IsapType getISAPType(final GordianNewISAPKey pType) {
+    public static IsapType getISAPType(final GordianISAPKey pType) {
         switch (pType) {
             case ISAPA128:
                 return IsapType.ISAP_A_128;
@@ -280,9 +283,9 @@ public final class GordianCoreStreamKeySubType {
      * @param pType the type
      * @return the name
      */
-    private static String toRomulusString(final GordianNewStreamKeySubType pType) {
-        final String myBase = GordianNewStreamKeyType.ROMULUS.toString();
-        switch ((GordianNewRomulusKey) pType) {
+    private static String toRomulusString(final GordianStreamKeySubType pType) {
+        final String myBase = GordianStreamKeyType.ROMULUS.toString();
+        switch ((GordianRomulusKey) pType) {
             case ROMULUS_M:
                 return myBase + "-M";
             case ROMULUS_N:
@@ -299,7 +302,7 @@ public final class GordianCoreStreamKeySubType {
      * @param pType the type
      * @return the parameters
      */
-    public static RomulusParameters getParameters(final GordianNewRomulusKey pType) {
+    public static RomulusParameters getParameters(final GordianRomulusKey pType) {
         switch (pType) {
             case ROMULUS_M:
                 return RomulusParameters.RomulusM;
@@ -317,9 +320,9 @@ public final class GordianCoreStreamKeySubType {
      * @param pType the type
      * @return the name
      */
-    private static String toSparkleString(final GordianNewStreamKeySubType pType) {
-        final String myBase = GordianNewStreamKeyType.SPARKLE.toString();
-        switch ((GordianNewSparkleKey) pType) {
+    private static String toSparkleString(final GordianStreamKeySubType pType) {
+        final String myBase = GordianStreamKeyType.SPARKLE.toString();
+        switch ((GordianSparkleKey) pType) {
             case SPARKLE128_128:
                 return myBase + "128_128";
             case SPARKLE256_128:
@@ -338,7 +341,7 @@ public final class GordianCoreStreamKeySubType {
      * @param pType the type
      * @return the keyLength
      */
-    static GordianLength requiredSparkleKeyLength(final GordianNewSparkleKey pType) {
+    static GordianLength requiredSparkleKeyLength(final GordianSparkleKey pType) {
         switch (pType) {
             case SPARKLE128_128:
             case SPARKLE256_128:
@@ -357,7 +360,7 @@ public final class GordianCoreStreamKeySubType {
      * @param pType the type
      * @return the ivLength
      */
-    static GordianLength requiredSparkleIVLength(final GordianNewSparkleKey pType) {
+    static GordianLength requiredSparkleIVLength(final GordianSparkleKey pType) {
         switch (pType) {
             case SPARKLE128_128:
                 return GordianLength.LEN_128;
@@ -376,7 +379,7 @@ public final class GordianCoreStreamKeySubType {
      * @param pType the type
      * @return the parameters
      */
-    public static SparkleParameters getParameters(final GordianNewSparkleKey pType) {
+    public static SparkleParameters getParameters(final GordianSparkleKey pType) {
         switch (pType) {
             case SPARKLE128_128:
                 return SparkleParameters.SCHWAEMM128_128;

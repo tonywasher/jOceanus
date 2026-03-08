@@ -22,17 +22,17 @@ import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamCipher;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymCipher;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianWrapper;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewCipherMode;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewPadding;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamCipherSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeySpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeySubType.GordianNewChaCha20Key;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeySubType.GordianNewSalsa20Key;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeySubType.GordianNewVMPCKey;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeyType;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymCipherSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymCipherSpecBuilder;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianCipherMode;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySubType.GordianChaCha20Key;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySubType.GordianSalsa20Key;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySubType.GordianVMPCKey;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeyType;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymCipherSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianPadding;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKey;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKeyGenerator;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseData;
@@ -110,7 +110,7 @@ public class JcaCipherFactory
     }
 
     @Override
-    public GordianSymCipher createSymKeyCipher(final GordianNewSymCipherSpec pCipherSpec) throws GordianException {
+    public GordianSymCipher createSymKeyCipher(final GordianSymCipherSpec pCipherSpec) throws GordianException {
         /* Check validity of SymKeySpec */
         checkSymCipherSpec(pCipherSpec);
         final GordianCoreSymCipherSpec mySpec = (GordianCoreSymCipherSpec) pCipherSpec;
@@ -130,7 +130,7 @@ public class JcaCipherFactory
     }
 
     @Override
-    public GordianStreamCipher createStreamKeyCipher(final GordianNewStreamCipherSpec pCipherSpec) throws GordianException {
+    public GordianStreamCipher createStreamKeyCipher(final GordianStreamCipherSpec pCipherSpec) throws GordianException {
         /* Check validity of StreamKeySpec */
         checkStreamCipherSpec(pCipherSpec);
         final GordianCoreStreamCipherSpec mySpec = (GordianCoreStreamCipherSpec) pCipherSpec;
@@ -142,11 +142,11 @@ public class JcaCipherFactory
     }
 
     @Override
-    public GordianWrapper createKeyWrapper(final GordianKey<GordianNewSymKeySpec> pKey) throws GordianException {
+    public GordianWrapper createKeyWrapper(final GordianKey<GordianSymKeySpec> pKey) throws GordianException {
         /* Create the cipher */
-        final JcaKey<GordianNewSymKeySpec> myKey = JcaKey.accessKey(pKey);
-        final GordianNewSymCipherSpecBuilder myBuilder = GordianCoreSymCipherSpecBuilder.newInstance();
-        final GordianNewSymCipherSpec mySpec = myBuilder.ecb(myKey.getKeyType(), GordianNewPadding.NONE);
+        final JcaKey<GordianSymKeySpec> myKey = JcaKey.accessKey(pKey);
+        final GordianSymCipherSpecBuilder myBuilder = GordianCoreSymCipherSpecBuilder.newInstance();
+        final GordianSymCipherSpec mySpec = myBuilder.ecb(myKey.getKeyType(), GordianPadding.NONE);
         final JcaSymCipher myJcaCipher = (JcaSymCipher) createSymKeyCipher(mySpec);
         return createKeyWrapper(myKey, myJcaCipher);
     }
@@ -160,10 +160,10 @@ public class JcaCipherFactory
      * @throws GordianException on error
      */
     private static <T extends GordianKeySpec> String getKeyAlgorithm(final T pKeySpec) throws GordianException {
-        if (pKeySpec instanceof GordianNewStreamKeySpec mySpec) {
+        if (pKeySpec instanceof GordianStreamKeySpec mySpec) {
             return getStreamKeyAlgorithm(mySpec);
         }
-        if (pKeySpec instanceof GordianNewSymKeySpec mySpec) {
+        if (pKeySpec instanceof GordianSymKeySpec mySpec) {
             return getSymKeyAlgorithm(mySpec);
         }
         throw new GordianDataException(GordianBaseData.getInvalidText(pKeySpec));
@@ -204,7 +204,7 @@ public class JcaCipherFactory
      * @return the Cipher
      * @throws GordianException on error
      */
-    private static Cipher getJavaCipher(final GordianNewSymCipherSpec pCipherSpec) throws GordianException {
+    private static Cipher getJavaCipher(final GordianSymCipherSpec pCipherSpec) throws GordianException {
         final String myAlgo = getSymKeyAlgorithm(pCipherSpec.getKeySpec())
                 + ALGO_SEP
                 + getCipherModeAlgorithm(pCipherSpec)
@@ -220,11 +220,11 @@ public class JcaCipherFactory
      * @return the Cipher
      * @throws GordianException on error
      */
-    private static Cipher getJavaCipher(final GordianNewStreamCipherSpec pCipherSpec) throws GordianException {
-        final GordianNewStreamKeySpec myKeySpec = pCipherSpec.getKeySpec();
+    private static Cipher getJavaCipher(final GordianStreamCipherSpec pCipherSpec) throws GordianException {
+        final GordianStreamKeySpec myKeySpec = pCipherSpec.getKeySpec();
         String myAlgo = getStreamKeyAlgorithm(myKeySpec);
         if (pCipherSpec.isAEAD()
-                && GordianNewStreamKeyType.CHACHA20 == myKeySpec.getStreamKeyType()) {
+                && GordianStreamKeyType.CHACHA20 == myKeySpec.getStreamKeyType()) {
             myAlgo = "CHACHA20-POLY1305";
         }
         return getJavaCipher(myAlgo);
@@ -258,7 +258,7 @@ public class JcaCipherFactory
      * @return the Algorithm
      * @throws GordianException on error
      */
-    static String getSymKeyAlgorithm(final GordianNewSymKeySpec pKeySpec) throws GordianException {
+    static String getSymKeyAlgorithm(final GordianSymKeySpec pKeySpec) throws GordianException {
         switch (pKeySpec.getSymKeyType()) {
             case TWOFISH:
                 return "TwoFish";
@@ -307,8 +307,8 @@ public class JcaCipherFactory
      * @return the Algorithm
      * @throws GordianException on error
      */
-    private static String getCipherModeAlgorithm(final GordianNewSymCipherSpec pSpec) throws GordianException {
-        final GordianNewCipherMode myMode = pSpec.getCipherMode();
+    private static String getCipherModeAlgorithm(final GordianSymCipherSpec pSpec) throws GordianException {
+        final GordianCipherMode myMode = pSpec.getCipherMode();
         switch (pSpec.getCipherMode()) {
             case ECB:
             case SIC:
@@ -323,20 +323,20 @@ public class JcaCipherFactory
                 return myMode.name();
             case CBC:
             case G3413CBC:
-                return GordianNewCipherMode.CBC.name();
+                return GordianCipherMode.CBC.name();
             case CFB:
             case G3413CFB:
                 return "CFB";
             case OFB:
             case G3413OFB:
-                return GordianNewCipherMode.OFB.name();
+                return GordianCipherMode.OFB.name();
             case KCTR:
             case G3413CTR:
                 return "CTR";
             case KCCM:
-                return GordianNewCipherMode.CCM.name();
+                return GordianCipherMode.CCM.name();
             case KGCM:
-                return GordianNewCipherMode.GCM.name();
+                return GordianCipherMode.GCM.name();
             default:
                 throw new GordianDataException(GordianBaseData.getInvalidText(myMode));
         }
@@ -348,7 +348,7 @@ public class JcaCipherFactory
      * @param pPadding use padding true/false
      * @return the Algorithm
      */
-    private static String getPaddingAlgorithm(final GordianNewPadding pPadding) {
+    private static String getPaddingAlgorithm(final GordianPadding pPadding) {
         switch (pPadding) {
             case CTS:
                 return "withCTS";
@@ -373,7 +373,7 @@ public class JcaCipherFactory
      * @return the Algorithm
      * @throws GordianException on error
      */
-    private static String getStreamKeyAlgorithm(final GordianNewStreamKeySpec pKeySpec) throws GordianException {
+    private static String getStreamKeyAlgorithm(final GordianStreamKeySpec pKeySpec) throws GordianException {
         switch (pKeySpec.getStreamKeyType()) {
             case HC:
                 return GordianLength.LEN_128 == pKeySpec.getKeyLength()
@@ -384,15 +384,15 @@ public class JcaCipherFactory
                         ? "ZUC-128"
                         : "ZUC-256";
             case CHACHA20:
-                return pKeySpec.getSubKeyType() == GordianNewChaCha20Key.STD
+                return pKeySpec.getSubKeyType() == GordianChaCha20Key.STD
                         ? "CHACHA"
                         : "CHACHA7539";
             case SALSA20:
-                return pKeySpec.getSubKeyType() == GordianNewSalsa20Key.STD
+                return pKeySpec.getSubKeyType() == GordianSalsa20Key.STD
                         ? pKeySpec.getStreamKeyType().name()
                         : "XSALSA20";
             case VMPC:
-                return pKeySpec.getSubKeyType() == GordianNewVMPCKey.STD
+                return pKeySpec.getSubKeyType() == GordianVMPCKey.STD
                         ? pKeySpec.getStreamKeyType().name()
                         : "VMPC-KSA3";
             case GRAIN:
@@ -406,27 +406,27 @@ public class JcaCipherFactory
     }
 
     @Override
-    protected boolean validStreamKeySpec(final GordianNewStreamKeySpec pKeySpec) {
+    protected boolean validStreamKeySpec(final GordianStreamKeySpec pKeySpec) {
         /* Check basic validity */
         if (!super.validStreamKeySpec(pKeySpec)) {
             return false;
         }
 
         /* Reject XChaCha20 */
-        return pKeySpec.getStreamKeyType() != GordianNewStreamKeyType.CHACHA20
-                || pKeySpec.getSubKeyType() != GordianNewChaCha20Key.XCHACHA;
+        return pKeySpec.getStreamKeyType() != GordianStreamKeyType.CHACHA20
+                || pKeySpec.getSubKeyType() != GordianChaCha20Key.XCHACHA;
     }
 
     @Override
-    protected boolean validSymCipherSpec(final GordianNewSymCipherSpec pCipherSpec) {
+    protected boolean validSymCipherSpec(final GordianSymCipherSpec pCipherSpec) {
         /* Check standard features */
         if (!super.validSymCipherSpec(pCipherSpec)) {
             return false;
         }
 
         /* Disallow GCM-SIV */
-        final GordianNewCipherMode myMode = pCipherSpec.getCipherMode();
-        if (GordianNewCipherMode.GCMSIV.equals(myMode)) {
+        final GordianCipherMode myMode = pCipherSpec.getCipherMode();
+        if (GordianCipherMode.GCMSIV.equals(myMode)) {
             return false;
         }
 
@@ -434,21 +434,21 @@ public class JcaCipherFactory
         switch (pCipherSpec.getKeySpec().getSymKeyType()) {
             case KALYNA:
                 /* Disallow OCB, CCM and GCM */
-                return !GordianNewCipherMode.OCB.equals(myMode)
-                        && !GordianNewCipherMode.KCCM.equals(myMode)
-                        && !GordianNewCipherMode.KGCM.equals(myMode)
-                        && !GordianNewCipherMode.CCM.equals(myMode)
-                        && !GordianNewCipherMode.GCM.equals(myMode);
+                return !GordianCipherMode.OCB.equals(myMode)
+                        && !GordianCipherMode.KCCM.equals(myMode)
+                        && !GordianCipherMode.KGCM.equals(myMode)
+                        && !GordianCipherMode.CCM.equals(myMode)
+                        && !GordianCipherMode.GCM.equals(myMode);
             case GOST:
                 /* Disallow OFB and CFB */
-                return !GordianNewCipherMode.OFB.equals(myMode)
-                        && !GordianNewCipherMode.CFB.equals(myMode);
+                return !GordianCipherMode.OFB.equals(myMode)
+                        && !GordianCipherMode.CFB.equals(myMode);
             case KUZNYECHIK:
                 /* Disallow OCB, OFB, CFB and CBC */
-                return !GordianNewCipherMode.OCB.equals(myMode)
-                        && !GordianNewCipherMode.OFB.equals(myMode)
-                        && !GordianNewCipherMode.CFB.equals(myMode)
-                        && !GordianNewCipherMode.CBC.equals(myMode);
+                return !GordianCipherMode.OCB.equals(myMode)
+                        && !GordianCipherMode.OFB.equals(myMode)
+                        && !GordianCipherMode.CFB.equals(myMode)
+                        && !GordianCipherMode.CBC.equals(myMode);
             default:
                 return true;
         }

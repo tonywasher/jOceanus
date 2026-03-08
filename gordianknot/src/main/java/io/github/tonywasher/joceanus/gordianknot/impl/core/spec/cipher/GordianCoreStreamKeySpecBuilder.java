@@ -18,19 +18,19 @@
 package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeySpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeySpecBuilder;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeySubType;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeySubType.GordianNewBlakeXofKey;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeySubType.GordianNewChaCha20Key;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeySubType.GordianNewElephantKey;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeySubType.GordianNewISAPKey;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeySubType.GordianNewRomulusKey;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeySubType.GordianNewSalsa20Key;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeySubType.GordianNewSkeinXofKey;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeySubType.GordianNewSparkleKey;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeySubType.GordianNewVMPCKey;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeyType;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySubType;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySubType.GordianBlakeXofKey;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySubType.GordianChaCha20Key;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySubType.GordianElephantKey;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySubType.GordianISAPKey;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySubType.GordianRomulusKey;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySubType.GordianSalsa20Key;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySubType.GordianSkeinXofKey;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySubType.GordianSparkleKey;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySubType.GordianVMPCKey;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeyType;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKeyLengths;
 
 import java.util.ArrayList;
@@ -43,16 +43,16 @@ import java.util.List;
  */
 
 public final class GordianCoreStreamKeySpecBuilder
-        implements GordianNewStreamKeySpecBuilder {
+        implements GordianStreamKeySpecBuilder {
     /**
      * The type.
      */
-    private GordianNewStreamKeyType theType;
+    private GordianStreamKeyType theType;
 
     /**
      * The subSpec.
      */
-    private GordianNewStreamKeySubType theSubType;
+    private GordianStreamKeySubType theSubType;
 
     /**
      * The keyLength.
@@ -75,25 +75,25 @@ public final class GordianCoreStreamKeySpecBuilder
     }
 
     @Override
-    public GordianNewStreamKeySpecBuilder withType(final GordianNewStreamKeyType pType) {
+    public GordianStreamKeySpecBuilder withType(final GordianStreamKeyType pType) {
         theType = pType;
         return this;
     }
 
     @Override
-    public GordianNewStreamKeySpecBuilder withSubType(final GordianNewStreamKeySubType pSubType) {
+    public GordianStreamKeySpecBuilder withSubType(final GordianStreamKeySubType pSubType) {
         theSubType = pSubType;
         return this;
     }
 
     @Override
-    public GordianNewStreamKeySpecBuilder withKeyLength(final GordianLength pKeyLength) {
+    public GordianStreamKeySpecBuilder withKeyLength(final GordianLength pKeyLength) {
         theKeyLength = pKeyLength;
         return this;
     }
 
     @Override
-    public GordianNewStreamKeySpec build() {
+    public GordianStreamKeySpec build() {
         /* Handle null type */
         if (theType == null) {
             throw new NullPointerException("streamKeyType is null");
@@ -149,7 +149,7 @@ public final class GordianCoreStreamKeySpecBuilder
             case BLAKE3XOF:
                 return GordianLength.LEN_256;
             case SPARKLE:
-                return GordianCoreStreamKeySubType.requiredSparkleKeyLength((GordianNewSparkleKey) theSubType);
+                return GordianCoreStreamKeySubType.requiredSparkleKeyLength((GordianSparkleKey) theSubType);
             default:
                 throw new IllegalArgumentException();
         }
@@ -161,9 +161,9 @@ public final class GordianCoreStreamKeySpecBuilder
      * @param pKeyLen the keyLength
      * @return the list
      */
-    public static List<GordianNewStreamKeySpec> listAllPossibleStreamKeySpecs(final GordianLength pKeyLen) {
+    public static List<GordianStreamKeySpec> listAllPossibleStreamKeySpecs(final GordianLength pKeyLen) {
         /* Create the array list */
-        final List<GordianNewStreamKeySpec> myList = new ArrayList<>();
+        final List<GordianStreamKeySpec> myList = new ArrayList<>();
 
         /* Check that the keyLength is supported */
         if (!GordianKeyLengths.isSupportedLength(pKeyLen)) {
@@ -197,13 +197,13 @@ public final class GordianCoreStreamKeySpecBuilder
      * @param pKeyLen  the keyLength
      * @return the list
      */
-    private static List<GordianNewStreamKeySpec> listStreamSubKeys(final GordianCoreStreamKeyType pKeyType,
-                                                                   final GordianLength pKeyLen) {
+    private static List<GordianStreamKeySpec> listStreamSubKeys(final GordianCoreStreamKeyType pKeyType,
+                                                                final GordianLength pKeyLen) {
         /* Create the array list */
-        final List<GordianNewStreamKeySpec> myList = new ArrayList<>();
+        final List<GordianStreamKeySpec> myList = new ArrayList<>();
 
         /* Loop through the subKeyTypes */
-        for (GordianNewStreamKeySubType mySubKeyType : listStreamSubKeys(pKeyType)) {
+        for (GordianStreamKeySubType mySubKeyType : listStreamSubKeys(pKeyType)) {
             /* Add valid subKeySpec */
             final GordianCoreStreamKeySpec mySpec = new GordianCoreStreamKeySpec(pKeyType.getType(), mySubKeyType, pKeyLen);
             if (mySpec.isValid()) {
@@ -221,27 +221,27 @@ public final class GordianCoreStreamKeySpecBuilder
      * @param pKeyType the keyType
      * @return the list
      */
-    private static List<GordianNewStreamKeySubType> listStreamSubKeys(final GordianCoreStreamKeyType pKeyType) {
+    private static List<GordianStreamKeySubType> listStreamSubKeys(final GordianCoreStreamKeyType pKeyType) {
         /* Switch on keyType */
         switch (pKeyType.getType()) {
             case SALSA20:
-                return Arrays.asList(GordianNewSalsa20Key.values());
+                return Arrays.asList(GordianSalsa20Key.values());
             case CHACHA20:
-                return Arrays.asList(GordianNewChaCha20Key.values());
+                return Arrays.asList(GordianChaCha20Key.values());
             case VMPC:
-                return Arrays.asList(GordianNewVMPCKey.values());
+                return Arrays.asList(GordianVMPCKey.values());
             case SKEINXOF:
-                return Arrays.asList(GordianNewSkeinXofKey.values());
+                return Arrays.asList(GordianSkeinXofKey.values());
             case BLAKE2XOF:
-                return Arrays.asList(GordianNewBlakeXofKey.values());
+                return Arrays.asList(GordianBlakeXofKey.values());
             case ELEPHANT:
-                return Arrays.asList(GordianNewElephantKey.values());
+                return Arrays.asList(GordianElephantKey.values());
             case ISAP:
-                return Arrays.asList(GordianNewISAPKey.values());
+                return Arrays.asList(GordianISAPKey.values());
             case ROMULUS:
-                return Arrays.asList(GordianNewRomulusKey.values());
+                return Arrays.asList(GordianRomulusKey.values());
             case SPARKLE:
-                return Arrays.asList(GordianNewSparkleKey.values());
+                return Arrays.asList(GordianSparkleKey.values());
             default:
                 return Collections.emptyList();
         }

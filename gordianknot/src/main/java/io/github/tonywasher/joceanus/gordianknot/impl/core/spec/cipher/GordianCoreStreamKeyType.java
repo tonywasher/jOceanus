@@ -18,7 +18,7 @@
 package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeyType;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeyType;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKeyLengths;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.base.GordianBundleLoader.GordianBundleId;
 
@@ -32,7 +32,7 @@ public final class GordianCoreStreamKeyType {
     /**
      * The streamKeyTypeMap.
      */
-    private static final Map<GordianNewStreamKeyType, GordianCoreStreamKeyType> TYPEMAP = newTypeMap();
+    private static final Map<GordianStreamKeyType, GordianCoreStreamKeyType> TYPEMAP = newTypeMap();
 
     /**
      * The streamKeyTypeArray.
@@ -42,7 +42,7 @@ public final class GordianCoreStreamKeyType {
     /**
      * The StreamKeyType.
      */
-    private final GordianNewStreamKeyType theType;
+    private final GordianStreamKeyType theType;
 
     /**
      * The Name.
@@ -54,7 +54,7 @@ public final class GordianCoreStreamKeyType {
      *
      * @param pType the type
      */
-    private GordianCoreStreamKeyType(final GordianNewStreamKeyType pType) {
+    private GordianCoreStreamKeyType(final GordianStreamKeyType pType) {
         theType = pType;
         theName = bundleIdForStreamKeyType(pType).getValue();
     }
@@ -64,7 +64,7 @@ public final class GordianCoreStreamKeyType {
      *
      * @return the keyType
      */
-    public GordianNewStreamKeyType getType() {
+    public GordianStreamKeyType getType() {
         return theType;
     }
 
@@ -150,7 +150,7 @@ public final class GordianCoreStreamKeyType {
      * @param pType the keyType
      * @return true/false
      */
-    public static boolean supportsLargeData(final GordianNewStreamKeyType pType) {
+    public static boolean supportsLargeData(final GordianStreamKeyType pType) {
         switch (pType) {
             case SNOW3G:
             case ZUC:
@@ -185,7 +185,7 @@ public final class GordianCoreStreamKeyType {
      * @param pType the streamKeyType
      * @return the resource bundleId
      */
-    private static GordianBundleId bundleIdForStreamKeyType(final GordianNewStreamKeyType pType) {
+    private static GordianBundleId bundleIdForStreamKeyType(final GordianStreamKeyType pType) {
         /* Create the map and return it */
         switch (pType) {
             case SALSA20:
@@ -262,7 +262,7 @@ public final class GordianCoreStreamKeyType {
      * @return the core type
      */
     public static GordianCoreStreamKeyType mapCoreType(final Object pType) {
-        return pType instanceof GordianNewStreamKeyType myType ? TYPEMAP.get(myType) : null;
+        return pType instanceof GordianStreamKeyType myType ? TYPEMAP.get(myType) : null;
     }
 
     /**
@@ -270,9 +270,9 @@ public final class GordianCoreStreamKeyType {
      *
      * @return the type map
      */
-    private static Map<GordianNewStreamKeyType, GordianCoreStreamKeyType> newTypeMap() {
-        final Map<GordianNewStreamKeyType, GordianCoreStreamKeyType> myMap = new EnumMap<>(GordianNewStreamKeyType.class);
-        for (GordianNewStreamKeyType myType : GordianNewStreamKeyType.values()) {
+    private static Map<GordianStreamKeyType, GordianCoreStreamKeyType> newTypeMap() {
+        final Map<GordianStreamKeyType, GordianCoreStreamKeyType> myMap = new EnumMap<>(GordianStreamKeyType.class);
+        for (GordianStreamKeyType myType : GordianStreamKeyType.values()) {
             myMap.put(myType, new GordianCoreStreamKeyType(myType));
         }
         return myMap;

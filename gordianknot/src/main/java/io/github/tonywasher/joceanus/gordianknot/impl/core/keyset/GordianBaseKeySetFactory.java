@@ -18,7 +18,7 @@ package io.github.tonywasher.joceanus.gordianknot.impl.core.keyset;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySetFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.keyset.spec.GordianNewKeySetSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keyset.spec.GordianKeySetSpec;
 
 /**
  * Base KeySetFactory interface.
@@ -32,5 +32,5 @@ public interface GordianBaseKeySetFactory
      * @return the empty keySedt
      * @throws GordianException on error
      */
-    GordianBaseKeySet createKeySet(GordianNewKeySetSpec pSpec) throws GordianException;
+    GordianBaseKeySet createKeySet(GordianKeySetSpec pSpec) throws GordianException;
 }

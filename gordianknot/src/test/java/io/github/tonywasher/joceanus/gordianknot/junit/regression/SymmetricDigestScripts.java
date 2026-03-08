@@ -20,7 +20,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigest;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianXof;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactoryType;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.digest.GordianCoreDigestFactory;
@@ -112,7 +112,7 @@ public class SymmetricDigestScripts {
     private static void profileDigest(final FactoryDigestSpec pDigestSpec) throws GordianException {
         /* Create the digest */
         final GordianFactory myFactory = pDigestSpec.getFactory();
-        final GordianNewDigestSpec mySpec = pDigestSpec.getSpec();
+        final GordianDigestSpec mySpec = pDigestSpec.getSpec();
         final GordianDigestFactory myDigestFactory = myFactory.getDigestFactory();
         final GordianDigest myDigest = myDigestFactory.createDigest(mySpec);
 
@@ -143,7 +143,7 @@ public class SymmetricDigestScripts {
     private static void multiDigest(final FactoryDigestSpec pDigestSpec) throws GordianException {
         /* Create the digest */
         final GordianFactory myFactory = pDigestSpec.getFactory();
-        final GordianNewDigestSpec mySpec = pDigestSpec.getSpec();
+        final GordianDigestSpec mySpec = pDigestSpec.getSpec();
         final GordianDigestFactory myDigestFactory = myFactory.getDigestFactory();
         final GordianDigest myDigest = myDigestFactory.createDigest(mySpec);
 
@@ -175,7 +175,7 @@ public class SymmetricDigestScripts {
     private static void checkXof(final FactoryDigestSpec pDigestSpec) throws GordianException {
         /* Create the digest */
         final GordianFactory myFactory = pDigestSpec.getFactory();
-        final GordianNewDigestSpec mySpec = pDigestSpec.getSpec();
+        final GordianDigestSpec mySpec = pDigestSpec.getSpec();
         final GordianDigestFactory myDigestFactory = myFactory.getDigestFactory();
         final GordianXof myXof = (GordianXof) myDigestFactory.createDigest(mySpec);
 
@@ -213,7 +213,7 @@ public class SymmetricDigestScripts {
         /* Create the digests */
         final GordianFactory myFactory = pDigestSpec.getFactory();
         final GordianFactory myPartner = pDigestSpec.getPartner();
-        final GordianNewDigestSpec mySpec = pDigestSpec.getSpec();
+        final GordianDigestSpec mySpec = pDigestSpec.getSpec();
         final GordianDigestFactory myDigestFactory = myFactory.getDigestFactory();
         final GordianDigest myDigest = myDigestFactory.createDigest(mySpec);
         final GordianDigestFactory myPartnerFactory = myPartner.getDigestFactory();
@@ -244,7 +244,7 @@ public class SymmetricDigestScripts {
         Assertions.assertNotNull(myId, "Unknown AlgorithmId for " + pSpec.getSpec());
 
         /* Check unique mapping */
-        final GordianNewDigestSpec mySpec = myFactory.getDigestSpecForIdentifier(myId);
+        final GordianDigestSpec mySpec = myFactory.getDigestSpecForIdentifier(myId);
         Assertions.assertEquals(pSpec.getSpec(), mySpec, "Invalid mapping for  " + pSpec.getSpec());
     }
 
@@ -254,7 +254,7 @@ public class SymmetricDigestScripts {
      * @param pDigestSpec the digestSpec
      * @return the input
      */
-    private static byte[] getDigestInput(final GordianNewDigestSpec pDigestSpec) {
+    private static byte[] getDigestInput(final GordianDigestSpec pDigestSpec) {
         /* Obtain basic input */
         final byte[] myBytes = "DigestInput".getBytes();
         final GordianCoreDigestSpec mySpec = (GordianCoreDigestSpec) pDigestSpec;

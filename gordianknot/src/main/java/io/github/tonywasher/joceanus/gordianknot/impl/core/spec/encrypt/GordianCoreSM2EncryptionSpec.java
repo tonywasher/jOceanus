@@ -17,9 +17,9 @@
 
 package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.encrypt;
 
-import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianNewSM2EncryptionSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianNewSM2EncryptionType;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianSM2EncryptionSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianSM2EncryptionType;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianCoreDigestSpec;
 
 import java.util.Objects;
@@ -28,11 +28,11 @@ import java.util.Objects;
  * SM2 EncryptionSpec.
  */
 public class GordianCoreSM2EncryptionSpec
-        implements GordianNewSM2EncryptionSpec {
+        implements GordianSM2EncryptionSpec {
     /**
      * EncryptionType.
      */
-    private final GordianNewSM2EncryptionType theType;
+    private final GordianSM2EncryptionType theType;
 
     /**
      * DigestSpec.
@@ -55,8 +55,8 @@ public class GordianCoreSM2EncryptionSpec
      * @param pType   the encryptionType
      * @param pDigest the digestSpec
      */
-    GordianCoreSM2EncryptionSpec(final GordianNewSM2EncryptionType pType,
-                                 final GordianNewDigestSpec pDigest) {
+    GordianCoreSM2EncryptionSpec(final GordianSM2EncryptionType pType,
+                                 final GordianDigestSpec pDigest) {
         /* Store parameters */
         theType = pType;
         theDigest = (GordianCoreDigestSpec) pDigest;
@@ -64,12 +64,12 @@ public class GordianCoreSM2EncryptionSpec
     }
 
     @Override
-    public GordianNewSM2EncryptionType getEncryptionType() {
+    public GordianSM2EncryptionType getEncryptionType() {
         return theType;
     }
 
     @Override
-    public GordianNewDigestSpec getDigestSpec() {
+    public GordianDigestSpec getDigestSpec() {
         return theDigest;
     }
 

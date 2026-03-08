@@ -28,7 +28,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.keystore.GordianKeyStoreEnt
 import io.github.tonywasher.joceanus.gordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStoreKey;
 import io.github.tonywasher.joceanus.gordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStorePair;
 import io.github.tonywasher.joceanus.gordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStoreSet;
-import io.github.tonywasher.joceanus.gordianknot.api.lock.spec.GordianNewPasswordLockSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.lock.spec.GordianPasswordLockSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.zip.GordianZipFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.zip.GordianZipLock;
 import io.github.tonywasher.joceanus.gordianknot.api.zip.GordianZipWriteFile;
@@ -87,7 +87,7 @@ public class GordianCoreKeyStore
     /**
      * The passwordLockSpec.
      */
-    private final GordianNewPasswordLockSpec thePasswordLockSpec;
+    private final GordianPasswordLockSpec thePasswordLockSpec;
 
     /**
      * The map of certificates by Subject.
@@ -111,7 +111,7 @@ public class GordianCoreKeyStore
      * @param pSpec    the passwordLockSpec
      */
     GordianCoreKeyStore(final GordianBaseFactory pFactory,
-                        final GordianNewPasswordLockSpec pSpec) {
+                        final GordianPasswordLockSpec pSpec) {
         /* Store parameters */
         theFactory = pFactory;
         thePasswordLockSpec = pSpec;
@@ -132,7 +132,7 @@ public class GordianCoreKeyStore
      *
      * @return the passwordLockSpec
      */
-    public GordianNewPasswordLockSpec getPasswordLockSpec() {
+    public GordianPasswordLockSpec getPasswordLockSpec() {
         return thePasswordLockSpec;
     }
 

@@ -18,8 +18,8 @@ package io.github.tonywasher.joceanus.gordianknot.impl.jca;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSubSpec.GordianNewDigestState;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestType;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSubSpec.GordianDigestState;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestType;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.digest.GordianCoreDigest;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
@@ -102,7 +102,7 @@ public final class JcaDigest
      */
     static String getSignAlgorithm(final GordianCoreDigestSpec pDigestSpec) throws GordianException {
         /* If this is a sha2 extended algorithm */
-        if (GordianNewDigestType.SHA2.equals(pDigestSpec.getDigestType())
+        if (GordianDigestType.SHA2.equals(pDigestSpec.getDigestType())
                 && pDigestSpec.isSha2Hybrid()) {
             return GordianLength.LEN_256.equals(pDigestSpec.getDigestLength())
                     ? "SHA512(256)"
@@ -122,7 +122,7 @@ public final class JcaDigest
      */
     static String getHMacAlgorithm(final GordianCoreDigestSpec pDigestSpec) throws GordianException {
         /* If this is a sha2 extended algorithm */
-        if (GordianNewDigestType.SHA2.equals(pDigestSpec.getDigestType())
+        if (GordianDigestType.SHA2.equals(pDigestSpec.getDigestType())
                 && pDigestSpec.isSha2Hybrid()) {
             return GordianLength.LEN_256.equals(pDigestSpec.getDigestLength())
                     ? "SHA512/256"
@@ -162,7 +162,7 @@ public final class JcaDigest
      */
     static String getAlgorithm(final GordianCoreDigestSpec pDigestSpec) throws GordianException {
         /* Access digest details */
-        final GordianNewDigestType myType = pDigestSpec.getDigestType();
+        final GordianDigestType myType = pDigestSpec.getDigestType();
         final GordianLength myLen = pDigestSpec.getDigestLength();
 
         /* Switch on digestType */
@@ -258,17 +258,17 @@ public final class JcaDigest
      */
     private static String getSHA2Algorithm(final GordianCoreDigestSpec pSpec) {
         /* Access lengths */
-        final GordianNewDigestState myState = pSpec.getDigestState();
+        final GordianDigestState myState = pSpec.getDigestState();
         final GordianLength myLen = pSpec.getDigestLength();
 
         /* Switch on length */
         switch (myLen) {
             case LEN_224:
-                return GordianNewDigestState.STATE256.equals(myState)
+                return GordianDigestState.STATE256.equals(myState)
                         ? "SHA224"
                         : "SHA-512/224";
             case LEN_256:
-                return GordianNewDigestState.STATE256.equals(myState)
+                return GordianDigestState.STATE256.equals(myState)
                         ? "SHA256"
                         : "SHA-512/256";
             case LEN_384:
@@ -339,7 +339,7 @@ public final class JcaDigest
      * @param pDigestType the digest type
      * @return true/false
      */
-    static boolean isHMacSupported(final GordianNewDigestType pDigestType) {
+    static boolean isHMacSupported(final GordianDigestType pDigestType) {
         switch (pDigestType) {
             case BLAKE2:
             case BLAKE3:

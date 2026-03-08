@@ -16,14 +16,15 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.impl.core.agree;
 
-import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementKDF;
-import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementType;
+import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementKDF;
+import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementType;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.agree.GordianCoreAgreementCalculator.GordianDerivationId;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianDataConverter;
@@ -31,7 +32,10 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianIOExceptio
 import io.github.tonywasher.joceanus.gordianknot.impl.core.kdf.GordianHKDFEngine;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.kdf.GordianHKDFParams;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianCompositeKeyPair;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.agree.GordianCoreAgreementSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.agree.GordianCoreAgreementSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianCoreDigestSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairSpec;
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1OctetString;
 import org.bouncycastle.asn1.ASN1Sequence;
@@ -79,7 +83,7 @@ public class GordianCoreAgreementComposite extends GordianCoreAgreementEngine {
      * @throws GordianException on error
      */
     GordianCoreAgreementComposite(final GordianCoreAgreementSupplier pSupplier,
-                                  final GordianAgreementSpec pSpec,
+                                  final GordianCoreAgreementSpec pSpec,
                                   final List<GordianCoreAgreementEngine> pEngines) throws GordianException {
         super(pSupplier, pSpec);
         theFactory = pSupplier.getFactory();
@@ -99,18 +103,20 @@ public class GordianCoreAgreementComposite extends GordianCoreAgreementEngine {
         final List<GordianAgreementSpec> mySpecs = new ArrayList<>();
 
         /* Switch signed agreements to Basic sub agreements */
-        final GordianAgreementType myType = pSpec.getAgreementType().isSigned()
+        final GordianCoreAgreementSpec mySpec = (GordianCoreAgreementSpec) pSpec;
+        final GordianAgreementType myType = mySpec.getCoreAgreementType().isSigned()
                 ? GordianAgreementType.BASIC
                 : pSpec.getAgreementType();
         final GordianAgreementKDF myKDF = pSpec.getKDFType();
 
         /* Loop through the keyPairs */
-        final GordianKeyPairSpec myKeyPairSpec = pSpec.getKeyPairSpec();
+        final GordianAgreementSpecBuilder myBuilder = GordianCoreAgreementSpecBuilder.newInstance();
+        final GordianCoreKeyPairSpec myKeyPairSpec = (GordianCoreKeyPairSpec) pSpec.getKeyPairSpec();
         final Iterator<GordianKeyPairSpec> myIterator = myKeyPairSpec.keySpecIterator();
         while (myIterator.hasNext()) {
-            final GordianKeyPairSpec mySpec = myIterator.next();
+            final GordianKeyPairSpec myKeySpec = myIterator.next();
             /* Determine the agreementType (note that we have no confirmation) */
-            mySpecs.add(new GordianAgreementSpec(mySpec, myType, myKDF));
+            mySpecs.add(myBuilder.agree(myKeySpec, myType, myKDF));
         }
 
         /* Return the list */
@@ -168,7 +174,7 @@ public class GordianCoreAgreementComposite extends GordianCoreAgreementEngine {
         }
 
         /* Sort out the result if anonymous */
-        if (theState.getSpec().getAgreementType().isAnonymous()) {
+        if (theState.getSpec().getCoreAgreementType().isAnonymous()) {
             mergeResults();
         }
     }
@@ -217,7 +223,7 @@ public class GordianCoreAgreementComposite extends GordianCoreAgreementEngine {
         }
 
         /* Sort out the result if no confirm */
-        if (!Boolean.TRUE.equals(theState.getSpec().withConfirm())) {
+        if (!theState.getSpec().withConfirm()) {
             mergeResults();
         }
     }
@@ -226,7 +232,7 @@ public class GordianCoreAgreementComposite extends GordianCoreAgreementEngine {
     public void processServerHello() throws GordianException {
         /* Access the client and server keyPairs */
         final GordianCoreAgreementParticipant myServer = theState.getServer();
-        final boolean isSigned = theState.getSpec().getAgreementType().isSigned();
+        final boolean isSigned = theState.getSpec().getCoreAgreementType().isSigned();
         final GordianCompositeKeyPair myEphemeralKeyPair = (GordianCompositeKeyPair) myServer.getEphemeralKeyPair();
         final Iterator<GordianKeyPair> myEphemeralIterator = myEphemeralKeyPair == null ? null : myEphemeralKeyPair.iterator();
 
@@ -268,8 +274,8 @@ public class GordianCoreAgreementComposite extends GordianCoreAgreementEngine {
         final GordianHKDFParams myParams = GordianHKDFParams.extractOnly();
         try {
             /* Create the HKDF parameters */
-            final GordianNewDigestSpecBuilder myBuilder = GordianCoreDigestSpecBuilder.newInstance();
-            final GordianNewDigestSpec myDigestSpec = myBuilder.generic(GordianDerivationId.COMPOSITE.getDigestType());
+            final GordianDigestSpecBuilder myBuilder = GordianCoreDigestSpecBuilder.newInstance();
+            final GordianDigestSpec myDigestSpec = myBuilder.digest(GordianDerivationId.COMPOSITE.getDigestType());
             Random myRandom = null;
 
             /* Loop through the engines */

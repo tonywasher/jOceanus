@@ -18,9 +18,9 @@ package io.github.tonywasher.joceanus.gordianknot.impl.core.digest;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpecBuilder;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestType;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestType;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseData;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
@@ -68,7 +68,7 @@ public abstract class GordianCoreDigestFactory
     }
 
     @Override
-    public GordianNewDigestSpecBuilder newDigestSpecBuilder() {
+    public GordianDigestSpecBuilder newDigestSpecBuilder() {
         return GordianCoreDigestSpecBuilder.newInstance();
     }
 
@@ -78,7 +78,7 @@ public abstract class GordianCoreDigestFactory
      * @param pSpec the digestSpec.
      * @return the Identifier
      */
-    public AlgorithmIdentifier getIdentifierForSpec(final GordianNewDigestSpec pSpec) {
+    public AlgorithmIdentifier getIdentifierForSpec(final GordianDigestSpec pSpec) {
         return getDigestAlgIds().getIdentifierForSpec(pSpec);
     }
 
@@ -105,12 +105,12 @@ public abstract class GordianCoreDigestFactory
     }
 
     @Override
-    public Predicate<GordianNewDigestSpec> supportedDigestSpecs() {
+    public Predicate<GordianDigestSpec> supportedDigestSpecs() {
         return this::validDigestSpec;
     }
 
     @Override
-    public Predicate<GordianNewDigestType> supportedDigestTypes() {
+    public Predicate<GordianDigestType> supportedDigestTypes() {
         return t -> theFactory.getValidator().validDigestType(t);
     }
 
@@ -120,7 +120,7 @@ public abstract class GordianCoreDigestFactory
      * @param pDigestSpec the digestSpec
      * @throws GordianException on error
      */
-    public void checkDigestSpec(final GordianNewDigestSpec pDigestSpec) throws GordianException {
+    public void checkDigestSpec(final GordianDigestSpec pDigestSpec) throws GordianException {
         /* Check validity of DigestType */
         if (!supportedDigestSpecs().test(pDigestSpec)) {
             throw new GordianDataException(GordianBaseData.getInvalidText(pDigestSpec));
@@ -133,7 +133,7 @@ public abstract class GordianCoreDigestFactory
      * @param pDigestSpec the digestSpec
      * @return true/false
      */
-    public boolean validDigestSpec(final GordianNewDigestSpec pDigestSpec) {
+    public boolean validDigestSpec(final GordianDigestSpec pDigestSpec) {
         /* Reject invalid digestSpec */
         if (pDigestSpec == null || !pDigestSpec.isValid()) {
             return false;
@@ -150,7 +150,7 @@ public abstract class GordianCoreDigestFactory
     }
 
     @Override
-    public List<GordianNewDigestSpec> listAllSupportedSpecs() {
+    public List<GordianDigestSpec> listAllSupportedSpecs() {
         return listAllPossibleSpecs()
                 .stream()
                 .filter(supportedDigestSpecs())
@@ -158,14 +158,14 @@ public abstract class GordianCoreDigestFactory
     }
 
     @Override
-    public List<GordianNewDigestType> listAllSupportedTypes() {
-        return Arrays.stream(GordianNewDigestType.values())
+    public List<GordianDigestType> listAllSupportedTypes() {
+        return Arrays.stream(GordianDigestType.values())
                 .filter(supportedDigestTypes())
                 .collect(Collectors.toCollection(ArrayList::new));
     }
 
     @Override
-    public List<GordianNewDigestSpec> listAllPossibleSpecs() {
+    public List<GordianDigestSpec> listAllPossibleSpecs() {
         return GordianCoreDigestSpecBuilder.listAllPossibleSpecs();
     }
 }

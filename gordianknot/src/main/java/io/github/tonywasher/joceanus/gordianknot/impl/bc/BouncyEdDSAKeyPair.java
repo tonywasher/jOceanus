@@ -18,15 +18,16 @@ package io.github.tonywasher.joceanus.gordianknot.impl.bc;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignParams;
-import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignatureSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPrivateKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPublicKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianKeyPairValidity;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.sign.GordianCoreSignature;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairSpec;
 import org.bouncycastle.asn1.ASN1Encoding;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
@@ -441,7 +442,8 @@ public final class BouncyEdDSAKeyPair {
          */
         private static Signer createSigner(final GordianKeyPair pKeyPair) {
             /* Determine the EdwardsCurve */
-            final boolean is25519 = pKeyPair.getKeyPairSpec().getEdwardsElliptic().is25519();
+            final GordianCoreKeyPairSpec myKeySpec = (GordianCoreKeyPairSpec) pKeyPair.getKeyPairSpec();
+            final boolean is25519 = myKeySpec.getEdwardsSpec().is25519();
             final byte[] myContext = new byte[0];
 
             /* Create the internal digests */
@@ -501,11 +503,6 @@ public final class BouncyEdDSAKeyPair {
         @Override
         protected BouncyKeyPair getKeyPair() {
             return (BouncyKeyPair) super.getKeyPair();
-        }
-
-        @Override
-        public GordianBaseFactory getFactory() {
-            return (GordianBaseFactory) super.getFactory();
         }
 
         @Override

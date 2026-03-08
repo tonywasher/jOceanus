@@ -18,7 +18,7 @@ package io.github.tonywasher.joceanus.gordianknot.impl.bc;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignature;
-import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignatureSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyDSAKeyPair.BouncyDSASignature;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyDSTUKeyPair.BouncyDSTUSignature;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyEdDSAKeyPair.BouncyEdDSASignature;
@@ -84,9 +84,9 @@ public class BouncySignatureFactory
                 return new BouncyRSASignature(getFactory(), pSignatureSpec);
             case EC:
                 return new BouncyECSignature(getFactory(), pSignatureSpec);
-            case DSTU4145:
+            case DSTU:
                 return new BouncyDSTUSignature(getFactory(), pSignatureSpec);
-            case GOST2012:
+            case GOST:
                 return new BouncyGOSTSignature(getFactory(), pSignatureSpec);
             case SM2:
                 return new BouncySM2Signature(getFactory(), pSignatureSpec);

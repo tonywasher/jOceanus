@@ -20,15 +20,15 @@ import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigest;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpecBuilder;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestType;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestType;
 import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianBadCredentialsException;
-import io.github.tonywasher.joceanus.gordianknot.api.lock.spec.GordianNewPasswordLockSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.lock.spec.GordianPasswordLockSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMac;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianNewMacSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianNewMacSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianMacSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianMacSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianDataConverter;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianIdManager;
@@ -54,7 +54,7 @@ public final class GordianPasswordLockRecipe {
     /**
      * The PasswordLockSpec.
      */
-    private final GordianNewPasswordLockSpec theLockSpec;
+    private final GordianPasswordLockSpec theLockSpec;
 
     /**
      * The Recipe.
@@ -93,7 +93,7 @@ public final class GordianPasswordLockRecipe {
      * @param pLockSpec the passwordLockSpec
      */
     GordianPasswordLockRecipe(final GordianBaseFactory pFactory,
-                              final GordianNewPasswordLockSpec pLockSpec) {
+                              final GordianPasswordLockSpec pLockSpec) {
         /* Access the secureRandom */
         final SecureRandom myRandom = pFactory.getRandomSource().getRandom();
 
@@ -224,8 +224,8 @@ public final class GordianPasswordLockRecipe {
         final GordianMacFactory myMacs = pFactory.getMacFactory();
 
         /* Create the primeMac */
-        final GordianNewMacSpecBuilder myMacBuilder = myMacs.newMacSpecBuilder();
-        GordianNewMacSpec myMacSpec = myMacBuilder.hMac(theParams.getPrimeDigest());
+        final GordianMacSpecBuilder myMacBuilder = myMacs.newMacSpecBuilder();
+        GordianMacSpec myMacSpec = myMacBuilder.hMac(theParams.getPrimeDigest());
         final GordianMac myPrimeMac = myMacs.createMac(myMacSpec);
         myPrimeMac.initKeyBytes(pPassword);
 
@@ -240,8 +240,8 @@ public final class GordianPasswordLockRecipe {
         myTertiaryMac.initKeyBytes(pPassword);
 
         /* Create the secretMac */
-        final GordianNewDigestSpecBuilder myBuilder = GordianCoreDigestSpecBuilder.newInstance();
-        myMacSpec = myMacBuilder.hMac(myBuilder.generic(theParams.getSecretDigest(), GordianLength.LEN_512));
+        final GordianDigestSpecBuilder myBuilder = GordianCoreDigestSpecBuilder.newInstance();
+        myMacSpec = myMacBuilder.hMac(myBuilder.digest(theParams.getSecretDigest(), GordianLength.LEN_512));
         final GordianMac mySecretMac = myMacs.createMac(myMacSpec);
         mySecretMac.initKeyBytes(pPassword);
 
@@ -256,7 +256,7 @@ public final class GordianPasswordLockRecipe {
         final byte[] mySecretHash = new byte[mySecretMac.getMacSize()];
 
         /* Access final digest */
-        final GordianNewDigestSpec myDigestSpec = myBuilder.generic(theParams.getExternalDigest(), GordianLength.LEN_512);
+        final GordianDigestSpec myDigestSpec = myBuilder.digest(theParams.getExternalDigest(), GordianLength.LEN_512);
         final GordianDigest myDigest = myDigests.createDigest(myDigestSpec);
 
         /* Initialise the hash input values as the salt bytes */
@@ -363,17 +363,17 @@ public final class GordianPasswordLockRecipe {
         /**
          * The secret hMac type.
          */
-        private final GordianNewDigestType theSecretDigest;
+        private final GordianDigestType theSecretDigest;
 
         /**
          * The hMac types.
          */
-        private final GordianNewDigestType[] theDigests;
+        private final GordianDigestType[] theDigests;
 
         /**
          * The external Digest type.
          */
-        private final GordianNewDigestType theExternalDigest;
+        private final GordianDigestType theExternalDigest;
 
         /**
          * The Adjustment.
@@ -440,7 +440,7 @@ public final class GordianPasswordLockRecipe {
          *
          * @return the digest type
          */
-        GordianNewDigestType getPrimeDigest() {
+        GordianDigestType getPrimeDigest() {
             return theDigests[0];
         }
 
@@ -449,7 +449,7 @@ public final class GordianPasswordLockRecipe {
          *
          * @return the digest type
          */
-        GordianNewDigestType getSecondaryDigest() {
+        GordianDigestType getSecondaryDigest() {
             return theDigests[1];
         }
 
@@ -458,7 +458,7 @@ public final class GordianPasswordLockRecipe {
          *
          * @return the digest type
          */
-        GordianNewDigestType getTertiaryDigest() {
+        GordianDigestType getTertiaryDigest() {
             return theDigests[2];
         }
 
@@ -467,7 +467,7 @@ public final class GordianPasswordLockRecipe {
          *
          * @return the digest type
          */
-        GordianNewDigestType getSecretDigest() {
+        GordianDigestType getSecretDigest() {
             return theSecretDigest;
         }
 
@@ -476,7 +476,7 @@ public final class GordianPasswordLockRecipe {
          *
          * @return the digest type
          */
-        GordianNewDigestType getExternalDigest() {
+        GordianDigestType getExternalDigest() {
             return theExternalDigest;
         }
 

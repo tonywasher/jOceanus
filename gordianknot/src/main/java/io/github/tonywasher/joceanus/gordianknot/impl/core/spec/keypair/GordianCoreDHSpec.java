@@ -17,11 +17,11 @@
 
 package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair;
 
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewDHSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianDHSpec;
 import org.bouncycastle.crypto.agreement.DHStandardGroups;
 import org.bouncycastle.crypto.params.DHParameters;
 
-import java.util.Collection;
 import java.util.EnumMap;
 import java.util.Map;
 
@@ -32,19 +32,24 @@ public final class GordianCoreDHSpec {
     /**
      * The specMap.
      */
-    private static final Map<GordianNewDHSpec, GordianCoreDHSpec> SPECMAP = newSpecMap();
+    private static final Map<GordianDHSpec, GordianCoreDHSpec> SPECMAP = newSpecMap();
+
+    /**
+     * The specArray.
+     */
+    private static final GordianCoreDHSpec[] VALUES = SPECMAP.values().toArray(new GordianCoreDHSpec[0]);
 
     /**
      * The Spec.
      */
-    private final GordianNewDHSpec theSpec;
+    private final GordianDHSpec theSpec;
 
     /**
      * Constructor.
      *
      * @param pSpec the spec
      */
-    private GordianCoreDHSpec(final GordianNewDHSpec pSpec) {
+    private GordianCoreDHSpec(final GordianDHSpec pSpec) {
         theSpec = pSpec;
     }
 
@@ -53,10 +58,40 @@ public final class GordianCoreDHSpec {
      *
      * @return the spec
      */
-    public GordianNewDHSpec getSpec() {
+    public GordianDHSpec getSpec() {
         return theSpec;
     }
 
+    /**
+     * Obtain the length for a spec.
+     *
+     * @return the length
+     */
+    public int getLength() {
+        switch (theSpec) {
+            case STD1024:
+                return GordianLength.LEN_1024.getLength();
+            case STD1536:
+                return GordianLength.LEN_1536.getLength();
+            case STD2048:
+            case FFDHE2048:
+                return GordianLength.LEN_2048.getLength();
+            case STD3072:
+            case FFDHE3072:
+                return GordianLength.LEN_3072.getLength();
+            case STD4096:
+            case FFDHE4096:
+                return GordianLength.LEN_4096.getLength();
+            case STD6144:
+            case FFDHE6144:
+                return GordianLength.LEN_6144.getLength();
+            case STD8192:
+            case FFDHE8192:
+                return GordianLength.LEN_8192.getLength();
+            default:
+                throw new IllegalArgumentException("Unknown GordianNewRSASpec");
+        }
+    }
 
     /**
      * Obtain the parameters.
@@ -90,7 +125,7 @@ public final class GordianCoreDHSpec {
             case FFDHE8192:
                 return DHStandardGroups.rfc7919_ffdhe8192;
             default:
-                throw new IllegalArgumentException("Unknown GordianNewDHSpec");
+                throw new IllegalArgumentException("Unknown GordianDHSpec");
         }
     }
 
@@ -142,7 +177,7 @@ public final class GordianCoreDHSpec {
      * @return the core spec
      */
     public static GordianCoreDHSpec mapCoreSpec(final Object pSpec) {
-        return pSpec instanceof GordianNewDHSpec mySpec ? SPECMAP.get(mySpec) : null;
+        return pSpec instanceof GordianDHSpec mySpec ? SPECMAP.get(mySpec) : null;
     }
 
     /**
@@ -150,9 +185,9 @@ public final class GordianCoreDHSpec {
      *
      * @return the type map
      */
-    private static Map<GordianNewDHSpec, GordianCoreDHSpec> newSpecMap() {
-        final Map<GordianNewDHSpec, GordianCoreDHSpec> myMap = new EnumMap<>(GordianNewDHSpec.class);
-        for (GordianNewDHSpec mySpec : GordianNewDHSpec.values()) {
+    private static Map<GordianDHSpec, GordianCoreDHSpec> newSpecMap() {
+        final Map<GordianDHSpec, GordianCoreDHSpec> myMap = new EnumMap<>(GordianDHSpec.class);
+        for (GordianDHSpec mySpec : GordianDHSpec.values()) {
             myMap.put(mySpec, new GordianCoreDHSpec(mySpec));
         }
         return myMap;
@@ -163,7 +198,7 @@ public final class GordianCoreDHSpec {
      *
      * @return the values
      */
-    public static Collection<GordianCoreDHSpec> values() {
-        return SPECMAP.values();
+    public static GordianCoreDHSpec[] values() {
+        return VALUES;
     }
 }

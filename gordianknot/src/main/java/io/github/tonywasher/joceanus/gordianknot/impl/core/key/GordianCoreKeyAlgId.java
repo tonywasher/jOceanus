@@ -19,18 +19,18 @@ package io.github.tonywasher.joceanus.gordianknot.impl.core.key;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeySpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeyType;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeySpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeySpecBuilder;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeyType;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeyType;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeySpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeyType;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKeyLengths;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianNewMacSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianNewMacSpecBuilder;
-import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianNewMacType;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianMacSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianMacSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianMacType;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianASN1Util;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.digest.GordianCoreDigestAlgId;
@@ -109,19 +109,19 @@ public class GordianCoreKeyAlgId {
             final GordianLength myKeyLen = myIterator.next();
 
             /* Loop through the possible SymKeySpecs */
-            for (GordianNewSymKeySpec mySpec : myCipherFactory.listAllSupportedSymKeySpecs(myKeyLen)) {
+            for (GordianSymKeySpec mySpec : myCipherFactory.listAllSupportedSymKeySpecs(myKeyLen)) {
                 /* Add any non-standard symKeys */
                 ensureSymKey(mySpec);
             }
 
             /* Loop through the possible StreamKeySpecs */
-            for (GordianNewStreamKeySpec mySpec : myCipherFactory.listAllSupportedStreamKeySpecs(myKeyLen)) {
+            for (GordianStreamKeySpec mySpec : myCipherFactory.listAllSupportedStreamKeySpecs(myKeyLen)) {
                 /* Add any non-standard streamKeys */
                 ensureStreamKey(mySpec);
             }
 
             /* Loop through the possible MacSpecs */
-            for (GordianNewMacSpec mySpec : myMacFactory.listAllSupportedSpecs(myKeyLen)) {
+            for (GordianMacSpec mySpec : myMacFactory.listAllSupportedSpecs(myKeyLen)) {
                 /* Add any non-standard macs */
                 ensureMac(mySpec);
             }
@@ -153,7 +153,7 @@ public class GordianCoreKeyAlgId {
      *
      * @param pSpec the symKeySpec
      */
-    private void ensureSymKey(final GordianNewSymKeySpec pSpec) {
+    private void ensureSymKey(final GordianSymKeySpec pSpec) {
         /* If the key is not already known */
         if (!theSpecMap.containsKey(pSpec)) {
             addSymKey(pSpec);
@@ -165,7 +165,7 @@ public class GordianCoreKeyAlgId {
      *
      * @param pSpec the keySpec
      */
-    private void addSymKey(final GordianNewSymKeySpec pSpec) {
+    private void addSymKey(final GordianSymKeySpec pSpec) {
         /* Build SymKey id */
         final ASN1ObjectIdentifier myId = appendSymKeyOID(SYMKEYOID, true, pSpec);
 
@@ -183,9 +183,9 @@ public class GordianCoreKeyAlgId {
      */
     public static ASN1ObjectIdentifier appendSymKeyOID(final ASN1ObjectIdentifier pBaseOID,
                                                        final boolean pAddLength,
-                                                       final GordianNewSymKeySpec pSpec) {
+                                                       final GordianSymKeySpec pSpec) {
         /* Create a branch based on the KeyType */
-        final GordianNewSymKeyType myType = pSpec.getSymKeyType();
+        final GordianSymKeyType myType = pSpec.getSymKeyType();
         ASN1ObjectIdentifier myId = pBaseOID.branch(Integer.toString(myType.ordinal() + 1));
 
         /* Add blockLength */
@@ -219,7 +219,7 @@ public class GordianCoreKeyAlgId {
      *
      * @param pSpec the streamKeySpec
      */
-    private void ensureStreamKey(final GordianNewStreamKeySpec pSpec) {
+    private void ensureStreamKey(final GordianStreamKeySpec pSpec) {
         /* If the key is not already known */
         if (!theSpecMap.containsKey(pSpec)) {
             addStreamKey(pSpec);
@@ -231,7 +231,7 @@ public class GordianCoreKeyAlgId {
      *
      * @param pSpec the keySpec
      */
-    private void addStreamKey(final GordianNewStreamKeySpec pSpec) {
+    private void addStreamKey(final GordianStreamKeySpec pSpec) {
         /* Build StreamKey id */
         final ASN1ObjectIdentifier myId = appendStreamKeyOID(STREAMKEYOID, pSpec);
 
@@ -247,9 +247,9 @@ public class GordianCoreKeyAlgId {
      * @return the resulting OID
      */
     public static ASN1ObjectIdentifier appendStreamKeyOID(final ASN1ObjectIdentifier pBaseOID,
-                                                          final GordianNewStreamKeySpec pSpec) {
+                                                          final GordianStreamKeySpec pSpec) {
         /* Create a branch based on the KeyType */
-        final GordianNewStreamKeyType myType = pSpec.getStreamKeyType();
+        final GordianStreamKeyType myType = pSpec.getStreamKeyType();
         ASN1ObjectIdentifier myId = pBaseOID.branch(Integer.toString(myType.ordinal() + 1));
 
         /* Add keyLength */
@@ -269,9 +269,9 @@ public class GordianCoreKeyAlgId {
      * Add well-known macs.
      */
     private void addWellKnownMacs() {
-        final GordianNewDigestSpecBuilder myDigestBuilder = GordianCoreDigestSpecBuilder.newInstance();
-        final GordianNewMacSpecBuilder myMacBuilder = GordianCoreMacSpecBuilder.newInstance();
-        final GordianNewSymKeySpecBuilder mySymBuilder = GordianCoreSymKeySpecBuilder.newInstance();
+        final GordianDigestSpecBuilder myDigestBuilder = GordianCoreDigestSpecBuilder.newInstance();
+        final GordianMacSpecBuilder myMacBuilder = GordianCoreMacSpecBuilder.newInstance();
+        final GordianSymKeySpecBuilder mySymBuilder = GordianCoreSymKeySpecBuilder.newInstance();
         addToMaps(myMacBuilder.hMac(myDigestBuilder.gost()), new AlgorithmIdentifier(CryptoProObjectIdentifiers.gostR3411Hmac, DERNull.INSTANCE));
         addToMaps(myMacBuilder.hMac(myDigestBuilder.streebog(GordianLength.LEN_256)),
                 new AlgorithmIdentifier(RosstandartObjectIdentifiers.id_tc26_hmac_gost_3411_12_256, DERNull.INSTANCE));
@@ -299,7 +299,7 @@ public class GordianCoreKeyAlgId {
      *
      * @param pSpec the macSpec
      */
-    private void ensureMac(final GordianNewMacSpec pSpec) {
+    private void ensureMac(final GordianMacSpec pSpec) {
         /* If the mac is not already known */
         if (!theSpecMap.containsKey(pSpec)) {
             addMac(pSpec);
@@ -311,17 +311,17 @@ public class GordianCoreKeyAlgId {
      *
      * @param pSpec the macSpec
      */
-    private void addMac(final GordianNewMacSpec pSpec) {
+    private void addMac(final GordianMacSpec pSpec) {
         /* Create a branch for mac based on the MacType */
-        final GordianNewMacType myType = pSpec.getMacType();
+        final GordianMacType myType = pSpec.getMacType();
         ASN1ObjectIdentifier myId = MACOID.branch(Integer.toString(myType.ordinal() + 1));
         myId = myId.branch(Integer.toString(pSpec.getKeyLength().ordinal() + 1));
 
         /* Obtain the subSpec */
         final Object mySubSpec = pSpec.getSubSpec();
-        if (mySubSpec instanceof GordianNewDigestSpec mySpec) {
+        if (mySubSpec instanceof GordianDigestSpec mySpec) {
             myId = GordianCoreDigestAlgId.appendDigestOID(myId, mySpec);
-        } else if (mySubSpec instanceof GordianNewSymKeySpec mySpec) {
+        } else if (mySubSpec instanceof GordianSymKeySpec mySpec) {
             myId = appendSymKeyOID(myId, false, mySpec);
         } else if (mySubSpec instanceof GordianLength myLength) {
             myId = myId.branch(Integer.toString(myLength.ordinal() + 1));

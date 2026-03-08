@@ -18,13 +18,14 @@ package io.github.tonywasher.joceanus.gordianknot.impl.jca;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairGenerator;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairType;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianNTRUPrimeSpec.GordianNTRUPrimeType;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairType;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNTRUPrimeSpec.GordianNTRUPrimeType;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseData;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianCoreKeyPairFactory;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaBIKEKeyPairGenerator;
 import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaCMCEKeyPairGenerator;
 import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaDHKeyPairGenerator;
@@ -112,6 +113,7 @@ public class JcaKeyPairFactory
      * @throws GordianException on error
      */
     private JcaKeyPairGenerator getJcaKeyPairGenerator(final GordianKeyPairSpec pKeySpec) throws GordianException {
+        final GordianCoreKeyPairSpec myKeySpec = (GordianCoreKeyPairSpec) pKeySpec;
         switch (pKeySpec.getKeyPairType()) {
             case RSA:
                 return new JcaRSAKeyPairGenerator(theFactory, pKeySpec);
@@ -119,8 +121,8 @@ public class JcaKeyPairFactory
                 return new JcaElGamalKeyPairGenerator(theFactory, pKeySpec);
             case EC:
             case SM2:
-            case DSTU4145:
-            case GOST2012:
+            case DSTU:
+            case GOST:
                 return new JcaECKeyPairGenerator(theFactory, pKeySpec);
             case DSA:
                 return new JcaDSAKeyPairGenerator(theFactory, pKeySpec);
@@ -150,7 +152,7 @@ public class JcaKeyPairFactory
             case NTRU:
                 return new JcaNTRUKeyPairGenerator(theFactory, pKeySpec);
             case NTRUPRIME:
-                return pKeySpec.getNTRUPrimeKeySpec().getType() == GordianNTRUPrimeType.NTRUL
+                return myKeySpec.getNTRUPrimeSpec().getType() == GordianNTRUPrimeType.NTRUL
                         ? new JcaNTRULPrimeKeyPairGenerator(theFactory, pKeySpec)
                         : new JcaSNTRUPrimeKeyPairGenerator(theFactory, pKeySpec);
             case FALCON:

@@ -17,7 +17,7 @@
 package io.github.tonywasher.joceanus.gordianknot.impl.core.lock;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
-import io.github.tonywasher.joceanus.gordianknot.api.lock.spec.GordianNewPasswordLockSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.lock.spec.GordianPasswordLockSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianASN1Util;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianASN1Util.GordianASN1Object;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
@@ -67,7 +67,7 @@ public class GordianPasswordLockASN1
      * @param pHashBytes the hash bytes
      * @param pPayload   the payload
      */
-    public GordianPasswordLockASN1(final GordianNewPasswordLockSpec pLockSpec,
+    public GordianPasswordLockASN1(final GordianPasswordLockSpec pLockSpec,
                                    final byte[] pHashBytes,
                                    final byte[] pPayload) {
         /* Store the Spec */
@@ -125,7 +125,7 @@ public class GordianPasswordLockASN1
      *
      * @return the lockSpec
      */
-    public GordianNewPasswordLockSpec getLockSpec() {
+    public GordianPasswordLockSpec getLockSpec() {
         return theLockSpec.getLockSpec();
     }
 

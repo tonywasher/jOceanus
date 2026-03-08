@@ -17,17 +17,26 @@
 
 package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher;
 
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewCipherMode;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewPadding;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymCipherSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymCipherSpecBuilder;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianCipherMode;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianPadding;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymCipherSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeySpecBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Core SymCipherSpec Builder.
+ */
 public final class GordianCoreSymCipherSpecBuilder
-        implements GordianNewSymCipherSpecBuilder {
+        implements GordianSymCipherSpecBuilder {
+    /**
+     * The symKeySpec builder.
+     */
+    private final GordianSymKeySpecBuilder theBuilder;
+
     /**
      * The keySpec.
      */
@@ -36,17 +45,18 @@ public final class GordianCoreSymCipherSpecBuilder
     /**
      * The mode.
      */
-    private GordianNewCipherMode theMode;
+    private GordianCipherMode theMode;
 
     /**
      * The padding.
      */
-    private GordianNewPadding thePadding;
+    private GordianPadding thePadding;
 
     /**
      * Private constructor.
      */
     private GordianCoreSymCipherSpecBuilder() {
+        theBuilder = GordianCoreSymKeySpecBuilder.newInstance();
     }
 
     /**
@@ -59,27 +69,33 @@ public final class GordianCoreSymCipherSpecBuilder
     }
 
     @Override
-    public GordianNewSymCipherSpecBuilder withKeySpec(final GordianNewSymKeySpec pKeySpec) {
+    public GordianSymCipherSpecBuilder withKeySpec(final GordianSymKeySpec pKeySpec) {
         theKeySpec = (GordianCoreSymKeySpec) pKeySpec;
         return this;
     }
 
     @Override
-    public GordianNewSymCipherSpecBuilder withMode(final GordianNewCipherMode pMode) {
+    public GordianSymCipherSpecBuilder withMode(final GordianCipherMode pMode) {
         theMode = pMode;
         return this;
     }
 
     @Override
-    public GordianNewSymCipherSpecBuilder withPadding(final GordianNewPadding pPadding) {
+    public GordianSymCipherSpecBuilder withPadding(final GordianPadding pPadding) {
         thePadding = pPadding;
         return this;
     }
 
+
     @Override
-    public GordianNewSymCipherSpec build() {
-        thePadding = thePadding == null ? GordianNewPadding.NONE : thePadding;
-        final GordianNewSymCipherSpec mySpec = new GordianCoreSymCipherSpec(theKeySpec, theMode, thePadding);
+    public GordianSymKeySpecBuilder usingSymKeySpecBuilder() {
+        return theBuilder;
+    }
+
+    @Override
+    public GordianSymCipherSpec build() {
+        thePadding = thePadding == null ? GordianPadding.NONE : thePadding;
+        final GordianSymCipherSpec mySpec = new GordianCoreSymCipherSpec(theKeySpec, theMode, thePadding);
         reset();
         return mySpec;
     }
@@ -99,9 +115,9 @@ public final class GordianCoreSymCipherSpecBuilder
      * @param pSpec the keySpec
      * @return the list
      */
-    public static List<GordianNewSymCipherSpec> listAllPossibleSymCipherSpecs(final GordianNewSymKeySpec pSpec) {
+    public static List<GordianSymCipherSpec> listAllPossibleSymCipherSpecs(final GordianSymKeySpec pSpec) {
         /* Create the array list */
-        final List<GordianNewSymCipherSpec> myList = new ArrayList<>();
+        final List<GordianSymCipherSpec> myList = new ArrayList<>();
         final GordianCoreSymKeySpec mySpec = (GordianCoreSymKeySpec) pSpec;
 
         /* Loop through the modes */
@@ -109,13 +125,13 @@ public final class GordianCoreSymCipherSpecBuilder
             /* If the mode has padding */
             if (myMode.hasPadding()) {
                 /* Loop through the paddings */
-                for (GordianNewPadding myPadding : GordianNewPadding.values()) {
+                for (GordianPadding myPadding : GordianPadding.values()) {
                     myList.add(new GordianCoreSymCipherSpec(mySpec, myMode.getMode(), myPadding));
                 }
 
                 /* else no padding */
             } else {
-                myList.add(new GordianCoreSymCipherSpec(mySpec, myMode.getMode(), GordianNewPadding.NONE));
+                myList.add(new GordianCoreSymCipherSpec(mySpec, myMode.getMode(), GordianPadding.NONE));
             }
         }
 

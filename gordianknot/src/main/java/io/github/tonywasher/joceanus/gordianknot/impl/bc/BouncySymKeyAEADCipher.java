@@ -19,8 +19,8 @@ package io.github.tonywasher.joceanus.gordianknot.impl.bc;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherParameters;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymAEADCipher;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymCipherSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.cipher.GordianCoreCipher;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
@@ -38,7 +38,7 @@ import java.util.Arrays;
  * Cipher for BouncyCastle AAD Symmetric Ciphers.
  */
 public class BouncySymKeyAEADCipher
-        extends GordianCoreCipher<GordianNewSymKeySpec>
+        extends GordianCoreCipher<GordianSymKeySpec>
         implements GordianSymAEADCipher {
     /**
      * Cipher.
@@ -58,15 +58,15 @@ public class BouncySymKeyAEADCipher
      * @param pCipher     the cipher
      */
     BouncySymKeyAEADCipher(final GordianBaseFactory pFactory,
-                           final GordianNewSymCipherSpec pCipherSpec,
+                           final GordianSymCipherSpec pCipherSpec,
                            final AEADBlockCipher pCipher) {
         super(pFactory, pCipherSpec);
         theCipher = pCipher;
     }
 
     @Override
-    public BouncyKey<GordianNewSymKeySpec> getKey() {
-        return (BouncyKey<GordianNewSymKeySpec>) super.getKey();
+    public BouncyKey<GordianSymKeySpec> getKey() {
+        return (BouncyKey<GordianSymKeySpec>) super.getKey();
     }
 
     @Override
@@ -74,7 +74,7 @@ public class BouncySymKeyAEADCipher
                      final GordianCipherParameters pParams) throws GordianException {
         /* Process the parameters and access the key */
         processParameters(pParams);
-        final BouncyKey<GordianNewSymKeySpec> myKey = BouncyKey.accessKey(getKey());
+        final BouncyKey<GordianSymKeySpec> myKey = BouncyKey.accessKey(getKey());
 
         /* Initialise the cipher */
         final KeyParameter myKeyParms = new KeyParameter(myKey.getKey());

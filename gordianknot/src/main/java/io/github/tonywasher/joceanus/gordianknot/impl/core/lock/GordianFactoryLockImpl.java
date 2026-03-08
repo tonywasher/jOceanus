@@ -19,7 +19,7 @@ package io.github.tonywasher.joceanus.gordianknot.impl.core.lock;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactory.GordianFactoryLock;
-import io.github.tonywasher.joceanus.gordianknot.api.lock.spec.GordianNewPasswordLockSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.lock.spec.GordianPasswordLockSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianDataConverter;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianParameters;
@@ -61,7 +61,7 @@ public class GordianFactoryLockImpl
      */
     public GordianFactoryLockImpl(final GordianBaseFactory pLockingFactory,
                                   final GordianBaseFactory pFactoryToLock,
-                                  final GordianNewPasswordLockSpec pLockSpec,
+                                  final GordianPasswordLockSpec pLockSpec,
                                   final char[] pPassword) throws GordianException {
         /* Protect from exceptions */
         byte[] myPassword = null;

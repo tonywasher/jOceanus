@@ -16,10 +16,9 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.impl.bc;
 
-import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianNTRUPrimeSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianNTRUPrimeSpec.GordianNTRUPrimeType;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNTRUPrimeSpec.GordianNTRUPrimeType;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyBIKEKeyPair.BouncyBIKEAgreementEngine;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyCMCEKeyPair.BouncyCMCEAgreementEngine;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyDHKeyPair.BouncyDHAnonAgreementEngine;
@@ -49,6 +48,9 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.agree.GordianCoreAgre
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseData;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.agree.GordianCoreAgreementSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreNTRUPrimeSpec;
 
 /**
  * Bouncy Agreement Factory.
@@ -66,39 +68,41 @@ public class BouncyAgreementFactory
 
     @Override
     public GordianCoreAgreementEngine createEngine(final GordianAgreementSpec pSpec) throws GordianException {
+        final GordianCoreAgreementSpec mySpec = (GordianCoreAgreementSpec) pSpec;
         switch (pSpec.getKeyPairSpec().getKeyPairType()) {
             case RSA:
-                return new BouncyRSAAgreementEngine(this, pSpec);
+                return new BouncyRSAAgreementEngine(this, mySpec);
             case EC:
-            case GOST2012:
-            case DSTU4145:
+            case GOST:
+            case DSTU:
             case SM2:
-                return getBCECEngine(pSpec);
+                return getBCECEngine(mySpec);
             case DH:
-                return getBCDHEngine(pSpec);
+                return getBCDHEngine(mySpec);
             case NEWHOPE:
-                return new BouncyNewHopeAgreementEngine(this, pSpec);
+                return new BouncyNewHopeAgreementEngine(this, mySpec);
             case CMCE:
-                return new BouncyCMCEAgreementEngine(this, pSpec);
+                return new BouncyCMCEAgreementEngine(this, mySpec);
             case FRODO:
-                return new BouncyFrodoAgreementEngine(this, pSpec);
+                return new BouncyFrodoAgreementEngine(this, mySpec);
             case SABER:
-                return new BouncySABERAgreementEngine(this, pSpec);
+                return new BouncySABERAgreementEngine(this, mySpec);
             case MLKEM:
-                return new BouncyMLKEMAgreementEngine(this, pSpec);
+                return new BouncyMLKEMAgreementEngine(this, mySpec);
             case HQC:
-                return new BouncyHQCAgreementEngine(this, pSpec);
+                return new BouncyHQCAgreementEngine(this, mySpec);
             case BIKE:
-                return new BouncyBIKEAgreementEngine(this, pSpec);
+                return new BouncyBIKEAgreementEngine(this, mySpec);
             case NTRU:
-                return new BouncyNTRUAgreementEngine(this, pSpec);
+                return new BouncyNTRUAgreementEngine(this, mySpec);
             case NTRUPRIME:
-                final GordianNTRUPrimeSpec mySpec = pSpec.getKeyPairSpec().getNTRUPrimeKeySpec();
-                return mySpec.getType() == GordianNTRUPrimeType.NTRUL
-                        ? new BouncyNTRULPrimeAgreementEngine(this, pSpec)
-                        : new BouncySNTRUPrimeAgreementEngine(this, pSpec);
+                final GordianCoreKeyPairSpec myKeySpec = (GordianCoreKeyPairSpec) pSpec.getKeyPairSpec();
+                final GordianCoreNTRUPrimeSpec myPrimeSpec = myKeySpec.getNTRUPrimeSpec();
+                return myPrimeSpec.getType() == GordianNTRUPrimeType.NTRUL
+                        ? new BouncyNTRULPrimeAgreementEngine(this, mySpec)
+                        : new BouncySNTRUPrimeAgreementEngine(this, mySpec);
             case XDH:
-                return getBCXDHEngine(pSpec);
+                return getBCXDHEngine(mySpec);
             case COMPOSITE:
             default:
                 return super.createEngine(pSpec);
@@ -112,7 +116,7 @@ public class BouncyAgreementFactory
      * @return the Agreement
      * @throws GordianException on error
      */
-    private GordianCoreAgreementEngine getBCECEngine(final GordianAgreementSpec pSpec) throws GordianException {
+    private GordianCoreAgreementEngine getBCECEngine(final GordianCoreAgreementSpec pSpec) throws GordianException {
         switch (pSpec.getAgreementType()) {
             case KEM:
                 return new BouncyECIESAgreementEngine(this, pSpec);
@@ -139,7 +143,7 @@ public class BouncyAgreementFactory
      * @return the Agreement
      * @throws GordianException on error
      */
-    private GordianCoreAgreementEngine getBCDHEngine(final GordianAgreementSpec pSpec) throws GordianException {
+    private GordianCoreAgreementEngine getBCDHEngine(final GordianCoreAgreementSpec pSpec) throws GordianException {
         switch (pSpec.getAgreementType()) {
             case ANON:
                 return new BouncyDHAnonAgreementEngine(this, pSpec);
@@ -162,7 +166,7 @@ public class BouncyAgreementFactory
      * @return the Agreement
      * @throws GordianException on error
      */
-    private GordianCoreAgreementEngine getBCXDHEngine(final GordianAgreementSpec pSpec) throws GordianException {
+    private GordianCoreAgreementEngine getBCXDHEngine(final GordianCoreAgreementSpec pSpec) throws GordianException {
         switch (pSpec.getAgreementType()) {
             case ANON:
                 return new BouncyXDHAnonAgreementEngine(this, pSpec);

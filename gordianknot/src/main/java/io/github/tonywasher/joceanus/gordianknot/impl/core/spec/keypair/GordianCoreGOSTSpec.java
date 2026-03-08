@@ -18,9 +18,8 @@
 package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewGOSTSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianGOSTSpec;
 
-import java.util.Collection;
 import java.util.EnumMap;
 import java.util.Map;
 
@@ -33,19 +32,24 @@ public final class GordianCoreGOSTSpec
     /**
      * The specMap.
      */
-    private static final Map<GordianNewGOSTSpec, GordianCoreGOSTSpec> SPECMAP = newSpecMap();
+    private static final Map<GordianGOSTSpec, GordianCoreGOSTSpec> SPECMAP = newSpecMap();
+
+    /**
+     * The specArray.
+     */
+    private static final GordianCoreGOSTSpec[] VALUES = SPECMAP.values().toArray(new GordianCoreGOSTSpec[0]);
 
     /**
      * The Spec.
      */
-    private final GordianNewGOSTSpec theSpec;
+    private final GordianGOSTSpec theSpec;
 
     /**
      * Constructor.
      *
      * @param pSpec the spec
      */
-    private GordianCoreGOSTSpec(final GordianNewGOSTSpec pSpec) {
+    private GordianCoreGOSTSpec(final GordianGOSTSpec pSpec) {
         theSpec = pSpec;
     }
 
@@ -54,7 +58,7 @@ public final class GordianCoreGOSTSpec
      *
      * @return the spec
      */
-    public GordianNewGOSTSpec getSpec() {
+    public GordianGOSTSpec getSpec() {
         return theSpec;
     }
 
@@ -75,8 +79,9 @@ public final class GordianCoreGOSTSpec
     }
 
     @Override
-    public GordianLength getKeySize() {
-        return theSpec == GordianNewGOSTSpec.GOST256A ? GordianLength.LEN_256 : GordianLength.LEN_512;
+    public int getKeySize() {
+        return theSpec == GordianGOSTSpec.GOST256A
+                ? GordianLength.LEN_256.getLength() : GordianLength.LEN_512.getLength();
     }
 
     /**
@@ -127,7 +132,7 @@ public final class GordianCoreGOSTSpec
      * @return the core spec
      */
     public static GordianCoreGOSTSpec mapCoreSpec(final Object pSpec) {
-        return pSpec instanceof GordianNewGOSTSpec mySpec ? SPECMAP.get(mySpec) : null;
+        return pSpec instanceof GordianGOSTSpec mySpec ? SPECMAP.get(mySpec) : null;
     }
 
     /**
@@ -135,9 +140,9 @@ public final class GordianCoreGOSTSpec
      *
      * @return the type map
      */
-    private static Map<GordianNewGOSTSpec, GordianCoreGOSTSpec> newSpecMap() {
-        final Map<GordianNewGOSTSpec, GordianCoreGOSTSpec> myMap = new EnumMap<>(GordianNewGOSTSpec.class);
-        for (GordianNewGOSTSpec mySpec : GordianNewGOSTSpec.values()) {
+    private static Map<GordianGOSTSpec, GordianCoreGOSTSpec> newSpecMap() {
+        final Map<GordianGOSTSpec, GordianCoreGOSTSpec> myMap = new EnumMap<>(GordianGOSTSpec.class);
+        for (GordianGOSTSpec mySpec : GordianGOSTSpec.values()) {
             myMap.put(mySpec, new GordianCoreGOSTSpec(mySpec));
         }
         return myMap;
@@ -148,7 +153,7 @@ public final class GordianCoreGOSTSpec
      *
      * @return the values
      */
-    public static Collection<GordianCoreGOSTSpec> values() {
-        return SPECMAP.values();
+    public static GordianCoreGOSTSpec[] values() {
+        return VALUES;
     }
 }

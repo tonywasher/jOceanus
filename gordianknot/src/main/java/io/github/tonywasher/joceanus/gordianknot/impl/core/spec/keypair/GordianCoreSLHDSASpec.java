@@ -17,13 +17,12 @@
 
 package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair;
 
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewSLHDSASpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianSLHDSASpec;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.nist.NISTObjectIdentifiers;
 import org.bouncycastle.jcajce.spec.SLHDSAParameterSpec;
 import org.bouncycastle.pqc.crypto.slhdsa.SLHDSAParameters;
 
-import java.util.Collection;
 import java.util.EnumMap;
 import java.util.Map;
 
@@ -34,19 +33,24 @@ public final class GordianCoreSLHDSASpec {
     /**
      * The specMap.
      */
-    private static final Map<GordianNewSLHDSASpec, GordianCoreSLHDSASpec> SPECMAP = newSpecMap();
+    private static final Map<GordianSLHDSASpec, GordianCoreSLHDSASpec> SPECMAP = newSpecMap();
+
+    /**
+     * The specArray.
+     */
+    private static final GordianCoreSLHDSASpec[] VALUES = SPECMAP.values().toArray(new GordianCoreSLHDSASpec[0]);
 
     /**
      * The Spec.
      */
-    private final GordianNewSLHDSASpec theSpec;
+    private final GordianSLHDSASpec theSpec;
 
     /**
      * Constructor.
      *
      * @param pSpec the spec
      */
-    private GordianCoreSLHDSASpec(final GordianNewSLHDSASpec pSpec) {
+    private GordianCoreSLHDSASpec(final GordianSLHDSASpec pSpec) {
         theSpec = pSpec;
     }
 
@@ -55,7 +59,7 @@ public final class GordianCoreSLHDSASpec {
      *
      * @return the spec
      */
-    public GordianNewSLHDSASpec getSpec() {
+    public GordianSLHDSASpec getSpec() {
         return theSpec;
     }
 
@@ -308,7 +312,7 @@ public final class GordianCoreSLHDSASpec {
      * @return the core spec
      */
     public static GordianCoreSLHDSASpec mapCoreSpec(final Object pSpec) {
-        return pSpec instanceof GordianNewSLHDSASpec mySpec ? SPECMAP.get(mySpec) : null;
+        return pSpec instanceof GordianSLHDSASpec mySpec ? SPECMAP.get(mySpec) : null;
     }
 
     /**
@@ -316,9 +320,9 @@ public final class GordianCoreSLHDSASpec {
      *
      * @return the type map
      */
-    private static Map<GordianNewSLHDSASpec, GordianCoreSLHDSASpec> newSpecMap() {
-        final Map<GordianNewSLHDSASpec, GordianCoreSLHDSASpec> myMap = new EnumMap<>(GordianNewSLHDSASpec.class);
-        for (GordianNewSLHDSASpec mySpec : GordianNewSLHDSASpec.values()) {
+    private static Map<GordianSLHDSASpec, GordianCoreSLHDSASpec> newSpecMap() {
+        final Map<GordianSLHDSASpec, GordianCoreSLHDSASpec> myMap = new EnumMap<>(GordianSLHDSASpec.class);
+        for (GordianSLHDSASpec mySpec : GordianSLHDSASpec.values()) {
             myMap.put(mySpec, new GordianCoreSLHDSASpec(mySpec));
         }
         return myMap;
@@ -329,7 +333,7 @@ public final class GordianCoreSLHDSASpec {
      *
      * @return the values
      */
-    public static Collection<GordianCoreSLHDSASpec> values() {
-        return SPECMAP.values();
+    public static GordianCoreSLHDSASpec[] values() {
+        return VALUES;
     }
 }

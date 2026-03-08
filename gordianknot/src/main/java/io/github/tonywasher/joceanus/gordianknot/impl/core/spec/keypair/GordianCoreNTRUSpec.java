@@ -17,13 +17,12 @@
 
 package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair;
 
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewNTRUSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNTRUSpec;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.bc.BCObjectIdentifiers;
 import org.bouncycastle.pqc.crypto.ntru.NTRUParameters;
 import org.bouncycastle.pqc.jcajce.spec.NTRUParameterSpec;
 
-import java.util.Collection;
 import java.util.EnumMap;
 import java.util.Map;
 
@@ -34,19 +33,24 @@ public final class GordianCoreNTRUSpec {
     /**
      * The specMap.
      */
-    private static final Map<GordianNewNTRUSpec, GordianCoreNTRUSpec> SPECMAP = newSpecMap();
+    private static final Map<GordianNTRUSpec, GordianCoreNTRUSpec> SPECMAP = newSpecMap();
+
+    /**
+     * The specArray.
+     */
+    private static final GordianCoreNTRUSpec[] VALUES = SPECMAP.values().toArray(new GordianCoreNTRUSpec[0]);
 
     /**
      * The Spec.
      */
-    private final GordianNewNTRUSpec theSpec;
+    private final GordianNTRUSpec theSpec;
 
     /**
      * Constructor.
      *
      * @param pSpec the spec
      */
-    private GordianCoreNTRUSpec(final GordianNewNTRUSpec pSpec) {
+    private GordianCoreNTRUSpec(final GordianNTRUSpec pSpec) {
         theSpec = pSpec;
     }
 
@@ -55,7 +59,7 @@ public final class GordianCoreNTRUSpec {
      *
      * @return the spec
      */
-    public GordianNewNTRUSpec getSpec() {
+    public GordianNTRUSpec getSpec() {
         return theSpec;
     }
 
@@ -163,7 +167,7 @@ public final class GordianCoreNTRUSpec {
      * @return the core spec
      */
     public static GordianCoreNTRUSpec mapCoreSpec(final Object pSpec) {
-        return pSpec instanceof GordianNewNTRUSpec mySpec ? SPECMAP.get(mySpec) : null;
+        return pSpec instanceof GordianNTRUSpec mySpec ? SPECMAP.get(mySpec) : null;
     }
 
     /**
@@ -171,9 +175,9 @@ public final class GordianCoreNTRUSpec {
      *
      * @return the type map
      */
-    private static Map<GordianNewNTRUSpec, GordianCoreNTRUSpec> newSpecMap() {
-        final Map<GordianNewNTRUSpec, GordianCoreNTRUSpec> myMap = new EnumMap<>(GordianNewNTRUSpec.class);
-        for (GordianNewNTRUSpec mySpec : GordianNewNTRUSpec.values()) {
+    private static Map<GordianNTRUSpec, GordianCoreNTRUSpec> newSpecMap() {
+        final Map<GordianNTRUSpec, GordianCoreNTRUSpec> myMap = new EnumMap<>(GordianNTRUSpec.class);
+        for (GordianNTRUSpec mySpec : GordianNTRUSpec.values()) {
             myMap.put(mySpec, new GordianCoreNTRUSpec(mySpec));
         }
         return myMap;
@@ -184,7 +188,7 @@ public final class GordianCoreNTRUSpec {
      *
      * @return the values
      */
-    public static Collection<GordianCoreNTRUSpec> values() {
-        return SPECMAP.values();
+    public static GordianCoreNTRUSpec[] values() {
+        return VALUES;
     }
 }

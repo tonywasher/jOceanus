@@ -20,20 +20,20 @@ import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymCipher;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymCipherSpecBuilder;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymKeySpecBuilder;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewPadding;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymCipherSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymCipherSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymCipherSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeySpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianPadding;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigest;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpecBuilder;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestType;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestType;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactoryType;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMac;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianNewMacSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianMacSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.cipher.GordianCoreCipher;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.random.GordianDRBGenerator;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.random.GordianSP800CTRDRBG;
@@ -41,6 +41,7 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.random.GordianSP800HM
 import io.github.tonywasher.joceanus.gordianknot.impl.core.random.GordianSP800HashDRBG;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.random.GordianX931CipherDRBG;
 import io.github.tonywasher.joceanus.gordianknot.util.GordianGenerator;
+import io.github.tonywasher.joceanus.gordianknot.util.GordianUtilities;
 import org.bouncycastle.crypto.prng.EntropySource;
 import org.bouncycastle.crypto.prng.EntropySourceProvider;
 import org.bouncycastle.util.encoders.Hex;
@@ -402,7 +403,7 @@ class RandomTest {
      * @param pTestCases the testCases
      * @throws GordianException on error
      */
-    private void testCTRCipherDRBG(final GordianCoreCipher<GordianNewSymKeySpec> pCipher,
+    private void testCTRCipherDRBG(final GordianCoreCipher<GordianSymKeySpec> pCipher,
                                    final GordianLength pKeySize,
                                    final GordianDRBGInit pInit,
                                    final GordianTestCase[] pTestCases) throws GordianException {
@@ -435,7 +436,7 @@ class RandomTest {
      * @param pTestCases the testCases
      * @throws GordianException on error
      */
-    private void testX931CipherDRBG(final GordianCoreCipher<GordianNewSymKeySpec> pCipher,
+    private void testX931CipherDRBG(final GordianCoreCipher<GordianSymKeySpec> pCipher,
                                     final String pKey,
                                     final GordianDRBGInit pInit,
                                     final GordianTestCase[] pTestCases) throws GordianException {
@@ -511,7 +512,7 @@ class RandomTest {
 
         /* Create the digest */
         final GordianDigestFactory myFactory = fcBCFACTORY.getDigestFactory();
-        final GordianNewDigestSpecBuilder myBuilder = myFactory.newDigestSpecBuilder();
+        final GordianDigestSpecBuilder myBuilder = myFactory.newDigestSpecBuilder();
         final GordianDigest myDigest = myFactory.createDigest(myBuilder.sha1());
 
         /* Create a standard stream */
@@ -577,8 +578,8 @@ class RandomTest {
 
         /* Create the mac */
         final GordianMacFactory myFactory = fcBCFACTORY.getMacFactory();
-        final GordianNewMacSpecBuilder myBuilder = myFactory.newMacSpecBuilder();
-        final GordianMac myMac = myFactory.createMac(myBuilder.hMac(GordianNewDigestType.SHA1));
+        final GordianMacSpecBuilder myBuilder = myFactory.newMacSpecBuilder();
+        final GordianMac myMac = myFactory.createMac(myBuilder.hMac(GordianDigestType.SHA1));
 
         /* Create a standard stream */
         Stream<DynamicNode> myStandard = Stream.of(DynamicTest.dynamicTest(STANDARD,
@@ -721,7 +722,7 @@ class RandomTest {
 
         /* Build the digest */
         final GordianDigestFactory myFactory = fcBCFACTORY.getDigestFactory();
-        final GordianNewDigestSpecBuilder myBuilder = myFactory.newDigestSpecBuilder();
+        final GordianDigestSpecBuilder myBuilder = myFactory.newDigestSpecBuilder();
         final GordianDigest myDigest = myFactory.createDigest(myBuilder.sha2(GordianLength.LEN_512));
 
         /* Create a standard stream */
@@ -844,9 +845,9 @@ class RandomTest {
 
         /* Create the mac */
         final GordianDigestFactory myDigestFactory = fcBCFACTORY.getDigestFactory();
-        final GordianNewDigestSpecBuilder myDigestBuilder = myDigestFactory.newDigestSpecBuilder();
+        final GordianDigestSpecBuilder myDigestBuilder = myDigestFactory.newDigestSpecBuilder();
         final GordianMacFactory myMacFactory = fcBCFACTORY.getMacFactory();
-        final GordianNewMacSpecBuilder myMacBuilder = myMacFactory.newMacSpecBuilder();
+        final GordianMacSpecBuilder myMacBuilder = myMacFactory.newMacSpecBuilder();
         final GordianMac myMac = myMacFactory.createMac(myMacBuilder.hMac(myDigestBuilder.sha2(GordianLength.LEN_512)));
 
         /* Create a standard stream */
@@ -925,8 +926,10 @@ class RandomTest {
 
         /* Create the cipher */
         final GordianCipherFactory myFactory = fcBCFACTORY.getCipherFactory();
-        final GordianNewSymCipherSpec mySpec = GordianSymCipherSpecBuilder.ecb(GordianSymKeySpecBuilder.aes(GordianLength.LEN_128), GordianNewPadding.NONE);
-        final GordianCoreCipher<GordianNewSymKeySpec> myCipher = (GordianCoreCipher<GordianNewSymKeySpec>) myFactory.createSymKeyCipher(mySpec);
+        final GordianSymKeySpecBuilder myKeyBuilder = GordianUtilities.newSymKeySpecBuilder();
+        final GordianSymCipherSpecBuilder myCipherBuilder = GordianUtilities.newSymCipherSpecBuilder();
+        final GordianSymCipherSpec mySpec = myCipherBuilder.ecb(myKeyBuilder.aes(GordianLength.LEN_128), GordianPadding.NONE);
+        final GordianCoreCipher<GordianSymKeySpec> myCipher = (GordianCoreCipher<GordianSymKeySpec>) myFactory.createSymKeyCipher(mySpec);
 
         /* Create a standard stream */
         Stream<DynamicNode> myStandard = Stream.of(DynamicTest.dynamicTest(STANDARD,
@@ -972,8 +975,10 @@ class RandomTest {
 
         /* Run the tests */
         final GordianCipherFactory myFactory = fcBCFACTORY.getCipherFactory();
-        final GordianNewSymCipherSpec mySpec = GordianSymCipherSpecBuilder.ecb(GordianSymKeySpecBuilder.aes(GordianLength.LEN_128), GordianNewPadding.NONE);
-        final GordianCoreCipher<GordianNewSymKeySpec> myCipher = (GordianCoreCipher<GordianNewSymKeySpec>) myFactory.createSymKeyCipher(mySpec);
+        final GordianSymKeySpecBuilder myKeyBuilder = GordianUtilities.newSymKeySpecBuilder();
+        final GordianSymCipherSpecBuilder myCipherBuilder = GordianUtilities.newSymCipherSpecBuilder();
+        final GordianSymCipherSpec mySpec = myCipherBuilder.ecb(myKeyBuilder.aes(GordianLength.LEN_128), GordianPadding.NONE);
+        final GordianCoreCipher<GordianSymKeySpec> myCipher = (GordianCoreCipher<GordianSymKeySpec>) myFactory.createSymKeyCipher(mySpec);
         testX931CipherDRBG(myCipher, "f7d36762b9915f1ed585eb8e91700eb2", myInitF, myTestsF);
 
         /* Create a standard stream */
@@ -1033,8 +1038,10 @@ class RandomTest {
 
         /* Create the cipher */
         final GordianCipherFactory myFactory = fcBCFACTORY.getCipherFactory();
-        final GordianNewSymCipherSpec mySpec = GordianSymCipherSpecBuilder.ecb(GordianSymKeySpecBuilder.aes(GordianLength.LEN_256), GordianNewPadding.NONE);
-        final GordianCoreCipher<GordianNewSymKeySpec> myCipher = (GordianCoreCipher<GordianNewSymKeySpec>) myFactory.createSymKeyCipher(mySpec);
+        final GordianSymKeySpecBuilder myKeyBuilder = myFactory.newSymKeySpecBuilder();
+        final GordianSymCipherSpecBuilder myCipherBuilder = myFactory.newSymCipherSpecBuilder();
+        final GordianSymCipherSpec mySpec = myCipherBuilder.ecb(myKeyBuilder.aes(GordianLength.LEN_256), GordianPadding.NONE);
+        final GordianCoreCipher<GordianSymKeySpec> myCipher = (GordianCoreCipher<GordianSymKeySpec>) myFactory.createSymKeyCipher(mySpec);
 
         /* Create a standard stream */
         Stream<DynamicNode> myStandard = Stream.of(DynamicTest.dynamicTest(PERSONALISED + ADDITIONAL,

@@ -18,8 +18,10 @@ package io.github.tonywasher.joceanus.gordianknot.api.sign;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairType;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairType;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpecBuilder;
 
 import java.util.List;
 import java.util.function.Predicate;
@@ -36,6 +38,13 @@ public interface GordianSignatureFactory {
      * @throws GordianException on error
      */
     GordianSignature createSigner(GordianSignatureSpec pSignatureSpec) throws GordianException;
+
+    /**
+     * create new GordianKeyPairSpecBuilder.
+     *
+     * @return the new KeyPairSpecBuilder
+     */
+    GordianSignatureSpecBuilder newSignatureSpecBuilder();
 
     /**
      * Obtain predicate for signatures.

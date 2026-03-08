@@ -16,7 +16,6 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.impl.bc;
 
-import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.agree.GordianCoreAgreementEngine;
@@ -24,6 +23,7 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.agree.GordianCoreAgre
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianPrivateKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianPublicKey;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.agree.GordianCoreAgreementSpec;
 
 /**
  * Base Agreement Engine class.
@@ -38,7 +38,7 @@ public abstract class BouncyAgreementBase
      * @throws GordianException on error
      */
     BouncyAgreementBase(final GordianCoreAgreementFactory pFactory,
-                        final GordianAgreementSpec pSpec) throws GordianException {
+                        final GordianCoreAgreementSpec pSpec) throws GordianException {
         /* Invoke underlying constructor */
         super(pFactory, pSpec);
 

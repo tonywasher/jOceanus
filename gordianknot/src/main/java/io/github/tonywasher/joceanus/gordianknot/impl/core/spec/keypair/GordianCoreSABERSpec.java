@@ -17,13 +17,12 @@
 
 package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair;
 
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewSABERSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianSABERSpec;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.bc.BCObjectIdentifiers;
 import org.bouncycastle.pqc.crypto.saber.SABERParameters;
 import org.bouncycastle.pqc.jcajce.spec.SABERParameterSpec;
 
-import java.util.Collection;
 import java.util.EnumMap;
 import java.util.Map;
 
@@ -34,19 +33,24 @@ public final class GordianCoreSABERSpec {
     /**
      * The specMap.
      */
-    private static final Map<GordianNewSABERSpec, GordianCoreSABERSpec> SPECMAP = newSpecMap();
+    private static final Map<GordianSABERSpec, GordianCoreSABERSpec> SPECMAP = newSpecMap();
+
+    /**
+     * The specArray.
+     */
+    private static final GordianCoreSABERSpec[] VALUES = SPECMAP.values().toArray(new GordianCoreSABERSpec[0]);
 
     /**
      * The Spec.
      */
-    private final GordianNewSABERSpec theSpec;
+    private final GordianSABERSpec theSpec;
 
     /**
      * Constructor.
      *
      * @param pSpec the spec
      */
-    private GordianCoreSABERSpec(final GordianNewSABERSpec pSpec) {
+    private GordianCoreSABERSpec(final GordianSABERSpec pSpec) {
         theSpec = pSpec;
     }
 
@@ -55,7 +59,7 @@ public final class GordianCoreSABERSpec {
      *
      * @return the spec
      */
-    public GordianNewSABERSpec getSpec() {
+    public GordianSABERSpec getSpec() {
         return theSpec;
     }
 
@@ -181,7 +185,7 @@ public final class GordianCoreSABERSpec {
      * @return the core spec
      */
     public static GordianCoreSABERSpec mapCoreSpec(final Object pSpec) {
-        return pSpec instanceof GordianNewSABERSpec mySpec ? SPECMAP.get(mySpec) : null;
+        return pSpec instanceof GordianSABERSpec mySpec ? SPECMAP.get(mySpec) : null;
     }
 
     /**
@@ -189,9 +193,9 @@ public final class GordianCoreSABERSpec {
      *
      * @return the type map
      */
-    private static Map<GordianNewSABERSpec, GordianCoreSABERSpec> newSpecMap() {
-        final Map<GordianNewSABERSpec, GordianCoreSABERSpec> myMap = new EnumMap<>(GordianNewSABERSpec.class);
-        for (GordianNewSABERSpec mySpec : GordianNewSABERSpec.values()) {
+    private static Map<GordianSABERSpec, GordianCoreSABERSpec> newSpecMap() {
+        final Map<GordianSABERSpec, GordianCoreSABERSpec> myMap = new EnumMap<>(GordianSABERSpec.class);
+        for (GordianSABERSpec mySpec : GordianSABERSpec.values()) {
             myMap.put(mySpec, new GordianCoreSABERSpec(mySpec));
         }
         return myMap;
@@ -202,7 +206,7 @@ public final class GordianCoreSABERSpec {
      *
      * @return the values
      */
-    public static Collection<GordianCoreSABERSpec> values() {
-        return SPECMAP.values();
+    public static GordianCoreSABERSpec[] values() {
+        return VALUES;
     }
 }

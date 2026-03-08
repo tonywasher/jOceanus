@@ -16,9 +16,9 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.impl.jca;
 
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewStreamKeyType;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewSymKeyType;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestType;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeyType;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeyType;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestType;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianValidator;
 
 /**
@@ -27,19 +27,19 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianValidator
 public class JcaValidator
         extends GordianValidator {
     @Override
-    public boolean validSymKeyType(final GordianNewSymKeyType pKeyType) {
+    public boolean validSymKeyType(final GordianSymKeyType pKeyType) {
         return supportedSymKeyType(pKeyType)
                 && super.validSymKeyType(pKeyType);
     }
 
     @Override
-    protected boolean validHMacDigestType(final GordianNewDigestType pDigestType) {
+    protected boolean validHMacDigestType(final GordianDigestType pDigestType) {
         return JcaDigest.isHMacSupported(pDigestType)
                 && validDigestType(pDigestType);
     }
 
     @Override
-    public boolean validDigestType(final GordianNewDigestType pDigestType) {
+    public boolean validDigestType(final GordianDigestType pDigestType) {
         /* Perform standard checks */
         if (!super.validDigestType(pDigestType)) {
             return false;
@@ -64,7 +64,7 @@ public class JcaValidator
     }
 
     @Override
-    public boolean validStreamKeyType(final GordianNewStreamKeyType pKeyType) {
+    public boolean validStreamKeyType(final GordianStreamKeyType pKeyType) {
         if (pKeyType == null) {
             return false;
         }
@@ -95,7 +95,7 @@ public class JcaValidator
      * @param pKeyType the keyType
      * @return true/false
      */
-    private static boolean supportedSymKeyType(final GordianNewSymKeyType pKeyType) {
+    private static boolean supportedSymKeyType(final GordianSymKeyType pKeyType) {
         if (pKeyType == null) {
             return false;
         }

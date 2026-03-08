@@ -19,7 +19,8 @@ final GordianFactory myBaseFactory = GordianGenerator.createFactory();
 final GordianKeySetFactory myKeySetFactory = myBaseFactory.getKeySetFactory();
 
 /* Create keySet */
-final GordianKeySetSpec mySpec = new GordianKeySetSpec(GordianLength.LEN_256);
+final GordianKeySetSpecBuilder myBuilder = myKeySetFactory.newKeySetSpecBuilder();
+final GordianKeySetSpec mySpec = myBuilder.keySet(GordianLength.LEN_256);
 final GordianKeySet myKeySet = myKeySetFactory.generateKeySet(mySpec);
                     </source>
                 </subsection>
@@ -71,7 +72,8 @@ final GordianFactory myBaseFactory = GordianGenerator.createFactory();
 final GordianKeySetFactory myKeySetFactory = myBaseFactory.getKeySetFactory();
 
 /* Create keySet */
-final GordianKeySetSpec mySpec = new GordianKeySetSpec(GordianLength.LEN_256);
+final GordianKeySetSpecBuilder myBuilder = myKeySetFactory.newKeySetSpecBuilder();
+final GordianKeySetSpec mySpec = myBuilder.keySet(GordianLength.LEN_256);
 final GordianKeySet myKeySet = myKeySetFactory.generateKeySet(mySpec);
 
 /* Encrypt data as one-off */
@@ -125,11 +127,12 @@ final GordianFactory myBaseFactory = GordianGenerator.createFactory();
 final GordianKeySetFactory myKeySetFactory = myBaseFactory.getKeySetFactory();
 
 /* Create keySet */
-final GordianKeySetSpec mySpec = new GordianKeySetSpec(GordianLength.LEN_256);
+final GordianKeySetSpecBuilder myBuilder = myKeySetFactory.newKeySetSpecBuilder();
+final GordianKeySetSpec mySpec = myBuilder.keySet(GordianLength.LEN_256);
 final GordianKeySet myKeySet = myKeySetFactory.generateKeySet(mySpec);
 
 /* Encrypt data as one-off */
-final byte[] myAADe = ...
+final byte[] myAAD = ...
 final byte[] myMessage = ...
 byte[] myEncrypted = myKeySet.encryptAADBytes(myMessage, myAAD);
 byte[] myResult = myKeySet.decryptAADBytes(myEncrypted, myAAD);
@@ -167,7 +170,8 @@ final GordianFactory myBaseFactory = GordianGenerator.createFactory();
 final GordianKeySetFactory myKeySetFactory = myBaseFactory.getKeySetFactory();
 
 /* Create keySet */
-final GordianKeySetSpec mySpec = new GordianKeySetSpec(GordianLength.LEN_256);
+final GordianKeySetSpecBuilder myBuilder = myKeySetFactory.newKeySetSpecBuilder();
+final GordianKeySetSpec mySpec = myBuilder.keySet(GordianLength.LEN_256);
 final GordianKeySet myKeySet = myKeySetFactory.generateKeySet(mySpec);
 
 /* Secure key */

@@ -17,10 +17,9 @@
 
 package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.agree;
 
-import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianNewAgreementType;
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNewKeyPairType;
+import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementType;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairType;
 
-import java.util.Collection;
 import java.util.EnumMap;
 import java.util.Map;
 
@@ -31,19 +30,24 @@ public final class GordianCoreAgreementType {
     /**
      * The agreementTypeMap.
      */
-    private static final Map<GordianNewAgreementType, GordianCoreAgreementType> TYPEMAP = newTypeMap();
+    private static final Map<GordianAgreementType, GordianCoreAgreementType> TYPEMAP = newTypeMap();
+
+    /**
+     * The agreementTypeArray.
+     */
+    private static final GordianCoreAgreementType[] VALUES = TYPEMAP.values().toArray(new GordianCoreAgreementType[0]);
 
     /**
      * The type.
      */
-    private final GordianNewAgreementType theType;
+    private final GordianAgreementType theType;
 
     /**
      * Constructor.
      *
      * @param pType the agreementType
      */
-    private GordianCoreAgreementType(final GordianNewAgreementType pType) {
+    private GordianCoreAgreementType(final GordianAgreementType pType) {
         theType = pType;
     }
 
@@ -52,7 +56,7 @@ public final class GordianCoreAgreementType {
      *
      * @return the Type
      */
-    public GordianNewAgreementType getType() {
+    public GordianAgreementType getType() {
         return theType;
     }
 
@@ -77,7 +81,7 @@ public final class GordianCoreAgreementType {
      * @return true/false
      */
     public boolean isSigned() {
-        return theType == GordianNewAgreementType.SIGNED;
+        return theType == GordianAgreementType.SIGNED;
     }
 
     /**
@@ -102,8 +106,8 @@ public final class GordianCoreAgreementType {
      * @param pKeyPairType the keyPair
      * @return true/false
      */
-    public boolean isSupported(final GordianNewKeyPairType pKeyPairType) {
-        if (pKeyPairType == GordianNewKeyPairType.COMPOSITE) {
+    public boolean isSupported(final GordianKeyPairType pKeyPairType) {
+        if (pKeyPairType == GordianKeyPairType.COMPOSITE) {
             return true;
         }
         switch (theType) {
@@ -131,12 +135,12 @@ public final class GordianCoreAgreementType {
      * @param pKeyPairType the keyPairType
      * @return true/false
      */
-    public static boolean hasKEM(final GordianNewKeyPairType pKeyPairType) {
+    public static boolean hasKEM(final GordianKeyPairType pKeyPairType) {
         switch (pKeyPairType) {
             case RSA:
             case EC:
-            case GOST2012:
-            case DSTU4145:
+            case GOST:
+            case DSTU:
             case SM2:
             case CMCE:
             case FRODO:
@@ -159,13 +163,13 @@ public final class GordianCoreAgreementType {
      * @param pKeyPairType the keyPairType
      * @return true/false
      */
-    public static boolean hasAnon(final GordianNewKeyPairType pKeyPairType) {
+    public static boolean hasAnon(final GordianKeyPairType pKeyPairType) {
         switch (pKeyPairType) {
             case DH:
             case EC:
             case SM2:
-            case GOST2012:
-            case DSTU4145:
+            case GOST:
+            case DSTU:
             case XDH:
                 return true;
             default:
@@ -174,16 +178,16 @@ public final class GordianCoreAgreementType {
     }
 
     /**
-     * Does the kKeyPairType have an SM2 agreement?
+     * Does the keyPairType have an SM2 agreement?
      *
      * @param pKeyPairType the keyPairType
      * @return true/false
      */
-    public static boolean hasSM2(final GordianNewKeyPairType pKeyPairType) {
+    public static boolean hasSM2(final GordianKeyPairType pKeyPairType) {
         switch (pKeyPairType) {
             case EC:
             case SM2:
-            case GOST2012:
+            case GOST:
                 return true;
             default:
                 return false;
@@ -196,7 +200,7 @@ public final class GordianCoreAgreementType {
      * @param pKeyPairType the keyPairType
      * @return true/false
      */
-    public static boolean hasBasic(final GordianNewKeyPairType pKeyPairType) {
+    public static boolean hasBasic(final GordianKeyPairType pKeyPairType) {
         return isECorDH(pKeyPairType);
     }
 
@@ -206,8 +210,8 @@ public final class GordianCoreAgreementType {
      * @param pKeyPairType the keyPairType
      * @return true/false
      */
-    public static boolean hasMQV(final GordianNewKeyPairType pKeyPairType) {
-        return pKeyPairType == GordianNewKeyPairType.DH || isEC(pKeyPairType);
+    public static boolean hasMQV(final GordianKeyPairType pKeyPairType) {
+        return pKeyPairType == GordianKeyPairType.DH || isEC(pKeyPairType);
     }
 
     /**
@@ -216,7 +220,7 @@ public final class GordianCoreAgreementType {
      * @param pKeyPairType the keyPairType
      * @return true/false
      */
-    public static boolean hasUnified(final GordianNewKeyPairType pKeyPairType) {
+    public static boolean hasUnified(final GordianKeyPairType pKeyPairType) {
         return isECorDH(pKeyPairType);
     }
 
@@ -226,12 +230,12 @@ public final class GordianCoreAgreementType {
      * @param pKeyPairType the keyPairType
      * @return true/false
      */
-    private static boolean isECorDH(final GordianNewKeyPairType pKeyPairType) {
+    private static boolean isECorDH(final GordianKeyPairType pKeyPairType) {
         switch (pKeyPairType) {
             case SM2:
             case EC:
-            case GOST2012:
-            case DSTU4145:
+            case GOST:
+            case DSTU:
             case DH:
             case XDH:
                 return true;
@@ -246,12 +250,12 @@ public final class GordianCoreAgreementType {
      * @param pKeyPairType the keyPairType
      * @return true/false
      */
-    private static boolean isEC(final GordianNewKeyPairType pKeyPairType) {
+    private static boolean isEC(final GordianKeyPairType pKeyPairType) {
         switch (pKeyPairType) {
             case SM2:
             case EC:
-            case GOST2012:
-            case DSTU4145:
+            case GOST:
+            case DSTU:
                 return true;
             default:
                 return false;
@@ -290,7 +294,7 @@ public final class GordianCoreAgreementType {
      * @return the core type
      */
     public static GordianCoreAgreementType mapCoreType(final Object pType) {
-        return pType instanceof GordianNewAgreementType myType ? TYPEMAP.get(myType) : null;
+        return pType instanceof GordianAgreementType myType ? TYPEMAP.get(myType) : null;
     }
 
     /**
@@ -298,9 +302,9 @@ public final class GordianCoreAgreementType {
      *
      * @return the type map
      */
-    private static Map<GordianNewAgreementType, GordianCoreAgreementType> newTypeMap() {
-        final Map<GordianNewAgreementType, GordianCoreAgreementType> myMap = new EnumMap<>(GordianNewAgreementType.class);
-        for (GordianNewAgreementType myType : GordianNewAgreementType.values()) {
+    private static Map<GordianAgreementType, GordianCoreAgreementType> newTypeMap() {
+        final Map<GordianAgreementType, GordianCoreAgreementType> myMap = new EnumMap<>(GordianAgreementType.class);
+        for (GordianAgreementType myType : GordianAgreementType.values()) {
             myMap.put(myType, new GordianCoreAgreementType(myType));
         }
         return myMap;
@@ -311,7 +315,7 @@ public final class GordianCoreAgreementType {
      *
      * @return the values
      */
-    public static Collection<GordianCoreAgreementType> values() {
-        return TYPEMAP.values();
+    public static GordianCoreAgreementType[] values() {
+        return VALUES;
     }
 }

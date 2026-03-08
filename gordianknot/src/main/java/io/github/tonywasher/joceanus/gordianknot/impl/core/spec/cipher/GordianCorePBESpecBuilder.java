@@ -17,25 +17,33 @@
 
 package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher;
 
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewPBESpec.GordianNewPBEArgon2Spec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewPBESpec.GordianNewPBEDigestAndCountSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewPBESpec.GordianNewPBESCryptSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewPBESpecBuilder;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianNewPBEType;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianPBESpec.GordianPBEArgon2Spec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianPBESpec.GordianPBEDigestAndCountSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianPBESpec.GordianPBESCryptSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianPBESpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianPBEType;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher.GordianCorePBESpec.GordianCorePBEArgon2Spec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher.GordianCorePBESpec.GordianCorePBEDigestAndCountSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher.GordianCorePBESpec.GordianCorePBESCryptSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianCoreDigestSpecBuilder;
 
 /**
  * PBE Specification Builder.
  */
 public final class GordianCorePBESpecBuilder
-        implements GordianNewPBESpecBuilder {
+        implements GordianPBESpecBuilder {
+    /**
+     * The digestSpec builder.
+     */
+    private final GordianDigestSpecBuilder theBuilder;
+
     /**
      * Private constructor.
      */
     private GordianCorePBESpecBuilder() {
+        theBuilder = GordianCoreDigestSpecBuilder.newInstance();
     }
 
     /**
@@ -48,28 +56,33 @@ public final class GordianCorePBESpecBuilder
     }
 
     @Override
-    public GordianNewPBEDigestAndCountSpec pbKDF2(final GordianNewDigestSpec pDigestSpec,
-                                                  final int pCount) {
-        return new GordianCorePBEDigestAndCountSpec(GordianNewPBEType.PBKDF2, pDigestSpec, pCount);
+    public GordianDigestSpecBuilder usingDigestSpecBuilder() {
+        return theBuilder;
     }
 
     @Override
-    public GordianNewPBEDigestAndCountSpec pkcs12(final GordianNewDigestSpec pDigestSpec,
-                                                  final int pCount) {
-        return new GordianCorePBEDigestAndCountSpec(GordianNewPBEType.PKCS12, pDigestSpec, pCount);
+    public GordianPBEDigestAndCountSpec pbKDF2(final GordianDigestSpec pDigestSpec,
+                                               final int pCount) {
+        return new GordianCorePBEDigestAndCountSpec(GordianPBEType.PBKDF2, pDigestSpec, pCount);
     }
 
     @Override
-    public GordianNewPBESCryptSpec scrypt(final int pCost,
-                                          final int pBlockSize,
-                                          final int pParallel) {
+    public GordianPBEDigestAndCountSpec pkcs12(final GordianDigestSpec pDigestSpec,
+                                               final int pCount) {
+        return new GordianCorePBEDigestAndCountSpec(GordianPBEType.PKCS12, pDigestSpec, pCount);
+    }
+
+    @Override
+    public GordianPBESCryptSpec scrypt(final int pCost,
+                                       final int pBlockSize,
+                                       final int pParallel) {
         return new GordianCorePBESCryptSpec(pCost, pBlockSize, pParallel);
     }
 
     @Override
-    public GordianNewPBEArgon2Spec argon2(final int pLanes,
-                                          final int pMemory,
-                                          final int pIterations) {
+    public GordianPBEArgon2Spec argon2(final int pLanes,
+                                       final int pMemory,
+                                       final int pIterations) {
         return new GordianCorePBEArgon2Spec(pLanes, pMemory, pIterations);
     }
 }

@@ -17,11 +17,15 @@
 /* Access factory */
 final GordianFactory myBaseFactory = GordianGenerator.createFactory();
 final GordianAsyncFactory myAsyncFactory = myBase.getAsyncFactory();
+final GordianDigestFactory myDigestFactory = myBase.getDigestFactory();
 final GordianKeyPairFactory myKeyPairFactory = myAsyncFactory.getKeyPairFactory();
 final GordianSignatureFactory mySignatureFactory = myAsyncFactory.getSignatureFactory();
+final GordianKeyPairSpecBuilder myKeyPairBuilder = myKeyPairFactory.newKeyPairSpecBuilder()
+final GordianSignatureSpecBuilder mySignatureBuilder = mySignatureFactory.newSignatureSpecBuilder()
+final GordianDigestSpecBuilder myDigestBuilder = myDigestFactory.newDigestSpecBuilder()
 
 /* Access keyPairGenerator */
-final GordianKeyPairSpec mySpec = GordianKeyPairSpecBuilder.rsa(GordianRSAModulus.MOD2048);
+final GordianKeyPairSpec mySpec = myKeyPairBuilder.rsa(GordianRSASpec.MOD2048);
 final GordianKeyPairGenerator myGenerator = myKeyPairFactory.getKeyPairGenerator(mySpec);
 final GordianKeyPair myKeyPair = myGenerator.generateKeyPair();
 GordianKeyPair mySigningPair = myKeyPair;
@@ -35,8 +39,8 @@ if (myKeyPair instanceof GordianStateAwareKeyPair) {
 }
 
 /* Access signer */
-final GordianSignatureSpec mySignSpec = GordianSignatureSpecBuilder.rsa(GordianSignatureType.PSSMGF1,
-                                                                        GordianDigestSpecBuilder.sha2(GordianLength.LEN_256));
+final GordianSignatureSpec mySignSpec = mySignatureBuilder.rsa(GordianSignatureType.PSSMGF1,
+                                                               myDigestBuilder.sha2(GordianLength.LEN_256));
 final GordianSignature mySigner = mySignatureFactory.createSigner(mySignSpec);
 
 /* Sign message */
@@ -60,20 +64,24 @@ final boolean verified = mySigner.verify(mySignature);
 /* Access factory */
 final GordianFactory myBaseFactory = GordianGenerator.createFactory();
 final GordianAsyncFactory myAsyncFactory = myBase.getAsyncFactory();
+final GordianDigestFactory myDigestFactory = myBase.getDigestFactory();
 final GordianKeyPairFactory myKeyPairFactory = myAsyncFactory.getKeyPairFactory();
 final GordianSignatureFactory mySignatureFactory = myAsyncFactory.getSignatureFactory();
+final GordianKeyPairSpecBuilder myKeyPairBuilder = myKeyPairFactory.newKeyPairSpecBuilder()
+final GordianSignatureSpecBuilder mySignatureBuilder = mySignatureFactory.newSignatureSpecBuilder()
+final GordianDigestSpecBuilder myDigestBuilder = myDigestFactory.newDigestSpecBuilder()
 
 /* Access keyPairGenerator */
-final GordianKeyPairSpec mySpec = GordianKeyPairSpecBuilder.composite(GordianKeyPairSpecBuilder.rsa(GordianRSAModulus.MOD2048),
-                                                                      GordianKeyPairSpecBuilder.ed25519());
+final GordianKeyPairSpec mySpec = myKeyPairBuilder.composite(myKeyPairBuilder.rsa(GordianRSASpec.MOD2048),
+                                                             myKeyPairBuilder.ed25519());
 final GordianKeyPairGenerator myGenerator = myKeyPairFactory.getKeyPairGenerator(mySpec);
 final GordianKeyPair myKeyPair = myGenerator.generateKeyPair();
 GordianKeyPair mySigningPair = myKeyPair;
 
 /* Access signer */
-final GordianSignatureSpec mySignSpec = GordianSignatureSpecBuilder.composite(GordianSignatureSpecBuilder.rsa(GordianSignatureType.PSSMGF1,
-                                                                                                              GordianDigestSpecBuilder.sha2(GordianLength.LEN_256)),
-                                                                              GordianSignatureSpecBuilder.edDSA());
+final GordianSignatureSpec mySignSpec = mySignatureBuilder.composite(mySignatureBuilder.rsa(GordianSignatureType.PSSMGF1,
+                                                                                            myDigestBuilder.sha2(GordianLength.LEN_256)),
+                                                                     mySignatureBuilder.edDSA());
 final GordianSignature mySigner = mySignatureFactory.createSigner(mySignSpec);
 
 /* Sign message */

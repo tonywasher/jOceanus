@@ -18,14 +18,14 @@ package io.github.tonywasher.joceanus.gordianknot.impl.jca;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianNewDigestType;
-import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianEncryptorSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianSM2EncryptionSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestType;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.encrypt.GordianCoreEncryptor;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.encrypt.GordianCoreEncryptorSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.encrypt.GordianCoreSM2EncryptionSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaKeyPair.JcaPrivateKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaKeyPair.JcaPublicKey;
 
@@ -70,7 +70,7 @@ public final class JcaEncryptor {
          * @throws GordianException on error
          */
         JcaBlockEncryptor(final GordianBaseFactory pFactory,
-                          final GordianEncryptorSpec pSpec) throws GordianException {
+                          final GordianCoreEncryptorSpec pSpec) throws GordianException {
             /* Initialise underlying cipher */
             super(pFactory, pSpec);
             theEncryptor = getJavaEncryptor(getAlgorithmName(pSpec), false);
@@ -201,7 +201,7 @@ public final class JcaEncryptor {
          * @param pSpec the Spec
          * @return the algorithm name
          */
-        private static String getAlgorithmName(final GordianEncryptorSpec pSpec) {
+        private static String getAlgorithmName(final GordianCoreEncryptorSpec pSpec) {
             /* Determine the base algorithm */
             final String myBase = pSpec.getKeyPairType().name();
 
@@ -238,7 +238,7 @@ public final class JcaEncryptor {
          * @throws GordianException on error
          */
         JcaHybridEncryptor(final GordianBaseFactory pFactory,
-                           final GordianEncryptorSpec pSpec) throws GordianException {
+                           final GordianCoreEncryptorSpec pSpec) throws GordianException {
             /* Initialise underlying cipher */
             super(pFactory, pSpec);
             theEncryptor = getJavaEncryptor(getAlgorithmName(pSpec), false);
@@ -322,11 +322,11 @@ public final class JcaEncryptor {
          * @param pSpec the Spec
          * @return the algorithm name
          */
-        private static String getAlgorithmName(final GordianEncryptorSpec pSpec) {
+        private static String getAlgorithmName(final GordianCoreEncryptorSpec pSpec) {
             /* Switch on encryptor type */
-            final GordianSM2EncryptionSpec mySpec = pSpec.getSM2EncryptionSpec();
-            final GordianNewDigestSpec myDigestSpec = mySpec.getDigestSpec();
-            final GordianNewDigestType myDigestType = myDigestSpec.getDigestType();
+            final GordianCoreSM2EncryptionSpec mySpec = pSpec.getSM2EncryptionSpec();
+            final GordianDigestSpec myDigestSpec = mySpec.getDigestSpec();
+            final GordianDigestType myDigestType = myDigestSpec.getDigestType();
             switch (myDigestType) {
                 case SHA2:
                     return "SM2withSHA" + myDigestSpec.getDigestLength();
