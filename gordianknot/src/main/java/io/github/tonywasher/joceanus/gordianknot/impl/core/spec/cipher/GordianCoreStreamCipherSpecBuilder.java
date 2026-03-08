@@ -21,6 +21,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamCipherSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamCipherSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySpecBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +31,11 @@ import java.util.List;
  */
 public final class GordianCoreStreamCipherSpecBuilder
         implements GordianStreamCipherSpecBuilder {
+    /**
+     * The streamKeySpec builder.
+     */
+    private final GordianStreamKeySpecBuilder theBuilder;
+
     /**
      * The keySpec.
      */
@@ -44,6 +50,7 @@ public final class GordianCoreStreamCipherSpecBuilder
      * Private constructor.
      */
     private GordianCoreStreamCipherSpecBuilder() {
+        theBuilder = GordianCoreStreamKeySpecBuilder.newInstance();
     }
 
     /**
@@ -65,6 +72,12 @@ public final class GordianCoreStreamCipherSpecBuilder
     public GordianStreamCipherSpecBuilder asAEAD() {
         asAEAD = true;
         return this;
+    }
+
+
+    @Override
+    public GordianStreamKeySpecBuilder usingStreamKeySpecBuilder() {
+        return theBuilder;
     }
 
     @Override

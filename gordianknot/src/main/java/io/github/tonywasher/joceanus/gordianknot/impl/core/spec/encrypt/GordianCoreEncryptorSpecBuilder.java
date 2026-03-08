@@ -36,6 +36,11 @@ import java.util.List;
 public final class GordianCoreEncryptorSpecBuilder
         implements GordianEncryptorSpecBuilder {
     /**
+     * The digestSpec builder.
+     */
+    private final GordianDigestSpecBuilder theBuilder;
+
+    /**
      * The keyPairType.
      */
     private GordianKeyPairType theKeyPairType;
@@ -49,6 +54,7 @@ public final class GordianCoreEncryptorSpecBuilder
      * Private constructor.
      */
     private GordianCoreEncryptorSpecBuilder() {
+        theBuilder = GordianCoreDigestSpecBuilder.newInstance();
     }
 
     /**
@@ -83,6 +89,11 @@ public final class GordianCoreEncryptorSpecBuilder
     public GordianEncryptorSpecBuilder withEncryptorSpecs(final List<GordianEncryptorSpec> pSpecs) {
         theSubSpec = pSpecs;
         return this;
+    }
+
+    @Override
+    public GordianDigestSpecBuilder usingDigestSpecBuilder() {
+        return theBuilder;
     }
 
     @Override

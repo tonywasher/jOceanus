@@ -19,6 +19,7 @@ package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.mac;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeySpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeyType;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpecBuilder;
@@ -44,7 +45,12 @@ public final class GordianCoreMacSpecBuilder
     /**
      * The digestSpec builder.
      */
-    private final GordianDigestSpecBuilder theBuilder;
+    private final GordianDigestSpecBuilder theDigestBuilder;
+
+    /**
+     * The symKeySpec builder.
+     */
+    private final GordianSymKeySpecBuilder theSymKeyBuilder;
 
     /**
      * The type.
@@ -65,7 +71,8 @@ public final class GordianCoreMacSpecBuilder
      * Constructor.
      */
     private GordianCoreMacSpecBuilder() {
-        theBuilder = GordianCoreDigestSpecBuilder.newInstance();
+        theDigestBuilder = GordianCoreDigestSpecBuilder.newInstance();
+        theSymKeyBuilder = GordianCoreSymKeySpecBuilder.newInstance();
     }
 
     /**
@@ -115,7 +122,12 @@ public final class GordianCoreMacSpecBuilder
 
     @Override
     public GordianDigestSpecBuilder usingDigestSpecBuilder() {
-        return theBuilder;
+        return theDigestBuilder;
+    }
+
+    @Override
+    public GordianSymKeySpecBuilder usingSymKeySpecBuilder() {
+        return theSymKeyBuilder;
     }
 
     @Override

@@ -18,6 +18,7 @@
 package io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec;
 
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairType;
 
 import java.util.Arrays;
@@ -60,6 +61,13 @@ public interface GordianEncryptorSpecBuilder {
      * @return the builder
      */
     GordianEncryptorSpecBuilder withEncryptorSpecs(List<GordianEncryptorSpec> pSpecs);
+
+    /**
+     * Access digestSpecBuilder.
+     *
+     * @return the digestSpec builder
+     */
+    GordianDigestSpecBuilder usingDigestSpecBuilder();
 
     /**
      * Build encryptorSpec.

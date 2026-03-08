@@ -21,11 +21,19 @@ import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianPBESpec.
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianPBESpec.GordianPBEDigestAndCountSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianPBESpec.GordianPBESCryptSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpecBuilder;
 
 /**
  * PBE Specification Builder.
  */
 public interface GordianPBESpecBuilder {
+    /**
+     * Access digestSpecBuilder.
+     *
+     * @return the digestSpec builder
+     */
+    GordianDigestSpecBuilder usingDigestSpecBuilder();
+
     /**
      * Create a pbkdf2Spec.
      *

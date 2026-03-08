@@ -19,6 +19,7 @@ package io.github.tonywasher.joceanus.gordianknot.api.mac.spec;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeySpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSubSpec.GordianDigestState;
@@ -82,6 +83,13 @@ public interface GordianMacSpecBuilder {
      * @return the digestSpec builder
      */
     GordianDigestSpecBuilder usingDigestSpecBuilder();
+
+    /**
+     * Access symKeySpecBuilder.
+     *
+     * @return the symKeySpec builder
+     */
+    GordianSymKeySpecBuilder usingSymKeySpecBuilder();
 
     /**
      * Build macSpec.

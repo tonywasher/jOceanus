@@ -46,6 +46,13 @@ public interface GordianSymCipherSpecBuilder {
     GordianSymCipherSpecBuilder withPadding(GordianPadding pPadding);
 
     /**
+     * Access symKeySpecBuilder.
+     *
+     * @return the symKeySpec builder
+     */
+    GordianSymKeySpecBuilder usingSymKeySpecBuilder();
+
+    /**
      * Build symCipherSpec.
      *
      * @return the symCipherSpec

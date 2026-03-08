@@ -18,8 +18,10 @@
 package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.lock;
 
 import io.github.tonywasher.joceanus.gordianknot.api.keyset.spec.GordianKeySetSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keyset.spec.GordianKeySetSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.lock.spec.GordianPasswordLockSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.lock.spec.GordianPasswordLockSpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keyset.GordianCoreKeySetSpecBuilder;
 
 /**
  * PasswordLock Spec Builder.
@@ -27,9 +29,15 @@ import io.github.tonywasher.joceanus.gordianknot.api.lock.spec.GordianPasswordLo
 public final class GordianCorePasswordLockSpecBuilder
         implements GordianPasswordLockSpecBuilder {
     /**
+     * The keySetSpec builder.
+     */
+    private final GordianKeySetSpecBuilder theBuilder;
+
+    /**
      * Private Constructor.
      */
     private GordianCorePasswordLockSpecBuilder() {
+        theBuilder = GordianCoreKeySetSpecBuilder.newInstance();
     }
 
     /**
@@ -60,5 +68,10 @@ public final class GordianCorePasswordLockSpecBuilder
     public GordianPasswordLockSpec passwordLock(final int pKIterations,
                                                 final GordianKeySetSpec pKeySetSpec) {
         return new GordianCorePasswordLockSpec(pKIterations, pKeySetSpec);
+    }
+
+    @Override
+    public GordianKeySetSpecBuilder usingKeySetSpecBuilder() {
+        return theBuilder;
     }
 }

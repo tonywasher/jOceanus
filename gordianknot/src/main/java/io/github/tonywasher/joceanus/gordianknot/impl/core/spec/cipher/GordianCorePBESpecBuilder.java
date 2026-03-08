@@ -23,9 +23,11 @@ import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianPBESpec.
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianPBESpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianPBEType;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher.GordianCorePBESpec.GordianCorePBEArgon2Spec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher.GordianCorePBESpec.GordianCorePBEDigestAndCountSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher.GordianCorePBESpec.GordianCorePBESCryptSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianCoreDigestSpecBuilder;
 
 /**
  * PBE Specification Builder.
@@ -33,9 +35,15 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher.GordianCo
 public final class GordianCorePBESpecBuilder
         implements GordianPBESpecBuilder {
     /**
+     * The digestSpec builder.
+     */
+    private final GordianDigestSpecBuilder theBuilder;
+
+    /**
      * Private constructor.
      */
     private GordianCorePBESpecBuilder() {
+        theBuilder = GordianCoreDigestSpecBuilder.newInstance();
     }
 
     /**
@@ -45,6 +53,11 @@ public final class GordianCorePBESpecBuilder
      */
     public static GordianCorePBESpecBuilder newInstance() {
         return new GordianCorePBESpecBuilder();
+    }
+
+    @Override
+    public GordianDigestSpecBuilder usingDigestSpecBuilder() {
+        return theBuilder;
     }
 
     @Override

@@ -18,6 +18,7 @@
 package io.github.tonywasher.joceanus.gordianknot.api.lock.spec;
 
 import io.github.tonywasher.joceanus.gordianknot.api.keyset.spec.GordianKeySetSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keyset.spec.GordianKeySetSpecBuilder;
 
 /**
  * PasswordLock Spec Builder.
@@ -55,4 +56,11 @@ public interface GordianPasswordLockSpecBuilder {
      */
     GordianPasswordLockSpec passwordLock(int pKIterations,
                                          GordianKeySetSpec pKeySetSpec);
+
+    /**
+     * Access keySetSpecBuilder.
+     *
+     * @return the keySetSpec builder
+     */
+    GordianKeySetSpecBuilder usingKeySetSpecBuilder();
 }

@@ -18,7 +18,9 @@
 package io.github.tonywasher.joceanus.gordianknot.api.random.spec;
 
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeySpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpecBuilder;
 
 /**
  * SecureRandom Specification Builder.
@@ -54,6 +56,20 @@ public interface GordianRandomSpecBuilder {
      * @return the Builder
      */
     GordianRandomSpecBuilder withResistance();
+
+    /**
+     * Access digestSpecBuilder.
+     *
+     * @return the digestSpec builder
+     */
+    GordianDigestSpecBuilder usingDigestSpecBuilder();
+
+    /**
+     * Access symKeySpecBuilder.
+     *
+     * @return the symKeySpec builder
+     */
+    GordianSymKeySpecBuilder usingSymKeySpecBuilder();
 
     /**
      * Build randomSpec.

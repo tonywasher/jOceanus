@@ -47,9 +47,10 @@ final byte[] myResult = myMac.finish();
 /* Access factory */
 final GordianFactory myBaseFactory = GordianGenerator.createFactory();
 final GordianMacFactory myMacFactory = myBaseFactory.getMacFactory();
+final GordianMacSpecBuilder myBuilder = myMacFactory.newMacSpecBuilder();
 
 /* Create mac */
-final GordianMacSpec mySpec = GordianMacSpecBuilder.blake3Mac(GordianLength.LEN_256);
+final GordianMacSpec mySpec = myBuilder.blake3Mac(GordianLength.LEN_256);
 final GordianMac myMac = myMacFactory.createMac(mySpec);
 final GordianXof myXof = (GordianXof) myMac;
 

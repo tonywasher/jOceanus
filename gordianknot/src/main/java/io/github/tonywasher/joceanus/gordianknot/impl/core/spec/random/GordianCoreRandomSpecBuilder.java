@@ -19,7 +19,9 @@ package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.random;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeySpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKeyLengths;
 import io.github.tonywasher.joceanus.gordianknot.api.random.spec.GordianRandomSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.random.spec.GordianRandomSpecBuilder;
@@ -36,6 +38,16 @@ import java.util.List;
  */
 public final class GordianCoreRandomSpecBuilder
         implements GordianRandomSpecBuilder {
+    /**
+     * The digestSpec builder.
+     */
+    private final GordianDigestSpecBuilder theDigestBuilder;
+
+    /**
+     * The symKeySpec builder.
+     */
+    private final GordianSymKeySpecBuilder theSymKeyBuilder;
+
     /**
      * The type.
      */
@@ -55,6 +67,8 @@ public final class GordianCoreRandomSpecBuilder
      * Constructor.
      */
     private GordianCoreRandomSpecBuilder() {
+        theDigestBuilder = GordianCoreDigestSpecBuilder.newInstance();
+        theSymKeyBuilder = GordianCoreSymKeySpecBuilder.newInstance();
     }
 
     /**
@@ -88,6 +102,16 @@ public final class GordianCoreRandomSpecBuilder
     public GordianRandomSpecBuilder withResistance() {
         withResistance = true;
         return this;
+    }
+
+    @Override
+    public GordianDigestSpecBuilder usingDigestSpecBuilder() {
+        return theDigestBuilder;
+    }
+
+    @Override
+    public GordianSymKeySpecBuilder usingSymKeySpecBuilder() {
+        return theSymKeyBuilder;
     }
 
     @Override

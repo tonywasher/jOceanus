@@ -37,6 +37,13 @@ public interface GordianStreamCipherSpecBuilder {
     GordianStreamCipherSpecBuilder asAEAD();
 
     /**
+     * Access streamKeySpecBuilder.
+     *
+     * @return the streamKeySpec builder
+     */
+    GordianStreamKeySpecBuilder usingStreamKeySpecBuilder();
+
+    /**
      * Build streamCipherSpec.
      *
      * @return the streamCipherSpec

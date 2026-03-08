@@ -22,6 +22,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianPadding;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymCipherSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymCipherSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeySpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeySpecBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +32,11 @@ import java.util.List;
  */
 public final class GordianCoreSymCipherSpecBuilder
         implements GordianSymCipherSpecBuilder {
+    /**
+     * The symKeySpec builder.
+     */
+    private final GordianSymKeySpecBuilder theBuilder;
+
     /**
      * The keySpec.
      */
@@ -50,6 +56,7 @@ public final class GordianCoreSymCipherSpecBuilder
      * Private constructor.
      */
     private GordianCoreSymCipherSpecBuilder() {
+        theBuilder = GordianCoreSymKeySpecBuilder.newInstance();
     }
 
     /**
@@ -77,6 +84,12 @@ public final class GordianCoreSymCipherSpecBuilder
     public GordianSymCipherSpecBuilder withPadding(final GordianPadding pPadding) {
         thePadding = pPadding;
         return this;
+    }
+
+
+    @Override
+    public GordianSymKeySpecBuilder usingSymKeySpecBuilder() {
+        return theBuilder;
     }
 
     @Override
