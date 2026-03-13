@@ -18,6 +18,7 @@
 package io.github.tonywasher.joceanus.themis.xanalysis.solver.mapper;
 
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.themis.exc.ThemisDataException;
 import io.github.tonywasher.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance;
 import io.github.tonywasher.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance.ThemisXAnalysisClassInstance;
 import io.github.tonywasher.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance.ThemisXAnalysisExpressionInstance;
@@ -97,8 +98,9 @@ public class ThemisXAnalysisMapper
      * Process package.
      *
      * @param pPackage the package
+     * @throws OceanusException on error
      */
-    public void processPackage(final ThemisXAnalysisSolverPackage pPackage) {
+    public void processPackage(final ThemisXAnalysisSolverPackage pPackage) throws OceanusException {
         /* Loop through the files in the package */
         for (ThemisXAnalysisSolverFile myFile : pPackage.getFiles()) {
             /* Process the file */
@@ -142,11 +144,6 @@ public class ThemisXAnalysisMapper
         /* Loop through the classes in the file */
         for (ThemisXAnalysisSolverClass myClass : pFile.getClasses()) {
             final ThemisXAnalysisClassInstance myInstance = myClass.getUnderlyingClass();
-
-            /* Ignore anonymous and local classes */
-            if (myInstance.isAnonClass() || myInstance.isLocalDeclaration()) {
-                continue;
-            }
 
             /* Loop through the extends */
             for (ThemisXAnalysisTypeInstance myExtends : myInstance.getExtends()) {
@@ -208,8 +205,9 @@ public class ThemisXAnalysisMapper
      * Process file.
      *
      * @param pFile the file
+     * @throws OceanusException on error
      */
-    private void processFile(final ThemisXAnalysisSolverFile pFile) {
+    private void processFile(final ThemisXAnalysisSolverFile pFile) throws OceanusException {
         /* Reset the fileState */
         resetFileState(pFile);
 
@@ -226,8 +224,9 @@ public class ThemisXAnalysisMapper
      * Process instance.
      *
      * @param pInstance the instance
+     * @throws OceanusException on error
      */
-    private void processInstance(final ThemisXAnalysisInstance pInstance) {
+    private void processInstance(final ThemisXAnalysisInstance pInstance) throws OceanusException {
         /* Process stacks */
         final boolean bumpType = theType.processInstance(pInstance);
         final boolean bumpName = theName.processInstance(pInstance);
@@ -256,12 +255,11 @@ public class ThemisXAnalysisMapper
      *
      * @param pElement the element
      * @return process children? true/false
+     * @throws OceanusException on error
      */
-    private boolean processElement(final ThemisXAnalysisInstance pElement) {
+    private boolean processElement(final ThemisXAnalysisInstance pElement) throws OceanusException {
         /* Handle ClassInstance */
-        if (pElement instanceof ThemisXAnalysisClassInstance myInstance
-                && !myInstance.isAnonClass()
-                && !myInstance.isLocalDeclaration()) {
+        if (pElement instanceof ThemisXAnalysisClassInstance myInstance) {
             final ThemisXAnalysisSolverClass myClass = theProject.getProjectClassMap().get(myInstance.getFullName());
             theFile.processInherited(myClass);
         }
@@ -296,8 +294,9 @@ public class ThemisXAnalysisMapper
      * Process class reference.
      *
      * @param pReference the reference
+     * @throws OceanusException on error
      */
-    private void processClassReference(final ThemisXAnalysisTypeClassInterface pReference) {
+    private void processClassReference(final ThemisXAnalysisTypeClassInterface pReference) throws OceanusException {
         /* Process as a possible reference */
         final ThemisXAnalysisClassInstance myResolved = theFile.processPossibleReference(pReference.getFullName());
 
@@ -310,7 +309,7 @@ public class ThemisXAnalysisMapper
             /* Report failure */
             final boolean bFound = (myType != null || myName != null);
             if (!bFound) {
-                System.out.println("Unresolved link: " + pReference.getFullName());
+                throw new ThemisDataException("Unresolved link: " + pReference.getFullName());
             }
         }
     }
@@ -319,8 +318,9 @@ public class ThemisXAnalysisMapper
      * Process field Access.
      *
      * @param pAccess the fieldAccess
+     * @throws OceanusException on error
      */
-    private void processFieldAccess(final ThemisXAnalysisExprFieldAccess pAccess) {
+    private void processFieldAccess(final ThemisXAnalysisExprFieldAccess pAccess) throws OceanusException {
         final ThemisXAnalysisExpressionInstance myExpr = pAccess.getScope();
         if (myExpr instanceof ThemisXAnalysisExprName myNameExpr) {
             /* Check to see if the field access is to an explicit class */
@@ -340,7 +340,7 @@ public class ThemisXAnalysisMapper
 
                 /* Report failure */
                 if (myName == null) {
-                    System.out.println("Unresolved fieldAccess: " + myNameRef);
+                    throw new ThemisDataException("Unresolved fieldAccess: " + myNameRef);
                 }
             }
         }
@@ -350,8 +350,9 @@ public class ThemisXAnalysisMapper
      * Process method call.
      *
      * @param pCall the methodCall
+     * @throws OceanusException on error
      */
-    private void processMethodCall(final ThemisXAnalysisExprMethodCall pCall) {
+    private void processMethodCall(final ThemisXAnalysisExprMethodCall pCall) throws OceanusException {
         final ThemisXAnalysisExpressionInstance myExpr = pCall.getScope();
         if (myExpr instanceof ThemisXAnalysisExprName myNameExpr) {
             /* Check to see if the field access is to an explicit class */
@@ -365,7 +366,7 @@ public class ThemisXAnalysisMapper
 
                 /* Report failure */
                 if (myName == null) {
-                    System.out.println("Unresolved methodCall using name: " + myNameRef);
+                    throw new ThemisDataException("Unresolved method call using name: " + myNameRef);
                 }
             }
         } else if (myExpr instanceof ThemisXAnalysisExprFieldAccess myFieldExpr) {
@@ -379,8 +380,9 @@ public class ThemisXAnalysisMapper
      * Process method Reference.
      *
      * @param pReference the reference
+     * @throws OceanusException on error
      */
-    private void processMethodReference(final ThemisXAnalysisExprMethodRef pReference) {
+    private void processMethodReference(final ThemisXAnalysisExprMethodRef pReference) throws OceanusException {
         final ThemisXAnalysisExpressionInstance myExpr = pReference.getScope();
         if (myExpr instanceof ThemisXAnalysisExprName myNameExpr) {
             /* Check to see if the method reference is to an explicit class */
@@ -394,7 +396,7 @@ public class ThemisXAnalysisMapper
 
                 /* Report failure */
                 if (myName == null) {
-                    System.out.println("Unresolved methodRef: " + myNameRef);
+                    throw new ThemisDataException("Unresolved methodRef: " + myNameRef);
                 }
             }
         }

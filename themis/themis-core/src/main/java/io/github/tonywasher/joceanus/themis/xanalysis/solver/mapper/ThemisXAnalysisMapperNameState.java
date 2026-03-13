@@ -17,6 +17,8 @@
 
 package io.github.tonywasher.joceanus.themis.xanalysis.solver.mapper;
 
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.themis.exc.ThemisDataException;
 import io.github.tonywasher.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance;
 import io.github.tonywasher.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance.ThemisXAnalysisClassInstance;
 import io.github.tonywasher.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance.ThemisXAnalysisDeclarationInstance;
@@ -78,8 +80,9 @@ public class ThemisXAnalysisMapperNameState {
      *
      * @param pInstance the instance
      * @return should cleanUp be called after processing this instance?
+     * @throws OceanusException on error
      */
-    boolean processInstance(final ThemisXAnalysisInstance pInstance) {
+    boolean processInstance(final ThemisXAnalysisInstance pInstance) throws OceanusException {
         /* Determine whether we should bump the stack */
         final boolean doBump = bumpStack(pInstance);
         if (doBump) {
@@ -184,25 +187,28 @@ public class ThemisXAnalysisMapperNameState {
      * Process class element.
      *
      * @param pClass the element
+     * @throws OceanusException on error
      */
-    private void processClass(final ThemisXAnalysisClassInstance pClass) {
+    private void processClass(final ThemisXAnalysisClassInstance pClass) throws OceanusException {
         for (ThemisXAnalysisTypeInstance myClass : pClass.getExtends()) {
             final ThemisXAnalysisTypeClassInterface myExtend = (ThemisXAnalysisTypeClassInterface) myClass;
             ThemisXAnalysisClassInstance myClassInstance = myExtend.getClassInstance();
             if (myClassInstance instanceof ThemisXAnalysisReflectExternal myExternal) {
                 myClassInstance = myExternal.getClassInstance();
             }
-            if (myClassInstance != null) {
-                /* Loop through all the field declarations */
-                for (ThemisXAnalysisInstance myChild : myClassInstance.getBody()) {
-                    if (myChild instanceof ThemisXAnalysisDeclField myField) {
-                        processField(myField);
-                    }
-                }
-
-                /* Follow the chain */
-                processClass(myClassInstance);
+            if (myClassInstance == null) {
+                throw new ThemisDataException("Class Instance not found: " + pClass.getFullName());
             }
+
+            /* Loop through all the field declarations */
+            for (ThemisXAnalysisInstance myChild : myClassInstance.getBody()) {
+                if (myChild instanceof ThemisXAnalysisDeclField myField) {
+                    processField(myField);
+                }
+            }
+
+            /* Follow the chain */
+            processClass(myClassInstance);
         }
     }
 

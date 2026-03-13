@@ -118,13 +118,7 @@ public class ThemisXAnalysisMapperProjectState
         for (ThemisXAnalysisSolverFile myFile : pPackage.getFiles()) {
             /* Loop through all classes */
             for (ThemisXAnalysisSolverClass myClass : myFile.getClasses()) {
-                final ThemisXAnalysisClassInstance myInstance = myClass.getUnderlyingClass();
-
-                /* Ignore local/anonymous and private classes */
-                final boolean isLocalAnon = myInstance.isAnonClass() || myInstance.isLocalDeclaration();
-                if (!isLocalAnon) {
-                    theProjectClasses.put(myClass.getFullName(), myClass);
-                }
+                theProjectClasses.put(myClass.getFullName(), myClass);
             }
         }
     }
