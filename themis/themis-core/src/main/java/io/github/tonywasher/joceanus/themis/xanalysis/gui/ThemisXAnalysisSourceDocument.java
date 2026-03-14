@@ -1,0 +1,153 @@
+/*
+ * Themis: Java Project Framework
+ * Copyright 2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+package io.github.tonywasher.joceanus.themis.xanalysis.gui;
+
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogManager;
+import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogger;
+import io.github.tonywasher.joceanus.themis.exc.ThemisIOException;
+import io.github.tonywasher.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
+import javax.swing.text.html.HTML.Tag;
+import javax.xml.XMLConstants;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import java.io.StringWriter;
+
+/**
+ * Document Builder for source.
+ */
+public class ThemisXAnalysisSourceDocument {
+    /**
+     * Logger.
+     */
+    private static final OceanusLogger LOGGER = OceanusLogManager.getLogger(ThemisXAnalysisSourceDocument.class);
+
+    /**
+     * The document builder.
+     */
+    private final DocumentBuilder theBuilder;
+
+    /**
+     * The Transformer.
+     */
+    private final Transformer theXformer;
+
+    /**
+     * The document.
+     */
+    private Document theDocument;
+
+    /**
+     * Constructor.
+     *
+     * @throws OceanusException on error
+     */
+    ThemisXAnalysisSourceDocument() throws OceanusException {
+        /* Protect against exceptions */
+        try {
+            /* Create the document builder */
+            final DocumentBuilderFactory myDocFactory = DocumentBuilderFactory.newInstance();
+            myDocFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+            myDocFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+            myDocFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
+            theBuilder = myDocFactory.newDocumentBuilder();
+
+            /* Create the transformer */
+            final TransformerFactory myXformFactory = TransformerFactory.newInstance();
+            myXformFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+            myXformFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+            myXformFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");
+            theXformer = myXformFactory.newTransformer();
+            theXformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+
+        } catch (Exception e) {
+            throw new ThemisIOException("Failed to create", e);
+        }
+    }
+
+    /**
+     * Obtain the document.
+     *
+     * @return the document
+     */
+    public Document getDocument() {
+        return theDocument;
+    }
+
+    /**
+     * Create new document.
+     *
+     * @return the body
+     */
+    private Element newDocument() {
+        /* Create the new document */
+        theDocument = theBuilder.newDocument();
+
+        /* Create the standard structure */
+        final Element myHtml = theDocument.createElement(Tag.HTML.toString());
+        theDocument.appendChild(myHtml);
+        final Element myBody = theDocument.createElement(Tag.BODY.toString());
+        myHtml.appendChild(myBody);
+        return myBody;
+    }
+
+    /**
+     * Create document for element.
+     *
+     * @param pElement the element
+     */
+    public String formatElement(final ThemisXAnalysisInstance pElement) {
+        /* Create new document and obtain the body */
+        final Element myBody = newDocument();
+
+        /* Create the code element */
+        final Element myCode = theDocument.createElement(Tag.CODE.toString());
+        myBody.appendChild(myCode);
+        myCode.setTextContent(pElement.toString());
+
+        return formatXML();
+    }
+
+    /**
+     * Format XML.
+     *
+     * @return the formatted XML
+     */
+    private String formatXML() {
+        /* Protect against exceptions */
+        try {
+            /* Transform the new document */
+            final StringWriter myWriter = new StringWriter();
+            theXformer.transform(new DOMSource(theDocument), new StreamResult(myWriter));
+            return myWriter.getBuffer().toString();
+
+        } catch (TransformerException e) {
+            LOGGER.error("Failed to format", e);
+            return "";
+        }
+    }
+}
