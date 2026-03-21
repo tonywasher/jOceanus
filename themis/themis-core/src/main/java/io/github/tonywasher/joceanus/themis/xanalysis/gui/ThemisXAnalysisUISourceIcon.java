@@ -35,7 +35,7 @@ import java.io.InputStream;
 /**
  * Icons for SourceTree entries.
  */
-public enum ThemisXAnalysisSourceIcon
+public enum ThemisXAnalysisUISourceIcon
         implements TethysUIIconId {
     /**
      * The Red UpperCase A.
@@ -452,7 +452,7 @@ public enum ThemisXAnalysisSourceIcon
      *
      * @param pSourceName the source name
      */
-    ThemisXAnalysisSourceIcon(final String pSourceName) {
+    ThemisXAnalysisUISourceIcon(final String pSourceName) {
         theSource = pSourceName;
     }
 
@@ -463,7 +463,7 @@ public enum ThemisXAnalysisSourceIcon
 
     @Override
     public InputStream getInputStream() {
-        return ThemisXAnalysisSourceIcon.class.getResourceAsStream(theSource);
+        return ThemisXAnalysisUISourceIcon.class.getResourceAsStream(theSource);
     }
 
     /**

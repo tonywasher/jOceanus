@@ -16,16 +16,16 @@
  */
 package io.github.tonywasher.joceanus.themis.xanalysis.stats;
 
-import io.github.tonywasher.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance;
 import io.github.tonywasher.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance.ThemisXAnalysisClassInstance;
-import io.github.tonywasher.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance.ThemisXAnalysisMethodInstance;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Statistics Class.
  */
-public class ThemisXAnalysisStatsClass {
+public class ThemisXAnalysisStatsClass
+        implements ThemisXAnalysisStatsElement {
     /**
      * The underlying class.
      */
@@ -42,6 +42,11 @@ public class ThemisXAnalysisStatsClass {
     private final List<ThemisXAnalysisStatsMethod> theMethods;
 
     /**
+     * The classes.
+     */
+    private final List<ThemisXAnalysisStatsClass> theClasses;
+
+    /**
      * Constructor.
      *
      * @param pClass the parsed class
@@ -53,10 +58,9 @@ public class ThemisXAnalysisStatsClass {
         /* Create the stats */
         theStats = new ThemisXAnalysisStats();
 
-        /* Populate the methodList */
-        final ThemisXAnalysisInstance myClass = (ThemisXAnalysisInstance) theClass;
-        final List<ThemisXAnalysisInstance> myMethods = myClass.discoverChildren(ThemisXAnalysisMethodInstance.class::isInstance);
-        theMethods = myMethods.stream().map(ThemisXAnalysisStatsMethod::new).toList();
+        /* Create the class and method lists */
+        theMethods = new ArrayList<>();
+        theClasses = new ArrayList<>();
     }
 
     /**
@@ -68,11 +72,7 @@ public class ThemisXAnalysisStatsClass {
         return theClass;
     }
 
-    /**
-     * Obtain the stats.
-     *
-     * @return the stats
-     */
+    @Override
     public ThemisXAnalysisStats getStats() {
         return theStats;
     }
@@ -84,6 +84,25 @@ public class ThemisXAnalysisStatsClass {
      */
     List<ThemisXAnalysisStatsMethod> getMethods() {
         return theMethods;
+    }
+
+    /**
+     * Obtain the classes.
+     *
+     * @return the classes
+     */
+    List<ThemisXAnalysisStatsClass> getClasses() {
+        return theClasses;
+    }
+
+    @Override
+    public void addMethod(final ThemisXAnalysisStatsElement pElement) {
+        theMethods.add((ThemisXAnalysisStatsMethod) pElement);
+    }
+
+    @Override
+    public void addClass(final ThemisXAnalysisStatsElement pElement) {
+        theClasses.add((ThemisXAnalysisStatsClass) pElement);
     }
 
     @Override

@@ -33,16 +33,16 @@ import io.github.tonywasher.joceanus.themis.xanalysis.parser.proj.ThemisXAnalysi
 /**
  * Source Panel.
  */
-public class ThemisXAnalysisSourcePanel {
+public class ThemisXAnalysisUISourcePanel {
     /**
      * The SplitTree Manager.
      */
-    private final TethysUISplitTreeManager<ThemisXAnalysisSourceEntry> theSplitTree;
+    private final TethysUISplitTreeManager<ThemisXAnalysisUISourceEntry> theSplitTree;
 
     /**
      * The Tree Manager.
      */
-    private final TethysUITreeManager<ThemisXAnalysisSourceEntry> theTree;
+    private final TethysUITreeManager<ThemisXAnalysisUISourceEntry> theTree;
 
     /**
      * The HTML Manager.
@@ -52,12 +52,12 @@ public class ThemisXAnalysisSourcePanel {
     /**
      * The Document Builder.
      */
-    private final ThemisXAnalysisSourceDocument theDoc;
+    private final ThemisXAnalysisUISourceDocument theDoc;
 
     /**
      * The Current root.
      */
-    private TethysUITreeItem<ThemisXAnalysisSourceEntry> theRoot;
+    private TethysUITreeItem<ThemisXAnalysisUISourceEntry> theRoot;
 
     /**
      * Constructor.
@@ -65,16 +65,16 @@ public class ThemisXAnalysisSourcePanel {
      * @param pFactory the GuiFactory
      * @throws OceanusException on error
      */
-    ThemisXAnalysisSourcePanel(final TethysUIFactory<?> pFactory) throws OceanusException {
+    ThemisXAnalysisUISourcePanel(final TethysUIFactory<?> pFactory) throws OceanusException {
         /* Create the splitTree Manager */
         theSplitTree = pFactory.controlFactory().newSplitTreeManager();
         theTree = theSplitTree.getTreeManager();
         theHTML = theSplitTree.getHTMLManager();
-        theHTML.setCSSContent(ThemisXAnalysisStyleSheet.CSS);
+        theHTML.setCSSContent(ThemisXAnalysisUIStyleSheet.CSS);
         theTree.setVisible(true);
 
         /* Create the document builder */
-        theDoc = new ThemisXAnalysisSourceDocument();
+        theDoc = new ThemisXAnalysisUISourceDocument();
 
         /* Listen to the TreeManager */
         theSplitTree.getEventRegistrar().addEventListener(this::handleSplitTreeAction);
@@ -103,7 +103,7 @@ public class ThemisXAnalysisSourcePanel {
 
         /* Create root item for project */
         final ThemisXAnalysisNodeCompilationUnit myUnit = pFile.getContents();
-        final ThemisXAnalysisSourceEntry myEntry = new ThemisXAnalysisSourceEntry(myUnit);
+        final ThemisXAnalysisUISourceEntry myEntry = new ThemisXAnalysisUISourceEntry(myUnit);
         theRoot = theTree.addRootItem(myEntry.getUniqueName(), myEntry);
         theRoot.setIcon(myEntry.getIcon());
         theRoot.setVisible(true);
@@ -118,13 +118,13 @@ public class ThemisXAnalysisSourcePanel {
      * @param pParent  the parent
      * @param pElement the element
      */
-    void createChildEntries(final TethysUITreeItem<ThemisXAnalysisSourceEntry> pParent,
+    void createChildEntries(final TethysUITreeItem<ThemisXAnalysisUISourceEntry> pParent,
                             final ThemisXAnalysisInstance pElement) {
         /* Loop through the root children */
         for (ThemisXAnalysisInstance myChild : pElement.getChildren()) {
             /* Create a new root entry */
-            final ThemisXAnalysisSourceEntry myEntry = new ThemisXAnalysisSourceEntry(pParent.getItem(), myChild);
-            final TethysUITreeItem<ThemisXAnalysisSourceEntry> myTreeItem = theTree.addChildItem(pParent, myEntry.getUniqueName(), myEntry);
+            final ThemisXAnalysisUISourceEntry myEntry = new ThemisXAnalysisUISourceEntry(pParent.getItem(), myChild);
+            final TethysUITreeItem<ThemisXAnalysisUISourceEntry> myTreeItem = theTree.addChildItem(pParent, myEntry.getUniqueName(), myEntry);
             myTreeItem.setIcon(myEntry.getIcon());
             myTreeItem.setVisible(true);
 
@@ -141,7 +141,7 @@ public class ThemisXAnalysisSourcePanel {
     private void handleSplitTreeAction(final OceanusEvent<TethysUIEvent> pEvent) {
         /* If this is a new value */
         if (pEvent.getEventId() == TethysUIEvent.NEWVALUE) {
-            handleNewTreeItem(pEvent.getDetails(ThemisXAnalysisSourceEntry.class));
+            handleNewTreeItem(pEvent.getDetails(ThemisXAnalysisUISourceEntry.class));
         }
     }
 
@@ -150,7 +150,7 @@ public class ThemisXAnalysisSourcePanel {
      *
      * @param pEntry the new entry
      */
-    private void handleNewTreeItem(final ThemisXAnalysisSourceEntry pEntry) {
+    private void handleNewTreeItem(final ThemisXAnalysisUISourceEntry pEntry) {
         /* If we have an entry */
         if (pEntry != null) {
             /* Access the Element */

@@ -22,7 +22,7 @@ import io.github.tonywasher.joceanus.themis.lethe.ui.ThemisDSMStyleSheet;
 
 import java.io.InputStream;
 
-public enum ThemisXAnalysisStyleSheet
+public enum ThemisXAnalysisUIStyleSheet
         implements TethysUIStyleSheetId {
     /**
      * Themis StyleSheet.
@@ -39,7 +39,7 @@ public enum ThemisXAnalysisStyleSheet
      *
      * @param pSource the source
      */
-    ThemisXAnalysisStyleSheet(final String pSource) {
+    ThemisXAnalysisUIStyleSheet(final String pSource) {
         theSource = pSource;
     }
 

@@ -21,7 +21,6 @@ import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogManager;
 import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogger;
 import io.github.tonywasher.joceanus.themis.exc.ThemisIOException;
-import io.github.tonywasher.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -38,13 +37,13 @@ import javax.xml.transform.stream.StreamResult;
 import java.io.StringWriter;
 
 /**
- * Document Builder for source.
+ * Base Document Builder for source.
  */
-public class ThemisXAnalysisSourceDocument {
+public abstract class ThemisXAnalysisUIBaseDocument {
     /**
      * Logger.
      */
-    private static final OceanusLogger LOGGER = OceanusLogManager.getLogger(ThemisXAnalysisSourceDocument.class);
+    private static final OceanusLogger LOGGER = OceanusLogManager.getLogger(ThemisXAnalysisUIBaseDocument.class);
 
     /**
      * The document builder.
@@ -66,7 +65,7 @@ public class ThemisXAnalysisSourceDocument {
      *
      * @throws OceanusException on error
      */
-    ThemisXAnalysisSourceDocument() throws OceanusException {
+    ThemisXAnalysisUIBaseDocument() throws OceanusException {
         /* Protect against exceptions */
         try {
             /* Create the document builder */
@@ -103,7 +102,7 @@ public class ThemisXAnalysisSourceDocument {
      *
      * @return the body
      */
-    private Element newDocument() {
+    protected Element newDocument() {
         /* Create the new document */
         theDocument = theBuilder.newDocument();
 
@@ -115,29 +114,13 @@ public class ThemisXAnalysisSourceDocument {
         return myBody;
     }
 
-    /**
-     * Create document for element.
-     *
-     * @param pElement the element
-     */
-    public String formatElement(final ThemisXAnalysisInstance pElement) {
-        /* Create new document and obtain the body */
-        final Element myBody = newDocument();
-
-        /* Create the code element */
-        final Element myCode = theDocument.createElement(Tag.CODE.toString());
-        myBody.appendChild(myCode);
-        myCode.setTextContent(pElement.toString());
-
-        return formatXML();
-    }
 
     /**
      * Format XML.
      *
      * @return the formatted XML
      */
-    private String formatXML() {
+    protected String formatXML() {
         /* Protect against exceptions */
         try {
             /* Transform the new document */

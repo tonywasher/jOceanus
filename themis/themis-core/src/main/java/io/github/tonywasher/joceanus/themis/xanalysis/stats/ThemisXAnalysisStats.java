@@ -29,10 +29,34 @@ public class ThemisXAnalysisStats {
     private final Map<ThemisXAnalysisStat, Number> theStats;
 
     /**
+     * The stats.
+     */
+    private final Map<ThemisXAnalysisStat, Number> theTotals;
+
+    /**
      * Constructor.
      */
     ThemisXAnalysisStats() {
         theStats = new EnumMap<>(ThemisXAnalysisStat.class);
+        theTotals = new EnumMap<>(ThemisXAnalysisStat.class);
+    }
+
+    /**
+     * Obtain the stats.
+     *
+     * @return the stats
+     */
+    public Map<ThemisXAnalysisStat, Number> getStats() {
+        return theStats;
+    }
+
+    /**
+     * Obtain the totals.
+     *
+     * @return the totals
+     */
+    public Map<ThemisXAnalysisStat, Number> getTotals() {
+        return theTotals;
     }
 
     /**
@@ -56,7 +80,27 @@ public class ThemisXAnalysisStats {
     }
 
     /**
-     * Obtain statistic value.
+     * Does the total value exist?.
+     *
+     * @param pStat the statistic
+     * @return true/false
+     */
+    public boolean hasTotal(final ThemisXAnalysisStat pStat) {
+        return theStats.containsKey(pStat);
+    }
+
+    /**
+     * Obtain total value.
+     *
+     * @param pStat the statistic
+     * @return the value
+     */
+    public Number getTotal(final ThemisXAnalysisStat pStat) {
+        return theStats.computeIfAbsent(pStat, s -> 0);
+    }
+
+    /**
+     * Set Statistic value.
      *
      * @param pStat  the statistic
      * @param pValue the value
@@ -64,5 +108,16 @@ public class ThemisXAnalysisStats {
     public void setStat(final ThemisXAnalysisStat pStat,
                         final Number pValue) {
         theStats.put(pStat, pValue);
+    }
+
+    /**
+     * Set Total value.
+     *
+     * @param pStat  the statistic
+     * @param pValue the value
+     */
+    public void setTotal(final ThemisXAnalysisStat pStat,
+                         final Number pValue) {
+        theTotals.put(pStat, pValue);
     }
 }

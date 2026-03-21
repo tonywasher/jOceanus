@@ -26,7 +26,8 @@ import java.util.List;
 /**
  * Statistics Module.
  */
-public class ThemisXAnalysisStatsModule {
+public class ThemisXAnalysisStatsModule
+        implements ThemisXAnalysisStatsElement {
     /**
      * The underlying module.
      */
@@ -60,8 +61,11 @@ public class ThemisXAnalysisStatsModule {
 
         /* Initialise the packages */
         for (ThemisXAnalysisPackage myPackage : theModule.getPackages()) {
-            final ThemisXAnalysisStatsPackage myStatsPackage = new ThemisXAnalysisStatsPackage(myPackage);
-            thePackages.add(myStatsPackage);
+            /* Only deal with non-placeholders */
+            if (!myPackage.isPlaceHolder()) {
+                final ThemisXAnalysisStatsPackage myStatsPackage = new ThemisXAnalysisStatsPackage(myPackage);
+                thePackages.add(myStatsPackage);
+            }
         }
     }
 
@@ -74,11 +78,7 @@ public class ThemisXAnalysisStatsModule {
         return theModule;
     }
 
-    /**
-     * Obtain the stats.
-     *
-     * @return the stats
-     */
+    @Override
     public ThemisXAnalysisStats getStats() {
         return theStats;
     }

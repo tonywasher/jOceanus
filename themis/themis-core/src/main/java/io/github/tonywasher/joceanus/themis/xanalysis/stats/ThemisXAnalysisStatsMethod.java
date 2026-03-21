@@ -16,13 +16,16 @@
  */
 package io.github.tonywasher.joceanus.themis.xanalysis.stats;
 
-import io.github.tonywasher.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance;
 import io.github.tonywasher.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance.ThemisXAnalysisMethodInstance;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Statistics Method.
  */
-public class ThemisXAnalysisStatsMethod {
+public class ThemisXAnalysisStatsMethod
+        implements ThemisXAnalysisStatsElement {
     /**
      * The underlying package.
      */
@@ -34,16 +37,24 @@ public class ThemisXAnalysisStatsMethod {
     private final ThemisXAnalysisStats theStats;
 
     /**
+     * The classes.
+     */
+    private final List<ThemisXAnalysisStatsClass> theClasses;
+
+    /**
      * Constructor.
      *
      * @param pMethod the parsed method
      */
-    ThemisXAnalysisStatsMethod(final ThemisXAnalysisInstance pMethod) {
+    ThemisXAnalysisStatsMethod(final ThemisXAnalysisMethodInstance pMethod) {
         /* Store the method */
-        theMethod = (ThemisXAnalysisMethodInstance) pMethod;
+        theMethod = pMethod;
 
         /* Create the stats */
         theStats = new ThemisXAnalysisStats();
+
+        /* Create the class list */
+        theClasses = new ArrayList<>();
     }
 
     /**
@@ -55,13 +66,23 @@ public class ThemisXAnalysisStatsMethod {
         return theMethod;
     }
 
-    /**
-     * Obtain the stats.
-     *
-     * @return the stats
-     */
+    @Override
     public ThemisXAnalysisStats getStats() {
         return theStats;
+    }
+
+    /**
+     * Obtain the classes.
+     *
+     * @return the classes
+     */
+    List<ThemisXAnalysisStatsClass> getClasses() {
+        return theClasses;
+    }
+    
+    @Override
+    public void addClass(final ThemisXAnalysisStatsElement pElement) {
+        theClasses.add((ThemisXAnalysisStatsClass) pElement);
     }
 
     @Override

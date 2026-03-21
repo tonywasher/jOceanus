@@ -51,7 +51,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * Source Panel Tree Entry.
  */
-public class ThemisXAnalysisSourceEntry {
+public class ThemisXAnalysisUISourceEntry {
     /**
      * Entry name prefix.
      */
@@ -65,7 +65,7 @@ public class ThemisXAnalysisSourceEntry {
     /**
      * The Parent.
      */
-    private final ThemisXAnalysisSourceEntry theParent;
+    private final ThemisXAnalysisUISourceEntry theParent;
 
     /**
      * The id of the entry.
@@ -75,7 +75,7 @@ public class ThemisXAnalysisSourceEntry {
     /**
      * The Child List.
      */
-    private List<ThemisXAnalysisSourceEntry> theChildList;
+    private List<ThemisXAnalysisUISourceEntry> theChildList;
 
     /**
      * The unique name of the entry.
@@ -102,7 +102,7 @@ public class ThemisXAnalysisSourceEntry {
      *
      * @param pElement the sourceElement
      */
-    ThemisXAnalysisSourceEntry(final ThemisXAnalysisInstance pElement) {
+    ThemisXAnalysisUISourceEntry(final ThemisXAnalysisInstance pElement) {
         this(null, pElement);
     }
 
@@ -112,8 +112,8 @@ public class ThemisXAnalysisSourceEntry {
      * @param pParent  the parent entry
      * @param pElement the sourceElement
      */
-    ThemisXAnalysisSourceEntry(final ThemisXAnalysisSourceEntry pParent,
-                               final ThemisXAnalysisInstance pElement) {
+    ThemisXAnalysisUISourceEntry(final ThemisXAnalysisUISourceEntry pParent,
+                                 final ThemisXAnalysisInstance pElement) {
         /* Store parameters */
         theParent = pParent;
         theObject = pElement;
@@ -122,7 +122,7 @@ public class ThemisXAnalysisSourceEntry {
         theId = NEXT_ENTRY_ID.getAndIncrement();
         theUniqueName = ENTRY_PREFIX + theId;
         theDisplayName = getElementDisplay(pElement);
-        theIcon = ThemisXAnalysisSourceIcon.getElementIcon(pElement);
+        theIcon = ThemisXAnalysisUISourceIcon.getElementIcon(pElement);
 
         /* If we have a parent */
         if (pParent != null) {
@@ -136,7 +136,7 @@ public class ThemisXAnalysisSourceEntry {
      *
      * @return the parent
      */
-    ThemisXAnalysisSourceEntry getParent() {
+    ThemisXAnalysisUISourceEntry getParent() {
         return theParent;
     }
 
@@ -177,7 +177,7 @@ public class ThemisXAnalysisSourceEntry {
      *
      * @return the iterator
      */
-    Iterator<ThemisXAnalysisSourceEntry> childIterator() {
+    Iterator<ThemisXAnalysisUISourceEntry> childIterator() {
         return theChildList == null
                 ? Collections.emptyIterator()
                 : theChildList.iterator();
@@ -188,7 +188,7 @@ public class ThemisXAnalysisSourceEntry {
      *
      * @param pChild the child to add
      */
-    private void addChild(final ThemisXAnalysisSourceEntry pChild) {
+    private void addChild(final ThemisXAnalysisUISourceEntry pChild) {
         if (theChildList == null) {
             theChildList = new ArrayList<>();
         }
@@ -206,7 +206,7 @@ public class ThemisXAnalysisSourceEntry {
         }
 
         /* Check class */
-        if (!(pThat instanceof ThemisXAnalysisSourceEntry myThat)) {
+        if (!(pThat instanceof ThemisXAnalysisUISourceEntry myThat)) {
             return false;
         }
 

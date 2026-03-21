@@ -25,7 +25,8 @@ import java.util.List;
 /**
  * Statistics Package.
  */
-public class ThemisXAnalysisStatsPackage {
+public class ThemisXAnalysisStatsPackage
+        implements ThemisXAnalysisStatsElement {
     /**
      * The underlying package.
      */
@@ -71,11 +72,7 @@ public class ThemisXAnalysisStatsPackage {
         return thePackage;
     }
 
-    /**
-     * Obtain the stats.
-     *
-     * @return the stats
-     */
+    @Override
     public ThemisXAnalysisStats getStats() {
         return theStats;
     }

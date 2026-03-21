@@ -18,12 +18,14 @@ package io.github.tonywasher.joceanus.themis.xanalysis.stats;
 
 import io.github.tonywasher.joceanus.themis.xanalysis.parser.proj.ThemisXAnalysisFile;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Statistics File.
  */
-public class ThemisXAnalysisStatsFile {
+public class ThemisXAnalysisStatsFile
+        implements ThemisXAnalysisStatsElement {
     /**
      * The underlying file.
      */
@@ -52,7 +54,11 @@ public class ThemisXAnalysisStatsFile {
         theStats = new ThemisXAnalysisStats();
 
         /* Populate the classList */
-        theClasses = theFile.getClasses().stream().map(ThemisXAnalysisStatsClass::new).toList();
+        theClasses = new ArrayList<>();
+
+        /* Create a statsParser */
+        final ThemisXAnalysisStatsParser myParser = new ThemisXAnalysisStatsParser();
+        myParser.parseElement(this, theFile.getContents());
     }
 
     /**
@@ -64,11 +70,7 @@ public class ThemisXAnalysisStatsFile {
         return theFile;
     }
 
-    /**
-     * Obtain the stats.
-     *
-     * @return the stats
-     */
+    @Override
     public ThemisXAnalysisStats getStats() {
         return theStats;
     }
@@ -80,6 +82,11 @@ public class ThemisXAnalysisStatsFile {
      */
     List<ThemisXAnalysisStatsClass> getClasses() {
         return theClasses;
+    }
+
+    @Override
+    public void addClass(final ThemisXAnalysisStatsElement pElement) {
+        theClasses.add((ThemisXAnalysisStatsClass) pElement);
     }
 
     @Override

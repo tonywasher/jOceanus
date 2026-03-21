@@ -28,7 +28,8 @@ import java.util.List;
 /**
  * Statistics Project.
  */
-public class ThemisXAnalysisStatsProject {
+public class ThemisXAnalysisStatsProject
+        implements ThemisXAnalysisStatsElement {
     /**
      * The underlying project.
      */
@@ -87,11 +88,7 @@ public class ThemisXAnalysisStatsProject {
         return theProject;
     }
 
-    /**
-     * Obtain the stats.
-     *
-     * @return the stats
-     */
+    @Override
     public ThemisXAnalysisStats getStats() {
         return theStats;
     }

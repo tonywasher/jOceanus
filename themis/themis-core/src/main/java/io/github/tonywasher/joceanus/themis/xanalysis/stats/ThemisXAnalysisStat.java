@@ -53,7 +53,7 @@ public enum ThemisXAnalysisStat {
     /**
      * NMTHD.
      */
-    NMTHD("Number of Methods"),
+    NMTHD("Number of Methods/Constructors"),
 
     /**
      * NATTR.
@@ -63,72 +63,7 @@ public enum ThemisXAnalysisStat {
     /**
      * NSTMT.
      */
-    NSTMT("Number of Statements"),
-
-    /**
-     * NPARM.
-     */
-    NPARM("Number of Parameters"),
-
-    /**
-     * IOVARS.
-     */
-    IOVARS("Number of Input/Output Parameters"),
-
-    /**
-     * TLOC.
-     */
-    TPLOC("Total Physical Lines Of Code"),
-
-    /**
-     * TLLOC.
-     */
-    TLLOC("Total Logical Lines Of Code"),
-
-    /**
-     * TBLOC.
-     */
-    TBLOC("Total Blank Lines of Code"),
-
-    /**
-     * TCLOC.
-     */
-    TCLOC("Total Comment Lines of Code"),
-
-    /**
-     * TNFLS.
-     */
-    TNFLS("Total Number of Files"),
-
-    /**
-     * TNPKG.
-     */
-    TNPKG("Total Number of Packages"),
-
-    /**
-     * TNCLS.
-     */
-    TNCLS("Total Number of Classes/Enums/Records"),
-
-    /**
-     * TNINT.
-     */
-    TNINT("Total Number of Interfaces/Abstract Classes"),
-
-    /**
-     * TNMTHD.
-     */
-    TNMTHD("Total Number of Methods"),
-
-    /**
-     * TNATTR.
-     */
-    TNATTR("Total Number of Attributes"),
-
-    /**
-     * TNSTMT.
-     */
-    TNSTMT("Total Number of Statements");
+    NSTMT("Number of Statements");
 
     /**
      * The description.
