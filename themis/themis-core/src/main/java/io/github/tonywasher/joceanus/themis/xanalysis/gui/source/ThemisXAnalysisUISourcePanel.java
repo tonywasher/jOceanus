@@ -38,7 +38,8 @@ import io.github.tonywasher.joceanus.themis.xanalysis.parser.proj.ThemisXAnalysi
 /**
  * Source Panel.
  */
-public class ThemisXAnalysisUISourcePanel {
+public class ThemisXAnalysisUISourcePanel
+        implements TethysUIComponent {
     /**
      * The SplitTree Manager.
      */
@@ -120,12 +121,8 @@ public class ThemisXAnalysisUISourcePanel {
         theFileSelect.getEventRegistrar().addEventListener(this::handleFileSelect);
     }
 
-    /**
-     * Obtain the component.
-     *
-     * @return the component
-     */
-    public TethysUIComponent getComponent() {
+    @Override
+    public TethysUIComponent getUnderlying() {
         return thePanel;
     }
 

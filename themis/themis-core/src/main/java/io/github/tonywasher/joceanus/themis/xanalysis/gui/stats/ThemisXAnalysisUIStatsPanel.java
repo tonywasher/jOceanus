@@ -35,7 +35,8 @@ import io.github.tonywasher.joceanus.themis.xanalysis.stats.ThemisXAnalysisStats
 import io.github.tonywasher.joceanus.themis.xanalysis.stats.ThemisXAnalysisStatsPackage;
 import io.github.tonywasher.joceanus.themis.xanalysis.stats.ThemisXAnalysisStatsProject;
 
-public class ThemisXAnalysisUIStatsPanel {
+public class ThemisXAnalysisUIStatsPanel
+        implements TethysUIComponent {
     /**
      * The SplitTree Manager.
      */
@@ -82,12 +83,8 @@ public class ThemisXAnalysisUIStatsPanel {
         theSplitTree.getEventRegistrar().addEventListener(this::handleSplitTreeAction);
     }
 
-    /**
-     * Obtain the component.
-     *
-     * @return the component
-     */
-    public TethysUIComponent getComponent() {
+    @Override
+    public TethysUIComponent getUnderlying() {
         return theSplitTree;
     }
 
