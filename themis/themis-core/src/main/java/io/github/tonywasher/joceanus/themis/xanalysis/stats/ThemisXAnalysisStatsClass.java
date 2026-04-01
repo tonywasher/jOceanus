@@ -82,7 +82,7 @@ public class ThemisXAnalysisStatsClass
      *
      * @return the methods
      */
-    List<ThemisXAnalysisStatsMethod> getMethods() {
+    public List<ThemisXAnalysisStatsMethod> getMethods() {
         return theMethods;
     }
 
@@ -91,8 +91,13 @@ public class ThemisXAnalysisStatsClass
      *
      * @return the classes
      */
-    List<ThemisXAnalysisStatsClass> getClasses() {
+    public List<ThemisXAnalysisStatsClass> getClasses() {
         return theClasses;
+    }
+
+    @Override
+    public String getName() {
+        return theClass.getName();
     }
 
     @Override

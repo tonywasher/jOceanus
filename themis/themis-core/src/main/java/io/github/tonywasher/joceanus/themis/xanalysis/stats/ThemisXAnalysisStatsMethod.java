@@ -57,6 +57,11 @@ public class ThemisXAnalysisStatsMethod
         theClasses = new ArrayList<>();
     }
 
+    @Override
+    public String getName() {
+        return theMethod.getName();
+    }
+
     /**
      * Obtain the method.
      *
@@ -76,10 +81,10 @@ public class ThemisXAnalysisStatsMethod
      *
      * @return the classes
      */
-    List<ThemisXAnalysisStatsClass> getClasses() {
+    public List<ThemisXAnalysisStatsClass> getClasses() {
         return theClasses;
     }
-    
+
     @Override
     public void addClass(final ThemisXAnalysisStatsElement pElement) {
         theClasses.add((ThemisXAnalysisStatsClass) pElement);

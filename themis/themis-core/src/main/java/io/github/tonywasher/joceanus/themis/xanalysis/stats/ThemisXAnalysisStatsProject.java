@@ -79,6 +79,11 @@ public class ThemisXAnalysisStatsProject
         }
     }
 
+    @Override
+    public String getName() {
+        return theProject.getName();
+    }
+
     /**
      * Obtain the project.
      *

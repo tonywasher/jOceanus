@@ -63,6 +63,11 @@ public class ThemisXAnalysisStatsPackage
         }
     }
 
+    @Override
+    public String getName() {
+        return thePackage.getPackage();
+    }
+
     /**
      * Obtain the package.
      *
@@ -91,7 +96,7 @@ public class ThemisXAnalysisStatsPackage
      *
      * @return the class map
      */
-    List<ThemisXAnalysisStatsFile> getFiles() {
+    public List<ThemisXAnalysisStatsFile> getFiles() {
         return theFiles;
     }
 

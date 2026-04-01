@@ -69,6 +69,11 @@ public class ThemisXAnalysisStatsModule
         }
     }
 
+    @Override
+    public String getName() {
+        return theModule.getName();
+    }
+
     /**
      * Obtain the module.
      *

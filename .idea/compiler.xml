@@ -8,7 +8,6 @@
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="false">
           <entry name="$MAVEN_REPOSITORY$/org/jetbrains/annotations/26.0.2-1/annotations-26.0.2-1.jar" />
-          <entry name="$MAVEN_REPOSITORY$/org/jetbrains/annotations/26.0.2-1/annotations-26.0.2-1.jar" />
         </processorPath>
         <module name="moneywise-javafx" />
         <module name="tethys-core" />
@@ -16,8 +15,8 @@
         <module name="themis-core" />
         <module name="tethys-swing" />
         <module name="moneywise-swing" />
-        <module name="tethys-javafx" />
         <module name="themis-javafx" />
+        <module name="tethys-javafx" />
         <module name="prometheus-sheet-api" />
         <module name="astraeus" />
         <module name="moneywise-core" />

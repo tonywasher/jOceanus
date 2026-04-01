@@ -15,7 +15,7 @@
  * the License.
  */
 
-package io.github.tonywasher.joceanus.themis.xanalysis.gui;
+package io.github.tonywasher.joceanus.themis.xanalysis.gui.base;
 
 import io.github.tonywasher.joceanus.tethys.api.control.TethysUIHTMLManager.TethysUIStyleSheetId;
 import io.github.tonywasher.joceanus.themis.lethe.ui.ThemisDSMStyleSheet;

@@ -102,4 +102,13 @@ public enum ThemisXAnalysisStat {
         }
         return null;
     }
+
+    /**
+     * Is the stat an integer.
+     *
+     * @return true/false
+     */
+    public boolean isInteger() {
+        return true;
+    }
 }

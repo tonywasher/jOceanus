@@ -22,6 +22,13 @@ package io.github.tonywasher.joceanus.themis.xanalysis.stats;
  */
 public interface ThemisXAnalysisStatsElement {
     /**
+     * Obtain the name.
+     *
+     * @return the name
+     */
+    String getName();
+
+    /**
      * Obtain the statistics.
      *
      * @return the statistics
@@ -33,7 +40,7 @@ public interface ThemisXAnalysisStatsElement {
      *
      * @param pMethod the method element
      */
-    default void addMethod(ThemisXAnalysisStatsElement pMethod) {
+    default void addMethod(final ThemisXAnalysisStatsElement pMethod) {
         throw new IllegalStateException();
     }
 
@@ -42,7 +49,7 @@ public interface ThemisXAnalysisStatsElement {
      *
      * @param pClazz the class element
      */
-    default void addClass(ThemisXAnalysisStatsElement pClazz) {
+    default void addClass(final ThemisXAnalysisStatsElement pClazz) {
         throw new IllegalStateException();
     }
 }

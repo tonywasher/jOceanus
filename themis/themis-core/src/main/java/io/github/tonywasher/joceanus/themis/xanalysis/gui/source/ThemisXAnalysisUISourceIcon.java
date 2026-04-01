@@ -15,7 +15,7 @@
  * the License.
  */
 
-package io.github.tonywasher.joceanus.themis.xanalysis.gui;
+package io.github.tonywasher.joceanus.themis.xanalysis.gui.source;
 
 import io.github.tonywasher.joceanus.tethys.api.base.TethysUIIconId;
 import io.github.tonywasher.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance;

@@ -24,6 +24,16 @@ import java.util.Map;
  */
 public class ThemisXAnalysisStats {
     /**
+     * The integer zero.
+     */
+    private static final Integer INT_ZERO = 0;
+
+    /**
+     * The double zero.
+     */
+    private static final Double DBL_ZERO = 0.0;
+
+    /**
      * The stats.
      */
     private final Map<ThemisXAnalysisStat, Number> theStats;
@@ -37,8 +47,8 @@ public class ThemisXAnalysisStats {
      * Constructor.
      */
     ThemisXAnalysisStats() {
-        theStats = new EnumMap<>(ThemisXAnalysisStat.class);
-        theTotals = new EnumMap<>(ThemisXAnalysisStat.class);
+        theStats = initStats();
+        theTotals = initStats();
     }
 
     /**
@@ -60,43 +70,43 @@ public class ThemisXAnalysisStats {
     }
 
     /**
-     * Does the stats value exist?.
-     *
-     * @param pStat the statistic
-     * @return true/false
-     */
-    public boolean hasStat(final ThemisXAnalysisStat pStat) {
-        return theStats.containsKey(pStat);
-    }
-
-    /**
-     * Obtain statistic value.
+     * Obtain integer statistic value.
      *
      * @param pStat the statistic
      * @return the value
      */
-    public Number getStat(final ThemisXAnalysisStat pStat) {
-        return theStats.computeIfAbsent(pStat, s -> 0);
+    public Integer getIntegerStat(final ThemisXAnalysisStat pStat) {
+        return (Integer) theStats.get(pStat);
     }
 
     /**
-     * Does the total value exist?.
-     *
-     * @param pStat the statistic
-     * @return true/false
-     */
-    public boolean hasTotal(final ThemisXAnalysisStat pStat) {
-        return theStats.containsKey(pStat);
-    }
-
-    /**
-     * Obtain total value.
+     * Obtain integer statistic value.
      *
      * @param pStat the statistic
      * @return the value
      */
-    public Number getTotal(final ThemisXAnalysisStat pStat) {
-        return theStats.computeIfAbsent(pStat, s -> 0);
+    public Double getDoubleStat(final ThemisXAnalysisStat pStat) {
+        return (Double) theStats.get(pStat);
+    }
+
+    /**
+     * Obtain integer statistic value.
+     *
+     * @param pStat the statistic
+     * @return the value
+     */
+    public Integer getIntegerTotal(final ThemisXAnalysisStat pStat) {
+        return (Integer) theTotals.get(pStat);
+    }
+
+    /**
+     * Obtain integer statistic value.
+     *
+     * @param pStat the statistic
+     * @return the value
+     */
+    public Double getDoubleTotal(final ThemisXAnalysisStat pStat) {
+        return (Double) theTotals.get(pStat);
     }
 
     /**
@@ -119,5 +129,18 @@ public class ThemisXAnalysisStats {
     public void setTotal(final ThemisXAnalysisStat pStat,
                          final Number pValue) {
         theTotals.put(pStat, pValue);
+    }
+
+    /**
+     * Initialize stats.
+     *
+     * @return the initialized stats
+     */
+    private Map<ThemisXAnalysisStat, Number> initStats() {
+        final Map<ThemisXAnalysisStat, Number> myStats = new EnumMap<>(ThemisXAnalysisStat.class);
+        for (ThemisXAnalysisStat myStat : ThemisXAnalysisStat.values()) {
+            myStats.put(myStat, myStat.isInteger() ? INT_ZERO : DBL_ZERO);
+        }
+        return myStats;
     }
 }

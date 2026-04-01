@@ -15,11 +15,11 @@
  * the License.
  */
 
-package io.github.tonywasher.joceanus.themis.xanalysis.gui;
+package io.github.tonywasher.joceanus.themis.xanalysis.gui.source;
 
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.themis.xanalysis.gui.base.ThemisXAnalysisUIBaseDocument;
 import io.github.tonywasher.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance;
-import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import javax.swing.text.html.HTML.Tag;
@@ -42,17 +42,18 @@ public class ThemisXAnalysisUISourceDocument
      * Create document for element.
      *
      * @param pElement the element
+     * @return the formatted document
      */
     public String formatElement(final ThemisXAnalysisInstance pElement) {
         /* Create new document and obtain the body */
         final Element myBody = newDocument();
-        final Document myDoc = getDocument();
 
         /* Create the code element */
-        final Element myCode = myDoc.createElement(Tag.CODE.toString());
+        final Element myCode = createElement(Tag.CODE);
         myBody.appendChild(myCode);
         myCode.setTextContent(pElement.toString());
 
+        /* Return the formatted HTML */
         return formatXML();
     }
 }

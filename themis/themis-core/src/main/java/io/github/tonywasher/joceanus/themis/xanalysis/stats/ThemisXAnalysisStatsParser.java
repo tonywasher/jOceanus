@@ -27,6 +27,9 @@ import io.github.tonywasher.joceanus.themis.xanalysis.parser.base.ThemisXAnalysi
 public class ThemisXAnalysisStatsParser {
     /**
      * Parse the element.
+     *
+     * @param pElement  the owning element
+     * @param pInstance the instance
      */
     void parseElement(final ThemisXAnalysisStatsElement pElement,
                       final ThemisXAnalysisInstance pInstance) {
@@ -35,11 +38,11 @@ public class ThemisXAnalysisStatsParser {
             if (myChild instanceof ThemisXAnalysisClassInstance myClass) {
                 final ThemisXAnalysisStatsClass myElement = new ThemisXAnalysisStatsClass(myClass);
                 pElement.addClass(myElement);
-                parseElement(myElement, pInstance);
+                parseElement(myElement, myChild);
             } else if (myChild instanceof ThemisXAnalysisMethodInstance myMethod) {
                 final ThemisXAnalysisStatsMethod myElement = new ThemisXAnalysisStatsMethod(myMethod);
                 pElement.addMethod(myElement);
-                parseElement(myElement, pInstance);
+                parseElement(myElement, myChild);
             } else {
                 parseElement(pElement, myChild);
             }

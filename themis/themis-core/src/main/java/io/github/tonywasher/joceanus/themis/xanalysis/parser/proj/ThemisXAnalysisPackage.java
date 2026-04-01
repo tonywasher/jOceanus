@@ -155,27 +155,27 @@ public class ThemisXAnalysisPackage {
      */
     List<ThemisXAnalysisFile> listFiles(final File pLocation) {
         /* Allocate the list */
-        final List<ThemisXAnalysisFile> myClasses = new ArrayList<>();
+        final List<ThemisXAnalysisFile> myFiles = new ArrayList<>();
 
         /* Loop through the entries in the directory */
-        for (File myFile : Objects.requireNonNull(pLocation.listFiles())) {
+        for (File myEntry : Objects.requireNonNull(pLocation.listFiles())) {
             /* Handle files */
-            if (!myFile.isDirectory()) {
+            if (!myEntry.isDirectory()) {
                 /* Access the name of the file */
-                final String myName = myFile.getName();
+                final String myName = myEntry.getName();
 
                 /* If this is a .java that is not package-info */
                 if (myName.endsWith(ThemisXAnalysisFile.SFX_JAVA)
                         && !PACKAGE_INFO.equals(myName)) {
                     /* Add the class */
-                    final ThemisXAnalysisFile myClass = new ThemisXAnalysisFile(myFile);
-                    myClasses.add(myClass);
+                    final ThemisXAnalysisFile myFile = new ThemisXAnalysisFile(myEntry);
+                    myFiles.add(myFile);
                 }
             }
         }
 
-        /* Return the classes */
-        return myClasses;
+        /* Return the files */
+        return myFiles;
     }
 
     /**

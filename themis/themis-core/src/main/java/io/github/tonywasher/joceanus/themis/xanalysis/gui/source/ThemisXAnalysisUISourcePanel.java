@@ -15,7 +15,7 @@
  * the License.
  */
 
-package io.github.tonywasher.joceanus.themis.xanalysis.gui;
+package io.github.tonywasher.joceanus.themis.xanalysis.gui.source;
 
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.oceanus.event.OceanusEvent;
@@ -26,9 +26,14 @@ import io.github.tonywasher.joceanus.tethys.api.control.TethysUISplitTreeManager
 import io.github.tonywasher.joceanus.tethys.api.control.TethysUITreeManager;
 import io.github.tonywasher.joceanus.tethys.api.control.TethysUITreeManager.TethysUITreeItem;
 import io.github.tonywasher.joceanus.tethys.api.factory.TethysUIFactory;
+import io.github.tonywasher.joceanus.tethys.api.pane.TethysUIBorderPaneManager;
+import io.github.tonywasher.joceanus.tethys.api.pane.TethysUIBoxPaneManager;
+import io.github.tonywasher.joceanus.tethys.api.pane.TethysUIPaneFactory;
+import io.github.tonywasher.joceanus.themis.xanalysis.gui.base.ThemisXAnalysisUIStyleSheet;
 import io.github.tonywasher.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance;
 import io.github.tonywasher.joceanus.themis.xanalysis.parser.node.ThemisXAnalysisNodeCompilationUnit;
 import io.github.tonywasher.joceanus.themis.xanalysis.parser.proj.ThemisXAnalysisFile;
+import io.github.tonywasher.joceanus.themis.xanalysis.parser.proj.ThemisXAnalysisProject;
 
 /**
  * Source Panel.
@@ -55,6 +60,21 @@ public class ThemisXAnalysisUISourcePanel {
     private final ThemisXAnalysisUISourceDocument theDoc;
 
     /**
+     * The FileSelector.
+     */
+    private final ThemisXAnalysisUISourceFileSelect theFileSelect;
+
+    /**
+     * The ModuleSelector.
+     */
+    private final ThemisXAnalysisUISourceModuleSelect theModuleSelect;
+
+    /**
+     * The panel.
+     */
+    private final TethysUIBorderPaneManager thePanel;
+
+    /**
      * The Current root.
      */
     private TethysUITreeItem<ThemisXAnalysisUISourceEntry> theRoot;
@@ -65,7 +85,7 @@ public class ThemisXAnalysisUISourcePanel {
      * @param pFactory the GuiFactory
      * @throws OceanusException on error
      */
-    ThemisXAnalysisUISourcePanel(final TethysUIFactory<?> pFactory) throws OceanusException {
+    public ThemisXAnalysisUISourcePanel(final TethysUIFactory<?> pFactory) throws OceanusException {
         /* Create the splitTree Manager */
         theSplitTree = pFactory.controlFactory().newSplitTreeManager();
         theTree = theSplitTree.getTreeManager();
@@ -76,8 +96,28 @@ public class ThemisXAnalysisUISourcePanel {
         /* Create the document builder */
         theDoc = new ThemisXAnalysisUISourceDocument();
 
-        /* Listen to the TreeManager */
+        /* Create the selectors */
+        theFileSelect = new ThemisXAnalysisUISourceFileSelect(pFactory);
+        final ThemisXAnalysisUISourcePackageSelect myPackageSelect = new ThemisXAnalysisUISourcePackageSelect(pFactory, theFileSelect);
+        theModuleSelect = new ThemisXAnalysisUISourceModuleSelect(pFactory, myPackageSelect);
+
+        /* Create the selector panel */
+        final TethysUIPaneFactory myPanes = pFactory.paneFactory();
+        final TethysUIBoxPaneManager mySelect = myPanes.newHBoxPane();
+        mySelect.addNode(theModuleSelect);
+        mySelect.addSpacer();
+        mySelect.addNode(myPackageSelect);
+        mySelect.addSpacer();
+        mySelect.addNode(theFileSelect);
+
+        /* Create the main panel */
+        thePanel = myPanes.newBorderPane();
+        thePanel.setNorth(mySelect);
+        thePanel.setCentre(theSplitTree);
+
+        /* Create listeners */
         theSplitTree.getEventRegistrar().addEventListener(this::handleSplitTreeAction);
+        theFileSelect.getEventRegistrar().addEventListener(this::handleFileSelect);
     }
 
     /**
@@ -86,7 +126,29 @@ public class ThemisXAnalysisUISourcePanel {
      * @return the component
      */
     public TethysUIComponent getComponent() {
-        return theSplitTree;
+        return thePanel;
+    }
+
+    /**
+     * Set the current project.
+     *
+     * @param pProject the current project
+     */
+    public void setCurrentProject(final ThemisXAnalysisProject pProject) {
+        /* Declare project to the moduleSelector */
+        theModuleSelect.setCurrentProject(pProject);
+    }
+
+    /**
+     * Handle the fileSelect action event.
+     *
+     * @param pEvent the event
+     */
+    private void handleFileSelect(final OceanusEvent<TethysUIEvent> pEvent) {
+        /* If this is a new value */
+        if (pEvent.getEventId() == TethysUIEvent.NEWVALUE) {
+            initialiseTree(theFileSelect.getCurrentFile());
+        }
     }
 
     /**
@@ -94,7 +156,7 @@ public class ThemisXAnalysisUISourcePanel {
      *
      * @param pFile the project file
      */
-    void initialiseTree(final ThemisXAnalysisFile pFile) {
+    private void initialiseTree(final ThemisXAnalysisFile pFile) {
         /* If there is currently a root item */
         if (theRoot != null) {
             /* Hide it */
@@ -118,8 +180,8 @@ public class ThemisXAnalysisUISourcePanel {
      * @param pParent  the parent
      * @param pElement the element
      */
-    void createChildEntries(final TethysUITreeItem<ThemisXAnalysisUISourceEntry> pParent,
-                            final ThemisXAnalysisInstance pElement) {
+    private void createChildEntries(final TethysUITreeItem<ThemisXAnalysisUISourceEntry> pParent,
+                                    final ThemisXAnalysisInstance pElement) {
         /* Loop through the root children */
         for (ThemisXAnalysisInstance myChild : pElement.getChildren()) {
             /* Create a new root entry */

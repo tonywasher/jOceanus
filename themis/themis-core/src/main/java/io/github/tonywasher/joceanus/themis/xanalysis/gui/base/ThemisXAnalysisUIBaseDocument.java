@@ -15,7 +15,7 @@
  * the License.
  */
 
-package io.github.tonywasher.joceanus.themis.xanalysis.gui;
+package io.github.tonywasher.joceanus.themis.xanalysis.gui.base;
 
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogManager;
@@ -65,7 +65,7 @@ public abstract class ThemisXAnalysisUIBaseDocument {
      *
      * @throws OceanusException on error
      */
-    ThemisXAnalysisUIBaseDocument() throws OceanusException {
+    protected ThemisXAnalysisUIBaseDocument() throws OceanusException {
         /* Protect against exceptions */
         try {
             /* Create the document builder */
@@ -114,6 +114,15 @@ public abstract class ThemisXAnalysisUIBaseDocument {
         return myBody;
     }
 
+    /**
+     * Create element for Tag.
+     *
+     * @param pTag the tag
+     * @return the element
+     */
+    protected Element createElement(final Tag pTag) {
+        return theDocument.createElement(pTag.toString());
+    }
 
     /**
      * Format XML.

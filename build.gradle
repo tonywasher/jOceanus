@@ -35,7 +35,7 @@ allprojects {
         mySQLVersion = "9.6.0"
         MariaDBVersion = "3.5.7"
         postGreSQLVersion = "42.7.9"
-        mssqlVersion = "13.2.1.jre11"
+        mssqlVersion = "13.4.0.jre11"
         h2Version = "2.4.240"
         apachePOIVersion = "5.5.1"
         jsoupVersion = "1.22.1"

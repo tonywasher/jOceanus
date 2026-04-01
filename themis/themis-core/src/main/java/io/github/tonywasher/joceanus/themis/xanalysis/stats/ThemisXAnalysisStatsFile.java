@@ -61,6 +61,11 @@ public class ThemisXAnalysisStatsFile
         myParser.parseElement(this, theFile.getContents());
     }
 
+    @Override
+    public String getName() {
+        return theFile.getName();
+    }
+
     /**
      * Obtain the file.
      *
@@ -80,7 +85,7 @@ public class ThemisXAnalysisStatsFile
      *
      * @return the class map
      */
-    List<ThemisXAnalysisStatsClass> getClasses() {
+    public List<ThemisXAnalysisStatsClass> getClasses() {
         return theClasses;
     }
 
