@@ -25,6 +25,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestFactory
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestType;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacFactory;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianNewMacParamsBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianMacSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianMacSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianMacType;
@@ -72,6 +73,11 @@ public abstract class GordianCoreMacFactory
     @Override
     public GordianMacSpecBuilder newMacSpecBuilder() {
         return GordianCoreMacSpecBuilder.newInstance();
+    }
+
+    @Override
+    public GordianNewMacParamsBuilder newMacParamsBuilder() {
+        return GordianCoreMacParamsBuilder.newInstance();
     }
 
     @Override

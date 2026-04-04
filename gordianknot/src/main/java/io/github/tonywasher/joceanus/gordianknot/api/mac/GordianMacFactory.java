@@ -58,6 +58,13 @@ public interface GordianMacFactory {
     GordianMacSpecBuilder newMacSpecBuilder();
 
     /**
+     * create new GordianMacParamsBuilder.
+     *
+     * @return the new MacParamsBuilder
+     */
+    GordianNewMacParamsBuilder newMacParamsBuilder();
+
+    /**
      * Obtain predicate for supported macSpecs.
      *
      * @return the predicate

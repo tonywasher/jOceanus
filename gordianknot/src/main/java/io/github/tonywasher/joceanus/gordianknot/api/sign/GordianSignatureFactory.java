@@ -40,11 +40,18 @@ public interface GordianSignatureFactory {
     GordianSignature createSigner(GordianSignatureSpec pSignatureSpec) throws GordianException;
 
     /**
-     * create new GordianKeyPairSpecBuilder.
+     * create new GordianSignatureSpecBuilder.
      *
-     * @return the new KeyPairSpecBuilder
+     * @return the new SignatureSpecBuilder
      */
     GordianSignatureSpecBuilder newSignatureSpecBuilder();
+
+    /**
+     * create new GordianSignParamsBuilder.
+     *
+     * @return the new SignParamsBuilder
+     */
+    GordianNewSignParamsBuilder newSignParamsBuilder();
 
     /**
      * Obtain predicate for signatures.
