@@ -16,13 +16,13 @@
  */
 package io.github.tonywasher.joceanus.moneywise.tax.uk;
 
+import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataMap;
+import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataObjectFormat;
+import io.github.tonywasher.joceanus.moneywise.tax.MoneyWiseTaxYearCache;
 import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
 import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
 import io.github.tonywasher.joceanus.oceanus.date.OceanusFiscalYear;
 import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
-import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataMap;
-import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataObjectFormat;
-import io.github.tonywasher.joceanus.moneywise.tax.MoneyWiseTaxYearCache;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -100,9 +100,10 @@ public class MoneyWiseUKTaxYearCache
         setTaxYearInCache(MoneyWiseUKTaxYearFactory.YEAR_2024);
         setTaxYearInCache(MoneyWiseUKTaxYearFactory.YEAR_2025);
         setTaxYearInCache(MoneyWiseUKTaxYearFactory.YEAR_2026);
+        setTaxYearInCache(MoneyWiseUKTaxYearFactory.YEAR_2027);
 
         /* Determine the dateRange */
-        final OceanusDate myEnd = MoneyWiseUKTaxYearFactory.YEAR_2026.getYearEnd();
+        final OceanusDate myEnd = MoneyWiseUKTaxYearFactory.YEAR_2027.getYearEnd();
         OceanusDate myStart = MoneyWiseUKTaxYearFactory.YEAR_1981.getYearEnd();
         myStart = new OceanusDate(myStart);
         myStart.adjustDay(1);

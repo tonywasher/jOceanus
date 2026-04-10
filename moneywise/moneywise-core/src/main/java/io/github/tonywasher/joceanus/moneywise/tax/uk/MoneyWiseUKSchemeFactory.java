@@ -16,7 +16,6 @@
  */
 package io.github.tonywasher.joceanus.moneywise.tax.uk;
 
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRate;
 import io.github.tonywasher.joceanus.moneywise.tax.uk.MoneyWiseUKCapitalScheme.MoneyWiseUKCapitalAsIncomeScheme;
 import io.github.tonywasher.joceanus.moneywise.tax.uk.MoneyWiseUKCapitalScheme.MoneyWiseUKCapitalFlatRateScheme;
 import io.github.tonywasher.joceanus.moneywise.tax.uk.MoneyWiseUKCapitalScheme.MoneyWiseUKCapitalResidentialScheme;
@@ -29,6 +28,7 @@ import io.github.tonywasher.joceanus.moneywise.tax.uk.MoneyWiseUKDividendScheme.
 import io.github.tonywasher.joceanus.moneywise.tax.uk.MoneyWiseUKInterestScheme.MoneyWiseUKInterestAsIncomeScheme;
 import io.github.tonywasher.joceanus.moneywise.tax.uk.MoneyWiseUKInterestScheme.MoneyWiseUKInterestBaseRateScheme;
 import io.github.tonywasher.joceanus.moneywise.tax.uk.MoneyWiseUKInterestScheme.MoneyWiseUKInterestLoBaseRateScheme;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRate;
 
 /**
  * The scheme factory.
@@ -82,6 +82,12 @@ public final class MoneyWiseUKSchemeFactory {
      */
     static final MoneyWiseUKDividendScheme DIVIDEND_NOTAXCREDIT1 = new MoneyWiseUKDividendAdditionalRateScheme(getTenthFractionalRate(875),
             getTenthFractionalRate(3375), getTenthFractionalRate(3935), Boolean.TRUE);
+
+    /**
+     * The Dividends Additional Rate Scheme with no TaxCredit and newer rates.
+     */
+    static final MoneyWiseUKDividendScheme DIVIDEND_NOTAXCREDIT2 = new MoneyWiseUKDividendAdditionalRateScheme(getTenthFractionalRate(1075),
+            getTenthFractionalRate(3575), getTenthFractionalRate(3935), Boolean.TRUE);
 
     /**
      * The Interest asIncome Scheme.
