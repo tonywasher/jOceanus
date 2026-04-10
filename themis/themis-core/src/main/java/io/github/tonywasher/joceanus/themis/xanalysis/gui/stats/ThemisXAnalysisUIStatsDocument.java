@@ -19,12 +19,12 @@ package io.github.tonywasher.joceanus.themis.xanalysis.gui.stats;
 
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.themis.xanalysis.gui.base.ThemisXAnalysisUIBaseDocument;
+import io.github.tonywasher.joceanus.themis.xanalysis.gui.base.ThemisXAnalysisUIHTMLTag;
 import io.github.tonywasher.joceanus.themis.xanalysis.stats.ThemisXAnalysisStat;
 import io.github.tonywasher.joceanus.themis.xanalysis.stats.ThemisXAnalysisStats;
 import io.github.tonywasher.joceanus.themis.xanalysis.stats.ThemisXAnalysisStatsElement;
 import org.w3c.dom.Element;
 
-import javax.swing.text.html.HTML.Tag;
 import java.util.Map;
 
 /**
@@ -67,7 +67,7 @@ public class ThemisXAnalysisUIStatsDocument
      * @return the stats element
      */
     private Element formatStats(final Map<ThemisXAnalysisStat, Number> pStats) {
-        final Element myTable = createElement(Tag.TABLE);
+        final Element myTable = createElement(ThemisXAnalysisUIHTMLTag.TABLE);
         addHeaderRow(myTable);
         for (ThemisXAnalysisStat myStat : ThemisXAnalysisStat.values()) {
             if (myStat.isInteger()) {
@@ -91,7 +91,7 @@ public class ThemisXAnalysisUIStatsDocument
      * @param pTable the table
      */
     private void addHeaderRow(final Element pTable) {
-        final Element myHeaderRow = createElement(Tag.TR);
+        final Element myHeaderRow = createElement(ThemisXAnalysisUIHTMLTag.TR);
         addHeaderCell(myHeaderRow, "Statistic");
         addHeaderCell(myHeaderRow, "Key");
         addHeaderCell(myHeaderRow, "Value");
@@ -106,7 +106,7 @@ public class ThemisXAnalysisUIStatsDocument
      */
     private void addHeaderCell(final Element pHeaderRow,
                                final String pTitle) {
-        final Element myHeader = createElement(Tag.TH);
+        final Element myHeader = createElement(ThemisXAnalysisUIHTMLTag.TH);
         pHeaderRow.appendChild(myHeader);
         myHeader.setTextContent(pTitle);
     }
@@ -121,7 +121,7 @@ public class ThemisXAnalysisUIStatsDocument
     private void addStatsRow(final Element pTable,
                              final ThemisXAnalysisStat pStat,
                              final Integer pValue) {
-        final Element myDataRow = createElement(Tag.TR);
+        final Element myDataRow = createElement(ThemisXAnalysisUIHTMLTag.TR);
         addDataCell(myDataRow, pStat.getDesc());
         addDataCell(myDataRow, pStat.name());
         addDataCell(myDataRow, Integer.toString(pValue));
@@ -138,7 +138,7 @@ public class ThemisXAnalysisUIStatsDocument
     private void addStatsRow(final Element pTable,
                              final ThemisXAnalysisStat pStat,
                              final Double pValue) {
-        final Element myDataRow = createElement(Tag.TR);
+        final Element myDataRow = createElement(ThemisXAnalysisUIHTMLTag.TR);
         addDataCell(myDataRow, pStat.getDesc());
         addDataCell(myDataRow, pStat.name());
         addDataCell(myDataRow, Double.toString(pValue));
@@ -153,7 +153,7 @@ public class ThemisXAnalysisUIStatsDocument
      */
     private void addDataCell(final Element pDataRow,
                              final String pData) {
-        final Element myData = createElement(Tag.TD);
+        final Element myData = createElement(ThemisXAnalysisUIHTMLTag.TD);
         pDataRow.appendChild(myData);
         myData.setTextContent(pData);
     }

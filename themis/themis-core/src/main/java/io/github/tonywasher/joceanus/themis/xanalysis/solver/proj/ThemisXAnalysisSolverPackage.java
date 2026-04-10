@@ -76,6 +76,11 @@ public class ThemisXAnalysisSolverPackage
     private final boolean isStandard;
 
     /**
+     * The parent package.
+     */
+    private ThemisXAnalysisSolverPackage theParent;
+
+    /**
      * Is the reference list circular?
      */
     private boolean isCircular;
@@ -193,6 +198,25 @@ public class ThemisXAnalysisSolverPackage
      */
     public void addChild(final ThemisXAnalysisSolverPackage pChild) {
         theChildren.add(pChild);
+        pChild.setParent(this);
+    }
+
+    /**
+     * Set parent package
+     *
+     * @param pParent the parent package
+     */
+    private void setParent(final ThemisXAnalysisSolverPackage pParent) {
+        theParent = pParent;
+    }
+
+    /**
+     * Obtain the parent package.
+     *
+     * @return the parent
+     */
+    public ThemisXAnalysisSolverPackage getParent() {
+        return theParent;
     }
 
     @Override

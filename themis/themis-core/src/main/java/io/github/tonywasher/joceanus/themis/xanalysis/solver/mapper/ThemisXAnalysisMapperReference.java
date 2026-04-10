@@ -54,19 +54,13 @@ public class ThemisXAnalysisMapperReference {
      * @param pPackage the package
      */
     private void processReferences(final ThemisXAnalysisSolverPackage pPackage) {
-        /* Obtain the map for the package */
-        final ThemisXAnalysisSolverReference myMap = pPackage.getReferenceMap();
-
         /* Process references for all children */
         for (ThemisXAnalysisSolverPackage myChild : pPackage.getChildren()) {
-            /* Obtain the map for the child */
-            final ThemisXAnalysisSolverReference myChildMap = myChild.getReferenceMap();
-
             /* Process references for all siblings */
             for (ThemisXAnalysisSolverPackage mySibling : pPackage.getChildren()) {
                 /* Avoid self references */
                 if (!myChild.equals(mySibling)) {
-                    findReferences(myChildMap, ThemisXAnalysisRefType.SIBLING, mySibling);
+                    findReferences(myChild, ThemisXAnalysisRefType.SIBLING, mySibling);
                 }
             }
 
@@ -75,10 +69,10 @@ public class ThemisXAnalysisMapperReference {
             pPackage.processLocalReferences();
 
             /* find references from the child to the parent */
-            findReferences(myChildMap, ThemisXAnalysisRefType.PARENT, pPackage);
+            findReferences(myChild, ThemisXAnalysisRefType.PARENT, pPackage);
 
             /* find references from the parent to the child */
-            findReferences(myMap, ThemisXAnalysisRefType.CHILD, myChild);
+            findReferences(pPackage, ThemisXAnalysisRefType.CHILD, myChild);
 
             /* Process child */
             processReferences(myChild);
@@ -95,24 +89,27 @@ public class ThemisXAnalysisMapperReference {
     }
 
     /**
-     * Find references to the target package and it's children.
+     * Find references from the source package plus children to the target package and it's children.
      *
-     * @param pMap     the referenceMap
+     * @param pSource  the sourcePackage
      * @param pRefType the referenceType
-     * @param pPackage the target package
+     * @param pTarget  the targetPackage
      */
-    private void findReferences(final ThemisXAnalysisSolverReference pMap,
+    private void findReferences(final ThemisXAnalysisSolverPackage pSource,
                                 final ThemisXAnalysisRefType pRefType,
-                                final ThemisXAnalysisSolverPackage pPackage) {
+                                final ThemisXAnalysisSolverPackage pTarget) {
+        /* Obtain the map for the package */
+        final ThemisXAnalysisSolverReference myMap = pSource.getReferenceMap();
+
         /* Create result map */
-        final ThemisXAnalysisSolverRefPackage myReferences = new ThemisXAnalysisSolverRefPackage(pPackage, pRefType);
+        final ThemisXAnalysisSolverRefPackage myReferences = new ThemisXAnalysisSolverRefPackage(pTarget, pRefType);
 
         /* Look for references */
-        findReferences(myReferences, pPackage);
+        findReferences(myReferences, pSource);
 
         /* If we have any references */
         if (!myReferences.getReferences().isEmpty()) {
-            pMap.addReferences(myReferences);
+            myMap.addReferences(myReferences);
         }
     }
 
@@ -120,18 +117,18 @@ public class ThemisXAnalysisMapperReference {
      * Find references to the target package and it's children.
      *
      * @param pReferences the referenceSet
-     * @param pPackage    the source package
+     * @param pSource     the source package
      */
     private void findReferences(final ThemisXAnalysisSolverRefPackage pReferences,
-                                final ThemisXAnalysisSolverPackage pPackage) {
+                                final ThemisXAnalysisSolverPackage pSource) {
         /* Loop through the files */
-        for (ThemisXAnalysisSolverFile myFile : pPackage.getFiles()) {
+        for (ThemisXAnalysisSolverFile myFile : pSource.getFiles()) {
             findReferences(pReferences, myFile);
         }
 
         /* Loop through the children to find further references */
         if (!ThemisXAnalysisRefType.CHILD.equals(pReferences.getReferenceType())) {
-            for (ThemisXAnalysisSolverPackage myChild : pPackage.getChildren()) {
+            for (ThemisXAnalysisSolverPackage myChild : pSource.getChildren()) {
                 findReferences(pReferences, myChild);
             }
         }

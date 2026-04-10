@@ -4,7 +4,7 @@
 project. The project is still under development, and should currently be viewed as a set of source examples,
 with no pre-built downloadable files available.
 
-The source is maintained on GitHub, having been migrated from **SourceForge**, although the namespace currently still references **SourceForge**.
+The source is maintained on GitHub, having been migrated from **SourceForge**.
 
 The project webSite is available on GitHub.
 

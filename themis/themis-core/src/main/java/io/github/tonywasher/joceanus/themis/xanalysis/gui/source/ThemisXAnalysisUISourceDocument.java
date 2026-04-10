@@ -19,10 +19,9 @@ package io.github.tonywasher.joceanus.themis.xanalysis.gui.source;
 
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.themis.xanalysis.gui.base.ThemisXAnalysisUIBaseDocument;
+import io.github.tonywasher.joceanus.themis.xanalysis.gui.base.ThemisXAnalysisUIHTMLTag;
 import io.github.tonywasher.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance;
 import org.w3c.dom.Element;
-
-import javax.swing.text.html.HTML.Tag;
 
 /**
  * Document Builder for source.
@@ -49,7 +48,7 @@ public class ThemisXAnalysisUISourceDocument
         final Element myBody = newDocument();
 
         /* Create the code element */
-        final Element myCode = createElement(Tag.CODE);
+        final Element myCode = createElement(ThemisXAnalysisUIHTMLTag.CODE);
         myBody.appendChild(myCode);
         myCode.setTextContent(pElement.toString());
 

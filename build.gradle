@@ -33,7 +33,7 @@ allprojects {
         jUnitVersion = "6.0.3"
         jsonVersion = "20251224"
         mySQLVersion = "9.6.0"
-        MariaDBVersion = "3.5.7"
+        MariaDBVersion = "3.5.8"
         postGreSQLVersion = "42.7.9"
         mssqlVersion = "13.4.0.jre11"
         h2Version = "2.4.240"
@@ -47,7 +47,7 @@ allprojects {
         javaFXPluginVersion = "0.1.0"
 
         /* Annotation versions */
-        jetBrainsAnnotationsVersion = "26.0.2-1"
+        jetBrainsAnnotationsVersion = "26.1.0"
 
         /* jacoco config */
         jacocoVersion = "0.8.14"

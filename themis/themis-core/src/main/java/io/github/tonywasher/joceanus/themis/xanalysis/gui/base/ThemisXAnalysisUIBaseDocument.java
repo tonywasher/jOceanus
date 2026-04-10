@@ -23,8 +23,8 @@ import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogger;
 import io.github.tonywasher.joceanus.themis.exc.ThemisIOException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Text;
 
-import javax.swing.text.html.HTML.Tag;
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -39,7 +39,8 @@ import java.io.StringWriter;
 /**
  * Base Document Builder for source.
  */
-public abstract class ThemisXAnalysisUIBaseDocument {
+public abstract class ThemisXAnalysisUIBaseDocument
+        implements ThemisXAnalysisUIDocBuilder {
     /**
      * Logger.
      */
@@ -107,21 +108,33 @@ public abstract class ThemisXAnalysisUIBaseDocument {
         theDocument = theBuilder.newDocument();
 
         /* Create the standard structure */
-        final Element myHtml = theDocument.createElement(Tag.HTML.toString());
+        final Element myHtml = createElement(ThemisXAnalysisUIHTMLTag.HTML);
         theDocument.appendChild(myHtml);
-        final Element myBody = theDocument.createElement(Tag.BODY.toString());
+        final Element myBody = createElement(ThemisXAnalysisUIHTMLTag.BODY);
         myHtml.appendChild(myBody);
         return myBody;
     }
 
-    /**
-     * Create element for Tag.
-     *
-     * @param pTag the tag
-     * @return the element
-     */
-    protected Element createElement(final Tag pTag) {
-        return theDocument.createElement(pTag.toString());
+    @Override
+    public Element createElement(final ThemisXAnalysisUIHTMLTag pTag) {
+        return theDocument.createElement(pTag.getTag());
+    }
+
+    @Override
+    public Text createTextNode(final String pText) {
+        return theDocument.createTextNode(pText);
+    }
+
+    @Override
+    public Text createTextNode(final char pChar) {
+        return createTextNode("" + pChar);
+    }
+
+    @Override
+    public void setAttribute(final Element pElement,
+                             final ThemisXAnalysisUIHTMLAttr pAttr,
+                             final String pValue) {
+        pElement.setAttribute(pAttr.getAttr(), pValue);
     }
 
     /**

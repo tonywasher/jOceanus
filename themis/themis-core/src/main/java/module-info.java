@@ -20,7 +20,7 @@
  */
 module io.github.tonywasher.joceanus.themis.core {
     /* java */
-    requires java.desktop;
+    requires java.xml;
     requires java.prefs;
 
     /* External libraries */

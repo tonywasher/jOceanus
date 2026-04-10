@@ -16,7 +16,7 @@
  */
 package io.github.tonywasher.joceanus.themis.lethe.statistics;
 
-import javax.swing.text.html.HTML.Tag;
+import io.github.tonywasher.joceanus.themis.xanalysis.gui.base.ThemisXAnalysisUIHTMLTag;
 
 /**
  * DSM report.
@@ -39,11 +39,11 @@ public final class ThemisStatsReport {
         final StringBuilder myBuilder = new StringBuilder();
 
         /* Start document */
-        addStartElement(myBuilder, Tag.HTML);
-        addStartElement(myBuilder, Tag.BODY);
+        addStartElement(myBuilder, ThemisXAnalysisUIHTMLTag.HTML);
+        addStartElement(myBuilder, ThemisXAnalysisUIHTMLTag.BODY);
 
         /* Build id table */
-        addStartElement(myBuilder, Tag.TABLE);
+        addStartElement(myBuilder, ThemisXAnalysisUIHTMLTag.TABLE);
         buildIdTableHeader(myBuilder);
 
         /* Loop through the identity chain */
@@ -55,13 +55,13 @@ public final class ThemisStatsReport {
         }
 
         /* Finish the table */
-        addEndElement(myBuilder, Tag.TABLE);
+        addEndElement(myBuilder, ThemisXAnalysisUIHTMLTag.TABLE);
 
-        addStartElement(myBuilder, Tag.HR);
-        addEndElement(myBuilder, Tag.HR);
+        addStartElement(myBuilder, ThemisXAnalysisUIHTMLTag.HR);
+        addEndElement(myBuilder, ThemisXAnalysisUIHTMLTag.HR);
 
         /* Build stats table */
-        addStartElement(myBuilder, Tag.TABLE);
+        addStartElement(myBuilder, ThemisXAnalysisUIHTMLTag.TABLE);
         buildStatsTableHeader(myBuilder);
 
         /* If we have statistics */
@@ -77,11 +77,11 @@ public final class ThemisStatsReport {
         }
 
         /* Finish the table */
-        addEndElement(myBuilder, Tag.TABLE);
+        addEndElement(myBuilder, ThemisXAnalysisUIHTMLTag.TABLE);
 
         /* Finish document */
-        addEndElement(myBuilder, Tag.BODY);
-        addEndElement(myBuilder, Tag.HTML);
+        addEndElement(myBuilder, ThemisXAnalysisUIHTMLTag.BODY);
+        addEndElement(myBuilder, ThemisXAnalysisUIHTMLTag.HTML);
         return myBuilder.toString();
     }
 
@@ -92,14 +92,14 @@ public final class ThemisStatsReport {
      */
     private static void buildIdTableHeader(final StringBuilder pBuilder) {
         /* Start the row */
-        addStartElementWithClass(pBuilder, Tag.TR, "dsm-row-header");
+        addStartElementWithClass(pBuilder, ThemisXAnalysisUIHTMLTag.TR, "dsm-row-header");
 
         /* Build the headers */
-        addTextElementWithClass(pBuilder, Tag.TH, "stats-name", "Element");
-        addTextElementWithClass(pBuilder, Tag.TH, "stats-desc", "Name");
+        addTextElementWithClass(pBuilder, ThemisXAnalysisUIHTMLTag.TH, "stats-name", "Element");
+        addTextElementWithClass(pBuilder, ThemisXAnalysisUIHTMLTag.TH, "stats-desc", "Name");
 
         /* Complete the row */
-        addEndElement(pBuilder, Tag.TR);
+        addEndElement(pBuilder, ThemisXAnalysisUIHTMLTag.TR);
     }
 
     /**
@@ -114,14 +114,14 @@ public final class ThemisStatsReport {
                                         final int pRowNo) {
         /* Start the row */
         final String myClass = (pRowNo % 2 == 0) ? "dsm-row-even" : "dsm-row-odd";
-        addStartElementWithClass(pBuilder, Tag.TR, myClass);
+        addStartElementWithClass(pBuilder, ThemisXAnalysisUIHTMLTag.TR, myClass);
 
         /* Build the cells */
-        addTextElementWithClass(pBuilder, Tag.TD, "dsm-cell-name-left", getIdElement(pIdentity));
-        addTextElementWithClass(pBuilder, Tag.TD, "dsm-cell-name-left", getIdName(pIdentity));
+        addTextElementWithClass(pBuilder, ThemisXAnalysisUIHTMLTag.TD, "dsm-cell-name-left", getIdElement(pIdentity));
+        addTextElementWithClass(pBuilder, ThemisXAnalysisUIHTMLTag.TD, "dsm-cell-name-left", getIdName(pIdentity));
 
         /* Complete the row */
-        addEndElement(pBuilder, Tag.TR);
+        addEndElement(pBuilder, ThemisXAnalysisUIHTMLTag.TR);
     }
 
     /**
@@ -187,15 +187,15 @@ public final class ThemisStatsReport {
      */
     private static void buildStatsTableHeader(final StringBuilder pBuilder) {
         /* Start the row */
-        addStartElementWithClass(pBuilder, Tag.TR, "dsm-row-header");
+        addStartElementWithClass(pBuilder, ThemisXAnalysisUIHTMLTag.TR, "dsm-row-header");
 
         /* Build the headers */
-        addTextElementWithClass(pBuilder, Tag.TH, "stats-desc", "Statistic");
-        addTextElementWithClass(pBuilder, Tag.TH, "stats-name", "Key");
-        addTextElementWithClass(pBuilder, Tag.TH, "stats-count", "Value");
+        addTextElementWithClass(pBuilder, ThemisXAnalysisUIHTMLTag.TH, "stats-desc", "Statistic");
+        addTextElementWithClass(pBuilder, ThemisXAnalysisUIHTMLTag.TH, "stats-name", "Key");
+        addTextElementWithClass(pBuilder, ThemisXAnalysisUIHTMLTag.TH, "stats-count", "Value");
 
         /* Complete the row */
-        addEndElement(pBuilder, Tag.TR);
+        addEndElement(pBuilder, ThemisXAnalysisUIHTMLTag.TR);
     }
 
     /**
@@ -212,15 +212,15 @@ public final class ThemisStatsReport {
                                            final int pRowNo) {
         /* Start the row */
         final String myClass = (pRowNo % 2 == 0) ? "dsm-row-even" : "dsm-row-odd";
-        addStartElementWithClass(pBuilder, Tag.TR, myClass);
+        addStartElementWithClass(pBuilder, ThemisXAnalysisUIHTMLTag.TR, myClass);
 
         /* Build the cells */
-        addTextElementWithClass(pBuilder, Tag.TD, "dsm-cell-name-left", pStat.getDesc());
-        addTextElement(pBuilder, Tag.TD, pStat.toString());
-        addTextElement(pBuilder, Tag.TD, Integer.toString(pValue));
+        addTextElementWithClass(pBuilder, ThemisXAnalysisUIHTMLTag.TD, "dsm-cell-name-left", pStat.getDesc());
+        addTextElement(pBuilder, ThemisXAnalysisUIHTMLTag.TD, pStat.toString());
+        addTextElement(pBuilder, ThemisXAnalysisUIHTMLTag.TD, Integer.toString(pValue));
 
         /* Complete the row */
-        addEndElement(pBuilder, Tag.TR);
+        addEndElement(pBuilder, ThemisXAnalysisUIHTMLTag.TR);
     }
 
     /**
@@ -231,7 +231,7 @@ public final class ThemisStatsReport {
      * @param pText    the text
      */
     private static void addTextElement(final StringBuilder pBuilder,
-                                       final Tag pElement,
+                                       final ThemisXAnalysisUIHTMLTag pElement,
                                        final String pText) {
         /* Add the text element */
         addStartElement(pBuilder, pElement);
@@ -248,7 +248,7 @@ public final class ThemisStatsReport {
      * @param pText    the text
      */
     private static void addTextElementWithClass(final StringBuilder pBuilder,
-                                                final Tag pElement,
+                                                final ThemisXAnalysisUIHTMLTag pElement,
                                                 final String pClass,
                                                 final String pText) {
         /* Add the text element */
@@ -265,7 +265,7 @@ public final class ThemisStatsReport {
      * @param pClass   the class of the element
      */
     private static void addStartElementWithClass(final StringBuilder pBuilder,
-                                                 final Tag pElement,
+                                                 final ThemisXAnalysisUIHTMLTag pElement,
                                                  final String pClass) {
         /* Start the element */
         pBuilder.append("<");
@@ -282,7 +282,7 @@ public final class ThemisStatsReport {
      * @param pElement the element
      */
     private static void addStartElement(final StringBuilder pBuilder,
-                                        final Tag pElement) {
+                                        final ThemisXAnalysisUIHTMLTag pElement) {
         /* Start the element */
         pBuilder.append("<");
         pBuilder.append(pElement);
@@ -296,7 +296,7 @@ public final class ThemisStatsReport {
      * @param pElement the element
      */
     private static void addEndElement(final StringBuilder pBuilder,
-                                      final Tag pElement) {
+                                      final ThemisXAnalysisUIHTMLTag pElement) {
         /* Start the element */
         pBuilder.append("</");
         pBuilder.append(pElement);

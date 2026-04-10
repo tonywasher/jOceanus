@@ -78,7 +78,7 @@
         <JSONVersion>20251224</JSONVersion>
         <ApacheMavenVersion>3.9.12</ApacheMavenVersion>
         <MySQLVersion>9.6.0</MySQLVersion>
-        <MariaDBVersion>3.5.7</MariaDBVersion>
+        <MariaDBVersion>3.5.8</MariaDBVersion>
         <PostGreSQLVersion>42.7.10</PostGreSQLVersion>
         <MSSQLVersion>13.4.0.jre11</MSSQLVersion>
         <H2Version>2.4.240</H2Version>
@@ -114,7 +114,7 @@
         <CheckStylePluginVersion>3.6.0</CheckStylePluginVersion>
         <PMDPluginVersion>3.28.0</PMDPluginVersion>
         <JacocoPluginVersion>0.8.14</JacocoPluginVersion>
-        <JetBrainsAnnotationsVersion>26.0.2-1</JetBrainsAnnotationsVersion>
+        <JetBrainsAnnotationsVersion>26.1.0</JetBrainsAnnotationsVersion>
         <VersionsPluginVersion>2.21.0</VersionsPluginVersion>
         <ExecPluginVersion>3.6.3</ExecPluginVersion>
         <sonar.organization>tonywasher</sonar.organization>

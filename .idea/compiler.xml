@@ -2,138 +2,71 @@
 <project version="4">
   <component name="CompilerConfiguration">
     <annotationProcessing>
+      <profile name="Annotation profile for astraeus" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
+          <entry name="$MAVEN_REPOSITORY$/org/jetbrains/annotations/26.1.0/annotations-26.1.0.jar" />
+        </processorPath>
+        <module name="astraeus" />
+      </profile>
+      <profile name="Annotation profile for moneywise-core" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
+          <entry name="$MAVEN_REPOSITORY$/org/jetbrains/annotations/26.1.0/annotations-26.1.0.jar" />
+        </processorPath>
+        <module name="moneywise-core" />
+      </profile>
+      <profile name="Annotation profile for moneywise-javafx" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
+          <entry name="$MAVEN_REPOSITORY$/org/jetbrains/annotations/26.1.0/annotations-26.1.0.jar" />
+        </processorPath>
+        <module name="moneywise-javafx" />
+      </profile>
+      <profile name="Annotation profile for moneywise-swing" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
+          <entry name="$MAVEN_REPOSITORY$/org/jetbrains/annotations/26.1.0/annotations-26.1.0.jar" />
+        </processorPath>
+        <module name="moneywise-swing" />
+      </profile>
+      <profile name="Annotation profile for prometheus-core" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
+          <entry name="$MAVEN_REPOSITORY$/org/jetbrains/annotations/26.1.0/annotations-26.1.0.jar" />
+        </processorPath>
+        <module name="prometheus-core" />
+      </profile>
       <profile name="Annotation profile for Java Oceanus package" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="false">
           <entry name="$MAVEN_REPOSITORY$/org/jetbrains/annotations/26.0.2-1/annotations-26.0.2-1.jar" />
-        </processorPath>
-        <module name="moneywise-javafx" />
-        <module name="moneywise-swing" />
-        <module name="astraeus" />
-        <module name="moneywise-core" />
-        <module name="prometheus-core" />
-      </profile>
-      <profile name="Annotation profile for gordianknot" enabled="true">
-        <sourceOutputDir name="target/generated-sources/annotations" />
-        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
-        <outputRelativeToContentRoot value="true" />
-        <processorPath useClasspath="false">
-          <entry name="$MAVEN_REPOSITORY$/org/jetbrains/annotations/26.0.2-1/annotations-26.0.2-1.jar" />
-          <entry name="$MAVEN_REPOSITORY$/org/jetbrains/annotations/26.0.2-1/annotations-26.0.2-1.jar" />
-        </processorPath>
-        <module name="gordianknot" />
-      </profile>
-      <profile name="Annotation profile for metis" enabled="true">
-        <sourceOutputDir name="target/generated-sources/annotations" />
-        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
-        <outputRelativeToContentRoot value="true" />
-        <processorPath useClasspath="false">
-          <entry name="$MAVEN_REPOSITORY$/org/jetbrains/annotations/26.0.2-1/annotations-26.0.2-1.jar" />
-          <entry name="$MAVEN_REPOSITORY$/org/jetbrains/annotations/26.0.2-1/annotations-26.0.2-1.jar" />
-        </processorPath>
-        <module name="metis" />
-      </profile>
-      <profile name="Annotation profile for oceanus" enabled="true">
-        <sourceOutputDir name="target/generated-sources/annotations" />
-        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
-        <outputRelativeToContentRoot value="true" />
-        <processorPath useClasspath="false">
-          <entry name="$MAVEN_REPOSITORY$/org/jetbrains/annotations/26.0.2-1/annotations-26.0.2-1.jar" />
-          <entry name="$MAVEN_REPOSITORY$/org/jetbrains/annotations/26.0.2-1/annotations-26.0.2-1.jar" />
-        </processorPath>
-        <module name="oceanus" />
-      </profile>
-      <profile name="Annotation profile for prometheus-sheet-api" enabled="true">
-        <sourceOutputDir name="target/generated-sources/annotations" />
-        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
-        <outputRelativeToContentRoot value="true" />
-        <processorPath useClasspath="false">
-          <entry name="$MAVEN_REPOSITORY$/org/jetbrains/annotations/26.0.2-1/annotations-26.0.2-1.jar" />
-          <entry name="$MAVEN_REPOSITORY$/org/jetbrains/annotations/26.0.2-1/annotations-26.0.2-1.jar" />
-        </processorPath>
-        <module name="prometheus-sheet-api" />
-      </profile>
-      <profile name="Annotation profile for prometheus-sheet-hssf" enabled="true">
-        <sourceOutputDir name="target/generated-sources/annotations" />
-        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
-        <outputRelativeToContentRoot value="true" />
-        <processorPath useClasspath="false">
-          <entry name="$MAVEN_REPOSITORY$/org/jetbrains/annotations/26.0.2-1/annotations-26.0.2-1.jar" />
-          <entry name="$MAVEN_REPOSITORY$/org/jetbrains/annotations/26.0.2-1/annotations-26.0.2-1.jar" />
-        </processorPath>
-        <module name="prometheus-sheet-hssf" />
-      </profile>
-      <profile name="Annotation profile for prometheus-sheet-odf" enabled="true">
-        <sourceOutputDir name="target/generated-sources/annotations" />
-        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
-        <outputRelativeToContentRoot value="true" />
-        <processorPath useClasspath="false">
-          <entry name="$MAVEN_REPOSITORY$/org/jetbrains/annotations/26.0.2-1/annotations-26.0.2-1.jar" />
-          <entry name="$MAVEN_REPOSITORY$/org/jetbrains/annotations/26.0.2-1/annotations-26.0.2-1.jar" />
-        </processorPath>
-        <module name="prometheus-sheet-odf" />
-      </profile>
-      <profile name="Annotation profile for tethys-core" enabled="true">
-        <sourceOutputDir name="target/generated-sources/annotations" />
-        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
-        <outputRelativeToContentRoot value="true" />
-        <processorPath useClasspath="false">
-          <entry name="$MAVEN_REPOSITORY$/org/jetbrains/annotations/26.0.2-1/annotations-26.0.2-1.jar" />
-          <entry name="$MAVEN_REPOSITORY$/org/jetbrains/annotations/26.0.2-1/annotations-26.0.2-1.jar" />
-        </processorPath>
-        <module name="tethys-core" />
-      </profile>
-      <profile name="Annotation profile for tethys-javafx" enabled="true">
-        <sourceOutputDir name="target/generated-sources/annotations" />
-        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
-        <outputRelativeToContentRoot value="true" />
-        <processorPath useClasspath="false">
-          <entry name="$MAVEN_REPOSITORY$/org/jetbrains/annotations/26.0.2-1/annotations-26.0.2-1.jar" />
-          <entry name="$MAVEN_REPOSITORY$/org/jetbrains/annotations/26.0.2-1/annotations-26.0.2-1.jar" />
-        </processorPath>
-        <module name="tethys-javafx" />
-      </profile>
-      <profile name="Annotation profile for tethys-swing" enabled="true">
-        <sourceOutputDir name="target/generated-sources/annotations" />
-        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
-        <outputRelativeToContentRoot value="true" />
-        <processorPath useClasspath="false">
-          <entry name="$MAVEN_REPOSITORY$/org/jetbrains/annotations/26.0.2-1/annotations-26.0.2-1.jar" />
-          <entry name="$MAVEN_REPOSITORY$/org/jetbrains/annotations/26.0.2-1/annotations-26.0.2-1.jar" />
-        </processorPath>
-        <module name="tethys-swing" />
-      </profile>
-      <profile name="Annotation profile for tethys-test" enabled="true">
-        <sourceOutputDir name="target/generated-sources/annotations" />
-        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
-        <outputRelativeToContentRoot value="true" />
-        <processorPath useClasspath="false">
-          <entry name="$MAVEN_REPOSITORY$/org/jetbrains/annotations/26.0.2-1/annotations-26.0.2-1.jar" />
-          <entry name="$MAVEN_REPOSITORY$/org/jetbrains/annotations/26.0.2-1/annotations-26.0.2-1.jar" />
-        </processorPath>
-        <module name="tethys-test" />
-      </profile>
-      <profile name="Annotation profile for themis-core" enabled="true">
-        <sourceOutputDir name="target/generated-sources/annotations" />
-        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
-        <outputRelativeToContentRoot value="true" />
-        <processorPath useClasspath="false">
-          <entry name="$MAVEN_REPOSITORY$/org/jetbrains/annotations/26.0.2-1/annotations-26.0.2-1.jar" />
-          <entry name="$MAVEN_REPOSITORY$/org/jetbrains/annotations/26.0.2-1/annotations-26.0.2-1.jar" />
-        </processorPath>
-        <module name="themis-core" />
-      </profile>
-      <profile name="Annotation profile for themis-javafx" enabled="true">
-        <sourceOutputDir name="target/generated-sources/annotations" />
-        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
-        <outputRelativeToContentRoot value="true" />
-        <processorPath useClasspath="false">
-          <entry name="$MAVEN_REPOSITORY$/org/jetbrains/annotations/26.0.2-1/annotations-26.0.2-1.jar" />
-          <entry name="$MAVEN_REPOSITORY$/org/jetbrains/annotations/26.0.2-1/annotations-26.0.2-1.jar" />
+          <entry name="$MAVEN_REPOSITORY$/org/jetbrains/annotations/26.1.0/annotations-26.1.0.jar" />
         </processorPath>
         <module name="themis-javafx" />
+        <module name="tethys-javafx" />
+        <module name="prometheus-sheet-api" />
+        <module name="tethys-core" />
+        <module name="tethys-test" />
+        <module name="metis" />
+        <module name="gordianknot" />
+        <module name="prometheus-sheet-odf" />
+        <module name="oceanus" />
+        <module name="prometheus-sheet-hssf" />
+        <module name="themis-core" />
+        <module name="tethys-swing" />
       </profile>
     </annotationProcessing>
   </component>
