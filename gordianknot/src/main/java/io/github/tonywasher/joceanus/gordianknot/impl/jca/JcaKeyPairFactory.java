@@ -42,6 +42,7 @@ import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.Jc
 import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaMayoKeyPairGenerator;
 import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaNTRUKeyPairGenerator;
 import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaNTRULPrimeKeyPairGenerator;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaNTRUPlusKeyPairGenerator;
 import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaNewHopeKeyPairGenerator;
 import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaPicnicKeyPairGenerator;
 import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaRSAKeyPairGenerator;
@@ -151,6 +152,8 @@ public class JcaKeyPairFactory
                 return new JcaBIKEKeyPairGenerator(theFactory, pKeySpec);
             case NTRU:
                 return new JcaNTRUKeyPairGenerator(theFactory, pKeySpec);
+            case NTRUPLUS:
+                return new JcaNTRUPlusKeyPairGenerator(theFactory, pKeySpec);
             case NTRUPRIME:
                 return myKeySpec.getNTRUPrimeSpec().getType() == GordianNTRUPrimeType.NTRUL
                         ? new JcaNTRULPrimeKeyPairGenerator(theFactory, pKeySpec)

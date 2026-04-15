@@ -146,6 +146,7 @@ public final class GordianCoreKeyPairType {
             case CMCE:
             case FALCON:
             case NTRU:
+            case NTRUPLUS:
             case NTRUPRIME:
             case HQC:
             case PICNIC:

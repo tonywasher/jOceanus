@@ -76,6 +76,7 @@ public class JcaAgreementFactory
             case HQC:
             case BIKE:
             case NTRU:
+            case NTRUPLUS:
             case NTRUPRIME:
                 return getPostQuantumEngine(mySpec);
             case XDH:
@@ -206,6 +207,7 @@ public class JcaAgreementFactory
             case HQC:
             case BIKE:
             case NTRU:
+            case NTRUPLUS:
             case NTRUPRIME:
             case COMPOSITE:
                 return true;

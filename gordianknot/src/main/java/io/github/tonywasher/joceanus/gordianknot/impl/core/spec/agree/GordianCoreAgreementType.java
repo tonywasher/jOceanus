@@ -149,6 +149,7 @@ public final class GordianCoreAgreementType {
             case HQC:
             case BIKE:
             case NTRU:
+            case NTRUPLUS:
             case NTRUPRIME:
             case NEWHOPE:
                 return true;

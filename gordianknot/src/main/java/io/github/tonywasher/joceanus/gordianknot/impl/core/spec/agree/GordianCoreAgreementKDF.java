@@ -90,6 +90,7 @@ public final class GordianCoreAgreementKDF {
             case HQC:
             case BIKE:
             case NTRU:
+            case NTRUPLUS:
             case NTRUPRIME:
                 return pAgreeType == GordianAgreementType.KEM
                         && theKDF == GordianAgreementKDF.NONE;

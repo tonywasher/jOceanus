@@ -127,6 +127,11 @@ public enum GordianKeyPairType {
     NTRU,
 
     /**
+     * NTRUPlus.
+     */
+    NTRUPLUS,
+
+    /**
      * NTRUPRIME.
      */
     NTRUPRIME,

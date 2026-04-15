@@ -296,6 +296,15 @@ public class GordianCoreKeyPairSpec
     }
 
     /**
+     * Obtain the NTRUPlus keySpec.
+     *
+     * @return the keySpec.
+     */
+    public GordianCoreNTRUPlusSpec getNTRUPlusSpec() {
+        return castValue(GordianCoreNTRUPlusSpec.class);
+    }
+
+    /**
      * Obtain the NTRUPRIME keySpec.
      *
      * @return the keySpec.
@@ -472,6 +481,8 @@ public class GordianCoreKeyPairSpec
                 return theSubSpec instanceof GordianCoreBIKESpec;
             case NTRU:
                 return theSubSpec instanceof GordianCoreNTRUSpec;
+            case NTRUPLUS:
+                return theSubSpec instanceof GordianCoreNTRUPlusSpec;
             case NTRUPRIME:
                 return theSubSpec instanceof GordianCoreNTRUPrimeSpec s && s.isValid();
             case FALCON:
@@ -597,6 +608,8 @@ public class GordianCoreKeyPairSpec
                 return GordianCoreBIKESpec.mapCoreSpec(pSubSpec);
             case NTRU:
                 return GordianCoreNTRUSpec.mapCoreSpec(pSubSpec);
+            case NTRUPLUS:
+                return GordianCoreNTRUPlusSpec.mapCoreSpec(pSubSpec);
             case FALCON:
                 return GordianCoreFalconSpec.mapCoreSpec(pSubSpec);
             case MAYO:
@@ -659,6 +672,8 @@ public class GordianCoreKeyPairSpec
                 return getBIKESpec().getSpec();
             case NTRU:
                 return getNTRUSpec().getSpec();
+            case NTRUPLUS:
+                return getNTRUPlusSpec().getSpec();
             case FALCON:
                 return getFalconSpec().getSpec();
             case MAYO:

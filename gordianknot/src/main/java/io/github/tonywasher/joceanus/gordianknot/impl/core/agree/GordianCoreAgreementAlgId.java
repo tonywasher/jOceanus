@@ -241,6 +241,9 @@ public class GordianCoreAgreementAlgId {
             case NTRU:
                 myId = myId.branch(Integer.toString(mySpec.getNTRUSpec().getSpec().ordinal() + 1));
                 break;
+            case NTRUPLUS:
+                myId = myId.branch(Integer.toString(mySpec.getNTRUPlusSpec().getSpec().ordinal() + 1));
+                break;
             case NTRUPRIME:
                 final GordianCoreNTRUPrimeSpec myNTRUPrime = mySpec.getNTRUPrimeSpec();
                 myId = myId.branch(Integer.toString(myNTRUPrime.getType().ordinal() + 1));

@@ -389,6 +389,16 @@ public interface GordianKeyPairSpecBuilder {
     }
 
     /**
+     * Create NTRUPlusKey.
+     *
+     * @param pSpec the NTRUPlus Spec
+     * @return the KeySpec
+     */
+    default GordianKeyPairSpec ntruPlus(final GordianNTRUPlusSpec pSpec) {
+        return withKeyPairType(GordianKeyPairType.NTRUPLUS).withEnumSubSpec(pSpec).build();
+    }
+
+    /**
      * Create NTRUPRIMEKey.
      *
      * @param pType   the Type

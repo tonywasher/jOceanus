@@ -233,6 +233,7 @@ public final class GordianKeyPairValidity {
             case HQC:
             case BIKE:
             case NTRU:
+            case NTRUPLUS:
             case NTRUPRIME:
             case NEWHOPE:
                 return myAgreeBuilder.kem(mySpec, GordianAgreementKDF.NONE);
