@@ -121,6 +121,24 @@ public abstract class GordianCoreAgreementEngine {
     }
 
     /**
+     * Obtain client Name.
+     *
+     * @return the client name
+     */
+    public byte[] getClientName() {
+        return theClient.getName();
+    }
+
+    /**
+     * Obtain server Name.
+     *
+     * @return the server name
+     */
+    public byte[] getServerName() {
+        return theServer.getName();
+    }
+
+    /**
      * Obtain client keyPair.
      *
      * @return the client keyPair

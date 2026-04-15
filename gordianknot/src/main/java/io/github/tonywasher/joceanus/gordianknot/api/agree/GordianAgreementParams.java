@@ -75,6 +75,20 @@ public interface GordianAgreementParams {
     byte[] getAdditionalData();
 
     /**
+     * Obtain the clientName.
+     *
+     * @return the clientName
+     */
+    byte[] getClientName();
+
+    /**
+     * Obtain the serverName.
+     *
+     * @return the serverName
+     */
+    byte[] getServerName();
+
+    /**
      * Set client Certificate.
      *
      * @param pClient the client certificate
@@ -120,4 +134,22 @@ public interface GordianAgreementParams {
      * @throws GordianException on error
      */
     GordianAgreementParams setAdditionalData(byte[] pData) throws GordianException;
+
+    /**
+     * Set clientName.
+     *
+     * @param pName the clientName
+     * @return the new agreementParams
+     * @throws GordianException on error
+     */
+    GordianAgreementParams setClientName(byte[] pName) throws GordianException;
+
+    /**
+     * Set serverName.
+     *
+     * @param pName the serverName
+     * @return the new agreementParams
+     * @throws GordianException on error
+     */
+    GordianAgreementParams setServerName(byte[] pName) throws GordianException;
 }

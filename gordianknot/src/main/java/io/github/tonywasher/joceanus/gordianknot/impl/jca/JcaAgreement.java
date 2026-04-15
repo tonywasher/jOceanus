@@ -45,6 +45,7 @@ import org.bouncycastle.jcajce.spec.DHUParameterSpec;
 import org.bouncycastle.jcajce.spec.KEMExtractSpec;
 import org.bouncycastle.jcajce.spec.KEMGenerateSpec;
 import org.bouncycastle.jcajce.spec.MQVParameterSpec;
+import org.bouncycastle.jcajce.spec.SM2KeyExchangeSpec;
 import org.bouncycastle.jcajce.spec.UserKeyingMaterialSpec;
 
 import javax.crypto.KeyAgreement;
@@ -495,6 +496,88 @@ public final class JcaAgreement {
     }
 
     /**
+     * Jca SM2 Agreement.
+     */
+    public static class JcaSM2Engine
+            extends JcaAgreementBase {
+        /**
+         * Key Agreement.
+         */
+        private KeyAgreement theAgreement;
+
+        /**
+         * Constructor.
+         *
+         * @param pFactory   the security factory
+         * @param pSpec      the agreementSpec
+         * @param pAgreement the agreement
+         */
+        JcaSM2Engine(final GordianCoreAgreementFactory pFactory,
+                     final GordianCoreAgreementSpec pSpec,
+                     final KeyAgreement pAgreement) throws GordianException {
+            /* Initialize underlying class */
+            super(pFactory, pSpec);
+
+            /* Store the agreement */
+            theAgreement = pAgreement;
+        }
+
+        @Override
+        public void processClientHello() throws GordianException {
+            /* Protect against exceptions */
+            try {
+                /* Access keys */
+                final JcaPublicKey myClientPublic = (JcaPublicKey) getPublicKey(getClientKeyPair());
+                final JcaPublicKey myClientEphPublic = (JcaPublicKey) getPublicKey(getClientEphemeral());
+                final JcaPrivateKey myPrivate = (JcaPrivateKey) getPrivateKey(getServerKeyPair());
+                final JcaPrivateKey myEphPrivate = (JcaPrivateKey) getPrivateKey(getServerEphemeral());
+
+                /* Access IDs */
+                final byte[] myClientID = getClientName() == null ? EMPTY : getClientName();
+                final byte[] myServerID = getServerName() == null ? EMPTY : getServerName();
+
+                /* Derive the secret */
+                final SM2KeyExchangeSpec mySpec = new SM2KeyExchangeSpec(false,
+                        myEphPrivate.getPrivateKey(), myClientEphPublic.getPublicKey(), myServerID, myClientID);
+                theAgreement.init(myPrivate.getPrivateKey(), mySpec);
+                theAgreement.doPhase(myClientPublic.getPublicKey(), true);
+                storeSecret(theAgreement.generateSecret());
+
+            } catch (InvalidKeyException
+                     | InvalidAlgorithmParameterException e) {
+                throw new GordianCryptoException(ERR_AGREEMENT, e);
+            }
+        }
+
+        @Override
+        public void processServerHello() throws GordianException {
+            /* Protect against exceptions */
+            try {
+                /* Access keys */
+                final JcaPublicKey myServerPublic = (JcaPublicKey) getPublicKey(getServerKeyPair());
+                final JcaPublicKey myServerEphPublic = (JcaPublicKey) getPublicKey(getServerEphemeral());
+                final JcaPrivateKey myPrivate = (JcaPrivateKey) getPrivateKey(getClientKeyPair());
+                final JcaPrivateKey myEphPrivate = (JcaPrivateKey) getPrivateKey(getClientEphemeral());
+
+                /* Access IDs */
+                final byte[] myClientID = getClientName() == null ? EMPTY : getClientName();
+                final byte[] myServerID = getServerName() == null ? EMPTY : getServerName();
+
+                /* Derive the secret */
+                final SM2KeyExchangeSpec mySpec = new SM2KeyExchangeSpec(true,
+                        myEphPrivate.getPrivateKey(), myServerEphPublic.getPublicKey(), myClientID, myServerID);
+                theAgreement.init(myPrivate.getPrivateKey(), mySpec);
+                theAgreement.doPhase(myServerPublic.getPublicKey(), true);
+                storeSecret(theAgreement.generateSecret());
+
+            } catch (InvalidKeyException
+                     | InvalidAlgorithmParameterException e) {
+                throw new GordianCryptoException(ERR_AGREEMENT, e);
+            }
+        }
+    }
+
+    /**
      * Base Agreement Engine class.
      */
     public abstract static class JcaAgreementBase
@@ -502,7 +585,7 @@ public final class JcaAgreement {
         /**
          * Empty byteArray.
          */
-        private static final byte[] EMPTY = new byte[0];
+        static final byte[] EMPTY = new byte[0];
 
         /**
          * Constructor.

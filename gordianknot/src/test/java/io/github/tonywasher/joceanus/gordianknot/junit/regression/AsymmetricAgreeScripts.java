@@ -22,6 +22,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementParam
 import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementStatus;
 import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementKDF;
 import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementType;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianCertificate;
@@ -248,6 +249,7 @@ public final class AsymmetricAgreeScripts {
         final GordianKeyPair myPair = myPairs.getKeyPair();
         final GordianKeyPair myTarget = myType.isAnonymous() ? myPair : myPairs.getTargetKeyPair();
         final byte[] myAdditional = GordianAgreementKDF.NONE.equals(mySpec.getKDFType()) ? null : "HelloThere".getBytes();
+        final boolean isSM2 = GordianAgreementType.SM2.equals(mySpec.getAgreementType());
 
         /* Create mini-certificates */
         final GordianAgreementFactory myAgrees = pAgreement.getOwner().getFactory().getAgreementFactory();
@@ -263,6 +265,9 @@ public final class AsymmetricAgreeScripts {
                 .setClientCertificate(myClientCert)
                 .setServerCertificate(myTargetCert)
                 .setAdditionalData(myAdditional);
+        if (isSM2) {
+            myParams = myParams.setClientName("Bill@yahoo".getBytes());
+        }
         final GordianAgreement mySender = myAgrees.createAgreement(myParams);
         final byte[] myClientHello = mySender.nextMessage();
 
@@ -272,6 +277,9 @@ public final class AsymmetricAgreeScripts {
                 .setServerCertificate(myTargetCert)
                 .setSigner(mySignerCert)
                 .setAdditionalData(myAdditional);
+        if (isSM2) {
+            myParams = myParams.setServerName("Ted@hotmail".getBytes());
+        }
         myResponder.updateParams(myParams);
 
         /* If we are not anonymous */
@@ -316,6 +324,7 @@ public final class AsymmetricAgreeScripts {
         final GordianKeyPair myPair = myPairs.getKeyPair();
         final GordianKeyPair myTarget = myPairs.getTargetKeyPair();
         final GordianKeyPair myPartnerTarget = myPairs.getPartnerTargetKeyPair();
+        final boolean isSM2 = GordianAgreementType.SM2.equals(mySpec.getAgreementType());
 
         /* Check the miniCertificates */
         final GordianAgreementFactory mySrcAgrees = pAgreement.getOwner().getFactory().getAgreementFactory();
@@ -333,6 +342,9 @@ public final class AsymmetricAgreeScripts {
         GordianAgreementParams myParams = mySrcAgrees.newAgreementParams(mySpec, BYTEARRAY)
                 .setClientCertificate(myClientCert)
                 .setServerCertificate(myTargetCert);
+        if (isSM2) {
+            myParams = myParams.setClientName("Bill@yahoo".getBytes());
+        }
         final GordianAgreement mySender = mySrcAgrees.createAgreement(myParams);
         final byte[] myClientHello = mySender.nextMessage();
 
@@ -341,6 +353,9 @@ public final class AsymmetricAgreeScripts {
         myParams = myResponder.getAgreementParams()
                 .setServerCertificate(myServerCert)
                 .setSigner(mySignerCert);
+        if (isSM2) {
+            myParams = myParams.setServerName("Ted@hotmail".getBytes());
+        }
         myResponder.updateParams(myParams);
 
         /* If we are not anonymous */

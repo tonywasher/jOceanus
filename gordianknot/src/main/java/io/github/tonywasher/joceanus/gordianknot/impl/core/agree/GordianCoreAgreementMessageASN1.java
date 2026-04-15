@@ -61,6 +61,8 @@ import java.util.Objects;
  *      messageType INTEGER
  *      clientId [1] INTEGER OPTIONAL
  *      serverId [2] INTEGER OPTIONAL
+ *      clientName [3] OCTET STRING OPTIONAL
+ *      serverName [4] OCTET STRING OPTIONAL
  * }
  *
  * Specification ::= SEQUENCE  {
@@ -122,6 +124,15 @@ public final class GordianCoreAgreementMessageASN1
      */
     private static final int TAG_SERVERID = 2;
 
+    /**
+     * The clientName tag.
+     */
+    private static final int TAG_CLIENTNAME = 3;
+
+    /**
+     * The serverName tag.
+     */
+    private static final int TAG_SERVERNAME = 4;
 
     /**
      * The resultAlgId tag.
@@ -147,6 +158,16 @@ public final class GordianCoreAgreementMessageASN1
      * The ServerId.
      */
     private Long theServerId;
+
+    /**
+     * The ClientName.
+     */
+    private byte[] theClientName;
+
+    /**
+     * The ServerName.
+     */
+    private byte[] theServerName;
 
     /**
      * The Agreement AlgorithmId.
@@ -239,6 +260,12 @@ public final class GordianCoreAgreementMessageASN1
                         break;
                     case TAG_SERVERID:
                         theServerId = ASN1Integer.getInstance(myTagged, false).longValueExact();
+                        break;
+                    case TAG_CLIENTNAME:
+                        theClientName = ASN1OctetString.getInstance(myTagged, false).getOctets();
+                        break;
+                    case TAG_SERVERNAME:
+                        theServerName = ASN1OctetString.getInstance(myTagged, false).getOctets();
                         break;
                     default:
                         throw new GordianDataException("Unexpected id tag");
@@ -390,9 +417,9 @@ public final class GordianCoreAgreementMessageASN1
     }
 
     /**
-     * Get the clientId.
+     * Get the serverId.
      *
-     * @return the clientId
+     * @return the serverId
      */
     Long getServerId() {
         return theServerId;
@@ -406,6 +433,46 @@ public final class GordianCoreAgreementMessageASN1
      */
     GordianCoreAgreementMessageASN1 setServerId(final Long pServerId) {
         theServerId = pServerId;
+        return this;
+    }
+
+    /**
+     * Get the clientName.
+     *
+     * @return the clientName
+     */
+    byte[] getClientName() {
+        return theClientName;
+    }
+
+    /**
+     * Set the clientName.
+     *
+     * @param pClientName the clientName
+     * @return this object
+     */
+    GordianCoreAgreementMessageASN1 setClientName(final byte[] pClientName) {
+        theClientName = pClientName;
+        return this;
+    }
+
+    /**
+     * Get the serverName.
+     *
+     * @return the serverName
+     */
+    byte[] getServerName() {
+        return theServerName;
+    }
+
+    /**
+     * Set the serverName.
+     *
+     * @param pServerName the serverName
+     * @return this object
+     */
+    GordianCoreAgreementMessageASN1 setServerName(final byte[] pServerName) {
+        theServerName = pServerName;
         return this;
     }
 
@@ -644,6 +711,12 @@ public final class GordianCoreAgreementMessageASN1
         if (theServerId != null) {
             vId.add(new DERTaggedObject(false, TAG_SERVERID, new ASN1Integer(theServerId)));
         }
+        if (theClientName != null) {
+            vId.add(new DERTaggedObject(false, TAG_CLIENTNAME, new BEROctetString(theClientName)));
+        }
+        if (theServerName != null) {
+            vId.add(new DERTaggedObject(false, TAG_SERVERNAME, new BEROctetString(theServerName)));
+        }
         v.add(new DERSequence(vId));
 
         /* Add algorithm section */
@@ -709,6 +782,8 @@ public final class GordianCoreAgreementMessageASN1
                 && Objects.equals(theClientCertificate, myThat.theClientCertificate)
                 && Objects.equals(theServerCertificate, myThat.theServerCertificate)
                 && Objects.equals(theSignerCertificate, myThat.theSignerCertificate)
+                && Arrays.equals(getClientName(), myThat.getClientName())
+                && Arrays.equals(getServerName(), myThat.getServerName())
                 && Arrays.equals(getSignature(), myThat.getSignature())
                 && Arrays.equals(getEncapsulated(), myThat.getEncapsulated())
                 && Arrays.equals(getConfirmation(), myThat.getConfirmation())
@@ -720,6 +795,8 @@ public final class GordianCoreAgreementMessageASN1
         return Objects.hash(getMessageType(), getClientId(), getServerId(),
                 getAgreementId(), getResultId(), getSignatureId(), getEphemeral(),
                 theClientCertificate, theServerCertificate, theSignerCertificate)
+                ^ Arrays.hashCode(getClientName())
+                ^ Arrays.hashCode(getServerName())
                 ^ Arrays.hashCode(getSignature())
                 ^ Arrays.hashCode(getEncapsulated())
                 ^ Arrays.hashCode(getConfirmation())

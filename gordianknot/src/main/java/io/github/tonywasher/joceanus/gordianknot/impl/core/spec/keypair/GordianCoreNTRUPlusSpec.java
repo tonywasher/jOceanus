@@ -29,7 +29,7 @@ import java.util.Map;
 /**
  * NTRUPlus KeySpec.
  */
-public class GordianCoreNTRUPlusSpec {
+public final class GordianCoreNTRUPlusSpec {
     /**
      * The specMap.
      */
