@@ -17,37 +17,40 @@
 
 package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair;
 
-import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianBIKESpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNTRUPlusSpec;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.bc.BCObjectIdentifiers;
-import org.bouncycastle.pqc.jcajce.spec.BIKEParameterSpec;
-import org.bouncycastle.pqc.legacy.bike.BIKEParameters;
+import org.bouncycastle.pqc.crypto.ntruplus.NTRUPlusParameters;
+import org.bouncycastle.pqc.jcajce.spec.NTRUPlusParameterSpec;
 
 import java.util.EnumMap;
 import java.util.Map;
 
-public final class GordianCoreBIKESpec {
+/**
+ * NTRUPlus KeySpec.
+ */
+public final class GordianCoreNTRUPlusSpec {
     /**
      * The specMap.
      */
-    private static final Map<GordianBIKESpec, GordianCoreBIKESpec> SPECMAP = newSpecMap();
+    private static final Map<GordianNTRUPlusSpec, GordianCoreNTRUPlusSpec> SPECMAP = newSpecMap();
 
     /**
      * The specArray.
      */
-    private static final GordianCoreBIKESpec[] VALUES = SPECMAP.values().toArray(new GordianCoreBIKESpec[0]);
+    private static final GordianCoreNTRUPlusSpec[] VALUES = SPECMAP.values().toArray(new GordianCoreNTRUPlusSpec[0]);
 
     /**
      * The Spec.
      */
-    private final GordianBIKESpec theSpec;
+    private final GordianNTRUPlusSpec theSpec;
 
     /**
      * Constructor.
      *
      * @param pSpec the spec
      */
-    private GordianCoreBIKESpec(final GordianBIKESpec pSpec) {
+    private GordianCoreNTRUPlusSpec(final GordianNTRUPlusSpec pSpec) {
         theSpec = pSpec;
     }
 
@@ -56,59 +59,59 @@ public final class GordianCoreBIKESpec {
      *
      * @return the spec
      */
-    public GordianBIKESpec getSpec() {
+    public GordianNTRUPlusSpec getSpec() {
         return theSpec;
     }
 
     /**
-     * Obtain BIKE Parameters.
+     * Obtain NTRU Parameters.
      *
      * @return the parameters.
      */
-    public BIKEParameters getParameters() {
+    public NTRUPlusParameters getParameters() {
         switch (theSpec) {
-            case BIKE128:
-                return BIKEParameters.bike128;
-            case BIKE192:
-                return BIKEParameters.bike192;
-            case BIKE256:
-                return BIKEParameters.bike256;
+            case KEM768:
+                return NTRUPlusParameters.ntruplus_kem_768;
+            case KEM864:
+                return NTRUPlusParameters.ntruplus_kem_864;
+            case KEM1152:
+                return NTRUPlusParameters.ntruplus_kem_1152;
             default:
                 throw new IllegalArgumentException();
         }
     }
 
     /**
-     * Obtain BIKE ParameterSpec.
+     * Obtain NTRU ParameterSpec.
      *
      * @return the parameters.
      */
-    public BIKEParameterSpec getParameterSpec() {
+    public NTRUPlusParameterSpec getParameterSpec() {
         switch (theSpec) {
-            case BIKE128:
-                return BIKEParameterSpec.bike128;
-            case BIKE192:
-                return BIKEParameterSpec.bike192;
-            case BIKE256:
-                return BIKEParameterSpec.bike256;
+            case KEM768:
+                return NTRUPlusParameterSpec.ntruplus_768;
+            case KEM864:
+                return NTRUPlusParameterSpec.ntruplus_864;
+            case KEM1152:
+                return NTRUPlusParameterSpec.ntruplus_1152;
             default:
                 throw new IllegalArgumentException();
         }
     }
 
     /**
-     * Obtain BIKE algorithm Identifier.
+     * Obtain NTRU algorithm Identifier.
      *
      * @return the identifier.
      */
     public ASN1ObjectIdentifier getIdentifier() {
         switch (theSpec) {
-            case BIKE128:
-                return BCObjectIdentifiers.bike128;
-            case BIKE192:
-                return BCObjectIdentifiers.bike192;
-            case BIKE256:
-                return BCObjectIdentifiers.bike256;
+            case KEM768:
+                return BCObjectIdentifiers.ntruplus768;
+            case KEM864:
+                return BCObjectIdentifiers.ntruplus864;
+            case KEM1152:
+                return BCObjectIdentifiers.ntruplus1152;
             default:
                 throw new IllegalArgumentException();
         }
@@ -130,7 +133,7 @@ public final class GordianCoreBIKESpec {
         }
 
         /* Check subFields */
-        return pThat instanceof GordianCoreBIKESpec myThat
+        return pThat instanceof GordianCoreNTRUPlusSpec myThat
                 && theSpec == myThat.getSpec();
     }
 
@@ -145,8 +148,8 @@ public final class GordianCoreBIKESpec {
      * @param pSpec the base spec
      * @return the core spec
      */
-    public static GordianCoreBIKESpec mapCoreSpec(final Object pSpec) {
-        return pSpec instanceof GordianBIKESpec mySpec ? SPECMAP.get(mySpec) : null;
+    public static GordianCoreNTRUPlusSpec mapCoreSpec(final Object pSpec) {
+        return pSpec instanceof GordianNTRUPlusSpec mySpec ? SPECMAP.get(mySpec) : null;
     }
 
     /**
@@ -154,10 +157,10 @@ public final class GordianCoreBIKESpec {
      *
      * @return the type map
      */
-    private static Map<GordianBIKESpec, GordianCoreBIKESpec> newSpecMap() {
-        final Map<GordianBIKESpec, GordianCoreBIKESpec> myMap = new EnumMap<>(GordianBIKESpec.class);
-        for (GordianBIKESpec mySpec : GordianBIKESpec.values()) {
-            myMap.put(mySpec, new GordianCoreBIKESpec(mySpec));
+    private static Map<GordianNTRUPlusSpec, GordianCoreNTRUPlusSpec> newSpecMap() {
+        final Map<GordianNTRUPlusSpec, GordianCoreNTRUPlusSpec> myMap = new EnumMap<>(GordianNTRUPlusSpec.class);
+        for (GordianNTRUPlusSpec mySpec : GordianNTRUPlusSpec.values()) {
+            myMap.put(mySpec, new GordianCoreNTRUPlusSpec(mySpec));
         }
         return myMap;
     }
@@ -167,7 +170,7 @@ public final class GordianCoreBIKESpec {
      *
      * @return the values
      */
-    public static GordianCoreBIKESpec[] values() {
+    public static GordianCoreNTRUPlusSpec[] values() {
         return VALUES;
     }
 }

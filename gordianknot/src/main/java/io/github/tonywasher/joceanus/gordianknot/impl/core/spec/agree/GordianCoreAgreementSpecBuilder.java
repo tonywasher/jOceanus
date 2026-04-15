@@ -133,6 +133,7 @@ public final class GordianCoreAgreementSpecBuilder
             case HQC:
             case BIKE:
             case NTRU:
+            case NTRUPLUS:
             case NTRUPRIME:
                 myAgreements.add(new GordianCoreAgreementSpec(pKeyPairSpec, GordianAgreementType.KEM, GordianAgreementKDF.NONE));
                 break;

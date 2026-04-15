@@ -19,6 +19,7 @@ package io.github.tonywasher.joceanus.gordianknot.impl.core.agree;
 import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementParams;
 import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementKDF;
 import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementType;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianCertificate;
 import io.github.tonywasher.joceanus.gordianknot.api.cert.GordianKeyPairUse;
@@ -97,6 +98,16 @@ public class GordianCoreAgreementParams
     private byte[] theAdditional;
 
     /**
+     * The ClientName.
+     */
+    private byte[] theClientName;
+
+    /**
+     * The ServerName.
+     */
+    private byte[] theServerName;
+
+    /**
      * Constructor.
      *
      * @param pSupplier   the supplier
@@ -151,6 +162,8 @@ public class GordianCoreAgreementParams
         theSigner = pSource.getSignerCertificate();
         theSignSpec = pSource.getSignatureSpec();
         theAdditional = pSource.theAdditional;
+        theClientName = pSource.theClientName;
+        theServerName = pSource.theServerName;
     }
 
     /**
@@ -252,6 +265,16 @@ public class GordianCoreAgreementParams
     @Override
     public byte[] getAdditionalData() {
         return theAdditional == null ? null : theAdditional.clone();
+    }
+
+    @Override
+    public byte[] getClientName() {
+        return theClientName == null ? null : theClientName.clone();
+    }
+
+    @Override
+    public byte[] getServerName() {
+        return theServerName == null ? null : theServerName.clone();
     }
 
     @Override
@@ -385,6 +408,44 @@ public class GordianCoreAgreementParams
         /* Create new updated parameters */
         final GordianCoreAgreementParams myParams = new GordianCoreAgreementParams(this);
         myParams.theAdditional = pData == null ? null : pData.clone();
+        return myParams;
+    }
+
+    @Override
+    public GordianAgreementParams setClientName(final byte[] pName) throws GordianException {
+        /* Not allowed for server parameters */
+        if (!isClient) {
+            throw new GordianDataException("Client Name cannot be changed for server");
+        }
+
+        /* Only allowed if agreementType is SM2 */
+        if (pName != null
+                && !GordianAgreementType.SM2.equals(theSpec.getAgreementType())) {
+            throw new GordianDataException("Names only allowed for SM2 agreementTypes");
+        }
+
+        /* Create new updated parameters */
+        final GordianCoreAgreementParams myParams = new GordianCoreAgreementParams(this);
+        myParams.theClientName = pName == null ? null : pName.clone();
+        return myParams;
+    }
+
+    @Override
+    public GordianAgreementParams setServerName(final byte[] pName) throws GordianException {
+        /* Only allowed for server parameters */
+        if (isClient) {
+            throw new GordianDataException("Server Name cannot be changed for client");
+        }
+
+        /* Only allowed if agreementType is SM2 */
+        if (pName != null
+                && !GordianAgreementType.SM2.equals(theSpec.getAgreementType())) {
+            throw new GordianDataException("Names only allowed for SM2 agreementTypes");
+        }
+
+        /* Create new updated parameters */
+        final GordianCoreAgreementParams myParams = new GordianCoreAgreementParams(this);
+        myParams.theServerName = pName == null ? null : pName.clone();
         return myParams;
     }
 }

@@ -35,6 +35,7 @@ import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyHQCKeyPair.Bouncy
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyMLKEMKeyPair.BouncyMLKEMAgreementEngine;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyNTRUKeyPair.BouncyNTRUAgreementEngine;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyNTRULPrimeKeyPair.BouncyNTRULPrimeAgreementEngine;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyNTRUPlusKeyPair.BouncyNTRUPlusAgreementEngine;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyNewHopeKeyPair.BouncyNewHopeAgreementEngine;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyRSAKeyPair.BouncyRSAAgreementEngine;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncySABERKeyPair.BouncySABERAgreementEngine;
@@ -95,6 +96,8 @@ public class BouncyAgreementFactory
                 return new BouncyBIKEAgreementEngine(this, mySpec);
             case NTRU:
                 return new BouncyNTRUAgreementEngine(this, mySpec);
+            case NTRUPLUS:
+                return new BouncyNTRUPlusAgreementEngine(this, mySpec);
             case NTRUPRIME:
                 final GordianCoreKeyPairSpec myKeySpec = (GordianCoreKeyPairSpec) pSpec.getKeyPairSpec();
                 final GordianCoreNTRUPrimeSpec myPrimeSpec = myKeySpec.getNTRUPrimeSpec();

@@ -38,6 +38,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianLMSSpec
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianMLDSASpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianMLKEMSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianMayoSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNTRUPlusSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNTRUPrimeSpec.GordianNTRUPrimeParams;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNTRUPrimeSpec.GordianNTRUPrimeType;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNTRUSpec;
@@ -135,6 +136,7 @@ public final class KeyStoreRequest {
                 agreedKeyPairRequestTest(myBuilder.hqc(GordianHQCSpec.HQC128)),
                 agreedKeyPairRequestTest(myBuilder.mlkem(GordianMLKEMSpec.MLKEM512)),
                 agreedKeyPairRequestTest(myBuilder.ntru(GordianNTRUSpec.HPS821)),
+                agreedKeyPairRequestTest(myBuilder.ntruPlus(GordianNTRUPlusSpec.KEM768)),
                 agreedKeyPairRequestTest(myBuilder.ntruprime(GordianNTRUPrimeType.NTRUL, GordianNTRUPrimeParams.PR653)),
                 agreedKeyPairRequestTest(myBuilder.saber(GordianSABERSpec.BASE128)),
                 agreedKeyPairRequestTest(myBuilder.composite(myBuilder.cmce(GordianCMCESpec.BASE3488),

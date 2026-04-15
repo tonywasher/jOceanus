@@ -16,6 +16,7 @@
  */
 package io.github.tonywasher.joceanus.gordianknot.impl.jca;
 
+import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementKDF;
 import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementType;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
@@ -30,6 +31,7 @@ import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaAgreement.JcaBasicE
 import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaAgreement.JcaMQVEngine;
 import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaAgreement.JcaNewHopeEngine;
 import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaAgreement.JcaPostQuantumEngine;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaAgreement.JcaSM2Engine;
 import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaAgreement.JcaUnifiedEngine;
 
 /**
@@ -63,8 +65,10 @@ public class JcaAgreementFactory
             case EC:
             case GOST:
             case DSTU:
-            case SM2:
                 return getECEngine(mySpec);
+            case SM2:
+                return mySpec.getAgreementType() == GordianAgreementType.SM2
+                        ? getSM2Engine(mySpec) : getECEngine(mySpec);
             case DH:
                 return getDHEngine(mySpec);
             case NEWHOPE:
@@ -76,6 +80,7 @@ public class JcaAgreementFactory
             case HQC:
             case BIKE:
             case NTRU:
+            case NTRUPLUS:
             case NTRUPRIME:
                 return getPostQuantumEngine(mySpec);
             case XDH:
@@ -106,6 +111,17 @@ public class JcaAgreementFactory
      */
     private GordianCoreAgreementEngine getNHEngine(final GordianCoreAgreementSpec pAgreementSpec) throws GordianException {
         return new JcaNewHopeEngine(this, pAgreementSpec, JcaAgreement.getJavaKeyAgreement("NH", true));
+    }
+
+    /**
+     * Create the SM2 Agreement.
+     *
+     * @param pAgreementSpec the agreementSpec
+     * @return the Agreement
+     * @throws GordianException on error
+     */
+    private GordianCoreAgreementEngine getSM2Engine(final GordianCoreAgreementSpec pAgreementSpec) throws GordianException {
+        return new JcaSM2Engine(this, pAgreementSpec, JcaAgreement.getJavaKeyAgreement("SM2", false));
     }
 
     /**
@@ -190,10 +206,10 @@ public class JcaAgreementFactory
             return false;
         }
 
-        /* Disallow SM2 */
+        /* Only allow SM2 for NoKDF */
         final GordianAgreementType myType = pSpec.getAgreementType();
         if (GordianAgreementType.SM2.equals(myType)) {
-            return false;
+            return GordianAgreementKDF.NONE.equals(pSpec.getKDFType()) && !pSpec.withConfirm();
         }
 
         /* Switch on KeyType */
@@ -206,6 +222,7 @@ public class JcaAgreementFactory
             case HQC:
             case BIKE:
             case NTRU:
+            case NTRUPLUS:
             case NTRUPRIME:
             case COMPOSITE:
                 return true;

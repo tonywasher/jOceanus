@@ -42,6 +42,7 @@ import org.bouncycastle.crypto.InvalidCipherTextException;
 import org.bouncycastle.crypto.agreement.SM2KeyExchange;
 import org.bouncycastle.crypto.engines.SM2Engine;
 import org.bouncycastle.crypto.engines.SM2Engine.Mode;
+import org.bouncycastle.crypto.params.ParametersWithID;
 import org.bouncycastle.crypto.params.ParametersWithRandom;
 import org.bouncycastle.crypto.params.SM2KeyExchangePrivateParameters;
 import org.bouncycastle.crypto.params.SM2KeyExchangePublicParameters;
@@ -170,9 +171,14 @@ public final class BouncySM2KeyPair {
     public static class BouncySM2AgreementEngine
             extends BouncyAgreementBase {
         /**
+         * Empty byteArray.
+         */
+        private static final byte[] EMPTY = new byte[0];
+
+        /**
          * Key length.
          */
-        private static final int KEYLEN = 64;
+        private static final int KEYLEN = 128;
 
         /**
          * The agreement.
@@ -203,17 +209,23 @@ public final class BouncySM2KeyPair {
             final BouncyECPrivateKey myPrivate = (BouncyECPrivateKey) getPrivateKey(getServerKeyPair());
             final BouncyECPrivateKey myEphPrivate = (BouncyECPrivateKey) getPrivateKey(getServerEphemeral());
 
+            /* Access IDs */
+            final byte[] myClientID = getClientName() == null ? EMPTY : getClientName();
+            final byte[] myServerID = getServerName() == null ? EMPTY : getServerName();
+
             /* Derive the secret */
             final SM2KeyExchangePrivateParameters myPrivParams = new SM2KeyExchangePrivateParameters(false,
                     myPrivate.getPrivateKey(), myEphPrivate.getPrivateKey());
-            theAgreement.init(myPrivParams);
+            final ParametersWithID myPrivIDParams = new ParametersWithID(myPrivParams, myServerID);
+            theAgreement.init(myPrivIDParams);
             final SM2KeyExchangePublicParameters myPubParams = new SM2KeyExchangePublicParameters(myClientPublic.getPublicKey(),
                     myClientEphPublic.getPublicKey());
+            final ParametersWithID myPubIDParams = new ParametersWithID(myPubParams, myClientID);
 
             /* If we are confirming */
-            if (Boolean.TRUE.equals(getSpec().withConfirm())) {
+            if (getSpec().withConfirm()) {
                 /* Create agreement and confirmation tags */
-                final byte[][] myResults = theAgreement.calculateKeyWithConfirmation(KEYLEN, null, myPubParams);
+                final byte[][] myResults = theAgreement.calculateKeyWithConfirmation(KEYLEN, null, myPubIDParams);
 
                 /* Store the confirmationTags */
                 setServerConfirm(myResults[1]);
@@ -225,7 +237,7 @@ public final class BouncySM2KeyPair {
                 /* else standard agreement */
             } else {
                 /* Calculate and store the secret */
-                storeSecret(theAgreement.calculateKey(KEYLEN, myPubParams));
+                storeSecret(theAgreement.calculateKey(KEYLEN, myPubIDParams));
             }
         }
 
@@ -237,22 +249,28 @@ public final class BouncySM2KeyPair {
             final BouncyECPrivateKey myPrivate = (BouncyECPrivateKey) getPrivateKey(getClientKeyPair());
             final BouncyECPrivateKey myEphPrivate = (BouncyECPrivateKey) getPrivateKey(getClientEphemeral());
 
+            /* Access IDs */
+            final byte[] myClientID = getClientName() == null ? EMPTY : getClientName();
+            final byte[] myServerID = getServerName() == null ? EMPTY : getServerName();
+
             /* Derive the secret */
             final SM2KeyExchangePrivateParameters myPrivParams = new SM2KeyExchangePrivateParameters(true,
                     myPrivate.getPrivateKey(), myEphPrivate.getPrivateKey());
-            theAgreement.init(myPrivParams);
+            final ParametersWithID myPrivIDParams = new ParametersWithID(myPrivParams, myClientID);
+            theAgreement.init(myPrivIDParams);
             final SM2KeyExchangePublicParameters myPubParams = new SM2KeyExchangePublicParameters(myServerPublic.getPublicKey(),
                     myServerEphPublic.getPublicKey());
+            final ParametersWithID myPubIDParams = new ParametersWithID(myPubParams, myServerID);
 
             /* If we are confirming */
-            if (Boolean.TRUE.equals(getSpec().withConfirm())) {
+            if (getSpec().withConfirm()) {
                 /* Obtain confirmationTag in serverHello */
                 final byte[] myConfirm = getServerConfirm();
 
                 /* Protect against exception */
                 try {
                     /* Create agreement and confirmation tags */
-                    final byte[][] myResults = theAgreement.calculateKeyWithConfirmation(KEYLEN, myConfirm, myPubParams);
+                    final byte[][] myResults = theAgreement.calculateKeyWithConfirmation(KEYLEN, myConfirm, myPubIDParams);
 
                     /* Store the confirmationTag */
                     if (setClientConfirm(myResults[1])) {
@@ -268,7 +286,7 @@ public final class BouncySM2KeyPair {
                 /* else standard agreement */
             } else {
                 /* Calculate and store the secret */
-                storeSecret(theAgreement.calculateKey(KEYLEN, myPubParams));
+                storeSecret(theAgreement.calculateKey(KEYLEN, myPubIDParams));
             }
         }
     }

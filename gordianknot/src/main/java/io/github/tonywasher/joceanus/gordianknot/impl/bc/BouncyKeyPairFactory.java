@@ -40,6 +40,7 @@ import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyMLKEMKeyPair.Boun
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyMayoKeyPair.BouncyMayoKeyPairGenerator;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyNTRUKeyPair.BouncyNTRUKeyPairGenerator;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyNTRULPrimeKeyPair.BouncyNTRULPrimeKeyPairGenerator;
+import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyNTRUPlusKeyPair.BouncyNTRUPlusKeyPairGenerator;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyNewHopeKeyPair.BouncyNewHopeKeyPairGenerator;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyPicnicKeyPair.BouncyPicnicKeyPairGenerator;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyRSAKeyPair.BouncyRSAKeyPairGenerator;
@@ -162,6 +163,8 @@ public class BouncyKeyPairFactory
                 return new BouncyBIKEKeyPairGenerator(theFactory, pKeySpec);
             case NTRU:
                 return new BouncyNTRUKeyPairGenerator(theFactory, pKeySpec);
+            case NTRUPLUS:
+                return new BouncyNTRUPlusKeyPairGenerator(theFactory, pKeySpec);
             case NTRUPRIME:
                 return myKeySpec.getNTRUPrimeSpec().getType() == GordianNTRUPrimeType.NTRUL
                         ? new BouncyNTRULPrimeKeyPairGenerator(theFactory, pKeySpec)

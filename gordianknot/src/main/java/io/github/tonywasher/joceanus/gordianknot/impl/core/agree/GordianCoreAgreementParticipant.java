@@ -56,6 +56,11 @@ public class GordianCoreAgreementParticipant {
     private Long theId;
 
     /**
+     * Name.
+     */
+    private byte[] theName;
+
+    /**
      * Confirm.
      */
     private byte[] theConfirm;
@@ -185,6 +190,26 @@ public class GordianCoreAgreementParticipant {
      */
     GordianCoreAgreementParticipant setId(final Long pId) {
         theId = pId;
+        return this;
+    }
+
+    /**
+     * Obtain the name.
+     *
+     * @return the name
+     */
+    byte[] getName() {
+        return theName;
+    }
+
+    /**
+     * Set the name.
+     *
+     * @param pName the id
+     * @return the state
+     */
+    GordianCoreAgreementParticipant setName(final byte[] pName) {
+        theName = pName;
         return this;
     }
 

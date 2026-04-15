@@ -73,7 +73,7 @@
         <appDir>${session.executionRootDirectory}/dist</appDir>
         <appBinDir>bin/</appBinDir>
         <appLibDir>lib/</appLibDir>
-        <BouncyCastleVersion>1.83</BouncyCastleVersion>
+        <BouncyCastleVersion>1.84</BouncyCastleVersion>
         <JUnitVersion>6.0.1</JUnitVersion>
         <JSONVersion>20251224</JSONVersion>
         <ApacheMavenVersion>3.9.12</ApacheMavenVersion>

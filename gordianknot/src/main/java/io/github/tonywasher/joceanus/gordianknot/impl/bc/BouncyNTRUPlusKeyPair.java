@@ -1,6 +1,6 @@
 /*
  * GordianKnot: Security Suite
- * Copyright 2012-2026. Tony Washer
+ * Copyright 2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -14,6 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
+
 package io.github.tonywasher.joceanus.gordianknot.impl.bc;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
@@ -34,17 +35,17 @@ import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.bouncycastle.crypto.AsymmetricCipherKeyPair;
 import org.bouncycastle.crypto.SecretWithEncapsulation;
 import org.bouncycastle.crypto.params.AsymmetricKeyParameter;
+import org.bouncycastle.pqc.crypto.ntruplus.NTRUPlusKEMExtractor;
+import org.bouncycastle.pqc.crypto.ntruplus.NTRUPlusKEMGenerator;
+import org.bouncycastle.pqc.crypto.ntruplus.NTRUPlusKeyGenerationParameters;
+import org.bouncycastle.pqc.crypto.ntruplus.NTRUPlusKeyPairGenerator;
+import org.bouncycastle.pqc.crypto.ntruplus.NTRUPlusParameters;
+import org.bouncycastle.pqc.crypto.ntruplus.NTRUPlusPrivateKeyParameters;
+import org.bouncycastle.pqc.crypto.ntruplus.NTRUPlusPublicKeyParameters;
 import org.bouncycastle.pqc.crypto.util.PrivateKeyFactory;
 import org.bouncycastle.pqc.crypto.util.PrivateKeyInfoFactory;
 import org.bouncycastle.pqc.crypto.util.PublicKeyFactory;
 import org.bouncycastle.pqc.crypto.util.SubjectPublicKeyInfoFactory;
-import org.bouncycastle.pqc.legacy.bike.BIKEKEMExtractor;
-import org.bouncycastle.pqc.legacy.bike.BIKEKEMGenerator;
-import org.bouncycastle.pqc.legacy.bike.BIKEKeyGenerationParameters;
-import org.bouncycastle.pqc.legacy.bike.BIKEKeyPairGenerator;
-import org.bouncycastle.pqc.legacy.bike.BIKEParameters;
-import org.bouncycastle.pqc.legacy.bike.BIKEPrivateKeyParameters;
-import org.bouncycastle.pqc.legacy.bike.BIKEPublicKeyParameters;
 
 import javax.security.auth.DestroyFailedException;
 import java.io.IOException;
@@ -52,37 +53,38 @@ import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Arrays;
 
+
 /**
- * BIKE KeyPair classes.
+ * NTRUPlus KeyPair classes.
  */
-public final class BouncyBIKEKeyPair {
+public final class BouncyNTRUPlusKeyPair {
     /**
      * Private constructor.
      */
-    private BouncyBIKEKeyPair() {
+    private BouncyNTRUPlusKeyPair() {
     }
 
     /**
-     * Bouncy BIKE PublicKey.
+     * Bouncy NTRUPlus PublicKey.
      */
-    public static class BouncyBIKEPublicKey
-            extends BouncyPublicKey<BIKEPublicKeyParameters> {
+    public static class BouncyNTRUPlusPublicKey
+            extends BouncyPublicKey<NTRUPlusPublicKeyParameters> {
         /**
          * Constructor.
          *
          * @param pKeySpec   the keySpec
          * @param pPublicKey the public key
          */
-        BouncyBIKEPublicKey(final GordianKeyPairSpec pKeySpec,
-                            final BIKEPublicKeyParameters pPublicKey) {
+        BouncyNTRUPlusPublicKey(final GordianKeyPairSpec pKeySpec,
+                                final NTRUPlusPublicKeyParameters pPublicKey) {
             super(pKeySpec, pPublicKey);
         }
 
         @Override
         protected boolean matchKey(final AsymmetricKeyParameter pThat) {
             /* Access keys */
-            final BIKEPublicKeyParameters myThis = getPublicKey();
-            final BIKEPublicKeyParameters myThat = (BIKEPublicKeyParameters) pThat;
+            final NTRUPlusPublicKeyParameters myThis = getPublicKey();
+            final NTRUPlusPublicKeyParameters myThat = (NTRUPlusPublicKeyParameters) pThat;
 
             /* Compare keys */
             return Arrays.equals(myThis.getEncoded(), myThat.getEncoded());
@@ -90,18 +92,18 @@ public final class BouncyBIKEKeyPair {
     }
 
     /**
-     * Bouncy BIKE PrivateKey.
+     * Bouncy NTRUPlus PrivateKey.
      */
-    public static class BouncyBIKEPrivateKey
-            extends BouncyPrivateKey<BIKEPrivateKeyParameters> {
+    public static class BouncyNTRUPlusPrivateKey
+            extends BouncyPrivateKey<NTRUPlusPrivateKeyParameters> {
         /**
          * Constructor.
          *
          * @param pKeySpec    the keySpec
          * @param pPrivateKey the private key
          */
-        BouncyBIKEPrivateKey(final GordianKeyPairSpec pKeySpec,
-                             final BIKEPrivateKeyParameters pPrivateKey) {
+        BouncyNTRUPlusPrivateKey(final GordianKeyPairSpec pKeySpec,
+                                 final NTRUPlusPrivateKeyParameters pPrivateKey) {
             super(pKeySpec, pPrivateKey);
         }
 
@@ -109,8 +111,8 @@ public final class BouncyBIKEKeyPair {
         @Override
         protected boolean matchKey(final AsymmetricKeyParameter pThat) {
             /* Access keys */
-            final BIKEPrivateKeyParameters myThis = getPrivateKey();
-            final BIKEPrivateKeyParameters myThat = (BIKEPrivateKeyParameters) pThat;
+            final NTRUPlusPrivateKeyParameters myThis = getPrivateKey();
+            final NTRUPlusPrivateKeyParameters myThat = (NTRUPlusPrivateKeyParameters) pThat;
 
             /* Compare keys */
             return Arrays.equals(myThis.getEncoded(), myThat.getEncoded());
@@ -118,14 +120,14 @@ public final class BouncyBIKEKeyPair {
     }
 
     /**
-     * BouncyCastle BIKE KeyPair generator.
+     * BouncyCastle NTRUPlus KeyPair generator.
      */
-    public static class BouncyBIKEKeyPairGenerator
+    public static class BouncyNTRUPlusKeyPairGenerator
             extends BouncyKeyPairGenerator {
         /**
          * Generator.
          */
-        private final BIKEKeyPairGenerator theGenerator;
+        private final NTRUPlusKeyPairGenerator theGenerator;
 
         /**
          * Constructor.
@@ -134,20 +136,20 @@ public final class BouncyBIKEKeyPair {
          * @param pKeySpec the keySpec
          * @throws GordianException on error
          */
-        BouncyBIKEKeyPairGenerator(final GordianBaseFactory pFactory,
-                                   final GordianKeyPairSpec pKeySpec) throws GordianException {
+        BouncyNTRUPlusKeyPairGenerator(final GordianBaseFactory pFactory,
+                                       final GordianKeyPairSpec pKeySpec) throws GordianException {
             /* Initialise underlying class */
             super(pFactory, pKeySpec);
 
             /* Create the generator */
-            theGenerator = new BIKEKeyPairGenerator();
+            theGenerator = new NTRUPlusKeyPairGenerator();
 
             /* Determine the parameters */
             final GordianCoreKeyPairSpec myKeySpec = (GordianCoreKeyPairSpec) pKeySpec;
-            final BIKEParameters myParms = myKeySpec.getBIKESpec().getParameters();
+            final NTRUPlusParameters myParms = myKeySpec.getNTRUPlusSpec().getParameters();
 
             /* Initialise the generator */
-            final BIKEKeyGenerationParameters myParams = new BIKEKeyGenerationParameters(getRandom(), myParms);
+            final NTRUPlusKeyGenerationParameters myParams = new NTRUPlusKeyGenerationParameters(getRandom(), myParms);
             theGenerator.init(myParams);
         }
 
@@ -155,8 +157,8 @@ public final class BouncyBIKEKeyPair {
         public BouncyKeyPair generateKeyPair() {
             /* Generate and return the keyPair */
             final AsymmetricCipherKeyPair myPair = theGenerator.generateKeyPair();
-            final BouncyBIKEPublicKey myPublic = new BouncyBIKEPublicKey(getKeySpec(), (BIKEPublicKeyParameters) myPair.getPublic());
-            final BouncyBIKEPrivateKey myPrivate = new BouncyBIKEPrivateKey(getKeySpec(), (BIKEPrivateKeyParameters) myPair.getPrivate());
+            final BouncyNTRUPlusPublicKey myPublic = new BouncyNTRUPlusPublicKey(getKeySpec(), (NTRUPlusPublicKeyParameters) myPair.getPublic());
+            final BouncyNTRUPlusPrivateKey myPrivate = new BouncyNTRUPlusPrivateKey(getKeySpec(), (NTRUPlusPrivateKeyParameters) myPair.getPrivate());
             return new BouncyKeyPair(myPublic, myPrivate);
         }
 
@@ -168,8 +170,8 @@ public final class BouncyBIKEKeyPair {
                 BouncyKeyPair.checkKeyPair(pKeyPair, getKeySpec());
 
                 /* build and return the encoding */
-                final BouncyBIKEPrivateKey myPrivateKey = (BouncyBIKEPrivateKey) getPrivateKey(pKeyPair);
-                final BIKEPrivateKeyParameters myParms = myPrivateKey.getPrivateKey();
+                final BouncyNTRUPlusPrivateKey myPrivateKey = (BouncyNTRUPlusPrivateKey) getPrivateKey(pKeyPair);
+                final NTRUPlusPrivateKeyParameters myParms = myPrivateKey.getPrivateKey();
                 final PrivateKeyInfo myInfo = PrivateKeyInfoFactory.createPrivateKeyInfo(myParms);
                 return new PKCS8EncodedKeySpec(myInfo.getEncoded());
 
@@ -187,10 +189,10 @@ public final class BouncyBIKEKeyPair {
                 checkKeySpec(pPrivateKey);
 
                 /* derive keyPair */
-                final BouncyBIKEPublicKey myPublic = derivePublicKey(pPublicKey);
+                final BouncyNTRUPlusPublicKey myPublic = derivePublicKey(pPublicKey);
                 final PrivateKeyInfo myInfo = PrivateKeyInfo.getInstance(pPrivateKey.getEncoded());
-                final BIKEPrivateKeyParameters myParms = (BIKEPrivateKeyParameters) PrivateKeyFactory.createKey(myInfo);
-                final BouncyBIKEPrivateKey myPrivate = new BouncyBIKEPrivateKey(getKeySpec(), myParms);
+                final NTRUPlusPrivateKeyParameters myParms = (NTRUPlusPrivateKeyParameters) PrivateKeyFactory.createKey(myInfo);
+                final BouncyNTRUPlusPrivateKey myPrivate = new BouncyNTRUPlusPrivateKey(getKeySpec(), myParms);
                 final BouncyKeyPair myPair = new BouncyKeyPair(myPublic, myPrivate);
 
                 /* Check that we have a matching pair */
@@ -212,8 +214,8 @@ public final class BouncyBIKEKeyPair {
                 BouncyKeyPair.checkKeyPair(pKeyPair, getKeySpec());
 
                 /* build and return the encoding */
-                final BouncyBIKEPublicKey myPublicKey = (BouncyBIKEPublicKey) getPublicKey(pKeyPair);
-                final BIKEPublicKeyParameters myParms = myPublicKey.getPublicKey();
+                final BouncyNTRUPlusPublicKey myPublicKey = (BouncyNTRUPlusPublicKey) getPublicKey(pKeyPair);
+                final NTRUPlusPublicKeyParameters myParms = myPublicKey.getPublicKey();
                 final SubjectPublicKeyInfo myInfo = SubjectPublicKeyInfoFactory.createSubjectPublicKeyInfo(myParms);
                 final byte[] myBytes = myInfo.getEncoded(ASN1Encoding.DER);
                 return new X509EncodedKeySpec(myBytes);
@@ -225,7 +227,7 @@ public final class BouncyBIKEKeyPair {
 
         @Override
         public BouncyKeyPair derivePublicOnlyKeyPair(final X509EncodedKeySpec pEncodedKey) throws GordianException {
-            final BouncyBIKEPublicKey myPublic = derivePublicKey(pEncodedKey);
+            final BouncyNTRUPlusPublicKey myPublic = derivePublicKey(pEncodedKey);
             return new BouncyKeyPair(myPublic);
         }
 
@@ -236,7 +238,7 @@ public final class BouncyBIKEKeyPair {
          * @return the public key
          * @throws GordianException on error
          */
-        private BouncyBIKEPublicKey derivePublicKey(final X509EncodedKeySpec pEncodedKey) throws GordianException {
+        private BouncyNTRUPlusPublicKey derivePublicKey(final X509EncodedKeySpec pEncodedKey) throws GordianException {
             /* Protect against exceptions */
             try {
                 /* Check the keySpecs */
@@ -244,8 +246,8 @@ public final class BouncyBIKEKeyPair {
 
                 /* derive publicKey */
                 final SubjectPublicKeyInfo myInfo = SubjectPublicKeyInfo.getInstance(pEncodedKey.getEncoded());
-                final BIKEPublicKeyParameters myParms = (BIKEPublicKeyParameters) PublicKeyFactory.createKey(myInfo);
-                return new BouncyBIKEPublicKey(getKeySpec(), myParms);
+                final NTRUPlusPublicKeyParameters myParms = (NTRUPlusPublicKeyParameters) PublicKeyFactory.createKey(myInfo);
+                return new BouncyNTRUPlusPublicKey(getKeySpec(), myParms);
 
             } catch (IOException e) {
                 throw new GordianCryptoException(ERROR_PARSE, e);
@@ -254,9 +256,9 @@ public final class BouncyBIKEKeyPair {
     }
 
     /**
-     * BIKE Agreement Engine.
+     * NTRUPlus Agreement Engine.
      */
-    public static class BouncyBIKEAgreementEngine
+    public static class BouncyNTRUPlusAgreementEngine
             extends BouncyAgreementBase {
         /**
          * Constructor.
@@ -265,8 +267,8 @@ public final class BouncyBIKEKeyPair {
          * @param pSpec    the agreementSpec
          * @throws GordianException on error
          */
-        BouncyBIKEAgreementEngine(final GordianCoreAgreementFactory pFactory,
-                                  final GordianCoreAgreementSpec pSpec) throws GordianException {
+        BouncyNTRUPlusAgreementEngine(final GordianCoreAgreementFactory pFactory,
+                                      final GordianCoreAgreementSpec pSpec) throws GordianException {
             /* Initialize underlying class */
             super(pFactory, pSpec);
         }
@@ -276,14 +278,14 @@ public final class BouncyBIKEKeyPair {
             /* Protect against exceptions */
             try {
                 /* Create encapsulation */
-                final BouncyBIKEPublicKey myPublic = (BouncyBIKEPublicKey) getPublicKey(getServerKeyPair());
-                final BIKEKEMGenerator myGenerator = new BIKEKEMGenerator(getRandom());
+                final BouncyNTRUPlusPublicKey myPublic = (BouncyNTRUPlusPublicKey) getPublicKey(getServerKeyPair());
+                final NTRUPlusKEMGenerator myGenerator = new NTRUPlusKEMGenerator(getRandom());
                 final SecretWithEncapsulation myResult = myGenerator.generateEncapsulated(myPublic.getPublicKey());
 
                 /* Store the encapsulation */
                 setEncapsulated(myResult.getEncapsulation());
 
-                /* Store secret */
+                /* Store secret and create initVector */
                 storeSecret(myResult.getSecret());
                 myResult.destroy();
 
@@ -294,9 +296,9 @@ public final class BouncyBIKEKeyPair {
 
         @Override
         public void processClientHello() throws GordianException {
-            /* Create extractor */
-            final BouncyBIKEPrivateKey myPrivate = (BouncyBIKEPrivateKey) getPrivateKey(getServerKeyPair());
-            final BIKEKEMExtractor myExtractor = new BIKEKEMExtractor(myPrivate.getPrivateKey());
+            /* Create encapsulation */
+            final BouncyNTRUPlusPrivateKey myPrivate = (BouncyNTRUPlusPrivateKey) getPrivateKey(getServerKeyPair());
+            final NTRUPlusKEMExtractor myExtractor = new NTRUPlusKEMExtractor(myPrivate.getPrivateKey());
 
             /* Parse encapsulated message and store secret */
             final byte[] myMessage = getEncapsulated();

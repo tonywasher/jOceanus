@@ -413,6 +413,7 @@ public class GordianCoreAgreementBuilder {
         myMsg.setAgreementId(theSupplier.getIdentifierForSpec(theState.getSpec()))
                 .setResultId(theSupplier.getIdentifierForResultType(theState.getResultType()))
                 .setClientId(myClient.getId())
+                .setClientName(myClient.getName())
                 .setInitVector(myClient.getInitVector())
                 .setEphemeral(myClient.getEphemeralKeySpec())
                 .setEncapsulated(theState.getEncapsulated());
@@ -449,6 +450,7 @@ public class GordianCoreAgreementBuilder {
 
         /* Set server details */
         myMsg.setServerId(myServer.getId())
+                .setServerName(myServer.getName())
                 .setInitVector(myServer.getInitVector())
                 .setEphemeral(myServer.getEphemeralKeySpec())
                 .setConfirmation(myServer.getConfirm());
@@ -523,6 +525,7 @@ public class GordianCoreAgreementBuilder {
 
         /* Store client details */
         myClient.setId(pClientHello.getClientId())
+                .setName(pClientHello.getClientName())
                 .setInitVector(pClientHello.getInitVector());
         final X509EncodedKeySpec myEphemeral = pClientHello.getEphemeral();
         if (myEphemeral != null) {
@@ -556,6 +559,7 @@ public class GordianCoreAgreementBuilder {
 
         /* Store server details */
         myServer.setId(pServerHello.getServerId())
+                .setName(pServerHello.getServerName())
                 .setInitVector(pServerHello.getInitVector())
                 .setConfirm(pServerHello.getConfirmation());
         final X509EncodedKeySpec myEphemeral = pServerHello.getEphemeral();

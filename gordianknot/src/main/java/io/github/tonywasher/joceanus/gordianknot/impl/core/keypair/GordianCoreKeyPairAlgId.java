@@ -41,6 +41,7 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianC
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreMLDSASpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreMLKEMSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreMayoSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreNTRUPlusSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreNTRUPrimeSpec.GordianCoreNTRUPrimeParams;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreNTRUSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCorePicnicSpec;
@@ -170,6 +171,7 @@ public class GordianCoreKeyPairAlgId {
         GordianHQCEncodedParser.register(this);
         GordianBIKEEncodedParser.register(this);
         GordianNTRUEncodedParser.register(this);
+        GordianNTRUPlusEncodedParser.register(this);
         GordianNTRUPrimeEncodedParser.register(this);
         GordianFalconEncodedParser.register(this);
         GordianMayoEncodedParser.register(this);
@@ -1037,6 +1039,47 @@ public class GordianCoreKeyPairAlgId {
             final GordianCoreKeyPairSpecBuilder myBuilder = GordianCoreKeyPairSpecBuilder.newInstance();
             for (GordianCoreNTRUSpec mySpec : GordianCoreNTRUSpec.values()) {
                 pIdManager.registerParser(mySpec.getIdentifier(), new GordianNTRUEncodedParser(myBuilder.ntru(mySpec.getSpec())));
+            }
+        }
+
+        @Override
+        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws GordianException {
+            return theKeySpec;
+        }
+
+        @Override
+        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws GordianException {
+            return theKeySpec;
+        }
+    }
+
+    /**
+     * NTRUPlus Encoded parser.
+     */
+    private static class GordianNTRUPlusEncodedParser implements GordianEncodedParser {
+        /**
+         * AsymKeySpec.
+         */
+        private final GordianKeyPairSpec theKeySpec;
+
+        /**
+         * Constructor.
+         *
+         * @param pKeySpec the keySpec
+         */
+        GordianNTRUPlusEncodedParser(final GordianKeyPairSpec pKeySpec) {
+            theKeySpec = pKeySpec;
+        }
+
+        /**
+         * Registrar.
+         *
+         * @param pIdManager the idManager
+         */
+        static void register(final GordianCoreKeyPairAlgId pIdManager) {
+            final GordianCoreKeyPairSpecBuilder myBuilder = GordianCoreKeyPairSpecBuilder.newInstance();
+            for (GordianCoreNTRUPlusSpec mySpec : GordianCoreNTRUPlusSpec.values()) {
+                pIdManager.registerParser(mySpec.getIdentifier(), new GordianNTRUEncodedParser(myBuilder.ntruPlus(mySpec.getSpec())));
             }
         }
 
