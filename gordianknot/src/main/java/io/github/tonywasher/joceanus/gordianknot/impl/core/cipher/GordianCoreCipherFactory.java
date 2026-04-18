@@ -19,7 +19,7 @@ package io.github.tonywasher.joceanus.gordianknot.impl.core.cipher;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianNewCipherParamsBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherParamsBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianWrapper;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianCipherSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianPBESpec;
@@ -119,7 +119,7 @@ public abstract class GordianCoreCipherFactory
     }
 
     @Override
-    public GordianNewCipherParamsBuilder newCipherParamsBuilder() {
+    public GordianCipherParamsBuilder newCipherParamsBuilder() {
         return GordianCoreCipherParamsBuilder.newInstance();
     }
 

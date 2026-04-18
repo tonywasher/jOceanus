@@ -76,7 +76,7 @@ public interface GordianKeyedCipher<T extends GordianKeySpec>
      * @param pParams the parameters
      * @throws GordianException on error
      */
-    void initForEncrypt(GordianCipherParameters pParams) throws GordianException;
+    void initForEncrypt(GordianCipherParams pParams) throws GordianException;
 
     /**
      * Initialise the cipher for decryption.
@@ -84,5 +84,5 @@ public interface GordianKeyedCipher<T extends GordianKeySpec>
      * @param pParams the parameters
      * @throws GordianException on error
      */
-    void initForDecrypt(GordianCipherParameters pParams) throws GordianException;
+    void initForDecrypt(GordianCipherParams pParams) throws GordianException;
 }

@@ -101,7 +101,7 @@ public interface GordianCipherFactory {
      *
      * @return the new CipherParamsBuilder
      */
-    GordianNewCipherParamsBuilder newCipherParamsBuilder();
+    GordianCipherParamsBuilder newCipherParamsBuilder();
 
     /**
      * create new GordianPBESpecBuilder.

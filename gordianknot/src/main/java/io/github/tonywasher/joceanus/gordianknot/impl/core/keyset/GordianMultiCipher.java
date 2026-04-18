@@ -20,8 +20,8 @@ import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipher;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherParameters;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherParameters.GordianKeyCipherParameters;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherParams.GordianKeyCipherParameters;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherParamsBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymCipher;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeyType;
@@ -33,6 +33,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianMacSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianMacSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.cipher.GordianCoreCipherParamsBuilder;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.key.GordianCoreKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.key.GordianCoreKeyGenerator;
@@ -279,6 +280,7 @@ public final class GordianMultiCipher
 
         /* Loop through the keys */
         int mySection = 0;
+        final GordianCipherParamsBuilder myBuilder = GordianCoreCipherParamsBuilder.newInstance();
         for (int i = 0; i < theNumSteps; i++) {
             /* Obtain the ciphers */
             final GordianSymKeyType myKeyType = mySymKeyTypes[i];
@@ -290,8 +292,8 @@ public final class GordianMultiCipher
                     ? calculateInitVector(myInitVector, mySection++)
                     : null;
             final GordianKeyCipherParameters<GordianSymKeySpec> myParms = myIV == null
-                    ? GordianCipherParameters.key(mySymKey)
-                    : GordianCipherParameters.keyAndNonce(mySymKey, myIV);
+                    ? myBuilder.key(mySymKey)
+                    : myBuilder.keyAndNonce(mySymKey, myIV);
             if (pEncrypt) {
                 myCipher.initForEncrypt(myParms);
             } else {
@@ -495,7 +497,8 @@ public final class GordianMultiCipher
         final GordianKey<GordianSymKeySpec> myStreamKey = theCipherMap.get(myStreamKeyType).getKey();
         final GordianSymCipher myStreamCipher = getCipher(myStreamKeyType, 0);
         final byte[] myIV = calculateInitVector(myInitVector, 0);
-        final GordianKeyCipherParameters<GordianSymKeySpec> myParms = GordianCipherParameters.keyAndNonce(myStreamKey, myIV);
+        final GordianCipherParamsBuilder myBuilder = GordianCoreCipherParamsBuilder.newInstance();
+        final GordianKeyCipherParameters<GordianSymKeySpec> myParms = myBuilder.keyAndNonce(myStreamKey, myIV);
         myStreamCipher.initForEncrypt(myParms);
 
         /* Process via the stream Cipher */
@@ -544,7 +547,8 @@ public final class GordianMultiCipher
         final GordianKey<GordianSymKeySpec> myStreamKey = theCipherMap.get(myStreamKeyType).getKey();
         final GordianSymCipher myStreamCipher = getCipher(myStreamKeyType, 0);
         final byte[] myIV = calculateInitVector(myInitVector, 0);
-        final GordianKeyCipherParameters<GordianSymKeySpec> myParms = GordianCipherParameters.keyAndNonce(myStreamKey, myIV);
+        final GordianCipherParamsBuilder myBuilder = GordianCoreCipherParamsBuilder.newInstance();
+        final GordianKeyCipherParameters<GordianSymKeySpec> myParms = myBuilder.keyAndNonce(myStreamKey, myIV);
         myStreamCipher.initForDecrypt(myParms);
 
         /* Process via the stream Cipher */
@@ -565,7 +569,8 @@ public final class GordianMultiCipher
         /* Access the required cipher */
         final GordianSymKeyCipherSet myCiphers = theCipherMap.get(myKeyType);
         final GordianSymCipher myCipher = myCiphers.getStandardCipher();
-        myCipher.initForEncrypt(GordianCipherParameters.key(myCiphers.getKey()));
+        final GordianCipherParamsBuilder myBuilder = GordianCoreCipherParamsBuilder.newInstance();
+        myCipher.initForEncrypt(myBuilder.key(myCiphers.getKey()));
 
         /* First part is from IV section 2 */
         final byte[] myIV = pParams.getInitVector();
@@ -594,7 +599,8 @@ public final class GordianMultiCipher
         /* Access the required cipher */
         final GordianSymKeyCipherSet myCiphers = theCipherMap.get(pSymKeyType);
         final GordianSymCipher myCipher = myCiphers.getStandardCipher();
-        myCipher.initForEncrypt(GordianCipherParameters.key(myCiphers.getKey()));
+        final GordianCipherParamsBuilder myBuilder = GordianCoreCipherParamsBuilder.newInstance();
+        myCipher.initForEncrypt(myBuilder.key(myCiphers.getKey()));
 
         /* encrypt the mac*/
         return myCipher.finish(pMac);

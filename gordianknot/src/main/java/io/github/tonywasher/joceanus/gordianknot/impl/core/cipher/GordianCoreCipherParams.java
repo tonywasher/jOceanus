@@ -18,10 +18,10 @@
 package io.github.tonywasher.joceanus.gordianknot.impl.core.cipher;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianKeySpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianNewCipherParams.GordianNewAEADCipherParameters;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianNewCipherParams.GordianNewKeyAndNonceCipherParameters;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianNewCipherParams.GordianNewKeyCipherParameters;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianNewCipherParams.GordianNewPBECipherParameters;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherParams.GordianAEADCipherParameters;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherParams.GordianKeyAndNonceCipherParameters;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherParams.GordianKeyCipherParameters;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherParams.GordianPBECipherParameters;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianPBESpec;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKey;
 
@@ -35,7 +35,7 @@ public interface GordianCoreCipherParams {
      * @param <T> the keyType
      */
     class GordianCoreKeyCipherParameters<T extends GordianKeySpec>
-            implements GordianNewKeyCipherParameters<T> {
+            implements GordianKeyCipherParameters<T> {
         /**
          * The Key.
          */
@@ -63,7 +63,7 @@ public interface GordianCoreCipherParams {
      */
     class GordianCoreKeyAndNonceCipherParameters<T extends GordianKeySpec>
             extends GordianCoreKeyCipherParameters<T>
-            implements GordianNewKeyAndNonceCipherParameters<T> {
+            implements GordianKeyAndNonceCipherParameters<T> {
         /**
          * The Nonce.
          */
@@ -116,7 +116,7 @@ public interface GordianCoreCipherParams {
      */
     class GordianCoreAEADCipherParameters<T extends GordianKeySpec>
             extends GordianCoreKeyAndNonceCipherParameters<T>
-            implements GordianNewAEADCipherParameters<T> {
+            implements GordianAEADCipherParameters<T> {
         /**
          * The InitialAEAD.
          */
@@ -158,7 +158,7 @@ public interface GordianCoreCipherParams {
      * PBE Parameters.
      */
     class GordianCorePBECipherParameters
-            implements GordianNewPBECipherParameters {
+            implements GordianPBECipherParameters {
         /**
          * The PBESpec.
          */

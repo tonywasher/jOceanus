@@ -20,17 +20,18 @@ import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherParameters;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherParams;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherParamsBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianKeyedCipher;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymAEADCipher;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymCipher;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianCipherMode;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianCipherSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianPBESpec;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianPadding;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymCipherSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymCipherSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeySpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianPadding;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKey;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKeyLengths;
@@ -217,12 +218,13 @@ public class SymmetricSymScripts {
 
         /* Create the Spec */
         final GordianSymCipher myCipher = myCipherFactory.createSymKeyCipher(mySpec);
-        GordianCipherParameters myParms = GordianCipherParameters.keyWithRandomNonce(myKey);
+        final GordianCipherParamsBuilder myParamsBuilder = myCipherFactory.newCipherParamsBuilder();
+        GordianCipherParams myParms = myParamsBuilder.keyWithRandomNonce(myKey);
         myCipher.initForEncrypt(myParms);
 
         /* Check encryption */
         final byte[] myIV = Arrays.clone(myCipher.getInitVector());
-        myParms = GordianCipherParameters.keyAndNonce(myKey, myIV);
+        myParms = myParamsBuilder.keyAndNonce(myKey, myIV);
         final byte[] myEncrypted = myCipher.finish(myTestData);
         final byte[] myEncrypted2 = myCipher.finish(myTestData);
         myCipher.initForDecrypt(myParms);
@@ -273,14 +275,15 @@ public class SymmetricSymScripts {
         final byte[] myBytes = getSymCipherTestData(mySpec);
 
         /* Encrypt the data as a single block */
-        myCipher1.initForEncrypt(GordianCipherParameters.keyWithRandomNonce(myKey));
+        final GordianCipherParamsBuilder myParamsBuilder = myCipherFactory.newCipherParamsBuilder();
+        myCipher1.initForEncrypt(myParamsBuilder.keyWithRandomNonce(myKey));
         byte[] myEncrypt = new byte[myCipher1.getOutputLength(myBytes.length)];
         int myOut = myCipher1.update(myBytes, 0, myBytes.length, myEncrypt, 0);
         myOut += myCipher1.finish(myEncrypt, myOut);
         myEncrypt = Arrays.copyOf(myEncrypt, myOut);
 
         /* Decrypt the data as partial blocks */
-        myCipher2.initForDecrypt(GordianCipherParameters.keyAndNonce(myKey, myCipher1.getInitVector()));
+        myCipher2.initForDecrypt(myParamsBuilder.keyAndNonce(myKey, myCipher1.getInitVector()));
         byte[] myMulti = new byte[myCipher2.getOutputLength(myEncrypt.length)];
         myOut = 0;
         for (int myPos = 0; myPos < myEncrypt.length; myPos += SymmetricTest.PARTIALLEN) {
@@ -295,7 +298,7 @@ public class SymmetricSymScripts {
         Assertions.assertArrayEquals(myBytes, myMulti, "Multi-Block decrypt failed");
 
         /* Encrypt the data as partial blocks */
-        myCipher2.initForEncrypt(GordianCipherParameters.keyWithRandomNonce(myKey));
+        myCipher2.initForEncrypt(myParamsBuilder.keyWithRandomNonce(myKey));
         myOut = 0;
         for (int myPos = 0; myPos < myBytes.length; myPos += SymmetricTest.PARTIALLEN) {
             final int myLen = Math.min(SymmetricTest.PARTIALLEN, myBytes.length - myPos);
@@ -305,7 +308,7 @@ public class SymmetricSymScripts {
         myEncrypt = Arrays.copyOf(myEncrypt, myOut);
 
         /* Decrypt the data as single block */
-        myCipher1.initForDecrypt(GordianCipherParameters.keyAndNonce(myKey, myCipher2.getInitVector()));
+        myCipher1.initForDecrypt(myParamsBuilder.keyAndNonce(myKey, myCipher2.getInitVector()));
         byte[] mySingle = new byte[myCipher1.getOutputLength(myEncrypt.length)];
         myOut = myCipher1.update(myEncrypt, 0, myEncrypt.length, mySingle, 0);
         myOut += myCipher1.finish(mySingle, myOut);
@@ -336,12 +339,13 @@ public class SymmetricSymScripts {
 
         /* Create the Spec */
         final GordianSymCipher myCipher = myCipherFactory.createSymKeyCipher(myCipherSpec);
-        GordianCipherParameters myParms = GordianCipherParameters.pbe(myPBESpec, myPassword);
+        final GordianCipherParamsBuilder myParamsBuilder = myCipherFactory.newCipherParamsBuilder();
+        GordianCipherParams myParms = myParamsBuilder.pbe(myPBESpec, myPassword);
         myCipher.initForEncrypt(myParms);
 
         /* Check encryption */
         final byte[] mySalt = myCipher.getPBESalt();
-        myParms = GordianCipherParameters.pbeAndNonce(myPBESpec, myPassword, mySalt);
+        myParms = myParamsBuilder.pbeAndNonce(myPBESpec, myPassword, mySalt);
         final byte[] myEncrypted = myCipher.finish(myTestData);
         myCipher.initForDecrypt(myParms);
         final byte[] myResult = myCipher.finish(myEncrypted);
@@ -375,13 +379,14 @@ public class SymmetricSymScripts {
 
         /* Create the Spec */
         final GordianKeyedCipher<GordianSymKeySpec> myCipher = myCipherFactory.createSymKeyCipher(mySpec);
-        GordianCipherParameters myParms = GordianCipherParameters.keyWithRandomNonce(myKey);
+        final GordianCipherParamsBuilder myParamsBuilder = myCipherFactory.newCipherParamsBuilder();
+        GordianCipherParams myParms = myParamsBuilder.keyWithRandomNonce(myKey);
         myCipher.initForEncrypt(myParms);
         if (!mySpec.getCoreCipherMode().hasPadding()
                 || !GordianPadding.NONE.equals(mySpec.getPadding())) {
             /* Check encryption */
             final byte[] myIV = myCipher.getInitVector();
-            myParms = GordianCipherParameters.keyAndNonce(myPartnerKey, myIV);
+            myParms = myParamsBuilder.keyAndNonce(myPartnerKey, myIV);
             final byte[] myEncrypted = myCipher.finish(myTestData);
             final GordianKeyedCipher<GordianSymKeySpec> myPartnerCipher = myPartnerFactory.createSymKeyCipher(mySpec);
             myPartnerCipher.initForDecrypt(myParms);
@@ -407,7 +412,8 @@ public class SymmetricSymScripts {
         final byte[] myTestData = SymmetricTest.getTestData();
         final byte[] myAADData = SymmetricTest.getAADData();
         final GordianSymAEADCipher myCipher = (GordianSymAEADCipher) myCipherFactory.createSymKeyCipher(mySpec);
-        GordianCipherParameters myParms = GordianCipherParameters.keyWithRandomNonce(myKey);
+        final GordianCipherParamsBuilder myParamsBuilder = myCipherFactory.newCipherParamsBuilder();
+        GordianCipherParams myParms = myParamsBuilder.keyWithRandomNonce(myKey);
         myCipher.initForEncrypt(myParms);
         final byte[] myIV = myCipher.getInitVector();
         myCipher.updateAAD(myAADData);
@@ -417,7 +423,7 @@ public class SymmetricSymScripts {
             myCipher.updateAAD(myAADData);
             myEncrypted2 = myCipher.finish(myTestData);
         }
-        myParms = GordianCipherParameters.aeadAndNonce(myKey, myAADData, myIV);
+        myParms = myParamsBuilder.aeadAndNonce(myKey, myAADData, myIV);
         myCipher.initForDecrypt(myParms);
         final byte[] myResult = myCipher.finish(myEncrypted);
         if (myEncrypted2 != null) {
@@ -448,7 +454,8 @@ public class SymmetricSymScripts {
         final byte[] myTestData = SymmetricTest.getTestData();
         final byte[] myAADData = SymmetricTest.getAADData();
         final GordianSymAEADCipher myCipher = (GordianSymAEADCipher) myCipherFactory.createSymKeyCipher(mySpec);
-        GordianCipherParameters myParms = GordianCipherParameters.keyWithRandomNonce(myKey);
+        final GordianCipherParamsBuilder myParamsBuilder = myCipherFactory.newCipherParamsBuilder();
+        GordianCipherParams myParms = myParamsBuilder.keyWithRandomNonce(myKey);
         myCipher.initForEncrypt(myParms);
         final byte[] myIV = myCipher.getInitVector();
         myCipher.updateAAD(myAADData);
@@ -456,7 +463,7 @@ public class SymmetricSymScripts {
 
         /* Decrypt data at partner */
         final GordianSymAEADCipher myPartnerCipher = (GordianSymAEADCipher) myPartnerFactory.createSymKeyCipher(mySpec);
-        myParms = GordianCipherParameters.keyAndNonce(myPartnerKey, myIV);
+        myParms = myParamsBuilder.keyAndNonce(myPartnerKey, myIV);
         myPartnerCipher.initForDecrypt(myParms);
         myPartnerCipher.updateAAD(myAADData);
         final byte[] myResult = myPartnerCipher.finish(myEncrypted);
@@ -547,7 +554,8 @@ public class SymmetricSymScripts {
 
         /* Start loop */
         final long myStart = System.nanoTime();
-        GordianCipherParameters myParms = GordianCipherParameters.key(mySymKey);
+        final GordianCipherParamsBuilder myParamsBuilder = myCipherFactory.newCipherParamsBuilder();
+        GordianCipherParams myParms = myParamsBuilder.key(mySymKey);
         for (int i = 0; i < SymmetricTest.profileRepeat; i++) {
             myCipher.initForEncrypt(myParms);
             myBytes = myCipher.finish(myBytes);

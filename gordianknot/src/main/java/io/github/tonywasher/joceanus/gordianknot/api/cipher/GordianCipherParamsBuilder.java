@@ -18,16 +18,16 @@
 package io.github.tonywasher.joceanus.gordianknot.api.cipher;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianKeySpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianNewCipherParams.GordianNewAEADCipherParameters;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianNewCipherParams.GordianNewKeyCipherParameters;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianNewCipherParams.GordianNewPBECipherParameters;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherParams.GordianAEADCipherParameters;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherParams.GordianKeyCipherParameters;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherParams.GordianPBECipherParameters;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianPBESpec;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKey;
 
 /**
  * Cipher Parameters Builder.
  */
-public interface GordianNewCipherParamsBuilder {
+public interface GordianCipherParamsBuilder {
     /**
      * Obtain keySpec Parameters.
      *
@@ -35,7 +35,7 @@ public interface GordianNewCipherParamsBuilder {
      * @param pKey the key
      * @return the keySpec
      */
-    <T extends GordianKeySpec> GordianNewKeyCipherParameters<T> key(GordianKey<T> pKey);
+    <T extends GordianKeySpec> GordianKeyCipherParameters<T> key(GordianKey<T> pKey);
 
     /**
      * Obtain keyAndNonce Parameters.
@@ -45,8 +45,8 @@ public interface GordianNewCipherParamsBuilder {
      * @param pNonce the nonce
      * @return the keySpec
      */
-    <T extends GordianKeySpec> GordianNewKeyCipherParameters<T> keyAndNonce(GordianKey<T> pKey,
-                                                                            byte[] pNonce);
+    <T extends GordianKeySpec> GordianKeyCipherParameters<T> keyAndNonce(GordianKey<T> pKey,
+                                                                         byte[] pNonce);
 
     /**
      * Obtain keyAndRandomNonce Parameters.
@@ -55,7 +55,7 @@ public interface GordianNewCipherParamsBuilder {
      * @param pKey the key
      * @return the keySpec
      */
-    <T extends GordianKeySpec> GordianNewKeyCipherParameters<T> keyWithRandomNonce(GordianKey<T> pKey);
+    <T extends GordianKeySpec> GordianKeyCipherParameters<T> keyWithRandomNonce(GordianKey<T> pKey);
 
     /**
      * Obtain aeadAndNonce Parameters.
@@ -66,9 +66,9 @@ public interface GordianNewCipherParamsBuilder {
      * @param pNonce       the nonce
      * @return the keySpec
      */
-    <T extends GordianKeySpec> GordianNewAEADCipherParameters<T> aeadAndNonce(GordianKey<T> pKey,
-                                                                              byte[] pInitialAEAD,
-                                                                              byte[] pNonce);
+    <T extends GordianKeySpec> GordianAEADCipherParameters<T> aeadAndNonce(GordianKey<T> pKey,
+                                                                           byte[] pInitialAEAD,
+                                                                           byte[] pNonce);
 
     /**
      * Obtain aeadAndRandomNonce Parameters.
@@ -78,8 +78,8 @@ public interface GordianNewCipherParamsBuilder {
      * @param pInitialAEAD the initialAEAD
      * @return the keySpec
      */
-    <T extends GordianKeySpec> GordianNewAEADCipherParameters<T> aeadWithRandomNonce(GordianKey<T> pKey,
-                                                                                     byte[] pInitialAEAD);
+    <T extends GordianKeySpec> GordianAEADCipherParameters<T> aeadWithRandomNonce(GordianKey<T> pKey,
+                                                                                  byte[] pInitialAEAD);
 
     /**
      * Obtain pbe Parameters.
@@ -88,8 +88,8 @@ public interface GordianNewCipherParamsBuilder {
      * @param pPassword the password
      * @return the keySpec
      */
-    GordianNewPBECipherParameters pbe(GordianPBESpec pPBESpec,
-                                      char[] pPassword);
+    GordianPBECipherParameters pbe(GordianPBESpec pPBESpec,
+                                   char[] pPassword);
 
     /**
      * Obtain pneAndNonce Parameters.
@@ -99,7 +99,7 @@ public interface GordianNewCipherParamsBuilder {
      * @param pNonce    the nonce
      * @return the keySpec
      */
-    GordianNewPBECipherParameters pbeAndNonce(GordianPBESpec pPBESpec,
-                                              char[] pPassword,
-                                              byte[] pNonce);
+    GordianPBECipherParameters pbeAndNonce(GordianPBESpec pPBESpec,
+                                           char[] pPassword,
+                                           byte[] pNonce);
 }

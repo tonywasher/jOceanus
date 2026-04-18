@@ -19,7 +19,7 @@ package io.github.tonywasher.joceanus.gordianknot.impl.core.cipher;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherParameters;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherParamsBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianWrapper;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKey;
@@ -396,7 +396,8 @@ public class GordianCoreWrapper
      * @throws GordianException on error
      */
     protected void initCipherForWrapping() throws GordianException {
-        theCipher.initForEncrypt(GordianCipherParameters.key(theKey));
+        final GordianCipherParamsBuilder myBuilder = GordianCoreCipherParamsBuilder.newInstance();
+        theCipher.initForEncrypt(myBuilder.key(theKey));
     }
 
     /**
@@ -405,7 +406,8 @@ public class GordianCoreWrapper
      * @throws GordianException on error
      */
     protected void initCipherForUnwrapping() throws GordianException {
-        theCipher.initForDecrypt(GordianCipherParameters.key(theKey));
+        final GordianCipherParamsBuilder myBuilder = GordianCoreCipherParamsBuilder.newInstance();
+        theCipher.initForDecrypt(myBuilder.key(theKey));
     }
 
     /**

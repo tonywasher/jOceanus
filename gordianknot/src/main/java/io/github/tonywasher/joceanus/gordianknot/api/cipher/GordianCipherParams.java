@@ -24,14 +24,14 @@ import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKey;
 /**
  * Cipher Parameters.
  */
-public interface GordianNewCipherParams {
+public interface GordianCipherParams {
     /**
      * Key Parameters.
      *
      * @param <T> the keyType
      */
-    interface GordianNewKeyCipherParameters<T extends GordianKeySpec>
-            extends GordianNewCipherParams {
+    interface GordianKeyCipherParameters<T extends GordianKeySpec>
+            extends GordianCipherParams {
         /**
          * Obtain the key.
          *
@@ -64,8 +64,8 @@ public interface GordianNewCipherParams {
      *
      * @param <T> the keyType
      */
-    interface GordianNewKeyAndNonceCipherParameters<T extends GordianKeySpec>
-            extends GordianNewKeyCipherParameters<T>, GordianNewNonceParameters {
+    interface GordianKeyAndNonceCipherParameters<T extends GordianKeySpec>
+            extends GordianKeyCipherParameters<T>, GordianNewNonceParameters {
     }
 
     /**
@@ -73,8 +73,8 @@ public interface GordianNewCipherParams {
      *
      * @param <T> the keyType
      */
-    interface GordianNewAEADCipherParameters<T extends GordianKeySpec>
-            extends GordianNewKeyAndNonceCipherParameters<T> {
+    interface GordianAEADCipherParameters<T extends GordianKeySpec>
+            extends GordianKeyAndNonceCipherParameters<T> {
         /**
          * Obtain the initialAEAD.
          *
@@ -86,8 +86,8 @@ public interface GordianNewCipherParams {
     /**
      * PBE Parameters.
      */
-    interface GordianNewPBECipherParameters
-            extends GordianNewCipherParams, GordianNewNonceParameters {
+    interface GordianPBECipherParameters
+            extends GordianCipherParams, GordianNewNonceParameters {
         /**
          * Obtain the PBESpec.
          *

@@ -18,10 +18,10 @@
 package io.github.tonywasher.joceanus.gordianknot.impl.core.cipher;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianKeySpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianNewCipherParams.GordianNewAEADCipherParameters;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianNewCipherParams.GordianNewKeyCipherParameters;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianNewCipherParams.GordianNewPBECipherParameters;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianNewCipherParamsBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherParams.GordianAEADCipherParameters;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherParams.GordianKeyCipherParameters;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherParams.GordianPBECipherParameters;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherParamsBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianPBESpec;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.cipher.GordianCoreCipherParams.GordianCoreAEADCipherParameters;
@@ -33,7 +33,7 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.cipher.GordianCoreCip
  * Core CipherParameters Builder.
  */
 public final class GordianCoreCipherParamsBuilder
-        implements GordianNewCipherParamsBuilder {
+        implements GordianCipherParamsBuilder {
     /**
      * Constructor.
      */
@@ -45,42 +45,42 @@ public final class GordianCoreCipherParamsBuilder
      *
      * @return the Builder
      */
-    public static GordianNewCipherParamsBuilder newInstance() {
+    public static GordianCipherParamsBuilder newInstance() {
         return new GordianCoreCipherParamsBuilder();
     }
 
     @Override
-    public <T extends GordianKeySpec> GordianNewKeyCipherParameters<T> key(final GordianKey<T> pKey) {
+    public <T extends GordianKeySpec> GordianKeyCipherParameters<T> key(final GordianKey<T> pKey) {
         return new GordianCoreKeyCipherParameters<>(pKey);
     }
 
     @Override
-    public <T extends GordianKeySpec> GordianNewKeyCipherParameters<T> keyAndNonce(final GordianKey<T> pKey,
-                                                                                   final byte[] pNonce) {
+    public <T extends GordianKeySpec> GordianKeyCipherParameters<T> keyAndNonce(final GordianKey<T> pKey,
+                                                                                final byte[] pNonce) {
         return new GordianCoreKeyAndNonceCipherParameters<>(pKey, pNonce);
     }
 
     @Override
-    public <T extends GordianKeySpec> GordianNewKeyCipherParameters<T> keyWithRandomNonce(final GordianKey<T> pKey) {
+    public <T extends GordianKeySpec> GordianKeyCipherParameters<T> keyWithRandomNonce(final GordianKey<T> pKey) {
         return new GordianCoreKeyAndNonceCipherParameters<>(pKey);
     }
 
     @Override
-    public <T extends GordianKeySpec> GordianNewAEADCipherParameters<T> aeadAndNonce(final GordianKey<T> pKey,
-                                                                                     final byte[] pInitialAEAD,
-                                                                                     final byte[] pNonce) {
+    public <T extends GordianKeySpec> GordianAEADCipherParameters<T> aeadAndNonce(final GordianKey<T> pKey,
+                                                                                  final byte[] pInitialAEAD,
+                                                                                  final byte[] pNonce) {
         return new GordianCoreAEADCipherParameters<>(pKey, pNonce, pInitialAEAD);
     }
 
     @Override
-    public <T extends GordianKeySpec> GordianNewAEADCipherParameters<T> aeadWithRandomNonce(final GordianKey<T> pKey,
-                                                                                            final byte[] pInitialAEAD) {
+    public <T extends GordianKeySpec> GordianAEADCipherParameters<T> aeadWithRandomNonce(final GordianKey<T> pKey,
+                                                                                         final byte[] pInitialAEAD) {
         return new GordianCoreAEADCipherParameters<>(pKey, null, pInitialAEAD);
     }
 
     @Override
-    public GordianNewPBECipherParameters pbe(final GordianPBESpec pPBESpec,
-                                             final char[] pPassword) {
+    public GordianPBECipherParameters pbe(final GordianPBESpec pPBESpec,
+                                          final char[] pPassword) {
         return new GordianCorePBECipherParameters(pPBESpec, pPassword);
     }
 
@@ -92,9 +92,9 @@ public final class GordianCoreCipherParamsBuilder
      * @param pNonce    the nonce
      * @return the keySpec
      */
-    public GordianNewPBECipherParameters pbeAndNonce(final GordianPBESpec pPBESpec,
-                                                     final char[] pPassword,
-                                                     final byte[] pNonce) {
+    public GordianPBECipherParameters pbeAndNonce(final GordianPBESpec pPBESpec,
+                                                  final char[] pPassword,
+                                                  final byte[] pNonce) {
         return new GordianCorePBECipherParameters(pPBESpec, pNonce, pPassword);
     }
 }
