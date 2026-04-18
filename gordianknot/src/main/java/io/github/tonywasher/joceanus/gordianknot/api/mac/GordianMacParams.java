@@ -23,7 +23,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianMacSpec;
 /**
  * Mac Parameters.
  */
-public interface GordianNewMacParams {
+public interface GordianMacParams {
     /**
      * Obtain the key.
      *

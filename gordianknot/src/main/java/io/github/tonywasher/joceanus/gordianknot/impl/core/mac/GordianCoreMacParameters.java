@@ -19,7 +19,7 @@ package io.github.tonywasher.joceanus.gordianknot.impl.core.mac;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKey;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacParameters;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacParams;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianMacSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianRandomSource;
@@ -97,7 +97,7 @@ public class GordianCoreMacParameters {
      * @param pParams the mac parameters
      * @throws GordianException on error
      */
-    void processParameters(final GordianMacParameters pParams) throws GordianException {
+    void processParameters(final GordianMacParams pParams) throws GordianException {
         /* Access the key details */
         theKey = pParams.getKey();
         theInitVector = obtainNonceFromParameters(pParams);
@@ -127,7 +127,7 @@ public class GordianCoreMacParameters {
      * @param pParams parameters
      * @return the nonce
      */
-    private byte[] obtainNonceFromParameters(final GordianMacParameters pParams) {
+    private byte[] obtainNonceFromParameters(final GordianMacParams pParams) {
         /* Access IV */
         byte[] myIV = pParams.getNonce();
         final int myIVLen = ((GordianCoreMacSpec) theSpec).getIVLen();

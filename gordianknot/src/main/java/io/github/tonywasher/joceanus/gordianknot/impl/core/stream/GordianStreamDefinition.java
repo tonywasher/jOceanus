@@ -28,7 +28,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigest;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKey;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMac;
-import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacParameters;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacParamsBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianMacSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianCoreKnuthObfuscater;
@@ -40,6 +40,7 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.digest.GordianCoreDig
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keyset.GordianCoreKeySet;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.mac.GordianCoreMacFactory;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.mac.GordianCoreMacParamsBuilder;
 
 import java.io.InputStream;
 import java.util.Arrays;
@@ -342,7 +343,8 @@ public final class GordianStreamDefinition {
         final GordianCoreMacFactory myMacs = (GordianCoreMacFactory) myFactory.getMacFactory();
         final GordianMac myMac = myMacs.createMac(mySpec);
         final GordianKey<GordianMacSpec> myKey = pKeySet.deriveKey(theTypeDefinition, mySpec);
-        myMac.init(GordianMacParameters.keyAndNonce(myKey, theInitVector));
+        final GordianMacParamsBuilder myBuilder = GordianCoreMacParamsBuilder.newInstance();
+        myMac.init(myBuilder.keyAndNonce(myKey, theInitVector));
 
         /* Create the stream */
         return new GordianMacInputStream(myMac, theValue, pCurrent);

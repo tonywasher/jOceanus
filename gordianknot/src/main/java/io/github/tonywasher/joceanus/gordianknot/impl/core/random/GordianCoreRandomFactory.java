@@ -35,7 +35,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKey;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKeyGenerator;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMac;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacParameters;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacParamsBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianMacSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianMacSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.random.GordianRandomFactory;
@@ -52,6 +52,7 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.cipher.GordianCoreCip
 import io.github.tonywasher.joceanus.gordianknot.impl.core.digest.GordianCoreDigestFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.mac.GordianCoreMacFactory;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.mac.GordianCoreMacParamsBuilder;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianCoreDigestType;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.random.GordianCoreRandomSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.random.GordianCoreRandomSpecBuilder;
@@ -374,7 +375,8 @@ public class GordianCoreRandomFactory
 
         /* Create and initialise the MAC */
         final GordianMac myMac = myMacs.createMac(mySpec);
-        myMac.init(GordianMacParameters.keyWithRandomNonce(myKey));
+        final GordianMacParamsBuilder myParamsBuilder = GordianCoreMacParamsBuilder.newInstance();
+        myMac.init(myParamsBuilder.keyWithRandomNonce(myKey));
 
         /* Return it */
         return myMac;

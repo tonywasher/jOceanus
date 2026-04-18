@@ -23,14 +23,14 @@ import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianMacSpec;
 /**
  * MacParams Builder.
  */
-public interface GordianNewMacParamsBuilder {
+public interface GordianMacParamsBuilder {
     /**
      * Set the key.
      *
      * @param pKey the key
      * @return the Builder
      */
-    GordianNewMacParamsBuilder setKey(GordianKey<GordianMacSpec> pKey);
+    GordianMacParamsBuilder setKey(GordianKey<GordianMacSpec> pKey);
 
     /**
      * Set the nonce.
@@ -38,14 +38,14 @@ public interface GordianNewMacParamsBuilder {
      * @param pNonce the nonce
      * @return the Builder
      */
-    GordianNewMacParamsBuilder setNonce(byte[] pNonce);
+    GordianMacParamsBuilder setNonce(byte[] pNonce);
 
     /**
      * Use random nonce.
      *
      * @return the Builder
      */
-    GordianNewMacParamsBuilder withRandomNonce();
+    GordianMacParamsBuilder withRandomNonce();
 
     /**
      * Set the personalisation.
@@ -53,7 +53,7 @@ public interface GordianNewMacParamsBuilder {
      * @param pPersonal the personalisation
      * @return the Builder
      */
-    GordianNewMacParamsBuilder setPersonalisation(byte[] pPersonal);
+    GordianMacParamsBuilder setPersonalisation(byte[] pPersonal);
 
     /**
      * Set the output length.
@@ -61,7 +61,7 @@ public interface GordianNewMacParamsBuilder {
      * @param pOutLen the outputLen
      * @return the Builder
      */
-    GordianNewMacParamsBuilder setOutputLength(long pOutLen);
+    GordianMacParamsBuilder setOutputLength(long pOutLen);
 
     /**
      * Set the treeConfig.
@@ -71,16 +71,16 @@ public interface GordianNewMacParamsBuilder {
      * @param pLeafLen  the leafLength.
      * @return the Builder
      */
-    GordianNewMacParamsBuilder setTreeConfig(int pFanOut,
-                                             int pMaxDepth,
-                                             int pLeafLen);
+    GordianMacParamsBuilder setTreeConfig(int pFanOut,
+                                          int pMaxDepth,
+                                          int pLeafLen);
 
     /**
      * Build the parameters.
      *
      * @return the parameters
      */
-    GordianNewMacParams build();
+    GordianMacParams build();
 
     /**
      * Generate keyOnly Parameters.
@@ -88,7 +88,7 @@ public interface GordianNewMacParamsBuilder {
      * @param pKey the key
      * @return the macParameters
      */
-    GordianNewMacParams key(GordianKey<GordianMacSpec> pKey);
+    GordianMacParams key(GordianKey<GordianMacSpec> pKey);
 
     /**
      * Obtain keyAndNonce Parameters.
@@ -97,8 +97,8 @@ public interface GordianNewMacParamsBuilder {
      * @param pNonce the nonce
      * @return the macParameters
      */
-    GordianNewMacParams keyAndNonce(GordianKey<GordianMacSpec> pKey,
-                                    byte[] pNonce);
+    GordianMacParams keyAndNonce(GordianKey<GordianMacSpec> pKey,
+                                 byte[] pNonce);
 
     /**
      * Obtain keyAndRandomNonce Parameters.
@@ -106,5 +106,5 @@ public interface GordianNewMacParamsBuilder {
      * @param pKey the key
      * @return the macParameters
      */
-    GordianNewMacParams keyWithRandomNonce(GordianKey<GordianMacSpec> pKey);
+    GordianMacParams keyWithRandomNonce(GordianKey<GordianMacSpec> pKey);
 }

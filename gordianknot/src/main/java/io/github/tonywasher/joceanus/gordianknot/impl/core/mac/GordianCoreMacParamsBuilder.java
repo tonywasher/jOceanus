@@ -18,8 +18,8 @@
 package io.github.tonywasher.joceanus.gordianknot.impl.core.mac;
 
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKey;
-import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianNewMacParams;
-import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianNewMacParamsBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacParams;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacParamsBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianMacSpec;
 import org.bouncycastle.util.Arrays;
 
@@ -27,7 +27,7 @@ import org.bouncycastle.util.Arrays;
  * Core MacParams Builder.
  */
 public final class GordianCoreMacParamsBuilder
-        implements GordianNewMacParamsBuilder {
+        implements GordianMacParamsBuilder {
     /**
      * The Key.
      */
@@ -79,7 +79,7 @@ public final class GordianCoreMacParamsBuilder
      *
      * @return the Builder
      */
-    public static GordianNewMacParamsBuilder newInstance() {
+    public static GordianMacParamsBuilder newInstance() {
         return new GordianCoreMacParamsBuilder();
     }
 
@@ -89,7 +89,7 @@ public final class GordianCoreMacParamsBuilder
      * @param pKey the key
      * @return the macParameters
      */
-    public GordianNewMacParams key(final GordianKey<GordianMacSpec> pKey) {
+    public GordianMacParams key(final GordianKey<GordianMacSpec> pKey) {
         final GordianCoreMacParams myParams = new GordianCoreMacParams();
         myParams.setKey(pKey);
         return myParams;
@@ -102,8 +102,8 @@ public final class GordianCoreMacParamsBuilder
      * @param pNonce the nonce
      * @return the macParameters
      */
-    public GordianNewMacParams keyAndNonce(final GordianKey<GordianMacSpec> pKey,
-                                           final byte[] pNonce) {
+    public GordianMacParams keyAndNonce(final GordianKey<GordianMacSpec> pKey,
+                                        final byte[] pNonce) {
         final GordianCoreMacParams myParams = new GordianCoreMacParams();
         myParams.setKey(pKey);
         myParams.setNonce(pNonce);
@@ -116,7 +116,7 @@ public final class GordianCoreMacParamsBuilder
      * @param pKey the key
      * @return the macParameters
      */
-    public GordianNewMacParams keyWithRandomNonce(final GordianKey<GordianMacSpec> pKey) {
+    public GordianMacParams keyWithRandomNonce(final GordianKey<GordianMacSpec> pKey) {
         final GordianCoreMacParams myParams = new GordianCoreMacParams();
         myParams.setKey(pKey);
         myParams.setRandomNonce();
@@ -124,41 +124,41 @@ public final class GordianCoreMacParamsBuilder
     }
 
     @Override
-    public GordianNewMacParamsBuilder setKey(final GordianKey<GordianMacSpec> pKey) {
+    public GordianMacParamsBuilder setKey(final GordianKey<GordianMacSpec> pKey) {
         theKey = pKey;
         return this;
     }
 
     @Override
-    public GordianNewMacParamsBuilder setNonce(final byte[] pNonce) {
+    public GordianMacParamsBuilder setNonce(final byte[] pNonce) {
         theNonce = Arrays.clone(pNonce);
         randomNonce = false;
         return this;
     }
 
     @Override
-    public GordianNewMacParamsBuilder withRandomNonce() {
+    public GordianMacParamsBuilder withRandomNonce() {
         theNonce = null;
         randomNonce = true;
         return this;
     }
 
     @Override
-    public GordianNewMacParamsBuilder setPersonalisation(final byte[] pPersonal) {
+    public GordianMacParamsBuilder setPersonalisation(final byte[] pPersonal) {
         thePersonal = Arrays.clone(pPersonal);
         return this;
     }
 
     @Override
-    public GordianNewMacParamsBuilder setOutputLength(final long pOutLen) {
+    public GordianMacParamsBuilder setOutputLength(final long pOutLen) {
         theOutLen = pOutLen;
         return this;
     }
 
     @Override
-    public GordianNewMacParamsBuilder setTreeConfig(final int pFanOut,
-                                                    final int pMaxDepth,
-                                                    final int pLeafLen) {
+    public GordianMacParamsBuilder setTreeConfig(final int pFanOut,
+                                                 final int pMaxDepth,
+                                                 final int pLeafLen) {
         theFanOut = (short) pFanOut;
         theMaxDepth = (short) pMaxDepth;
         theLeafLen = pLeafLen;
@@ -166,7 +166,7 @@ public final class GordianCoreMacParamsBuilder
     }
 
     @Override
-    public GordianNewMacParams build() {
+    public GordianMacParams build() {
         /* Create params */
         final GordianCoreMacParams myParams = new GordianCoreMacParams();
 
@@ -193,7 +193,7 @@ public final class GordianCoreMacParamsBuilder
 
         /* Reset state */
         reset();
-        
+
         /* Return the parameters */
         return myParams;
     }

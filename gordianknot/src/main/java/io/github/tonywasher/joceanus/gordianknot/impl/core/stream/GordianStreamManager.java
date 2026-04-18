@@ -32,7 +32,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSp
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKey;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKeyGenerator;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMac;
-import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacParameters;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacParamsBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianMacSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianIdManager;
@@ -41,6 +41,7 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.cipher.GordianCoreCip
 import io.github.tonywasher.joceanus.gordianknot.impl.core.digest.GordianCoreDigestFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keyset.GordianCoreKeySet;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.mac.GordianCoreMacFactory;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.mac.GordianCoreMacParamsBuilder;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher.GordianCoreStreamCipherSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher.GordianCoreSymCipherSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.stream.GordianStreamDefinition.GordianStreamType;
@@ -173,7 +174,8 @@ public final class GordianStreamManager {
 
         /* Create and initialise the MAC */
         final GordianMac myMac = myMacs.createMac(myMacSpec);
-        myMac.init(GordianMacParameters.keyWithRandomNonce(myMacKey));
+        final GordianMacParamsBuilder myMacBuilder = GordianCoreMacParamsBuilder.newInstance();
+        myMac.init(myMacBuilder.keyWithRandomNonce(myMacKey));
         final GordianMacOutputStream myMacStream = new GordianMacOutputStream(myMac, myCurrent);
         myCurrent = myMacStream;
 
@@ -182,6 +184,7 @@ public final class GordianStreamManager {
         boolean bFirst = true;
 
         /* For each encryption key */
+        final GordianCipherParamsBuilder myCipherBuilder = GordianCoreCipherParamsBuilder.newInstance();
         final Iterator<GordianKey<GordianSymKeySpec>> myIterator = mySymKeys.iterator();
         while (myIterator.hasNext()) {
             final GordianKey<GordianSymKeySpec> myKey = myIterator.next();
@@ -199,8 +202,7 @@ public final class GordianStreamManager {
 
             /* Build the cipher stream */
             final GordianSymCipher mySymCipher = myCiphers.createSymKeyCipher(mySymSpec);
-            final GordianCipherParamsBuilder myBuilder = GordianCoreCipherParamsBuilder.newInstance();
-            mySymCipher.initForEncrypt(myBuilder.keyWithRandomNonce(myKey));
+            mySymCipher.initForEncrypt(myCipherBuilder.keyWithRandomNonce(myKey));
             myCurrent = new GordianCipherOutputStream<>(mySymCipher, myCurrent);
 
             /* Note that this is no longer the first */
@@ -213,8 +215,7 @@ public final class GordianStreamManager {
         final GordianKeyGenerator<GordianStreamKeySpec> myStreamGenerator = myCiphers.getKeyGenerator(myStreamKeySpec);
         final GordianKey<GordianStreamKeySpec> myStreamKey = myStreamGenerator.generateKey();
         final GordianStreamCipher myStreamCipher = myCiphers.createStreamKeyCipher(myStreamBuilder.streamCipher(myStreamKey.getKeyType()));
-        final GordianCipherParamsBuilder myBuilder = GordianCoreCipherParamsBuilder.newInstance();
-        myStreamCipher.initForEncrypt(myBuilder.keyWithRandomNonce(myStreamKey));
+        myStreamCipher.initForEncrypt(myCipherBuilder.keyWithRandomNonce(myStreamKey));
         myCurrent = new GordianCipherOutputStream<>(myStreamCipher, myCurrent);
 
         /* If we are compressing */

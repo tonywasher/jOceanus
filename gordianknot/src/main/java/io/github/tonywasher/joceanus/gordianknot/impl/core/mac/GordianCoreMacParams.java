@@ -18,7 +18,7 @@
 package io.github.tonywasher.joceanus.gordianknot.impl.core.mac;
 
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKey;
-import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianNewMacParams;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacParams;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianMacSpec;
 import org.bouncycastle.util.Arrays;
 
@@ -26,7 +26,7 @@ import org.bouncycastle.util.Arrays;
  * Core Mac Parameters.
  */
 public class GordianCoreMacParams
-        implements GordianNewMacParams {
+        implements GordianMacParams {
     /**
      * The Key.
      */
