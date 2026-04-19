@@ -39,6 +39,10 @@
               <th class="defHdr">Starting Balance</th>
             </tr>
             <tr>
+              <td>DamageLoan</td>
+              <td>Damage</td>
+              <td>PrivateLoan</td>
+              <td>GBP</td>
               <td/>
             </tr>
           </table>

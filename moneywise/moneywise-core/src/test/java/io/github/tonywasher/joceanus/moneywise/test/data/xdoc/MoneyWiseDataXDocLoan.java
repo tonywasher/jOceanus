@@ -16,7 +16,6 @@
  */
 package io.github.tonywasher.joceanus.moneywise.test.data.xdoc;
 
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.base.MoneyWiseXAnalysisEvent;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysis;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisLoanBucket;
@@ -29,6 +28,7 @@ import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseLoan;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWisePayee;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseCurrency;
 import io.github.tonywasher.joceanus.moneywise.test.data.trans.MoneyWiseDataTestCase;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -122,7 +122,6 @@ public class MoneyWiseDataXDocLoan {
 
             /* Set parent */
             final MoneyWisePayee myParent = myLoan.getParent();
-            theReport.newRow();
             theReport.newCell();
             theReport.setCellValue(myParent.getName());
             if (!theParents.contains(myParent)) {
@@ -130,17 +129,14 @@ public class MoneyWiseDataXDocLoan {
             }
 
             /* Set type */
-            theReport.newRow();
             theReport.newCell();
             theReport.setCellValue(myLoan.getCategory().getCategoryType().getName());
 
             /* Set currency */
-            theReport.newRow();
             theReport.newCell();
             theReport.setCellValue(myLoan.getAssetCurrency().getName());
 
             /* Set opening balance */
-            theReport.newRow();
             theReport.newCell();
             final OceanusMoney myStarting = myLoan.getOpeningBalance();
             if (myStarting != null) {
