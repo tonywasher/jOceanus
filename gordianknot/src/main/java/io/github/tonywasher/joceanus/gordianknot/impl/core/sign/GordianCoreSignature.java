@@ -19,7 +19,7 @@ package io.github.tonywasher.joceanus.gordianknot.impl.core.sign;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianAsyncFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
-import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignParams;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianNewSignParams;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignature;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignatureFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpec;
@@ -149,7 +149,7 @@ public abstract class GordianCoreSignature
     }
 
     @Override
-    public void initForSigning(final GordianSignParams pParams) throws GordianException {
+    public void initForSigning(final GordianNewSignParams pParams) throws GordianException {
         /* Store details */
         theMode = GordianSignatureMode.SIGN;
         theKeyPair = pParams.getKeyPair();
@@ -166,7 +166,7 @@ public abstract class GordianCoreSignature
     }
 
     @Override
-    public void initForVerify(final GordianSignParams pParams) throws GordianException {
+    public void initForVerify(final GordianNewSignParams pParams) throws GordianException {
         /* Store details */
         theMode = GordianSignatureMode.VERIFY;
         theKeyPair = pParams.getKeyPair();

@@ -29,7 +29,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMac;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianMacSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianMacSpecBuilder;
-import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignParams;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianNewSignParamsBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignature;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.agree.GordianCoreAgreementCalculator.GordianDerivationId;
@@ -466,7 +466,8 @@ public class GordianCoreAgreementBuilder {
 
             /* Build the signature */
             final GordianSignature mySigner = mySigns.createSigner(mySignSpec);
-            mySigner.initForSigning(GordianSignParams.keyPair(mySignerPair));
+            final GordianNewSignParamsBuilder myBuilder = mySigns.newSignParamsBuilder();
+            mySigner.initForSigning(myBuilder.keyPair(mySignerPair));
             mySigner.update(myClient.getEphemeralKeySpec().getEncoded());
             mySigner.update(myClient.getInitVector());
             mySigner.update(myServer.getEphemeralKeySpec().getEncoded());
@@ -580,7 +581,8 @@ public class GordianCoreAgreementBuilder {
             final GordianSignature mySigner = mySigns.createSigner(mySignSpec);
 
             /* Build the signature */
-            mySigner.initForVerify(GordianSignParams.keyPair(mySignerPair));
+            final GordianNewSignParamsBuilder myBuilder = mySigns.newSignParamsBuilder();
+            mySigner.initForVerify(myBuilder.keyPair(mySignerPair));
             mySigner.update(myClient.getEphemeralKeySpec().getEncoded());
             mySigner.update(myClient.getInitVector());
             mySigner.update(myServer.getEphemeralKeySpec().getEncoded());

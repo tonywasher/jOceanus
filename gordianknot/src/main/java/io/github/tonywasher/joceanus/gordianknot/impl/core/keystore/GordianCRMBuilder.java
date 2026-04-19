@@ -32,7 +32,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.keystore.GordianKeyStoreEnt
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMac;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianMacSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignParams;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianNewSignParamsBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignature;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianASN1Util;
@@ -43,6 +43,7 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.digest.GordianCoreDig
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianIOException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keystore.GordianCRMEncryptor.GordianCRMResult;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.sign.GordianCoreSignParamsBuilder;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.sign.GordianCoreSignatureFactory;
 import org.bouncycastle.asn1.ASN1Object;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
@@ -277,7 +278,8 @@ public class GordianCRMBuilder {
         /* Protect against exceptions */
         try {
             /* Create the signature */
-            pSigner.initForSigning(GordianSignParams.keyPair(pKeyPair));
+            final GordianNewSignParamsBuilder myBuilder = GordianCoreSignParamsBuilder.newInstance();
+            pSigner.initForSigning(myBuilder.keyPair(pKeyPair));
             pSigner.update(pCertRequest.getEncoded());
             final byte[] mySignature = pSigner.sign();
 
