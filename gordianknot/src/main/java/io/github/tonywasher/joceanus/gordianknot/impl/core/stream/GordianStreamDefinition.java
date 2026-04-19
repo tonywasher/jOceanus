@@ -17,7 +17,7 @@
 package io.github.tonywasher.joceanus.gordianknot.impl.core.stream;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherParameters;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherParamsBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamCipher;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymCipher;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamCipherSpec;
@@ -28,17 +28,19 @@ import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigest;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKey;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMac;
-import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacParameters;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacParamsBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianMacSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianCoreKnuthObfuscater;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianDataConverter;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.cipher.GordianCoreCipher;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.cipher.GordianCoreCipherFactory;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.cipher.GordianCoreCipherParamsBuilder;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.digest.GordianCoreDigestFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keyset.GordianCoreKeySet;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.mac.GordianCoreMacFactory;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.mac.GordianCoreMacParamsBuilder;
 
 import java.io.InputStream;
 import java.util.Arrays;
@@ -341,7 +343,8 @@ public final class GordianStreamDefinition {
         final GordianCoreMacFactory myMacs = (GordianCoreMacFactory) myFactory.getMacFactory();
         final GordianMac myMac = myMacs.createMac(mySpec);
         final GordianKey<GordianMacSpec> myKey = pKeySet.deriveKey(theTypeDefinition, mySpec);
-        myMac.init(GordianMacParameters.keyAndNonce(myKey, theInitVector));
+        final GordianMacParamsBuilder myBuilder = GordianCoreMacParamsBuilder.newInstance();
+        myMac.init(myBuilder.keyAndNonce(myKey, theInitVector));
 
         /* Create the stream */
         return new GordianMacInputStream(myMac, theValue, pCurrent);
@@ -369,7 +372,8 @@ public final class GordianStreamDefinition {
         final GordianCoreCipherFactory myCiphers = (GordianCoreCipherFactory) myFactory.getCipherFactory();
         final GordianSymCipher myCipher = myCiphers.createSymKeyCipher(mySpec);
         final GordianKey<GordianSymKeySpec> myKey = pKeySet.deriveKey(theTypeDefinition, myKeySpec);
-        myCipher.initForDecrypt(GordianCipherParameters.keyAndNonce(myKey, theInitVector));
+        final GordianCipherParamsBuilder myBuilder = GordianCoreCipherParamsBuilder.newInstance();
+        myCipher.initForDecrypt(myBuilder.keyAndNonce(myKey, theInitVector));
 
         /* Create the stream */
         return new GordianCipherInputStream<>(myCipher, pCurrent);
@@ -397,7 +401,8 @@ public final class GordianStreamDefinition {
         final GordianCoreCipherFactory myCiphers = (GordianCoreCipherFactory) myFactory.getCipherFactory();
         final GordianStreamCipher myCipher = myCiphers.createStreamKeyCipher(mySpec);
         final GordianKey<GordianStreamKeySpec> myKey = pKeySet.deriveKey(theTypeDefinition, myType);
-        myCipher.initForDecrypt(GordianCipherParameters.keyAndNonce(myKey, theInitVector));
+        final GordianCipherParamsBuilder myBuilder = GordianCoreCipherParamsBuilder.newInstance();
+        myCipher.initForDecrypt(myBuilder.keyAndNonce(myKey, theInitVector));
 
         /* Create the stream */
         return new GordianCipherInputStream<>(myCipher, pCurrent);

@@ -19,7 +19,8 @@ package io.github.tonywasher.joceanus.gordianknot.impl.core.cipher;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherParameters;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherParams;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherParamsBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianKeyedCipher;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianCipherSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianPBESpec;
@@ -137,12 +138,12 @@ public abstract class GordianCoreCipher<T extends GordianKeySpec>
     }
 
     @Override
-    public void initForEncrypt(final GordianCipherParameters pParams) throws GordianException {
+    public void initForEncrypt(final GordianCipherParams pParams) throws GordianException {
         init(true, pParams);
     }
 
     @Override
-    public void initForDecrypt(final GordianCipherParameters pParams) throws GordianException {
+    public void initForDecrypt(final GordianCipherParams pParams) throws GordianException {
         init(false, pParams);
     }
 
@@ -154,7 +155,7 @@ public abstract class GordianCoreCipher<T extends GordianKeySpec>
      * @throws GordianException on error
      */
     public abstract void init(boolean pEncrypt,
-                              GordianCipherParameters pParams) throws GordianException;
+                              GordianCipherParams pParams) throws GordianException;
 
     /**
      * Init with bytes as key.
@@ -170,7 +171,8 @@ public abstract class GordianCoreCipher<T extends GordianKeySpec>
 
         /* Create the key and initialise */
         final GordianKey<T> myKey = theParameters.buildKeyFromBytes(pKeyBytes);
-        initForEncrypt(GordianCipherParameters.key(myKey));
+        final GordianCipherParamsBuilder myBuilder = GordianCoreCipherParamsBuilder.newInstance();
+        initForEncrypt(myBuilder.key(myKey));
     }
 
     /**
@@ -179,7 +181,7 @@ public abstract class GordianCoreCipher<T extends GordianKeySpec>
      * @param pParams the cipher parameters
      * @throws GordianException on error
      */
-    protected void processParameters(final GordianCipherParameters pParams) throws GordianException {
+    protected void processParameters(final GordianCipherParams pParams) throws GordianException {
         /* Process the parameters */
         theParameters.processParameters(pParams);
         checkValidKey(getKey());

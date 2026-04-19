@@ -19,7 +19,7 @@ package io.github.tonywasher.joceanus.gordianknot.impl.jca;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianAEADCipher;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherParameters;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherParams;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamAEADCipher;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymAEADCipher;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianCipherSpec;
@@ -83,7 +83,7 @@ public class JcaAEADCipher<T extends GordianKeySpec>
 
     @Override
     public void init(final boolean pEncrypt,
-                     final GordianCipherParameters pParams) throws GordianException {
+                     final GordianCipherParams pParams) throws GordianException {
         /* Process the parameters and access the key */
         processParameters(pParams);
         final JcaKey<T> myJcaKey = JcaKey.accessKey(getKey());

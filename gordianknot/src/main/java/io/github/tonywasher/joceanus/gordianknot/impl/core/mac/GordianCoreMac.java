@@ -19,7 +19,8 @@ package io.github.tonywasher.joceanus.gordianknot.impl.core.mac;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKey;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMac;
-import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacParameters;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacParams;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacParamsBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianMacSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianLogicException;
@@ -82,7 +83,8 @@ public abstract class GordianCoreMac
     public void initKeyBytes(final byte[] pKeyBytes) throws GordianException {
         /* Create the key and initialise */
         final GordianKey<GordianMacSpec> myKey = theParameters.buildKeyFromBytes(pKeyBytes);
-        init(GordianMacParameters.key(myKey));
+        final GordianMacParamsBuilder myBuilder = GordianCoreMacParamsBuilder.newInstance();
+        init(myBuilder.key(myKey));
     }
 
     /**
@@ -91,7 +93,7 @@ public abstract class GordianCoreMac
      * @param pParams the mac parameters
      * @throws GordianException on error
      */
-    protected void processParameters(final GordianMacParameters pParams) throws GordianException {
+    protected void processParameters(final GordianMacParams pParams) throws GordianException {
         /* Process the parameters */
         theParameters.processParameters(pParams);
         checkValidKey(getKey());

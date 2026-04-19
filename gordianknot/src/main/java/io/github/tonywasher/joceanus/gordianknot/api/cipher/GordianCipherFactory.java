@@ -97,6 +97,13 @@ public interface GordianCipherFactory {
     GordianStreamCipherSpecBuilder newStreamCipherSpecBuilder();
 
     /**
+     * create new GordianCipherParamsBuilder.
+     *
+     * @return the new CipherParamsBuilder
+     */
+    GordianCipherParamsBuilder newCipherParamsBuilder();
+
+    /**
      * create new GordianPBESpecBuilder.
      *
      * @return the new PBESpecBuilder

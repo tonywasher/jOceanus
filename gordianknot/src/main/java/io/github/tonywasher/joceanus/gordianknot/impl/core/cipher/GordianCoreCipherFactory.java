@@ -19,11 +19,13 @@ package io.github.tonywasher.joceanus.gordianknot.impl.core.cipher;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherParamsBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianWrapper;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianCipherSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianPBESpec;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianPBESpec.GordianPBEDigestAndCountSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianPBESpecBuilder;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianPadding;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamCipherSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamCipherSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySpec;
@@ -34,7 +36,6 @@ import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymCiphe
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeySpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeyType;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianPadding;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKey;
@@ -96,6 +97,7 @@ public abstract class GordianCoreCipherFactory
         return GordianCoreSymKeySpecBuilder.newInstance();
     }
 
+
     @Override
     public GordianStreamKeySpecBuilder newStreamKeySpecBuilder() {
         return GordianCoreStreamKeySpecBuilder.newInstance();
@@ -114,6 +116,11 @@ public abstract class GordianCoreCipherFactory
     @Override
     public GordianPBESpecBuilder newPBESpecBuilder() {
         return GordianCorePBESpecBuilder.newInstance();
+    }
+
+    @Override
+    public GordianCipherParamsBuilder newCipherParamsBuilder() {
+        return GordianCoreCipherParamsBuilder.newInstance();
     }
 
     @Override

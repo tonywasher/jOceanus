@@ -26,7 +26,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKey;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKeyLengths;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMac;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacParameters;
+import io.github.tonywasher.joceanus.gordianknot.api.mac.GordianMacParamsBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianMacSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianMacType;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
@@ -168,15 +168,16 @@ public final class SymmetricMacScripts {
 
         /* Start loop */
         final long myStart = System.nanoTime();
+        final GordianMacParamsBuilder myParamsBuilder = myMacFactory.newMacParamsBuilder();
         for (int i = 0; i < SymmetricTest.profileRepeat; i++) {
             /* Use first mac */
-            myMac1.init(GordianMacParameters.keyWithRandomNonce(myKey));
+            myMac1.init(myParamsBuilder.keyWithRandomNonce(myKey));
             myMac1.update(myBytes);
             final byte[] myFirst = myMac1.finish();
 
             /* If we need to reInitialise */
             if (needsReInit) {
-                myMac2.init(GordianMacParameters.keyAndNonce(myKey, myMac1.getInitVector()));
+                myMac2.init(myParamsBuilder.keyAndNonce(myKey, myMac1.getInitVector()));
             }
 
             /* Use second mac */
@@ -215,12 +216,13 @@ public final class SymmetricMacScripts {
 
         /* Create the mac as a single block */
         final byte[] myBytes = SymmetricTest.getTestData();
-        myMac1.init(GordianMacParameters.keyWithRandomNonce(myKey));
+        final GordianMacParamsBuilder myParamsBuilder = myMacFactory.newMacParamsBuilder();
+        myMac1.init(myParamsBuilder.keyWithRandomNonce(myKey));
         myMac1.update(myBytes);
         final byte[] mySingle = myMac1.finish();
 
         /* Create the mac as partial blocks */
-        myMac2.init(GordianMacParameters.keyAndNonce(myKey, myMac1.getInitVector()));
+        myMac2.init(myParamsBuilder.keyAndNonce(myKey, myMac1.getInitVector()));
         for (int myPos = 0; myPos < SymmetricTest.DATALEN; myPos += SymmetricTest.PARTIALLEN) {
             final int myLen = Math.min(SymmetricTest.PARTIALLEN, SymmetricTest.DATALEN - myPos);
             myMac2.update(myBytes, myPos, myLen);
@@ -248,7 +250,8 @@ public final class SymmetricMacScripts {
 
         /* Create the data */
         final byte[] myData = SymmetricTest.getTestData();
-        myMac.init(GordianMacParameters.keyWithRandomNonce(myKey));
+        final GordianMacParamsBuilder myParamsBuilder = myMacFactory.newMacParamsBuilder();
+        myMac.init(myParamsBuilder.keyWithRandomNonce(myKey));
 
         /* Update the Xofs with the data */
         myXof.update(myData, 0, SymmetricTest.DATALEN);
@@ -291,14 +294,15 @@ public final class SymmetricMacScripts {
 
         /* Calculate macs */
         final byte[] myBytes = "MacInput".getBytes();
-        myMac.init(GordianMacParameters.keyWithRandomNonce(myKey));
+        final GordianMacParamsBuilder myParamsBuilder = myMacFactory.newMacParamsBuilder();
+        myMac.init(myParamsBuilder.keyWithRandomNonce(myKey));
         final byte[] myIV = myMac.getInitVector();
         myMac.update(myBytes);
         final byte[] myFirst = myMac.finish();
         if (myIV == null) {
-            myPartnerMac.init(GordianMacParameters.key(myPartnerKey));
+            myPartnerMac.init(myParamsBuilder.key(myPartnerKey));
         } else {
-            myPartnerMac.init(GordianMacParameters.keyAndNonce(myPartnerKey, myIV));
+            myPartnerMac.init(myParamsBuilder.keyAndNonce(myPartnerKey, myIV));
         }
         myPartnerMac.update(myBytes);
         final byte[] mySecond = myPartnerMac.finish();

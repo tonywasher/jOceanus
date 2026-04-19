@@ -27,7 +27,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairFacto
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPairGenerator;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStorePair;
-import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignParams;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianNewSignParamsBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignature;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
@@ -36,6 +36,7 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianIOExceptio
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianLogicException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianCompositeKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keypair.GordianCoreKeyPair;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.sign.GordianCoreSignParamsBuilder;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.sign.GordianCoreSignatureFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.sign.GordianCoreSignatureSpec;
 import org.bouncycastle.asn1.ASN1EncodableVector;
@@ -657,7 +658,8 @@ public class GordianCoreCertificate
         try {
             /* Build the signature */
             final GordianSignature mySigner = createSigner();
-            mySigner.initForSigning(GordianSignParams.keyPair(pSigner));
+            final GordianNewSignParamsBuilder myBuilder = GordianCoreSignParamsBuilder.newInstance();
+            mySigner.initForSigning(myBuilder.keyPair(pSigner));
             final GordianStreamConsumer myConsumer = new GordianStreamConsumer(mySigner);
             final ASN1OutputStream myOut = ASN1OutputStream.create(myConsumer);
             myOut.writeObject(theTbsCertificate);
@@ -699,7 +701,8 @@ public class GordianCoreCertificate
         try {
             /* Build the signature */
             final GordianSignature myValidator = createSigner();
-            myValidator.initForVerify(GordianSignParams.keyPair(pSigner));
+            final GordianNewSignParamsBuilder myBuilder = GordianCoreSignParamsBuilder.newInstance();
+            myValidator.initForVerify(myBuilder.keyPair(pSigner));
             final GordianStreamConsumer myConsumer = new GordianStreamConsumer(myValidator);
             final ASN1OutputStream myOut = ASN1OutputStream.create(myConsumer);
             myOut.writeObject(theTbsCertificate);

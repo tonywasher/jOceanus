@@ -19,7 +19,7 @@ package io.github.tonywasher.joceanus.gordianknot.junit.regression;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianAsyncFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
-import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignParams;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianNewSignParamsBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignature;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignatureFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpec;
@@ -87,10 +87,11 @@ public final class AsymmetricSignScripts {
         final GordianSignatureFactory mySigns = pSignature.getOwner().getFactory().getSignatureFactory();
         final byte[] myMessage = "Hello there. How is life treating you?".getBytes();
         GordianSignature mySigner = mySigns.createSigner(mySpec);
-        mySigner.initForSigning(GordianSignParams.keyPair(myMirror));
+        final GordianNewSignParamsBuilder myBuilder = mySigns.newSignParamsBuilder();
+        mySigner.initForSigning(myBuilder.keyPair(myMirror));
         mySigner.update(myMessage);
         byte[] mySignature = mySigner.sign();
-        mySigner.initForVerify(GordianSignParams.keyPair(myPair));
+        mySigner.initForVerify(myBuilder.keyPair(myPair));
         mySigner.update(myMessage);
         Assertions.assertTrue(mySigner.verify(mySignature), "Failed to verify own signature");
     }
@@ -113,22 +114,23 @@ public final class AsymmetricSignScripts {
         final GordianSignatureFactory myTgtSigns = pSignature.getOwner().getPartner().getSignatureFactory();
         final byte[] myMessage = "Hello there. How is life treating you?".getBytes();
         GordianSignature mySigner = mySrcSigns.createSigner(mySpec);
-        mySigner.initForSigning(GordianSignParams.keyPair(myPair));
+        final GordianNewSignParamsBuilder myBuilder = mySrcSigns.newSignParamsBuilder();
+        mySigner.initForSigning(myBuilder.keyPair(myPair));
         mySigner.update(myMessage);
         byte[] mySignature = mySigner.sign();
 
         /* Check sent signature */
         mySigner = myTgtSigns.createSigner(mySpec);
-        mySigner.initForVerify(GordianSignParams.keyPair(myPartnerSelf));
+        mySigner.initForVerify(myBuilder.keyPair(myPartnerSelf));
         mySigner.update(myMessage);
         Assertions.assertTrue(mySigner.verify(mySignature), "Failed to verify sent signature");
 
         /* Check incoming signature */
-        mySigner.initForSigning(GordianSignParams.keyPair(myPartnerSelf));
+        mySigner.initForSigning(myBuilder.keyPair(myPartnerSelf));
         mySigner.update(myMessage);
         mySignature = mySigner.sign();
         mySigner = mySrcSigns.createSigner(mySpec);
-        mySigner.initForVerify(GordianSignParams.keyPair(myPair));
+        mySigner.initForVerify(myBuilder.keyPair(myPair));
         mySigner.update(myMessage);
         Assertions.assertTrue(mySigner.verify(mySignature), "Failed to verify returned signature");
     }

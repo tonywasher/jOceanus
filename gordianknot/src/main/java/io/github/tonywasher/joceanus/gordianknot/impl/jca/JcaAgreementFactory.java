@@ -20,6 +20,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreement
 import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementType;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairType;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.agree.GordianCoreAgreementEngine;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.agree.GordianCoreAgreementFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseData;
@@ -173,6 +174,8 @@ public class JcaAgreementFactory
             case MQV:
                 return new JcaMQVEngine(this, pAgreementSpec,
                         JcaAgreement.getJavaKeyAgreement(JcaAgreement.getFullAgreementName("ECMQV", pAgreementSpec), false));
+            case SM2:
+                return getSM2Engine(pAgreementSpec);
             default:
                 throw new GordianDataException(GordianBaseData.getInvalidText(pAgreementSpec));
         }
@@ -209,7 +212,9 @@ public class JcaAgreementFactory
         /* Only allow SM2 for NoKDF */
         final GordianAgreementType myType = pSpec.getAgreementType();
         if (GordianAgreementType.SM2.equals(myType)) {
-            return GordianAgreementKDF.NONE.equals(pSpec.getKDFType()) && !pSpec.withConfirm();
+            return GordianAgreementKDF.NONE.equals(pSpec.getKDFType())
+                    && !GordianKeyPairType.GOST.equals(pSpec.getKeyPairSpec().getKeyPairType())
+                    && !pSpec.withConfirm();
         }
 
         /* Switch on KeyType */

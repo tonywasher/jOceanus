@@ -24,6 +24,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianGOSTSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairType;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianNewSignParamsBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignatureFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpecBuilder;
@@ -72,6 +73,11 @@ public abstract class GordianCoreSignatureFactory
     @Override
     public GordianSignatureSpecBuilder newSignatureSpecBuilder() {
         return GordianCoreSignatureSpecBuilder.newInstance();
+    }
+
+    @Override
+    public GordianNewSignParamsBuilder newSignParamsBuilder() {
+        return GordianCoreSignParamsBuilder.newInstance();
     }
 
     /**

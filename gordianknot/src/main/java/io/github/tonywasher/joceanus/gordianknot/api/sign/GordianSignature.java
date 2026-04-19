@@ -38,7 +38,7 @@ public interface GordianSignature
      * @param pParams the parameters
      * @throws GordianException on error
      */
-    void initForSigning(GordianSignParams pParams) throws GordianException;
+    void initForSigning(GordianNewSignParams pParams) throws GordianException;
 
     /**
      * Initialise for verify.
@@ -46,7 +46,7 @@ public interface GordianSignature
      * @param pParams the parameters
      * @throws GordianException on error
      */
-    void initForVerify(GordianSignParams pParams) throws GordianException;
+    void initForVerify(GordianNewSignParams pParams) throws GordianException;
 
     /**
      * Complete the signature operation and return the signature bytes.

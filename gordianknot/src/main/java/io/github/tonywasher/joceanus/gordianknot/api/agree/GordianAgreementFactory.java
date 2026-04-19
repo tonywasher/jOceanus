@@ -52,6 +52,13 @@ public interface GordianAgreementFactory {
                                               Object pResultType) throws GordianException;
 
     /**
+     * create new GordianAgreeParamsBuilder.
+     *
+     * @return the new AgreeParamsBuilder
+     */
+    GordianNewAgreeParamsBuilder newAgreeParamsBuilder();
+
+    /**
      * CreateAgreement.
      *
      * @param pParams the agreementParams

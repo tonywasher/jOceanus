@@ -19,7 +19,8 @@ package io.github.tonywasher.joceanus.gordianknot.impl.core.agree;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherParameters;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherParams;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherParamsBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamCipher;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymCipher;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamCipherSpec;
@@ -37,6 +38,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.keyset.spec.GordianKeySetSp
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianDataConverter;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianParameters;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.cipher.GordianCoreCipherParamsBuilder;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.kdf.GordianHKDFEngine;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.kdf.GordianHKDFParams;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.key.GordianCoreKeyGenerator;
@@ -196,18 +198,19 @@ public class GordianCoreAgreementCalculator {
         final GordianSymCipher myInCipher = myCiphers.createSymKeyCipher(pCipherSpec);
 
         /* If we need an IV */
+        final GordianCipherParamsBuilder myBuilder = GordianCoreCipherParamsBuilder.newInstance();
         if (pCipherSpec.needsIV()) {
             /* Calculate the IV */
             final byte[] myIV = deriveIV(pSecret, pCipherSpec.getIVLength());
 
             /* Initialise the ciphers */
-            final GordianCipherParameters myParms = GordianCipherParameters.keyAndNonce(myKey, myIV);
+            final GordianCipherParams myParms = myBuilder.keyAndNonce(myKey, myIV);
             myOutCipher.initForEncrypt(myParms);
             myInCipher.initForDecrypt(myParms);
 
             /* else no IV */
         } else {
-            final GordianCipherParameters myParms = GordianCipherParameters.key(myKey);
+            final GordianCipherParams myParms = myBuilder.key(myKey);
             myOutCipher.initForEncrypt(myParms);
             myInCipher.initForDecrypt(myParms);
         }
@@ -236,19 +239,20 @@ public class GordianCoreAgreementCalculator {
         final GordianStreamCipher myInCipher = myCiphers.createStreamKeyCipher(pCipherSpec);
 
         /* If we need an IV */
+        final GordianCipherParamsBuilder myBuilder = GordianCoreCipherParamsBuilder.newInstance();
         if (pCipherSpec.needsIV()) {
             /* Calculate the IV */
             final byte[] myIV = deriveIV(pSecret, pCipherSpec.getIVLength());
 
             /* Initialise the ciphers */
-            final GordianCipherParameters myParms = GordianCipherParameters.keyAndNonce(myKey, myIV);
+            final GordianCipherParams myParms = myBuilder.keyAndNonce(myKey, myIV);
             myOutCipher.initForEncrypt(myParms);
             myInCipher.initForDecrypt(myParms);
 
             /* else no IV */
         } else {
             /* Initialise the ciphers */
-            final GordianCipherParameters myParms = GordianCipherParameters.key(myKey);
+            final GordianCipherParams myParms = myBuilder.key(myKey);
             myOutCipher.initForEncrypt(myParms);
             myInCipher.initForDecrypt(myParms);
         }

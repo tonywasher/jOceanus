@@ -33,7 +33,8 @@ import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianEncryptorFac
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianEncryptorSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianEncryptorSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
-import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignParams;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianNewSignParams;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianNewSignParamsBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignature;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignatureFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpec;
@@ -110,7 +111,8 @@ public final class GordianKeyPairValidity {
         final GordianSignature mySigner = mySigns.createSigner(pSignSpec);
 
         /* Create signature */
-        final GordianSignParams myParams = GordianSignParams.keyPair(pKeyPair);
+        final GordianNewSignParamsBuilder myBuilder = mySigns.newSignParamsBuilder();
+        final GordianNewSignParams myParams = myBuilder.keyPair(pKeyPair);
         mySigner.initForSigning(myParams);
         mySigner.update(myData);
         final byte[] mySignature = mySigner.sign();

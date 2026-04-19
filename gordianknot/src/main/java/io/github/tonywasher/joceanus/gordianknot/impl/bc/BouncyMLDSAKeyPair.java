@@ -19,7 +19,7 @@ package io.github.tonywasher.joceanus.gordianknot.impl.bc;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignParams;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianNewSignParams;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPrivateKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPublicKey;
@@ -34,20 +34,20 @@ import org.bouncycastle.crypto.AsymmetricCipherKeyPair;
 import org.bouncycastle.crypto.CipherParameters;
 import org.bouncycastle.crypto.CryptoException;
 import org.bouncycastle.crypto.Signer;
+import org.bouncycastle.crypto.generators.MLDSAKeyPairGenerator;
 import org.bouncycastle.crypto.params.AsymmetricKeyParameter;
+import org.bouncycastle.crypto.params.MLDSAKeyGenerationParameters;
+import org.bouncycastle.crypto.params.MLDSAParameters;
+import org.bouncycastle.crypto.params.MLDSAPrivateKeyParameters;
+import org.bouncycastle.crypto.params.MLDSAPublicKeyParameters;
 import org.bouncycastle.crypto.params.ParametersWithContext;
 import org.bouncycastle.crypto.params.ParametersWithRandom;
-import org.bouncycastle.pqc.crypto.mldsa.HashMLDSASigner;
-import org.bouncycastle.pqc.crypto.mldsa.MLDSAKeyGenerationParameters;
-import org.bouncycastle.pqc.crypto.mldsa.MLDSAKeyPairGenerator;
-import org.bouncycastle.pqc.crypto.mldsa.MLDSAParameters;
-import org.bouncycastle.pqc.crypto.mldsa.MLDSAPrivateKeyParameters;
-import org.bouncycastle.pqc.crypto.mldsa.MLDSAPublicKeyParameters;
-import org.bouncycastle.pqc.crypto.mldsa.MLDSASigner;
-import org.bouncycastle.pqc.crypto.util.PrivateKeyFactory;
-import org.bouncycastle.pqc.crypto.util.PrivateKeyInfoFactory;
-import org.bouncycastle.pqc.crypto.util.PublicKeyFactory;
-import org.bouncycastle.pqc.crypto.util.SubjectPublicKeyInfoFactory;
+import org.bouncycastle.crypto.signers.HashMLDSASigner;
+import org.bouncycastle.crypto.signers.MLDSASigner;
+import org.bouncycastle.crypto.util.PrivateKeyFactory;
+import org.bouncycastle.crypto.util.PrivateKeyInfoFactory;
+import org.bouncycastle.crypto.util.PublicKeyFactory;
+import org.bouncycastle.crypto.util.SubjectPublicKeyInfoFactory;
 
 import java.io.IOException;
 import java.security.spec.PKCS8EncodedKeySpec;
@@ -315,7 +315,7 @@ public final class BouncyMLDSAKeyPair {
         }
 
         @Override
-        public void initForSigning(final GordianSignParams pParams) throws GordianException {
+        public void initForSigning(final GordianNewSignParams pParams) throws GordianException {
             /* Initialise detail */
             super.initForSigning(pParams);
             final BouncyKeyPair myPair = getKeyPair();
@@ -333,7 +333,7 @@ public final class BouncyMLDSAKeyPair {
         }
 
         @Override
-        public void initForVerify(final GordianSignParams pParams) throws GordianException {
+        public void initForVerify(final GordianNewSignParams pParams) throws GordianException {
             /* Initialise detail */
             super.initForVerify(pParams);
             final BouncyKeyPair myPair = getKeyPair();

@@ -20,8 +20,8 @@ package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianMLKEMSpec;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.nist.NISTObjectIdentifiers;
+import org.bouncycastle.crypto.params.MLKEMParameters;
 import org.bouncycastle.jcajce.spec.MLKEMParameterSpec;
-import org.bouncycastle.pqc.crypto.mlkem.MLKEMParameters;
 
 import java.util.EnumMap;
 import java.util.Map;

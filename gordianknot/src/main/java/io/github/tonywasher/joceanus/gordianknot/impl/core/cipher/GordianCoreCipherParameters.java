@@ -20,11 +20,11 @@ import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherParameters;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherParameters.GordianAEADCipherParameters;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherParameters.GordianKeyCipherParameters;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherParameters.GordianNonceParameters;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherParameters.GordianPBECipherParameters;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherParams;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherParams.GordianAEADCipherParameters;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherParams.GordianKeyCipherParameters;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherParams.GordianNewNonceParameters;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherParams.GordianPBECipherParameters;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianCipherSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianPBESpec;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianPBESpec.GordianPBEArgon2Spec;
@@ -169,7 +169,7 @@ public class GordianCoreCipherParameters<T extends GordianKeySpec> {
      * @param pParams the cipher parameters
      * @throws GordianException on error
      */
-    void processParameters(final GordianCipherParameters pParams) throws GordianException {
+    void processParameters(final GordianCipherParams pParams) throws GordianException {
         /* If the cipher parameters are PBE */
         if (pParams instanceof GordianPBECipherParameters myPBEParams) {
             /* Process separately */
@@ -260,7 +260,7 @@ public class GordianCoreCipherParameters<T extends GordianKeySpec> {
      * @return the key
      */
     @SuppressWarnings("unchecked")
-    private GordianKey<T> obtainKeyFromParameters(final GordianCipherParameters pParams) {
+    private GordianKey<T> obtainKeyFromParameters(final GordianCipherParams pParams) {
         /* If we have specified IV */
         if (pParams instanceof GordianKeyCipherParameters<?> myParams) {
             return (GordianKey<T>) myParams.getKey();
@@ -277,13 +277,13 @@ public class GordianCoreCipherParameters<T extends GordianKeySpec> {
      * @param pPBESalt is this a PBESalt
      * @return the nonce
      */
-    private byte[] obtainNonceFromParameters(final GordianCipherParameters pParams,
+    private byte[] obtainNonceFromParameters(final GordianCipherParams pParams,
                                              final boolean pPBESalt) {
         /* Default IV is null */
         byte[] myIV = null;
 
         /* If we have specified IV */
-        if (pParams instanceof GordianNonceParameters myParams) {
+        if (pParams instanceof GordianNewNonceParameters myParams) {
             /* If we have an explicit Nonce */
             if (!myParams.randomNonce()) {
                 /* access the nonce */
@@ -308,7 +308,7 @@ public class GordianCoreCipherParameters<T extends GordianKeySpec> {
      * @param pParams parameters
      * @return the initialAEAD
      */
-    private static byte[] obtainInitialAEADFromParameters(final GordianCipherParameters pParams) {
+    private static byte[] obtainInitialAEADFromParameters(final GordianCipherParams pParams) {
         /* Default initialAEAD is null */
         byte[] myInitial = null;
 

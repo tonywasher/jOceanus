@@ -60,7 +60,7 @@ public interface GordianMac
      * @param pParams the parameters
      * @throws GordianException on error
      */
-    void init(GordianMacParameters pParams) throws GordianException;
+    void init(GordianMacParams pParams) throws GordianException;
 
     /**
      * Init with bytes as key.

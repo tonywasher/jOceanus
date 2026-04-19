@@ -17,7 +17,7 @@
 package io.github.tonywasher.joceanus.gordianknot.impl.bc;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherParameters;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianCipherParams;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamAEADCipher;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamCipherSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySpec;
@@ -66,7 +66,7 @@ public class BouncyStreamKeyAEADCipher
 
     @Override
     public void init(final boolean pEncrypt,
-                     final GordianCipherParameters pParams) throws GordianException {
+                     final GordianCipherParams pParams) throws GordianException {
         /* Process the parameters and access the key */
         processParameters(pParams);
         final BouncyKey<GordianStreamKeySpec> myKey = BouncyKey.accessKey(getKey());

@@ -22,7 +22,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSp
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianSignParams;
+import io.github.tonywasher.joceanus.gordianknot.api.sign.GordianNewSignParams;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPrivateKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPublicKey;
@@ -444,7 +444,7 @@ public final class BouncyRSAKeyPair {
         }
 
         @Override
-        public void initForSigning(final GordianSignParams pParams) throws GordianException {
+        public void initForSigning(final GordianNewSignParams pParams) throws GordianException {
             /* Initialise detail */
             super.initForSigning(pParams);
             final BouncyKeyPair myPair = getKeyPair();
@@ -459,7 +459,7 @@ public final class BouncyRSAKeyPair {
         }
 
         @Override
-        public void initForVerify(final GordianSignParams pParams) throws GordianException {
+        public void initForVerify(final GordianNewSignParams pParams) throws GordianException {
             /* Initialise detail */
             super.initForVerify(pParams);
             final BouncyKeyPair myPair = getKeyPair();
