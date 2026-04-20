@@ -50,6 +50,16 @@ public class ThemisXAnalysisUIRefDocument
     private final ThemisXAnalysisUIRefLocal theLocal;
 
     /**
+     * The links builder.
+     */
+    private final ThemisXAnalysisUIRefLinks theLinks;
+
+    /**
+     * The prefix.
+     */
+    private String thePrefix;
+
+    /**
      * Is the package childless?
      */
     private boolean isChildless;
@@ -60,12 +70,10 @@ public class ThemisXAnalysisUIRefDocument
      * @throws OceanusException on error
      */
     ThemisXAnalysisUIRefDocument() throws OceanusException {
-        /* Initialise underlying */
-        //super();
-
-        /* Creat builders */
+        /* Create builders */
         theFamily = new ThemisXAnalysisUIRefFamily(this);
         theLocal = new ThemisXAnalysisUIRefLocal(this);
+        theLinks = new ThemisXAnalysisUIRefLinks(this);
     }
 
     /**
@@ -77,7 +85,8 @@ public class ThemisXAnalysisUIRefDocument
         /* Store the module */
         thePackageMap = pModule.getPackages();
 
-        /* TODO select default package */
+        /* DeterminePrefix */
+        determinePrefix(pModule);
     }
 
     /**
@@ -92,6 +101,16 @@ public class ThemisXAnalysisUIRefDocument
     }
 
     /**
+     * Is the link a list link?
+     *
+     * @param pLink the link
+     * @return true/false
+     */
+    boolean isListLink(final String pLink) {
+        return pLink.startsWith(ThemisXAnalysisUIRefConstants.LINKLIST);
+    }
+
+    /**
      * Format the new package.
      *
      * @param pLink the link to the new package
@@ -100,7 +119,7 @@ public class ThemisXAnalysisUIRefDocument
     String formatNewPackageLink(final String pLink) {
         /* If this is a package link */
         if (pLink.startsWith(ThemisXAnalysisUIRefConstants.LINKPACKAGE)) {
-            /* Strip of the header and locate the package */
+            /* Strip off the header and locate the package */
             final String myName = pLink.substring(ThemisXAnalysisUIRefConstants.LINKPACKAGE.length());
             final ThemisXAnalysisSolverPackage myPackage = thePackageMap.get(myName);
 
@@ -115,7 +134,7 @@ public class ThemisXAnalysisUIRefDocument
 
         /* If this is a local link */
         if (pLink.startsWith(ThemisXAnalysisUIRefConstants.LINKLOCAL)) {
-            /* Strip of the header and locate the package */
+            /* Strip off the header and locate the package */
             final String myName = pLink.substring(ThemisXAnalysisUIRefConstants.LINKLOCAL.length());
             final ThemisXAnalysisSolverPackage myPackage = thePackageMap.get(myName);
 
@@ -126,6 +145,36 @@ public class ThemisXAnalysisUIRefDocument
 
             /* Format the packageHTML */
             return formatPackage(myPackage, true);
+        }
+
+        /* Unrecognised link */
+        throw new IllegalArgumentException("Invalid Link header");
+    }
+
+    /**
+     * Format the linkList.
+     *
+     * @param pLink the link to the linkList
+     * @return the HTML
+     */
+    String formatListLink(final String pLink) {
+        /* If this is a list link */
+        if (pLink.startsWith(ThemisXAnalysisUIRefConstants.LINKLIST)) {
+            /* Strip off the header and locate the packages */
+            final String myNames = pLink.substring(ThemisXAnalysisUIRefConstants.LINKLIST.length());
+            final int myIndex = myNames.indexOf(ThemisXAnalysisUIRefConstants.SEPCHAR);
+            final String mySourceName = myNames.substring(0, myIndex);
+            final String myTargetName = myNames.substring(myIndex + 1);
+            final ThemisXAnalysisSolverPackage mySource = thePackageMap.get(mySourceName);
+            final ThemisXAnalysisSolverPackage myTarget = thePackageMap.get(myTargetName);
+
+            /* Handle unknown packages */
+            if (mySource == null || myTarget == null) {
+                throw new IllegalArgumentException("Unknown package");
+            }
+
+            /* Format the listHTML */
+            return formatLinkList(mySource, myTarget);
         }
 
         /* Unrecognised link */
@@ -167,6 +216,33 @@ public class ThemisXAnalysisUIRefDocument
     }
 
     /**
+     * Create document for linkList.
+     *
+     * @param pSource the source package
+     * @param pTarget the target package
+     * @return the formatted document
+     */
+    private String formatLinkList(final ThemisXAnalysisSolverPackage pSource,
+                                  final ThemisXAnalysisSolverPackage pTarget) {
+        /* Create new document and obtain the body */
+        final Element myBody = newDocument();
+
+        /* format the package Links */
+        final Element myHeader = createElement(ThemisXAnalysisUIHTMLTag.H3);
+        myBody.appendChild(myHeader);
+
+        /* Create new table */
+        final Element myTable = createElement(ThemisXAnalysisUIHTMLTag.TABLE);
+        myBody.appendChild(myTable);
+
+        /* Format link list */
+        theLinks.formatLinks(pSource, pTarget, myTable);
+
+        /* Return the formatted HTML */
+        return formatXML();
+    }
+
+    /**
      * Add package link.
      *
      * @param pElement the element
@@ -195,5 +271,76 @@ public class ThemisXAnalysisUIRefDocument
         final String myLinkRef = ThemisXAnalysisUIRefConstants.LINKPACKAGE + pPackage.getPackageName();
         setAttribute(myLink, ThemisXAnalysisUIHTMLAttr.HREF, myLinkRef);
         myLink.setTextContent(myName);
+    }
+
+    /**
+     * Determine the prefix.
+     *
+     * @param pModule the module
+     */
+    private void determinePrefix(final ThemisXAnalysisSolverModule pModule) {
+        /* Initialise the prefix */
+        thePrefix = null;
+
+        /* If we have a non-null modules */
+        if (pModule != null) {
+            /* Loop through the available packages */
+            for (ThemisXAnalysisSolverPackage myPackage : pModule.getPackages().values()) {
+                /* Adjust the prefix */
+                adjustPrefix(myPackage);
+            }
+        }
+    }
+
+    /**
+     * Adjust prefix.
+     *
+     * @param pPackage the package
+     */
+    private void adjustPrefix(final ThemisXAnalysisSolverPackage pPackage) {
+        /* Ignore placeHolder */
+        if (skipPackage(pPackage)) {
+            return;
+        }
+
+        /* If we do not have a prefix */
+        final String myName = pPackage.getPackageName();
+        if (thePrefix == null) {
+            thePrefix = myName;
+
+            /* else if we need to change the prefix */
+        } else if (!myName.startsWith(thePrefix)) {
+            /* if we need to change the prefix */
+            if (!myName.startsWith(thePrefix)) {
+                /* Determine length */
+                final int myLength = Math.min(thePrefix.length(), myName.length());
+
+                /* Loop while prefixes are the same */
+                for (int i = 0; i < myLength; i++) {
+                    /* If we have found a difference */
+                    if (thePrefix.charAt(i) != myName.charAt(i)) {
+                        /* Strip the prefix down */
+                        thePrefix = thePrefix.substring(0, i);
+                        break;
+                    }
+                }
+
+                /* If the package is a prefix of the prefix */
+                if (thePrefix.startsWith(myName)) {
+                    thePrefix = myName;
+                }
+            }
+        }
+    }
+
+    /**
+     * Should we skip the package?
+     *
+     * @param pPackage the package
+     * @return true/false
+     */
+    private boolean skipPackage(final ThemisXAnalysisSolverPackage pPackage) {
+        /* Skip placeholders */
+        return pPackage.isPlaceHolder();
     }
 }

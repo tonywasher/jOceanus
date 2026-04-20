@@ -37,7 +37,7 @@ public enum ThemisXAnalysisUIHTMLAttr {
     private final String theAttr;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param pAttr the attribute text
      */

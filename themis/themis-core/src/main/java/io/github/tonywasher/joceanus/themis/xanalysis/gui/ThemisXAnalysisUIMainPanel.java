@@ -32,6 +32,7 @@ import io.github.tonywasher.joceanus.tethys.api.pane.TethysUIBoxPaneManager;
 import io.github.tonywasher.joceanus.tethys.api.pane.TethysUIPaneFactory;
 import io.github.tonywasher.joceanus.tethys.api.pane.TethysUITabPaneManager;
 import io.github.tonywasher.joceanus.tethys.api.pane.TethysUITabPaneManager.TethysUITabItem;
+import io.github.tonywasher.joceanus.themis.xanalysis.gui.reference.ThemisXAnalysisUIRefPanel;
 import io.github.tonywasher.joceanus.themis.xanalysis.gui.source.ThemisXAnalysisUISourcePanel;
 import io.github.tonywasher.joceanus.themis.xanalysis.gui.stats.ThemisXAnalysisUIStatsPanel;
 import io.github.tonywasher.joceanus.themis.xanalysis.parser.ThemisXAnalysisParser;
@@ -63,6 +64,11 @@ public class ThemisXAnalysisUIMainPanel
     private final ThemisXAnalysisUIStatsPanel theStats;
 
     /**
+     * Reference Panel.
+     */
+    private final ThemisXAnalysisUIRefPanel theRefs;
+
+    /**
      * The Source Tab.
      */
     private final TethysUITabItem theSourceTab;
@@ -71,6 +77,11 @@ public class ThemisXAnalysisUIMainPanel
      * The Stats Tab.
      */
     private final TethysUITabItem theStatsTab;
+
+    /**
+     * The Refs Tab.
+     */
+    private final TethysUITabItem theRefsTab;
 
     /**
      * The Log Tab.
@@ -105,16 +116,19 @@ public class ThemisXAnalysisUIMainPanel
         /* Create the subPanels */
         theSource = new ThemisXAnalysisUISourcePanel(theGuiFactory);
         theStats = new ThemisXAnalysisUIStatsPanel(theGuiFactory);
+        theRefs = new ThemisXAnalysisUIRefPanel(theGuiFactory);
 
         /* Create the tabs */
         final TethysUIPaneFactory myPanes = theGuiFactory.paneFactory();
         final TethysUITabPaneManager myTabs = myPanes.newTabPane();
         theSourceTab = myTabs.addTabItem("Source", theSource);
         theStatsTab = myTabs.addTabItem("Stats", theStats);
+        theRefsTab = myTabs.addTabItem("References", theRefs);
 
         /* Hide tabs */
         theSourceTab.setVisible(false);
         theStatsTab.setVisible(false);
+        theRefsTab.setVisible(false);
 
         /* Create the log tab */
         theLogSink = theGuiFactory.getLogSink();
@@ -198,6 +212,10 @@ public class ThemisXAnalysisUIMainPanel
             final ThemisXAnalysisSolverProject myProject = new ThemisXAnalysisSolverProject(myParser);
             final ThemisXAnalysisSolver mySolver = new ThemisXAnalysisSolver(myProject);
             myError = mySolver.getError();
+            if (myError == null) {
+                theRefs.setCurrentProject(myProject);
+                theRefsTab.setVisible(true);
+            }
         }
 
         /* If we parsed successfully */

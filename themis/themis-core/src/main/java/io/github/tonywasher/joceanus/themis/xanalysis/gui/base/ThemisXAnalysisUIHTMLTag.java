@@ -97,7 +97,7 @@ public enum ThemisXAnalysisUIHTMLTag {
     private final String theTag;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param pTag the tag text
      */

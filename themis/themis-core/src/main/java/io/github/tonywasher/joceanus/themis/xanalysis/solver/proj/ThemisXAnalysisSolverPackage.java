@@ -202,7 +202,7 @@ public class ThemisXAnalysisSolverPackage
     }
 
     /**
-     * Set parent package
+     * Set parent package.
      *
      * @param pParent the parent package
      */
