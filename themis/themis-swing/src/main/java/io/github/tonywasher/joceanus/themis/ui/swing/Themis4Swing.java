@@ -17,7 +17,7 @@
 package io.github.tonywasher.joceanus.themis.ui.swing;
 
 import io.github.tonywasher.joceanus.tethys.swing.launch.TethysUISwingLaunch;
-import io.github.tonywasher.joceanus.themis.xanalysis.gui.launch.ThemisXAnalysisApp;
+import io.github.tonywasher.joceanus.themis.gui.launch.ThemisApp;
 
 /**
  * Themis Swing StartUp.
@@ -36,6 +36,6 @@ public final class Themis4Swing
      * @param pArgs the arguments
      */
     public static void main(final String[] pArgs) {
-        launch(new ThemisXAnalysisApp());
+        launch(new ThemisApp());
     }
 }

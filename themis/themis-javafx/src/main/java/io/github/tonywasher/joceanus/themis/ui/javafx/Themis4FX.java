@@ -18,7 +18,7 @@ package io.github.tonywasher.joceanus.themis.ui.javafx;
 
 import io.github.tonywasher.joceanus.tethys.api.factory.TethysUILaunchProgram;
 import io.github.tonywasher.joceanus.tethys.javafx.launch.TethysUIFXLaunch;
-import io.github.tonywasher.joceanus.themis.xanalysis.gui.launch.ThemisXAnalysisApp;
+import io.github.tonywasher.joceanus.themis.gui.launch.ThemisApp;
 
 /**
  * ThemisDSM javaFX entryPoint.
@@ -33,6 +33,6 @@ public class Themis4FX
 
     @Override
     protected TethysUILaunchProgram getProgramInfo() {
-        return new ThemisXAnalysisApp();
+        return new ThemisApp();
     }
 }

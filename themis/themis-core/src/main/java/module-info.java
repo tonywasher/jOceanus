@@ -32,5 +32,5 @@ module io.github.tonywasher.joceanus.themis.core {
     requires io.github.tonywasher.joceanus.oceanus;
 
     /* Exports */
-    exports io.github.tonywasher.joceanus.themis.xanalysis.gui.launch;
+    exports io.github.tonywasher.joceanus.themis.gui.launch;
 }

@@ -32,7 +32,7 @@ allprojects {
         bouncyCastleVersion = "1.83"
         jUnitVersion = "6.0.3"
         jsonVersion = "20251224"
-        mySQLVersion = "9.6.0"
+        mySQLVersion = "9.7.0"
         MariaDBVersion = "3.5.8"
         postGreSQLVersion = "42.7.10"
         mssqlVersion = "13.4.0.jre11"
