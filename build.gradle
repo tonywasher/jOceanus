@@ -174,7 +174,7 @@ task distribute {
         buildJRE()
     }
 }
-distribute.dependsOn ":moneywise-swing:jar", ":moneywise-javafx:jar", ":themis-javafx:jar", ":prometheus-sheet-odf:jar", ":prometheus-sheet-hssf:jar"
+distribute.dependsOn ":moneywise-swing:jar", ":moneywise-javafx:jar", ":themis-javafx:jar", ":themis-swing:jar", ":prometheus-sheet-odf:jar", ":prometheus-sheet-hssf:jar"
 assemble.dependsOn distribute
 
 /* Make sure distribution directory is cleared on clean */

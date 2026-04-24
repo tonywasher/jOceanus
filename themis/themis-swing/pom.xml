@@ -1,0 +1,49 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>io.github.tonywasher.joceanus</groupId>
+    <artifactId>themis</artifactId>
+    <version>1.6.4-SNAPSHOT</version>
+  </parent>
+  <groupId>io.github.tonywasher.joceanus.themis</groupId>
+  <artifactId>themis-swing</artifactId>
+  <name>Themis Swing Project Framework</name>
+  <description>Java Swing Project Framework</description>
+  <dependencies>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>themis-core</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${TethysGroup}</groupId>
+      <artifactId>tethys-swing</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+  </dependencies>
+  <properties>
+    <packageMain>${packageName}.ui.swing.Themis4Swing</packageMain>
+    <moduleName>${packageName}.swing</moduleName>
+    <packageSplash>io/github/tonywasher/joceanus/themis/ui/icons/swing/ThemisSplash.png</packageSplash>
+  </properties>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>${JarPluginVersion}</version>
+        <configuration>
+          <archive>
+            <manifestEntries>
+              <SplashScreen-Image>${packageSplash}</SplashScreen-Image>
+            </manifestEntries>
+          </archive>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>

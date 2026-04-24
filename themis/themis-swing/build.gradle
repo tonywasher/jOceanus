@@ -1,0 +1,23 @@
+/* Dependencies */
+dependencies {
+    implementation project(':themis-core')
+    implementation project(':tethys-swing')
+    implementation project(':tethys-core')
+    implementation project(':oceanus')
+}
+
+/* Details */
+description = 'Themis Swing Project Framework'
+mainClass = "io.github.tonywasher.joceanus.moneywise.ui.swing.Themis4Swing"
+moduleName = "io.github.tonywasher.joceanus.themis.swing"
+splashScreen = "io/github/tonywasher/joceanus/themis/xanalysis/gui/icons/swing/ThemisSplash.png"
+
+/* Register the project */
+registerProject(project)
+
+/* Specific Manifest details */
+jar {
+    manifest {
+        attributes(manifestAttrs)
+    }
+}

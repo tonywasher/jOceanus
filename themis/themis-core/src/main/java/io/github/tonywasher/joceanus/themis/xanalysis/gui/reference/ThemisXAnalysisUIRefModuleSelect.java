@@ -30,6 +30,7 @@ import io.github.tonywasher.joceanus.tethys.api.menu.TethysUIScrollItem;
 import io.github.tonywasher.joceanus.tethys.api.menu.TethysUIScrollMenu;
 import io.github.tonywasher.joceanus.tethys.api.pane.TethysUIBoxPaneManager;
 import io.github.tonywasher.joceanus.tethys.api.pane.TethysUIPaneFactory;
+import io.github.tonywasher.joceanus.themis.xanalysis.gui.base.ThemisXAnalysisUIResource;
 import io.github.tonywasher.joceanus.themis.xanalysis.solver.proj.ThemisXAnalysisSolverModule;
 import io.github.tonywasher.joceanus.themis.xanalysis.solver.proj.ThemisXAnalysisSolverProject;
 
@@ -81,7 +82,7 @@ public class ThemisXAnalysisUIRefModuleSelect
 
         /* Create the label */
         final TethysUIControlFactory myControls = pFactory.controlFactory();
-        final TethysUILabel myPromptLabel = myControls.newLabel("Module:");
+        final TethysUILabel myPromptLabel = myControls.newLabel(ThemisXAnalysisUIResource.PROMPT_MODULE.getValue());
 
         /* Create the button */
         theButton = pFactory.buttonFactory().newScrollButton(ThemisXAnalysisSolverModule.class);

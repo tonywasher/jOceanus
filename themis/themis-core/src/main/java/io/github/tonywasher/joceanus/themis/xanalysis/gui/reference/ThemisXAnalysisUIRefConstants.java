@@ -17,6 +17,7 @@
 
 package io.github.tonywasher.joceanus.themis.xanalysis.gui.reference;
 
+import io.github.tonywasher.joceanus.themis.xanalysis.gui.base.ThemisXAnalysisUIResource;
 import io.github.tonywasher.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisChar;
 
 /**
@@ -37,7 +38,7 @@ public final class ThemisXAnalysisUIRefConstants {
     /**
      * Local package name.
      */
-    static final String LOCALPACKAGE = "<Local>";
+    static final String LOCALPACKAGE = ThemisXAnalysisUIResource.PACKAGE_LOCAL.getValue();
 
     /**
      * New package indicator.

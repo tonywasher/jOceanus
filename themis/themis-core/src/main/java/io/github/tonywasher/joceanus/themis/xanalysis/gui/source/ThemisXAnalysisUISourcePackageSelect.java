@@ -30,6 +30,7 @@ import io.github.tonywasher.joceanus.tethys.api.menu.TethysUIScrollItem;
 import io.github.tonywasher.joceanus.tethys.api.menu.TethysUIScrollMenu;
 import io.github.tonywasher.joceanus.tethys.api.pane.TethysUIBoxPaneManager;
 import io.github.tonywasher.joceanus.tethys.api.pane.TethysUIPaneFactory;
+import io.github.tonywasher.joceanus.themis.xanalysis.gui.base.ThemisXAnalysisUIResource;
 import io.github.tonywasher.joceanus.themis.xanalysis.parser.proj.ThemisXAnalysisModule;
 import io.github.tonywasher.joceanus.themis.xanalysis.parser.proj.ThemisXAnalysisPackage;
 
@@ -100,7 +101,7 @@ public class ThemisXAnalysisUISourcePackageSelect
         /* Create the labels */
         final TethysUIControlFactory myControls = pFactory.controlFactory();
         thePrefixLabel = myControls.newLabel();
-        final TethysUILabel myPromptLabel = myControls.newLabel("Package:");
+        final TethysUILabel myPromptLabel = myControls.newLabel(ThemisXAnalysisUIResource.PROMPT_PACKAGE.getValue());
 
         /* Create the button */
         theButton = pFactory.buttonFactory().newScrollButton(ThemisXAnalysisPackage.class);
@@ -222,25 +223,22 @@ public class ThemisXAnalysisUISourcePackageSelect
             /* We have more than one package so display selection button */
             theButton.setVisible(true);
 
-            /* if we need to change the prefix */
-            if (!myName.startsWith(thePrefix)) {
-                /* Determine length */
-                final int myLength = Math.min(thePrefix.length(), myName.length());
+            /* Determine length */
+            final int myLength = Math.min(thePrefix.length(), myName.length());
 
-                /* Loop while prefixes are the same */
-                for (int i = 0; i < myLength; i++) {
-                    /* If we have found a difference */
-                    if (thePrefix.charAt(i) != myName.charAt(i)) {
-                        /* Strip the prefix down */
-                        thePrefix = thePrefix.substring(0, i);
-                        break;
-                    }
+            /* Loop while prefixes are the same */
+            for (int i = 0; i < myLength; i++) {
+                /* If we have found a difference */
+                if (thePrefix.charAt(i) != myName.charAt(i)) {
+                    /* Strip the prefix down */
+                    thePrefix = thePrefix.substring(0, i);
+                    break;
                 }
+            }
 
-                /* If the package is a prefix of the prefix */
-                if (thePrefix.startsWith(myName)) {
-                    thePrefix = myName;
-                }
+            /* If the package is a prefix of the prefix */
+            if (thePrefix.startsWith(myName)) {
+                thePrefix = myName;
             }
         }
     }

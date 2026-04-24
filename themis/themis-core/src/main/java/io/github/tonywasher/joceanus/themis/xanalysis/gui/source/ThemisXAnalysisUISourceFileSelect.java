@@ -30,6 +30,7 @@ import io.github.tonywasher.joceanus.tethys.api.menu.TethysUIScrollItem;
 import io.github.tonywasher.joceanus.tethys.api.menu.TethysUIScrollMenu;
 import io.github.tonywasher.joceanus.tethys.api.pane.TethysUIBoxPaneManager;
 import io.github.tonywasher.joceanus.tethys.api.pane.TethysUIPaneFactory;
+import io.github.tonywasher.joceanus.themis.xanalysis.gui.base.ThemisXAnalysisUIResource;
 import io.github.tonywasher.joceanus.themis.xanalysis.parser.proj.ThemisXAnalysisFile;
 import io.github.tonywasher.joceanus.themis.xanalysis.parser.proj.ThemisXAnalysisPackage;
 
@@ -81,7 +82,7 @@ public class ThemisXAnalysisUISourceFileSelect
 
         /* Create the label */
         final TethysUIControlFactory myControls = pFactory.controlFactory();
-        final TethysUILabel myPromptLabel = myControls.newLabel("File:");
+        final TethysUILabel myPromptLabel = myControls.newLabel(ThemisXAnalysisUIResource.PROMPT_FILE.getValue());
 
         /* Create the button */
         theButton = pFactory.buttonFactory().newScrollButton(ThemisXAnalysisFile.class);

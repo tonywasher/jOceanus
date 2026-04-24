@@ -15,7 +15,4 @@
  * the License.
  */
 
-/**
- * Gui classes.
- */
-package io.github.tonywasher.joceanus.themis.xanalysis.gui;
+package io.github.tonywasher.joceanus.themis.xanalysis.gui.launch;

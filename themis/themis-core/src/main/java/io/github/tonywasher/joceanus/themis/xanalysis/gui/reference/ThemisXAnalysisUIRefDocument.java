@@ -21,6 +21,7 @@ import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.themis.xanalysis.gui.base.ThemisXAnalysisUIBaseDocument;
 import io.github.tonywasher.joceanus.themis.xanalysis.gui.base.ThemisXAnalysisUIHTMLAttr;
 import io.github.tonywasher.joceanus.themis.xanalysis.gui.base.ThemisXAnalysisUIHTMLTag;
+import io.github.tonywasher.joceanus.themis.xanalysis.gui.base.ThemisXAnalysisUIResource;
 import io.github.tonywasher.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisChar;
 import io.github.tonywasher.joceanus.themis.xanalysis.solver.proj.ThemisXAnalysisSolverModule;
 import io.github.tonywasher.joceanus.themis.xanalysis.solver.proj.ThemisXAnalysisSolverPackage;
@@ -250,12 +251,12 @@ public class ThemisXAnalysisUIRefDocument
      */
     private void addPackageLink(final Element pElement,
                                 final ThemisXAnalysisSolverPackage pPackage) {
-        /* Determine whether parent is root */
-        final boolean isRoot = pPackage.getPackageName().isEmpty();
-        final String myName = isRoot ? "<Root>" : pPackage.getShortName();
+        /* Obtain the package name */
+        final String myName = getPackageLinkName(pPackage);
+        final boolean doParent = myName.equals(pPackage.getShortName());
 
-        /* If we are not root */
-        if (!isRoot) {
+        /* Handle parent package */
+        if (doParent) {
             /* Obtain the parent package */
             final ThemisXAnalysisSolverPackage myParent = pPackage.getParent();
             addPackageLink(pElement, myParent);
@@ -271,6 +272,23 @@ public class ThemisXAnalysisUIRefDocument
         final String myLinkRef = ThemisXAnalysisUIRefConstants.LINKPACKAGE + pPackage.getPackageName();
         setAttribute(myLink, ThemisXAnalysisUIHTMLAttr.HREF, myLinkRef);
         myLink.setTextContent(myName);
+    }
+
+    /**
+     * Determin package link name.
+     *
+     * @param pPackage the package
+     * @return the package linkName
+     */
+    private String getPackageLinkName(final ThemisXAnalysisSolverPackage pPackage) {
+        /* Handle root case */
+        if (pPackage.getPackageName().isEmpty()) {
+            return ThemisXAnalysisUIResource.PACKAGE_ROOT.getValue();
+        }
+
+        /* Special handling for prefix */
+        return pPackage.getPackageName().equals(thePrefix)
+                ? "<" + pPackage.getPackageName() + ">" : pPackage.getShortName();
     }
 
     /**
@@ -310,25 +328,23 @@ public class ThemisXAnalysisUIRefDocument
 
             /* else if we need to change the prefix */
         } else if (!myName.startsWith(thePrefix)) {
-            /* if we need to change the prefix */
-            if (!myName.startsWith(thePrefix)) {
-                /* Determine length */
-                final int myLength = Math.min(thePrefix.length(), myName.length());
 
-                /* Loop while prefixes are the same */
-                for (int i = 0; i < myLength; i++) {
-                    /* If we have found a difference */
-                    if (thePrefix.charAt(i) != myName.charAt(i)) {
-                        /* Strip the prefix down */
-                        thePrefix = thePrefix.substring(0, i);
-                        break;
-                    }
-                }
+            /* Determine length */
+            final int myLength = Math.min(thePrefix.length(), myName.length());
 
-                /* If the package is a prefix of the prefix */
-                if (thePrefix.startsWith(myName)) {
-                    thePrefix = myName;
+            /* Loop while prefixes are the same */
+            for (int i = 0; i < myLength; i++) {
+                /* If we have found a difference */
+                if (thePrefix.charAt(i) != myName.charAt(i)) {
+                    /* Strip the prefix down */
+                    thePrefix = thePrefix.substring(0, i);
+                    break;
                 }
+            }
+
+            /* If the package is a prefix of the prefix */
+            if (thePrefix.startsWith(myName)) {
+                thePrefix = myName;
             }
         }
     }

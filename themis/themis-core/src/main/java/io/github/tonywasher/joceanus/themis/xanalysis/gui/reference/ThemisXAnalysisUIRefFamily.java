@@ -107,7 +107,7 @@ public class ThemisXAnalysisUIRefFamily {
             createRowHeader(myRow, myChild);
 
             /* Create the link row for local to child and vice-versa */
-            if (hasFiles) {
+            if (myLocalRow != null) {
                 createSelfLocalCell(myLocalRow, pPackage);
                 createLinkCell(myLocalRow, myChild, pPackage);
                 createLinkCell(myRow, pPackage, myChild);

@@ -14,25 +14,28 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package io.github.tonywasher.joceanus.themis.ui.javafx;
+package io.github.tonywasher.joceanus.themis.ui.swing;
 
-import io.github.tonywasher.joceanus.tethys.api.factory.TethysUILaunchProgram;
-import io.github.tonywasher.joceanus.tethys.javafx.launch.TethysUIFXLaunch;
+import io.github.tonywasher.joceanus.tethys.swing.launch.TethysUISwingLaunch;
 import io.github.tonywasher.joceanus.themis.xanalysis.gui.launch.ThemisXAnalysisApp;
 
 /**
- * ThemisDSM javaFX entryPoint.
+ * Themis Swing StartUp.
  */
-public class Themis4FX
-        extends TethysUIFXLaunch {
+public final class Themis4Swing
+        extends TethysUISwingLaunch {
     /**
-     * Constructor.
+     * Private constructor.
      */
-    public Themis4FX() {
+    private Themis4Swing() {
     }
 
-    @Override
-    protected TethysUILaunchProgram getProgramInfo() {
-        return new ThemisXAnalysisApp();
+    /**
+     * launch program.
+     *
+     * @param pArgs the arguments
+     */
+    public static void main(final String[] pArgs) {
+        launch(new ThemisXAnalysisApp());
     }
 }

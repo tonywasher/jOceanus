@@ -18,6 +18,7 @@
 package io.github.tonywasher.joceanus.themis.xanalysis.gui.source;
 
 import io.github.tonywasher.joceanus.tethys.api.base.TethysUIIconId;
+import io.github.tonywasher.joceanus.themis.xanalysis.gui.base.ThemisXAnalysisUIResource;
 import io.github.tonywasher.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance;
 import io.github.tonywasher.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance.ThemisXAnalysisDeclarationInstance;
 import io.github.tonywasher.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance.ThemisXAnalysisExpressionInstance;
@@ -255,23 +256,23 @@ public class ThemisXAnalysisUISourceEntry {
         /* Switch on the id */
         switch ((ThemisXAnalysisDeclaration) pElement.getId()) {
             case ANNOTATION:
-                return "Annotation";
+                return ThemisXAnalysisUIResource.SOURCEDECL_ANNOT.getValue();
             case ANNOTATIONMEMBER:
-                return "AnnotationMember";
+                return ThemisXAnalysisUIResource.SOURCEDECL_ANNOTMEMBER.getValue();
             case CLASSINTERFACE:
                 return ((ThemisXAnalysisDeclClassInterface) pElement).getName();
             case COMPACT:
-                return "Compact";
+                return ThemisXAnalysisUIResource.SOURCEDECL_COMPACT.getValue();
             case CONSTRUCTOR:
-                return "Constructor";
+                return ThemisXAnalysisUIResource.SOURCEDECL_CONSTRUCT.getValue();
             case ENUM:
                 return ((ThemisXAnalysisDeclEnum) pElement).getName();
             case ENUMVALUE:
                 return ((ThemisXAnalysisDeclEnumValue) pElement).getNode().getNameAsString();
             case FIELD:
-                return "Field";
+                return ThemisXAnalysisUIResource.SOURCEDECL_FIELD.getValue();
             case INITIALIZER:
-                return "Initializer";
+                return ThemisXAnalysisUIResource.SOURCEDECL_INIT.getValue();
             case METHOD:
                 return ((ThemisXAnalysisDeclMethod) pElement).getName();
             case RECORD:
@@ -291,29 +292,29 @@ public class ThemisXAnalysisUISourceEntry {
         /* Switch on the id */
         switch ((ThemisXAnalysisNode) pElement.getId()) {
             case ARRAYLEVEL:
-                return "ArrayLevel";
+                return ThemisXAnalysisUIResource.SOURCENODE_ARRAYLVL.getValue();
             case CASE:
-                return "Case";
+                return ThemisXAnalysisUIResource.SOURCENODE_CASE.getValue();
             case CATCH:
-                return "Catch";
+                return ThemisXAnalysisUIResource.SOURCENODE_CATCH.getValue();
             case COMMENT:
-                return "Comment";
+                return ThemisXAnalysisUIResource.SOURCENODE_COMMENT.getValue();
             case COMPILATIONUNIT:
-                return "CompilationUnit";
+                return ThemisXAnalysisUIResource.SOURCENODE_COMPUNIT.getValue();
             case IMPORT:
-                return "Import";
+                return ThemisXAnalysisUIResource.SOURCENODE_IMPORT.getValue();
             case MODIFIER:
                 return ((ThemisXAnalysisNodeModifier) pElement).getKeyword().toString();
             case NAME:
-                return "Name";
+                return ThemisXAnalysisUIResource.SOURCENODE_NAME.getValue();
             case PACKAGE:
-                return "Package";
+                return ThemisXAnalysisUIResource.SOURCENODE_PACKAGE.getValue();
             case PARAMETER:
                 return ((ThemisXAnalysisNodeParameter) pElement).getNode().getNameAsString();
             case SIMPLENAME:
                 return ((ThemisXAnalysisNodeSimpleName) pElement).getName();
             case VALUEPAIR:
-                return "ValuePair";
+                return ThemisXAnalysisUIResource.SOURCENODE_VALUEPAIR.getValue();
             case VARIABLE:
                 return ((ThemisXAnalysisNodeVariable) pElement).getNode().getNameAsString();
             default:
@@ -331,73 +332,73 @@ public class ThemisXAnalysisUISourceEntry {
         /* Switch on the id */
         switch ((ThemisXAnalysisExpression) pElement.getId()) {
             case ARRAYACCESS:
-                return "ArrayAccess";
+                return ThemisXAnalysisUIResource.SOURCEEXPR_ARRAYACCESS.getValue();
             case MARKER:
-                return "MarkerAnnot";
+                return ThemisXAnalysisUIResource.SOURCEEXPR_MARKER.getValue();
             case NORMAL:
-                return "NormalAnnot";
+                return ThemisXAnalysisUIResource.SOURCEEXPR_NORMAL.getValue();
             case SINGLEMEMBER:
-                return "SingleAnnot";
+                return ThemisXAnalysisUIResource.SOURCEEXPR_SINGLE.getValue();
             case ARRAYCREATION:
-                return "ArrayCreate";
+                return ThemisXAnalysisUIResource.SOURCEEXPR_ARRAYCREATE.getValue();
             case CAST:
-                return "Cast";
+                return ThemisXAnalysisUIResource.SOURCEEXPR_CAST.getValue();
             case CHAR:
-                return "Char";
+                return ThemisXAnalysisUIResource.SOURCEEXPR_CHAR.getValue();
             case ARRAYINIT:
-                return "ArrayInit";
+                return ThemisXAnalysisUIResource.SOURCEEXPR_ARRAYINIT.getValue();
             case INTEGER:
-                return "Integer";
+                return ThemisXAnalysisUIResource.SOURCEEXPR_INTEGER.getValue();
             case ASSIGN:
-                return "Assign";
+                return ThemisXAnalysisUIResource.SOURCEEXPR_ASSIGN.getValue();
             case BINARY:
-                return "Binary";
+                return ThemisXAnalysisUIResource.SOURCEEXPR_BINARY.getValue();
             case BOOLEAN:
-                return "Boolean";
+                return ThemisXAnalysisUIResource.SOURCEEXPR_BOOLEAN.getValue();
             case CLASS:
-                return "Class";
+                return ThemisXAnalysisUIResource.SOURCEEXPR_CLASS.getValue();
             case CONDITIONAL:
-                return "Conditional";
+                return ThemisXAnalysisUIResource.SOURCEEXPR_CONDITIONAL.getValue();
             case NULL:
-                return "Null";
+                return ThemisXAnalysisUIResource.SOURCEEXPR_NULL.getValue();
             case DOUBLE:
-                return "Double";
+                return ThemisXAnalysisUIResource.SOURCEEXPR_DOUBLE.getValue();
             case ENCLOSED:
-                return "Enclosed";
+                return ThemisXAnalysisUIResource.SOURCEEXPR_ENCLOSED.getValue();
             case FIELDACCESS:
-                return "FieldAccess";
+                return ThemisXAnalysisUIResource.SOURCEEXPR_FIELDACCESS.getValue();
             case INSTANCEOF:
-                return "InstanceOf";
+                return ThemisXAnalysisUIResource.SOURCEEXPR_INSTANCEOF.getValue();
             case LAMBDA:
-                return "Lambda";
+                return ThemisXAnalysisUIResource.SOURCEEXPR_LAMBDA.getValue();
             case LONG:
-                return "Long";
+                return ThemisXAnalysisUIResource.SOURCEEXPR_LONG.getValue();
             case METHODCALL:
-                return "MethodCalL";
+                return ThemisXAnalysisUIResource.SOURCEEXPR_METHODCALL.getValue();
             case METHODREFERENCE:
-                return "MethodRef";
+                return ThemisXAnalysisUIResource.SOURCEEXPR_METHODREF.getValue();
             case NAME:
-                return "Name";
+                return ThemisXAnalysisUIResource.SOURCEEXPR_NAME.getValue();
             case OBJECTCREATE:
-                return "ObjectCreate";
+                return ThemisXAnalysisUIResource.SOURCEEXPR_OBJCREATE.getValue();
             case STRING:
-                return "String";
+                return ThemisXAnalysisUIResource.SOURCEEXPR_STRING.getValue();
             case SUPER:
-                return "Super";
+                return ThemisXAnalysisUIResource.SOURCEEXPR_SUPER.getValue();
             case SWITCH:
-                return "Switch";
+                return ThemisXAnalysisUIResource.SOURCEEXPR_SWITCH.getValue();
             case TEXTBLOCK:
-                return "TextBlock";
+                return ThemisXAnalysisUIResource.SOURCEEXPR_TEXT.getValue();
             case THIS:
-                return "This";
+                return ThemisXAnalysisUIResource.SOURCEEXPR_THIS.getValue();
             case TYPE:
-                return "Type";
+                return ThemisXAnalysisUIResource.SOURCEEXPR_TYPE.getValue();
             case TYPEPATTERN:
-                return "TypePattern";
+                return ThemisXAnalysisUIResource.SOURCEEXPR_TYPEPATTERN.getValue();
             case UNARY:
-                return "Unary";
+                return ThemisXAnalysisUIResource.SOURCEEXPR_UNARY.getValue();
             case VARIABLE:
-                return "Variable";
+                return ThemisXAnalysisUIResource.SOURCEEXPR_VARIABLE.getValue();
             default:
                 throw new IllegalArgumentException("Unknown ThemisXAnalysisExpression");
         }
@@ -413,45 +414,45 @@ public class ThemisXAnalysisUISourceEntry {
         /* Switch on the id */
         switch ((ThemisXAnalysisStatement) pElement.getId()) {
             case ASSERT:
-                return "Assert";
+                return ThemisXAnalysisUIResource.SOURCESTMT_ASSERT.getValue();
             case BLOCK:
-                return "Block";
+                return ThemisXAnalysisUIResource.SOURCESTMT_BLOCK.getValue();
             case BREAK:
-                return "Break";
+                return ThemisXAnalysisUIResource.SOURCESTMT_BREAK.getValue();
             case LOCALCLASS:
                 return getDeclarationDisplay(((ThemisXAnalysisStmtClass) pElement).getBody());
             case CONSTRUCTOR:
-                return "Constructor";
+                return ThemisXAnalysisUIResource.SOURCESTMT_CONSTRUCT.getValue();
             case CONTINUE:
-                return "Continue";
+                return ThemisXAnalysisUIResource.SOURCESTMT_CONTINUE.getValue();
             case DO:
-                return "Do";
+                return ThemisXAnalysisUIResource.SOURCESTMT_DO.getValue();
             case EMPTY:
-                return "Empty";
+                return ThemisXAnalysisUIResource.SOURCESTMT_EMPTY.getValue();
             case FOR:
-                return "For";
+                return ThemisXAnalysisUIResource.SOURCESTMT_FOR.getValue();
             case FOREACH:
-                return "ForEach";
+                return ThemisXAnalysisUIResource.SOURCESTMT_FOREACH.getValue();
             case IF:
-                return "If";
+                return ThemisXAnalysisUIResource.SOURCESTMT_IF.getValue();
             case LABELED:
-                return "Labelled";
+                return ThemisXAnalysisUIResource.SOURCESTMT_LABELED.getValue();
             case LOCALRECORD:
                 return getDeclarationDisplay(((ThemisXAnalysisStmtRecord) pElement).getBody());
             case RETURN:
-                return "Return";
+                return ThemisXAnalysisUIResource.SOURCESTMT_RETURN.getValue();
             case SWITCH:
-                return "Switch";
+                return ThemisXAnalysisUIResource.SOURCESTMT_SWITCH.getValue();
             case SYNCHRONIZED:
-                return "Synchronized";
+                return ThemisXAnalysisUIResource.SOURCESTMT_SYNC.getValue();
             case THROW:
-                return "Throw";
+                return ThemisXAnalysisUIResource.SOURCESTMT_THROW.getValue();
             case TRY:
-                return "Try";
+                return ThemisXAnalysisUIResource.SOURCESTMT_TRY.getValue();
             case WHILE:
-                return "While";
+                return ThemisXAnalysisUIResource.SOURCESTMT_WHILE.getValue();
             case YIELD:
-                return "Yield";
+                return ThemisXAnalysisUIResource.SOURCESTMT_YIELD.getValue();
             default:
                 throw new IllegalArgumentException("Unknown ThemisXAnalysisStatement");
         }
@@ -467,25 +468,25 @@ public class ThemisXAnalysisUISourceEntry {
         /* Switch on the id */
         switch ((ThemisXAnalysisType) pElement.getId()) {
             case ARRAY:
-                return "Array";
+                return ThemisXAnalysisUIResource.SOURCETYPE_ARRAY.getValue();
             case CLASSINTERFACE:
-                return "ClassRef";
+                return ThemisXAnalysisUIResource.SOURCETYPE_CLASS.getValue();
             case INTERSECTION:
-                return "Intersection";
+                return ThemisXAnalysisUIResource.SOURCETYPE_INTERSECT.getValue();
             case PARAMETER:
-                return "Parameter";
+                return ThemisXAnalysisUIResource.SOURCETYPE_PARAMETER.getValue();
             case PRIMITIVE:
-                return "Primitive";
+                return ThemisXAnalysisUIResource.SOURCETYPE_PRIMITIVE.getValue();
             case UNION:
-                return "Union";
+                return ThemisXAnalysisUIResource.SOURCETYPE_UNION.getValue();
             case UNKNOWN:
-                return "Unknown";
+                return ThemisXAnalysisUIResource.SOURCETYPE_UNKNOWN.getValue();
             case VAR:
-                return "Var";
+                return ThemisXAnalysisUIResource.SOURCETYPE_VAR.getValue();
             case VOID:
-                return "Void";
+                return ThemisXAnalysisUIResource.SOURCETYPE_VOID.getValue();
             case WILDCARD:
-                return "Wildcard";
+                return ThemisXAnalysisUIResource.SOURCETYPE_WILDCARD.getValue();
             default:
                 throw new IllegalArgumentException("Unknown ThemisXAnalysisType");
         }

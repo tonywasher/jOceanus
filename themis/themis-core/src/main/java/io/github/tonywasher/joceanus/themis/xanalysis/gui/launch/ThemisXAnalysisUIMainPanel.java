@@ -15,7 +15,7 @@
  * the License.
  */
 
-package io.github.tonywasher.joceanus.themis.xanalysis.gui;
+package io.github.tonywasher.joceanus.themis.xanalysis.gui.launch;
 
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.tethys.api.base.TethysUIComponent;
@@ -27,11 +27,14 @@ import io.github.tonywasher.joceanus.tethys.api.dialog.TethysUIDialogFactory;
 import io.github.tonywasher.joceanus.tethys.api.dialog.TethysUIDirectorySelector;
 import io.github.tonywasher.joceanus.tethys.api.factory.TethysUIFactory;
 import io.github.tonywasher.joceanus.tethys.api.factory.TethysUILogTextArea;
+import io.github.tonywasher.joceanus.tethys.api.factory.TethysUIMainPanel;
 import io.github.tonywasher.joceanus.tethys.api.pane.TethysUIBorderPaneManager;
 import io.github.tonywasher.joceanus.tethys.api.pane.TethysUIBoxPaneManager;
 import io.github.tonywasher.joceanus.tethys.api.pane.TethysUIPaneFactory;
 import io.github.tonywasher.joceanus.tethys.api.pane.TethysUITabPaneManager;
 import io.github.tonywasher.joceanus.tethys.api.pane.TethysUITabPaneManager.TethysUITabItem;
+import io.github.tonywasher.joceanus.themis.exc.ThemisIOException;
+import io.github.tonywasher.joceanus.themis.xanalysis.gui.base.ThemisXAnalysisUIResource;
 import io.github.tonywasher.joceanus.themis.xanalysis.gui.reference.ThemisXAnalysisUIRefPanel;
 import io.github.tonywasher.joceanus.themis.xanalysis.gui.source.ThemisXAnalysisUISourcePanel;
 import io.github.tonywasher.joceanus.themis.xanalysis.gui.stats.ThemisXAnalysisUIStatsPanel;
@@ -42,12 +45,19 @@ import io.github.tonywasher.joceanus.themis.xanalysis.solver.proj.ThemisXAnalysi
 import io.github.tonywasher.joceanus.themis.xanalysis.stats.ThemisXAnalysisStatsProject;
 
 import java.io.File;
+import java.util.prefs.BackingStoreException;
+import java.util.prefs.Preferences;
 
 /**
  * Main panel.
  */
 public class ThemisXAnalysisUIMainPanel
-        implements TethysUIComponent {
+        implements TethysUIMainPanel {
+    /**
+     * Default Project Preference.
+     */
+    private static final String PREF_PROJECT = "DefaultLocation";
+
     /**
      * The GUI Factory.
      */
@@ -121,9 +131,9 @@ public class ThemisXAnalysisUIMainPanel
         /* Create the tabs */
         final TethysUIPaneFactory myPanes = theGuiFactory.paneFactory();
         final TethysUITabPaneManager myTabs = myPanes.newTabPane();
-        theSourceTab = myTabs.addTabItem("Source", theSource);
-        theStatsTab = myTabs.addTabItem("Stats", theStats);
-        theRefsTab = myTabs.addTabItem("References", theRefs);
+        theSourceTab = myTabs.addTabItem(ThemisXAnalysisUIResource.TAB_SOURCE.getValue(), theSource);
+        theRefsTab = myTabs.addTabItem(ThemisXAnalysisUIResource.TAB_REFERENCES.getValue(), theRefs);
+        theStatsTab = myTabs.addTabItem(ThemisXAnalysisUIResource.TAB_STATS.getValue(), theStats);
 
         /* Hide tabs */
         theSourceTab.setVisible(false);
@@ -132,7 +142,7 @@ public class ThemisXAnalysisUIMainPanel
 
         /* Create the log tab */
         theLogSink = theGuiFactory.getLogSink();
-        theLogTab = myTabs.addTabItem("Log", theLogSink);
+        theLogTab = myTabs.addTabItem(ThemisXAnalysisUIResource.TAB_LOG.getValue(), theLogSink);
         theLogSink.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> theLogTab.setVisible(true));
         theLogSink.getEventRegistrar().addEventListener(TethysUIEvent.WINDOWCLOSED, e -> theLogTab.setVisible(false));
         theLogTab.setVisible(theLogSink.isActive());
@@ -141,7 +151,7 @@ public class ThemisXAnalysisUIMainPanel
         final TethysUIControlFactory myControls = theGuiFactory.controlFactory();
         final TethysUIButtonFactory<?> myButtons = theGuiFactory.buttonFactory();
         final TethysUIBoxPaneManager myProjectSelect = myPanes.newHBoxPane();
-        myProjectSelect.addNode(myControls.newLabel("Project:"));
+        myProjectSelect.addNode(myControls.newLabel(ThemisXAnalysisUIResource.PROMPT_PROJECT.getValue()));
         theProjectButton = myButtons.newButton();
         theProjectButton.setTextOnly();
         myProjectSelect.addNode(theProjectButton);
@@ -158,10 +168,16 @@ public class ThemisXAnalysisUIMainPanel
         thePanel = myPanes.newBorderPane();
         thePanel.setNorth(myProjectControl);
         thePanel.setCentre(myTabs);
+
+        /* Handle the default location */
+        final File myLocation = getDefaultLocation();
+        if (myLocation != null) {
+            handleNewProject(myLocation);
+        }
     }
 
     @Override
-    public TethysUIComponent getUnderlying() {
+    public TethysUIComponent getComponent() {
         return thePanel;
     }
 
@@ -175,7 +191,7 @@ public class ThemisXAnalysisUIMainPanel
         /* Determine the name of the directory to load */
         final TethysUIDialogFactory myDialogs = theGuiFactory.dialogFactory();
         final TethysUIDirectorySelector myDialog = myDialogs.newDirectorySelector();
-        myDialog.setTitle("Select Project");
+        myDialog.setTitle(ThemisXAnalysisUIResource.SELECT_PROJECT.getValue());
         myDialog.setInitialDirectory(myInit);
         final File myFile = myDialog.selectDirectory();
 
@@ -194,11 +210,19 @@ public class ThemisXAnalysisUIMainPanel
     private void handleNewProject(final File pProjectDir) {
         /* Hide tabs */
         theSourceTab.setVisible(false);
+        theRefsTab.setVisible(false);
         theStatsTab.setVisible(false);
+
+        /* Save details */
+        OceanusException myError = storeDefaultLocation(pProjectDir);
+        if (myError != null) {
+            writeErrorToLog(myError);
+            return;
+        }
 
         /* Parse the project */
         final ThemisXAnalysisParser myParser = new ThemisXAnalysisParser(pProjectDir);
-        OceanusException myError = myParser.getError();
+        myError = myParser.getError();
         if (myError == null) {
             final ThemisXAnalysisProject myProject = myParser.getProject();
             theSource.setCurrentProject(myProject);
@@ -229,10 +253,69 @@ public class ThemisXAnalysisUIMainPanel
             }
         }
 
-        /* Display the error */
+        /* Display any error */
         if (myError != null) {
-            theLogSink.writeLogMessage(myError.getMessage());
-            theLogTab.setVisible(true);
+            writeErrorToLog(myError);
         }
+    }
+
+    /**
+     * Write error to log.
+     *
+     * @param pError the error
+     */
+    private void writeErrorToLog(final OceanusException pError) {
+        theLogSink.writeLogMessage(pError.getMessage());
+        theLogTab.setVisible(true);
+    }
+
+    /**
+     * Obtain the default location.
+     *
+     * @return the default location
+     */
+    private File getDefaultLocation() {
+        final Preferences myPreferences = deriveHandle();
+        final String myLocation = myPreferences.get(PREF_PROJECT, null);
+        return myLocation == null ? null : new File(myLocation);
+    }
+
+    /**
+     * Store the default location.
+     *
+     * @param pLocation the default location
+     * @return exception or null
+     */
+    private OceanusException storeDefaultLocation(final File pLocation) {
+        /* Protect against exceptions */
+        try {
+            final Preferences myPreferences = deriveHandle();
+            myPreferences.put(PREF_PROJECT, pLocation.getAbsolutePath());
+            myPreferences.flush();
+            return null;
+        } catch (BackingStoreException e) {
+            return new ThemisIOException("Failed to save preference", e);
+        }
+    }
+
+    /**
+     * Derive handle for node.
+     *
+     * @return the class name
+     */
+    private Preferences deriveHandle() {
+        /* Obtain the class name */
+        final Class<?> myClass = this.getClass();
+        String myName = myClass.getCanonicalName();
+
+        /* Obtain the package name */
+        final String myPackage = myClass.getPackage().getName();
+
+        /* Strip off the package name */
+        myName = myName.substring(myPackage.length() + 1);
+
+        /* Derive the handle */
+        final Preferences myHandle = Preferences.userNodeForPackage(myClass);
+        return myHandle.node(myName);
     }
 }

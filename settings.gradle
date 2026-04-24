@@ -18,6 +18,7 @@ include(':tethys-test')
 include(':themis-core')
 include(':prometheus-sheet-hssf')
 include(':tethys-swing')
+include(':themis-swing')
 include(':oceanus')
 
 /* Define the sub-projects */
@@ -37,4 +38,5 @@ project(":tethys-test").projectDir = file('tethys/tethys-test')
 project(":themis-core").projectDir = file('themis/themis-core')
 project(":prometheus-sheet-hssf").projectDir = file('prometheus/sheet/prometheus-sheet-hssf')
 project(":tethys-swing").projectDir = file('tethys/tethys-swing')
+project(":themis-swing").projectDir = file('themis/themis-swing')
 project(":oceanus").projectDir = file('oceanus')

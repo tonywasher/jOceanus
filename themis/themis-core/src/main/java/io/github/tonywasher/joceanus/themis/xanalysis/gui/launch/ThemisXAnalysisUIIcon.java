@@ -15,31 +15,44 @@
  * the License.
  */
 
-package io.github.tonywasher.joceanus.themis.xanalysis.gui.base;
+package io.github.tonywasher.joceanus.themis.xanalysis.gui.launch;
 
-import io.github.tonywasher.joceanus.tethys.api.control.TethysUIHTMLManager.TethysUIStyleSheetId;
+import io.github.tonywasher.joceanus.tethys.api.base.TethysUIIconId;
 
 import java.io.InputStream;
 
-public enum ThemisXAnalysisUIStyleSheet
-        implements TethysUIStyleSheetId {
+/**
+ * Icons for program.
+ */
+public enum ThemisXAnalysisUIIcon
+        implements TethysUIIconId {
     /**
-     * Themis StyleSheet.
+     * The small program icon.
      */
-    CSS("themis.css");
+    SMALL("ThemisSmall.png"),
 
     /**
-     * The Source.
+     * The big program icon.
+     */
+    BIG("ThemisBig.png"),
+
+    /**
+     * The splash program icon.
+     */
+    SPLASH("ThemisSplash.png");
+
+    /**
+     * Source name.
      */
     private final String theSource;
 
     /**
      * Constructor.
      *
-     * @param pSource the source
+     * @param pSourceName the source name
      */
-    ThemisXAnalysisUIStyleSheet(final String pSource) {
-        theSource = pSource;
+    ThemisXAnalysisUIIcon(final String pSourceName) {
+        theSource = pSourceName;
     }
 
     @Override
@@ -49,6 +62,6 @@ public enum ThemisXAnalysisUIStyleSheet
 
     @Override
     public InputStream getInputStream() {
-        return ThemisXAnalysisUIStyleSheet.class.getResourceAsStream(theSource);
+        return ThemisXAnalysisUIIcon.class.getResourceAsStream(theSource);
     }
 }
