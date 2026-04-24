@@ -1,0 +1,359 @@
+/*
+ * Themis: Java Project Framework
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.themis.solver.proj;
+
+import io.github.tonywasher.joceanus.themis.parser.base.ThemisChar;
+import io.github.tonywasher.joceanus.themis.parser.proj.ThemisFile;
+import io.github.tonywasher.joceanus.themis.parser.proj.ThemisPackage;
+import io.github.tonywasher.joceanus.themis.solver.proj.ThemisSolverDef.ThemisSolverModuleDef;
+import io.github.tonywasher.joceanus.themis.solver.proj.ThemisSolverDef.ThemisSolverPackageDef;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Solver Package.
+ */
+public class ThemisSolverPackage
+        implements ThemisSolverPackageDef, Comparable<ThemisSolverPackage> {
+    /**
+     * The owning module.
+     */
+    private final ThemisSolverModuleDef theModule;
+
+    /**
+     * The underlying package.
+     */
+    private final ThemisPackage thePackage;
+
+    /**
+     * The shortName.
+     */
+    private final String theShortName;
+
+    /**
+     * The files.
+     */
+    private final List<ThemisSolverFile> theFiles;
+
+    /**
+     * The list of child packages.
+     */
+    private final List<ThemisSolverPackage> theChildren;
+
+    /**
+     * The referenceMap.
+     */
+    private final ThemisSolverReference theReferenceMap;
+
+    /**
+     * The referenced sibling packages in local package.
+     */
+    private final List<ThemisSolverPackage> theLocalReferences;
+
+    /**
+     * The implied referenced sibling packages in local package.
+     */
+    private final List<ThemisSolverPackage> theImpliedReferences;
+
+    /**
+     * Is this a standard package?
+     */
+    private final boolean isStandard;
+
+    /**
+     * The parent package.
+     */
+    private ThemisSolverPackage theParent;
+
+    /**
+     * Is the reference list circular?
+     */
+    private boolean isCircular;
+
+    /**
+     * Is the package incestuous viz. its parent?
+     */
+    private boolean isIncestuous;
+
+    /**
+     * Constructor.
+     *
+     * @param pModule  the owning module
+     * @param pPackage the parsed package
+     */
+    ThemisSolverPackage(final ThemisSolverModuleDef pModule,
+                        final ThemisPackage pPackage) {
+        /* Store the package and register with parser */
+        theModule = pModule;
+        thePackage = pPackage;
+        isStandard = pPackage.isStandard();
+
+        /* Determine the short name */
+        final String myName = getPackageName();
+        final int iIndex = myName.lastIndexOf(ThemisChar.PERIOD);
+        theShortName = iIndex == -1 ? myName : myName.substring(iIndex + 1);
+
+        /* Create the referenceMap and lists */
+        theReferenceMap = new ThemisSolverReference();
+        theLocalReferences = new ArrayList<>();
+        theImpliedReferences = new ArrayList<>();
+
+        /* Populate the fileList */
+        theFiles = new ArrayList<>();
+        theChildren = new ArrayList<>();
+        for (ThemisFile myFile : thePackage.getFiles()) {
+            final ThemisSolverFile mySolverFile = new ThemisSolverFile(this, myFile);
+            theFiles.add(mySolverFile);
+        }
+    }
+
+    @Override
+    public ThemisSolverModuleDef getOwningModule() {
+        return theModule;
+    }
+
+    @Override
+    public ThemisPackage getUnderlyingPackage() {
+        return thePackage;
+    }
+
+    @Override
+    public String getPackageName() {
+        return thePackage.getPackage();
+    }
+
+    /**
+     * Obtain the short package name.
+     *
+     * @return the shirt package name
+     */
+    public String getShortName() {
+        return theShortName;
+    }
+
+    /**
+     * Obtain the file list.
+     *
+     * @return the file list
+     */
+    public List<ThemisSolverFile> getFiles() {
+        return theFiles;
+    }
+
+    /**
+     * Obtain the list of child packages.
+     *
+     * @return the list of child packages
+     */
+    public List<ThemisSolverPackage> getChildren() {
+        return theChildren;
+    }
+
+    /**
+     * Obtain the referenceMap.
+     *
+     * @return the referenceMap
+     */
+    public ThemisSolverReference getReferenceMap() {
+        return theReferenceMap;
+    }
+
+    /**
+     * Obtain the local references.
+     *
+     * @return the local references
+     */
+    public List<ThemisSolverPackage> getLocalReferences() {
+        return theLocalReferences;
+    }
+
+    /**
+     * Obtain the implied references.
+     *
+     * @return the implied references
+     */
+    public List<ThemisSolverPackage> getImpliedReferences() {
+        return theImpliedReferences;
+    }
+
+    /**
+     * Add the child package.
+     *
+     * @param pChild the child package
+     */
+    public void addChild(final ThemisSolverPackage pChild) {
+        theChildren.add(pChild);
+        pChild.setParent(this);
+    }
+
+    /**
+     * Set parent package.
+     *
+     * @param pParent the parent package
+     */
+    private void setParent(final ThemisSolverPackage pParent) {
+        theParent = pParent;
+    }
+
+    /**
+     * Obtain the parent package.
+     *
+     * @return the parent
+     */
+    public ThemisSolverPackage getParent() {
+        return theParent;
+    }
+
+    @Override
+    public boolean isStandard() {
+        return isStandard;
+    }
+
+    /**
+     * Is the reference list circular?
+     *
+     * @return true/false
+     */
+    public boolean isCircular() {
+        return isCircular;
+    }
+
+    /**
+     * Mark the package as incestuous.
+     */
+    public void markIncestuous() {
+        isIncestuous = true;
+    }
+
+    /**
+     * Is the reference list incestuous?
+     *
+     * @return true/false
+     */
+    public boolean isIncestuous() {
+        return isIncestuous;
+    }
+
+    /**
+     * Is the package a placeHolder?
+     *
+     * @return true/false
+     */
+    public boolean isPlaceHolder() {
+        return thePackage.isPlaceHolder();
+    }
+
+    /**
+     * Set the referenced classes.
+     *
+     * @param pReferenced the referenced classes
+     */
+    public void setReferenced(final List<ThemisSolverPackage> pReferenced) {
+        /* Add all references except for a self-reference */
+        theLocalReferences.addAll(pReferenced.stream().filter(s -> !s.equals(this)).toList());
+    }
+
+    /**
+     * process local references.
+     */
+    public void processLocalReferences() {
+        /* Loop through the referenced local classes */
+        for (ThemisSolverPackage myPackage : theLocalReferences) {
+            /* Process the class */
+            processLocalReferences(myPackage);
+        }
+
+        /* Determine whether we are circular */
+        isCircular = theImpliedReferences.contains(this);
+    }
+
+    /**
+     * process local references.
+     *
+     * @param pPackage the class to process local references for
+     */
+    private void processLocalReferences(final ThemisSolverPackage pPackage) {
+        /* If this is not already in the local reference list */
+        if (!theImpliedReferences.contains(pPackage)) {
+            /* Add the class */
+            theImpliedReferences.add(pPackage);
+
+            /* Only process further if we have not found circularity */
+            if (!pPackage.equals(this)) {
+                /* Loop through the local references */
+                for (ThemisSolverPackage myPackage : pPackage.getLocalReferences()) {
+                    /* Process the local references */
+                    processLocalReferences(myPackage);
+                }
+            }
+        }
+    }
+
+
+    @Override
+    public boolean equals(final Object pThat) {
+        /* Handle the trivial cases */
+        if (this == pThat) {
+            return true;
+        }
+        if (pThat == null) {
+            return false;
+        }
+
+        /* Make sure that the object is a Package */
+        if (!(pThat instanceof ThemisSolverPackage myThat)) {
+            return false;
+        }
+
+        /* Check name of package */
+        return getPackageName().equals(myThat.getPackageName());
+    }
+
+    @Override
+    public int hashCode() {
+        return getPackageName().hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return thePackage.toString();
+    }
+
+    @Override
+    public int compareTo(final ThemisSolverPackage pThat) {
+        /* Handle simple dependency */
+        if (theImpliedReferences.contains(pThat)
+                && !pThat.getImpliedReferences().contains(this)) {
+            return -1;
+        }
+        if (pThat.getImpliedReferences().contains(this)
+                && !theImpliedReferences.contains(pThat)) {
+            return 1;
+        }
+
+        /* Sort on number of dependencies */
+        final int iDiff = pThat.theImpliedReferences.size()
+                - theImpliedReferences.size();
+        if (iDiff != 0) {
+            return iDiff;
+        }
+
+        /* If all else fails rely on alphabetical */
+        return getPackageName().compareTo(pThat.getPackageName());
+    }
+}

@@ -20,7 +20,7 @@
  */
 module io.github.tonywasher.joceanus.themis.core {
     /* java */
-    requires java.desktop;
+    requires java.xml;
     requires java.prefs;
 
     /* External libraries */
@@ -32,8 +32,5 @@ module io.github.tonywasher.joceanus.themis.core {
     requires io.github.tonywasher.joceanus.oceanus;
 
     /* Exports */
-    exports io.github.tonywasher.joceanus.themis.lethe.ui.launch;
-
-    /* Allow properties to be read */
-    opens io.github.tonywasher.joceanus.themis.lethe.ui to io.github.tonywasher.joceanus.metis;
+    exports io.github.tonywasher.joceanus.themis.gui.launch;
 }

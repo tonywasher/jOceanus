@@ -24,5 +24,6 @@
     <file url="file://$PROJECT_DIR$/themis/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/themis/themis-core/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/themis/themis-javafx/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/themis/themis-swing/src/main/java" charset="UTF-8" />
   </component>
 </project>

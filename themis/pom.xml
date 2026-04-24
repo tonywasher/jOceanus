@@ -13,6 +13,7 @@
   <modules>
     <module>themis-core</module>
     <module>themis-javafx</module>
+    <module>themis-swing</module>
   </modules>
   <properties>
     <scmComponent>themis</scmComponent>

@@ -74,32 +74,32 @@
         <appBinDir>bin/</appBinDir>
         <appLibDir>lib/</appLibDir>
         <BouncyCastleVersion>1.84</BouncyCastleVersion>
-        <JUnitVersion>6.0.1</JUnitVersion>
+        <JUnitVersion>6.0.3</JUnitVersion>
         <JSONVersion>20251224</JSONVersion>
-        <ApacheMavenVersion>3.9.12</ApacheMavenVersion>
-        <MySQLVersion>9.6.0</MySQLVersion>
-        <MariaDBVersion>3.5.7</MariaDBVersion>
+        <ApacheMavenVersion>3.9.15</ApacheMavenVersion>
+        <MySQLVersion>9.7.0</MySQLVersion>
+        <MariaDBVersion>3.5.8</MariaDBVersion>
         <PostGreSQLVersion>42.7.10</PostGreSQLVersion>
-        <MSSQLVersion>13.2.1.jre11</MSSQLVersion>
+        <MSSQLVersion>13.4.0.jre11</MSSQLVersion>
         <H2Version>2.4.240</H2Version>
         <ApachePOIVersion>5.5.1</ApachePOIVersion>
-        <JSoupVersion>1.22.1</JSoupVersion>
+        <JSoupVersion>1.22.2</JSoupVersion>
         <JFreeChartVersion>1.5.6</JFreeChartVersion>
         <JavaParserVersion>3.28.0</JavaParserVersion>
         <ZipSDKVersion>9.20</ZipSDKVersion>
         <JavaVersion>21</JavaVersion>
         <JavaFXVersion>21.0.10</JavaFXVersion>
         <JavaLanguageVersion>21</JavaLanguageVersion>
-        <CheckStyleVersion>13.3.0</CheckStyleVersion>
-        <PMDVersion>7.22.0</PMDVersion>
+        <CheckStyleVersion>13.4.0</CheckStyleVersion>
+        <PMDVersion>7.24.0</PMDVersion>
         <CleanPluginVersion>3.5.0</CleanPluginVersion>
-        <ResourcesPluginVersion>3.4.0</ResourcesPluginVersion>
+        <ResourcesPluginVersion>3.5.0</ResourcesPluginVersion>
         <InstallPluginVersion>3.1.4</InstallPluginVersion>
         <SitePluginVersion>3.21.0</SitePluginVersion>
         <DeployPluginVersion>3.1.4</DeployPluginVersion>
         <EnforcerPluginVersion>3.6.2</EnforcerPluginVersion>
         <CompilerPluginVersion>3.15.0</CompilerPluginVersion>
-        <ShadePluginVersion>3.6.1</ShadePluginVersion>
+        <ShadePluginVersion>3.6.2</ShadePluginVersion>
         <DependencyPluginVersion>3.10.0</DependencyPluginVersion>
         <SurefirePluginVersion>3.5.5</SurefirePluginVersion>
         <BuildNumberPluginVersion>3.3.0</BuildNumberPluginVersion>
@@ -114,7 +114,7 @@
         <CheckStylePluginVersion>3.6.0</CheckStylePluginVersion>
         <PMDPluginVersion>3.28.0</PMDPluginVersion>
         <JacocoPluginVersion>0.8.14</JacocoPluginVersion>
-        <JetBrainsAnnotationsVersion>26.0.2-1</JetBrainsAnnotationsVersion>
+        <JetBrainsAnnotationsVersion>26.1.0</JetBrainsAnnotationsVersion>
         <VersionsPluginVersion>2.21.0</VersionsPluginVersion>
         <ExecPluginVersion>3.6.3</ExecPluginVersion>
         <sonar.organization>tonywasher</sonar.organization>

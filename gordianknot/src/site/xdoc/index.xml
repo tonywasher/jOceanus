@@ -7,7 +7,7 @@
         <section name="Overview">
             <p>
                 <strong>GordianKnot</strong>
-                provides an layer over the BouncyCastle encryption library,
+                provides a layer over the BouncyCastle encryption library,
                 and adds significant additional functionality, via a <strong>GordianFactory</strong> object.
                 Two flavours of factory are provided, one that accesses BouncyCastle via the JCA provider interface, and
                 one that accesses the BouncyCastle lightweight API. This second flavour supports additional algorithms

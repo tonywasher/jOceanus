@@ -17,10 +17,10 @@
 package io.github.tonywasher.joceanus.themis.analysis;
 
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
-import io.github.tonywasher.joceanus.themis.xanalysis.parser.ThemisXAnalysisParser;
-import io.github.tonywasher.joceanus.themis.xanalysis.solver.ThemisXAnalysisSolver;
-import io.github.tonywasher.joceanus.themis.xanalysis.solver.proj.ThemisXAnalysisSolverProject;
-import io.github.tonywasher.joceanus.themis.xanalysis.stats.ThemisXAnalysisStatsProject;
+import io.github.tonywasher.joceanus.themis.parser.ThemisParser;
+import io.github.tonywasher.joceanus.themis.solver.ThemisSolver;
+import io.github.tonywasher.joceanus.themis.solver.proj.ThemisSolverProject;
+import io.github.tonywasher.joceanus.themis.stats.ThemisStatsProject;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.DynamicNode;
@@ -43,7 +43,7 @@ class TestAnalysis {
     /**
      * The project parser.
      */
-    private ThemisXAnalysisParser theProjectParser;
+    private ThemisParser theProjectParser;
 
     /**
      * Create the analysis test suite.
@@ -71,7 +71,7 @@ class TestAnalysis {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        theProjectParser = new ThemisXAnalysisParser(myLocation);
+        theProjectParser = new ThemisParser(myLocation);
         Assertions.assertNull(theProjectParser.getError(), "Exception analysing project");
     }
 
@@ -84,8 +84,8 @@ class TestAnalysis {
         Assumptions.assumeTrue(theProjectParser.getError() == null);
 
         /* Analyse dependencies of project */
-        final ThemisXAnalysisSolverProject myProject = new ThemisXAnalysisSolverProject(theProjectParser);
-        final ThemisXAnalysisSolver mySolver = new ThemisXAnalysisSolver(myProject);
+        final ThemisSolverProject myProject = new ThemisSolverProject(theProjectParser);
+        final ThemisSolver mySolver = new ThemisSolver(myProject);
         Assertions.assertNotNull(mySolver, "Failed to analyse project");
         //Assertions.assertNull(myProject.getError(), "Exception analysing project");
     }
@@ -99,7 +99,7 @@ class TestAnalysis {
         Assumptions.assumeTrue(theProjectParser.getError() == null);
 
         /* Analyse dependencies of project */
-        final ThemisXAnalysisStatsProject myProject = new ThemisXAnalysisStatsProject(theProjectParser);
+        final ThemisStatsProject myProject = new ThemisStatsProject(theProjectParser);
         Assertions.assertNotNull(myProject, "Failed to analyse project");
         Assertions.assertNull(myProject.getError(), "Exception analysing project");
     }
