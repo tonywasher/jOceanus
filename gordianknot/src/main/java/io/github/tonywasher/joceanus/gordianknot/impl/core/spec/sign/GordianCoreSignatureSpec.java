@@ -21,6 +21,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairType;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureType;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.base.GordianSpecConstants;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianCoreDigestSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairType;
 
@@ -33,11 +34,6 @@ import java.util.Objects;
  */
 public class GordianCoreSignatureSpec
         implements GordianSignatureSpec {
-    /**
-     * The Separator.
-     */
-    private static final String SEP = "-";
-
     /**
      * KeyPairType.
      */
@@ -264,18 +260,18 @@ public class GordianCoreSignatureSpec
             /* Load the name */
             theName = theKeyPairType.toString();
             if (theSignatureType.getType() != GordianSignatureType.NATIVE) {
-                theName += SEP + theSignatureType;
+                theName += GordianSpecConstants.SEP + theSignatureType;
             }
             if (theSignatureSpec != null) {
                 if (theKeyPairType.getType() == GordianKeyPairType.COMPOSITE) {
                     final Iterator<GordianSignatureSpec> myIterator = signatureSpecIterator();
                     final StringBuilder myBuilder = new StringBuilder(theName);
                     while (myIterator.hasNext()) {
-                        myBuilder.append(SEP).append(myIterator.next().toString());
+                        myBuilder.append(GordianSpecConstants.SEP).append(myIterator.next().toString());
                     }
                     theName = myBuilder.toString();
                 } else {
-                    theName += SEP + theSignatureSpec.toString();
+                    theName += GordianSpecConstants.SEP + theSignatureSpec.toString();
                 }
             }
         }

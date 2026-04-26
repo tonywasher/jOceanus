@@ -21,6 +21,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianXMSSSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.base.GordianSpecConstants;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianCoreDigestSpecBuilder;
 
 import java.util.ArrayList;
@@ -34,11 +35,6 @@ import java.util.Objects;
  */
 public class GordianCoreXMSSSpec
         implements GordianXMSSSpec {
-    /**
-     * The Separator.
-     */
-    private static final String SEP = "-";
-
     /**
      * The key type.
      */
@@ -214,13 +210,13 @@ public class GordianCoreXMSSSpec
             if (isValid) {
                 /* Load the name */
                 theName = theKeyType.toString()
-                        + SEP + theDigestType
-                        + SEP + theHeight
-                        + (isMT() ? SEP + theLayers : "");
+                        + GordianSpecConstants.SEP + theDigestType
+                        + GordianSpecConstants.SEP + theHeight
+                        + (isMT() ? GordianSpecConstants.SEP + theLayers : "");
             } else {
                 /* Report invalid spec */
                 theName = "InvalidXMSSKeySpec: " + theKeyType + ":" + theDigestType
-                        + ":" + theHeight + (isMT() ? SEP + theLayers : "");
+                        + ":" + theHeight + (isMT() ? GordianSpecConstants.SEP + theLayers : "");
             }
         }
 

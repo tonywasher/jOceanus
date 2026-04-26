@@ -19,6 +19,7 @@ package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.mac;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianSipHashType;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.base.GordianSpecConstants;
 
 import java.util.EnumMap;
 import java.util.Map;
@@ -132,8 +133,8 @@ public final class GordianCoreSipHashType {
             if (GordianLength.LEN_128 == theOutLen) {
                 theName += theOutLen;
             }
-            theName += GordianCoreMacSpec.SEP + getCompression()
-                    + GordianCoreMacSpec.SEP + getFinalisation();
+            theName += GordianSpecConstants.SEP + getCompression()
+                    + GordianSpecConstants.SEP + getFinalisation();
         }
 
         /* return the name */

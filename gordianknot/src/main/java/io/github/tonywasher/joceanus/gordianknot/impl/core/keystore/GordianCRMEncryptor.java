@@ -41,7 +41,6 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.encrypt.GordianCoreEn
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianIOException;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.keyset.GordianKeySetSpecASN1;
-import io.github.tonywasher.joceanus.gordianknot.util.GordianUtilities;
 import org.bouncycastle.asn1.BEROctetString;
 import org.bouncycastle.asn1.cms.EncryptedContentInfo;
 import org.bouncycastle.asn1.cms.IssuerAndSerialNumber;
@@ -138,7 +137,7 @@ public class GordianCRMEncryptor {
         final GordianCoreAgreementFactory myAgreeFactory = (GordianCoreAgreementFactory) myFactory.getAgreementFactory();
         final GordianCertificate myCert = myAgreeFactory.newMiniCertificate(SERVER, pCertificate.getKeyPair(),
                 new GordianKeyPairUsage(GordianKeyPairUse.AGREEMENT));
-        final GordianKeySetSpecBuilder myBuilder = GordianUtilities.newKeySetSpecBuilder();
+        final GordianKeySetSpecBuilder myBuilder = theFactory.getKeySetFactory().newKeySetSpecBuilder();
         final GordianAgreementParams myParams = myAgreeFactory.newAgreementParams(pAgreeSpec, myBuilder.keySet())
                 .setServerCertificate(myCert);
         final GordianAgreement myAgree = myAgreeFactory.createAgreement(myParams);

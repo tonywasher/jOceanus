@@ -111,6 +111,11 @@ public class GordianBlake2sDigest
     }
 
     @Override
+    public boolean isBlake2b() {
+        return false;
+    }
+
+    @Override
     public String getAlgorithmName() {
         return "Blake2s-" + getDigestSize() * Byte.SIZE;
     }

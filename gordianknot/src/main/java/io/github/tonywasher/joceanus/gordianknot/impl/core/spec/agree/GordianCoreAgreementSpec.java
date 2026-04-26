@@ -22,6 +22,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreement
 import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementType;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairType;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.base.GordianSpecConstants;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairSpec;
 
 import java.util.Objects;
@@ -31,11 +32,6 @@ import java.util.Objects;
  */
 public class GordianCoreAgreementSpec
         implements GordianAgreementSpec {
-    /**
-     * The Separator.
-     */
-    private static final String SEP = "-";
-
     /**
      * KeyPairSpec.
      */
@@ -206,16 +202,16 @@ public class GordianCoreAgreementSpec
             if (isValid) {
                 /* Load the name */
                 theName = theKeyPairSpec.toString()
-                        + SEP + theAgreementType;
+                        + GordianSpecConstants.SEP + theAgreementType;
 
                 /* Add KDF type if present */
                 if (GordianAgreementKDF.NONE != theKDFType.getKDF()) {
-                    theName += SEP + theKDFType;
+                    theName += GordianSpecConstants.SEP + theKDFType;
                 }
 
                 /* Add Confirm if present */
                 if (withConfirm) {
-                    theName += SEP + "CONFIRM";
+                    theName += GordianSpecConstants.SEP + "CONFIRM";
                 }
             } else {
                 /* Report invalid spec */

@@ -18,7 +18,6 @@ package io.github.tonywasher.joceanus.gordianknot.impl.core.agree;
 
 import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreement;
 import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianAgreementParams;
-import io.github.tonywasher.joceanus.gordianknot.api.agree.GordianNewAgreeParamsBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.agree.spec.GordianAgreementType;
@@ -90,11 +89,6 @@ public abstract class GordianCoreAgreementFactory
     @Override
     public GordianAgreementSpecBuilder newAgreementSpecBuilder() {
         return GordianCoreAgreementSpecBuilder.newInstance();
-    }
-
-    @Override
-    public GordianNewAgreeParamsBuilder newAgreeParamsBuilder() {
-        return GordianCoreAgreeParamsBuilder.newInstance(this);
     }
 
     @Override

@@ -19,6 +19,7 @@ package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair;
 
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairType;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.base.GordianSpecConstants;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -30,11 +31,6 @@ import java.util.Objects;
  */
 public class GordianCoreKeyPairSpec
         implements GordianKeyPairSpec {
-    /**
-     * The Separator.
-     */
-    private static final String SEP = "-";
-
     /**
      * The keyPairType.
      */
@@ -401,12 +397,12 @@ public class GordianCoreKeyPairSpec
                     final Iterator<GordianKeyPairSpec> myIterator = keySpecIterator();
                     final StringBuilder myBuilder = new StringBuilder(theName);
                     while (myIterator.hasNext()) {
-                        myBuilder.append(SEP).append(myIterator.next().toString());
+                        myBuilder.append(GordianSpecConstants.SEP).append(myIterator.next().toString());
                     }
                     theName = myBuilder.toString();
                     break;
                 default:
-                    theName += SEP + theSubSpec;
+                    theName += GordianSpecConstants.SEP + theSubSpec;
                     break;
             }
         }

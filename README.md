@@ -27,6 +27,7 @@ The underlying projects are as follows.
 * Gui classes (**Tethys**)
 
   * a set of classes providing an abstraction layer on top of the Gui allowing both Swing and JavaFX implementations.
+  * a set of classes providing generic thread support on top of both javaFX and Swing
 
 * Encryption classes (**GordianKnot**)
 
@@ -37,9 +38,8 @@ The underlying projects are as follows.
   * Access classes for MySQL/PostgreSQL/SQLServer/MariaDB databases as well as OpenOffice/Excel spreadsheets.
   * Secure data model for database.
   * Generic versioned data model enabling easy undo/reset.
-  * Integrated Data Viewer
+  * Integrated Data Viewer and Help Manager
   * Preferences Support.
-  * a set of classes providing generic thread support on top of both javaFX and Swing
 
 * Analysis classes (**Themis**)
 
@@ -47,7 +47,7 @@ The underlying projects are as follows.
 
 ## Building the project
 
-The project is built via **Maven** and requires **Java21**.
+The project is built via **Maven** and requires **Java21** and **Maven3.9.14**.
 
 There is additional support for a **gradle** build, but this will not build the webSite.
 

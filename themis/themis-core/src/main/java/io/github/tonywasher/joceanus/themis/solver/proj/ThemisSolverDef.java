@@ -23,6 +23,8 @@ import io.github.tonywasher.joceanus.themis.parser.proj.ThemisModule;
 import io.github.tonywasher.joceanus.themis.parser.proj.ThemisPackage;
 import io.github.tonywasher.joceanus.themis.parser.proj.ThemisProject;
 
+import java.util.List;
+
 /**
  * Solver Interface.
  */
@@ -82,6 +84,13 @@ public interface ThemisSolverDef {
          * @return the packageName
          */
         String getPackageName();
+
+        /**
+         * Obtain the local references.
+         *
+         * @return the local references
+         */
+        List<ThemisSolverPackageDef> getLocalReferences();
 
         /**
          * Is this a standard package?

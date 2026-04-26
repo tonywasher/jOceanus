@@ -19,6 +19,7 @@ package io.github.tonywasher.joceanus.themis.solver.mapper;
 
 import io.github.tonywasher.joceanus.themis.parser.base.ThemisChar;
 import io.github.tonywasher.joceanus.themis.solver.proj.ThemisSolverClass;
+import io.github.tonywasher.joceanus.themis.solver.proj.ThemisSolverDef.ThemisSolverPackageDef;
 import io.github.tonywasher.joceanus.themis.solver.proj.ThemisSolverFile;
 import io.github.tonywasher.joceanus.themis.solver.proj.ThemisSolverModule;
 import io.github.tonywasher.joceanus.themis.solver.proj.ThemisSolverPackage;
@@ -173,7 +174,7 @@ public class ThemisMapperReference {
      */
     private void determineLocalReferences(final ThemisSolverPackage pPackage) {
         /* Create list */
-        final List<ThemisSolverPackage> myReferences = new ArrayList<>();
+        final List<ThemisSolverPackageDef> myReferences = new ArrayList<>();
         final ThemisSolverReference myReferenceMap = pPackage.getReferenceMap();
 
         /* Add all Sibling references to the list */

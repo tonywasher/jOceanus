@@ -63,12 +63,12 @@ public class ThemisSolverPackage
     /**
      * The referenced sibling packages in local package.
      */
-    private final List<ThemisSolverPackage> theLocalReferences;
+    private final List<ThemisSolverPackageDef> theLocalReferences;
 
     /**
      * The implied referenced sibling packages in local package.
      */
-    private final List<ThemisSolverPackage> theImpliedReferences;
+    private final List<ThemisSolverPackageDef> theImpliedReferences;
 
     /**
      * Is this a standard package?
@@ -173,12 +173,8 @@ public class ThemisSolverPackage
         return theReferenceMap;
     }
 
-    /**
-     * Obtain the local references.
-     *
-     * @return the local references
-     */
-    public List<ThemisSolverPackage> getLocalReferences() {
+    @Override
+    public List<ThemisSolverPackageDef> getLocalReferences() {
         return theLocalReferences;
     }
 
@@ -187,7 +183,7 @@ public class ThemisSolverPackage
      *
      * @return the implied references
      */
-    public List<ThemisSolverPackage> getImpliedReferences() {
+    public List<ThemisSolverPackageDef> getImpliedReferences() {
         return theImpliedReferences;
     }
 
@@ -263,7 +259,7 @@ public class ThemisSolverPackage
      *
      * @param pReferenced the referenced classes
      */
-    public void setReferenced(final List<ThemisSolverPackage> pReferenced) {
+    public void setReferenced(final List<ThemisSolverPackageDef> pReferenced) {
         /* Add all references except for a self-reference */
         theLocalReferences.addAll(pReferenced.stream().filter(s -> !s.equals(this)).toList());
     }
@@ -273,7 +269,7 @@ public class ThemisSolverPackage
      */
     public void processLocalReferences() {
         /* Loop through the referenced local classes */
-        for (ThemisSolverPackage myPackage : theLocalReferences) {
+        for (ThemisSolverPackageDef myPackage : theLocalReferences) {
             /* Process the class */
             processLocalReferences(myPackage);
         }
@@ -287,7 +283,7 @@ public class ThemisSolverPackage
      *
      * @param pPackage the class to process local references for
      */
-    private void processLocalReferences(final ThemisSolverPackage pPackage) {
+    private void processLocalReferences(final ThemisSolverPackageDef pPackage) {
         /* If this is not already in the local reference list */
         if (!theImpliedReferences.contains(pPackage)) {
             /* Add the class */
@@ -296,7 +292,7 @@ public class ThemisSolverPackage
             /* Only process further if we have not found circularity */
             if (!pPackage.equals(this)) {
                 /* Loop through the local references */
-                for (ThemisSolverPackage myPackage : pPackage.getLocalReferences()) {
+                for (ThemisSolverPackageDef myPackage : pPackage.getLocalReferences()) {
                     /* Process the local references */
                     processLocalReferences(myPackage);
                 }

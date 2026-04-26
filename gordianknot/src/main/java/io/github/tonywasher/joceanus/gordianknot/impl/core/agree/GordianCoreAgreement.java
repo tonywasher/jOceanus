@@ -25,8 +25,6 @@ import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamCipher;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymCipher;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamCipherSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymCipherSpec;
-import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactory;
-import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactoryType;
 import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySet;
 import io.github.tonywasher.joceanus.gordianknot.api.keyset.spec.GordianKeySetSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.sign.spec.GordianSignatureSpec;
@@ -134,13 +132,6 @@ public class GordianCoreAgreement
     public Object getResult() throws GordianException {
         checkStatus(GordianAgreementStatus.RESULT_AVAILABLE);
         return theState.getResult();
-    }
-
-    @Override
-    public GordianFactory getFactoryResult() {
-        return GordianAgreementStatus.RESULT_AVAILABLE.equals(theState.getStatus())
-                && theState.getResultType() instanceof GordianFactoryType
-                ? (GordianFactory) theState.getResult() : null;
     }
 
     @Override

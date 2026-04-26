@@ -22,6 +22,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestTy
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianEncryptorSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianSM2EncryptionSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianKeyPairType;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.base.GordianSpecConstants;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianCoreDigestSpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair.GordianCoreKeyPairType;
 
@@ -38,11 +39,6 @@ public class GordianCoreEncryptorSpec
      * The EC-ElGamal name.
      */
     private static final String ECELGAMAL = "ElGamal";
-
-    /**
-     * The Separator.
-     */
-    static final String SEP = "-";
 
     /**
      * KeyPairType.
@@ -226,20 +222,20 @@ public class GordianCoreEncryptorSpec
                 switch (theKeyPairType.getType()) {
                     case RSA:
                     case ELGAMAL:
-                        theName += SEP + theEncryptorType;
+                        theName += GordianSpecConstants.SEP + theEncryptorType;
                         break;
                     case EC:
                     case GOST:
-                        theName += SEP + ECELGAMAL;
+                        theName += GordianSpecConstants.SEP + ECELGAMAL;
                         break;
                     case SM2:
-                        theName += SEP + (theEncryptorType == null ? ECELGAMAL : theEncryptorType);
+                        theName += GordianSpecConstants.SEP + (theEncryptorType == null ? ECELGAMAL : theEncryptorType);
                         break;
                     case COMPOSITE:
                         final Iterator<GordianEncryptorSpec> myIterator = encryptorSpecIterator();
                         final StringBuilder myBuilder = new StringBuilder(theName);
                         while (myIterator.hasNext()) {
-                            myBuilder.append(SEP).append(myIterator.next().toString());
+                            myBuilder.append(GordianSpecConstants.SEP).append(myIterator.next().toString());
                         }
                         theName = myBuilder.toString();
                         break;

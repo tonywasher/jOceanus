@@ -18,6 +18,7 @@
 package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair;
 
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianNTRUPrimeSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.base.GordianSpecConstants;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.bc.BCObjectIdentifiers;
 import org.bouncycastle.pqc.crypto.ntruprime.NTRULPRimeParameters;
@@ -36,11 +37,6 @@ import java.util.Objects;
  */
 public class GordianCoreNTRUPrimeSpec
         implements GordianNTRUPrimeSpec {
-    /**
-     * The Separator.
-     */
-    private static final String SEP = "-";
-
     /**
      * The type.
      */
@@ -121,10 +117,10 @@ public class GordianCoreNTRUPrimeSpec
             /* If the keySpec is valid */
             if (isValid) {
                 /* Load the name */
-                theName = theType.toString() + "Prime" + SEP + theParams.toString();
+                theName = theType.toString() + "Prime" + GordianSpecConstants.SEP + theParams.toString();
             } else {
                 /* Report invalid spec */
-                theName = "InvalidLMSKeySpec: " + theType + SEP + theParams;
+                theName = "InvalidLMSKeySpec: " + theType + GordianSpecConstants.SEP + theParams;
             }
         }
 

@@ -24,6 +24,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestTy
 import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianMacSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianMacType;
 import io.github.tonywasher.joceanus.gordianknot.api.mac.spec.GordianSipHashType;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.base.GordianSpecConstants;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher.GordianCoreSymKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher.GordianCoreSymKeyType;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianCoreDigestSpec;
@@ -38,11 +39,6 @@ import java.util.Objects;
  */
 public class GordianCoreMacSpec
         implements GordianMacSpec {
-    /**
-     * The Separator.
-     */
-    static final String SEP = "-";
-
     /**
      * The Mac Type.
      */
@@ -499,46 +495,46 @@ public class GordianCoreMacSpec
                     theName = theSubSpec.toString();
                     break;
                 case POLY1305:
-                    theName += theSubSpec == null ? "" : SEP + getSymKeyType();
+                    theName += theSubSpec == null ? "" : GordianSpecConstants.SEP + getSymKeyType();
                     break;
                 case GMAC:
                 case CMAC:
                 case CFBMAC:
                 case CBCMAC:
-                    theName += SEP + theSubSpec.toString();
+                    theName += GordianSpecConstants.SEP + theSubSpec.toString();
                     break;
                 case KALYNA:
-                    theName += getSymKeyBlockLength() + SEP + theKeyLength;
+                    theName += getSymKeyBlockLength() + GordianSpecConstants.SEP + theKeyLength;
                     break;
                 case KUPYNA:
-                    theName += SEP + getDigestLength() + SEP + theKeyLength;
+                    theName += GordianSpecConstants.SEP + getDigestLength() + GordianSpecConstants.SEP + theKeyLength;
                     break;
                 case KMAC:
-                    theName += getDigestState() + SEP + theKeyLength;
+                    theName += getDigestState() + GordianSpecConstants.SEP + theKeyLength;
                     break;
                 case SKEIN:
                     final boolean isSkeinXof = Objects.requireNonNull(getDigestSpec()).isXofMode();
                     theName = GordianDigestType.SKEIN
                             + (isSkeinXof ? "X" : "")
                             + "Mac"
-                            + SEP + getDigestState()
-                            + (isSkeinXof ? "" : SEP + getDigestLength())
-                            + SEP + theKeyLength;
+                            + GordianSpecConstants.SEP + getDigestState()
+                            + (isSkeinXof ? "" : GordianSpecConstants.SEP + getDigestLength())
+                            + GordianSpecConstants.SEP + theKeyLength;
                     break;
                 case HMAC:
                 case ZUC:
-                    theName += theSubSpec.toString() + SEP + theKeyLength;
+                    theName += theSubSpec.toString() + GordianSpecConstants.SEP + theKeyLength;
                     break;
                 case BLAKE2:
                     final boolean isBlakeXof = Objects.requireNonNull(getDigestSpec()).isXofMode();
                     theName = GordianDigestType.BLAKE2
                             + Objects.requireNonNull(getDigestState())
                             .getBlake2Algorithm(isBlakeXof)
-                            + "Mac" + (isBlakeXof ? "" : SEP + getDigestLength())
-                            + SEP + theKeyLength;
+                            + "Mac" + (isBlakeXof ? "" : GordianSpecConstants.SEP + getDigestLength())
+                            + GordianSpecConstants.SEP + theKeyLength;
                     break;
                 case BLAKE3:
-                    theName += SEP + getDigestLength();
+                    theName += GordianSpecConstants.SEP + getDigestLength();
                     break;
                 case VMPC:
                     theName += theKeyLength;

@@ -19,6 +19,7 @@ package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.random;
 
 import io.github.tonywasher.joceanus.gordianknot.api.random.spec.GordianRandomSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.random.spec.GordianRandomType;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.base.GordianSpecConstants;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher.GordianCoreSymKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianCoreDigestSpec;
 
@@ -29,11 +30,6 @@ import java.util.Objects;
  */
 public class GordianCoreRandomSpec
         implements GordianRandomSpec {
-    /**
-     * The Separator.
-     */
-    static final String SEP = "-";
-
     /**
      * The RandomType.
      */
@@ -168,9 +164,9 @@ public class GordianCoreRandomSpec
             if (isValid) {
                 /* Load the name */
                 theName = theType.toString();
-                theName += SEP + theSubSpec;
+                theName += GordianSpecConstants.SEP + theSubSpec;
                 if (isPredictionResistant) {
-                    theName += SEP + "resistant";
+                    theName += GordianSpecConstants.SEP + "resistant";
                 }
             } else {
                 /* Report invalid spec */

@@ -22,6 +22,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSp
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSubSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSubSpec.GordianDigestState;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestType;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.base.GordianSpecConstants;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianCoreDigestSubSpec.GordianCoreDigestState;
 
 import java.util.Objects;
@@ -31,11 +32,6 @@ import java.util.Objects;
  */
 public class GordianCoreDigestSpec
         implements GordianDigestSpec {
-    /**
-     * The Separator.
-     */
-    private static final String SEP = "-";
-
     /**
      * The digestType.
      */
@@ -200,38 +196,38 @@ public class GordianCoreDigestSpec
                 switch (theType.getType()) {
                     case SHA2:
                         if (isSha2Hybrid()) {
-                            theName += SEP + theSubSpec;
+                            theName += GordianSpecConstants.SEP + theSubSpec;
                         }
-                        theName += SEP + theLength;
+                        theName += GordianSpecConstants.SEP + theLength;
                         break;
                     case SHAKE:
                         theName += theSubSpec;
                         break;
                     case SKEIN:
                         if (isXofMode) {
-                            theName += "X" + SEP + theSubSpec;
+                            theName += "X" + GordianSpecConstants.SEP + theSubSpec;
                         } else {
-                            theName += SEP + theSubSpec + SEP + theLength;
+                            theName += GordianSpecConstants.SEP + theSubSpec + GordianSpecConstants.SEP + theLength;
                         }
                         break;
                     case BLAKE2:
                         theName += getCoreDigestState().getBlake2Algorithm(isXofMode);
                         if (!isXofMode) {
-                            theName += SEP + theLength;
+                            theName += GordianSpecConstants.SEP + theLength;
                         }
                         break;
                     case KANGAROO:
                         theName = getCoreDigestState().getKangarooAlgorithm();
                         break;
                     case HARAKA:
-                        theName += SEP + theSubSpec;
+                        theName += GordianSpecConstants.SEP + theSubSpec;
                         break;
                     case ASCON:
                         theName += isXofMode ? "X" : "";
                         break;
                     default:
                         if (theType.getSupportedLengths().length > 1) {
-                            theName += SEP + theLength;
+                            theName += GordianSpecConstants.SEP + theLength;
                         }
                         break;
                 }

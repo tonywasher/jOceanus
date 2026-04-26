@@ -39,7 +39,7 @@ public class ThemisStatsMethod
     /**
      * The classes.
      */
-    private final List<ThemisStatsClass> theClasses;
+    private final List<ThemisStatsElement> theClasses;
 
     /**
      * Constructor.
@@ -81,13 +81,13 @@ public class ThemisStatsMethod
      *
      * @return the classes
      */
-    public List<ThemisStatsClass> getClasses() {
+    public List<ThemisStatsElement> getClasses() {
         return theClasses;
     }
 
     @Override
     public void addClass(final ThemisStatsElement pElement) {
-        theClasses.add((ThemisStatsClass) pElement);
+        theClasses.add(pElement);
     }
 
     @Override
