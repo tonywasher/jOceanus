@@ -32,9 +32,9 @@ public enum ThemisUIHTMLTag {
     BODY("body"),
 
     /**
-     * Code.
+     * PreFormatted.
      */
-    CODE("code"),
+    PRE("pre"),
 
     /**
      * A.
@@ -99,7 +99,12 @@ public enum ThemisUIHTMLTag {
     /**
      * Span.
      */
-    SPAN("span");
+    SPAN("span"),
+
+    /**
+     * Break.
+     */
+    BR("br");
 
     /**
      * Tag text.

@@ -115,6 +115,7 @@ public class ThemisUIStatsPanel
             final ThemisUIStatsEntry myEntry = new ThemisUIStatsEntry(pProject);
             theRoot = theTree.addRootItem(myEntry.getUniqueName(), myEntry);
             theRoot.setVisible(true);
+            handleNewTreeItem(myEntry);
 
             /* Loop through the modules */
             for (ThemisStatsModule myModule : pProject.getModules()) {

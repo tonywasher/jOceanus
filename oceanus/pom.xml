@@ -26,6 +26,6 @@
   <properties>
     <scmComponent>oceanus</scmComponent>
     <packageName>${packageKey}.${scmComponent}</packageName>
-    <moduleName>${packageName}.core</moduleName>
+    <moduleName>${packageName}</moduleName>
   </properties>
 </project>

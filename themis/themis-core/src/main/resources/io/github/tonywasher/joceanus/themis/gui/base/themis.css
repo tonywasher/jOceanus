@@ -78,11 +78,11 @@ tr.dsm-row-header {
 	background-color: LightGray;
 }
 
-table tr.a {
+tr:nth-child(odd) {
 	background-color: lavender;
 }
 
-table tr.b {
+tr:nth-child(even) {
 	background-color: whitesmoke;
 }
 
@@ -95,9 +95,9 @@ table th.tableHdr {
 table th.tableHdr > div {
 	transform:
 		/* Magic Numbers */
-			translate(25px, 51px)
-				/* 45 is really 360 - 45 */
-			rotate(315deg);
+		translate(25px, 51px)
+		/* 45 is really 360 - 45 */
+		rotate(315deg);
 	width: 30px;
 }
 table th.tableHdr > div > span {

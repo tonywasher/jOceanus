@@ -48,7 +48,7 @@ public class ThemisUISourceDocument
         final Element myBody = newDocument();
 
         /* Create the code element */
-        final Element myCode = createElement(ThemisUIHTMLTag.CODE);
+        final Element myCode = createElement(ThemisUIHTMLTag.PRE);
         myBody.appendChild(myCode);
         myCode.setTextContent(pElement.toString());
 

@@ -231,7 +231,7 @@ public enum ThemisUIResource
     /**
      * SourceExpr Conditional.
      */
-    SOURCEEXPR_CONDITIONAL("source.expr.conditional"),
+    SOURCEEXPR_CONDITIONAL("source.expr.condition"),
 
     /**
      * SourceExpr Null.
@@ -251,12 +251,12 @@ public enum ThemisUIResource
     /**
      * SourceExpr FieldAccess.
      */
-    SOURCEEXPR_FIELDACCESS("source.expr.fieldyAccess"),
+    SOURCEEXPR_FIELDACCESS("source.expr.fieldAccess"),
 
     /**
      * SourceExpr InstanceOf.
      */
-    SOURCEEXPR_INSTANCEOF("source.expr.instanceOf"),
+    SOURCEEXPR_INSTANCEOF("source.expr.instance"),
 
     /**
      * SourceExpr Lambda.
@@ -331,7 +331,7 @@ public enum ThemisUIResource
     /**
      * SourceExpr Variable.
      */
-    SOURCEEXPR_VARIABLE("source.expr.variable"),
+    SOURCEEXPR_VARIABLE("source.expr.var"),
 
     /**
      * SourceStmt Assert.
@@ -367,6 +367,11 @@ public enum ThemisUIResource
      * SourceStmt Empty.
      */
     SOURCESTMT_EMPTY("source.stmt.empty"),
+
+    /**
+     * SourceStmt Expression.
+     */
+    SOURCESTMT_EXPR("source.stmt.expr"),
 
     /**
      * SourceStmt For.
@@ -512,7 +517,6 @@ public enum ThemisUIResource
     public String getValue() {
         /* If we have not initialised the value */
         if (theValue == null) {
-            /* Derive the value */
             theValue = LOADER.getValue(this);
         }
 

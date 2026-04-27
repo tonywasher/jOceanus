@@ -166,6 +166,7 @@ public class ThemisUISourcePanel
         theRoot = theTree.addRootItem(myEntry.getUniqueName(), myEntry);
         theRoot.setIcon(myEntry.getIcon());
         theRoot.setVisible(true);
+        handleNewTreeItem(myEntry);
 
         /* Create child entries */
         createChildEntries(theRoot, myUnit);

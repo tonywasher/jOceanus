@@ -139,7 +139,11 @@ public class ThemisStats {
     private Map<ThemisStat, Number> initStats() {
         final Map<ThemisStat, Number> myStats = new EnumMap<>(ThemisStat.class);
         for (ThemisStat myStat : ThemisStat.values()) {
-            myStats.put(myStat, myStat.isInteger() ? INT_ZERO : DBL_ZERO);
+            if (myStat.isInteger()) {
+                myStats.put(myStat, INT_ZERO);
+            } else {
+                myStats.put(myStat, DBL_ZERO);
+            }
         }
         return myStats;
     }

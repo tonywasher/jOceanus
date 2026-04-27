@@ -56,14 +56,9 @@ public class ThemisUIRefDocument
     private final ThemisUIRefLinks theLinks;
 
     /**
-     * The prefix.
+     * The default.
      */
-    private String thePrefix;
-
-    /**
-     * Is the package childless?
-     */
-    private boolean isChildless;
+    private ThemisSolverPackage theDefault;
 
     /**
      * Constructor.
@@ -86,8 +81,8 @@ public class ThemisUIRefDocument
         /* Store the module */
         thePackageMap = pModule.getPackages();
 
-        /* DeterminePrefix */
-        determinePrefix(pModule);
+        /* DetermineDefault */
+        determineDefault(pModule);
     }
 
     /**
@@ -117,17 +112,13 @@ public class ThemisUIRefDocument
      * @return the HTML
      */
     String formatDefaultPackage() {
-        /* Access the default package */
-        final String myName = thePrefix == null ? ThemisSolverModule.ROOT : thePrefix;
-        final ThemisSolverPackage myPackage = thePackageMap.get(myName);
-
-        /* Handle unknown package */
-        if (myPackage == null) {
+        /* Handle no default package */
+        if (theDefault == null) {
             throw new IllegalArgumentException("No default package");
         }
 
         /* Format the packageHTML */
-        return formatPackage(myPackage, false);
+        return formatPackage(theDefault, false);
     }
 
     /**
@@ -223,7 +214,7 @@ public class ThemisUIRefDocument
         myBody.appendChild(myTable);
 
         /* If we have no children or should be local */
-        if (isChildless || pLocal) {
+        if (pPackage.getChildren().isEmpty() || pLocal) {
             /* Format local classes */
             theLocal.formatLocal(pPackage, myTable);
         } else {
@@ -305,67 +296,67 @@ public class ThemisUIRefDocument
             return ThemisUIResource.PACKAGE_ROOT.getValue();
         }
 
-        /* Special handling for prefix */
-        return pPackage.getPackageName().equals(thePrefix)
+        /* Special handling for default */
+        return pPackage.equals(theDefault)
                 ? "<" + pPackage.getPackageName() + ">" : pPackage.getShortName();
     }
 
     /**
-     * Determine the prefix.
+     * Determine the default package.
      *
      * @param pModule the module
      */
-    private void determinePrefix(final ThemisSolverModule pModule) {
-        /* Initialise the prefix */
-        thePrefix = null;
+    private void determineDefault(final ThemisSolverModule pModule) {
+        /* Initialise the default */
+        theDefault = null;
 
         /* If we have a non-null modules */
         if (pModule != null) {
             /* Loop through the available packages */
             for (ThemisSolverPackage myPackage : pModule.getPackages().values()) {
-                /* Adjust the prefix */
-                adjustPrefix(myPackage);
+                /* Adjust the default */
+                adjustDefault(myPackage);
             }
         }
     }
 
     /**
-     * Adjust prefix.
+     * Adjust default.
      *
      * @param pPackage the package
      */
-    private void adjustPrefix(final ThemisSolverPackage pPackage) {
+    private void adjustDefault(final ThemisSolverPackage pPackage) {
         /* Ignore placeHolder */
         if (skipPackage(pPackage)) {
             return;
         }
 
-        /* If we do not have a prefix */
-        final String myName = pPackage.getPackageName();
-        if (thePrefix == null) {
-            thePrefix = myName;
+        /* Store first package as default */
+        if (theDefault == null) {
+            theDefault = pPackage;
 
-            /* else if we need to change the prefix */
-        } else if (!myName.startsWith(thePrefix)) {
-
-            /* Determine length */
-            final int myLength = Math.min(thePrefix.length(), myName.length());
-
-            /* Loop while prefixes are the same */
-            for (int i = 0; i < myLength; i++) {
-                /* If we have found a difference */
-                if (thePrefix.charAt(i) != myName.charAt(i)) {
-                    /* Strip the prefix down */
-                    thePrefix = thePrefix.substring(0, i);
-                    break;
-                }
-            }
-
-            /* If the package is a prefix of the prefix */
-            if (thePrefix.startsWith(myName)) {
-                thePrefix = myName;
-            }
+            /* else we need to find a common parent */
+        } else {
+            theDefault = getCommonParent(theDefault, pPackage);
         }
+    }
+
+    /**
+     * Obtain common parent.
+     *
+     * @param pFirst  the first package
+     * @param pSecond the second package
+     */
+    private ThemisSolverPackage getCommonParent(final ThemisSolverPackage pFirst,
+                                                final ThemisSolverPackage pSecond) {
+        if (pFirst.equals(pSecond)) {
+            return pFirst;
+        }
+        final String myFirst = pFirst.getPackageName();
+        final String mySecond = pSecond.getPackageName();
+        return myFirst.length() >= mySecond.length()
+                ? getCommonParent(pFirst.getParent(), pSecond)
+                : getCommonParent(pFirst, pSecond.getParent());
     }
 
     /**

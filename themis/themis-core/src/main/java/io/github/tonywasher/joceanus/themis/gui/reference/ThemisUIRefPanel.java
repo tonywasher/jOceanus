@@ -131,7 +131,7 @@ public class ThemisUIRefPanel
         theLinkHtml.setVisible(false);
 
         /* Format the default package */
-        theDoc.formatDefaultPackage();
+        theLinkHtml.setHTMLContent(theDoc.formatDefaultPackage(), "");
     }
 
     /**

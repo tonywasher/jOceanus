@@ -34,11 +34,6 @@ import java.util.Map;
  */
 public class ThemisProject {
     /**
-     * Consolidation Pass error.
-     */
-    private static final String CONSOLIDATION_ERROR = "Failed on consolidation Pass";
-
-    /**
      * The project name.
      */
     private final String theName;

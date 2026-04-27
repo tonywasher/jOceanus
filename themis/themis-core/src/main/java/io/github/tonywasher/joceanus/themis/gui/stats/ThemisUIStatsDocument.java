@@ -51,9 +51,25 @@ public class ThemisUIStatsDocument
         /* Create new document and obtain the body */
         final Element myBody = newDocument();
 
-        /* Access the stats and create the tables */
+        /* Add the header */
+        final Element myHdr = createElement(ThemisUIHTMLTag.H1);
+        myBody.appendChild(myHdr);
+        myHdr.setTextContent(pElement.getName());
+
+        /* Add local stats */
         final ThemisStats myStats = pElement.getStats();
+        final Element myHdr1 = createElement(ThemisUIHTMLTag.H3);
+        myBody.appendChild(myHdr1);
+        myHdr1.setTextContent("Local");
         myBody.appendChild(formatStats(myStats.getStats()));
+
+        /* Add separator */
+        myBody.appendChild(createElement(ThemisUIHTMLTag.HR));
+
+        /* Add totals stats */
+        final Element myHdr2 = createElement(ThemisUIHTMLTag.H3);
+        myBody.appendChild(myHdr2);
+        myHdr2.setTextContent("Totals");
         myBody.appendChild(formatStats(myStats.getTotals()));
 
         /* Return the formatted HTML */

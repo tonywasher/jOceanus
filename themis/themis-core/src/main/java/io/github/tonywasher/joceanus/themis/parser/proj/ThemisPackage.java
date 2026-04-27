@@ -45,6 +45,16 @@ public class ThemisPackage {
     private final String thePackage;
 
     /**
+     * The short name.
+     */
+    private final String theShortName;
+
+    /**
+     * The package name.
+     */
+    private final String theParentName;
+
+    /**
      * The location.
      */
     private final File theLocation;
@@ -78,6 +88,11 @@ public class ThemisPackage {
         isStandard = pLocation.getAbsolutePath().endsWith(PATH_XTRA);
         isPlaceHolder = false;
 
+        /* Determine the short name */
+        final int iIndex = thePackage.lastIndexOf(ThemisChar.PERIOD);
+        theShortName = iIndex == -1 ? thePackage : thePackage.substring(iIndex + 1);
+        theParentName = iIndex == -1 ? null : thePackage.substring(0, iIndex);
+
         /* Create directory path and record the location */
         final String myPath = pPackage.replace(ThemisChar.PERIOD, File.separatorChar);
         final File myLocation = new File(pLocation, myPath);
@@ -98,6 +113,11 @@ public class ThemisPackage {
         isStandard = false;
         isPlaceHolder = true;
 
+        /* Determine the short name */
+        final int iIndex = thePackage.lastIndexOf(ThemisChar.PERIOD);
+        theShortName = iIndex == -1 ? thePackage : thePackage.substring(iIndex + 1);
+        theParentName = iIndex == -1 ? null : thePackage.substring(0, iIndex);
+
         /* Build empty list of files */
         theFiles = new ArrayList<>();
     }
@@ -109,6 +129,33 @@ public class ThemisPackage {
      */
     public String getPackage() {
         return thePackage;
+    }
+
+    /**
+     * Obtain the shortName.
+     *
+     * @return the shortName
+     */
+    public String getShortName() {
+        return theShortName;
+    }
+
+    /**
+     * Obtain the parentName.
+     *
+     * @return the parentName
+     */
+    public String getParentName() {
+        return theParentName;
+    }
+
+    /**
+     * Is this the root package.
+     *
+     * @return true/false
+     */
+    public boolean isRoot() {
+        return theShortName.isEmpty();
     }
 
     /**

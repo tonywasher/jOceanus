@@ -190,7 +190,7 @@ public enum ThemisUISourceIcon
     /**
      * The Blue LowerCase k.
      */
-    BLUELOWERK("blue/LowerrK.png"),
+    BLUELOWERK("blue/LowerK.png"),
 
     /**
      * The Blue UpperCase V.
@@ -225,7 +225,7 @@ public enum ThemisUISourceIcon
     /**
      * The Green LowerCase I.
      */
-    GREENLOWERI("green/LowernI.png"),
+    GREENLOWERI("green/LowerI.png"),
 
     /**
      * The Green UpperCase A.
@@ -436,6 +436,11 @@ public enum ThemisUISourceIcon
      * The Orange UpperCase W.
      */
     ORANGEUPPERW("orange/UpperW.png"),
+
+    /**
+     * The Orange UpperCase X.
+     */
+    ORANGEUPPERX("orange/UpperX.png"),
 
     /**
      * The Orange UpperCase Y.
@@ -668,6 +673,8 @@ public enum ThemisUISourceIcon
                 return ORANGEUPPERD;
             case EMPTY:
                 return ORANGEUPPERE;
+            case EXPRESSION:
+                return ORANGEUPPERX;
             case FOR:
                 return ORANGEUPPERF;
             case FOREACH:
