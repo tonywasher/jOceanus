@@ -429,6 +429,8 @@ public class ThemisUISourceEntry {
                 return ThemisUIResource.SOURCESTMT_DO.getValue();
             case EMPTY:
                 return ThemisUIResource.SOURCESTMT_EMPTY.getValue();
+            case EXPRESSION:
+                return ThemisUIResource.SOURCESTMT_EXPR.getValue();
             case FOR:
                 return ThemisUIResource.SOURCESTMT_FOR.getValue();
             case FOREACH:

@@ -132,6 +132,7 @@ public class ThemisUIRefModuleSelect
         final List<ThemisSolverModule> myModules = theProject == null ? null : theProject.getModules();
         final ThemisSolverModule myModule = (myModules == null || myModules.isEmpty()) ? null : myModules.getFirst();
         theButton.setValue(myModule);
+        handleNewModule();
     }
 
     /**

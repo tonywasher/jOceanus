@@ -27,14 +27,24 @@ public enum ThemisUIHTMLTag {
     HTML("html"),
 
     /**
+     * Head.
+     */
+    HEAD("head"),
+
+    /**
+     * Style.
+     */
+    STYLE("style"),
+
+    /**
      * Body.
      */
     BODY("body"),
 
     /**
-     * Code.
+     * PreFormatted.
      */
-    CODE("code"),
+    PRE("pre"),
 
     /**
      * A.
@@ -77,6 +87,16 @@ public enum ThemisUIHTMLTag {
     TABLE("table"),
 
     /**
+     * THead.
+     */
+    THEAD("thead"),
+
+    /**
+     * TBody.
+     */
+    TBODY("tbody"),
+
+    /**
      * Table Header.
      */
     TH("th"),
@@ -99,7 +119,12 @@ public enum ThemisUIHTMLTag {
     /**
      * Span.
      */
-    SPAN("span");
+    SPAN("span"),
+
+    /**
+     * Break.
+     */
+    BR("br");
 
     /**
      * Tag text.

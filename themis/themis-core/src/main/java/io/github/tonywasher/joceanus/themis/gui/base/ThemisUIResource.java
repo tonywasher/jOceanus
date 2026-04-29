@@ -74,19 +74,59 @@ public enum ThemisUIResource
     PROMPT_FILE("prompt.file"),
 
     /**
-     * Local Package.
+     * Reference Local Package.
      */
-    PACKAGE_LOCAL("package.local"),
+    REF_LOCAL("reference.local"),
 
     /**
-     * Family Package.
+     * Reference Family Package.
      */
-    PACKAGE_FAMILY("package.family"),
+    REF_FAMILY("reference.family"),
 
     /**
-     * Root Package.
+     * Reference Root Package.
      */
-    PACKAGE_ROOT("package.root"),
+    REF_ROOT("reference.root"),
+
+    /**
+     * Reference Parent Package.
+     */
+    REF_PARENT("reference.parent"),
+
+    /**
+     * Reference Home Package.
+     */
+    REF_HOME("reference.home"),
+
+    /**
+     * Reference Links.
+     */
+    REF_LINKS("reference.links"),
+
+    /**
+     * Stats Local.
+     */
+    STATS_LOCAL("stats.local"),
+
+    /**
+     * Stats Total.
+     */
+    STATS_TOTAL("stats.total"),
+
+    /**
+     * Stats Desc.
+     */
+    STATS_DESC("stats.desc"),
+
+    /**
+     * Stats Key.
+     */
+    STATS_KEY("stats.key"),
+
+    /**
+     * Stats Value.
+     */
+    STATS_VALUE("stats.value"),
 
     /**
      * SourceDecl Annotation.
@@ -231,7 +271,7 @@ public enum ThemisUIResource
     /**
      * SourceExpr Conditional.
      */
-    SOURCEEXPR_CONDITIONAL("source.expr.conditional"),
+    SOURCEEXPR_CONDITIONAL("source.expr.condition"),
 
     /**
      * SourceExpr Null.
@@ -251,12 +291,12 @@ public enum ThemisUIResource
     /**
      * SourceExpr FieldAccess.
      */
-    SOURCEEXPR_FIELDACCESS("source.expr.fieldyAccess"),
+    SOURCEEXPR_FIELDACCESS("source.expr.fieldAccess"),
 
     /**
      * SourceExpr InstanceOf.
      */
-    SOURCEEXPR_INSTANCEOF("source.expr.instanceOf"),
+    SOURCEEXPR_INSTANCEOF("source.expr.instance"),
 
     /**
      * SourceExpr Lambda.
@@ -331,7 +371,7 @@ public enum ThemisUIResource
     /**
      * SourceExpr Variable.
      */
-    SOURCEEXPR_VARIABLE("source.expr.variable"),
+    SOURCEEXPR_VARIABLE("source.expr.var"),
 
     /**
      * SourceStmt Assert.
@@ -367,6 +407,11 @@ public enum ThemisUIResource
      * SourceStmt Empty.
      */
     SOURCESTMT_EMPTY("source.stmt.empty"),
+
+    /**
+     * SourceStmt Expression.
+     */
+    SOURCESTMT_EXPR("source.stmt.expr"),
 
     /**
      * SourceStmt For.
@@ -512,7 +557,6 @@ public enum ThemisUIResource
     public String getValue() {
         /* If we have not initialised the value */
         if (theValue == null) {
-            /* Derive the value */
             theValue = LOADER.getValue(this);
         }
 

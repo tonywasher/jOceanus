@@ -29,7 +29,12 @@ public enum ThemisUIHTMLAttr {
     /**
      * Href.
      */
-    HREF("href");
+    HREF("href"),
+
+    /**
+     * Style.
+     */
+    STYLE("style");
 
     /**
      * Attribute text.

@@ -89,7 +89,7 @@ public class GordianSkeinParameters
      * A builder for {@link GordianSkeinParameters}.
      */
     public static class GordianSkeinParametersBuilder
-            extends SkeinParameters.Builder {
+            extends Builder {
         /**
          * The maximum xofLen.
          */

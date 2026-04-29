@@ -105,11 +105,13 @@ public class ThemisUISourcePanel
         /* Create the selector panel */
         final TethysUIPaneFactory myPanes = pFactory.paneFactory();
         final TethysUIBoxPaneManager mySelect = myPanes.newHBoxPane();
+        mySelect.addSpacer();
         mySelect.addNode(theModuleSelect);
         mySelect.addSpacer();
         mySelect.addNode(myPackageSelect);
         mySelect.addSpacer();
         mySelect.addNode(theFileSelect);
+        mySelect.addSpacer();
 
         /* Create the main panel */
         thePanel = myPanes.newBorderPane();
@@ -166,6 +168,7 @@ public class ThemisUISourcePanel
         theRoot = theTree.addRootItem(myEntry.getUniqueName(), myEntry);
         theRoot.setIcon(myEntry.getIcon());
         theRoot.setVisible(true);
+        handleNewTreeItem(myEntry);
 
         /* Create child entries */
         createChildEntries(theRoot, myUnit);

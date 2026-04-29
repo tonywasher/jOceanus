@@ -4,17 +4,34 @@ body {
 }
 
 table {
-	align: center;
-	table-layout: fixed;
-	border-top: solid;
-	border-bottom: solid;
+	text-align: center;
+	border-collapse: collapse;
 	margin-left: auto;
 	margin-right: auto;
 	page-break-inside:avoid;
-	width: 90%
 }
 
-h1,h2 {
+table.tableStd {
+	width: 90%;
+}
+
+table.refNavigation {
+	margin-bottom: 30px;
+	border: none;
+}
+
+tbody.tableZebra {
+	border-top: 2px solid;
+	border-bottom: 2px solid;
+	border-left: 2px solid;
+	border-right: 2px solid;
+}
+
+h1 {
+	text-align: center;
+}
+
+h3 {
 	text-align: center;
 }
 
@@ -22,85 +39,50 @@ th {
 	font-weight: bold;
 }
 
-th.dsm-package {
-	width: auto;
+td.refLink {
+	border-right: 2px solid;
 }
 
-th.dsm-key {
-	width: 35px;
-}
-
-th.dsm-col-count {
-	width: 20px;
-}
-
-th.stats-name {
-	width: 90px;
-}
-
-th.stats-desc {
-	width: auto;
-}
-
-th.stats-desc {
-	width: auto;
-}
-
-th.stats-name {
-	width: 100px;
-}
-
-th.stats-count {
-	width: 100px;
-}
-
-td {
-	text-align: center;
-}
-
-td.dsm-cell-name-right {
-	text-align: right;
-}
-
-td.dsm-cell-name-left {
-	text-align: left;
-}
-
-td.dsm-cell-self {
+td.refSelfOK {
 	background-color: black;
 }
 
-td.dsm-cell-circular {
+td.refError {
 	background-color: red;
 }
 
-tr.dsm-row-header {
-	background-color: LightGray;
+td.refLinkList {
+	min-width: 25px;
 }
 
-table tr.a {
+td.refLinkSibling {
+	min-width: 25px;
+}
+
+tbody.tableZebra tr:nth-child(odd) {
 	background-color: lavender;
 }
 
-table tr.b {
+tbody.tableZebra tr:nth-child(even) {
 	background-color: whitesmoke;
 }
 
-table th.tableHdr {
-	/* Something you can count on */
-	height: 140px;
+.toolTipHolder {
+	position:relative;
+}
+
+span.toolTip {
+	display:none;
+	position:absolute;
+	z-index:1;
+	background-color:black;
+	padding:3px;
+	color:white;
+	top:20px;
+	left:20px;
 	white-space: nowrap;
 }
 
-table th.tableHdr > div {
-	transform:
-		/* Magic Numbers */
-			translate(25px, 51px)
-				/* 45 is really 360 - 45 */
-			rotate(315deg);
-	width: 30px;
-}
-table th.tableHdr > div > span {
-	border-bottom: 1px solid #ccc;
-	padding: 5px 10px;
+.toolTipHolder:hover span.toolTip {
+	display:block;
 }

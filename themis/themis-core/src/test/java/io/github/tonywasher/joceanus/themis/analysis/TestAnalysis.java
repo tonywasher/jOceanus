@@ -86,8 +86,7 @@ class TestAnalysis {
         /* Analyse dependencies of project */
         final ThemisSolverProject myProject = new ThemisSolverProject(theProjectParser);
         final ThemisSolver mySolver = new ThemisSolver(myProject);
-        Assertions.assertNotNull(mySolver, "Failed to analyse project");
-        //Assertions.assertNull(myProject.getError(), "Exception analysing project");
+        Assertions.assertNull(mySolver.getError(), "Exception analysing project");
     }
 
     /**
@@ -100,7 +99,6 @@ class TestAnalysis {
 
         /* Analyse dependencies of project */
         final ThemisStatsProject myProject = new ThemisStatsProject(theProjectParser);
-        Assertions.assertNotNull(myProject, "Failed to analyse project");
         Assertions.assertNull(myProject.getError(), "Exception analysing project");
     }
 }

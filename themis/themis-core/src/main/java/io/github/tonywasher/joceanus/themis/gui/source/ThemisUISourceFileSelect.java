@@ -132,6 +132,7 @@ public class ThemisUISourceFileSelect
         final List<ThemisFile> myFiles = thePackage == null ? null : thePackage.getFiles();
         final ThemisFile myFile = (myFiles == null || myFiles.isEmpty()) ? null : myFiles.getFirst();
         theButton.setValue(myFile);
+        handleNewFile();
     }
 
     /**

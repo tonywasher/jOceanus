@@ -31,6 +31,7 @@ import io.github.tonywasher.joceanus.tethys.api.menu.TethysUIScrollMenu;
 import io.github.tonywasher.joceanus.tethys.api.pane.TethysUIBoxPaneManager;
 import io.github.tonywasher.joceanus.tethys.api.pane.TethysUIPaneFactory;
 import io.github.tonywasher.joceanus.themis.gui.base.ThemisUIResource;
+import io.github.tonywasher.joceanus.themis.parser.base.ThemisChar;
 import io.github.tonywasher.joceanus.themis.parser.proj.ThemisModule;
 import io.github.tonywasher.joceanus.themis.parser.proj.ThemisPackage;
 
@@ -154,6 +155,7 @@ public class ThemisUISourcePackageSelect
         /* Set the default package */
         final ThemisPackage myPackage = getDefaultPackage();
         theButton.setValue(myPackage, getDisplayName(myPackage));
+        handleNewPackage();
     }
 
     /**
@@ -162,7 +164,7 @@ public class ThemisUISourcePackageSelect
      * @return the default package
      */
     private ThemisPackage getDefaultPackage() {
-        /* If we have a non-null modules */
+        /* If we have a non-null module */
         if (theModule != null) {
             /* Loop through the available packages */
             for (ThemisPackage myPackage : theModule.getPackages()) {
@@ -219,28 +221,42 @@ public class ThemisUISourcePackageSelect
             thePrefix = myName;
 
             /* else if we need to change the prefix */
-        } else if (!myName.startsWith(thePrefix)) {
+        } else {
             /* We have more than one package so display selection button */
             theButton.setVisible(true);
 
-            /* Determine length */
-            final int myLength = Math.min(thePrefix.length(), myName.length());
-
-            /* Loop while prefixes are the same */
-            for (int i = 0; i < myLength; i++) {
-                /* If we have found a difference */
-                if (thePrefix.charAt(i) != myName.charAt(i)) {
-                    /* Strip the prefix down */
-                    thePrefix = thePrefix.substring(0, i);
-                    break;
-                }
-            }
-
-            /* If the package is a prefix of the prefix */
-            if (thePrefix.startsWith(myName)) {
-                thePrefix = myName;
-            }
+            /* Determine common prefix */
+            thePrefix = getCommonPrefix(myName, thePrefix);
         }
+    }
+
+    /**
+     * Obtain common prefix.
+     *
+     * @param pFirst  the first name
+     * @param pSecond the second name
+     * @return the prefix
+     */
+    private String getCommonPrefix(final String pFirst,
+                                   final String pSecond) {
+        if (pFirst.equals(pSecond)) {
+            return pFirst;
+        }
+        return pFirst.length() >= pSecond.length()
+                ? getCommonPrefix(getParentName(pFirst), pSecond)
+                : getCommonPrefix(pFirst, getParentName(pSecond));
+    }
+
+    /**
+     * Obtain Parent Name.
+     *
+     * @param pName the name
+     * @return the parent name
+     */
+    private String getParentName(final String pName) {
+        /* Determine the short name */
+        final int iIndex = pName.lastIndexOf(ThemisChar.PERIOD);
+        return iIndex == -1 ? "" : pName.substring(0, iIndex);
     }
 
     /**

@@ -22,11 +22,9 @@ import io.github.tonywasher.joceanus.themis.gui.base.ThemisUIBaseDocument;
 import io.github.tonywasher.joceanus.themis.gui.base.ThemisUIHTMLAttr;
 import io.github.tonywasher.joceanus.themis.gui.base.ThemisUIHTMLTag;
 import io.github.tonywasher.joceanus.themis.gui.base.ThemisUIResource;
-import io.github.tonywasher.joceanus.themis.parser.base.ThemisChar;
 import io.github.tonywasher.joceanus.themis.solver.proj.ThemisSolverModule;
 import io.github.tonywasher.joceanus.themis.solver.proj.ThemisSolverPackage;
 import org.w3c.dom.Element;
-import org.w3c.dom.Text;
 
 import java.util.Map;
 
@@ -56,14 +54,9 @@ public class ThemisUIRefDocument
     private final ThemisUIRefLinks theLinks;
 
     /**
-     * The prefix.
+     * The default.
      */
-    private String thePrefix;
-
-    /**
-     * Is the package childless?
-     */
-    private boolean isChildless;
+    private ThemisSolverPackage theDefault;
 
     /**
      * Constructor.
@@ -86,8 +79,8 @@ public class ThemisUIRefDocument
         /* Store the module */
         thePackageMap = pModule.getPackages();
 
-        /* DeterminePrefix */
-        determinePrefix(pModule);
+        /* DetermineDefault */
+        determineDefault(pModule);
     }
 
     /**
@@ -117,17 +110,13 @@ public class ThemisUIRefDocument
      * @return the HTML
      */
     String formatDefaultPackage() {
-        /* Access the default package */
-        final String myName = thePrefix == null ? ThemisSolverModule.ROOT : thePrefix;
-        final ThemisSolverPackage myPackage = thePackageMap.get(myName);
-
-        /* Handle unknown package */
-        if (myPackage == null) {
+        /* Handle no default package */
+        if (theDefault == null) {
             throw new IllegalArgumentException("No default package");
         }
 
         /* Format the packageHTML */
-        return formatPackage(myPackage, false);
+        return formatPackage(theDefault, false);
     }
 
     /**
@@ -213,17 +202,18 @@ public class ThemisUIRefDocument
         /* Create new document and obtain the body */
         final Element myBody = newDocument();
 
-        /* format the package Links */
-        final Element myHeader = createElement(ThemisUIHTMLTag.H3);
-        myBody.appendChild(myHeader);
-        addPackageLink(myHeader, pPackage);
+        /* Create the title */
+        buildPackageTitle(myBody, pPackage);
+
+        /* Create the links */
+        buildPackageLinks(myBody, pPackage, pLocal);
 
         /* Create new table */
         final Element myTable = createElement(ThemisUIHTMLTag.TABLE);
         myBody.appendChild(myTable);
 
         /* If we have no children or should be local */
-        if (isChildless || pLocal) {
+        if (pPackage.getChildren().isEmpty() || pLocal) {
             /* Format local classes */
             theLocal.formatLocal(pPackage, myTable);
         } else {
@@ -248,8 +238,9 @@ public class ThemisUIRefDocument
         final Element myBody = newDocument();
 
         /* format the package Links */
-        final Element myHeader = createElement(ThemisUIHTMLTag.H3);
+        final Element myHeader = createElement(ThemisUIHTMLTag.H1);
         myBody.appendChild(myHeader);
+        myHeader.setTextContent(ThemisUIResource.REF_LINKS.getValue());
 
         /* Create new table */
         final Element myTable = createElement(ThemisUIHTMLTag.TABLE);
@@ -263,109 +254,194 @@ public class ThemisUIRefDocument
     }
 
     /**
-     * Add package link.
+     * Build package title.
      *
-     * @param pElement the element
+     * @param pBody    the document body
      * @param pPackage the package
      */
-    private void addPackageLink(final Element pElement,
+    private void buildPackageTitle(final Element pBody,
+                                   final ThemisSolverPackage pPackage) {
+        /* Create the header */
+        final Element myHeader = createElement(ThemisUIHTMLTag.H3);
+        pBody.appendChild(myHeader);
+
+        /* Set name of package */
+        final String myName = pPackage.getPackageName().isEmpty()
+                ? ThemisUIResource.REF_ROOT.getValue()
+                : pPackage.getPackageName();
+        myHeader.setTextContent(myName);
+    }
+
+    /**
+     * Build package links.
+     *
+     * @param pBody    the document body
+     * @param pPackage the package
+     * @param pLocal   chose local Classes
+     */
+    private void buildPackageLinks(final Element pBody,
+                                   final ThemisSolverPackage pPackage,
+                                   final boolean pLocal) {
+        /* Create the links */
+        final Element myLinks = createElement(ThemisUIHTMLTag.TR);
+
+        /* Create links */
+        createHomeLink(myLinks, pPackage);
+        createParentLink(myLinks, pPackage);
+        if (pLocal) {
+            createFamilyLink(myLinks, pPackage);
+        }
+
+        /* If we have links, then add to body */
+        if (myLinks.hasChildNodes()) {
+            /* Create the table */
+            final Element myTable = createElement(ThemisUIHTMLTag.TABLE);
+            pBody.appendChild(myTable);
+            myTable.appendChild(myLinks);
+            addClassToElement(myTable, ThemisUIRefConstants.CLASSNAVTABLE);
+        }
+    }
+
+    /**
+     * Create home link.
+     *
+     * @param pLinks   the document links
+     * @param pPackage the package
+     */
+    private void createHomeLink(final Element pLinks,
                                 final ThemisSolverPackage pPackage) {
-        /* Obtain the package name */
-        final String myName = getPackageLinkName(pPackage);
-        final boolean doParent = myName.equals(pPackage.getShortName());
+        /* If we are not the default package */
+        if (!pPackage.equals(theDefault)) {
+            /* Create the cell */
+            final Element myCell = createElement(ThemisUIHTMLTag.TD);
+            pLinks.appendChild(myCell);
 
-        /* Handle parent package */
-        if (doParent) {
-            /* Obtain the parent package */
-            final ThemisSolverPackage myParent = pPackage.getParent();
-            addPackageLink(pElement, myParent);
+            /* Create the link */
+            final Element myLink = createElement(ThemisUIHTMLTag.A);
+            myCell.appendChild(myLink);
 
-            /* Add link */
-            final Text myPeriod = createTextNode(ThemisChar.PERIOD);
-            pElement.appendChild(myPeriod);
+            /* Set link details */
+            final String myLinkRef = ThemisUIRefConstants.LINKPACKAGE + theDefault.getPackageName();
+            setAttribute(myLink, ThemisUIHTMLAttr.HREF, myLinkRef);
+
+            /* Set name of package */
+            myLink.setTextContent(ThemisUIResource.REF_HOME.getValue());
         }
-
-        /* Create link element */
-        final Element myLink = createElement(ThemisUIHTMLTag.A);
-        pElement.appendChild(myLink);
-        final String myLinkRef = ThemisUIRefConstants.LINKPACKAGE + pPackage.getPackageName();
-        setAttribute(myLink, ThemisUIHTMLAttr.HREF, myLinkRef);
-        myLink.setTextContent(myName);
     }
 
     /**
-     * Determine package link name.
+     * Create parent link.
      *
+     * @param pLinks   the document links
      * @param pPackage the package
-     * @return the package linkName
      */
-    private String getPackageLinkName(final ThemisSolverPackage pPackage) {
-        /* Handle root case */
-        if (pPackage.getPackageName().isEmpty()) {
-            return ThemisUIResource.PACKAGE_ROOT.getValue();
-        }
+    private void createParentLink(final Element pLinks,
+                                  final ThemisSolverPackage pPackage) {
+        /* If we are not the default package */
+        final ThemisSolverPackage myParent = pPackage.getParent();
+        if (!pPackage.equals(theDefault)
+                && !theDefault.equals(myParent)) {
+            /* Create the cell */
+            final Element myCell = createElement(ThemisUIHTMLTag.TD);
+            pLinks.appendChild(myCell);
 
-        /* Special handling for prefix */
-        return pPackage.getPackageName().equals(thePrefix)
-                ? "<" + pPackage.getPackageName() + ">" : pPackage.getShortName();
+            /* Create the link */
+            final Element myLink = createElement(ThemisUIHTMLTag.A);
+            myCell.appendChild(myLink);
+
+            /* Set link details */
+            final String myLinkRef = ThemisUIRefConstants.LINKPACKAGE + myParent.getPackageName();
+            setAttribute(myLink, ThemisUIHTMLAttr.HREF, myLinkRef);
+
+            /* Set name of package */
+            myLink.setTextContent(ThemisUIResource.REF_PARENT.getValue());
+        }
     }
 
     /**
-     * Determine the prefix.
+     * Create parent link.
+     *
+     * @param pLinks   the document links
+     * @param pPackage the package
+     */
+    private void createFamilyLink(final Element pLinks,
+                                  final ThemisSolverPackage pPackage) {
+        /* If we are not the default package */
+        if (!pPackage.getChildren().isEmpty()) {
+            /* Create the cell */
+            final Element myCell = createElement(ThemisUIHTMLTag.TD);
+            pLinks.appendChild(myCell);
+
+            /* Create the link */
+            final Element myLink = createElement(ThemisUIHTMLTag.A);
+            myCell.appendChild(myLink);
+
+            /* Set link details */
+            final String myLinkRef = ThemisUIRefConstants.LINKPACKAGE + pPackage.getPackageName();
+            setAttribute(myLink, ThemisUIHTMLAttr.HREF, myLinkRef);
+
+            /* Set name of package */
+            myLink.setTextContent(ThemisUIResource.REF_FAMILY.getValue());
+        }
+    }
+
+    /**
+     * Determine the default package.
      *
      * @param pModule the module
      */
-    private void determinePrefix(final ThemisSolverModule pModule) {
-        /* Initialise the prefix */
-        thePrefix = null;
+    private void determineDefault(final ThemisSolverModule pModule) {
+        /* Initialise the default */
+        theDefault = null;
 
         /* If we have a non-null modules */
         if (pModule != null) {
             /* Loop through the available packages */
             for (ThemisSolverPackage myPackage : pModule.getPackages().values()) {
-                /* Adjust the prefix */
-                adjustPrefix(myPackage);
+                /* Adjust the default */
+                adjustDefault(myPackage);
             }
         }
     }
 
     /**
-     * Adjust prefix.
+     * Adjust default.
      *
      * @param pPackage the package
      */
-    private void adjustPrefix(final ThemisSolverPackage pPackage) {
+    private void adjustDefault(final ThemisSolverPackage pPackage) {
         /* Ignore placeHolder */
         if (skipPackage(pPackage)) {
             return;
         }
 
-        /* If we do not have a prefix */
-        final String myName = pPackage.getPackageName();
-        if (thePrefix == null) {
-            thePrefix = myName;
+        /* Store first package as default */
+        if (theDefault == null) {
+            theDefault = pPackage;
 
-            /* else if we need to change the prefix */
-        } else if (!myName.startsWith(thePrefix)) {
-
-            /* Determine length */
-            final int myLength = Math.min(thePrefix.length(), myName.length());
-
-            /* Loop while prefixes are the same */
-            for (int i = 0; i < myLength; i++) {
-                /* If we have found a difference */
-                if (thePrefix.charAt(i) != myName.charAt(i)) {
-                    /* Strip the prefix down */
-                    thePrefix = thePrefix.substring(0, i);
-                    break;
-                }
-            }
-
-            /* If the package is a prefix of the prefix */
-            if (thePrefix.startsWith(myName)) {
-                thePrefix = myName;
-            }
+            /* else we need to find a common parent */
+        } else {
+            theDefault = getCommonParent(theDefault, pPackage);
         }
+    }
+
+    /**
+     * Obtain common parent.
+     *
+     * @param pFirst  the first package
+     * @param pSecond the second package
+     * @return the common parent
+     */
+    private ThemisSolverPackage getCommonParent(final ThemisSolverPackage pFirst,
+                                                final ThemisSolverPackage pSecond) {
+        if (pFirst.equals(pSecond)) {
+            return pFirst;
+        }
+        final String myFirst = pFirst.getPackageName();
+        final String mySecond = pSecond.getPackageName();
+        return myFirst.length() >= mySecond.length()
+                ? getCommonParent(pFirst.getParent(), pSecond)
+                : getCommonParent(pFirst, pSecond.getParent());
     }
 
     /**
