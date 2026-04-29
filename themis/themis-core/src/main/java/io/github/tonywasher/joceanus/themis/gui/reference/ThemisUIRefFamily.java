@@ -17,6 +17,7 @@
 
 package io.github.tonywasher.joceanus.themis.gui.reference;
 
+import io.github.tonywasher.joceanus.themis.gui.base.ThemisUIBaseDocument;
 import io.github.tonywasher.joceanus.themis.gui.base.ThemisUIDocBuilder;
 import io.github.tonywasher.joceanus.themis.gui.base.ThemisUIHTMLAttr;
 import io.github.tonywasher.joceanus.themis.gui.base.ThemisUIHTMLTag;
@@ -81,38 +82,31 @@ public class ThemisUIRefFamily {
         /* Set the details */
         setDetails(pPackage);
 
-        /* Create a new hdrRow */
-        final Element myHdrRow = theBuilder.createElement(ThemisUIHTMLTag.TR);
-        pTable.appendChild(myHdrRow);
-
-        /* Create a blank cell for top left */
-        final Element myHdrBlank = theBuilder.createElement(ThemisUIHTMLTag.TH);
-        myHdrRow.appendChild(myHdrBlank);
+        /* Create table body */
+        final Element myTblBody = theBuilder.createElement(ThemisUIHTMLTag.TBODY);
+        pTable.appendChild(myTblBody);
+        theBuilder.addClassToElement(myTblBody, ThemisUIBaseDocument.CLASSTBLZEBRA);
 
         /* Create the Local Column header */
         Element myLocalRow = null;
         if (hasFiles) {
-            createColLocalHeader(myHdrRow);
             myLocalRow = theBuilder.createElement(ThemisUIHTMLTag.TR);
-            pTable.appendChild(myLocalRow);
+            myTblBody.appendChild(myLocalRow);
             createRowLocalHeader(myLocalRow, pPackage);
+            createSelfLocalCell(myLocalRow, pPackage);
         }
 
         /* Loop through the children */
         for (ThemisSolverPackage myChild : theChildren) {
             /* Create a new row */
             final Element myRow = theBuilder.createElement(ThemisUIHTMLTag.TR);
-            pTable.appendChild(myRow);
-
-            /* Create a new header for the package short name */
-            createColHeader(myHdrRow, myChild);
+            myTblBody.appendChild(myRow);
 
             /* Create a new cell for the package short name */
             createRowHeader(myRow, myChild);
 
             /* Create the link row for local to child and vice-versa */
             if (myLocalRow != null) {
-                createSelfLocalCell(myLocalRow, pPackage);
                 createLinkCell(myLocalRow, myChild, pPackage);
                 createLinkCell(myRow, pPackage, myChild);
             }
@@ -127,49 +121,10 @@ public class ThemisUIRefFamily {
                     /* else create the standard cell */
                 } else {
                     /* Create the link row */
-                    createLinkCell(myRow, myChild, mySibling);
+                    createLinkCell(myRow, mySibling, myChild);
                 }
             }
         }
-    }
-
-    /**
-     * Create column header cell.
-     *
-     * @param pRow    the row
-     * @param pSource the source package
-     */
-    private void createColHeader(final Element pRow,
-                                 final ThemisSolverPackage pSource) {
-        /* Create the cell */
-        final Element myCell = theBuilder.createElement(ThemisUIHTMLTag.TH);
-        theBuilder.setAttribute(myCell, ThemisUIHTMLAttr.CLASS, ThemisUIRefConstants.CLASSHDR);
-        pRow.appendChild(myCell);
-
-        /* Create the div and span */
-        final Element myDiv = theBuilder.createElement(ThemisUIHTMLTag.DIV);
-        myCell.appendChild(myDiv);
-        final Element mySpan = theBuilder.createElement(ThemisUIHTMLTag.SPAN);
-        myDiv.appendChild(mySpan);
-
-        /* Populate the cell */
-        final String myName = pSource.getShortName();
-        mySpan.setTextContent(myName);
-    }
-
-    /**
-     * Create column local header cell.
-     *
-     * @param pRow the row
-     */
-    private void createColLocalHeader(final Element pRow) {
-        /* Create the cell */
-        final Element myCell = theBuilder.createElement(ThemisUIHTMLTag.TH);
-        theBuilder.setAttribute(myCell, ThemisUIHTMLAttr.CLASS, ThemisUIRefConstants.CLASSHDR);
-        pRow.appendChild(myCell);
-
-        /* Populate the cell */
-        myCell.setTextContent(ThemisUIRefConstants.LOCALPACKAGE);
     }
 
     /**
@@ -182,7 +137,7 @@ public class ThemisUIRefFamily {
                                  final ThemisSolverPackage pTarget) {
         /* Create the cell */
         final Element myCell = theBuilder.createElement(ThemisUIHTMLTag.TD);
-        theBuilder.setAttribute(myCell, ThemisUIHTMLAttr.CLASS, ThemisUIRefConstants.CLASSLINK);
+        theBuilder.addClassToElement(myCell, ThemisUIRefConstants.CLASSLINK);
         pRow.appendChild(myCell);
 
         /* Create the link */
@@ -207,7 +162,7 @@ public class ThemisUIRefFamily {
                                       final ThemisSolverPackage pTarget) {
         /* Create the cell */
         final Element myCell = theBuilder.createElement(ThemisUIHTMLTag.TD);
-        theBuilder.setAttribute(myCell, ThemisUIHTMLAttr.CLASS, ThemisUIRefConstants.CLASSLINK);
+        theBuilder.addClassToElement(myCell, ThemisUIRefConstants.CLASSLINK);
         pRow.appendChild(myCell);
 
         /* Create the link */
@@ -238,7 +193,8 @@ public class ThemisUIRefFamily {
 
         /* Create the cell */
         final Element myCell = theBuilder.createElement(ThemisUIHTMLTag.TD);
-        theBuilder.setAttribute(myCell, ThemisUIHTMLAttr.CLASS, myClass);
+        theBuilder.addClassToElement(myCell, myClass);
+        theBuilder.addClassToElement(myCell, ThemisUIRefConstants.CLASSLINKLIST);
         pRow.appendChild(myCell);
     }
 
@@ -258,7 +214,8 @@ public class ThemisUIRefFamily {
 
         /* Create the cell */
         final Element myCell = theBuilder.createElement(ThemisUIHTMLTag.TD);
-        theBuilder.setAttribute(myCell, ThemisUIHTMLAttr.CLASS, myClass);
+        theBuilder.addClassToElement(myCell, myClass);
+        theBuilder.addClassToElement(myCell, ThemisUIRefConstants.CLASSLINKLIST);
         pRow.appendChild(myCell);
     }
 
@@ -276,7 +233,7 @@ public class ThemisUIRefFamily {
         final ThemisSolverReference myMap = pSource.getReferenceMap();
         final ThemisSolverRefPackage myLinkMap = myMap.getReferences(pTarget);
         final Element myCell = theBuilder.createElement(ThemisUIHTMLTag.TD);
-        theBuilder.setAttribute(myCell, ThemisUIHTMLAttr.CLASS, ThemisUIRefConstants.CLASSLINKLIST);
+        theBuilder.addClassToElement(myCell, ThemisUIRefConstants.CLASSLINKLIST);
         pRow.appendChild(myCell);
 
         /* If we have links */
@@ -294,6 +251,9 @@ public class ThemisUIRefFamily {
             final List<ThemisSolverRefClass> myReferences = myLinkMap.getReferences();
             final String myText = Integer.toString(myReferences.size());
             myLink.setTextContent(myText);
+
+            /* Add toolTip */
+            theBuilder.addToolTipToElement(myCell, pSource.getShortName() + " -> " + pTarget.getShortName());
         }
     }
 }

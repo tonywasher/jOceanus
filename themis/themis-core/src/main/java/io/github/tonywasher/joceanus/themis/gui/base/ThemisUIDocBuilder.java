@@ -58,4 +58,22 @@ public interface ThemisUIDocBuilder {
     void setAttribute(Element pElement,
                       ThemisUIHTMLAttr pAttr,
                       String pValue);
+
+    /**
+     * Add class to element.
+     *
+     * @param pElement the element
+     * @param pClass   the class
+     */
+    void addClassToElement(Element pElement,
+                           String pClass);
+
+    /**
+     * Add tooltip to element.
+     *
+     * @param pElement the element
+     * @param pToolTip the tooltip
+     */
+    void addToolTipToElement(Element pElement,
+                             String pToolTip);
 }

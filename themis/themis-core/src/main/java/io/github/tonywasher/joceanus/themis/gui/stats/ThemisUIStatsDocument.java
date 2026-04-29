@@ -20,6 +20,7 @@ package io.github.tonywasher.joceanus.themis.gui.stats;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.themis.gui.base.ThemisUIBaseDocument;
 import io.github.tonywasher.joceanus.themis.gui.base.ThemisUIHTMLTag;
+import io.github.tonywasher.joceanus.themis.gui.base.ThemisUIResource;
 import io.github.tonywasher.joceanus.themis.stats.ThemisStat;
 import io.github.tonywasher.joceanus.themis.stats.ThemisStats;
 import io.github.tonywasher.joceanus.themis.stats.ThemisStatsElement;
@@ -60,7 +61,7 @@ public class ThemisUIStatsDocument
         final ThemisStats myStats = pElement.getStats();
         final Element myHdr1 = createElement(ThemisUIHTMLTag.H3);
         myBody.appendChild(myHdr1);
-        myHdr1.setTextContent("Local");
+        myHdr1.setTextContent(ThemisUIResource.STATS_LOCAL.getValue());
         myBody.appendChild(formatStats(myStats.getStats()));
 
         /* Add separator */
@@ -69,7 +70,7 @@ public class ThemisUIStatsDocument
         /* Add totals stats */
         final Element myHdr2 = createElement(ThemisUIHTMLTag.H3);
         myBody.appendChild(myHdr2);
-        myHdr2.setTextContent("Totals");
+        myHdr2.setTextContent(ThemisUIResource.STATS_TOTAL.getValue());
         myBody.appendChild(formatStats(myStats.getTotals()));
 
         /* Return the formatted HTML */
@@ -83,18 +84,27 @@ public class ThemisUIStatsDocument
      * @return the stats element
      */
     private Element formatStats(final Map<ThemisStat, Number> pStats) {
+        /* Create table body */
         final Element myTable = createElement(ThemisUIHTMLTag.TABLE);
-        addHeaderRow(myTable);
+        addClassToElement(myTable, CLASSTBLSTD);
+        final Element myBody = createElement(ThemisUIHTMLTag.TBODY);
+        myTable.appendChild(myBody);
+        addClassToElement(myBody, CLASSTBLZEBRA);
+
+        /* Add header row */
+        addHeaderRow(myBody);
+
+        /* Loop through the stats */
         for (ThemisStat myStat : ThemisStat.values()) {
             if (myStat.isInteger()) {
                 final Integer myValue = (Integer) pStats.get(myStat);
-                if (myValue != 0) {
-                    addStatsRow(myTable, myStat, myValue);
-                }
+                //if (myValue != 0) {
+                addStatsRow(myBody, myStat, myValue);
+                //}
             } else {
                 final Double myValue = (Double) pStats.get(myStat);
                 if (myValue != 0) {
-                    addStatsRow(myTable, myStat, myValue);
+                    addStatsRow(myBody, myStat, myValue);
                 }
             }
         }
@@ -108,9 +118,9 @@ public class ThemisUIStatsDocument
      */
     private void addHeaderRow(final Element pTable) {
         final Element myHeaderRow = createElement(ThemisUIHTMLTag.TR);
-        addHeaderCell(myHeaderRow, "Statistic");
-        addHeaderCell(myHeaderRow, "Key");
-        addHeaderCell(myHeaderRow, "Value");
+        addHeaderCell(myHeaderRow, ThemisUIResource.STATS_DESC.getValue());
+        addHeaderCell(myHeaderRow, ThemisUIResource.STATS_KEY.getValue());
+        addHeaderCell(myHeaderRow, ThemisUIResource.STATS_VALUE.getValue());
         pTable.appendChild(myHeaderRow);
     }
 
@@ -133,15 +143,17 @@ public class ThemisUIStatsDocument
      * @param pTable the table
      * @param pStat  the stat
      * @param pValue the value
+     * @return the row
      */
-    private void addStatsRow(final Element pTable,
-                             final ThemisStat pStat,
-                             final Integer pValue) {
+    private Element addStatsRow(final Element pTable,
+                                final ThemisStat pStat,
+                                final Integer pValue) {
         final Element myDataRow = createElement(ThemisUIHTMLTag.TR);
         addDataCell(myDataRow, pStat.getDesc());
         addDataCell(myDataRow, pStat.name());
         addDataCell(myDataRow, Integer.toString(pValue));
         pTable.appendChild(myDataRow);
+        return myDataRow;
     }
 
     /**
@@ -150,15 +162,17 @@ public class ThemisUIStatsDocument
      * @param pTable the table
      * @param pStat  the stat
      * @param pValue the value
+     * @return the row
      */
-    private void addStatsRow(final Element pTable,
-                             final ThemisStat pStat,
-                             final Double pValue) {
+    private Element addStatsRow(final Element pTable,
+                                final ThemisStat pStat,
+                                final Double pValue) {
         final Element myDataRow = createElement(ThemisUIHTMLTag.TR);
         addDataCell(myDataRow, pStat.getDesc());
         addDataCell(myDataRow, pStat.name());
         addDataCell(myDataRow, Double.toString(pValue));
         pTable.appendChild(myDataRow);
+        return myDataRow;
     }
 
     /**

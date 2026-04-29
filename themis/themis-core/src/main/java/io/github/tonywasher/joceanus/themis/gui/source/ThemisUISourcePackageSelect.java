@@ -235,6 +235,7 @@ public class ThemisUISourcePackageSelect
      *
      * @param pFirst  the first name
      * @param pSecond the second name
+     * @return the prefix
      */
     private String getCommonPrefix(final String pFirst,
                                    final String pSecond) {

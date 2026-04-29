@@ -17,6 +17,7 @@
 
 package io.github.tonywasher.joceanus.themis.gui.reference;
 
+import io.github.tonywasher.joceanus.themis.gui.base.ThemisUIBaseDocument;
 import io.github.tonywasher.joceanus.themis.gui.base.ThemisUIDocBuilder;
 import io.github.tonywasher.joceanus.themis.gui.base.ThemisUIHTMLTag;
 import io.github.tonywasher.joceanus.themis.parser.base.ThemisChar;
@@ -62,17 +63,24 @@ public class ThemisUIRefLinks {
 
         /* If we have links */
         if (myLinkMap != null) {
+            /* Create table body */
+            theBuilder.addClassToElement(pTable, ThemisUIBaseDocument.CLASSTBLSTD);
+            final Element myBody = theBuilder.createElement(ThemisUIHTMLTag.TBODY);
+            pTable.appendChild(myBody);
+            theBuilder.addClassToElement(myBody, ThemisUIBaseDocument.CLASSTBLZEBRA);
+
             /* Create the header */
-            formatHeader(pSource, pTarget, pTable);
+            formatHeader(pSource, pTarget, myBody);
 
             /* Loop through the references */
             for (ThemisSolverRefClass myLink : myLinkMap.getReferences()) {
                 /* Create table row */
                 final Element myRow = theBuilder.createElement(ThemisUIHTMLTag.TR);
-                pTable.appendChild(myRow);
+                myBody.appendChild(myRow);
 
                 /* Add row elements */
                 formatFromClass(pSource, myLink, myRow);
+                formatArrow(myRow);
                 formatToClasses(pTarget, myLink, myRow);
             }
         }
@@ -92,16 +100,16 @@ public class ThemisUIRefLinks {
         final Element myRow = theBuilder.createElement(ThemisUIHTMLTag.TR);
         pTable.appendChild(myRow);
 
-        /* Create a blank cell for top left */
-        final Element myHdrBlank = theBuilder.createElement(ThemisUIHTMLTag.TH);
-        myRow.appendChild(myHdrBlank);
-
-        /* Create the source cell */
+        /* Create the source header */
         final Element mySource = theBuilder.createElement(ThemisUIHTMLTag.TH);
         mySource.setTextContent(pSource.getPackageName());
         myRow.appendChild(mySource);
 
-        /* Create the source cell */
+        /* Create the null header */
+        final Element myLink = theBuilder.createElement(ThemisUIHTMLTag.TH);
+        myRow.appendChild(myLink);
+
+        /* Create the source header */
         final Element myTarget = theBuilder.createElement(ThemisUIHTMLTag.TH);
         myTarget.setTextContent(pTarget.getPackageName());
         myRow.appendChild(myTarget);
@@ -128,6 +136,20 @@ public class ThemisUIRefLinks {
     }
 
     /**
+     * Format arrow.
+     *
+     * @param pTable the table row
+     */
+    private void formatArrow(final Element pTable) {
+        /* Create table cell */
+        final Element myCell = theBuilder.createElement(ThemisUIHTMLTag.TD);
+        pTable.appendChild(myCell);
+
+        /* Set the text */
+        myCell.setTextContent("➤");
+    }
+
+    /**
      * Format to link.
      *
      * @param pTarget the Target package
@@ -145,17 +167,17 @@ public class ThemisUIRefLinks {
         boolean myXtra = false;
         final String myPrefix = pTarget.getPackageName() + ThemisChar.PERIOD;
         for (ThemisSolverClass myClass : pLink.getReferences()) {
+            /* If this is an extra class */
+            if (myXtra) {
+                /* Add a text element */
+                final Element myBreak = theBuilder.createElement(ThemisUIHTMLTag.BR);
+                myCell.appendChild(myBreak);
+            }
+
             /* Add a text element */
             final String myName = myClass.getFullName();
             final Node myText = theBuilder.createTextNode(myName.substring(myPrefix.length()));
             myCell.appendChild(myText);
-
-            /* If this is an extra class */
-            if (myXtra) {
-                /* Add a text element */
-                final Node mySpace = theBuilder.createTextNode(ThemisChar.BLANK);
-                myCell.appendChild(mySpace);
-            }
 
             /* Note xtra classes */
             myXtra = true;

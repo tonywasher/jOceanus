@@ -38,7 +38,7 @@ public final class ThemisUIRefConstants {
     /**
      * Local package name.
      */
-    static final String LOCALPACKAGE = ThemisUIResource.PACKAGE_LOCAL.getValue();
+    static final String LOCALPACKAGE = ThemisUIResource.REF_LOCAL.getValue();
 
     /**
      * New package indicator.
@@ -58,30 +58,35 @@ public final class ThemisUIRefConstants {
     /**
      * SelfOK class.
      */
-    static final String CLASSSELFOK = "tableSelfOK";
+    static final String CLASSSELFOK = "refSelfOK";
 
     /**
      * SelfError class.
      */
-    static final String CLASSSELFERROR = "tableSelfError";
+    static final String CLASSSELFERROR = "refSelfError";
 
     /**
      * Link class.
      */
-    static final String CLASSLINK = "tableLink";
+    static final String CLASSLINK = "refLink";
 
     /**
      * Link class.
      */
-    static final String CLASSLINKLIST = "tableLinkList";
+    static final String CLASSLINKLIST = "refLinkList";
+
+    /**
+     * Link class.
+     */
+    static final String CLASSLINKSIBLING = "refLinkSibling";
 
     /**
      * Link Present class.
      */
-    static final String CLASSLINKPRESENT = "tableLinkPresent";
+    static final String CLASSLINKPRESENT = "refLinkPresent";
 
     /**
-     * Header class.
+     * Navigation Table class.
      */
-    static final String CLASSHDR = "tableHdr";
+    static final String CLASSNAVTABLE = "refNavigation";
 }

@@ -74,19 +74,59 @@ public enum ThemisUIResource
     PROMPT_FILE("prompt.file"),
 
     /**
-     * Local Package.
+     * Reference Local Package.
      */
-    PACKAGE_LOCAL("package.local"),
+    REF_LOCAL("reference.local"),
 
     /**
-     * Family Package.
+     * Reference Family Package.
      */
-    PACKAGE_FAMILY("package.family"),
+    REF_FAMILY("reference.family"),
 
     /**
-     * Root Package.
+     * Reference Root Package.
      */
-    PACKAGE_ROOT("package.root"),
+    REF_ROOT("reference.root"),
+
+    /**
+     * Reference Parent Package.
+     */
+    REF_PARENT("reference.parent"),
+
+    /**
+     * Reference Home Package.
+     */
+    REF_HOME("reference.home"),
+
+    /**
+     * Reference Links.
+     */
+    REF_LINKS("reference.links"),
+
+    /**
+     * Stats Local.
+     */
+    STATS_LOCAL("stats.local"),
+
+    /**
+     * Stats Total.
+     */
+    STATS_TOTAL("stats.total"),
+
+    /**
+     * Stats Desc.
+     */
+    STATS_DESC("stats.desc"),
+
+    /**
+     * Stats Key.
+     */
+    STATS_KEY("stats.key"),
+
+    /**
+     * Stats Value.
+     */
+    STATS_VALUE("stats.value"),
 
     /**
      * SourceDecl Annotation.

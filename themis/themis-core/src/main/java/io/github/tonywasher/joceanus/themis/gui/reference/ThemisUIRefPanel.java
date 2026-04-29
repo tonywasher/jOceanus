@@ -23,6 +23,7 @@ import io.github.tonywasher.joceanus.tethys.api.base.TethysUIEvent;
 import io.github.tonywasher.joceanus.tethys.api.control.TethysUIControlFactory;
 import io.github.tonywasher.joceanus.tethys.api.control.TethysUIHTMLManager;
 import io.github.tonywasher.joceanus.tethys.api.factory.TethysUIFactory;
+import io.github.tonywasher.joceanus.tethys.api.pane.TethysUIBorderPaneManager;
 import io.github.tonywasher.joceanus.tethys.api.pane.TethysUIBoxPaneManager;
 import io.github.tonywasher.joceanus.tethys.api.pane.TethysUIPaneFactory;
 import io.github.tonywasher.joceanus.tethys.api.pane.TethysUIScrollPaneManager;
@@ -55,9 +56,19 @@ public class ThemisUIRefPanel
     private final TethysUIHTMLManager theLinkHtml;
 
     /**
+     * The DSM Scroll.
+     */
+    private final TethysUIScrollPaneManager theDSMScroll;
+
+    /**
+     * The Link Scroll.
+     */
+    private final TethysUIScrollPaneManager theLinkScroll;
+
+    /**
      * The panel.
      */
-    private final TethysUIBoxPaneManager thePane;
+    private final TethysUIBorderPaneManager thePane;
 
     /**
      * Constructor.
@@ -75,10 +86,10 @@ public class ThemisUIRefPanel
 
         /* Create scroll-panes */
         final TethysUIPaneFactory myPanes = pFactory.paneFactory();
-        final TethysUIScrollPaneManager myDSMScroll = myPanes.newScrollPane();
-        myDSMScroll.setContent(theDSMHtml);
-        final TethysUIScrollPaneManager myLinkScroll = myPanes.newScrollPane();
-        myLinkScroll.setContent(theLinkHtml);
+        theDSMScroll = myPanes.newScrollPane();
+        theDSMScroll.setContent(theDSMHtml);
+        theLinkScroll = myPanes.newScrollPane();
+        theLinkScroll.setContent(theLinkHtml);
 
         /* Create the document builder */
         theDoc = new ThemisUIRefDocument();
@@ -86,15 +97,19 @@ public class ThemisUIRefPanel
         /* Create the module select */
         theSelect = new ThemisUIRefModuleSelect(pFactory);
         final TethysUIBoxPaneManager mySelect = myPanes.newHBoxPane();
-        mySelect.addNode(myControls.newLabel("Module:"));
+        mySelect.addSpacer();
         mySelect.addNode(theSelect);
         mySelect.addSpacer();
 
+        /* Create the display panel */
+        final TethysUIBoxPaneManager myPane = myPanes.newVBoxPane();
+        myPane.addNode(theDSMScroll);
+        myPane.addNode(theLinkScroll);
+
         /* Create the panel */
-        thePane = myPanes.newVBoxPane();
-        thePane.addNode(mySelect);
-        thePane.addNode(myDSMScroll);
-        thePane.addNode(myLinkScroll);
+        thePane = myPanes.newBorderPane();
+        thePane.setNorth(mySelect);
+        thePane.setCentre(myPane);
 
         /* Handle module select */
         theSelect.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE,
@@ -128,10 +143,11 @@ public class ThemisUIRefPanel
     private void selectModule() {
         /* Select module and hide link list */
         theDoc.setModule(theSelect.getCurrentModule());
-        theLinkHtml.setVisible(false);
+        theLinkScroll.setVisible(false);
 
         /* Format the default package */
-        theLinkHtml.setHTMLContent(theDoc.formatDefaultPackage(), "");
+        final String myHTML = theDoc.formatDefaultPackage();
+        theDSMHtml.setHTMLContent(myHTML, "");
     }
 
     /**
@@ -143,14 +159,16 @@ public class ThemisUIRefPanel
         /* If this is a new package */
         if (theDoc.isNewPackageLink(pReference)) {
             /* Format the package and hide link list */
-            theDSMHtml.setHTMLContent(theDoc.formatNewPackageLink(pReference), "");
-            theLinkHtml.setVisible(false);
+            final String myHTML = theDoc.formatNewPackageLink(pReference);
+            theDSMHtml.setHTMLContent(myHTML, "");
+            theLinkScroll.setVisible(false);
 
             /* If this is a listLink */
         } else if (theDoc.isListLink(pReference)) {
             /* Format the list and show link list */
-            theLinkHtml.setHTMLContent(theDoc.formatListLink(pReference), "");
-            theLinkHtml.setVisible(true);
+            final String myHTML = theDoc.formatListLink(pReference);
+            theLinkHtml.setHTMLContent(myHTML, "");
+            theLinkScroll.setVisible(true);
         }
     }
 }

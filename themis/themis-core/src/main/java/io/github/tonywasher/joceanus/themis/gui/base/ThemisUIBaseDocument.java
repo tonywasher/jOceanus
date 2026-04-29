@@ -21,6 +21,7 @@ import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogManager;
 import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogger;
 import io.github.tonywasher.joceanus.themis.exc.ThemisIOException;
+import io.github.tonywasher.joceanus.themis.parser.base.ThemisChar;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Text;
@@ -45,6 +46,16 @@ public abstract class ThemisUIBaseDocument
      * Logger.
      */
     private static final OceanusLogger LOGGER = OceanusLogManager.getLogger(ThemisUIBaseDocument.class);
+
+    /**
+     * The Table standard class.
+     */
+    public static final String CLASSTBLSTD = "tableStd";
+
+    /**
+     * The Table Zebra class.
+     */
+    public static final String CLASSTBLZEBRA = "tableZebra";
 
     /**
      * The document builder.
@@ -135,6 +146,28 @@ public abstract class ThemisUIBaseDocument
                              final ThemisUIHTMLAttr pAttr,
                              final String pValue) {
         pElement.setAttribute(pAttr.getAttr(), pValue);
+    }
+
+    @Override
+    public void addClassToElement(final Element pElement,
+                                  final String pClass) {
+        final String myAttr = ThemisUIHTMLAttr.CLASS.getAttr();
+        final String myExist = pElement.getAttribute(myAttr);
+        if (myExist.isEmpty()) {
+            pElement.setAttribute(myAttr, pClass);
+        } else {
+            pElement.setAttribute(myAttr, myExist + ThemisChar.BLANK + pClass);
+        }
+    }
+
+    @Override
+    public void addToolTipToElement(final Element pElement,
+                                    final String pToolTip) {
+        addClassToElement(pElement, "toolTipHolder");
+        final Element myToolTip = createElement(ThemisUIHTMLTag.SPAN);
+        pElement.appendChild(myToolTip);
+        addClassToElement(myToolTip, "toolTip");
+        myToolTip.setTextContent(pToolTip);
     }
 
     /**

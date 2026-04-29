@@ -22,11 +22,9 @@ import io.github.tonywasher.joceanus.themis.gui.base.ThemisUIBaseDocument;
 import io.github.tonywasher.joceanus.themis.gui.base.ThemisUIHTMLAttr;
 import io.github.tonywasher.joceanus.themis.gui.base.ThemisUIHTMLTag;
 import io.github.tonywasher.joceanus.themis.gui.base.ThemisUIResource;
-import io.github.tonywasher.joceanus.themis.parser.base.ThemisChar;
 import io.github.tonywasher.joceanus.themis.solver.proj.ThemisSolverModule;
 import io.github.tonywasher.joceanus.themis.solver.proj.ThemisSolverPackage;
 import org.w3c.dom.Element;
-import org.w3c.dom.Text;
 
 import java.util.Map;
 
@@ -204,10 +202,11 @@ public class ThemisUIRefDocument
         /* Create new document and obtain the body */
         final Element myBody = newDocument();
 
-        /* format the package Links */
-        final Element myHeader = createElement(ThemisUIHTMLTag.H3);
-        myBody.appendChild(myHeader);
-        addPackageLink(myHeader, pPackage);
+        /* Create the title */
+        buildPackageTitle(myBody, pPackage);
+
+        /* Create the links */
+        buildPackageLinks(myBody, pPackage, pLocal);
 
         /* Create new table */
         final Element myTable = createElement(ThemisUIHTMLTag.TABLE);
@@ -239,8 +238,9 @@ public class ThemisUIRefDocument
         final Element myBody = newDocument();
 
         /* format the package Links */
-        final Element myHeader = createElement(ThemisUIHTMLTag.H3);
+        final Element myHeader = createElement(ThemisUIHTMLTag.H1);
         myBody.appendChild(myHeader);
+        myHeader.setTextContent(ThemisUIResource.REF_LINKS.getValue());
 
         /* Create new table */
         final Element myTable = createElement(ThemisUIHTMLTag.TABLE);
@@ -254,51 +254,135 @@ public class ThemisUIRefDocument
     }
 
     /**
-     * Add package link.
+     * Build package title.
      *
-     * @param pElement the element
+     * @param pBody    the document body
      * @param pPackage the package
      */
-    private void addPackageLink(final Element pElement,
-                                final ThemisSolverPackage pPackage) {
-        /* Obtain the package name */
-        final String myName = getPackageLinkName(pPackage);
-        final boolean doParent = myName.equals(pPackage.getShortName());
+    private void buildPackageTitle(final Element pBody,
+                                   final ThemisSolverPackage pPackage) {
+        /* Create the header */
+        final Element myHeader = createElement(ThemisUIHTMLTag.H3);
+        pBody.appendChild(myHeader);
 
-        /* Handle parent package */
-        if (doParent) {
-            /* Obtain the parent package */
-            final ThemisSolverPackage myParent = pPackage.getParent();
-            addPackageLink(pElement, myParent);
-
-            /* Add link */
-            final Text myPeriod = createTextNode(ThemisChar.PERIOD);
-            pElement.appendChild(myPeriod);
-        }
-
-        /* Create link element */
-        final Element myLink = createElement(ThemisUIHTMLTag.A);
-        pElement.appendChild(myLink);
-        final String myLinkRef = ThemisUIRefConstants.LINKPACKAGE + pPackage.getPackageName();
-        setAttribute(myLink, ThemisUIHTMLAttr.HREF, myLinkRef);
-        myLink.setTextContent(myName);
+        /* Set name of package */
+        final String myName = pPackage.getPackageName().isEmpty()
+                ? ThemisUIResource.REF_ROOT.getValue()
+                : pPackage.getPackageName();
+        myHeader.setTextContent(myName);
     }
 
     /**
-     * Determine package link name.
+     * Build package links.
      *
+     * @param pBody    the document body
      * @param pPackage the package
-     * @return the package linkName
+     * @param pLocal   chose local Classes
      */
-    private String getPackageLinkName(final ThemisSolverPackage pPackage) {
-        /* Handle root case */
-        if (pPackage.getPackageName().isEmpty()) {
-            return ThemisUIResource.PACKAGE_ROOT.getValue();
+    private void buildPackageLinks(final Element pBody,
+                                   final ThemisSolverPackage pPackage,
+                                   final boolean pLocal) {
+        /* Create the links */
+        final Element myLinks = createElement(ThemisUIHTMLTag.TR);
+
+        /* Create links */
+        createHomeLink(myLinks, pPackage);
+        createParentLink(myLinks, pPackage);
+        if (pLocal) {
+            createFamilyLink(myLinks, pPackage);
         }
 
-        /* Special handling for default */
-        return pPackage.equals(theDefault)
-                ? "<" + pPackage.getPackageName() + ">" : pPackage.getShortName();
+        /* If we have links, then add to body */
+        if (myLinks.hasChildNodes()) {
+            /* Create the table */
+            final Element myTable = createElement(ThemisUIHTMLTag.TABLE);
+            pBody.appendChild(myTable);
+            myTable.appendChild(myLinks);
+            addClassToElement(myTable, ThemisUIRefConstants.CLASSNAVTABLE);
+        }
+    }
+
+    /**
+     * Create home link.
+     *
+     * @param pLinks   the document links
+     * @param pPackage the package
+     */
+    private void createHomeLink(final Element pLinks,
+                                final ThemisSolverPackage pPackage) {
+        /* If we are not the default package */
+        if (!pPackage.equals(theDefault)) {
+            /* Create the cell */
+            final Element myCell = createElement(ThemisUIHTMLTag.TD);
+            pLinks.appendChild(myCell);
+
+            /* Create the link */
+            final Element myLink = createElement(ThemisUIHTMLTag.A);
+            myCell.appendChild(myLink);
+
+            /* Set link details */
+            final String myLinkRef = ThemisUIRefConstants.LINKPACKAGE + theDefault.getPackageName();
+            setAttribute(myLink, ThemisUIHTMLAttr.HREF, myLinkRef);
+
+            /* Set name of package */
+            myLink.setTextContent(ThemisUIResource.REF_HOME.getValue());
+        }
+    }
+
+    /**
+     * Create parent link.
+     *
+     * @param pLinks   the document links
+     * @param pPackage the package
+     */
+    private void createParentLink(final Element pLinks,
+                                  final ThemisSolverPackage pPackage) {
+        /* If we are not the default package */
+        final ThemisSolverPackage myParent = pPackage.getParent();
+        if (!pPackage.equals(theDefault)
+                && !theDefault.equals(myParent)) {
+            /* Create the cell */
+            final Element myCell = createElement(ThemisUIHTMLTag.TD);
+            pLinks.appendChild(myCell);
+
+            /* Create the link */
+            final Element myLink = createElement(ThemisUIHTMLTag.A);
+            myCell.appendChild(myLink);
+
+            /* Set link details */
+            final String myLinkRef = ThemisUIRefConstants.LINKPACKAGE + myParent.getPackageName();
+            setAttribute(myLink, ThemisUIHTMLAttr.HREF, myLinkRef);
+
+            /* Set name of package */
+            myLink.setTextContent(ThemisUIResource.REF_PARENT.getValue());
+        }
+    }
+
+    /**
+     * Create parent link.
+     *
+     * @param pLinks   the document links
+     * @param pPackage the package
+     */
+    private void createFamilyLink(final Element pLinks,
+                                  final ThemisSolverPackage pPackage) {
+        /* If we are not the default package */
+        if (!pPackage.getChildren().isEmpty()) {
+            /* Create the cell */
+            final Element myCell = createElement(ThemisUIHTMLTag.TD);
+            pLinks.appendChild(myCell);
+
+            /* Create the link */
+            final Element myLink = createElement(ThemisUIHTMLTag.A);
+            myCell.appendChild(myLink);
+
+            /* Set link details */
+            final String myLinkRef = ThemisUIRefConstants.LINKPACKAGE + pPackage.getPackageName();
+            setAttribute(myLink, ThemisUIHTMLAttr.HREF, myLinkRef);
+
+            /* Set name of package */
+            myLink.setTextContent(ThemisUIResource.REF_FAMILY.getValue());
+        }
     }
 
     /**
@@ -346,6 +430,7 @@ public class ThemisUIRefDocument
      *
      * @param pFirst  the first package
      * @param pSecond the second package
+     * @return the common parent
      */
     private ThemisSolverPackage getCommonParent(final ThemisSolverPackage pFirst,
                                                 final ThemisSolverPackage pSecond) {
