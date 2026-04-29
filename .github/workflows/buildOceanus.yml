@@ -6,8 +6,8 @@ on:
       - main
 
 jobs:
-  build_linux:
-    runs-on: ubuntu-latest
+  build_windows:
+    runs-on: windows-latest
     steps:
       - uses: actions/checkout@v6
         with:
@@ -23,17 +23,17 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: mvn -B package site site:stage sonar:sonar --file pom.xml
       - name: Package HTML site
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: Site
           path: target/staging
       - name: Package distribution directory
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
-          name: LinuxDist
+          name: WindowsDist
           path: dist
-  build_windows:
-    runs-on: windows-latest
+  build_linux:
+    runs-on: linux-latest
     steps:
       - uses: actions/checkout@v6
       - name: Set up JDK 21
@@ -45,7 +45,7 @@ jobs:
       - name: Build project with Maven
         run: mvn -B package --file pom.xml
       - name: Package distribution directory
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
-          name: WindowsDist
+          name: LinuxDist
           path: dist
