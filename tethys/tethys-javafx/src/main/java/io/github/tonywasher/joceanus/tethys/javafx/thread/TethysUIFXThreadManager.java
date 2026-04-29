@@ -17,12 +17,12 @@
 package io.github.tonywasher.joceanus.tethys.javafx.thread;
 
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
-import javafx.concurrent.Worker.State;
 import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThread;
 import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadCancelException;
 import io.github.tonywasher.joceanus.tethys.core.factory.TethysUICoreFactory;
 import io.github.tonywasher.joceanus.tethys.core.thread.TethysUICoreThreadManager;
 import io.github.tonywasher.joceanus.tethys.core.thread.TethysUICoreThreadStatus;
+import javafx.concurrent.Worker.State;
 
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -72,7 +72,7 @@ public class TethysUIFXThreadManager
     }
 
     @Override
-    protected void threadCompleted() {
+    public void threadCompleted() {
         /* Remove reference */
         theWorker = null;
 

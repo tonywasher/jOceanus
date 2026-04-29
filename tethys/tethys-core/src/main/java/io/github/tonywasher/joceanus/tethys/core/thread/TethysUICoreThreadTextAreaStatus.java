@@ -25,6 +25,7 @@ import io.github.tonywasher.joceanus.tethys.api.pane.TethysUIBorderPaneManager;
 import io.github.tonywasher.joceanus.tethys.api.pane.TethysUIBoxPaneManager;
 import io.github.tonywasher.joceanus.tethys.api.pane.TethysUIPaneFactory;
 import io.github.tonywasher.joceanus.tethys.api.pane.TethysUIScrollPaneManager;
+import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadManager;
 import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadStatus;
 import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadStatusManager;
 import io.github.tonywasher.joceanus.tethys.core.base.TethysUICoreComponent;
@@ -64,7 +65,7 @@ public abstract class TethysUICoreThreadTextAreaStatus
     /**
      * The Thread Manager.
      */
-    private final TethysUICoreThreadManager theThreadManager;
+    private final TethysUIThreadManager theThreadManager;
 
     /**
      * Pane.
@@ -102,7 +103,7 @@ public abstract class TethysUICoreThreadTextAreaStatus
      * @param pManager the Thread Manager
      * @param pFactory the GUI factory
      */
-    protected TethysUICoreThreadTextAreaStatus(final TethysUICoreThreadManager pManager,
+    protected TethysUICoreThreadTextAreaStatus(final TethysUIThreadManager pManager,
                                                final TethysUICoreFactory<?> pFactory) {
         /* Store parameters */
         theThreadManager = pManager;

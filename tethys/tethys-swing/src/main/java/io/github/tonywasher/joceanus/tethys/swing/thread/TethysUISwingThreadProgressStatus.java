@@ -16,12 +16,12 @@
  */
 package io.github.tonywasher.joceanus.tethys.swing.thread;
 
-import javax.swing.Timer;
-
+import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadManager;
 import io.github.tonywasher.joceanus.tethys.core.factory.TethysUICoreFactory;
-import io.github.tonywasher.joceanus.tethys.core.thread.TethysUICoreThreadManager;
 import io.github.tonywasher.joceanus.tethys.core.thread.TethysUICoreThreadProgressStatus;
 import io.github.tonywasher.joceanus.tethys.swing.base.TethysUISwingNode;
+
+import javax.swing.Timer;
 
 /**
  * Swing Thread ProgressBar Status Manager.
@@ -39,7 +39,7 @@ public class TethysUISwingThreadProgressStatus
      * @param pManager the thread manager
      * @param pFactory the GUI factory
      */
-    TethysUISwingThreadProgressStatus(final TethysUICoreThreadManager pManager,
+    TethysUISwingThreadProgressStatus(final TethysUIThreadManager pManager,
                                       final TethysUICoreFactory<?> pFactory) {
         /* Initialise underlying class */
         super(pManager, pFactory);

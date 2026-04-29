@@ -119,9 +119,9 @@ public class GordianSP800CTRDRBG
     private byte[] blockCipherDF(final byte[] pInput,
                                  final int pNumBits) throws GordianException {
         /* Check valid # of bits */
-        if (pNumBits > GordianCoreRandomFactory.MAX_BITS_REQUEST) {
+        if (pNumBits > GordianRandomConstants.MAX_BITS_REQUEST) {
             throw new IllegalArgumentException("Number of bits per request limited to "
-                    + GordianCoreRandomFactory.MAX_BITS_REQUEST);
+                    + GordianRandomConstants.MAX_BITS_REQUEST);
         }
 
         /* Allocate the lengths */
@@ -301,14 +301,14 @@ public class GordianSP800CTRDRBG
                         final byte[] pXtraBytes,
                         final boolean isPredictionResistant) {
         /* Check valid # of bits */
-        final int myNumBits = pOutput.length << GordianCoreRandomFactory.BIT_SHIFT;
-        if (myNumBits > GordianCoreRandomFactory.MAX_BITS_REQUEST) {
+        final int myNumBits = pOutput.length << GordianRandomConstants.BIT_SHIFT;
+        if (myNumBits > GordianRandomConstants.MAX_BITS_REQUEST) {
             throw new IllegalArgumentException("Number of bits per request limited to "
-                    + GordianCoreRandomFactory.MAX_BITS_REQUEST);
+                    + GordianRandomConstants.MAX_BITS_REQUEST);
         }
 
         /* Check for reSeed required */
-        if (theReseedCounter.compareLimit(GordianCoreRandomFactory.RESEED_MAX)) {
+        if (theReseedCounter.compareLimit(GordianRandomConstants.RESEED_MAX)) {
             return -1;
         }
 
@@ -379,6 +379,6 @@ public class GordianSP800CTRDRBG
 
     @Override
     public String getAlgorithm() {
-        return GordianCoreRandomFactory.SP800_PREFIX + theCipher.getCipherSpec().toString();
+        return GordianRandomConstants.SP800_PREFIX + theCipher.getCipherSpec().toString();
     }
 }

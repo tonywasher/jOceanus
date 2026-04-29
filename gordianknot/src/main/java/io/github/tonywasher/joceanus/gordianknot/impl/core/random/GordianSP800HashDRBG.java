@@ -146,14 +146,14 @@ public final class GordianSP800HashDRBG
                         final byte[] pXtraBytes,
                         final boolean isPredictionResistant) {
         /* Check valid # of bits */
-        final int myNumBits = pOutput.length << GordianCoreRandomFactory.BIT_SHIFT;
-        if (myNumBits > GordianCoreRandomFactory.MAX_BITS_REQUEST) {
+        final int myNumBits = pOutput.length << GordianRandomConstants.BIT_SHIFT;
+        if (myNumBits > GordianRandomConstants.MAX_BITS_REQUEST) {
             throw new IllegalArgumentException("Number of bits per request limited to "
-                    + GordianCoreRandomFactory.MAX_BITS_REQUEST);
+                    + GordianRandomConstants.MAX_BITS_REQUEST);
         }
 
         /* Check for reSeed required */
-        if (theReseedCounter.compareLimit(GordianCoreRandomFactory.RESEED_MAX)) {
+        if (theReseedCounter.compareLimit(GordianRandomConstants.RESEED_MAX)) {
             return -1;
         }
 
@@ -203,7 +203,7 @@ public final class GordianSP800HashDRBG
                            final int pNumBits) {
         /* Determine # of iterations */
         final int mySize = theDigest.getDigestSize();
-        final int myLen = pNumBits >> GordianCoreRandomFactory.BIT_SHIFT;
+        final int myLen = pNumBits >> GordianRandomConstants.BIT_SHIFT;
 
         /* Allocate counters */
         final GordianByteArrayInteger myData = new GordianByteArrayInteger(pInputBytes);
@@ -245,7 +245,7 @@ public final class GordianSP800HashDRBG
                                                final int pSeedLength) {
         /* Determine sizes */
         final int mySize = theDigest.getDigestSize();
-        final int myLen = pSeedLength >> GordianCoreRandomFactory.BIT_SHIFT;
+        final int myLen = pSeedLength >> GordianRandomConstants.BIT_SHIFT;
         byte myCount = 1;
 
         /* Create output buffer */
@@ -297,6 +297,6 @@ public final class GordianSP800HashDRBG
 
     @Override
     public String getAlgorithm() {
-        return GordianCoreRandomFactory.SP800_PREFIX + theDigest.getDigestSpec().toString();
+        return GordianRandomConstants.SP800_PREFIX + theDigest.getDigestSpec().toString();
     }
 }

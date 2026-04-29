@@ -19,7 +19,6 @@ package io.github.tonywasher.joceanus.gordianknot.api.agree;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamCipher;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymCipher;
-import io.github.tonywasher.joceanus.gordianknot.api.factory.GordianFactory;
 import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySet;
 
 /**
@@ -55,13 +54,6 @@ public interface GordianAgreement {
      * @throws GordianException on error
      */
     Object getResult() throws GordianException;
-
-    /**
-     * Obtain factory result.
-     *
-     * @return the result if it is available as a factory, otherwise null
-     */
-    GordianFactory getFactoryResult();
 
     /**
      * Obtain keySet result.

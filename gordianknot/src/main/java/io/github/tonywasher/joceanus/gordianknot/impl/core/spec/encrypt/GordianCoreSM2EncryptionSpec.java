@@ -20,6 +20,7 @@ package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.encrypt;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianSM2EncryptionSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.encrypt.spec.GordianSM2EncryptionType;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.base.GordianSpecConstants;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.digest.GordianCoreDigestSpec;
 
 import java.util.Objects;
@@ -116,7 +117,7 @@ public class GordianCoreSM2EncryptionSpec
             /* If the encryptionSpec is valid */
             if (isValid) {
                 /* Load the name */
-                theName = theType.toString() + GordianCoreEncryptorSpec.SEP + theDigest.toString();
+                theName = theType.toString() + GordianSpecConstants.SEP + theDigest.toString();
             } else {
                 /* Report invalid spec */
                 theName = "InvalidEncryptorSpec: " + theType + ":" + theDigest;

@@ -21,9 +21,9 @@ package io.github.tonywasher.joceanus.oceanus.logger;
  */
 public class OceanusLogger {
     /**
-     * The log manager instance.
+     * The log engine.
      */
-    private final OceanusLogManager theManager;
+    private final OceanusLogEngine theEngine;
 
     /**
      * The class for which this is the logger.
@@ -33,12 +33,12 @@ public class OceanusLogger {
     /**
      * Constructor.
      *
-     * @param pManager the manager
-     * @param pOwner   the owning class
+     * @param pEngine the engine
+     * @param pOwner  the owning class
      */
-    public OceanusLogger(final OceanusLogManager pManager,
-                         final Class<?> pOwner) {
-        theManager = pManager;
+    OceanusLogger(final OceanusLogEngine pEngine,
+                  final Class<?> pOwner) {
+        theEngine = pEngine;
         theOwner = pOwner;
     }
 
@@ -51,8 +51,8 @@ public class OceanusLogger {
     public void debug(final String pFormat,
                       final Object... pArgs) {
         final String myMessage = String.format(pFormat, pArgs);
-        final String myLogMessage = theManager.formatMessage(theOwner, OceanusLogLevel.DEBUG, myMessage);
-        theManager.writeLogMessage(myLogMessage);
+        final String myLogMessage = theEngine.formatMessage(theOwner, OceanusLogLevel.DEBUG, myMessage);
+        theEngine.writeLogMessage(myLogMessage);
     }
 
     /**
@@ -63,9 +63,9 @@ public class OceanusLogger {
      */
     public void debug(final String pMessage,
                       final byte[] pData) {
-        final String myLogMessage = theManager.formatMessage(theOwner, OceanusLogLevel.DEBUG, pMessage);
-        final String myLogData = OceanusLogManager.formatData(pData);
-        theManager.writeLogMessage(myLogMessage + myLogData);
+        final String myLogMessage = theEngine.formatMessage(theOwner, OceanusLogLevel.DEBUG, pMessage);
+        final String myLogData = OceanusLogEngine.formatData(pData);
+        theEngine.writeLogMessage(myLogMessage + myLogData);
     }
 
     /**
@@ -80,9 +80,9 @@ public class OceanusLogger {
                       final byte[] pData,
                       final int pOffset,
                       final int pLength) {
-        final String myLogMessage = theManager.formatMessage(theOwner, OceanusLogLevel.DEBUG, pMessage);
-        final String myLogData = OceanusLogManager.formatData(pData, pOffset, pLength);
-        theManager.writeLogMessage(myLogMessage + myLogData);
+        final String myLogMessage = theEngine.formatMessage(theOwner, OceanusLogLevel.DEBUG, pMessage);
+        final String myLogData = OceanusLogEngine.formatData(pData, pOffset, pLength);
+        theEngine.writeLogMessage(myLogMessage + myLogData);
     }
 
     /**
@@ -94,8 +94,8 @@ public class OceanusLogger {
     public void info(final String pFormat,
                      final Object... pArgs) {
         final String myMessage = String.format(pFormat, pArgs);
-        final String myLogMessage = theManager.formatMessage(theOwner, OceanusLogLevel.INFO, myMessage);
-        theManager.writeLogMessage(myLogMessage);
+        final String myLogMessage = theEngine.formatMessage(theOwner, OceanusLogLevel.INFO, myMessage);
+        theEngine.writeLogMessage(myLogMessage);
     }
 
     /**
@@ -107,8 +107,8 @@ public class OceanusLogger {
     public void error(final String pFormat,
                       final Object... pArgs) {
         final String myMessage = String.format(pFormat, pArgs);
-        final String myLogMessage = theManager.formatMessage(theOwner, OceanusLogLevel.ERROR, myMessage);
-        theManager.writeLogMessage(myLogMessage);
+        final String myLogMessage = theEngine.formatMessage(theOwner, OceanusLogLevel.ERROR, myMessage);
+        theEngine.writeLogMessage(myLogMessage);
     }
 
     /**
@@ -119,8 +119,8 @@ public class OceanusLogger {
      */
     public void error(final String pMessage,
                       final Throwable pException) {
-        final String myLogMessage = theManager.formatMessage(theOwner, OceanusLogLevel.ERROR, pMessage);
-        theManager.writeLogMessage(myLogMessage, pException);
+        final String myLogMessage = theEngine.formatMessage(theOwner, OceanusLogLevel.ERROR, pMessage);
+        theEngine.writeLogMessage(myLogMessage, pException);
     }
 
     /**
@@ -132,8 +132,8 @@ public class OceanusLogger {
     public void fatal(final String pFormat,
                       final Object... pArgs) {
         final String myMessage = String.format(pFormat, pArgs);
-        final String myLogMessage = theManager.formatMessage(theOwner, OceanusLogLevel.FATAL, myMessage);
-        theManager.writeLogMessage(myLogMessage);
+        final String myLogMessage = theEngine.formatMessage(theOwner, OceanusLogLevel.FATAL, myMessage);
+        theEngine.writeLogMessage(myLogMessage);
     }
 
     /**
@@ -144,7 +144,7 @@ public class OceanusLogger {
      */
     public void fatal(final String pMessage,
                       final Throwable pException) {
-        final String myLogMessage = theManager.formatMessage(theOwner, OceanusLogLevel.FATAL, pMessage);
-        theManager.writeLogMessage(myLogMessage, pException);
+        final String myLogMessage = theEngine.formatMessage(theOwner, OceanusLogLevel.FATAL, pMessage);
+        theEngine.writeLogMessage(myLogMessage, pException);
     }
 }

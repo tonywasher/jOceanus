@@ -17,6 +17,8 @@
 
 package io.github.tonywasher.joceanus.themis.solver.proj;
 
+import io.github.tonywasher.joceanus.themis.solver.proj.ThemisSolverDef.ThemisSolverPackageDef;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -29,7 +31,7 @@ public class ThemisSolverReference {
     /**
      * Map of references to other packages.
      */
-    private final Map<ThemisSolverPackage, ThemisSolverRefPackage> theMap;
+    private final Map<ThemisSolverPackageDef, ThemisSolverRefPackage> theMap;
 
     /**
      * Constructor.
@@ -44,7 +46,7 @@ public class ThemisSolverReference {
      * @param pPackage the package
      * @return the references
      */
-    public ThemisSolverRefPackage getReferences(final ThemisSolverPackage pPackage) {
+    public ThemisSolverRefPackage getReferences(final ThemisSolverPackageDef pPackage) {
         return theMap.get(pPackage);
     }
 
@@ -54,7 +56,7 @@ public class ThemisSolverReference {
      * @param pPackage the package
      * @return the reference
      */
-    public ThemisSolverRefPackage getReferredPackage(final ThemisSolverPackage pPackage) {
+    public ThemisSolverRefPackage getReferredPackage(final ThemisSolverPackageDef pPackage) {
         return theMap.get(pPackage);
     }
 
@@ -64,7 +66,7 @@ public class ThemisSolverReference {
      * @param pReferences the references
      */
     public void addReferences(final ThemisSolverRefPackage pReferences) {
-        final ThemisSolverPackage myPackage = pReferences.getPackage();
+        final ThemisSolverPackageDef myPackage = pReferences.getPackage();
         theMap.put(myPackage, pReferences);
     }
 
@@ -85,7 +87,7 @@ public class ThemisSolverReference {
         /**
          * The package that is referred to.
          */
-        private final ThemisSolverPackage thePackage;
+        private final ThemisSolverPackageDef thePackage;
 
         /**
          * The referenceType.
@@ -103,7 +105,7 @@ public class ThemisSolverReference {
          * @param pPackage the package
          * @param pRefType the reference type
          */
-        public ThemisSolverRefPackage(final ThemisSolverPackage pPackage,
+        public ThemisSolverRefPackage(final ThemisSolverPackageDef pPackage,
                                       final ThemisRefType pRefType) {
             thePackage = pPackage;
             theRefType = pRefType;
@@ -115,7 +117,7 @@ public class ThemisSolverReference {
          *
          * @return the class
          */
-        public ThemisSolverPackage getPackage() {
+        public ThemisSolverPackageDef getPackage() {
             return thePackage;
         }
 

@@ -61,7 +61,7 @@ public class TethysUISwingThreadManager
     }
 
     @Override
-    protected void threadCompleted() {
+    public void threadCompleted() {
         /* Remove reference */
         theWorker = null;
 

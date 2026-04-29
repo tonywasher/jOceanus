@@ -16,48 +16,22 @@
  */
 package io.github.tonywasher.joceanus.oceanus.logger;
 
-import io.github.tonywasher.joceanus.oceanus.convert.OceanusDataConverter;
-
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
-
 /**
  * Log Manager.
  */
 public final class OceanusLogManager {
     /**
-     * The data section length.
-     */
-    private static final int DATA_SECTION = 32;
-
-    /**
-     * The data advance.
-     */
-    private static final int DATA_ADVANCE = 3;
-
-    /**
-     * The output stream.
-     */
-    private static OceanusLogSink theSink = new OceanusLogStdOut();
-
-    /**
-     * The initial time.
-     */
-    private final long theTimeZero;
-
-    /**
-     * The constructor.
+     * Private constructor.
      */
     private OceanusLogManager() {
-        theTimeZero = System.nanoTime();
     }
 
     /**
-     * Obtain the singleton instance.
+     * Obtain the singleton engine instance.
      *
      * @return the instance.
      */
-    private static OceanusLogManager getInstance() {
+    private static OceanusLogEngine getInstance() {
         return OceanusLogManagerHelper.INSTANCE;
     }
 
@@ -77,115 +51,7 @@ public final class OceanusLogManager {
      * @param pSink the sink
      */
     public static void setSink(final OceanusLogSink pSink) {
-        theSink = pSink;
-    }
-
-    /**
-     * Format message.
-     *
-     * @param pOwner   the owner
-     * @param pLevel   the log level
-     * @param pMessage the message to format
-     * @return the formatted string
-     */
-    String formatMessage(final Class<?> pOwner,
-                         final OceanusLogLevel pLevel,
-                         final String pMessage) {
-        return (System.nanoTime() - theTimeZero)
-                + " "
-                + pLevel.name()
-                + ": "
-                + pOwner.getSimpleName()
-                + "- "
-                + pMessage;
-    }
-
-    /**
-     * Format data.
-     *
-     * @param pData the data to format
-     * @return the formatted data
-     */
-    public static String formatData(final byte[] pData) {
-        return pData == null
-                ? "\nnull"
-                : formatData(pData, 0, pData.length);
-    }
-
-    /**
-     * Format data.
-     *
-     * @param pData   the data to format
-     * @param pOffset the offset
-     * @param pLength the length of data
-     * @return the formatted data
-     */
-    public static String formatData(final byte[] pData,
-                                    final int pOffset,
-                                    final int pLength) {
-        /* Handle null data */
-        if (pData == null) {
-            return "\nnull";
-        }
-
-        /* Handle partial buffer */
-        byte[] myData = pData;
-        if (pOffset != 0 || pLength != pData.length) {
-            myData = new byte[pLength];
-            System.arraycopy(pData, pOffset, myData, 0, pLength);
-        }
-
-        /* Format the data */
-        final String myFormatted = OceanusDataConverter.bytesToHexString(myData);
-
-        /* Place it into StringBuilder buffer */
-        final StringBuilder myBuilder = new StringBuilder();
-        myBuilder.append(myFormatted);
-
-        /* Loop through the data */
-        int myOffSet = 0;
-        for (int i = 0; i < pLength; i++) {
-            /* Insert blank/newLine between each HexPair */
-            final char myChar = (i % DATA_SECTION) == 0 ? '\n' : ' ';
-            myBuilder.insert(myOffSet, myChar);
-            myOffSet += DATA_ADVANCE;
-        }
-
-        /* Return the data */
-        return myBuilder.toString();
-    }
-
-    /**
-     * Write log message.
-     *
-     * @param pMessage the message to format
-     */
-    void writeLogMessage(final String pMessage) {
-        synchronized (this) {
-            theSink.writeLogMessage(pMessage);
-        }
-    }
-
-    /**
-     * Write log message and exception.
-     *
-     * @param pMessage   the message to format
-     * @param pException the exception
-     */
-    void writeLogMessage(final String pMessage,
-                         final Throwable pException) {
-        synchronized (this) {
-            theSink.writeLogMessage(pMessage);
-            final ByteArrayOutputStream myBaos = new ByteArrayOutputStream();
-            try (PrintStream myPs = new PrintStream(myBaos)) {
-                if (pException != null) {
-                    pException.printStackTrace(myPs);
-                } else {
-                    myPs.println("Null Exception");
-                }
-                theSink.writeLogMessage(myBaos.toString());
-            }
-        }
+        OceanusLogEngine.setSink(pSink);
     }
 
     /**
@@ -193,30 +59,8 @@ public final class OceanusLogManager {
      */
     private static final class OceanusLogManagerHelper {
         /**
-         * The Log Manager instance.
+         * The Log Engine instance.
          */
-        private static final OceanusLogManager INSTANCE = new OceanusLogManager();
-    }
-
-    /**
-     * Default Log Sink.
-     */
-    static final class OceanusLogStdOut
-            implements OceanusLogSink {
-        /**
-         * The output stream.
-         */
-        private final PrintStream theOutput = System.out;
-
-        /**
-         * Constructor.
-         */
-        private OceanusLogStdOut() {
-        }
-
-        @Override
-        public void writeLogMessage(final String pMessage) {
-            theOutput.println(pMessage);
-        }
+        private static final OceanusLogEngine INSTANCE = new OceanusLogEngine();
     }
 }

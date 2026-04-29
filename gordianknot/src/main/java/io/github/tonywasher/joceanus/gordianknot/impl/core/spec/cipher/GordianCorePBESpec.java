@@ -20,6 +20,7 @@ package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianPBESpec;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianPBEType;
 import io.github.tonywasher.joceanus.gordianknot.api.digest.spec.GordianDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.base.GordianSpecConstants;
 
 import java.util.Objects;
 
@@ -28,11 +29,6 @@ import java.util.Objects;
  */
 public class GordianCorePBESpec
         implements GordianPBESpec {
-    /**
-     * The Separator.
-     */
-    private static final String SEP = "-";
-
     /**
      * The PBEType.
      */
@@ -156,7 +152,8 @@ public class GordianCorePBESpec
 
         @Override
         public String toString() {
-            return getPBEType().toString() + SEP + theDigestSpec.toString() + SEP + theCount;
+            return getPBEType().toString() + GordianSpecConstants.SEP
+                    + theDigestSpec.toString() + GordianSpecConstants.SEP + theCount;
         }
     }
 
@@ -280,7 +277,8 @@ public class GordianCorePBESpec
 
         @Override
         public String toString() {
-            return getPBEType().toString() + SEP + theBlockSize + SEP + theCost + SEP + theParallel;
+            return getPBEType().toString() + GordianSpecConstants.SEP + theBlockSize
+                    + GordianSpecConstants.SEP + theCost + GordianSpecConstants.SEP + theParallel;
         }
     }
 
@@ -381,7 +379,8 @@ public class GordianCorePBESpec
 
         @Override
         public String toString() {
-            return getPBEType().toString() + SEP + theLanes + SEP + theMemory + SEP + theIterations;
+            return getPBEType().toString() + GordianSpecConstants.SEP + theLanes
+                    + GordianSpecConstants.SEP + theMemory + GordianSpecConstants.SEP + theIterations;
         }
     }
 }

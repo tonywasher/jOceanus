@@ -20,6 +20,7 @@ package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher;
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeyType;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.base.GordianSpecConstants;
 
 import java.util.Objects;
 
@@ -28,11 +29,6 @@ import java.util.Objects;
  */
 public class GordianCoreSymKeySpec
         implements GordianSymKeySpec {
-    /**
-     * The Separator.
-     */
-    private static final String SEP = "-";
-
     /**
      * The symKeyType.
      */
@@ -163,7 +159,7 @@ public class GordianCoreSymKeySpec
                     }
                     theName += myLen;
                 }
-                theName += SEP + theKeyLength;
+                theName += GordianSpecConstants.SEP + theKeyLength;
             } else {
                 /* Report invalid spec */
                 theName = "InvalidSymKeySpec: " + theType + ":" + theBlockLength + ":" + theKeyLength;

@@ -19,9 +19,10 @@ package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.cipher;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianCipherMode;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianPadding;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymCipherSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeySpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianPadding;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.base.GordianSpecConstants;
 
 import java.util.Objects;
 
@@ -35,11 +36,6 @@ public class GordianCoreSymCipherSpec
      * The AAD IV length.
      */
     public static final int AADIVLEN = 12;
-
-    /**
-     * The Separator.
-     */
-    private static final String SEP = "-";
 
     /**
      * The keySpec.
@@ -162,9 +158,9 @@ public class GordianCoreSymCipherSpec
             if (isValid) {
                 /* Load the name */
                 theName = theKeySpec.toString();
-                theName += SEP + theMode;
+                theName += GordianSpecConstants.SEP + theMode;
                 if (!GordianPadding.NONE.equals(thePadding)) {
-                    theName += SEP + thePadding;
+                    theName += GordianSpecConstants.SEP + thePadding;
                 }
             } else {
                 /* Report invalid spec */

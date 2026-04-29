@@ -108,7 +108,7 @@ public class GordianKeyPairLockImpl
                     .setServerCertificate(myCert);
             final GordianAgreement myAgreement = myAgreeFactory.createAgreement(myParams);
             final byte[] myClientHello = myAgreement.nextMessage();
-            final GordianBaseFactory myFactory = (GordianBaseFactory) myAgreement.getFactoryResult();
+            final GordianBaseFactory myFactory = (GordianBaseFactory) myAgreement.getResult();
 
             /* Create a recipe */
             final GordianPasswordLockRecipe myRecipe = new GordianPasswordLockRecipe(pLockingFactory, pLockSpec);
@@ -194,7 +194,7 @@ public class GordianKeyPairLockImpl
                     new GordianKeyPairUsage(GordianKeyPairUse.AGREEMENT));
             final GordianAgreementParams myParams = myAgreement.getAgreementParams().setServerCertificate(myCert);
             myAgreement.updateParams(myParams);
-            final GordianBaseFactory myFactory = (GordianBaseFactory) myAgreement.getFactoryResult();
+            final GordianBaseFactory myFactory = (GordianBaseFactory) myAgreement.getResult();
 
             /* Resolve the recipe */
             myPassword = GordianDataConverter.charsToByteArray(pPassword);

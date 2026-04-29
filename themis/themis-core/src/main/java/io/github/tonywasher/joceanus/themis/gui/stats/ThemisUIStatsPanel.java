@@ -197,13 +197,13 @@ public class ThemisUIStatsPanel
         myTreeItem.setVisible(true);
 
         /* Loop through the classes */
-        for (ThemisStatsClass myClass : pClass.getClasses()) {
-            addClass(myTreeItem, myClass);
+        for (ThemisStatsElement myClass : pClass.getClasses()) {
+            addClass(myTreeItem, (ThemisStatsClass) myClass);
         }
 
         /* Loop through the methods */
-        for (ThemisStatsMethod myMethod : pClass.getMethods()) {
-            addMethod(myTreeItem, myMethod);
+        for (ThemisStatsElement myMethod : pClass.getMethods()) {
+            addMethod(myTreeItem, (ThemisStatsMethod) myMethod);
         }
     }
 
@@ -221,8 +221,8 @@ public class ThemisUIStatsPanel
         myTreeItem.setVisible(true);
 
         /* Loop through the classes */
-        for (ThemisStatsClass myClass : pMethod.getClasses()) {
-            addClass(myTreeItem, myClass);
+        for (ThemisStatsElement myClass : pMethod.getClasses()) {
+            addClass(myTreeItem, (ThemisStatsClass) myClass);
         }
     }
 

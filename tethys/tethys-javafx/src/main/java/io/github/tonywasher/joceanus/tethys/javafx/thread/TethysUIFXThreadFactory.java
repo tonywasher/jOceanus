@@ -54,12 +54,12 @@ public class TethysUIFXThreadFactory
     }
 
     @Override
-    public TethysUIFXThreadProgressStatus newThreadSliderStatus(final TethysUICoreThreadManager pManager) {
-        return new TethysUIFXThreadProgressStatus(pManager, theFactory);
+    public TethysUIFXThreadProgressStatus newThreadSliderStatus(final TethysUIThreadManager pManager) {
+        return new TethysUIFXThreadProgressStatus((TethysUICoreThreadManager) pManager, theFactory);
     }
 
     @Override
-    public TethysUIFXThreadTextAreaStatus newThreadTextAreaStatus(final TethysUICoreThreadManager pManager) {
-        return new TethysUIFXThreadTextAreaStatus(pManager, theFactory);
+    public TethysUIFXThreadTextAreaStatus newThreadTextAreaStatus(final TethysUIThreadManager pManager) {
+        return new TethysUIFXThreadTextAreaStatus((TethysUICoreThreadManager) pManager, theFactory);
     }
 }

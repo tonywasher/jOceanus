@@ -153,7 +153,7 @@ public abstract class GordianBlake2Base
         theMaxDepth = 1;
 
         /* Determine maxXofLen */
-        theMaxXofLen = this instanceof GordianBlake2bDigest ? 0xFFFFFFFEL : 0xFFFEL;
+        theMaxXofLen = isBlake2b() ? 0xFFFFFFFEL : 0xFFFEL;
     }
 
     /**
@@ -169,6 +169,13 @@ public abstract class GordianBlake2Base
         /* Determine maxXofLen */
         theMaxXofLen = pSource.theMaxXofLen;
     }
+
+    /**
+     * Is the digest a blake2b digest?
+     *
+     * @return true/false
+     */
+    public abstract boolean isBlake2b();
 
     /**
      * Set the digestLength.

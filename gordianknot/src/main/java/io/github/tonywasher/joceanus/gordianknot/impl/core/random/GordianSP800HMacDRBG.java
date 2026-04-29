@@ -165,14 +165,14 @@ public final class GordianSP800HMacDRBG
                         final boolean isPredictionResistant) {
         /* Check valid # of bits */
         final int myLen = pOutput.length;
-        final int myNumBits = myLen << GordianCoreRandomFactory.BIT_SHIFT;
-        if (myNumBits > GordianCoreRandomFactory.MAX_BITS_REQUEST) {
+        final int myNumBits = myLen << GordianRandomConstants.BIT_SHIFT;
+        if (myNumBits > GordianRandomConstants.MAX_BITS_REQUEST) {
             throw new IllegalArgumentException("Number of bits per request limited to "
-                    + GordianCoreRandomFactory.MAX_BITS_REQUEST);
+                    + GordianRandomConstants.MAX_BITS_REQUEST);
         }
 
         /* Check for reSeed required */
-        if (theReseedCounter.compareLimit(GordianCoreRandomFactory.RESEED_MAX)) {
+        if (theReseedCounter.compareLimit(GordianRandomConstants.RESEED_MAX)) {
             return -1;
         }
 
@@ -242,6 +242,6 @@ public final class GordianSP800HMacDRBG
 
     @Override
     public String getAlgorithm() {
-        return GordianCoreRandomFactory.SP800_PREFIX + theHMac.getMacSpec().toString();
+        return GordianRandomConstants.SP800_PREFIX + theHMac.getMacSpec().toString();
     }
 }

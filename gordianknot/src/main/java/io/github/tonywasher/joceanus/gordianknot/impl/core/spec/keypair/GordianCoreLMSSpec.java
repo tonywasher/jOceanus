@@ -19,6 +19,7 @@ package io.github.tonywasher.joceanus.gordianknot.impl.core.spec.keypair;
 
 import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
 import io.github.tonywasher.joceanus.gordianknot.api.keypair.spec.GordianLMSSpec;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.base.GordianSpecConstants;
 import org.bouncycastle.pqc.crypto.lms.LMOtsParameters;
 import org.bouncycastle.pqc.crypto.lms.LMSParameters;
 import org.bouncycastle.pqc.crypto.lms.LMSigParameters;
@@ -32,11 +33,6 @@ import java.util.Objects;
  */
 public class GordianCoreLMSSpec
         implements GordianLMSSpec {
-    /**
-     * The Separator.
-     */
-    private static final String SEP = "-";
-
     /**
      * Max depth for HSS key.
      */
@@ -219,15 +215,17 @@ public class GordianCoreLMSSpec
             /* If the keySpec is valid */
             if (isValid) {
                 /* Load the name */
-                theName = theHash.toString() + SEP + theWidth.toString() + SEP + theHeight.toString() + SEP + theLength.toString();
+                theName = theHash.toString() + GordianSpecConstants.SEP + theWidth.toString()
+                        + GordianSpecConstants.SEP + theHeight.toString() + GordianSpecConstants.SEP + theLength.toString();
                 if (theDepth > 1) {
-                    theName = "HSS-" + theDepth + SEP + theName;
+                    theName = "HSS-" + theDepth + GordianSpecConstants.SEP + theName;
                 }
             } else {
                 /* Report invalid spec */
-                theName = "InvalidLMSKeySpec: " + theHash + SEP + theWidth + SEP + theHeight + SEP + theLength;
+                theName = "InvalidLMSKeySpec: " + theHash + GordianSpecConstants.SEP + theWidth
+                        + GordianSpecConstants.SEP + theHeight + GordianSpecConstants.SEP + theLength;
                 if (theDepth != 1) {
-                    theName += SEP + theDepth;
+                    theName += GordianSpecConstants.SEP + theDepth;
                 }
             }
         }

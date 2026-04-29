@@ -30,6 +30,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKe
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySubType.GordianSparkleKey;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySubType.GordianVMPCKey;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeyType;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.spec.base.GordianSpecConstants;
 
 import java.util.Objects;
 
@@ -38,11 +39,6 @@ import java.util.Objects;
  */
 public class GordianCoreStreamKeySpec
         implements GordianStreamKeySpec {
-    /**
-     * The Separator.
-     */
-    private static final String SEP = "-";
-
     /**
      * The StreamKey Type.
      */
@@ -267,7 +263,7 @@ public class GordianCoreStreamKeySpec
             if (isValid) {
                 /* Load the name */
                 theName = getName();
-                theName += SEP + theKeyLength;
+                theName += GordianSpecConstants.SEP + theKeyLength;
             } else {
                 /* Report invalid spec */
                 theName = "InvalidStreamKeySpec: " + theType + ":" + theKeyLength;
@@ -299,7 +295,8 @@ public class GordianCoreStreamKeySpec
                         return theType.toString();
                 }
             case SKEINXOF:
-                return theType + SEP + GordianCoreStreamKeySubType.getLengthForSkeinXofKey((GordianSkeinXofKey) theSubKeyType);
+                return theType + GordianSpecConstants.SEP
+                        + GordianCoreStreamKeySubType.getLengthForSkeinXofKey((GordianSkeinXofKey) theSubKeyType);
             case BLAKE2XOF:
             case ELEPHANT:
             case ISAP:

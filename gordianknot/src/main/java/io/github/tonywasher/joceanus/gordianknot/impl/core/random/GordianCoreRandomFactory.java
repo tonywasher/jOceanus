@@ -73,16 +73,6 @@ import java.util.stream.Collectors;
 public class GordianCoreRandomFactory
         implements GordianRandomFactory {
     /**
-     * The SP800 prefix.
-     */
-    static final String SP800_PREFIX = "SP800-";
-
-    /**
-     * The bit shift.
-     */
-    static final int BIT_SHIFT = 3;
-
-    /**
      * The number of entropy bits required.
      */
     private static final int NUM_ENTROPY_BITS_REQUIRED = GordianSP800HashDRBG.LONG_SEED_LENGTH;
@@ -91,26 +81,6 @@ public class GordianCoreRandomFactory
      * The number of entropy bits required.
      */
     private static final int NUM_ENTROPY_BYTES_REQUIRED = NUM_ENTROPY_BITS_REQUIRED / Byte.SIZE;
-
-    /**
-     * The power of 2 for RESEED calculation.
-     */
-    private static final int RESEED_POWER = 48;
-
-    /**
-     * The length of time before a reSeed is required.
-     */
-    static final long RESEED_MAX = 1L << (RESEED_POWER - 1);
-
-    /**
-     * The power of 2 for BITS calculation.
-     */
-    private static final int BITS_POWER = 19;
-
-    /**
-     * The maximum # of bits that can be requested.
-     */
-    static final int MAX_BITS_REQUEST = 1 << (BITS_POWER - 1);
 
     /**
      * The factory.
