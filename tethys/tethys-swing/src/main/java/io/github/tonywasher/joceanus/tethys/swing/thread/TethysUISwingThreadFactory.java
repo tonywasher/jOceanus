@@ -19,7 +19,6 @@ package io.github.tonywasher.joceanus.tethys.swing.thread;
 import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadManager;
 import io.github.tonywasher.joceanus.tethys.core.factory.TethysUICoreFactory;
 import io.github.tonywasher.joceanus.tethys.core.thread.TethysUICoreThreadFactory;
-import io.github.tonywasher.joceanus.tethys.core.thread.TethysUICoreThreadManager;
 
 /**
  * swing Thread Factory.
@@ -54,12 +53,12 @@ public class TethysUISwingThreadFactory
     }
 
     @Override
-    public TethysUISwingThreadProgressStatus newThreadSliderStatus(final TethysUICoreThreadManager pManager) {
+    public TethysUISwingThreadProgressStatus newThreadSliderStatus(final TethysUIThreadManager pManager) {
         return new TethysUISwingThreadProgressStatus(pManager, theFactory);
     }
 
     @Override
-    public TethysUISwingThreadTextAreaStatus newThreadTextAreaStatus(final TethysUICoreThreadManager pManager) {
+    public TethysUISwingThreadTextAreaStatus newThreadTextAreaStatus(final TethysUIThreadManager pManager) {
         return new TethysUISwingThreadTextAreaStatus(pManager, theFactory);
     }
 }

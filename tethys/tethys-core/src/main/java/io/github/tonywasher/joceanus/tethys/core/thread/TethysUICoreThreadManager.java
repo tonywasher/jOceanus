@@ -221,10 +221,8 @@ public abstract class TethysUICoreThreadManager
      */
     protected abstract <T> Runnable wrapThread(TethysUIThread<T> pThread);
 
-    /**
-     * Register thread completion.
-     */
-    protected void threadCompleted() {
+    @Override
+    public void threadCompleted() {
         /* Remove reference */
         final TethysUIThread<?> myThread = theThread;
         theThread = null;

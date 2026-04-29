@@ -104,4 +104,9 @@ public interface TethysUIThreadManager
      * @param pTask the name of the task
      */
     void setNewProfile(String pTask);
+
+    /**
+     * Register thread completion.
+     */
+    void threadCompleted();
 }

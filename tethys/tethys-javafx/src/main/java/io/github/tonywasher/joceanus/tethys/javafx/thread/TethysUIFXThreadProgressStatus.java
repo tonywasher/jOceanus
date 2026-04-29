@@ -16,14 +16,13 @@
  */
 package io.github.tonywasher.joceanus.tethys.javafx.thread;
 
+import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadManager;
+import io.github.tonywasher.joceanus.tethys.core.factory.TethysUICoreFactory;
+import io.github.tonywasher.joceanus.tethys.core.thread.TethysUICoreThreadProgressStatus;
+import io.github.tonywasher.joceanus.tethys.javafx.base.TethysUIFXNode;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.util.Duration;
-
-import io.github.tonywasher.joceanus.tethys.core.factory.TethysUICoreFactory;
-import io.github.tonywasher.joceanus.tethys.core.thread.TethysUICoreThreadManager;
-import io.github.tonywasher.joceanus.tethys.core.thread.TethysUICoreThreadProgressStatus;
-import io.github.tonywasher.joceanus.tethys.javafx.base.TethysUIFXNode;
 
 /**
  * JavaFX Thread ProgressBar Status Manager.
@@ -41,7 +40,7 @@ public class TethysUIFXThreadProgressStatus
      * @param pManager the thread manager
      * @param pFactory the GUI factory
      */
-    TethysUIFXThreadProgressStatus(final TethysUICoreThreadManager pManager,
+    TethysUIFXThreadProgressStatus(final TethysUIThreadManager pManager,
                                    final TethysUICoreFactory<?> pFactory) {
         /* Initialise underlying class */
         super(pManager, pFactory);

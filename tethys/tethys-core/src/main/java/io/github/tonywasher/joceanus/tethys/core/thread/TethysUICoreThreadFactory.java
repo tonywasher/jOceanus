@@ -17,6 +17,7 @@
 package io.github.tonywasher.joceanus.tethys.core.thread;
 
 import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadFactory;
+import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadManager;
 
 /**
  * Core Thread Factory API.
@@ -29,7 +30,7 @@ public interface TethysUICoreThreadFactory
      * @param pManager the thread manager
      * @return the thread status manager
      */
-    TethysUICoreThreadProgressStatus newThreadSliderStatus(TethysUICoreThreadManager pManager);
+    TethysUICoreThreadProgressStatus newThreadSliderStatus(TethysUIThreadManager pManager);
 
     /**
      * Create a Thread TextArea Status.
@@ -37,5 +38,5 @@ public interface TethysUICoreThreadFactory
      * @param pManager the thread manager
      * @return the thread status manager
      */
-    TethysUICoreThreadTextAreaStatus newThreadTextAreaStatus(TethysUICoreThreadManager pManager);
+    TethysUICoreThreadTextAreaStatus newThreadTextAreaStatus(TethysUIThreadManager pManager);
 }

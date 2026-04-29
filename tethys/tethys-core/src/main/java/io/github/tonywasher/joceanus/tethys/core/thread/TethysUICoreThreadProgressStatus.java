@@ -101,7 +101,7 @@ public abstract class TethysUICoreThreadProgressStatus
     /**
      * The Thread Manager.
      */
-    private final TethysUICoreThreadManager theThreadManager;
+    private final TethysUIThreadManager theThreadManager;
 
     /**
      * GUI Factory.
@@ -159,7 +159,7 @@ public abstract class TethysUICoreThreadProgressStatus
      * @param pManager the Thread Manager
      * @param pFactory the GUI factory
      */
-    protected TethysUICoreThreadProgressStatus(final TethysUICoreThreadManager pManager,
+    protected TethysUICoreThreadProgressStatus(final TethysUIThreadManager pManager,
                                                final TethysUICoreFactory<?> pFactory) {
         /* Store parameters */
         theThreadManager = pManager;

@@ -16,8 +16,8 @@
  */
 package io.github.tonywasher.joceanus.tethys.javafx.thread;
 
+import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadManager;
 import io.github.tonywasher.joceanus.tethys.core.factory.TethysUICoreFactory;
-import io.github.tonywasher.joceanus.tethys.core.thread.TethysUICoreThreadManager;
 import io.github.tonywasher.joceanus.tethys.core.thread.TethysUICoreThreadTextAreaStatus;
 import io.github.tonywasher.joceanus.tethys.javafx.base.TethysUIFXNode;
 
@@ -32,7 +32,7 @@ public class TethysUIFXThreadTextAreaStatus
      * @param pManager the thread manager
      * @param pFactory the GUI factory
      */
-    TethysUIFXThreadTextAreaStatus(final TethysUICoreThreadManager pManager,
+    TethysUIFXThreadTextAreaStatus(final TethysUIThreadManager pManager,
                                    final TethysUICoreFactory<?> pFactory) {
         /* Initialise underlying class */
         super(pManager, pFactory);

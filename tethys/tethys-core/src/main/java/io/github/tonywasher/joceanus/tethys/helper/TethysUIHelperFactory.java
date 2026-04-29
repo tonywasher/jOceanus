@@ -281,6 +281,11 @@ public class TethysUIHelperFactory
         }
 
         @Override
+        public void threadCompleted() {
+            /* NoOp */
+        }
+
+        @Override
         public void initTask(final String pTask) {
             /* NoOp */
         }

@@ -24,7 +24,7 @@ public final class GordianRandomConstants {
     /**
      * Private constructor.
      */
-    GordianRandomConstants() {
+    private GordianRandomConstants() {
     }
 
     /**
