@@ -46,6 +46,11 @@ public class MoneyWiseNullThreadMgr
     }
 
     @Override
+    public void threadCompleted() {
+        /* NoOp */
+    }
+
+    @Override
     public OceanusEventRegistrar<TethysUIThreadEvent> getEventRegistrar() {
         return null;
     }
