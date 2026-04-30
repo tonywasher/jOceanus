@@ -201,13 +201,11 @@ public class GordianGCMSIVBlockCipher
         final KeyParameter myKey;
 
         /* Access parameters */
-        if (cipherParameters instanceof AEADParameters) {
-            final AEADParameters myAEAD = (AEADParameters) cipherParameters;
+        if (cipherParameters instanceof AEADParameters myAEAD) {
             myInitialAEAD = myAEAD.getAssociatedText();
             myNonce = myAEAD.getNonce();
             myKey = myAEAD.getKey();
-        } else if (cipherParameters instanceof ParametersWithIV) {
-            final ParametersWithIV myParms = (ParametersWithIV) cipherParameters;
+        } else if (cipherParameters instanceof ParametersWithIV myParms) {
             myNonce = myParms.getIV();
             myKey = (KeyParameter) myParms.getParameters();
         } else {

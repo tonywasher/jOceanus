@@ -57,16 +57,14 @@ public class GordianKMACWrapper
     public void init(final CipherParameters pParams) {
         CipherParameters myParams = pParams;
         byte[] myPersonal = null;
-        if (myParams instanceof GordianKeccakParameters) {
-            final GordianKeccakParameters myKeccakParams = (GordianKeccakParameters) myParams;
+        if (myParams instanceof GordianKeccakParameters myKeccakParams) {
             myParams = new KeyParameter(myKeccakParams.getKey());
             myPersonal = myKeccakParams.getPersonalisation();
         }
-        if (!(myParams instanceof KeyParameter)) {
+        if (!(myParams instanceof KeyParameter myKeyParams)) {
             throw new IllegalArgumentException("Invalid parameter passed to KMAC init - "
                     + pParams.getClass().getName());
         }
-        final KeyParameter myKeyParams = (KeyParameter) myParams;
         if (myKeyParams.getKey() == null) {
             throw new IllegalArgumentException("KMAC requires a key parameter.");
         }

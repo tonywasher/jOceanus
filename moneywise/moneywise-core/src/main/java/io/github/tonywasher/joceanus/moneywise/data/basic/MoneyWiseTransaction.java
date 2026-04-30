@@ -16,16 +16,6 @@
  */
 package io.github.tonywasher.joceanus.moneywise.data.basic;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDateFormatter;
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRate;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
-import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.metis.data.MetisDataDifference;
 import io.github.tonywasher.joceanus.metis.data.MetisDataEditState;
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
@@ -43,6 +33,16 @@ import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTransInfoCl
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTransInfoType.MoneyWiseTransInfoTypeList;
 import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
 import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseLogicException;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateFormatter;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRate;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataList;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataMapItem;
@@ -1166,8 +1166,8 @@ public class MoneyWiseTransaction
          */
         @Override
         public MoneyWiseTransaction addCopyItem(final PrometheusDataItem pItem) {
-            if (pItem instanceof MoneyWiseTransaction) {
-                final MoneyWiseTransaction myTrans = new MoneyWiseTransaction(this, (MoneyWiseTransaction) pItem);
+            if (pItem instanceof MoneyWiseTransaction myItem) {
+                final MoneyWiseTransaction myTrans = new MoneyWiseTransaction(this, myItem);
                 add(myTrans);
                 return myTrans;
             }

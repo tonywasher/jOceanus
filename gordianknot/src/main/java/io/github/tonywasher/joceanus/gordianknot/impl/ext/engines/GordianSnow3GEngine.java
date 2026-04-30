@@ -170,13 +170,11 @@ public class GordianSnow3GEngine
         CipherParameters myParams = params;
         byte[] newKey = null;
         byte[] newIV = null;
-        if ((myParams instanceof ParametersWithIV)) {
-            final ParametersWithIV ivParams = (ParametersWithIV) myParams;
+        if ((myParams instanceof ParametersWithIV ivParams)) {
             newIV = ivParams.getIV();
             myParams = ivParams.getParameters();
         }
-        if (myParams instanceof KeyParameter) {
-            final KeyParameter keyParam = (KeyParameter) myParams;
+        if (myParams instanceof KeyParameter keyParam) {
             newKey = keyParam.getKey();
         }
 

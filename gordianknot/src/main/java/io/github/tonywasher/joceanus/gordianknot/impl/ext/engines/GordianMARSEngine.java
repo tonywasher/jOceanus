@@ -44,9 +44,14 @@ public class GordianMARSEngine
     private static final int INTLENGTH = BLOCKSIZEB / Integer.BYTES;
 
     /**
+     * Initialised flag.
+     */
+    private boolean initialised;
+
+    /**
      * Encryption flag.
      */
-    private Boolean forEncryption;
+    private boolean forEncryption;
 
     /**
      * Input buffer.
@@ -603,14 +608,15 @@ public class GordianMARSEngine
         }
 
         /* Set up key */
+        initialised = true;
         this.forEncryption = forEncrypt;
         setKey(keyBytes);
     }
 
     @Override
     public int processBlock(final byte[] in, final int inOff, final byte[] out, final int outOff) throws DataLengthException, IllegalStateException {
-        if (forEncryption == null) {
-            throw new IllegalStateException("Anubis engine not initialised");
+        if (!initialised) {
+            throw new IllegalStateException("MARS engine not initialised");
         }
         if (inOff > (in.length - BLOCKSIZEB)) {
             throw new DataLengthException("input buffer too short");
