@@ -22,7 +22,6 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataExcept
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -52,7 +51,7 @@ public class GordianZipFileProperties {
     /**
      * The Value buffer length.
      */
-    private static final char BUFFER_VALLEN = 200;
+    private static final int BUFFER_VALLEN = 200;
 
     /**
      * List of properties.
@@ -242,11 +241,8 @@ public class GordianZipFileProperties {
      */
     private Property getProperty(final String pName) {
         /* Loop through the properties */
-        final Iterator<Property> myIterator = theList.iterator();
-        while (myIterator.hasNext()) {
+        for (Property myProperty : theList) {
             /* Access next property */
-            final Property myProperty = myIterator.next();
-
             /* Check the property name */
             final int iDiff = pName.compareTo(myProperty.getName());
 
@@ -275,11 +271,8 @@ public class GordianZipFileProperties {
         final StringBuilder myValue = new StringBuilder(BUFFER_VALLEN);
 
         /* Loop through the properties */
-        final Iterator<Property> myIterator = theList.iterator();
-        while (myIterator.hasNext()) {
+        for (Property myProperty : theList) {
             /* Access next property */
-            final Property myProperty = myIterator.next();
-
             /* Build the value string */
             myValue.setLength(0);
             myValue.append(myProperty.getName());
@@ -301,7 +294,7 @@ public class GordianZipFileProperties {
             }
 
             /* Add the value to the string */
-            if (myString.length() > 0) {
+            if (!myString.isEmpty()) {
                 myString.append(SEP_PROPERTY);
             }
             myString.append(myValue);
@@ -416,11 +409,8 @@ public class GordianZipFileProperties {
 
             /* Loop through the properties in the list */
             int iIndex = 0;
-            final Iterator<Property> myIterator = pList.iterator();
-            while (myIterator.hasNext()) {
+            for (Property myProperty : pList) {
                 /* Access next property */
-                final Property myProperty = myIterator.next();
-
                 /* Check the property name */
                 final int iDiff = pName.compareTo(myProperty.getName());
 
