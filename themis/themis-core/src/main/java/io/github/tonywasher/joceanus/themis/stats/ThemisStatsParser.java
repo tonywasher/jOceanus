@@ -35,16 +35,18 @@ public class ThemisStatsParser {
                       final ThemisInstance pInstance) {
         /* Loop through the children */
         for (ThemisInstance myChild : pInstance.getChildren()) {
-            if (myChild instanceof ThemisClassInstance myClass) {
-                final ThemisStatsClass myElement = new ThemisStatsClass(myClass);
-                pElement.addClass(myElement);
-                parseElement(myElement, myChild);
-            } else if (myChild instanceof ThemisMethodInstance myMethod) {
-                final ThemisStatsMethod myElement = new ThemisStatsMethod(myMethod);
-                pElement.addMethod(myElement);
-                parseElement(myElement, myChild);
-            } else {
-                parseElement(pElement, myChild);
+            switch (myChild) {
+                case ThemisClassInstance myClass -> {
+                    final ThemisStatsClass myElement = new ThemisStatsClass(myClass);
+                    pElement.addClass(myElement);
+                    parseElement(myElement, myChild);
+                }
+                case ThemisMethodInstance myMethod -> {
+                    final ThemisStatsMethod myElement = new ThemisStatsMethod(myMethod);
+                    pElement.addMethod(myElement);
+                    parseElement(myElement, myChild);
+                }
+                default -> parseElement(pElement, myChild);
             }
         }
     }

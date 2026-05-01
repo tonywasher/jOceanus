@@ -81,14 +81,12 @@ public final class GordianKeyPairValidity {
     public static void checkValidity(final GordianBaseFactory pFactory,
                                      final GordianKeyPair pKeyPair) throws GordianException {
         final Object myCheck = getValidityCheck(pFactory, pKeyPair);
-        if (myCheck instanceof GordianSignatureSpec mySpec) {
-            checkValidity(pFactory, pKeyPair, mySpec);
-        } else if (myCheck instanceof GordianEncryptorSpec mySpec) {
-            checkValidity(pFactory, pKeyPair, mySpec);
-        } else if (myCheck instanceof GordianAgreementSpec mySpec) {
-            checkValidity(pFactory, pKeyPair, mySpec);
-        } else {
-            throw new GordianLogicException("Unexpected keyPairType");
+        switch (myCheck) {
+            case GordianSignatureSpec mySpec -> checkValidity(pFactory, pKeyPair, mySpec);
+            case GordianEncryptorSpec mySpec -> checkValidity(pFactory, pKeyPair, mySpec);
+
+            case GordianAgreementSpec mySpec -> checkValidity(pFactory, pKeyPair, mySpec);
+            default -> throw new GordianLogicException("Unexpected keyPairType");
         }
     }
 
@@ -195,9 +193,10 @@ public final class GordianKeyPairValidity {
      * @param pFactory the factory
      * @param pKeyPair the keyPair
      * @return the validity check
+     * @throws GordianException on error
      */
     private static Object getValidityCheck(final GordianBaseFactory pFactory,
-                                           final GordianKeyPair pKeyPair) {
+                                           final GordianKeyPair pKeyPair) throws GordianException {
         /* Switch on keyType */
         final GordianDigestSpecBuilder myBuilder = GordianCoreDigestSpecBuilder.newInstance();
         final GordianEncryptorSpecBuilder myEncBuilder = GordianCoreEncryptorSpecBuilder.newInstance();
@@ -240,7 +239,7 @@ public final class GordianKeyPairValidity {
             case NEWHOPE:
                 return myAgreeBuilder.kem(mySpec, GordianAgreementKDF.NONE);
             default:
-                return null;
+                throw new GordianDataException("No validity check found for :" + mySpec.getKeyPairType());
         }
     }
 }
