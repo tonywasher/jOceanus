@@ -180,14 +180,10 @@ public class GordianCoreAgreementSpec
 
         /* Confirmation is restricted to certain agreement types */
         if (withConfirm) {
-            switch (theAgreementType.getType()) {
-                case UNIFIED:
-                case MQV:
-                case SM2:
-                    return true;
-                default:
-                    return false;
-            }
+            return switch (theAgreementType.getType()) {
+                case UNIFIED, MQV, SM2 -> true;
+                default -> false;
+            };
         }
 
         /* Valid if supported */

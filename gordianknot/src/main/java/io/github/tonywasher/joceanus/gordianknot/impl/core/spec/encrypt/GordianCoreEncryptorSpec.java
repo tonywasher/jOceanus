@@ -151,23 +151,16 @@ public class GordianCoreEncryptorSpec
         if (theKeyPairType == null) {
             return false;
         }
-        switch (theKeyPairType.getType()) {
-            case RSA:
-            case ELGAMAL:
-                return theEncryptorType instanceof GordianDigestSpec s
-                        && s.isValid();
-            case SM2:
-                return theEncryptorType == null
-                        || (theEncryptorType instanceof GordianSM2EncryptionSpec s
-                        && s.isValid());
-            case EC:
-            case GOST:
-                return theEncryptorType == null;
-            case COMPOSITE:
-                return theEncryptorType instanceof List && checkComposite();
-            default:
-                return false;
-        }
+        return switch (theKeyPairType.getType()) {
+            case RSA, ELGAMAL -> theEncryptorType instanceof GordianDigestSpec s
+                    && s.isValid();
+            case SM2 -> theEncryptorType == null
+                    || (theEncryptorType instanceof GordianSM2EncryptionSpec s
+                    && s.isValid());
+            case EC, GOST -> theEncryptorType == null;
+            case COMPOSITE -> theEncryptorType instanceof List && checkComposite();
+            default -> false;
+        };
     }
 
     /**
@@ -179,19 +172,14 @@ public class GordianCoreEncryptorSpec
         if (!isValid) {
             return false;
         }
-        switch (theKeyPairType.getType()) {
-            case RSA:
-            case ELGAMAL:
+        return switch (theKeyPairType.getType()) {
+            case RSA, ELGAMAL -> {
                 final GordianCoreDigestSpec mySpec = getDigestSpec();
-                return GordianDigestType.SHA2.equals(mySpec.getDigestType()) && !mySpec.isSha2Hybrid();
-            case EC:
-            case GOST:
-            case SM2:
-            case COMPOSITE:
-                return true;
-            default:
-                return false;
-        }
+                yield GordianDigestType.SHA2.equals(mySpec.getDigestType()) && !mySpec.isSha2Hybrid();
+            }
+            case EC, GOST, SM2, COMPOSITE -> true;
+            default -> false;
+        };
     }
 
     /**
@@ -220,12 +208,10 @@ public class GordianCoreEncryptorSpec
                 /* Load the name */
                 theName = theKeyPairType.toString();
                 switch (theKeyPairType.getType()) {
-                    case RSA:
-                    case ELGAMAL:
+                    case RSA, ELGAMAL:
                         theName += GordianSpecConstants.SEP + theEncryptorType;
                         break;
-                    case EC:
-                    case GOST:
+                    case EC, GOST:
                         theName += GordianSpecConstants.SEP + ECELGAMAL;
                         break;
                     case SM2:

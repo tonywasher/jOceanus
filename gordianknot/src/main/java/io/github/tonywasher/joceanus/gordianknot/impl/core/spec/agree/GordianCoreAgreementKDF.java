@@ -71,32 +71,16 @@ public final class GordianCoreAgreementKDF {
     public boolean isSupported(final GordianKeyPairType pKeyType,
                                final GordianAgreementType pAgreeType) {
         /* Switch on keyType */
-        switch (pKeyType) {
-            case RSA:
-                return !isCKDF();
-            case EC:
-            case SM2:
-            case DSTU:
-            case GOST:
-                return isSupported4EC(pAgreeType);
-            case DH:
-                return isSupported4DH(pAgreeType);
-            case XDH:
-                return isSupported4XDH(pAgreeType);
-            case CMCE:
-            case FRODO:
-            case SABER:
-            case NEWHOPE:
-            case HQC:
-            case BIKE:
-            case NTRU:
-            case NTRUPLUS:
-            case NTRUPRIME:
-                return pAgreeType == GordianAgreementType.KEM
-                        && theKDF == GordianAgreementKDF.NONE;
-            default:
-                return true;
-        }
+        return switch (pKeyType) {
+            case RSA -> !isCKDF();
+            case EC, SM2, DSTU, GOST -> isSupported4EC(pAgreeType);
+            case DH -> isSupported4DH(pAgreeType);
+            case XDH -> isSupported4XDH(pAgreeType);
+            case CMCE, FRODO, SABER, NEWHOPE, HQC, BIKE, NTRU, NTRUPLUS, NTRUPRIME ->
+                    pAgreeType == GordianAgreementType.KEM
+                            && theKDF == GordianAgreementKDF.NONE;
+            default -> true;
+        };
     }
 
     /**
@@ -107,18 +91,13 @@ public final class GordianCoreAgreementKDF {
      */
     private boolean isSupported4DH(final GordianAgreementType pAgreeType) {
         /* Switch on kdfType */
-        switch (theKDF) {
-            case SHA256KDF:
-            case SHA512KDF:
-                return true;
-            case SHA256CKDF:
-            case SHA512CKDF:
-                return pAgreeType == GordianAgreementType.UNIFIED || pAgreeType == GordianAgreementType.MQV;
-            case NONE:
-                return pAgreeType == GordianAgreementType.BASIC || pAgreeType == GordianAgreementType.KEM;
-            default:
-                return false;
-        }
+        return switch (theKDF) {
+            case SHA256KDF, SHA512KDF -> true;
+            case SHA256CKDF, SHA512CKDF ->
+                    pAgreeType == GordianAgreementType.UNIFIED || pAgreeType == GordianAgreementType.MQV;
+            case NONE -> pAgreeType == GordianAgreementType.BASIC || pAgreeType == GordianAgreementType.KEM;
+            default -> false;
+        };
     }
 
     /**
@@ -129,19 +108,11 @@ public final class GordianCoreAgreementKDF {
      */
     private boolean isSupported4XDH(final GordianAgreementType pAgreeType) {
         /* Switch on kdfType */
-        switch (theKDF) {
-            case SHA512KDF:
-            case SHA256KDF:
-                return true;
-            case SHA512CKDF:
-            case SHA256CKDF:
-            case SHA512HKDF:
-            case SHA256HKDF:
-            case NONE:
-                return pAgreeType != GordianAgreementType.UNIFIED;
-            default:
-                return false;
-        }
+        return switch (theKDF) {
+            case SHA512KDF, SHA256KDF -> true;
+            case SHA512CKDF, SHA256CKDF, SHA512HKDF, SHA256HKDF, NONE -> pAgreeType != GordianAgreementType.UNIFIED;
+            default -> false;
+        };
     }
 
     /**
@@ -152,17 +123,11 @@ public final class GordianCoreAgreementKDF {
      */
     private boolean isSupported4EC(final GordianAgreementType pAgreeType) {
         /* Switch on kdfType */
-        switch (theKDF) {
-            case SHA512KDF:
-            case SHA256KDF:
-            case NONE:
-                return true;
-            case SHA512CKDF:
-            case SHA256CKDF:
-                return pAgreeType != GordianAgreementType.KEM;
-            default:
-                return false;
-        }
+        return switch (theKDF) {
+            case SHA512KDF, SHA256KDF, NONE -> true;
+            case SHA512CKDF, SHA256CKDF -> pAgreeType != GordianAgreementType.KEM;
+            default -> false;
+        };
     }
 
     /**

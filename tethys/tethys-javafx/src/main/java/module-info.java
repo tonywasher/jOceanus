@@ -33,4 +33,5 @@ module io.github.tonywasher.joceanus.tethys.javafx {
 
     /* Exports */
     exports io.github.tonywasher.joceanus.tethys.javafx.launch;
+    exports io.github.tonywasher.joceanus.tethys.javafx.launch.util;
 }

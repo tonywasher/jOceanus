@@ -69,14 +69,11 @@ public final class GordianCoreFalconSpec {
      * @return the parameters.
      */
     public FalconParameters getParameters() {
-        switch (theSpec) {
-            case FALCON512:
-                return FalconParameters.falcon_512;
-            case FALCON1024:
-                return FalconParameters.falcon_1024;
-            default:
-                throw new IllegalArgumentException();
-        }
+        return switch (theSpec) {
+            case FALCON512 -> FalconParameters.falcon_512;
+            case FALCON1024 -> FalconParameters.falcon_1024;
+            default -> throw new IllegalArgumentException();
+        };
     }
 
     /**
@@ -85,14 +82,11 @@ public final class GordianCoreFalconSpec {
      * @return the parameters.
      */
     public FalconParameterSpec getParameterSpec() {
-        switch (theSpec) {
-            case FALCON512:
-                return FalconParameterSpec.falcon_512;
-            case FALCON1024:
-                return FalconParameterSpec.falcon_1024;
-            default:
-                throw new IllegalArgumentException();
-        }
+        return switch (theSpec) {
+            case FALCON512 -> FalconParameterSpec.falcon_512;
+            case FALCON1024 -> FalconParameterSpec.falcon_1024;
+            default -> throw new IllegalArgumentException();
+        };
     }
 
     /**

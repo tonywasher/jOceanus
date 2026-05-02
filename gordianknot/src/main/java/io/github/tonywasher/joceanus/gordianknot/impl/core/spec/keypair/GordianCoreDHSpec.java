@@ -68,29 +68,16 @@ public final class GordianCoreDHSpec {
      * @return the length
      */
     public int getLength() {
-        switch (theSpec) {
-            case STD1024:
-                return GordianLength.LEN_1024.getLength();
-            case STD1536:
-                return GordianLength.LEN_1536.getLength();
-            case STD2048:
-            case FFDHE2048:
-                return GordianLength.LEN_2048.getLength();
-            case STD3072:
-            case FFDHE3072:
-                return GordianLength.LEN_3072.getLength();
-            case STD4096:
-            case FFDHE4096:
-                return GordianLength.LEN_4096.getLength();
-            case STD6144:
-            case FFDHE6144:
-                return GordianLength.LEN_6144.getLength();
-            case STD8192:
-            case FFDHE8192:
-                return GordianLength.LEN_8192.getLength();
-            default:
-                throw new IllegalArgumentException("Unknown GordianNewRSASpec");
-        }
+        return switch (theSpec) {
+            case STD1024 -> GordianLength.LEN_1024.getLength();
+            case STD1536 -> GordianLength.LEN_1536.getLength();
+            case STD2048, FFDHE2048 -> GordianLength.LEN_2048.getLength();
+            case STD3072, FFDHE3072 -> GordianLength.LEN_3072.getLength();
+            case STD4096, FFDHE4096 -> GordianLength.LEN_4096.getLength();
+            case STD6144, FFDHE6144 -> GordianLength.LEN_6144.getLength();
+            case STD8192, FFDHE8192 -> GordianLength.LEN_8192.getLength();
+            default -> throw new IllegalArgumentException("Unknown GordianNewRSASpec");
+        };
     }
 
     /**
@@ -99,34 +86,21 @@ public final class GordianCoreDHSpec {
      * @return the parameters
      */
     public DHParameters getParameters() {
-        switch (theSpec) {
-            case STD1024:
-                return DHStandardGroups.rfc2409_1024;
-            case STD1536:
-                return DHStandardGroups.rfc3526_1536;
-            case STD2048:
-                return DHStandardGroups.rfc3526_2048;
-            case STD3072:
-                return DHStandardGroups.rfc3526_3072;
-            case STD4096:
-                return DHStandardGroups.rfc3526_4096;
-            case STD6144:
-                return DHStandardGroups.rfc3526_6144;
-            case STD8192:
-                return DHStandardGroups.rfc3526_8192;
-            case FFDHE2048:
-                return DHStandardGroups.rfc7919_ffdhe2048;
-            case FFDHE3072:
-                return DHStandardGroups.rfc7919_ffdhe3072;
-            case FFDHE4096:
-                return DHStandardGroups.rfc7919_ffdhe4096;
-            case FFDHE6144:
-                return DHStandardGroups.rfc7919_ffdhe6144;
-            case FFDHE8192:
-                return DHStandardGroups.rfc7919_ffdhe8192;
-            default:
-                throw new IllegalArgumentException("Unknown GordianDHSpec");
-        }
+        return switch (theSpec) {
+            case STD1024 -> DHStandardGroups.rfc2409_1024;
+            case STD1536 -> DHStandardGroups.rfc3526_1536;
+            case STD2048 -> DHStandardGroups.rfc3526_2048;
+            case STD3072 -> DHStandardGroups.rfc3526_3072;
+            case STD4096 -> DHStandardGroups.rfc3526_4096;
+            case STD6144 -> DHStandardGroups.rfc3526_6144;
+            case STD8192 -> DHStandardGroups.rfc3526_8192;
+            case FFDHE2048 -> DHStandardGroups.rfc7919_ffdhe2048;
+            case FFDHE3072 -> DHStandardGroups.rfc7919_ffdhe3072;
+            case FFDHE4096 -> DHStandardGroups.rfc7919_ffdhe4096;
+            case FFDHE6144 -> DHStandardGroups.rfc7919_ffdhe6144;
+            case FFDHE8192 -> DHStandardGroups.rfc7919_ffdhe8192;
+            default -> throw new IllegalArgumentException("Unknown GordianDHSpec");
+        };
     }
 
     /**

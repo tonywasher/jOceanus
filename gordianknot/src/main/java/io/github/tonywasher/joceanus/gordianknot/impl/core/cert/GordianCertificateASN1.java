@@ -75,17 +75,16 @@ public class GordianCertificateASN1
      */
     public GordianCertificateASN1(final GordianCertificate pCertificate) throws GordianException {
         /* Handle core Certificate */
-        if (pCertificate instanceof GordianCoreCertificate myCore) {
-            theFull = myCore.getCertificate();
-            theMini = null;
-
-            /* Handle miniCertificate */
-        } else if (pCertificate instanceof GordianMiniCertificate myMini) {
-            theFull = null;
-            theMini = myMini.getASN1();
-
-        } else {
-            throw new GordianLogicException("Unexpected certificate type");
+        switch (pCertificate) {
+            case GordianCoreCertificate myCore -> {
+                theFull = myCore.getCertificate();
+                theMini = null;
+            }
+            case GordianMiniCertificate myMini -> {
+                theFull = null;
+                theMini = myMini.getASN1();
+            }
+            default -> throw new GordianLogicException("Unexpected certificate type");
         }
     }
 

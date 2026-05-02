@@ -16,10 +16,6 @@
  */
 package io.github.tonywasher.joceanus.metis.viewer;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimal;
-import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
-import io.github.tonywasher.joceanus.oceanus.profile.OceanusProfile;
 import io.github.tonywasher.joceanus.metis.data.MetisDataDelta;
 import io.github.tonywasher.joceanus.metis.data.MetisDataFieldValue;
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataList;
@@ -31,6 +27,10 @@ import io.github.tonywasher.joceanus.metis.field.MetisFieldItem.MetisFieldVersio
 import io.github.tonywasher.joceanus.metis.field.MetisFieldValidation;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldVersionHistory;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldVersionedItem;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimal;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
+import io.github.tonywasher.joceanus.oceanus.profile.OceanusProfile;
 
 import java.util.Iterator;
 import java.util.List;
@@ -135,25 +135,13 @@ public class MetisViewerFormatter {
                 ? myDelta.getObject()
                 : pObject;
 
-        /* If we are FieldItem */
-        if (myObject instanceof MetisFieldItem myField) {
-            formatHTMLEosFieldItem(myField);
-
-            /* If we are Stack Trace */
-        } else if (myObject instanceof StackTraceElement[] myStack) {
-            formatHTMLStackTrace(myStack);
-
-            /* If we are TethysProfile */
-        } else if (myObject instanceof OceanusProfile myProfile) {
-            formatHTMLEosFieldItem(new MetisViewerProfileWrapper(myProfile));
-
-            /* If we are Throwable */
-        } else if (myObject instanceof Throwable myThrow) {
-            formatHTMLEosFieldItem(new MetisViewerExceptionWrapper(myThrow));
-
-            /* else handle unsupported list item */
-        } else {
-            formatHTMLUnknown(myObject);
+        /* Switch on object */
+        switch (myObject) {
+            case MetisFieldItem myField -> formatHTMLEosFieldItem(myField);
+            case StackTraceElement[] myStack -> formatHTMLStackTrace(myStack);
+            case OceanusProfile myProfile -> formatHTMLEosFieldItem(new MetisViewerProfileWrapper(myProfile));
+            case Throwable myThrow -> formatHTMLEosFieldItem(new MetisViewerExceptionWrapper(myThrow));
+            default -> formatHTMLUnknown(myObject);
         }
     }
 

@@ -301,7 +301,7 @@ class PrometheusOdfTableStore {
      * Apply Data Validation.
      *
      * @param pSheet     the workSheet containing the cells
-     * @param pFirstCell the the first cell in the range
+     * @param pFirstCell the first cell in the range
      * @param pLastCell  the last cell in the range
      * @param pValueList the value list
      */
@@ -318,7 +318,7 @@ class PrometheusOdfTableStore {
             /* Loop through the values */
             for (String myValue : pValueList) {
                 /* If this is not the first element */
-                if (myBuilder.length() > 0) {
+                if (!myBuilder.isEmpty()) {
                     /* Add a comma */
                     myBuilder.append(',');
                 }

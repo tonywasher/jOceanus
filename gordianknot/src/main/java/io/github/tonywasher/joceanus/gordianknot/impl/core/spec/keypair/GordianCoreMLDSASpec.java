@@ -69,17 +69,10 @@ public final class GordianCoreMLDSASpec {
      * @return true/false
      */
     public boolean isHash() {
-        switch (theSpec) {
-            case MLDSA44SHA:
-            case MLDSA65SHA:
-            case MLDSA87SHA:
-                return true;
-            case MLDSA44:
-            case MLDSA65:
-            case MLDSA87:
-            default:
-                return false;
-        }
+        return switch (theSpec) {
+            case MLDSA44SHA, MLDSA65SHA, MLDSA87SHA -> true;
+            default -> false;
+        };
     }
 
     /**
@@ -88,22 +81,15 @@ public final class GordianCoreMLDSASpec {
      * @return the parameters.
      */
     public MLDSAParameters getParameters() {
-        switch (theSpec) {
-            case MLDSA44:
-                return MLDSAParameters.ml_dsa_44;
-            case MLDSA65:
-                return MLDSAParameters.ml_dsa_65;
-            case MLDSA87:
-                return MLDSAParameters.ml_dsa_87;
-            case MLDSA44SHA:
-                return MLDSAParameters.ml_dsa_44_with_sha512;
-            case MLDSA65SHA:
-                return MLDSAParameters.ml_dsa_65_with_sha512;
-            case MLDSA87SHA:
-                return MLDSAParameters.ml_dsa_87_with_sha512;
-            default:
-                throw new IllegalArgumentException();
-        }
+        return switch (theSpec) {
+            case MLDSA44 -> MLDSAParameters.ml_dsa_44;
+            case MLDSA65 -> MLDSAParameters.ml_dsa_65;
+            case MLDSA87 -> MLDSAParameters.ml_dsa_87;
+            case MLDSA44SHA -> MLDSAParameters.ml_dsa_44_with_sha512;
+            case MLDSA65SHA -> MLDSAParameters.ml_dsa_65_with_sha512;
+            case MLDSA87SHA -> MLDSAParameters.ml_dsa_87_with_sha512;
+            default -> throw new IllegalArgumentException();
+        };
     }
 
     /**
@@ -112,22 +98,15 @@ public final class GordianCoreMLDSASpec {
      * @return the parameters.
      */
     public MLDSAParameterSpec getParameterSpec() {
-        switch (theSpec) {
-            case MLDSA44:
-                return MLDSAParameterSpec.ml_dsa_44;
-            case MLDSA65:
-                return MLDSAParameterSpec.ml_dsa_65;
-            case MLDSA87:
-                return MLDSAParameterSpec.ml_dsa_87;
-            case MLDSA44SHA:
-                return MLDSAParameterSpec.ml_dsa_44_with_sha512;
-            case MLDSA65SHA:
-                return MLDSAParameterSpec.ml_dsa_65_with_sha512;
-            case MLDSA87SHA:
-                return MLDSAParameterSpec.ml_dsa_87_with_sha512;
-            default:
-                throw new IllegalArgumentException();
-        }
+        return switch (theSpec) {
+            case MLDSA44 -> MLDSAParameterSpec.ml_dsa_44;
+            case MLDSA65 -> MLDSAParameterSpec.ml_dsa_65;
+            case MLDSA87 -> MLDSAParameterSpec.ml_dsa_87;
+            case MLDSA44SHA -> MLDSAParameterSpec.ml_dsa_44_with_sha512;
+            case MLDSA65SHA -> MLDSAParameterSpec.ml_dsa_65_with_sha512;
+            case MLDSA87SHA -> MLDSAParameterSpec.ml_dsa_87_with_sha512;
+            default -> throw new IllegalArgumentException();
+        };
     }
 
     /**
@@ -136,22 +115,15 @@ public final class GordianCoreMLDSASpec {
      * @return the identifier.
      */
     public ASN1ObjectIdentifier getIdentifier() {
-        switch (theSpec) {
-            case MLDSA44:
-                return NISTObjectIdentifiers.id_ml_dsa_44;
-            case MLDSA65:
-                return NISTObjectIdentifiers.id_ml_dsa_65;
-            case MLDSA87:
-                return NISTObjectIdentifiers.id_ml_dsa_87;
-            case MLDSA44SHA:
-                return NISTObjectIdentifiers.id_hash_ml_dsa_44_with_sha512;
-            case MLDSA65SHA:
-                return NISTObjectIdentifiers.id_hash_ml_dsa_65_with_sha512;
-            case MLDSA87SHA:
-                return NISTObjectIdentifiers.id_hash_ml_dsa_87_with_sha512;
-            default:
-                throw new IllegalArgumentException();
-        }
+        return switch (theSpec) {
+            case MLDSA44 -> NISTObjectIdentifiers.id_ml_dsa_44;
+            case MLDSA65 -> NISTObjectIdentifiers.id_ml_dsa_65;
+            case MLDSA87 -> NISTObjectIdentifiers.id_ml_dsa_87;
+            case MLDSA44SHA -> NISTObjectIdentifiers.id_hash_ml_dsa_44_with_sha512;
+            case MLDSA65SHA -> NISTObjectIdentifiers.id_hash_ml_dsa_65_with_sha512;
+            case MLDSA87SHA -> NISTObjectIdentifiers.id_hash_ml_dsa_87_with_sha512;
+            default -> throw new IllegalArgumentException();
+        };
     }
 
     @Override

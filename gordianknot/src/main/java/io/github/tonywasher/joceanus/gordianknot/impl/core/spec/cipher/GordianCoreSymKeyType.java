@@ -158,41 +158,24 @@ public final class GordianCoreSymKeyType {
         }
 
         /* switch on keyLength */
-        switch (theType) {
-            case THREEFISH:
-                return GordianLength.LEN_256 == pKeyLen
-                        || GordianLength.LEN_512 == pKeyLen
-                        || GordianLength.LEN_1024 == pKeyLen;
-            case SHACAL2:
-                return GordianLength.LEN_256 == pKeyLen
-                        || GordianLength.LEN_512 == pKeyLen;
-            case GOST:
-            case KUZNYECHIK:
-                return GordianLength.LEN_256 == pKeyLen;
-            case SM4:
-            case SEED:
-            case NOEKEON:
-            case CAST5:
-            case RC5:
-            case SKIPJACK:
-            case TEA:
-            case XTEA:
-            case IDEA:
-                return GordianLength.LEN_128 == pKeyLen;
-            case RC2:
-                return true;
-            case DESEDE:
-                return GordianLength.LEN_128 == pKeyLen
-                        || GordianLength.LEN_192 == pKeyLen;
-            case KALYNA:
-                return GordianLength.LEN_128 == pKeyLen
-                        || GordianLength.LEN_256 == pKeyLen
-                        || GordianLength.LEN_512 == pKeyLen;
-            default:
-                return GordianLength.LEN_128 == pKeyLen
-                        || GordianLength.LEN_192 == pKeyLen
-                        || GordianLength.LEN_256 == pKeyLen;
-        }
+        return switch (theType) {
+            case THREEFISH -> GordianLength.LEN_256 == pKeyLen
+                    || GordianLength.LEN_512 == pKeyLen
+                    || GordianLength.LEN_1024 == pKeyLen;
+            case SHACAL2 -> GordianLength.LEN_256 == pKeyLen
+                    || GordianLength.LEN_512 == pKeyLen;
+            case GOST, KUZNYECHIK -> GordianLength.LEN_256 == pKeyLen;
+            case SM4, SEED, NOEKEON, CAST5, RC5, SKIPJACK, TEA, XTEA, IDEA -> GordianLength.LEN_128 == pKeyLen;
+            case RC2 -> true;
+            case DESEDE -> GordianLength.LEN_128 == pKeyLen
+                    || GordianLength.LEN_192 == pKeyLen;
+            case KALYNA -> GordianLength.LEN_128 == pKeyLen
+                    || GordianLength.LEN_256 == pKeyLen
+                    || GordianLength.LEN_512 == pKeyLen;
+            default -> GordianLength.LEN_128 == pKeyLen
+                    || GordianLength.LEN_192 == pKeyLen
+                    || GordianLength.LEN_256 == pKeyLen;
+        };
     }
 
     /**
@@ -220,17 +203,14 @@ public final class GordianCoreSymKeyType {
         }
 
         /* Switch on keyType */
-        switch (theType) {
+        return switch (theType) {
             /* ThreeFish keys must be same length as blockSize */
-            case THREEFISH:
-                return pKeyLen == pBlkLen;
+            case THREEFISH -> pKeyLen == pBlkLen;
             /* Explicitly disallow Kalyna128-512 */
-            case KALYNA:
-                return GordianLength.LEN_128 != pBlkLen
-                        || GordianLength.LEN_512 != pKeyLen;
-            default:
-                return true;
-        }
+            case KALYNA -> GordianLength.LEN_128 != pBlkLen
+                    || GordianLength.LEN_512 != pKeyLen;
+            default -> true;
+        };
     }
 
     /**
@@ -241,68 +221,38 @@ public final class GordianCoreSymKeyType {
      */
     private static GordianBundleId bundleIdForSymKeyType(final GordianSymKeyType pType) {
         /* Create the map and return it */
-        switch (pType) {
-            case AES:
-                return GordianCipherResource.SYMKEY_AES;
-            case SERPENT:
-                return GordianCipherResource.SYMKEY_SERPENT;
-            case TWOFISH:
-                return GordianCipherResource.SYMKEY_TWOFISH;
-            case CAMELLIA:
-                return GordianCipherResource.SYMKEY_CAMELLIA;
-            case RC6:
-                return GordianCipherResource.SYMKEY_RC6;
-            case CAST6:
-                return GordianCipherResource.SYMKEY_CAST6;
-            case ARIA:
-                return GordianCipherResource.SYMKEY_ARIA;
-            case THREEFISH:
-                return GordianCipherResource.SYMKEY_THREEFISH;
-            case NOEKEON:
-                return GordianCipherResource.SYMKEY_NOEKEON;
-            case SEED:
-                return GordianCipherResource.SYMKEY_SEED;
-            case SM4:
-                return GordianCipherResource.SYMKEY_SM4;
-            case RC2:
-                return GordianCipherResource.SYMKEY_RC2;
-            case RC5:
-                return GordianCipherResource.SYMKEY_RC5;
-            case CAST5:
-                return GordianCipherResource.SYMKEY_CAST5;
-            case TEA:
-                return GordianCipherResource.SYMKEY_TEA;
-            case XTEA:
-                return GordianCipherResource.SYMKEY_XTEA;
-            case IDEA:
-                return GordianCipherResource.SYMKEY_IDEA;
-            case SKIPJACK:
-                return GordianCipherResource.SYMKEY_SKIPJACK;
-            case BLOWFISH:
-                return GordianCipherResource.SYMKEY_BLOWFISH;
-            case DESEDE:
-                return GordianCipherResource.SYMKEY_DESEDE;
-            case GOST:
-                return GordianCipherResource.SYMKEY_GOST;
-            case KUZNYECHIK:
-                return GordianCipherResource.SYMKEY_KUZNYECHIK;
-            case KALYNA:
-                return GordianCipherResource.SYMKEY_KALYNA;
-            case SHACAL2:
-                return GordianCipherResource.SYMKEY_SHACAL2;
-            case SPECK:
-                return GordianCipherResource.SYMKEY_SPECK;
-            case ANUBIS:
-                return GordianCipherResource.SYMKEY_ANUBIS;
-            case SIMON:
-                return GordianCipherResource.SYMKEY_SIMON;
-            case MARS:
-                return GordianCipherResource.SYMKEY_MARS;
-            case LEA:
-                return GordianCipherResource.SYMKEY_LEA;
-            default:
-                throw new IllegalArgumentException();
-        }
+        return switch (pType) {
+            case AES -> GordianCipherResource.SYMKEY_AES;
+            case SERPENT -> GordianCipherResource.SYMKEY_SERPENT;
+            case TWOFISH -> GordianCipherResource.SYMKEY_TWOFISH;
+            case CAMELLIA -> GordianCipherResource.SYMKEY_CAMELLIA;
+            case RC6 -> GordianCipherResource.SYMKEY_RC6;
+            case CAST6 -> GordianCipherResource.SYMKEY_CAST6;
+            case ARIA -> GordianCipherResource.SYMKEY_ARIA;
+            case THREEFISH -> GordianCipherResource.SYMKEY_THREEFISH;
+            case NOEKEON -> GordianCipherResource.SYMKEY_NOEKEON;
+            case SEED -> GordianCipherResource.SYMKEY_SEED;
+            case SM4 -> GordianCipherResource.SYMKEY_SM4;
+            case RC2 -> GordianCipherResource.SYMKEY_RC2;
+            case RC5 -> GordianCipherResource.SYMKEY_RC5;
+            case CAST5 -> GordianCipherResource.SYMKEY_CAST5;
+            case TEA -> GordianCipherResource.SYMKEY_TEA;
+            case XTEA -> GordianCipherResource.SYMKEY_XTEA;
+            case IDEA -> GordianCipherResource.SYMKEY_IDEA;
+            case SKIPJACK -> GordianCipherResource.SYMKEY_SKIPJACK;
+            case BLOWFISH -> GordianCipherResource.SYMKEY_BLOWFISH;
+            case DESEDE -> GordianCipherResource.SYMKEY_DESEDE;
+            case GOST -> GordianCipherResource.SYMKEY_GOST;
+            case KUZNYECHIK -> GordianCipherResource.SYMKEY_KUZNYECHIK;
+            case KALYNA -> GordianCipherResource.SYMKEY_KALYNA;
+            case SHACAL2 -> GordianCipherResource.SYMKEY_SHACAL2;
+            case SPECK -> GordianCipherResource.SYMKEY_SPECK;
+            case ANUBIS -> GordianCipherResource.SYMKEY_ANUBIS;
+            case SIMON -> GordianCipherResource.SYMKEY_SIMON;
+            case MARS -> GordianCipherResource.SYMKEY_MARS;
+            case LEA -> GordianCipherResource.SYMKEY_LEA;
+            default -> throw new IllegalArgumentException();
+        };
     }
 
     /**
@@ -313,45 +263,17 @@ public final class GordianCoreSymKeyType {
      */
     private static GordianLength[] blockLengthsForSymKeyType(final GordianSymKeyType pType) {
         /* Create the map and return it */
-        switch (pType) {
-            case AES:
-            case TWOFISH:
-            case SERPENT:
-            case CAMELLIA:
-            case RC6:
-            case CAST6:
-            case ARIA:
-            case SM4:
-            case NOEKEON:
-            case KUZNYECHIK:
-            case SPECK:
-            case ANUBIS:
-            case SIMON:
-            case MARS:
-            case LEA:
-            case SEED:
-                return new GordianLength[]{GordianLength.LEN_128};
-            case THREEFISH:
-                return new GordianLength[]{GordianLength.LEN_256, GordianLength.LEN_512, GordianLength.LEN_1024};
-            case TEA:
-            case XTEA:
-            case IDEA:
-            case SKIPJACK:
-            case RC2:
-            case DESEDE:
-            case CAST5:
-            case BLOWFISH:
-            case GOST:
-                return new GordianLength[]{GordianLength.LEN_64};
-            case RC5:
-                return new GordianLength[]{GordianLength.LEN_128, GordianLength.LEN_64};
-            case KALYNA:
-                return new GordianLength[]{GordianLength.LEN_128, GordianLength.LEN_256, GordianLength.LEN_512};
-            case SHACAL2:
-                return new GordianLength[]{GordianLength.LEN_256};
-            default:
-                throw new IllegalArgumentException();
-        }
+        return switch (pType) {
+            case AES, TWOFISH, SERPENT, CAMELLIA, RC6, CAST6, ARIA, SM4, NOEKEON, KUZNYECHIK, SPECK, ANUBIS, SIMON,
+                 MARS, LEA, SEED -> new GordianLength[]{GordianLength.LEN_128};
+            case THREEFISH -> new GordianLength[]{GordianLength.LEN_256, GordianLength.LEN_512, GordianLength.LEN_1024};
+            case TEA, XTEA, IDEA, SKIPJACK, RC2, DESEDE, CAST5, BLOWFISH, GOST ->
+                    new GordianLength[]{GordianLength.LEN_64};
+            case RC5 -> new GordianLength[]{GordianLength.LEN_128, GordianLength.LEN_64};
+            case KALYNA -> new GordianLength[]{GordianLength.LEN_128, GordianLength.LEN_256, GordianLength.LEN_512};
+            case SHACAL2 -> new GordianLength[]{GordianLength.LEN_256};
+            default -> throw new IllegalArgumentException();
+        };
     }
 
     /**
@@ -364,44 +286,15 @@ public final class GordianCoreSymKeyType {
     static GordianLength defaultBlockLengthForSymKeyTypeAndKeyLength(final GordianSymKeyType pType,
                                                                      final GordianLength pKeyLength) {
         /* Create the map and return it */
-        switch (pType) {
-            case AES:
-            case TWOFISH:
-            case SERPENT:
-            case CAMELLIA:
-            case RC6:
-            case CAST6:
-            case ARIA:
-            case SM4:
-            case NOEKEON:
-            case KUZNYECHIK:
-            case SPECK:
-            case ANUBIS:
-            case SIMON:
-            case MARS:
-            case LEA:
-            case RC5:
-            case SEED:
-                return GordianLength.LEN_128;
-            case THREEFISH:
-                return pKeyLength;
-            case KALYNA:
-                return GordianLength.LEN_512.equals(pKeyLength) ? GordianLength.LEN_256 : GordianLength.LEN_128;
-            case TEA:
-            case XTEA:
-            case IDEA:
-            case SKIPJACK:
-            case RC2:
-            case DESEDE:
-            case CAST5:
-            case BLOWFISH:
-            case GOST:
-                return GordianLength.LEN_64;
-            case SHACAL2:
-                return GordianLength.LEN_256;
-            default:
-                throw new IllegalArgumentException();
-        }
+        return switch (pType) {
+            case AES, TWOFISH, SERPENT, CAMELLIA, RC6, CAST6, ARIA, SM4, NOEKEON, KUZNYECHIK, SPECK, ANUBIS, SIMON,
+                 MARS, LEA, RC5, SEED -> GordianLength.LEN_128;
+            case THREEFISH -> pKeyLength;
+            case KALYNA -> GordianLength.LEN_512.equals(pKeyLength) ? GordianLength.LEN_256 : GordianLength.LEN_128;
+            case TEA, XTEA, IDEA, SKIPJACK, RC2, DESEDE, CAST5, BLOWFISH, GOST -> GordianLength.LEN_64;
+            case SHACAL2 -> GordianLength.LEN_256;
+            default -> throw new IllegalArgumentException();
+        };
     }
 
     /**
@@ -412,41 +305,13 @@ public final class GordianCoreSymKeyType {
      */
     static GordianLength defaultKeyLengthForSymKeyType(final GordianSymKeyType pType) {
         /* Create the map and return it */
-        switch (pType) {
-            case AES:
-            case TWOFISH:
-            case SERPENT:
-            case CAMELLIA:
-            case RC6:
-            case CAST6:
-            case THREEFISH:
-            case ARIA:
-            case KALYNA:
-            case KUZNYECHIK:
-            case SPECK:
-            case ANUBIS:
-            case SIMON:
-            case MARS:
-            case LEA:
-            case GOST:
-            case SHACAL2:
-                return GordianLength.LEN_256;
-            case RC2:
-            case NOEKEON:
-            case RC5:
-            case DESEDE:
-            case CAST5:
-            case BLOWFISH:
-            case SEED:
-            case TEA:
-            case XTEA:
-            case IDEA:
-            case SKIPJACK:
-            case SM4:
-                return GordianLength.LEN_128;
-            default:
-                throw new IllegalArgumentException();
-        }
+        return switch (pType) {
+            case AES, TWOFISH, SERPENT, CAMELLIA, RC6, CAST6, THREEFISH, ARIA, KALYNA, KUZNYECHIK, SPECK, ANUBIS, SIMON,
+                 MARS, LEA, GOST, SHACAL2 -> GordianLength.LEN_256;
+            case RC2, NOEKEON, RC5, DESEDE, CAST5, BLOWFISH, SEED, TEA, XTEA, IDEA, SKIPJACK, SM4 ->
+                    GordianLength.LEN_128;
+            default -> throw new IllegalArgumentException();
+        };
     }
 
     @Override

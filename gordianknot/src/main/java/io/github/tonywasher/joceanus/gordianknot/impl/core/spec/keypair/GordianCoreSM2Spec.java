@@ -63,26 +63,20 @@ public final class GordianCoreSM2Spec
 
     @Override
     public String getCurveName() {
-        switch (theSpec) {
-            case SM2P256V1:
-                return "sm2p256v1";
-            case WAPIP192V1:
-                return "wapip192v1";
-            default:
-                throw new IllegalArgumentException();
-        }
+        return switch (theSpec) {
+            case SM2P256V1 -> "sm2p256v1";
+            case WAPIP192V1 -> "wapip192v1";
+            default -> throw new IllegalArgumentException();
+        };
     }
 
     @Override
     public int getKeySize() {
-        switch (theSpec) {
-            case SM2P256V1:
-                return GordianLength.LEN_256.getLength();
-            case WAPIP192V1:
-                return GordianLength.LEN_192.getLength();
-            default:
-                throw new IllegalArgumentException();
-        }
+        return switch (theSpec) {
+            case SM2P256V1 -> GordianLength.LEN_256.getLength();
+            case WAPIP192V1 -> GordianLength.LEN_192.getLength();
+            default -> throw new IllegalArgumentException();
+        };
     }
 
     /**

@@ -66,13 +66,10 @@ public final class GordianCoreAgreementType {
      * @return true/false
      */
     public boolean isAnonymous() {
-        switch (theType) {
-            case KEM:
-            case ANON:
-                return true;
-            default:
-                return false;
-        }
+        return switch (theType) {
+            case KEM, ANON -> true;
+            default -> false;
+        };
     }
 
     /**
@@ -90,14 +87,10 @@ public final class GordianCoreAgreementType {
      * @return true/false
      */
     public boolean canConfirm() {
-        switch (theType) {
-            case UNIFIED:
-            case MQV:
-            case SM2:
-                return true;
-            default:
-                return false;
-        }
+        return switch (theType) {
+            case UNIFIED, MQV, SM2 -> true;
+            default -> false;
+        };
     }
 
     /**
@@ -110,23 +103,15 @@ public final class GordianCoreAgreementType {
         if (pKeyPairType == GordianKeyPairType.COMPOSITE) {
             return true;
         }
-        switch (theType) {
-            case KEM:
-                return hasKEM(pKeyPairType);
-            case ANON:
-                return hasAnon(pKeyPairType);
-            case BASIC:
-            case SIGNED:
-                return hasBasic(pKeyPairType);
-            case SM2:
-                return hasSM2(pKeyPairType);
-            case MQV:
-                return hasMQV(pKeyPairType);
-            case UNIFIED:
-                return hasUnified(pKeyPairType);
-            default:
-                return false;
-        }
+        return switch (theType) {
+            case KEM -> hasKEM(pKeyPairType);
+            case ANON -> hasAnon(pKeyPairType);
+            case BASIC, SIGNED -> hasBasic(pKeyPairType);
+            case SM2 -> hasSM2(pKeyPairType);
+            case MQV -> hasMQV(pKeyPairType);
+            case UNIFIED -> hasUnified(pKeyPairType);
+            default -> false;
+        };
     }
 
     /**
@@ -136,26 +121,11 @@ public final class GordianCoreAgreementType {
      * @return true/false
      */
     public static boolean hasKEM(final GordianKeyPairType pKeyPairType) {
-        switch (pKeyPairType) {
-            case RSA:
-            case EC:
-            case GOST:
-            case DSTU:
-            case SM2:
-            case CMCE:
-            case FRODO:
-            case SABER:
-            case MLKEM:
-            case HQC:
-            case BIKE:
-            case NTRU:
-            case NTRUPLUS:
-            case NTRUPRIME:
-            case NEWHOPE:
-                return true;
-            default:
-                return false;
-        }
+        return switch (pKeyPairType) {
+            case RSA, EC, GOST, DSTU, SM2, CMCE, FRODO, SABER, MLKEM, HQC, BIKE, NTRU, NTRUPLUS, NTRUPRIME, NEWHOPE ->
+                    true;
+            default -> false;
+        };
     }
 
     /**
@@ -165,17 +135,10 @@ public final class GordianCoreAgreementType {
      * @return true/false
      */
     public static boolean hasAnon(final GordianKeyPairType pKeyPairType) {
-        switch (pKeyPairType) {
-            case DH:
-            case EC:
-            case SM2:
-            case GOST:
-            case DSTU:
-            case XDH:
-                return true;
-            default:
-                return false;
-        }
+        return switch (pKeyPairType) {
+            case DH, EC, SM2, GOST, DSTU, XDH -> true;
+            default -> false;
+        };
     }
 
     /**
@@ -185,14 +148,10 @@ public final class GordianCoreAgreementType {
      * @return true/false
      */
     public static boolean hasSM2(final GordianKeyPairType pKeyPairType) {
-        switch (pKeyPairType) {
-            case EC:
-            case SM2:
-            case GOST:
-                return true;
-            default:
-                return false;
-        }
+        return switch (pKeyPairType) {
+            case EC, SM2, GOST -> true;
+            default -> false;
+        };
     }
 
     /**
@@ -232,17 +191,10 @@ public final class GordianCoreAgreementType {
      * @return true/false
      */
     private static boolean isECorDH(final GordianKeyPairType pKeyPairType) {
-        switch (pKeyPairType) {
-            case SM2:
-            case EC:
-            case GOST:
-            case DSTU:
-            case DH:
-            case XDH:
-                return true;
-            default:
-                return false;
-        }
+        return switch (pKeyPairType) {
+            case SM2, EC, GOST, DSTU, DH, XDH -> true;
+            default -> false;
+        };
     }
 
     /**
@@ -252,15 +204,10 @@ public final class GordianCoreAgreementType {
      * @return true/false
      */
     private static boolean isEC(final GordianKeyPairType pKeyPairType) {
-        switch (pKeyPairType) {
-            case SM2:
-            case EC:
-            case GOST:
-            case DSTU:
-                return true;
-            default:
-                return false;
-        }
+        return switch (pKeyPairType) {
+            case SM2, EC, GOST, DSTU -> true;
+            default -> false;
+        };
     }
 
     @Override

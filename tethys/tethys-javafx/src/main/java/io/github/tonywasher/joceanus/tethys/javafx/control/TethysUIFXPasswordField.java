@@ -16,11 +16,10 @@
  */
 package io.github.tonywasher.joceanus.tethys.javafx.control;
 
-import javafx.scene.control.PasswordField;
-
 import io.github.tonywasher.joceanus.tethys.core.control.TethysUICorePasswordField;
 import io.github.tonywasher.joceanus.tethys.core.factory.TethysUICoreFactory;
 import io.github.tonywasher.joceanus.tethys.javafx.base.TethysUIFXNode;
+import javafx.scene.control.PasswordField;
 
 /**
  * javaFX Password Field.
@@ -60,7 +59,7 @@ public class TethysUIFXPasswordField
     public char[] getPassword() {
         final String myText = theField.getText();
         return myText == null
-                || myText.length() == 0
+                || myText.isEmpty()
                 ? null
                 : myText.toCharArray();
     }

@@ -70,22 +70,15 @@ public final class GordianCoreFRODOSpec {
      * @return the parameters.
      */
     public FrodoParameters getParameters() {
-        switch (theSpec) {
-            case AES640:
-                return FrodoParameters.frodokem640aes;
-            case SHAKE640:
-                return FrodoParameters.frodokem640shake;
-            case AES976:
-                return FrodoParameters.frodokem976aes;
-            case SHAKE976:
-                return FrodoParameters.frodokem976shake;
-            case AES1344:
-                return FrodoParameters.frodokem1344aes;
-            case SHAKE1344:
-                return FrodoParameters.frodokem1344shake;
-            default:
-                throw new IllegalArgumentException();
-        }
+        return switch (theSpec) {
+            case AES640 -> FrodoParameters.frodokem640aes;
+            case SHAKE640 -> FrodoParameters.frodokem640shake;
+            case AES976 -> FrodoParameters.frodokem976aes;
+            case SHAKE976 -> FrodoParameters.frodokem976shake;
+            case AES1344 -> FrodoParameters.frodokem1344aes;
+            case SHAKE1344 -> FrodoParameters.frodokem1344shake;
+            default -> throw new IllegalArgumentException();
+        };
     }
 
     /**
@@ -94,22 +87,15 @@ public final class GordianCoreFRODOSpec {
      * @return the parameters.
      */
     public FrodoParameterSpec getParameterSpec() {
-        switch (theSpec) {
-            case AES640:
-                return FrodoParameterSpec.frodokem640aes;
-            case SHAKE640:
-                return FrodoParameterSpec.frodokem640shake;
-            case AES976:
-                return FrodoParameterSpec.frodokem976aes;
-            case SHAKE976:
-                return FrodoParameterSpec.frodokem976shake;
-            case AES1344:
-                return FrodoParameterSpec.frodokem1344aes;
-            case SHAKE1344:
-                return FrodoParameterSpec.frodokem1344shake;
-            default:
-                throw new IllegalArgumentException();
-        }
+        return switch (theSpec) {
+            case AES640 -> FrodoParameterSpec.frodokem640aes;
+            case SHAKE640 -> FrodoParameterSpec.frodokem640shake;
+            case AES976 -> FrodoParameterSpec.frodokem976aes;
+            case SHAKE976 -> FrodoParameterSpec.frodokem976shake;
+            case AES1344 -> FrodoParameterSpec.frodokem1344aes;
+            case SHAKE1344 -> FrodoParameterSpec.frodokem1344shake;
+            default -> throw new IllegalArgumentException();
+        };
     }
 
     /**
@@ -118,22 +104,15 @@ public final class GordianCoreFRODOSpec {
      * @return the identifier.
      */
     public ASN1ObjectIdentifier getIdentifier() {
-        switch (theSpec) {
-            case AES640:
-                return BCObjectIdentifiers.frodokem640aes;
-            case SHAKE640:
-                return BCObjectIdentifiers.frodokem640shake;
-            case AES976:
-                return BCObjectIdentifiers.frodokem976aes;
-            case SHAKE976:
-                return BCObjectIdentifiers.frodokem976shake;
-            case AES1344:
-                return BCObjectIdentifiers.frodokem1344aes;
-            case SHAKE1344:
-                return BCObjectIdentifiers.frodokem1344shake;
-            default:
-                throw new IllegalArgumentException();
-        }
+        return switch (theSpec) {
+            case AES640 -> BCObjectIdentifiers.frodokem640aes;
+            case SHAKE640 -> BCObjectIdentifiers.frodokem640shake;
+            case AES976 -> BCObjectIdentifiers.frodokem976aes;
+            case SHAKE976 -> BCObjectIdentifiers.frodokem976shake;
+            case AES1344 -> BCObjectIdentifiers.frodokem1344aes;
+            case SHAKE1344 -> BCObjectIdentifiers.frodokem1344shake;
+            default -> throw new IllegalArgumentException();
+        };
     }
 
     @Override

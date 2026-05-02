@@ -139,21 +139,22 @@ public class GordianCoreRandomFactory
         final GordianCoreRandomSpec mySpec = (GordianCoreRandomSpec) pRandomSpec;
         final GordianDigestSpec myDigest = mySpec.getDigestSpec();
         final boolean isResistent = pRandomSpec.isPredictionResistant();
-        switch (pRandomSpec.getRandomType()) {
-            case HASH:
-                return buildHash(myDigests.createDigest(myDigest), isResistent);
-            case HMAC:
+        return switch (pRandomSpec.getRandomType()) {
+            case HASH -> buildHash(myDigests.createDigest(myDigest), isResistent);
+            case HMAC -> {
                 final GordianMacSpec myMacSpec = myMacBuilder.hMac(myDigest);
-                return buildHMAC(myMacs.createMac(myMacSpec), isResistent);
-            case CTR:
-                GordianSymCipherSpec myCipherSpec = myCipherBuilder.ecb(mySpec.getSymKeySpec(), GordianPadding.NONE);
-                return buildCTR(myCiphers.createSymKeyCipher(myCipherSpec), isResistent);
-            case X931:
-                myCipherSpec = myCipherBuilder.ecb(mySpec.getSymKeySpec(), GordianPadding.NONE);
-                return buildX931(myCiphers.createSymKeyCipher(myCipherSpec), isResistent);
-            default:
-                throw new GordianDataException(GordianBaseData.getInvalidText(pRandomSpec));
-        }
+                yield buildHMAC(myMacs.createMac(myMacSpec), isResistent);
+            }
+            case CTR -> {
+                final GordianSymCipherSpec myCipherSpec = myCipherBuilder.ecb(mySpec.getSymKeySpec(), GordianPadding.NONE);
+                yield buildCTR(myCiphers.createSymKeyCipher(myCipherSpec), isResistent);
+            }
+            case X931 -> {
+                final GordianSymCipherSpec myCipherSpec = myCipherBuilder.ecb(mySpec.getSymKeySpec(), GordianPadding.NONE);
+                yield buildX931(myCiphers.createSymKeyCipher(myCipherSpec), isResistent);
+            }
+            default -> throw new GordianDataException(GordianBaseData.getInvalidText(pRandomSpec));
+        };
     }
 
     @Override
@@ -207,20 +208,21 @@ public class GordianCoreRandomFactory
         final GordianSymKeySpec mySymKey = mySpec.getSymKeySpec();
 
         /* Check that the randomType is supported */
-        switch (myType) {
-            case HASH:
+        return switch (myType) {
+            case HASH -> {
                 final GordianCoreDigestFactory myDigests = (GordianCoreDigestFactory) theFactory.getDigestFactory();
-                return myDigest != null && myDigests.validDigestSpec(myDigest);
-            case HMAC:
+                yield myDigest != null && myDigests.validDigestSpec(myDigest);
+            }
+            case HMAC -> {
                 final GordianCoreMacFactory myMacs = (GordianCoreMacFactory) theFactory.getMacFactory();
-                return myDigest != null && myMacs.validHMacSpec(myDigest);
-            case CTR:
-            case X931:
+                yield myDigest != null && myMacs.validHMacSpec(myDigest);
+            }
+            case CTR, X931 -> {
                 final GordianCoreCipherFactory myCiphers = (GordianCoreCipherFactory) theFactory.getCipherFactory();
-                return mySymKey != null && myCiphers.validSymKeySpec(mySymKey);
-            default:
-                return false;
-        }
+                yield mySymKey != null && myCiphers.validSymKeySpec(mySymKey);
+            }
+            default -> false;
+        };
     }
 
     /**

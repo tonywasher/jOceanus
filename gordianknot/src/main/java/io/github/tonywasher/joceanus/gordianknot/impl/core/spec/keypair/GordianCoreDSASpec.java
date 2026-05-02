@@ -67,16 +67,12 @@ public final class GordianCoreDSASpec {
      * @return the keySize
      */
     public int getKeySize() {
-        switch (theSpec) {
-            case MOD1024:
-                return GordianLength.LEN_1024.getLength();
-            case MOD2048:
-                return GordianLength.LEN_2048.getLength();
-            case MOD3072:
-                return GordianLength.LEN_3072.getLength();
-            default:
-                throw new IllegalArgumentException();
-        }
+        return switch (theSpec) {
+            case MOD1024 -> GordianLength.LEN_1024.getLength();
+            case MOD2048 -> GordianLength.LEN_2048.getLength();
+            case MOD3072 -> GordianLength.LEN_3072.getLength();
+            default -> throw new IllegalArgumentException();
+        };
     }
 
     /**
@@ -85,15 +81,11 @@ public final class GordianCoreDSASpec {
      * @return the hashSize
      */
     public int getHashSize() {
-        switch (theSpec) {
-            case MOD1024:
-                return GordianLength.LEN_160.getLength();
-            case MOD2048:
-            case MOD3072:
-                return GordianLength.LEN_256.getLength();
-            default:
-                throw new IllegalArgumentException();
-        }
+        return switch (theSpec) {
+            case MOD1024 -> GordianLength.LEN_160.getLength();
+            case MOD2048, MOD3072 -> GordianLength.LEN_256.getLength();
+            default -> throw new IllegalArgumentException();
+        };
     }
 
     /**

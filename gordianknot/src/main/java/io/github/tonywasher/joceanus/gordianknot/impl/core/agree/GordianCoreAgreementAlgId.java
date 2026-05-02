@@ -249,8 +249,6 @@ public class GordianCoreAgreementAlgId {
                 myId = myId.branch(Integer.toString(myNTRUPrime.getType().ordinal() + 1));
                 myId = myId.branch(Integer.toString(myNTRUPrime.getParams().ordinal() + 1));
                 break;
-            case NEWHOPE:
-            case COMPOSITE:
             default:
                 break;
         }

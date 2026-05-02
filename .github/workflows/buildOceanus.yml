@@ -33,7 +33,7 @@ jobs:
           name: WindowsDist
           path: dist
   build_linux:
-    runs-on: linux-latest
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
       - name: Set up JDK 21

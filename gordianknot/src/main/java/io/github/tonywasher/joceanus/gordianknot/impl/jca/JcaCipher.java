@@ -100,8 +100,8 @@ public abstract class JcaCipher<T extends GordianKeySpec>
         try {
             /* Careful of RC5 */
             final T myKeyType = myJcaKey.getKeyType();
-            final boolean isRC5 = myKeyType instanceof GordianSymKeySpec
-                    && GordianSymKeyType.RC5.equals(((GordianSymKeySpec) myKeyType).getSymKeyType());
+            final boolean isRC5 = myKeyType instanceof GordianSymKeySpec mySymKeySpec
+                    && GordianSymKeyType.RC5.equals(mySymKeySpec.getSymKeyType());
 
             /* Initialise as required */
             if (myIV != null || isRC5) {
@@ -127,8 +127,7 @@ public abstract class JcaCipher<T extends GordianKeySpec>
     static AlgorithmParameterSpec generateParameters(final JcaKey<?> pKey,
                                                      final byte[] pIV) {
         final Object myKeyType = pKey.getKeyType();
-        if (myKeyType instanceof GordianSymKeySpec) {
-            final GordianSymKeySpec mySpec = (GordianSymKeySpec) myKeyType;
+        if (myKeyType instanceof GordianSymKeySpec mySpec) {
             final GordianSymKeyType myType = mySpec.getSymKeyType();
             final GordianLength myLen = mySpec.getBlockLength();
             if (GordianSymKeyType.RC2.equals(myType)) {
@@ -184,8 +183,8 @@ public abstract class JcaCipher<T extends GordianKeySpec>
     @Override
     public int getBlockSize() {
         final GordianCipherSpec<T> mySpec = getCipherSpec();
-        return (mySpec instanceof GordianCoreSymCipherSpec
-                && ((GordianCoreSymCipherSpec) mySpec).getCoreCipherMode().hasPadding())
+        return (mySpec instanceof GordianCoreSymCipherSpec mySymCipherSpec
+                && mySymCipherSpec.getCoreCipherMode().hasPadding())
                 ? theCipher.getBlockSize() : 0;
     }
 

@@ -69,22 +69,15 @@ public final class GordianCoreNTRUSpec {
      * @return the parameters.
      */
     public NTRUParameters getParameters() {
-        switch (theSpec) {
-            case HPS509:
-                return NTRUParameters.ntruhps2048509;
-            case HPS677:
-                return NTRUParameters.ntruhps2048677;
-            case HPS821:
-                return NTRUParameters.ntruhps4096821;
-            case HPS1229:
-                return NTRUParameters.ntruhps40961229;
-            case HRSS701:
-                return NTRUParameters.ntruhrss701;
-            case HRSS1373:
-                return NTRUParameters.ntruhrss1373;
-            default:
-                throw new IllegalArgumentException();
-        }
+        return switch (theSpec) {
+            case HPS509 -> NTRUParameters.ntruhps2048509;
+            case HPS677 -> NTRUParameters.ntruhps2048677;
+            case HPS821 -> NTRUParameters.ntruhps4096821;
+            case HPS1229 -> NTRUParameters.ntruhps40961229;
+            case HRSS701 -> NTRUParameters.ntruhrss701;
+            case HRSS1373 -> NTRUParameters.ntruhrss1373;
+            default -> throw new IllegalArgumentException();
+        };
     }
 
     /**
@@ -93,22 +86,15 @@ public final class GordianCoreNTRUSpec {
      * @return the parameters.
      */
     public NTRUParameterSpec getParameterSpec() {
-        switch (theSpec) {
-            case HPS509:
-                return NTRUParameterSpec.ntruhps2048509;
-            case HPS677:
-                return NTRUParameterSpec.ntruhps2048677;
-            case HPS821:
-                return NTRUParameterSpec.ntruhps4096821;
-            case HPS1229:
-                return NTRUParameterSpec.ntruhps40961229;
-            case HRSS701:
-                return NTRUParameterSpec.ntruhrss701;
-            case HRSS1373:
-                return NTRUParameterSpec.ntruhrss1373;
-            default:
-                throw new IllegalArgumentException();
-        }
+        return switch (theSpec) {
+            case HPS509 -> NTRUParameterSpec.ntruhps2048509;
+            case HPS677 -> NTRUParameterSpec.ntruhps2048677;
+            case HPS821 -> NTRUParameterSpec.ntruhps4096821;
+            case HPS1229 -> NTRUParameterSpec.ntruhps40961229;
+            case HRSS701 -> NTRUParameterSpec.ntruhrss701;
+            case HRSS1373 -> NTRUParameterSpec.ntruhrss1373;
+            default -> throw new IllegalArgumentException();
+        };
     }
 
     /**
@@ -117,22 +103,15 @@ public final class GordianCoreNTRUSpec {
      * @return the identifier.
      */
     public ASN1ObjectIdentifier getIdentifier() {
-        switch (theSpec) {
-            case HPS509:
-                return BCObjectIdentifiers.ntruhps2048509;
-            case HPS677:
-                return BCObjectIdentifiers.ntruhps2048677;
-            case HPS821:
-                return BCObjectIdentifiers.ntruhps4096821;
-            case HPS1229:
-                return BCObjectIdentifiers.ntruhps40961229;
-            case HRSS701:
-                return BCObjectIdentifiers.ntruhrss701;
-            case HRSS1373:
-                return BCObjectIdentifiers.ntruhrss1373;
-            default:
-                throw new IllegalArgumentException();
-        }
+        return switch (theSpec) {
+            case HPS509 -> BCObjectIdentifiers.ntruhps2048509;
+            case HPS677 -> BCObjectIdentifiers.ntruhps2048677;
+            case HPS821 -> BCObjectIdentifiers.ntruhps4096821;
+            case HPS1229 -> BCObjectIdentifiers.ntruhps40961229;
+            case HRSS701 -> BCObjectIdentifiers.ntruhrss701;
+            case HRSS1373 -> BCObjectIdentifiers.ntruhrss1373;
+            default -> throw new IllegalArgumentException();
+        };
     }
 
     @Override

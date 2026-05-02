@@ -164,11 +164,8 @@ public class GordianCoreZipFileContents
 
         /* Loop through the files in the list in the list */
         int iIndex = 0;
-        final Iterator<GordianZipFileEntry> myIterator = theList.iterator();
-        while (myIterator.hasNext()) {
+        for (GordianZipFileEntry myEntry : theList) {
             /* Access next entry */
-            final GordianZipFileEntry myEntry = myIterator.next();
-
             /* Check the entry name */
             final int iDiff = myName.compareTo(myEntry.getFileName());
 
@@ -197,11 +194,8 @@ public class GordianCoreZipFileContents
     @Override
     public GordianZipFileEntry findFileEntry(final String pName) {
         /* Loop through the file entries */
-        final Iterator<GordianZipFileEntry> myIterator = theList.iterator();
-        while (myIterator.hasNext()) {
+        for (GordianZipFileEntry myEntry : theList) {
             /* Access the entry */
-            final GordianZipFileEntry myEntry = myIterator.next();
-
             /* Check the entry name */
             final int iDiff = pName.compareTo(myEntry.getFileName());
 
@@ -230,16 +224,15 @@ public class GordianCoreZipFileContents
         GordianZipFileProperties myProperties;
 
         /* Loop through the file entries */
-        final Iterator<GordianZipFileEntry> myIterator = theList.iterator();
-        while (myIterator.hasNext()) {
+        for (GordianZipFileEntry gordianZipFileEntry : theList) {
             /* Access the entry */
-            final GordianCoreZipFileEntry myEntry = (GordianCoreZipFileEntry) myIterator.next();
+            final GordianCoreZipFileEntry myEntry = (GordianCoreZipFileEntry) gordianZipFileEntry;
 
             /* Access the properties */
             myProperties = myEntry.allocateProperties();
 
             /* Add the value to the string */
-            if (myString.length() > 0) {
+            if (!myString.isEmpty()) {
                 myString.append(SEPARATOR_FILE);
             }
 
@@ -248,7 +241,7 @@ public class GordianCoreZipFileContents
         }
 
         /* Add the value to the string */
-        if (myString.length() > 0) {
+        if (!myString.isEmpty()) {
             myString.append(SEPARATOR_FILE);
         }
 

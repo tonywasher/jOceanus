@@ -122,24 +122,13 @@ public final class GordianCoreAgreementSpecBuilder
 
         /* Switch on keyPairType */
         switch (pKeyPairSpec.getKeyPairType()) {
-            case RSA:
-            case MLKEM:
+            case RSA, MLKEM:
                 myAgreements.addAll(listAllKDFs(pKeyPairSpec, GordianAgreementType.KEM));
                 break;
-            case NEWHOPE:
-            case CMCE:
-            case FRODO:
-            case SABER:
-            case HQC:
-            case BIKE:
-            case NTRU:
-            case NTRUPLUS:
-            case NTRUPRIME:
+            case NEWHOPE, CMCE, FRODO, SABER, HQC, BIKE, NTRU, NTRUPLUS, NTRUPRIME:
                 myAgreements.add(new GordianCoreAgreementSpec(pKeyPairSpec, GordianAgreementType.KEM, GordianAgreementKDF.NONE));
                 break;
-            case EC:
-            case SM2:
-            case GOST:
+            case EC, SM2, GOST:
                 myAgreements.addAll(listAllKDFs(pKeyPairSpec, GordianAgreementType.ANON));
                 myAgreements.addAll(listAllKDFs(pKeyPairSpec, GordianAgreementType.KEM));
                 myAgreements.addAll(listAllKDFs(pKeyPairSpec, GordianAgreementType.BASIC));
@@ -151,8 +140,7 @@ public final class GordianCoreAgreementSpecBuilder
                 myAgreements.addAll(listAllKDFs(pKeyPairSpec, GordianAgreementType.SM2));
                 myAgreements.addAll(listAllKDFs(pKeyPairSpec, GordianAgreementType.SM2, true));
                 break;
-            case DH:
-            case DSTU:
+            case DH, DSTU:
                 myAgreements.addAll(listAllKDFs(pKeyPairSpec, GordianAgreementType.ANON));
                 myAgreements.addAll(listAllKDFs(pKeyPairSpec, GordianAgreementType.KEM));
                 myAgreements.addAll(listAllKDFs(pKeyPairSpec, GordianAgreementType.BASIC));

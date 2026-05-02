@@ -61,13 +61,10 @@ public final class GordianCoreRandomType {
      * @return true/false
      */
     public boolean hasSymKeySpec() {
-        switch (theType) {
-            case CTR:
-            case X931:
-                return true;
-            default:
-                return false;
-        }
+        return switch (theType) {
+            case CTR, X931 -> true;
+            default -> false;
+        };
     }
 
     @Override

@@ -137,8 +137,7 @@ public class GordianChaChaPoly1305
         initialAEAD = null;
 
         /* If we have AEAD parameters */
-        if (params instanceof AEADParameters) {
-            final AEADParameters param = (AEADParameters) params;
+        if (params instanceof AEADParameters param) {
             initialAEAD = param.getAssociatedText();
             final byte[] nonce = param.getNonce();
             final KeyParameter key = param.getKey();

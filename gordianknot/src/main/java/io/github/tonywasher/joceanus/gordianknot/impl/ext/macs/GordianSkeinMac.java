@@ -98,10 +98,10 @@ public class GordianSkeinMac
     public void init(final CipherParameters params)
             throws IllegalArgumentException {
         final GordianSkeinParameters skeinParameters;
-        if (params instanceof GordianSkeinParameters) {
-            skeinParameters = (GordianSkeinParameters) params;
-        } else if (params instanceof KeyParameter) {
-            skeinParameters = new GordianSkeinParametersBuilder().setKey(((KeyParameter) params).getKey()).build();
+        if (params instanceof GordianSkeinParameters skeinParams) {
+            skeinParameters = skeinParams;
+        } else if (params instanceof KeyParameter keyParams) {
+            skeinParameters = new GordianSkeinParametersBuilder().setKey(keyParams.getKey()).build();
         } else {
             throw new IllegalArgumentException("Invalid parameter passed to Skein MAC init - "
                     + params.getClass().getName());

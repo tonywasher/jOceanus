@@ -441,66 +441,36 @@ public class GordianCoreKeyPairSpec
         }
 
         /* Switch on keyPairType */
-        switch (theKeyPairType.getType()) {
-            case RSA:
-                return theSubSpec instanceof GordianCoreRSASpec;
-            case DSA:
-                return theSubSpec instanceof GordianCoreDSASpec;
-            case DH:
-            case ELGAMAL:
-                return theSubSpec instanceof GordianCoreDHSpec;
-            case EC:
-                return theSubSpec instanceof GordianCoreECSpec;
-            case SM2:
-                return theSubSpec instanceof GordianCoreSM2Spec;
-            case GOST:
-                return theSubSpec instanceof GordianCoreGOSTSpec;
-            case DSTU:
-                return theSubSpec instanceof GordianCoreDSTUSpec;
-            case XMSS:
-                return theSubSpec instanceof GordianCoreXMSSSpec s && s.isValid();
-            case SLHDSA:
-                return theSubSpec instanceof GordianCoreSLHDSASpec;
-            case CMCE:
-                return theSubSpec instanceof GordianCoreCMCESpec;
-            case FRODO:
-                return theSubSpec instanceof GordianCoreFRODOSpec;
-            case SABER:
-                return theSubSpec instanceof GordianCoreSABERSpec;
-            case MLKEM:
-                return theSubSpec instanceof GordianCoreMLKEMSpec;
-            case MLDSA:
-                return theSubSpec instanceof GordianCoreMLDSASpec;
-            case HQC:
-                return theSubSpec instanceof GordianCoreHQCSpec;
-            case BIKE:
-                return theSubSpec instanceof GordianCoreBIKESpec;
-            case NTRU:
-                return theSubSpec instanceof GordianCoreNTRUSpec;
-            case NTRUPLUS:
-                return theSubSpec instanceof GordianCoreNTRUPlusSpec;
-            case NTRUPRIME:
-                return theSubSpec instanceof GordianCoreNTRUPrimeSpec s && s.isValid();
-            case FALCON:
-                return theSubSpec instanceof GordianCoreFalconSpec;
-            case MAYO:
-                return theSubSpec instanceof GordianCoreMayoSpec;
-            case SNOVA:
-                return theSubSpec instanceof GordianCoreSnovaSpec;
-            case PICNIC:
-                return theSubSpec instanceof GordianCorePicnicSpec;
-            case NEWHOPE:
-                return theSubSpec == null;
-            case LMS:
-                return theSubSpec instanceof GordianCoreLMSSpec ls && ls.isValid();
-            case EDDSA:
-            case XDH:
-                return theSubSpec instanceof GordianCoreEdwardsSpec;
-            case COMPOSITE:
-                return theSubSpec instanceof List && checkComposite();
-            default:
-                return false;
-        }
+        return switch (theKeyPairType.getType()) {
+            case RSA -> theSubSpec instanceof GordianCoreRSASpec;
+            case DSA -> theSubSpec instanceof GordianCoreDSASpec;
+            case DH, ELGAMAL -> theSubSpec instanceof GordianCoreDHSpec;
+            case EC -> theSubSpec instanceof GordianCoreECSpec;
+            case SM2 -> theSubSpec instanceof GordianCoreSM2Spec;
+            case GOST -> theSubSpec instanceof GordianCoreGOSTSpec;
+            case DSTU -> theSubSpec instanceof GordianCoreDSTUSpec;
+            case XMSS -> theSubSpec instanceof GordianCoreXMSSSpec s && s.isValid();
+            case SLHDSA -> theSubSpec instanceof GordianCoreSLHDSASpec;
+            case CMCE -> theSubSpec instanceof GordianCoreCMCESpec;
+            case FRODO -> theSubSpec instanceof GordianCoreFRODOSpec;
+            case SABER -> theSubSpec instanceof GordianCoreSABERSpec;
+            case MLKEM -> theSubSpec instanceof GordianCoreMLKEMSpec;
+            case MLDSA -> theSubSpec instanceof GordianCoreMLDSASpec;
+            case HQC -> theSubSpec instanceof GordianCoreHQCSpec;
+            case BIKE -> theSubSpec instanceof GordianCoreBIKESpec;
+            case NTRU -> theSubSpec instanceof GordianCoreNTRUSpec;
+            case NTRUPLUS -> theSubSpec instanceof GordianCoreNTRUPlusSpec;
+            case NTRUPRIME -> theSubSpec instanceof GordianCoreNTRUPrimeSpec s && s.isValid();
+            case FALCON -> theSubSpec instanceof GordianCoreFalconSpec;
+            case MAYO -> theSubSpec instanceof GordianCoreMayoSpec;
+            case SNOVA -> theSubSpec instanceof GordianCoreSnovaSpec;
+            case PICNIC -> theSubSpec instanceof GordianCorePicnicSpec;
+            case NEWHOPE -> theSubSpec == null;
+            case LMS -> theSubSpec instanceof GordianCoreLMSSpec ls && ls.isValid();
+            case EDDSA, XDH -> theSubSpec instanceof GordianCoreEdwardsSpec;
+            case COMPOSITE -> theSubSpec instanceof List && checkComposite();
+            default -> false;
+        };
     }
 
     /**
@@ -570,61 +540,31 @@ public class GordianCoreKeyPairSpec
         }
 
         /* Switch on keyPairType */
-        switch (theKeyPairType.getType()) {
-            case RSA:
-                return GordianCoreRSASpec.mapCoreSpec(pSubSpec);
-            case DSA:
-                return GordianCoreDSASpec.mapCoreSpec(pSubSpec);
-            case DH:
-            case ELGAMAL:
-                return GordianCoreDHSpec.mapCoreSpec(pSubSpec);
-            case EC:
-                return GordianCoreECSpec.mapCoreSpec(pSubSpec);
-            case SM2:
-                return GordianCoreSM2Spec.mapCoreSpec(pSubSpec);
-            case GOST:
-                return GordianCoreGOSTSpec.mapCoreSpec(pSubSpec);
-            case DSTU:
-                return GordianCoreDSTUSpec.mapCoreSpec(pSubSpec);
-            case SLHDSA:
-                return GordianCoreSLHDSASpec.mapCoreSpec(pSubSpec);
-            case CMCE:
-                return GordianCoreCMCESpec.mapCoreSpec(pSubSpec);
-            case FRODO:
-                return GordianCoreFRODOSpec.mapCoreSpec(pSubSpec);
-            case SABER:
-                return GordianCoreSABERSpec.mapCoreSpec(pSubSpec);
-            case MLKEM:
-                return GordianCoreMLKEMSpec.mapCoreSpec(pSubSpec);
-            case MLDSA:
-                return GordianCoreMLDSASpec.mapCoreSpec(pSubSpec);
-            case HQC:
-                return GordianCoreHQCSpec.mapCoreSpec(pSubSpec);
-            case BIKE:
-                return GordianCoreBIKESpec.mapCoreSpec(pSubSpec);
-            case NTRU:
-                return GordianCoreNTRUSpec.mapCoreSpec(pSubSpec);
-            case NTRUPLUS:
-                return GordianCoreNTRUPlusSpec.mapCoreSpec(pSubSpec);
-            case FALCON:
-                return GordianCoreFalconSpec.mapCoreSpec(pSubSpec);
-            case MAYO:
-                return GordianCoreMayoSpec.mapCoreSpec(pSubSpec);
-            case SNOVA:
-                return GordianCoreSnovaSpec.mapCoreSpec(pSubSpec);
-            case PICNIC:
-                return GordianCorePicnicSpec.mapCoreSpec(pSubSpec);
-            case EDDSA:
-            case XDH:
-                return GordianCoreEdwardsSpec.mapCoreSpec(pSubSpec);
-            case NEWHOPE:
-            case NTRUPRIME:
-            case LMS:
-            case XMSS:
-            case COMPOSITE:
-            default:
-                return pSubSpec;
-        }
+        return switch (theKeyPairType.getType()) {
+            case RSA -> GordianCoreRSASpec.mapCoreSpec(pSubSpec);
+            case DSA -> GordianCoreDSASpec.mapCoreSpec(pSubSpec);
+            case DH, ELGAMAL -> GordianCoreDHSpec.mapCoreSpec(pSubSpec);
+            case EC -> GordianCoreECSpec.mapCoreSpec(pSubSpec);
+            case SM2 -> GordianCoreSM2Spec.mapCoreSpec(pSubSpec);
+            case GOST -> GordianCoreGOSTSpec.mapCoreSpec(pSubSpec);
+            case DSTU -> GordianCoreDSTUSpec.mapCoreSpec(pSubSpec);
+            case SLHDSA -> GordianCoreSLHDSASpec.mapCoreSpec(pSubSpec);
+            case CMCE -> GordianCoreCMCESpec.mapCoreSpec(pSubSpec);
+            case FRODO -> GordianCoreFRODOSpec.mapCoreSpec(pSubSpec);
+            case SABER -> GordianCoreSABERSpec.mapCoreSpec(pSubSpec);
+            case MLKEM -> GordianCoreMLKEMSpec.mapCoreSpec(pSubSpec);
+            case MLDSA -> GordianCoreMLDSASpec.mapCoreSpec(pSubSpec);
+            case HQC -> GordianCoreHQCSpec.mapCoreSpec(pSubSpec);
+            case BIKE -> GordianCoreBIKESpec.mapCoreSpec(pSubSpec);
+            case NTRU -> GordianCoreNTRUSpec.mapCoreSpec(pSubSpec);
+            case NTRUPLUS -> GordianCoreNTRUPlusSpec.mapCoreSpec(pSubSpec);
+            case FALCON -> GordianCoreFalconSpec.mapCoreSpec(pSubSpec);
+            case MAYO -> GordianCoreMayoSpec.mapCoreSpec(pSubSpec);
+            case SNOVA -> GordianCoreSnovaSpec.mapCoreSpec(pSubSpec);
+            case PICNIC -> GordianCorePicnicSpec.mapCoreSpec(pSubSpec);
+            case EDDSA, XDH -> GordianCoreEdwardsSpec.mapCoreSpec(pSubSpec);
+            default -> pSubSpec;
+        };
     }
 
     /**
@@ -634,60 +574,30 @@ public class GordianCoreKeyPairSpec
      */
     private Object unwrapSubSpec() {
         /* Switch on keyPairType */
-        switch (theKeyPairType.getType()) {
-            case RSA:
-                return getRSASpec().getSpec();
-            case DSA:
-                return getDSASpec().getSpec();
-            case DH:
-            case ELGAMAL:
-                return getDHSpec().getSpec();
-            case EC:
-                return getECSpec().getSpec();
-            case SM2:
-                return getSM2Spec().getSpec();
-            case GOST:
-                return getGOSTSpec().getSpec();
-            case DSTU:
-                return getDSTUSpec().getSpec();
-            case SLHDSA:
-                return getSLHDSASpec().getSpec();
-            case CMCE:
-                return getCMCESpec().getSpec();
-            case FRODO:
-                return getFRODOSpec().getSpec();
-            case SABER:
-                return getSABERSpec().getSpec();
-            case MLKEM:
-                return getMLKEMSpec().getSpec();
-            case MLDSA:
-                return getMLDSASpec().getSpec();
-            case HQC:
-                return getHQCSpec().getSpec();
-            case BIKE:
-                return getBIKESpec().getSpec();
-            case NTRU:
-                return getNTRUSpec().getSpec();
-            case NTRUPLUS:
-                return getNTRUPlusSpec().getSpec();
-            case FALCON:
-                return getFalconSpec().getSpec();
-            case MAYO:
-                return getMayoSpec().getSpec();
-            case SNOVA:
-                return getSnovaSpec().getSpec();
-            case PICNIC:
-                return getPicnicSpec().getSpec();
-            case EDDSA:
-            case XDH:
-                return getEdwardsSpec().getSpec();
-            case NEWHOPE:
-            case NTRUPRIME:
-            case LMS:
-            case XMSS:
-            case COMPOSITE:
-            default:
-                return theSubSpec;
-        }
+        return switch (theKeyPairType.getType()) {
+            case RSA -> getRSASpec().getSpec();
+            case DSA -> getDSASpec().getSpec();
+            case DH, ELGAMAL -> getDHSpec().getSpec();
+            case EC -> getECSpec().getSpec();
+            case SM2 -> getSM2Spec().getSpec();
+            case GOST -> getGOSTSpec().getSpec();
+            case DSTU -> getDSTUSpec().getSpec();
+            case SLHDSA -> getSLHDSASpec().getSpec();
+            case CMCE -> getCMCESpec().getSpec();
+            case FRODO -> getFRODOSpec().getSpec();
+            case SABER -> getSABERSpec().getSpec();
+            case MLKEM -> getMLKEMSpec().getSpec();
+            case MLDSA -> getMLDSASpec().getSpec();
+            case HQC -> getHQCSpec().getSpec();
+            case BIKE -> getBIKESpec().getSpec();
+            case NTRU -> getNTRUSpec().getSpec();
+            case NTRUPLUS -> getNTRUPlusSpec().getSpec();
+            case FALCON -> getFalconSpec().getSpec();
+            case MAYO -> getMayoSpec().getSpec();
+            case SNOVA -> getSnovaSpec().getSpec();
+            case PICNIC -> getPicnicSpec().getSpec();
+            case EDDSA, XDH -> getEdwardsSpec().getSpec();
+            default -> theSubSpec;
+        };
     }
 }

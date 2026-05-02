@@ -194,14 +194,14 @@ public class GordianCoreEncryptorAlgId {
 
         /* Obtain the encryptor */
         final Object myEncryptor = pSpec.getEncryptorType();
-        if (myEncryptor instanceof GordianDigestSpec mySpec) {
-            myId = GordianCoreDigestAlgId.appendDigestOID(myId.branch("2"), mySpec);
-        } else if (myEncryptor instanceof GordianCoreSM2EncryptionSpec mySpec) {
-            myId = myId.branch("4").branch(Integer.toString(mySpec.getEncryptionType().ordinal() + 1));
-            myId = GordianCoreDigestAlgId.appendDigestOID(myId, mySpec.getDigestSpec());
-        } else {
-            myId = myId.branch("1");
-        }
+        myId = switch (myEncryptor) {
+            case GordianDigestSpec mySpec -> GordianCoreDigestAlgId.appendDigestOID(myId.branch("2"), mySpec);
+            case GordianCoreSM2EncryptionSpec mySpec -> {
+                myId = myId.branch("4").branch(Integer.toString(mySpec.getEncryptionType().ordinal() + 1));
+                yield GordianCoreDigestAlgId.appendDigestOID(myId, mySpec.getDigestSpec());
+            }
+            case null, default -> myId.branch("1");
+        };
 
         /* Add the spec to the maps */
         addToMaps(pSpec, new AlgorithmIdentifier(myId, DERNull.INSTANCE));

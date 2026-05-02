@@ -16,13 +16,13 @@
  */
 package io.github.tonywasher.joceanus.prometheus.data;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
-import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.metis.data.MetisDataDifference;
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataNamedItem;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
 import io.github.tonywasher.joceanus.metis.list.MetisListKey;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.prometheus.exc.PrometheusDataException;
 
 import java.util.ArrayList;
@@ -191,12 +191,10 @@ public abstract class PrometheusStaticDataItem
 
             /* Store the Enabled flag */
             myValue = pValues.getValue(PrometheusDataResource.STATICDATA_ENABLED);
-            if (myValue instanceof Boolean b) {
-                setValueEnabled(b);
-            } else if (myValue instanceof String s) {
-                setValueEnabled(myFormatter.parseValue(s, Boolean.class));
-            } else {
-                setValueEnabled(Boolean.TRUE);
+            switch (myValue) {
+                case Boolean b -> setValueEnabled(b);
+                case String s -> setValueEnabled(myFormatter.parseValue(s, Boolean.class));
+                default -> setValueEnabled(Boolean.TRUE);
             }
 
             /* Catch Exceptions */

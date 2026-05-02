@@ -16,10 +16,6 @@
  */
 package io.github.tonywasher.joceanus.metis.ui;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
-import io.github.tonywasher.joceanus.oceanus.event.OceanusEventManager;
-import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar;
-import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
 import io.github.tonywasher.joceanus.metis.preference.MetisPreferenceEvent;
 import io.github.tonywasher.joceanus.metis.preference.MetisPreferenceResource;
 import io.github.tonywasher.joceanus.metis.preference.MetisPreferenceSet;
@@ -27,10 +23,13 @@ import io.github.tonywasher.joceanus.metis.preference.MetisPreferenceSet.MetisBo
 import io.github.tonywasher.joceanus.metis.preference.MetisPreferenceSet.MetisDatePreference;
 import io.github.tonywasher.joceanus.metis.preference.MetisPreferenceSet.MetisEnumPreference;
 import io.github.tonywasher.joceanus.metis.preference.MetisPreferenceSet.MetisIntegerPreference;
-import io.github.tonywasher.joceanus.metis.preference.MetisPreferenceSet.MetisPreferenceId;
 import io.github.tonywasher.joceanus.metis.preference.MetisPreferenceSet.MetisPreferenceItem;
 import io.github.tonywasher.joceanus.metis.preference.MetisPreferenceSet.MetisStringPreference;
 import io.github.tonywasher.joceanus.metis.preference.MetisPreferenceType;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventManager;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
 import io.github.tonywasher.joceanus.tethys.api.base.TethysUIAlignment;
 import io.github.tonywasher.joceanus.tethys.api.base.TethysUIComponent;
 import io.github.tonywasher.joceanus.tethys.api.base.TethysUIConstant;
@@ -263,28 +262,19 @@ public class MetisPreferenceSetView
      * @return the element
      */
     protected PreferenceElement allocatePreferenceElement(final MetisPreferenceItem pItem) {
-        if (pItem instanceof MetisEnumPreference<?> myEnum) {
-            return new EnumPreferenceElement<>(myEnum);
-        } else if (pItem instanceof MetisIntegerPreference myInt) {
-            return new IntegerPreferenceElement(myInt);
-        } else if (pItem instanceof MetisDatePreference myDate) {
-            return new DatePreferenceElement(myDate);
-        } else if (pItem instanceof MetisBooleanPreference myBool) {
-            return new BooleanPreferenceElement(myBool);
-        } else if (pItem instanceof MetisStringPreference myString) {
-            final MetisPreferenceId myId = myString.getType();
-            if (myId.equals(MetisPreferenceType.DIRECTORY)) {
-                return new DirectoryPreferenceElement(myString);
-            } else if (myId.equals(MetisPreferenceType.FILE)) {
-                return new FilePreferenceElement(myString);
-            } else if (myId.equals(MetisPreferenceType.COLOR)) {
-                return new ColorPreferenceElement(myString);
-            } else {
-                return new StringPreferenceElement(myString);
-            }
-        } else {
-            throw new IllegalArgumentException("Bad Preference Type: " + pItem.getType());
-        }
+        return switch (pItem) {
+            case MetisEnumPreference<?> myEnum -> new EnumPreferenceElement<>(myEnum);
+            case MetisIntegerPreference myInt -> new IntegerPreferenceElement(myInt);
+            case MetisDatePreference myDate -> new DatePreferenceElement(myDate);
+            case MetisBooleanPreference myBool -> new BooleanPreferenceElement(myBool);
+            case MetisStringPreference myString -> switch (myString.getType()) {
+                case MetisPreferenceType.DIRECTORY -> new DirectoryPreferenceElement(myString);
+                case MetisPreferenceType.FILE -> new FilePreferenceElement(myString);
+                case MetisPreferenceType.COLOR -> new ColorPreferenceElement(myString);
+                default -> new StringPreferenceElement(myString);
+            };
+            default -> throw new IllegalArgumentException("Bad Preference Type: " + pItem.getType());
+        };
     }
 
     /**

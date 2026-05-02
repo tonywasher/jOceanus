@@ -162,27 +162,19 @@ public class GordianCoreDigestSpec
         }
 
         /* Switch on keyType */
-        switch (theType.getType()) {
-            case SHA2:
-            case SHAKE:
-            case KANGAROO:
-            case HARAKA:
-                return theSubSpec instanceof GordianCoreDigestState
-                        && !isXofMode
-                        && getCoreDigestState().validForTypeAndLength(theType, theLength);
-            case SKEIN:
-            case BLAKE2:
-                return theSubSpec instanceof GordianCoreDigestState
-                        && (isXofMode ? getCoreDigestState().lengthForXofType(theType) == theLength
-                        : getCoreDigestState().validForTypeAndLength(theType, theLength));
-            case ASCON:
-                return theSubSpec == null
-                        && theType.isLengthValid(theLength);
-            default:
-                return theSubSpec == null
-                        && !isXofMode
-                        && theType.isLengthValid(theLength);
-        }
+        return switch (theType.getType()) {
+            case SHA2, SHAKE, KANGAROO, HARAKA -> theSubSpec instanceof GordianCoreDigestState
+                    && !isXofMode
+                    && getCoreDigestState().validForTypeAndLength(theType, theLength);
+            case SKEIN, BLAKE2 -> theSubSpec instanceof GordianCoreDigestState
+                    && (isXofMode ? getCoreDigestState().lengthForXofType(theType) == theLength
+                    : getCoreDigestState().validForTypeAndLength(theType, theLength));
+            case ASCON -> theSubSpec == null
+                    && theType.isLengthValid(theLength);
+            default -> theSubSpec == null
+                    && !isXofMode
+                    && theType.isLengthValid(theLength);
+        };
     }
 
     @Override

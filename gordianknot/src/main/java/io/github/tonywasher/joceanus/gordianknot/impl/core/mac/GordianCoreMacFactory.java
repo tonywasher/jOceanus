@@ -194,44 +194,27 @@ public abstract class GordianCoreMacFactory
         final GordianCoreMacSpec myMacSpec = (GordianCoreMacSpec) pMacSpec;
         final GordianDigestSpec myDigestSpec = myMacSpec.getDigestSpec();
         final GordianSymKeySpec mySymSpec = myMacSpec.getSymKeySpec();
-        switch (myType) {
-            case HMAC:
-                return supportedHMacDigestSpecs().test(myDigestSpec);
-            case GMAC:
-                return supportedGMacSymKeySpecs().test(mySymSpec);
-            case CMAC:
-                return supportedCMacSymKeySpecs().test(mySymSpec);
-            case POLY1305:
-                return supportedPoly1305SymKeySpecs().test(mySymSpec);
-            case SKEIN:
-                return GordianDigestType.SKEIN.equals(Objects.requireNonNull(myDigestSpec).getDigestType())
-                        && myDigests.supportedDigestSpecs().test(myDigestSpec);
-            case BLAKE2:
-                return GordianDigestType.BLAKE2.equals(Objects.requireNonNull(myDigestSpec).getDigestType())
-                        && myDigests.supportedDigestSpecs().test(myDigestSpec);
-            case BLAKE3:
-                return GordianDigestType.BLAKE3.equals(Objects.requireNonNull(myDigestSpec).getDigestType())
-                        && myDigests.supportedDigestSpecs().test(myDigestSpec);
-            case KUPYNA:
-                return GordianDigestType.KUPYNA.equals(Objects.requireNonNull(myDigestSpec).getDigestType())
-                        && myDigests.supportedDigestSpecs().test(myDigestSpec);
-            case KALYNA:
-                return GordianSymKeyType.KALYNA.equals(Objects.requireNonNull(mySymSpec).getSymKeyType())
-                        && myCiphers.validSymKeySpec(mySymSpec);
-            case CBCMAC:
-            case CFBMAC:
-                return (!GordianSymKeyType.RC5.equals(Objects.requireNonNull(mySymSpec).getSymKeyType())
-                        || !GordianLength.LEN_128.equals(mySymSpec.getBlockLength()))
-                        && myCiphers.validSymKeySpec(mySymSpec);
-            case ZUC:
-            case VMPC:
-            case SIPHASH:
-            case GOST:
-            case KMAC:
-                return true;
-            default:
-                return false;
-        }
+        return switch (myType) {
+            case HMAC -> supportedHMacDigestSpecs().test(myDigestSpec);
+            case GMAC -> supportedGMacSymKeySpecs().test(mySymSpec);
+            case CMAC -> supportedCMacSymKeySpecs().test(mySymSpec);
+            case POLY1305 -> supportedPoly1305SymKeySpecs().test(mySymSpec);
+            case SKEIN -> GordianDigestType.SKEIN.equals(Objects.requireNonNull(myDigestSpec).getDigestType())
+                    && myDigests.supportedDigestSpecs().test(myDigestSpec);
+            case BLAKE2 -> GordianDigestType.BLAKE2.equals(Objects.requireNonNull(myDigestSpec).getDigestType())
+                    && myDigests.supportedDigestSpecs().test(myDigestSpec);
+            case BLAKE3 -> GordianDigestType.BLAKE3.equals(Objects.requireNonNull(myDigestSpec).getDigestType())
+                    && myDigests.supportedDigestSpecs().test(myDigestSpec);
+            case KUPYNA -> GordianDigestType.KUPYNA.equals(Objects.requireNonNull(myDigestSpec).getDigestType())
+                    && myDigests.supportedDigestSpecs().test(myDigestSpec);
+            case KALYNA -> GordianSymKeyType.KALYNA.equals(Objects.requireNonNull(mySymSpec).getSymKeyType())
+                    && myCiphers.validSymKeySpec(mySymSpec);
+            case CBCMAC, CFBMAC -> (!GordianSymKeyType.RC5.equals(Objects.requireNonNull(mySymSpec).getSymKeyType())
+                    || !GordianLength.LEN_128.equals(mySymSpec.getBlockLength()))
+                    && myCiphers.validSymKeySpec(mySymSpec);
+            case ZUC, VMPC, SIPHASH, GOST, KMAC -> true;
+            default -> false;
+        };
     }
 
     /**
@@ -241,14 +224,13 @@ public abstract class GordianCoreMacFactory
      * @return true/false
      */
     protected boolean validPoly1305SymKeySpec(final GordianSymKeySpec pKeySpec) {
-        switch (pKeySpec.getSymKeyType()) {
-            case KUZNYECHIK:
-            case RC5:
-                return false;
-            default:
+        return switch (pKeySpec.getSymKeyType()) {
+            case KUZNYECHIK, RC5 -> false;
+            default -> {
                 final GordianCoreCipherFactory myCiphers = (GordianCoreCipherFactory) theFactory.getCipherFactory();
-                return myCiphers.validSymKeySpec(pKeySpec);
-        }
+                yield myCiphers.validSymKeySpec(pKeySpec);
+            }
+        };
     }
 
     /**

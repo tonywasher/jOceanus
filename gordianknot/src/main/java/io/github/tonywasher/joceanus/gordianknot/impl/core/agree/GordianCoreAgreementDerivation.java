@@ -112,24 +112,14 @@ public class GordianCoreAgreementDerivation {
      * @return the derivation method
      */
     private GordianCoreAgreementDerivationMethod derivationMethod() {
-        switch (theState.getSpec().getKDFType()) {
-            case SHA256KDF:
-            case SHA512KDF:
-                return this::deriveKDF;
-            case SHA256CKDF:
-            case SHA512CKDF:
-                return this::deriveCKDF;
-            case SHA256HKDF:
-            case SHA512HKDF:
-                return this::deriveHKDF;
-            case KMAC128:
-            case KMAC256:
-                return this::deriveKMAC;
-            case SHAKE256:
-                return this::deriveSHAKE;
-            default:
-                throw new IllegalArgumentException();
-        }
+        return switch (theState.getSpec().getKDFType()) {
+            case SHA256KDF, SHA512KDF -> this::deriveKDF;
+            case SHA256CKDF, SHA512CKDF -> this::deriveCKDF;
+            case SHA256HKDF, SHA512HKDF -> this::deriveHKDF;
+            case KMAC128, KMAC256 -> this::deriveKMAC;
+            case SHAKE256 -> this::deriveSHAKE;
+            default -> throw new IllegalArgumentException();
+        };
     }
 
     /**
@@ -210,15 +200,11 @@ public class GordianCoreAgreementDerivation {
      * @return the length
      */
     private int getLength() {
-        switch (theState.getSpec().getKDFType()) {
-            case KMAC256:
-            case SHAKE256:
-                return GordianLength.LEN_256.getLength();
-            case KMAC128:
-                return GordianLength.LEN_128.getLength();
-            default:
-                throw new IllegalArgumentException();
-        }
+        return switch (theState.getSpec().getKDFType()) {
+            case KMAC256, SHAKE256 -> GordianLength.LEN_256.getLength();
+            case KMAC128 -> GordianLength.LEN_128.getLength();
+            default -> throw new IllegalArgumentException();
+        };
     }
 
     /**
@@ -227,18 +213,11 @@ public class GordianCoreAgreementDerivation {
      * @return the digest
      */
     private Digest getDigest() {
-        switch (theState.getSpec().getKDFType()) {
-            case SHA256KDF:
-            case SHA256CKDF:
-            case SHA256HKDF:
-                return new SHA256Digest();
-            case SHA512KDF:
-            case SHA512CKDF:
-            case SHA512HKDF:
-                return new SHA512Digest();
-            default:
-                throw new IllegalArgumentException();
-        }
+        return switch (theState.getSpec().getKDFType()) {
+            case SHA256KDF, SHA256CKDF, SHA256HKDF -> new SHA256Digest();
+            case SHA512KDF, SHA512CKDF, SHA512HKDF -> new SHA512Digest();
+            default -> throw new IllegalArgumentException();
+        };
     }
 
     /**
@@ -247,19 +226,10 @@ public class GordianCoreAgreementDerivation {
      * @param pSecret the secret
      */
     private void allocateResult(final byte[] pSecret) {
-        switch (theState.getSpec().getKeyPairSpec().getKeyPairType()) {
-            case EC:
-            case GOST:
-            case DSTU:
-            case SM2:
-            case DH:
-            case XDH:
-                theResult = new byte[pSecret.length];
-                break;
-            default:
-                theResult = new byte[GordianLength.LEN_256.getByteLength()];
-                break;
-        }
+        theResult = switch (theState.getSpec().getKeyPairSpec().getKeyPairType()) {
+            case EC, GOST, DSTU, SM2, DH, XDH -> new byte[pSecret.length];
+            default -> new byte[GordianLength.LEN_256.getByteLength()];
+        };
     }
 
     /**

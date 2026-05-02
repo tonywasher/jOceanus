@@ -16,15 +16,15 @@
  */
 package io.github.tonywasher.joceanus.moneywise.data.statics;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
-import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import io.github.tonywasher.joceanus.metis.data.MetisDataResource;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldVersionValues;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldVersionedSet;
 import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataSet;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValues;
@@ -116,13 +116,13 @@ public class MoneyWiseCurrency
 
         /* Store the Default */
         final Object myValue = pValues.getValue(MoneyWiseStaticResource.CURRENCY_REPORTING);
-        if (myValue instanceof Boolean b) {
-            setValueReporting(b);
-        } else if (myValue instanceof String s) {
-            final OceanusDataFormatter myFormatter = getDataSet().getDataFormatter();
-            setValueReporting(myFormatter.parseValue(s, Boolean.class));
-        } else {
-            setValueReporting(Boolean.FALSE);
+        switch (myValue) {
+            case Boolean b -> setValueReporting(b);
+            case String s -> {
+                final OceanusDataFormatter myFormatter = getDataSet().getDataFormatter();
+                setValueReporting(myFormatter.parseValue(s, Boolean.class));
+            }
+            default -> setValueReporting(Boolean.FALSE);
         }
     }
 

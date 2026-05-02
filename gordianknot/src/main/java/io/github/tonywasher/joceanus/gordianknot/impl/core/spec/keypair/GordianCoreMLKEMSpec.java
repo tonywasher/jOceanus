@@ -69,16 +69,12 @@ public final class GordianCoreMLKEMSpec {
      * @return the parameters.
      */
     public MLKEMParameters getParameters() {
-        switch (theSpec) {
-            case MLKEM512:
-                return MLKEMParameters.ml_kem_512;
-            case MLKEM768:
-                return MLKEMParameters.ml_kem_768;
-            case MLKEM1024:
-                return MLKEMParameters.ml_kem_1024;
-            default:
-                throw new IllegalArgumentException();
-        }
+        return switch (theSpec) {
+            case MLKEM512 -> MLKEMParameters.ml_kem_512;
+            case MLKEM768 -> MLKEMParameters.ml_kem_768;
+            case MLKEM1024 -> MLKEMParameters.ml_kem_1024;
+            default -> throw new IllegalArgumentException();
+        };
     }
 
     /**
@@ -87,16 +83,12 @@ public final class GordianCoreMLKEMSpec {
      * @return the parameters.
      */
     public MLKEMParameterSpec getParameterSpec() {
-        switch (theSpec) {
-            case MLKEM512:
-                return MLKEMParameterSpec.ml_kem_512;
-            case MLKEM768:
-                return MLKEMParameterSpec.ml_kem_768;
-            case MLKEM1024:
-                return MLKEMParameterSpec.ml_kem_1024;
-            default:
-                throw new IllegalArgumentException();
-        }
+        return switch (theSpec) {
+            case MLKEM512 -> MLKEMParameterSpec.ml_kem_512;
+            case MLKEM768 -> MLKEMParameterSpec.ml_kem_768;
+            case MLKEM1024 -> MLKEMParameterSpec.ml_kem_1024;
+            default -> throw new IllegalArgumentException();
+        };
     }
 
     /**
@@ -105,16 +97,12 @@ public final class GordianCoreMLKEMSpec {
      * @return the identifier.
      */
     public ASN1ObjectIdentifier getIdentifier() {
-        switch (theSpec) {
-            case MLKEM512:
-                return NISTObjectIdentifiers.id_alg_ml_kem_512;
-            case MLKEM768:
-                return NISTObjectIdentifiers.id_alg_ml_kem_768;
-            case MLKEM1024:
-                return NISTObjectIdentifiers.id_alg_ml_kem_1024;
-            default:
-                throw new IllegalArgumentException();
-        }
+        return switch (theSpec) {
+            case MLKEM512 -> NISTObjectIdentifiers.id_alg_ml_kem_512;
+            case MLKEM768 -> NISTObjectIdentifiers.id_alg_ml_kem_768;
+            case MLKEM1024 -> NISTObjectIdentifiers.id_alg_ml_kem_1024;
+            default -> throw new IllegalArgumentException();
+        };
     }
 
     @Override

@@ -66,16 +66,12 @@ public final class GordianCoreBIKESpec {
      * @return the parameters.
      */
     public BIKEParameters getParameters() {
-        switch (theSpec) {
-            case BIKE128:
-                return BIKEParameters.bike128;
-            case BIKE192:
-                return BIKEParameters.bike192;
-            case BIKE256:
-                return BIKEParameters.bike256;
-            default:
-                throw new IllegalArgumentException();
-        }
+        return switch (theSpec) {
+            case BIKE128 -> BIKEParameters.bike128;
+            case BIKE192 -> BIKEParameters.bike192;
+            case BIKE256 -> BIKEParameters.bike256;
+            default -> throw new IllegalArgumentException();
+        };
     }
 
     /**
@@ -84,16 +80,12 @@ public final class GordianCoreBIKESpec {
      * @return the parameters.
      */
     public BIKEParameterSpec getParameterSpec() {
-        switch (theSpec) {
-            case BIKE128:
-                return BIKEParameterSpec.bike128;
-            case BIKE192:
-                return BIKEParameterSpec.bike192;
-            case BIKE256:
-                return BIKEParameterSpec.bike256;
-            default:
-                throw new IllegalArgumentException();
-        }
+        return switch (theSpec) {
+            case BIKE128 -> BIKEParameterSpec.bike128;
+            case BIKE192 -> BIKEParameterSpec.bike192;
+            case BIKE256 -> BIKEParameterSpec.bike256;
+            default -> throw new IllegalArgumentException();
+        };
     }
 
     /**
@@ -102,16 +94,12 @@ public final class GordianCoreBIKESpec {
      * @return the identifier.
      */
     public ASN1ObjectIdentifier getIdentifier() {
-        switch (theSpec) {
-            case BIKE128:
-                return BCObjectIdentifiers.bike128;
-            case BIKE192:
-                return BCObjectIdentifiers.bike192;
-            case BIKE256:
-                return BCObjectIdentifiers.bike256;
-            default:
-                throw new IllegalArgumentException();
-        }
+        return switch (theSpec) {
+            case BIKE128 -> BCObjectIdentifiers.bike128;
+            case BIKE192 -> BCObjectIdentifiers.bike192;
+            case BIKE256 -> BCObjectIdentifiers.bike256;
+            default -> throw new IllegalArgumentException();
+        };
     }
 
     @Override

@@ -64,25 +64,14 @@ public final class GordianCoreSignatureType {
      * @return true/false
      */
     public boolean isSupported(final GordianKeyPairType pKeyType) {
-        switch (theType) {
-            case ISO9796D2:
-            case PSSMGF1:
-            case PSS128:
-            case PSS256:
-            case X931:
-                return GordianKeyPairType.RSA == pKeyType;
-            case NR:
-                return GordianKeyPairType.EC == pKeyType;
-            case PREHASH:
-                return hasPreHash(pKeyType);
-            case NATIVE:
-                return hasNative(pKeyType);
-            case DSA:
-            case DDSA:
-                return hasDSA(pKeyType);
-            default:
-                return false;
-        }
+        return switch (theType) {
+            case ISO9796D2, PSSMGF1, PSS128, PSS256, X931 -> GordianKeyPairType.RSA == pKeyType;
+            case NR -> GordianKeyPairType.EC == pKeyType;
+            case PREHASH -> hasPreHash(pKeyType);
+            case NATIVE -> hasNative(pKeyType);
+            case DSA, DDSA -> hasDSA(pKeyType);
+            default -> false;
+        };
     }
 
     /**
@@ -92,13 +81,10 @@ public final class GordianCoreSignatureType {
      * @return true/false
      */
     public static boolean hasPreHash(final GordianKeyPairType pKeyType) {
-        switch (pKeyType) {
-            case XMSS:
-            case RSA:
-                return true;
-            default:
-                return false;
-        }
+        return switch (pKeyType) {
+            case XMSS, RSA -> true;
+            default -> false;
+        };
     }
 
     /**
@@ -108,13 +94,10 @@ public final class GordianCoreSignatureType {
      * @return true/false
      */
     public static boolean hasDSA(final GordianKeyPairType pKeyType) {
-        switch (pKeyType) {
-            case EC:
-            case DSA:
-                return true;
-            default:
-                return false;
-        }
+        return switch (pKeyType) {
+            case EC, DSA -> true;
+            default -> false;
+        };
     }
 
     /**
@@ -124,24 +107,10 @@ public final class GordianCoreSignatureType {
      * @return true/false
      */
     public static boolean hasNative(final GordianKeyPairType pKeyType) {
-        switch (pKeyType) {
-            case SM2:
-            case EDDSA:
-            case DSTU:
-            case GOST:
-            case SLHDSA:
-            case MLDSA:
-            case FALCON:
-            case PICNIC:
-            case MAYO:
-            case SNOVA:
-            case XMSS:
-            case LMS:
-            case COMPOSITE:
-                return true;
-            default:
-                return false;
-        }
+        return switch (pKeyType) {
+            case SM2, EDDSA, DSTU, GOST, SLHDSA, MLDSA, FALCON, PICNIC, MAYO, SNOVA, XMSS, LMS, COMPOSITE -> true;
+            default -> false;
+        };
     }
 
     /**
@@ -150,14 +119,10 @@ public final class GordianCoreSignatureType {
      * @return true/false
      */
     public boolean isPSS() {
-        switch (theType) {
-            case PSSMGF1:
-            case PSS128:
-            case PSS256:
-                return true;
-            default:
-                return false;
-        }
+        return switch (theType) {
+            case PSSMGF1, PSS128, PSS256 -> true;
+            default -> false;
+        };
     }
 
     @Override

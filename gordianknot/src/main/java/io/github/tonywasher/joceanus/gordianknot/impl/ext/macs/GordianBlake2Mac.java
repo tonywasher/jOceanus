@@ -50,16 +50,15 @@ public class GordianBlake2Mac
     @Override
     public void init(final CipherParameters pParams) {
         CipherParameters myParams = pParams;
-        if (myParams instanceof KeyParameter) {
+        if (myParams instanceof KeyParameter keyParam) {
             myParams = new GordianBlake2ParametersBuilder()
-                    .setKey(((KeyParameter) myParams).getKey())
+                    .setKey(keyParam.getKey())
                     .build();
         }
-        if (!(myParams instanceof GordianBlake2Parameters)) {
+        if (!(myParams instanceof GordianBlake2Parameters myBlakeParams)) {
             throw new IllegalArgumentException("Invalid parameter passed to Blake2Mac init - "
                     + pParams.getClass().getName());
         }
-        final GordianBlake2Parameters myBlakeParams = (GordianBlake2Parameters) myParams;
         if (myBlakeParams.getKey() == null) {
             throw new IllegalArgumentException("Blake2Mac requires a key parameter.");
         }

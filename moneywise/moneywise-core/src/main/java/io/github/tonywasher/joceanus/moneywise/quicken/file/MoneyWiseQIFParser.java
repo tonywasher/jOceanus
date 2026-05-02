@@ -110,7 +110,7 @@ public class MoneyWiseQIFParser {
                 /* else normal line */
             } else {
                 /* Ignore blank lines */
-                if (myLine.length() > 0) {
+                if (!myLine.isEmpty()) {
                     myLines.add(myLine);
                 }
             }

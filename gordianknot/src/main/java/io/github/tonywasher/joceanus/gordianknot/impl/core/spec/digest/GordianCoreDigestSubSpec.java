@@ -44,19 +44,14 @@ public interface GordianCoreDigestSubSpec {
      * @return the subSpec types
      */
     static GordianDigestSubSpec[] getPossibleSubSpecsForType(final GordianDigestType pType) {
-        switch (pType) {
-            case SHA2:
-            case BLAKE2:
-            case HARAKA:
-                return new GordianDigestState[]{GordianDigestState.STATE256, GordianDigestState.STATE512};
-            case SKEIN:
-                return new GordianDigestState[]{GordianDigestState.STATE256, GordianDigestState.STATE512, GordianDigestState.STATE1024};
-            case SHAKE:
-            case KANGAROO:
-                return new GordianDigestState[]{GordianDigestState.STATE128, GordianDigestState.STATE256};
-            default:
-                return new GordianDigestState[]{null};
-        }
+        return switch (pType) {
+            case SHA2, BLAKE2, HARAKA ->
+                    new GordianDigestState[]{GordianDigestState.STATE256, GordianDigestState.STATE512};
+            case SKEIN ->
+                    new GordianDigestState[]{GordianDigestState.STATE256, GordianDigestState.STATE512, GordianDigestState.STATE1024};
+            case SHAKE, KANGAROO -> new GordianDigestState[]{GordianDigestState.STATE128, GordianDigestState.STATE256};
+            default -> new GordianDigestState[]{null};
+        };
     }
 
     /**
@@ -68,35 +63,24 @@ public interface GordianCoreDigestSubSpec {
      */
     static GordianDigestSubSpec getDefaultSubSpecForTypeAndLength(final GordianDigestType pType,
                                                                   final GordianLength pLength) {
-        switch (pType) {
-            case SHA2:
-                return pLength == GordianLength.LEN_224 || pLength == GordianLength.LEN_256
-                        ? GordianDigestState.STATE256
-                        : GordianDigestState.STATE512;
-            case SKEIN:
-                switch (pLength) {
-                    case LEN_1024:
-                        return GordianDigestState.STATE1024;
-                    case LEN_512:
-                    case LEN_384:
-                        return GordianDigestState.STATE512;
-                    default:
-                        return GordianDigestState.STATE256;
-                }
-            case SHAKE:
-            case KANGAROO:
-                return pLength == GordianLength.LEN_256
-                        ? GordianDigestState.STATE128
-                        : GordianDigestState.STATE256;
-            case BLAKE2:
-                return pLength == GordianLength.LEN_128 || pLength == GordianLength.LEN_224
-                        ? GordianDigestState.STATE256
-                        : GordianDigestState.STATE512;
-            case HARAKA:
-                return GordianDigestState.STATE256;
-            default:
-                return null;
-        }
+        return switch (pType) {
+            case SHA2 -> pLength == GordianLength.LEN_224 || pLength == GordianLength.LEN_256
+                    ? GordianDigestState.STATE256
+                    : GordianDigestState.STATE512;
+            case SKEIN -> switch (pLength) {
+                case LEN_1024 -> GordianDigestState.STATE1024;
+                case LEN_512, LEN_384 -> GordianDigestState.STATE512;
+                default -> GordianDigestState.STATE256;
+            };
+            case SHAKE, KANGAROO -> pLength == GordianLength.LEN_256
+                    ? GordianDigestState.STATE128
+                    : GordianDigestState.STATE256;
+            case BLAKE2 -> pLength == GordianLength.LEN_128 || pLength == GordianLength.LEN_224
+                    ? GordianDigestState.STATE256
+                    : GordianDigestState.STATE512;
+            case HARAKA -> GordianDigestState.STATE256;
+            default -> null;
+        };
     }
 
     /**
@@ -176,27 +160,17 @@ public interface GordianCoreDigestSubSpec {
          * @return the length
          */
         GordianLength lengthForXofType(final GordianCoreDigestType pType) {
-            switch (pType.getType()) {
-                case SKEIN:
-                    switch (theState) {
-                        case STATE256:
-                        case STATE512:
-                        case STATE1024:
-                            return theLength;
-                        default:
-                            return null;
-                    }
-                case BLAKE2:
-                    switch (theState) {
-                        case STATE256:
-                        case STATE512:
-                            return theLength;
-                        default:
-                            return null;
-                    }
-                default:
-                    return null;
-            }
+            return switch (pType.getType()) {
+                case SKEIN -> switch (theState) {
+                    case STATE256, STATE512, STATE1024 -> theLength;
+                    default -> null;
+                };
+                case BLAKE2 -> switch (theState) {
+                    case STATE256, STATE512 -> theLength;
+                    default -> null;
+                };
+                default -> null;
+            };
         }
 
         /**
@@ -208,21 +182,14 @@ public interface GordianCoreDigestSubSpec {
          */
         boolean validForTypeAndLength(final GordianCoreDigestType pType,
                                       final GordianLength pLength) {
-            switch (pType.getType()) {
-                case SHA2:
-                    return validForSha2Length(pLength);
-                case SHAKE:
-                case KANGAROO:
-                    return validForSHAKELength(pLength);
-                case SKEIN:
-                    return validForSkeinLength(pLength);
-                case BLAKE2:
-                    return validForBlake2Length(pLength);
-                case HARAKA:
-                    return validForHarakaLength(pLength);
-                default:
-                    return false;
-            }
+            return switch (pType.getType()) {
+                case SHA2 -> validForSha2Length(pLength);
+                case SHAKE, KANGAROO -> validForSHAKELength(pLength);
+                case SKEIN -> validForSkeinLength(pLength);
+                case BLAKE2 -> validForBlake2Length(pLength);
+                case HARAKA -> validForHarakaLength(pLength);
+                default -> false;
+            };
         }
 
         /**
@@ -232,28 +199,17 @@ public interface GordianCoreDigestSubSpec {
          * @return true/false
          */
         private boolean validForSha2Length(final GordianLength pLength) {
-            switch (theState) {
-                case STATE512:
-                    switch (pLength) {
-                        case LEN_224:
-                        case LEN_256:
-                        case LEN_384:
-                        case LEN_512:
-                            return true;
-                        default:
-                            return false;
-                    }
-                case STATE256:
-                    switch (pLength) {
-                        case LEN_224:
-                        case LEN_256:
-                            return true;
-                        default:
-                            return false;
-                    }
-                default:
-                    return false;
-            }
+            return switch (theState) {
+                case STATE512 -> switch (pLength) {
+                    case LEN_224, LEN_256, LEN_384, LEN_512 -> true;
+                    default -> false;
+                };
+                case STATE256 -> switch (pLength) {
+                    case LEN_224, LEN_256 -> true;
+                    default -> false;
+                };
+                default -> false;
+            };
         }
 
         /**
@@ -263,14 +219,11 @@ public interface GordianCoreDigestSubSpec {
          * @return true/false
          */
         private boolean validForSHAKELength(final GordianLength pLength) {
-            switch (theState) {
-                case STATE256:
-                    return pLength == GordianLength.LEN_512;
-                case STATE128:
-                    return pLength == GordianLength.LEN_256;
-                default:
-                    return false;
-            }
+            return switch (theState) {
+                case STATE256 -> pLength == GordianLength.LEN_512;
+                case STATE128 -> pLength == GordianLength.LEN_256;
+                default -> false;
+            };
         }
 
         /**
@@ -280,41 +233,21 @@ public interface GordianCoreDigestSubSpec {
          * @return true/false
          */
         private boolean validForSkeinLength(final GordianLength pLength) {
-            switch (theState) {
-                case STATE1024:
-                    switch (pLength) {
-                        case LEN_384:
-                        case LEN_512:
-                        case LEN_1024:
-                            return true;
-                        default:
-                            return false;
-                    }
-                case STATE512:
-                    switch (pLength) {
-                        case LEN_128:
-                        case LEN_160:
-                        case LEN_224:
-                        case LEN_256:
-                        case LEN_384:
-                        case LEN_512:
-                            return true;
-                        default:
-                            return false;
-                    }
-                case STATE256:
-                    switch (pLength) {
-                        case LEN_128:
-                        case LEN_160:
-                        case LEN_224:
-                        case LEN_256:
-                            return true;
-                        default:
-                            return false;
-                    }
-                default:
-                    return false;
-            }
+            return switch (theState) {
+                case STATE1024 -> switch (pLength) {
+                    case LEN_384, LEN_512, LEN_1024 -> true;
+                    default -> false;
+                };
+                case STATE512 -> switch (pLength) {
+                    case LEN_128, LEN_160, LEN_224, LEN_256, LEN_384, LEN_512 -> true;
+                    default -> false;
+                };
+                case STATE256 -> switch (pLength) {
+                    case LEN_128, LEN_160, LEN_224, LEN_256 -> true;
+                    default -> false;
+                };
+                default -> false;
+            };
         }
 
         /**
@@ -324,30 +257,17 @@ public interface GordianCoreDigestSubSpec {
          * @return true/false
          */
         private boolean validForBlake2Length(final GordianLength pLength) {
-            switch (theState) {
-                case STATE512:
-                    switch (pLength) {
-                        case LEN_160:
-                        case LEN_256:
-                        case LEN_384:
-                        case LEN_512:
-                            return true;
-                        default:
-                            return false;
-                    }
-                case STATE256:
-                    switch (pLength) {
-                        case LEN_128:
-                        case LEN_160:
-                        case LEN_224:
-                        case LEN_256:
-                            return true;
-                        default:
-                            return false;
-                    }
-                default:
-                    return false;
-            }
+            return switch (theState) {
+                case STATE512 -> switch (pLength) {
+                    case LEN_160, LEN_256, LEN_384, LEN_512 -> true;
+                    default -> false;
+                };
+                case STATE256 -> switch (pLength) {
+                    case LEN_128, LEN_160, LEN_224, LEN_256 -> true;
+                    default -> false;
+                };
+                default -> false;
+            };
         }
 
         /**
@@ -357,13 +277,10 @@ public interface GordianCoreDigestSubSpec {
          * @return true/false
          */
         private boolean validForHarakaLength(final GordianLength pLength) {
-            switch (theState) {
-                case STATE512:
-                case STATE256:
-                    return pLength == GordianLength.LEN_256;
-                default:
-                    return false;
-            }
+            return switch (theState) {
+                case STATE512, STATE256 -> pLength == GordianLength.LEN_256;
+                default -> false;
+            };
         }
 
         /**
@@ -403,18 +320,13 @@ public interface GordianCoreDigestSubSpec {
          * @return the length
          */
         public GordianLength lengthForDigestState() {
-            switch (theState) {
-                case STATE128:
-                    return GordianLength.LEN_128;
-                case STATE256:
-                    return GordianLength.LEN_256;
-                case STATE512:
-                    return GordianLength.LEN_512;
-                case STATE1024:
-                    return GordianLength.LEN_1024;
-                default:
-                    throw new IllegalArgumentException();
-            }
+            return switch (theState) {
+                case STATE128 -> GordianLength.LEN_128;
+                case STATE256 -> GordianLength.LEN_256;
+                case STATE512 -> GordianLength.LEN_512;
+                case STATE1024 -> GordianLength.LEN_1024;
+                default -> throw new IllegalArgumentException();
+            };
         }
 
         @Override

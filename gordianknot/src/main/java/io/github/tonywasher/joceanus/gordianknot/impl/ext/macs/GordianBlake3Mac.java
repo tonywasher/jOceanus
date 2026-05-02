@@ -51,14 +51,13 @@ public class GordianBlake3Mac
     @Override
     public void init(final CipherParameters pParams) {
         CipherParameters myParams = pParams;
-        if (myParams instanceof KeyParameter) {
-            myParams = GordianBlake3Parameters.key(((KeyParameter) myParams).getKey());
+        if (myParams instanceof KeyParameter keyParam) {
+            myParams = GordianBlake3Parameters.key(keyParam.getKey());
         }
-        if (!(myParams instanceof GordianBlake3Parameters)) {
+        if (!(myParams instanceof GordianBlake3Parameters myBlakeParams)) {
             throw new IllegalArgumentException("Invalid parameter passed to Blake3Mac init - "
                     + pParams.getClass().getName());
         }
-        final GordianBlake3Parameters myBlakeParams = (GordianBlake3Parameters) myParams;
         if (myBlakeParams.getKey() == null) {
             throw new IllegalArgumentException("Blake3Mac requires a key parameter.");
         }

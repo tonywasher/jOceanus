@@ -16,8 +16,8 @@
  */
 package io.github.tonywasher.joceanus.moneywise.tax.uk;
 
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
 
 /**
  * Rental Tax Scheme.
@@ -28,12 +28,6 @@ public class MoneyWiseUKRoomRentalScheme
      * Local Report fields.
      */
     private static final MetisFieldSet<MoneyWiseUKRoomRentalScheme> FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseUKRoomRentalScheme.class);
-
-    /**
-     * Constructor.
-     */
-    public MoneyWiseUKRoomRentalScheme() {
-    }
 
     @Override
     protected OceanusMoney adjustAllowances(final MoneyWiseUKTaxConfig pConfig,

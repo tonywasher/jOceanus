@@ -97,17 +97,12 @@ public class GordianCoreSM2EncryptionSpec
      * @return true/false
      */
     private boolean isDigestSupported() {
-        switch (theDigest.getDigestType()) {
-            case SHA2:
-                return !theDigest.isSha2Hybrid();
-            case WHIRLPOOL:
-            case SM3:
-                return true;
-            case BLAKE2:
-                return theDigest.getDigestLength().equals(theDigest.getCoreDigestState().getLength());
-            default:
-                return false;
-        }
+        return switch (theDigest.getDigestType()) {
+            case SHA2 -> !theDigest.isSha2Hybrid();
+            case WHIRLPOOL, SM3 -> true;
+            case BLAKE2 -> theDigest.getDigestLength().equals(theDigest.getCoreDigestState().getLength());
+            default -> false;
+        };
     }
 
     @Override

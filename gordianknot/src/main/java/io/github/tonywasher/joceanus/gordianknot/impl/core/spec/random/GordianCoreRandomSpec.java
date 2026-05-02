@@ -141,19 +141,14 @@ public class GordianCoreRandomSpec
         if (theType == null) {
             return false;
         }
-        switch (theType.getType()) {
-            case HMAC:
-            case HASH:
-                return theSubSpec instanceof GordianCoreDigestSpec mySpec
-                        && mySpec.isValid()
-                        && mySpec.getCoreDigestType().supportsLargeData();
-            case CTR:
-            case X931:
-                return theSubSpec instanceof GordianCoreSymKeySpec mySpec
-                        && mySpec.isValid();
-            default:
-                return false;
-        }
+        return switch (theType.getType()) {
+            case HMAC, HASH -> theSubSpec instanceof GordianCoreDigestSpec mySpec
+                    && mySpec.isValid()
+                    && mySpec.getCoreDigestType().supportsLargeData();
+            case CTR, X931 -> theSubSpec instanceof GordianCoreSymKeySpec mySpec
+                    && mySpec.isValid();
+            default -> false;
+        };
     }
 
     @Override

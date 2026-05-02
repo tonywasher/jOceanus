@@ -209,7 +209,7 @@ public class TethysUICoreItemList<T extends Comparable<? super T>> {
         while (myIterator.hasNext()) {
             final TethysUICoreItem<T> myItem = myIterator.next();
             if (myItem.isSelected()) {
-                if (myBuilder.length() > 0) {
+                if (!myBuilder.isEmpty()) {
                     myBuilder.append(',');
                 }
                 myBuilder.append(myItem);
@@ -229,12 +229,11 @@ public class TethysUICoreItemList<T extends Comparable<? super T>> {
         }
 
         /* Make sure that the object is the same class */
-        if (!(pThat instanceof TethysUICoreItemList)) {
+        if (!(pThat instanceof TethysUICoreItemList<?> myThat)) {
             return false;
         }
 
         /* Check for equality */
-        final TethysUICoreItemList<?> myThat = (TethysUICoreItemList<?>) pThat;
         return theList.equals(myThat.theList);
     }
 
@@ -333,12 +332,11 @@ public class TethysUICoreItemList<T extends Comparable<? super T>> {
             }
 
             /* Make sure that the object is the same class */
-            if (!(pThat instanceof TethysUICoreItem)) {
+            if (!(pThat instanceof TethysUICoreItem<?> myThat)) {
                 return false;
             }
 
             /* Check for equality */
-            final TethysUICoreItem<?> myThat = (TethysUICoreItem<?>) pThat;
             return theItem.equals(myThat.getItem())
                     && isSelected == myThat.isSelected();
         }

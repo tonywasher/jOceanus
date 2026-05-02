@@ -145,13 +145,10 @@ public class GordianCoreSignatureSpec
      * @return true/false
      */
     public boolean supportsContext() {
-        switch (theKeyPairType.getType()) {
-            case MLDSA:
-            case SLHDSA:
-                return true;
-            default:
-                return false;
-        }
+        return switch (theKeyPairType.getType()) {
+            case MLDSA, SLHDSA -> true;
+            default -> false;
+        };
     }
 
     /**
@@ -163,33 +160,16 @@ public class GordianCoreSignatureSpec
         if (theKeyPairType == null || theSignatureType == null) {
             return false;
         }
-        switch (theKeyPairType.getType()) {
-            case RSA:
-            case DSA:
-            case EC:
-            case DSTU:
-            case GOST:
-                return theSignatureSpec instanceof GordianCoreDigestSpec mySpec
-                        && mySpec.isValid()
-                        && mySpec.getCoreDigestType().supportsLargeData();
-            case EDDSA:
-            case SLHDSA:
-            case MLDSA:
-            case FALCON:
-            case MAYO:
-            case SNOVA:
-            case XMSS:
-            case LMS:
-                return theSignatureSpec == null;
-            case PICNIC:
-                return theSignatureSpec == null || checkPICNICDigest();
-            case SM2:
-                return checkSM2Digest();
-            case COMPOSITE:
-                return theSignatureSpec instanceof List && checkComposite();
-            default:
-                return false;
-        }
+        return switch (theKeyPairType.getType()) {
+            case RSA, DSA, EC, DSTU, GOST -> theSignatureSpec instanceof GordianCoreDigestSpec mySpec
+                    && mySpec.isValid()
+                    && mySpec.getCoreDigestType().supportsLargeData();
+            case EDDSA, SLHDSA, MLDSA, FALCON, MAYO, SNOVA, XMSS, LMS -> theSignatureSpec == null;
+            case PICNIC -> theSignatureSpec == null || checkPICNICDigest();
+            case SM2 -> checkSM2Digest();
+            case COMPOSITE -> theSignatureSpec instanceof List && checkComposite();
+            default -> false;
+        };
     }
 
     /**
@@ -222,14 +202,10 @@ public class GordianCoreSignatureSpec
         }
 
         /* Switch on DigestType */
-        switch (mySpec.getDigestType()) {
-            case SHA2:
-            case SHA3:
-            case SHAKE:
-                return true;
-            default:
-                return false;
-        }
+        return switch (mySpec.getDigestType()) {
+            case SHA2, SHA3, SHAKE -> true;
+            default -> false;
+        };
     }
 
     /**
@@ -242,15 +218,12 @@ public class GordianCoreSignatureSpec
         if (!(theSignatureSpec instanceof GordianCoreDigestSpec mySpec)) {
             return false;
         }
-        switch (mySpec.getDigestType()) {
-            case SM3:
-                return true;
-            case SHA2:
-                return GordianLength.LEN_256.equals(mySpec.getDigestLength())
-                        && !mySpec.isSha2Hybrid();
-            default:
-                return false;
-        }
+        return switch (mySpec.getDigestType()) {
+            case SM3 -> true;
+            case SHA2 -> GordianLength.LEN_256.equals(mySpec.getDigestLength())
+                    && !mySpec.isSha2Hybrid();
+            default -> false;
+        };
     }
 
     @Override

@@ -131,32 +131,22 @@ public class GordianCoreStreamKeySpec
         }
 
         /* Check subKeyTypes */
-        switch (theType.getType()) {
-            case SALSA20:
-                return checkSalsaValidity();
-            case CHACHA20:
-                return checkChaChaValidity();
-            case VMPC:
-                return checkVMPCValidity();
-            case SKEINXOF:
-                return checkSkeinValidity();
-            case BLAKE2XOF:
-                return checkBlake2Validity();
-            case ELEPHANT:
-                return theSubKeyType instanceof GordianElephantKey
-                        && theType.validForKeyLength(theKeyLength);
-            case ISAP:
-                return theSubKeyType instanceof GordianISAPKey
-                        && theType.validForKeyLength(theKeyLength);
-            case ROMULUS:
-                return theSubKeyType instanceof GordianRomulusKey
-                        && theType.validForKeyLength(theKeyLength);
-            case SPARKLE:
-                return checkSparkleValidity();
-            default:
-                return theSubKeyType == null
-                        && theType.validForKeyLength(theKeyLength);
-        }
+        return switch (theType.getType()) {
+            case SALSA20 -> checkSalsaValidity();
+            case CHACHA20 -> checkChaChaValidity();
+            case VMPC -> checkVMPCValidity();
+            case SKEINXOF -> checkSkeinValidity();
+            case BLAKE2XOF -> checkBlake2Validity();
+            case ELEPHANT -> theSubKeyType instanceof GordianElephantKey
+                    && theType.validForKeyLength(theKeyLength);
+            case ISAP -> theSubKeyType instanceof GordianISAPKey
+                    && theType.validForKeyLength(theKeyLength);
+            case ROMULUS -> theSubKeyType instanceof GordianRomulusKey
+                    && theType.validForKeyLength(theKeyLength);
+            case SPARKLE -> checkSparkleValidity();
+            default -> theSubKeyType == null
+                    && theType.validForKeyLength(theKeyLength);
+        };
     }
 
     /**
@@ -280,32 +270,20 @@ public class GordianCoreStreamKeySpec
      * @return the name
      */
     private String getName() {
-        switch (theType.getType()) {
-            case VMPC:
-                return theSubKeyType == GordianVMPCKey.KSA ? theType + "KSA3" : theType.toString();
-            case SALSA20:
-                return theSubKeyType == GordianSalsa20Key.XSALSA ? "X" + theType : theType.toString();
-            case CHACHA20:
-                switch ((GordianChaCha20Key) theSubKeyType) {
-                    case XCHACHA:
-                        return "X" + theType;
-                    case ISO7539:
-                        return "ChaCha7539";
-                    default:
-                        return theType.toString();
-                }
-            case SKEINXOF:
-                return theType + GordianSpecConstants.SEP
-                        + GordianCoreStreamKeySubType.getLengthForSkeinXofKey((GordianSkeinXofKey) theSubKeyType);
-            case BLAKE2XOF:
-            case ELEPHANT:
-            case ISAP:
-            case ROMULUS:
-            case SPARKLE:
-                return GordianCoreStreamKeySubType.toSubTypeString(theType.getType(), theSubKeyType);
-            default:
-                return theType.toString();
-        }
+        return switch (theType.getType()) {
+            case VMPC -> theSubKeyType == GordianVMPCKey.KSA ? theType + "KSA3" : theType.toString();
+            case SALSA20 -> theSubKeyType == GordianSalsa20Key.XSALSA ? "X" + theType : theType.toString();
+            case CHACHA20 -> switch ((GordianChaCha20Key) theSubKeyType) {
+                case XCHACHA -> "X" + theType;
+                case ISO7539 -> "ChaCha7539";
+                default -> theType.toString();
+            };
+            case SKEINXOF -> theType + GordianSpecConstants.SEP
+                    + GordianCoreStreamKeySubType.getLengthForSkeinXofKey((GordianSkeinXofKey) theSubKeyType);
+            case BLAKE2XOF, ELEPHANT, ISAP, ROMULUS, SPARKLE ->
+                    GordianCoreStreamKeySubType.toSubTypeString(theType.getType(), theSubKeyType);
+            default -> theType.toString();
+        };
     }
 
     /**
@@ -314,45 +292,28 @@ public class GordianCoreStreamKeySpec
      * @return the IV length.
      */
     public int getIVLength() {
-        switch (theType.getType()) {
-            case RABBIT:
-                return GordianLength.LEN_64.getByteLength();
-            case GRAIN:
-            case ELEPHANT:
-                return GordianLength.LEN_96.getByteLength();
-            case SOSEMANUK:
-            case SNOW3G:
-            case BLAKE3XOF:
-            case SKEINXOF:
-            case ASCON:
-            case ISAP:
-            case PHOTONBEETLE:
-            case ROMULUS:
-            case XOODYAK:
-                return GordianLength.LEN_128.getByteLength();
-            case HC:
-                return GordianLength.LEN_128 == theKeyLength
-                        ? GordianLength.LEN_128.getByteLength()
-                        : GordianLength.LEN_256.getByteLength();
-            case ZUC:
-                return GordianLength.LEN_128 == theKeyLength
-                        ? GordianLength.LEN_128.getByteLength()
-                        : GordianLength.LEN_200.getByteLength();
-            case VMPC:
-                return theKeyLength.getByteLength();
-            case BLAKE2XOF:
-                return GordianCoreStreamKeySubType.requiredBlakeIVLength((GordianBlakeXofKey) theSubKeyType).getByteLength();
-            case CHACHA20:
-                return GordianCoreStreamKeySubType.requiredChaChaIVLength((GordianChaCha20Key) theSubKeyType).getByteLength();
-            case SALSA20:
-                return GordianCoreStreamKeySubType.requiredSalsaIVLength((GordianSalsa20Key) theSubKeyType).getByteLength();
-            case SPARKLE:
-                return GordianCoreStreamKeySubType.requiredSparkleIVLength((GordianSparkleKey) theSubKeyType).getByteLength();
-            case ISAAC:
-            case RC4:
-            default:
-                return 0;
-        }
+        return switch (theType.getType()) {
+            case RABBIT -> GordianLength.LEN_64.getByteLength();
+            case GRAIN, ELEPHANT -> GordianLength.LEN_96.getByteLength();
+            case SOSEMANUK, SNOW3G, BLAKE3XOF, SKEINXOF, ASCON, ISAP, PHOTONBEETLE, ROMULUS, XOODYAK ->
+                    GordianLength.LEN_128.getByteLength();
+            case HC -> GordianLength.LEN_128 == theKeyLength
+                    ? GordianLength.LEN_128.getByteLength()
+                    : GordianLength.LEN_256.getByteLength();
+            case ZUC -> GordianLength.LEN_128 == theKeyLength
+                    ? GordianLength.LEN_128.getByteLength()
+                    : GordianLength.LEN_200.getByteLength();
+            case VMPC -> theKeyLength.getByteLength();
+            case BLAKE2XOF ->
+                    GordianCoreStreamKeySubType.requiredBlakeIVLength((GordianBlakeXofKey) theSubKeyType).getByteLength();
+            case CHACHA20 ->
+                    GordianCoreStreamKeySubType.requiredChaChaIVLength((GordianChaCha20Key) theSubKeyType).getByteLength();
+            case SALSA20 ->
+                    GordianCoreStreamKeySubType.requiredSalsaIVLength((GordianSalsa20Key) theSubKeyType).getByteLength();
+            case SPARKLE ->
+                    GordianCoreStreamKeySubType.requiredSparkleIVLength((GordianSparkleKey) theSubKeyType).getByteLength();
+            default -> 0;
+        };
     }
 
     /**
@@ -371,18 +332,10 @@ public class GordianCoreStreamKeySpec
      * @return true/false
      */
     public boolean isAEAD() {
-        switch (theType.getType()) {
-            case ASCON:
-            case ELEPHANT:
-            case ISAP:
-            case PHOTONBEETLE:
-            case ROMULUS:
-            case SPARKLE:
-            case XOODYAK:
-                return true;
-            default:
-                return false;
-        }
+        return switch (theType.getType()) {
+            case ASCON, ELEPHANT, ISAP, PHOTONBEETLE, ROMULUS, SPARKLE, XOODYAK -> true;
+            default -> false;
+        };
     }
 
     @Override

@@ -63,80 +63,42 @@ public final class GordianCoreECSpec
 
     @Override
     public String getCurveName() {
-        switch (theSpec) {
-            case SECT571K1:
-                return "sect571k1";
-            case SECT571R1:
-                return "sect571r1";
-            case SECP521R1:
-                return "secp521r1";
-            case SECT409K1:
-                return "sect409k1";
-            case SECT409R1:
-                return "sect409r1";
-            case SECP384R1:
-                return "secp384r1";
-            case SECT283K1:
-                return "sect283k1";
-            case SECT283R1:
-                return "sect283r1";
-            case SECP256K1:
-                return "secp256k1";
-            case SECP256R1:
-                return "secp256r1";
-            case BRAINPOOLP512R1:
-                return "brainpoolP512r1";
-            case BRAINPOOLP512T1:
-                return "brainpoolP512t1";
-            case BRAINPOOLP384R1:
-                return "brainpoolP384r1";
-            case BRAINPOOLP384T1:
-                return "brainpoolP384t1";
-            case BRAINPOOLP320R1:
-                return "brainpoolP320r1";
-            case BRAINPOOLP320T1:
-                return "brainpoolP320t1";
-            case BRAINPOOLP256R1:
-                return "brainpoolP256r1";
-            case BRAINPOOLP256T1:
-                return "brainpoolP256t1";
-            default:
-                throw new IllegalArgumentException();
-        }
+        return switch (theSpec) {
+            case SECT571K1 -> "sect571k1";
+            case SECT571R1 -> "sect571r1";
+            case SECP521R1 -> "secp521r1";
+            case SECT409K1 -> "sect409k1";
+            case SECT409R1 -> "sect409r1";
+            case SECP384R1 -> "secp384r1";
+            case SECT283K1 -> "sect283k1";
+            case SECT283R1 -> "sect283r1";
+            case SECP256K1 -> "secp256k1";
+            case SECP256R1 -> "secp256r1";
+            case BRAINPOOLP512R1 -> "brainpoolP512r1";
+            case BRAINPOOLP512T1 -> "brainpoolP512t1";
+            case BRAINPOOLP384R1 -> "brainpoolP384r1";
+            case BRAINPOOLP384T1 -> "brainpoolP384t1";
+            case BRAINPOOLP320R1 -> "brainpoolP320r1";
+            case BRAINPOOLP320T1 -> "brainpoolP320t1";
+            case BRAINPOOLP256R1 -> "brainpoolP256r1";
+            case BRAINPOOLP256T1 -> "brainpoolP256t1";
+            default -> throw new IllegalArgumentException();
+        };
     }
 
     @Override
     public int getKeySize() {
-        switch (theSpec) {
-            case SECT571K1:
-            case SECT571R1:
-                return GordianLength.LEN_571.getLength();
-            case SECP521R1:
-                return GordianLength.LEN_521.getLength();
-            case BRAINPOOLP512R1:
-            case BRAINPOOLP512T1:
-                return GordianLength.LEN_512.getLength();
-            case SECT409K1:
-            case SECT409R1:
-                return GordianLength.LEN_409.getLength();
-            case SECP384R1:
-            case BRAINPOOLP384R1:
-            case BRAINPOOLP384T1:
-                return GordianLength.LEN_384.getLength();
-            case BRAINPOOLP320R1:
-            case BRAINPOOLP320T1:
-                return GordianLength.LEN_320.getLength();
-            case SECT283K1:
-            case SECT283R1:
-                return GordianLength.LEN_283.getLength();
-            case SECP256K1:
-            case SECP256R1:
-            case BRAINPOOLP256R1:
-            case BRAINPOOLP256T1:
-                return GordianLength.LEN_256.getLength();
-            default:
-                throw new IllegalArgumentException();
-        }
+        return switch (theSpec) {
+            case SECT571K1, SECT571R1 -> GordianLength.LEN_571.getLength();
+            case SECP521R1 -> GordianLength.LEN_521.getLength();
+            case BRAINPOOLP512R1, BRAINPOOLP512T1 -> GordianLength.LEN_512.getLength();
+            case SECT409K1, SECT409R1 -> GordianLength.LEN_409.getLength();
+            case SECP384R1, BRAINPOOLP384R1, BRAINPOOLP384T1 -> GordianLength.LEN_384.getLength();
+            case BRAINPOOLP320R1, BRAINPOOLP320T1 -> GordianLength.LEN_320.getLength();
+            case SECT283K1, SECT283R1 -> GordianLength.LEN_283.getLength();
+            case SECP256K1, SECP256R1, BRAINPOOLP256R1, BRAINPOOLP256T1 -> GordianLength.LEN_256.getLength();
+            default -> throw new IllegalArgumentException();
+        };
     }
 
     /**
@@ -162,21 +124,11 @@ public final class GordianCoreECSpec
 
     @Override
     public boolean hasCustomCurve() {
-        switch (theSpec) {
-            case SECP256K1:
-            case SECP256R1:
-            case SECP384R1:
-            case SECP521R1:
-            case SECT283K1:
-            case SECT283R1:
-            case SECT409K1:
-            case SECT409R1:
-            case SECT571K1:
-            case SECT571R1:
-                return true;
-            default:
-                return false;
-        }
+        return switch (theSpec) {
+            case SECP256K1, SECP256R1, SECP384R1, SECP521R1, SECT283K1, SECT283R1, SECT409K1, SECT409R1, SECT571K1,
+                 SECT571R1 -> true;
+            default -> false;
+        };
     }
 
     @Override

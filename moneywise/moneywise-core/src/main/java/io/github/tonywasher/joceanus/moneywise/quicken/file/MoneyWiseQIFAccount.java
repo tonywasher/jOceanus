@@ -16,8 +16,6 @@
  */
 package io.github.tonywasher.joceanus.moneywise.quicken.file;
 
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
-import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseCash;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDeposit;
@@ -30,6 +28,8 @@ import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseLoanCategor
 import io.github.tonywasher.joceanus.moneywise.quicken.definitions.MoneyWiseQAccountLineType;
 import io.github.tonywasher.joceanus.moneywise.quicken.file.MoneyWiseQIFLine.MoneyWiseQIFMoneyLine;
 import io.github.tonywasher.joceanus.moneywise.quicken.file.MoneyWiseQIFLine.MoneyWiseQIFStringLine;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 
 import java.util.HashMap;
 import java.util.List;
@@ -111,27 +111,25 @@ public class MoneyWiseQIFAccount
         /* Store data */
         theName = pAccount.getName();
 
-        /* Handle deposit */
-        if (pAccount instanceof MoneyWiseDeposit myDeposit) {
-            theClass = myDeposit.getCategoryClass();
-            theDesc = myDeposit.getDesc();
-
-            /* Handle cash */
-        } else if (pAccount instanceof MoneyWiseCash myCash) {
-            theClass = myCash.getCategoryClass();
-            theDesc = myCash.getDesc();
-
-            /* Handle loan */
-        } else if (pAccount instanceof MoneyWiseLoan myLoan) {
-            theClass = myLoan.getCategoryClass();
-            theDesc = myLoan.getDesc();
-
-            /* Handle portfolio */
-        } else if (pAccount instanceof MoneyWisePortfolio myPortfolio) {
-            theClass = MoneyWiseBasicDataType.PORTFOLIO;
-            theDesc = myPortfolio.getDesc();
-        } else {
-            throw new IllegalArgumentException();
+        /* Switch on account */
+        switch (pAccount) {
+            case MoneyWiseDeposit myDeposit -> {
+                theClass = myDeposit.getCategoryClass();
+                theDesc = myDeposit.getDesc();
+            }
+            case MoneyWiseCash myCash -> {
+                theClass = myCash.getCategoryClass();
+                theDesc = myCash.getDesc();
+            }
+            case MoneyWiseLoan myLoan -> {
+                theClass = myLoan.getCategoryClass();
+                theDesc = myLoan.getDesc();
+            }
+            case MoneyWisePortfolio myPortfolio -> {
+                theClass = MoneyWiseBasicDataType.PORTFOLIO;
+                theDesc = myPortfolio.getDesc();
+            }
+            default -> throw new IllegalArgumentException();
         }
 
         /* Build lines */

@@ -25,12 +25,6 @@ import io.github.tonywasher.joceanus.tethys.javafx.launch.TethysUIFXPreLoader;
  */
 public class MoneyWiseFXpreLoader
         extends TethysUIFXPreLoader {
-    /**
-     * Constructor.
-     */
-    public MoneyWiseFXpreLoader() {
-    }
-
     @Override
     protected TethysUILaunchProgram getProgramInfo() {
         return new MoneyWiseApp();

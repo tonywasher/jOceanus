@@ -273,19 +273,11 @@ public abstract class GordianCoreSignatureFactory
             /* Switch on DigestType */
             final GordianCoreSignatureSpec mySpec = (GordianCoreSignatureSpec) pSpec;
             final GordianDigestSpec myDigest = mySpec.getDigestSpec();
-            switch (myDigest.getDigestType()) {
-                case SHA1:
-                case SHA2:
-                case SHA3:
-                case MD2:
-                case MD4:
-                case MD5:
-                    return true;
-                case RIPEMD:
-                    return myDigest.getDigestLength().getLength() <= GordianLength.LEN_256.getLength();
-                default:
-                    return false;
-            }
+            return switch (myDigest.getDigestType()) {
+                case SHA1, SHA2, SHA3, MD2, MD4, MD5 -> true;
+                case RIPEMD -> myDigest.getDigestLength().getLength() <= GordianLength.LEN_256.getLength();
+                default -> false;
+            };
         }
 
         /* Otherwise OK */
@@ -302,16 +294,10 @@ public abstract class GordianCoreSignatureFactory
         /* Switch on DigestType */
         final GordianCoreSignatureSpec mySpec = (GordianCoreSignatureSpec) pSpec;
         final GordianDigestSpec myDigest = mySpec.getDigestSpec();
-        switch (myDigest.getDigestType()) {
-            case ASCON:
-            case ISAP:
-            case PHOTONBEETLE:
-            case SPARKLE:
-            case XOODYAK:
-                return false;
-            default:
-                return true;
-        }
+        return switch (myDigest.getDigestType()) {
+            case ASCON, ISAP, PHOTONBEETLE, SPARKLE, XOODYAK -> false;
+            default -> true;
+        };
     }
 
     /**

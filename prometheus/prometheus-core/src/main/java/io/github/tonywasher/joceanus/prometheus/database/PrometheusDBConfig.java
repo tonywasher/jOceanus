@@ -79,12 +79,6 @@ public class PrometheusDBConfig {
     private int theBatch;
 
     /**
-     * Constructor.
-     */
-    public PrometheusDBConfig() {
-    }
-
-    /**
      * Set the driver.
      *
      * @param pDriver the driver

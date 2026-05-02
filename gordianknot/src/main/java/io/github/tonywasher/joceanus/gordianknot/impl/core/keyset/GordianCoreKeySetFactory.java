@@ -42,9 +42,8 @@ public class GordianCoreKeySetFactory
      * Constructor.
      *
      * @param pFactory the factory.
-     * @throws GordianException on error
      */
-    public GordianCoreKeySetFactory(final GordianBaseFactory pFactory) throws GordianException {
+    public GordianCoreKeySetFactory(final GordianBaseFactory pFactory) {
         theFactory = pFactory;
     }
 
@@ -121,13 +120,9 @@ public class GordianCoreKeySetFactory
         }
 
         /* Check on length */
-        switch (pSpec.getKeyLength()) {
-            case LEN_128:
-            case LEN_192:
-            case LEN_256:
-                return true;
-            default:
-                return false;
-        }
+        return switch (pSpec.getKeyLength()) {
+            case LEN_128, LEN_192, LEN_256 -> true;
+            default -> false;
+        };
     }
 }

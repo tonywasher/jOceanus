@@ -64,18 +64,13 @@ public final class GordianCoreGOSTSpec
 
     @Override
     public String getCurveName() {
-        switch (theSpec) {
-            case GOST256A:
-                return "Tc26-Gost-3410-12-256-paramSetA";
-            case GOST512A:
-                return "Tc26-Gost-3410-12-512-paramSetA";
-            case GOST512B:
-                return "Tc26-Gost-3410-12-512-paramSetB";
-            case GOST512C:
-                return "Tc26-Gost-3410-12-512-paramSetC";
-            default:
-                throw new IllegalArgumentException();
-        }
+        return switch (theSpec) {
+            case GOST256A -> "Tc26-Gost-3410-12-256-paramSetA";
+            case GOST512A -> "Tc26-Gost-3410-12-512-paramSetA";
+            case GOST512B -> "Tc26-Gost-3410-12-512-paramSetB";
+            case GOST512C -> "Tc26-Gost-3410-12-512-paramSetC";
+            default -> throw new IllegalArgumentException();
+        };
     }
 
     @Override

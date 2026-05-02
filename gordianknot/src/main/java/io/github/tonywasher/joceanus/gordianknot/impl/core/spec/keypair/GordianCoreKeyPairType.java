@@ -66,15 +66,10 @@ public final class GordianCoreKeyPairType {
      * @return true/false
      */
     public boolean useRandomForSignatures() {
-        switch (theType) {
-            case PICNIC:
-            case LMS:
-            case XMSS:
-            case EDDSA:
-                return false;
-            default:
-                return true;
-        }
+        return switch (theType) {
+            case PICNIC, LMS, XMSS, EDDSA -> false;
+            default -> true;
+        };
     }
 
     /**
@@ -83,21 +78,11 @@ public final class GordianCoreKeyPairType {
      * @return ALWAYS/POSSIBLE/NEVER
      */
     public GordianRequired useDigestForSignatures() {
-        switch (theType) {
-            case SLHDSA:
-            case MLDSA:
-            case FALCON:
-            case MAYO:
-            case SNOVA:
-            case XMSS:
-            case EDDSA:
-            case LMS:
-                return GordianRequired.NEVER;
-            case PICNIC:
-                return GordianRequired.POSSIBLE;
-            default:
-                return GordianRequired.ALWAYS;
-        }
+        return switch (theType) {
+            case SLHDSA, MLDSA, FALCON, MAYO, SNOVA, XMSS, EDDSA, LMS -> GordianRequired.NEVER;
+            case PICNIC -> GordianRequired.POSSIBLE;
+            default -> GordianRequired.ALWAYS;
+        };
     }
 
     /**
@@ -106,17 +91,10 @@ public final class GordianCoreKeyPairType {
      * @return true/false
      */
     public boolean subTypeForSignatures() {
-        switch (theType) {
-            case MLDSA:
-            case SLHDSA:
-            case FALCON:
-            case MAYO:
-            case SNOVA:
-            case XMSS:
-                return true;
-            default:
-                return false;
-        }
+        return switch (theType) {
+            case MLDSA, SLHDSA, FALCON, MAYO, SNOVA, XMSS -> true;
+            default -> false;
+        };
     }
 
     /**
@@ -125,39 +103,10 @@ public final class GordianCoreKeyPairType {
      * @return true/false
      */
     public boolean isStandardJca() {
-        switch (theType) {
-            case RSA:
-            case DSA:
-            case EC:
-            case ELGAMAL:
-            case DH:
-            case SM2:
-            case GOST:
-            case DSTU:
-            case XDH:
-            case EDDSA:
-            case MLKEM:
-            case MLDSA:
-            case SLHDSA:
-                return true;
-            case BIKE:
-            case FRODO:
-            case SABER:
-            case CMCE:
-            case FALCON:
-            case NTRU:
-            case NTRUPLUS:
-            case NTRUPRIME:
-            case HQC:
-            case PICNIC:
-            case XMSS:
-            case LMS:
-            case MAYO:
-            case SNOVA:
-            case NEWHOPE:
-            default:
-                return false;
-        }
+        return switch (theType) {
+            case RSA, DSA, EC, ELGAMAL, DH, SM2, GOST, DSTU, XDH, EDDSA, MLKEM, MLDSA, SLHDSA -> true;
+            default -> false;
+        };
     }
 
     @Override
