@@ -69,16 +69,12 @@ public final class GordianCoreNTRUPlusSpec {
      * @return the parameters.
      */
     public NTRUPlusParameters getParameters() {
-        switch (theSpec) {
-            case KEM768:
-                return NTRUPlusParameters.ntruplus_kem_768;
-            case KEM864:
-                return NTRUPlusParameters.ntruplus_kem_864;
-            case KEM1152:
-                return NTRUPlusParameters.ntruplus_kem_1152;
-            default:
-                throw new IllegalArgumentException();
-        }
+        return switch (theSpec) {
+            case KEM768 -> NTRUPlusParameters.ntruplus_kem_768;
+            case KEM864 -> NTRUPlusParameters.ntruplus_kem_864;
+            case KEM1152 -> NTRUPlusParameters.ntruplus_kem_1152;
+            default -> throw new IllegalArgumentException();
+        };
     }
 
     /**
@@ -87,16 +83,12 @@ public final class GordianCoreNTRUPlusSpec {
      * @return the parameters.
      */
     public NTRUPlusParameterSpec getParameterSpec() {
-        switch (theSpec) {
-            case KEM768:
-                return NTRUPlusParameterSpec.ntruplus_768;
-            case KEM864:
-                return NTRUPlusParameterSpec.ntruplus_864;
-            case KEM1152:
-                return NTRUPlusParameterSpec.ntruplus_1152;
-            default:
-                throw new IllegalArgumentException();
-        }
+        return switch (theSpec) {
+            case KEM768 -> NTRUPlusParameterSpec.ntruplus_768;
+            case KEM864 -> NTRUPlusParameterSpec.ntruplus_864;
+            case KEM1152 -> NTRUPlusParameterSpec.ntruplus_1152;
+            default -> throw new IllegalArgumentException();
+        };
     }
 
     /**
@@ -105,16 +97,12 @@ public final class GordianCoreNTRUPlusSpec {
      * @return the identifier.
      */
     public ASN1ObjectIdentifier getIdentifier() {
-        switch (theSpec) {
-            case KEM768:
-                return BCObjectIdentifiers.ntruplus768;
-            case KEM864:
-                return BCObjectIdentifiers.ntruplus864;
-            case KEM1152:
-                return BCObjectIdentifiers.ntruplus1152;
-            default:
-                throw new IllegalArgumentException();
-        }
+        return switch (theSpec) {
+            case KEM768 -> BCObjectIdentifiers.ntruplus768;
+            case KEM864 -> BCObjectIdentifiers.ntruplus864;
+            case KEM1152 -> BCObjectIdentifiers.ntruplus1152;
+            default -> throw new IllegalArgumentException();
+        };
     }
 
     @Override

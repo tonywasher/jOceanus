@@ -139,8 +139,7 @@ public abstract class GordianCoreEncryptorFactory
         final GordianKeyPairType myEncType = pEncryptorSpec.getKeyPairType();
         final GordianCoreKeyPairSpec myKeySpec = (GordianCoreKeyPairSpec) pKeyPairSpec;
         switch (myEncType) {
-            case SM2:
-            case EC:
+            case SM2, EC:
                 if (!GordianKeyPairType.EC.equals(myKeyType)
                         && !GordianKeyPairType.GOST.equals(myKeyType)
                         && !GordianKeyPairType.SM2.equals(myKeyType)) {
@@ -187,9 +186,7 @@ public abstract class GordianCoreEncryptorFactory
                     return false;
                 }
             }
-            if (pairIterator.hasNext() || encIterator.hasNext()) {
-                return false;
-            }
+            return !pairIterator.hasNext() && !encIterator.hasNext();
         }
 
         /* OK */
@@ -253,9 +250,7 @@ public abstract class GordianCoreEncryptorFactory
         switch (pKeySpec.getKeyPairType()) {
             case RSA:
                 return myEncBuilder.rsa(myDigestBuilder.sha2(GordianLength.LEN_512));
-            case EC:
-            case SM2:
-            case GOST:
+            case EC, SM2, GOST:
                 return myEncBuilder.sm2(GordianSM2EncryptionType.C1C2C3, myDigestBuilder.sm3());
             case ELGAMAL:
                 return myEncBuilder.elGamal(myDigestBuilder.sha2(GordianLength.LEN_512));

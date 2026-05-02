@@ -121,72 +121,43 @@ public class BouncyKeyPairFactory
      */
     private BouncyKeyPairGenerator getBCKeyPairGenerator(final GordianKeyPairSpec pKeySpec) throws GordianException {
         final GordianCoreKeyPairSpec myKeySpec = (GordianCoreKeyPairSpec) pKeySpec;
-        switch (pKeySpec.getKeyPairType()) {
-            case RSA:
-                return new BouncyRSAKeyPairGenerator(theFactory, pKeySpec);
-            case ELGAMAL:
-                return new BouncyElGamalKeyPairGenerator(theFactory, pKeySpec);
-            case EC:
-            case SM2:
-                return new BouncyECKeyPairGenerator(theFactory, pKeySpec);
-            case DSTU:
-                return new BouncyDSTUKeyPairGenerator(theFactory, pKeySpec);
-            case GOST:
-                return new BouncyGOSTKeyPairGenerator(theFactory, pKeySpec);
-            case XDH:
-                return myKeySpec.getEdwardsSpec().is25519()
-                        ? new BouncyX25519KeyPairGenerator(theFactory, pKeySpec)
-                        : new BouncyX448KeyPairGenerator(theFactory, pKeySpec);
-            case EDDSA:
-                return myKeySpec.getEdwardsSpec().is25519()
-                        ? new BouncyEd25519KeyPairGenerator(theFactory, pKeySpec)
-                        : new BouncyEd448KeyPairGenerator(theFactory, pKeySpec);
-            case DSA:
-                return new BouncyDSAKeyPairGenerator(theFactory, pKeySpec);
-            case DH:
-                return new BouncyDHKeyPairGenerator(theFactory, pKeySpec);
-            case SLHDSA:
-                return new BouncySLHDSAKeyPairGenerator(theFactory, pKeySpec);
-            case CMCE:
-                return new BouncyCMCEKeyPairGenerator(theFactory, pKeySpec);
-            case FRODO:
-                return new BouncyFrodoKeyPairGenerator(theFactory, pKeySpec);
-            case SABER:
-                return new BouncySABERKeyPairGenerator(theFactory, pKeySpec);
-            case MLKEM:
-                return new BouncyMLKEMKeyPairGenerator(theFactory, pKeySpec);
-            case MLDSA:
-                return new BouncyMLDSAKeyPairGenerator(theFactory, pKeySpec);
-            case HQC:
-                return new BouncyHQCKeyPairGenerator(theFactory, pKeySpec);
-            case BIKE:
-                return new BouncyBIKEKeyPairGenerator(theFactory, pKeySpec);
-            case NTRU:
-                return new BouncyNTRUKeyPairGenerator(theFactory, pKeySpec);
-            case NTRUPLUS:
-                return new BouncyNTRUPlusKeyPairGenerator(theFactory, pKeySpec);
-            case NTRUPRIME:
-                return myKeySpec.getNTRUPrimeSpec().getType() == GordianNTRUPrimeType.NTRUL
-                        ? new BouncyNTRULPrimeKeyPairGenerator(theFactory, pKeySpec)
-                        : new BouncySNTRUPrimeKeyPairGenerator(theFactory, pKeySpec);
-            case FALCON:
-                return new BouncyFalconKeyPairGenerator(theFactory, pKeySpec);
-            case MAYO:
-                return new BouncyMayoKeyPairGenerator(theFactory, pKeySpec);
-            case SNOVA:
-                return new BouncySnovaKeyPairGenerator(theFactory, pKeySpec);
-            case PICNIC:
-                return new BouncyPicnicKeyPairGenerator(theFactory, pKeySpec);
-            case NEWHOPE:
-                return new BouncyNewHopeKeyPairGenerator(theFactory, pKeySpec);
-            case XMSS:
-                return myKeySpec.getXMSSSpec().isMT()
-                        ? new BouncyXMSSMTKeyPairGenerator(theFactory, pKeySpec)
-                        : new BouncyXMSSKeyPairGenerator(theFactory, pKeySpec);
-            case LMS:
-                return new BouncyHSSKeyPairGenerator(theFactory, pKeySpec);
-            default:
-                throw new GordianDataException(GordianBaseData.getInvalidText(pKeySpec.getKeyPairType()));
-        }
+        return switch (pKeySpec.getKeyPairType()) {
+            case RSA -> new BouncyRSAKeyPairGenerator(theFactory, pKeySpec);
+            case ELGAMAL -> new BouncyElGamalKeyPairGenerator(theFactory, pKeySpec);
+            case EC, SM2 -> new BouncyECKeyPairGenerator(theFactory, pKeySpec);
+            case DSTU -> new BouncyDSTUKeyPairGenerator(theFactory, pKeySpec);
+            case GOST -> new BouncyGOSTKeyPairGenerator(theFactory, pKeySpec);
+            case XDH -> myKeySpec.getEdwardsSpec().is25519()
+                    ? new BouncyX25519KeyPairGenerator(theFactory, pKeySpec)
+                    : new BouncyX448KeyPairGenerator(theFactory, pKeySpec);
+            case EDDSA -> myKeySpec.getEdwardsSpec().is25519()
+                    ? new BouncyEd25519KeyPairGenerator(theFactory, pKeySpec)
+                    : new BouncyEd448KeyPairGenerator(theFactory, pKeySpec);
+            case DSA -> new BouncyDSAKeyPairGenerator(theFactory, pKeySpec);
+            case DH -> new BouncyDHKeyPairGenerator(theFactory, pKeySpec);
+            case SLHDSA -> new BouncySLHDSAKeyPairGenerator(theFactory, pKeySpec);
+            case CMCE -> new BouncyCMCEKeyPairGenerator(theFactory, pKeySpec);
+            case FRODO -> new BouncyFrodoKeyPairGenerator(theFactory, pKeySpec);
+            case SABER -> new BouncySABERKeyPairGenerator(theFactory, pKeySpec);
+            case MLKEM -> new BouncyMLKEMKeyPairGenerator(theFactory, pKeySpec);
+            case MLDSA -> new BouncyMLDSAKeyPairGenerator(theFactory, pKeySpec);
+            case HQC -> new BouncyHQCKeyPairGenerator(theFactory, pKeySpec);
+            case BIKE -> new BouncyBIKEKeyPairGenerator(theFactory, pKeySpec);
+            case NTRU -> new BouncyNTRUKeyPairGenerator(theFactory, pKeySpec);
+            case NTRUPLUS -> new BouncyNTRUPlusKeyPairGenerator(theFactory, pKeySpec);
+            case NTRUPRIME -> myKeySpec.getNTRUPrimeSpec().getType() == GordianNTRUPrimeType.NTRUL
+                    ? new BouncyNTRULPrimeKeyPairGenerator(theFactory, pKeySpec)
+                    : new BouncySNTRUPrimeKeyPairGenerator(theFactory, pKeySpec);
+            case FALCON -> new BouncyFalconKeyPairGenerator(theFactory, pKeySpec);
+            case MAYO -> new BouncyMayoKeyPairGenerator(theFactory, pKeySpec);
+            case SNOVA -> new BouncySnovaKeyPairGenerator(theFactory, pKeySpec);
+            case PICNIC -> new BouncyPicnicKeyPairGenerator(theFactory, pKeySpec);
+            case NEWHOPE -> new BouncyNewHopeKeyPairGenerator(theFactory, pKeySpec);
+            case XMSS -> myKeySpec.getXMSSSpec().isMT()
+                    ? new BouncyXMSSMTKeyPairGenerator(theFactory, pKeySpec)
+                    : new BouncyXMSSKeyPairGenerator(theFactory, pKeySpec);
+            case LMS -> new BouncyHSSKeyPairGenerator(theFactory, pKeySpec);
+            default -> throw new GordianDataException(GordianBaseData.getInvalidText(pKeySpec.getKeyPairType()));
+        };
     }
 }

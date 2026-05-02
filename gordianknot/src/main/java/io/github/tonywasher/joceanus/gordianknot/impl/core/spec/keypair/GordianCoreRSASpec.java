@@ -67,24 +67,16 @@ public final class GordianCoreRSASpec {
      * @return the length
      */
     public int getLength() {
-        switch (theSpec) {
-            case MOD1024:
-                return GordianLength.LEN_1024.getLength();
-            case MOD1536:
-                return GordianLength.LEN_1536.getLength();
-            case MOD2048:
-                return GordianLength.LEN_2048.getLength();
-            case MOD3072:
-                return GordianLength.LEN_3072.getLength();
-            case MOD4096:
-                return GordianLength.LEN_4096.getLength();
-            case MOD6144:
-                return GordianLength.LEN_6144.getLength();
-            case MOD8192:
-                return GordianLength.LEN_8192.getLength();
-            default:
-                throw new IllegalArgumentException("Unknown GordianNewRSASpec");
-        }
+        return switch (theSpec) {
+            case MOD1024 -> GordianLength.LEN_1024.getLength();
+            case MOD1536 -> GordianLength.LEN_1536.getLength();
+            case MOD2048 -> GordianLength.LEN_2048.getLength();
+            case MOD3072 -> GordianLength.LEN_3072.getLength();
+            case MOD4096 -> GordianLength.LEN_4096.getLength();
+            case MOD6144 -> GordianLength.LEN_6144.getLength();
+            case MOD8192 -> GordianLength.LEN_8192.getLength();
+            default -> throw new IllegalArgumentException("Unknown GordianNewRSASpec");
+        };
     }
 
     /**

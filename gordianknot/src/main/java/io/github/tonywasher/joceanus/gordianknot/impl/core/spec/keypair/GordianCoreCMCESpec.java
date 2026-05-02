@@ -70,30 +70,19 @@ public final class GordianCoreCMCESpec {
      * @return the parameters.
      */
     public CMCEParameters getParameters() {
-        switch (theSpec) {
-            case BASE3488:
-                return CMCEParameters.mceliece348864r3;
-            case PIVOT3488:
-                return CMCEParameters.mceliece348864fr3;
-            case BASE4608:
-                return CMCEParameters.mceliece460896r3;
-            case PIVOT4608:
-                return CMCEParameters.mceliece460896fr3;
-            case BASE6688:
-                return CMCEParameters.mceliece6688128r3;
-            case PIVOT6688:
-                return CMCEParameters.mceliece6688128fr3;
-            case BASE6960:
-                return CMCEParameters.mceliece6960119r3;
-            case PIVOT6960:
-                return CMCEParameters.mceliece6960119fr3;
-            case BASE8192:
-                return CMCEParameters.mceliece8192128r3;
-            case PIVOT8192:
-                return CMCEParameters.mceliece8192128fr3;
-            default:
-                throw new IllegalArgumentException();
-        }
+        return switch (theSpec) {
+            case BASE3488 -> CMCEParameters.mceliece348864r3;
+            case PIVOT3488 -> CMCEParameters.mceliece348864fr3;
+            case BASE4608 -> CMCEParameters.mceliece460896r3;
+            case PIVOT4608 -> CMCEParameters.mceliece460896fr3;
+            case BASE6688 -> CMCEParameters.mceliece6688128r3;
+            case PIVOT6688 -> CMCEParameters.mceliece6688128fr3;
+            case BASE6960 -> CMCEParameters.mceliece6960119r3;
+            case PIVOT6960 -> CMCEParameters.mceliece6960119fr3;
+            case BASE8192 -> CMCEParameters.mceliece8192128r3;
+            case PIVOT8192 -> CMCEParameters.mceliece8192128fr3;
+            default -> throw new IllegalArgumentException();
+        };
     }
 
     /**
@@ -102,30 +91,19 @@ public final class GordianCoreCMCESpec {
      * @return the parameters.
      */
     public CMCEParameterSpec getParameterSpec() {
-        switch (theSpec) {
-            case BASE3488:
-                return CMCEParameterSpec.mceliece348864;
-            case PIVOT3488:
-                return CMCEParameterSpec.mceliece348864f;
-            case BASE4608:
-                return CMCEParameterSpec.mceliece460896;
-            case PIVOT4608:
-                return CMCEParameterSpec.mceliece460896f;
-            case BASE6688:
-                return CMCEParameterSpec.mceliece6688128;
-            case PIVOT6688:
-                return CMCEParameterSpec.mceliece6688128f;
-            case BASE6960:
-                return CMCEParameterSpec.mceliece6960119;
-            case PIVOT6960:
-                return CMCEParameterSpec.mceliece6960119f;
-            case BASE8192:
-                return CMCEParameterSpec.mceliece8192128;
-            case PIVOT8192:
-                return CMCEParameterSpec.mceliece8192128f;
-            default:
-                throw new IllegalArgumentException();
-        }
+        return switch (theSpec) {
+            case BASE3488 -> CMCEParameterSpec.mceliece348864;
+            case PIVOT3488 -> CMCEParameterSpec.mceliece348864f;
+            case BASE4608 -> CMCEParameterSpec.mceliece460896;
+            case PIVOT4608 -> CMCEParameterSpec.mceliece460896f;
+            case BASE6688 -> CMCEParameterSpec.mceliece6688128;
+            case PIVOT6688 -> CMCEParameterSpec.mceliece6688128f;
+            case BASE6960 -> CMCEParameterSpec.mceliece6960119;
+            case PIVOT6960 -> CMCEParameterSpec.mceliece6960119f;
+            case BASE8192 -> CMCEParameterSpec.mceliece8192128;
+            case PIVOT8192 -> CMCEParameterSpec.mceliece8192128f;
+            default -> throw new IllegalArgumentException();
+        };
     }
 
     /**
@@ -134,30 +112,19 @@ public final class GordianCoreCMCESpec {
      * @return the identifier.
      */
     public ASN1ObjectIdentifier getIdentifier() {
-        switch (theSpec) {
-            case BASE3488:
-                return BCObjectIdentifiers.mceliece348864_r3;
-            case PIVOT3488:
-                return BCObjectIdentifiers.mceliece348864f_r3;
-            case BASE4608:
-                return BCObjectIdentifiers.mceliece460896_r3;
-            case PIVOT4608:
-                return BCObjectIdentifiers.mceliece460896f_r3;
-            case BASE6688:
-                return BCObjectIdentifiers.mceliece6688128_r3;
-            case PIVOT6688:
-                return BCObjectIdentifiers.mceliece6688128f_r3;
-            case BASE6960:
-                return BCObjectIdentifiers.mceliece6960119_r3;
-            case PIVOT6960:
-                return BCObjectIdentifiers.mceliece6960119f_r3;
-            case BASE8192:
-                return BCObjectIdentifiers.mceliece8192128_r3;
-            case PIVOT8192:
-                return BCObjectIdentifiers.mceliece8192128f_r3;
-            default:
-                throw new IllegalArgumentException();
-        }
+        return switch (theSpec) {
+            case BASE3488 -> BCObjectIdentifiers.mceliece348864_r3;
+            case PIVOT3488 -> BCObjectIdentifiers.mceliece348864f_r3;
+            case BASE4608 -> BCObjectIdentifiers.mceliece460896_r3;
+            case PIVOT4608 -> BCObjectIdentifiers.mceliece460896f_r3;
+            case BASE6688 -> BCObjectIdentifiers.mceliece6688128_r3;
+            case PIVOT6688 -> BCObjectIdentifiers.mceliece6688128f_r3;
+            case BASE6960 -> BCObjectIdentifiers.mceliece6960119_r3;
+            case PIVOT6960 -> BCObjectIdentifiers.mceliece6960119f_r3;
+            case BASE8192 -> BCObjectIdentifiers.mceliece8192128_r3;
+            case PIVOT8192 -> BCObjectIdentifiers.mceliece8192128f_r3;
+            default -> throw new IllegalArgumentException();
+        };
     }
 
     @Override

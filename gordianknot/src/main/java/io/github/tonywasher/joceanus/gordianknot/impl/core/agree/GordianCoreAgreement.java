@@ -79,9 +79,8 @@ public class GordianCoreAgreement
      * Constructor.
      *
      * @param pEngine the engine
-     * @throws GordianException on error
      */
-    public GordianCoreAgreement(final GordianCoreAgreementEngine pEngine) throws GordianException {
+    public GordianCoreAgreement(final GordianCoreAgreementEngine pEngine) {
         /* Store details */
         theEngine = pEngine;
         theSupplier = theEngine.getSupplier();
@@ -241,10 +240,9 @@ public class GordianCoreAgreement
      *
      * @param pSignSpec the signature spec
      * @param pSigner   the signer certificate
-     * @throws GordianException on error
      */
     void setSignerCertificate(final GordianSignatureSpec pSignSpec,
-                              final GordianCertificate pSigner) throws GordianException {
+                              final GordianCertificate pSigner) {
         theBuilder.setSignSpec(pSignSpec)
                 .setSignerCertificate(pSigner);
     }
@@ -500,18 +498,10 @@ public class GordianCoreAgreement
      * @return true/false
      */
     private boolean needClientEphemeral() {
-        switch (theSpec.getAgreementType()) {
-            case ANON:
-            case SIGNED:
-            case SM2:
-            case MQV:
-            case UNIFIED:
-                return true;
-            case KEM:
-            case BASIC:
-            default:
-                return false;
-        }
+        return switch (theSpec.getAgreementType()) {
+            case ANON, SIGNED, SM2, MQV, UNIFIED -> true;
+            default -> false;
+        };
     }
 
     /**
@@ -520,17 +510,9 @@ public class GordianCoreAgreement
      * @return true/false
      */
     private boolean needServerEphemeral() {
-        switch (theSpec.getAgreementType()) {
-            case SIGNED:
-            case SM2:
-            case MQV:
-            case UNIFIED:
-                return true;
-            case ANON:
-            case KEM:
-            case BASIC:
-            default:
-                return false;
-        }
+        return switch (theSpec.getAgreementType()) {
+            case SIGNED, SM2, MQV, UNIFIED -> true;
+            default -> false;
+        };
     }
 }

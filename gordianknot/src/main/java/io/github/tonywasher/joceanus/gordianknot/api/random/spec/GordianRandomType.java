@@ -47,12 +47,9 @@ public enum GordianRandomType {
      * @return true/false
      */
     public boolean hasSymKeySpec() {
-        switch (this) {
-            case CTR:
-            case X931:
-                return true;
-            default:
-                return false;
-        }
+        return switch (this) {
+            case CTR, X931 -> true;
+            default -> false;
+        };
     }
 }

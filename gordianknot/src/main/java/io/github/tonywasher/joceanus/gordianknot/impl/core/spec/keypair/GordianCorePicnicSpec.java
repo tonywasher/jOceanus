@@ -69,34 +69,21 @@ public final class GordianCorePicnicSpec {
      * @return the parameters.
      */
     public PicnicParameters getParameters() {
-        switch (theSpec) {
-            case L1UR:
-                return PicnicParameters.picnicl1ur;
-            case L1FS:
-                return PicnicParameters.picnicl1fs;
-            case L1FULL:
-                return PicnicParameters.picnicl1full;
-            case L13:
-                return PicnicParameters.picnic3l1;
-            case L3UR:
-                return PicnicParameters.picnicl3ur;
-            case L3FS:
-                return PicnicParameters.picnicl3fs;
-            case L3FULL:
-                return PicnicParameters.picnicl3full;
-            case L33:
-                return PicnicParameters.picnic3l3;
-            case L5UR:
-                return PicnicParameters.picnicl5ur;
-            case L5FS:
-                return PicnicParameters.picnicl5fs;
-            case L5FULL:
-                return PicnicParameters.picnicl5full;
-            case L53:
-                return PicnicParameters.picnic3l5;
-            default:
-                throw new IllegalArgumentException();
-        }
+        return switch (theSpec) {
+            case L1UR -> PicnicParameters.picnicl1ur;
+            case L1FS -> PicnicParameters.picnicl1fs;
+            case L1FULL -> PicnicParameters.picnicl1full;
+            case L13 -> PicnicParameters.picnic3l1;
+            case L3UR -> PicnicParameters.picnicl3ur;
+            case L3FS -> PicnicParameters.picnicl3fs;
+            case L3FULL -> PicnicParameters.picnicl3full;
+            case L33 -> PicnicParameters.picnic3l3;
+            case L5UR -> PicnicParameters.picnicl5ur;
+            case L5FS -> PicnicParameters.picnicl5fs;
+            case L5FULL -> PicnicParameters.picnicl5full;
+            case L53 -> PicnicParameters.picnic3l5;
+            default -> throw new IllegalArgumentException();
+        };
     }
 
     /**
@@ -105,34 +92,21 @@ public final class GordianCorePicnicSpec {
      * @return the parameters.
      */
     public PicnicParameterSpec getParameterSpec() {
-        switch (theSpec) {
-            case L1UR:
-                return PicnicParameterSpec.picnicl1ur;
-            case L1FS:
-                return PicnicParameterSpec.picnicl1fs;
-            case L1FULL:
-                return PicnicParameterSpec.picnicl1full;
-            case L13:
-                return PicnicParameterSpec.picnic3l1;
-            case L3UR:
-                return PicnicParameterSpec.picnicl3ur;
-            case L3FS:
-                return PicnicParameterSpec.picnicl3fs;
-            case L3FULL:
-                return PicnicParameterSpec.picnicl3full;
-            case L33:
-                return PicnicParameterSpec.picnic3l3;
-            case L5UR:
-                return PicnicParameterSpec.picnicl5ur;
-            case L5FS:
-                return PicnicParameterSpec.picnicl5fs;
-            case L5FULL:
-                return PicnicParameterSpec.picnicl5full;
-            case L53:
-                return PicnicParameterSpec.picnic3l5;
-            default:
-                throw new IllegalArgumentException();
-        }
+        return switch (theSpec) {
+            case L1UR -> PicnicParameterSpec.picnicl1ur;
+            case L1FS -> PicnicParameterSpec.picnicl1fs;
+            case L1FULL -> PicnicParameterSpec.picnicl1full;
+            case L13 -> PicnicParameterSpec.picnic3l1;
+            case L3UR -> PicnicParameterSpec.picnicl3ur;
+            case L3FS -> PicnicParameterSpec.picnicl3fs;
+            case L3FULL -> PicnicParameterSpec.picnicl3full;
+            case L33 -> PicnicParameterSpec.picnic3l3;
+            case L5UR -> PicnicParameterSpec.picnicl5ur;
+            case L5FS -> PicnicParameterSpec.picnicl5fs;
+            case L5FULL -> PicnicParameterSpec.picnicl5full;
+            case L53 -> PicnicParameterSpec.picnic3l5;
+            default -> throw new IllegalArgumentException();
+        };
     }
 
     /**
@@ -141,34 +115,21 @@ public final class GordianCorePicnicSpec {
      * @return the identifier.
      */
     public ASN1ObjectIdentifier getIdentifier() {
-        switch (theSpec) {
-            case L1UR:
-                return BCObjectIdentifiers.picnicl1ur;
-            case L1FS:
-                return BCObjectIdentifiers.picnicl1fs;
-            case L1FULL:
-                return BCObjectIdentifiers.picnicl1full;
-            case L13:
-                return BCObjectIdentifiers.picnic3l1;
-            case L3UR:
-                return BCObjectIdentifiers.picnicl3ur;
-            case L3FS:
-                return BCObjectIdentifiers.picnicl3fs;
-            case L3FULL:
-                return BCObjectIdentifiers.picnicl3full;
-            case L33:
-                return BCObjectIdentifiers.picnic3l3;
-            case L5UR:
-                return BCObjectIdentifiers.picnicl5ur;
-            case L5FS:
-                return BCObjectIdentifiers.picnicl5fs;
-            case L5FULL:
-                return BCObjectIdentifiers.picnicl5full;
-            case L53:
-                return BCObjectIdentifiers.picnic3l5;
-            default:
-                throw new IllegalArgumentException();
-        }
+        return switch (theSpec) {
+            case L1UR -> BCObjectIdentifiers.picnicl1ur;
+            case L1FS -> BCObjectIdentifiers.picnicl1fs;
+            case L1FULL -> BCObjectIdentifiers.picnicl1full;
+            case L13 -> BCObjectIdentifiers.picnic3l1;
+            case L3UR -> BCObjectIdentifiers.picnicl3ur;
+            case L3FS -> BCObjectIdentifiers.picnicl3fs;
+            case L3FULL -> BCObjectIdentifiers.picnicl3full;
+            case L33 -> BCObjectIdentifiers.picnic3l3;
+            case L5UR -> BCObjectIdentifiers.picnicl5ur;
+            case L5FS -> BCObjectIdentifiers.picnicl5fs;
+            case L5FULL -> BCObjectIdentifiers.picnicl5full;
+            case L53 -> BCObjectIdentifiers.picnic3l5;
+            default -> throw new IllegalArgumentException();
+        };
     }
 
     @Override

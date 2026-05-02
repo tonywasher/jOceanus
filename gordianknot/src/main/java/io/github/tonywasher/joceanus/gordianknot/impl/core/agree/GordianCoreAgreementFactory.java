@@ -138,16 +138,12 @@ public abstract class GordianCoreAgreementFactory
         final GordianCoreAgreementMessageASN1 myASN1 = GordianCoreAgreementMessageASN1.getInstance(pMessage);
 
         /* Switch on the messageType */
-        switch (myASN1.getMessageType()) {
-            case CLIENTHELLO:
-                return parseClientHello(myASN1);
-            case SERVERHELLO:
-                return parseServerHello(myASN1);
-            case CLIENTCONFIRM:
-                return parseClientConfirm(myASN1);
-            default:
-                throw new GordianDataException("Unexpected MessageType: " + myASN1.getMessageType());
-        }
+        return switch (myASN1.getMessageType()) {
+            case CLIENTHELLO -> parseClientHello(myASN1);
+            case SERVERHELLO -> parseServerHello(myASN1);
+            case CLIENTCONFIRM -> parseClientConfirm(myASN1);
+            default -> throw new GordianDataException("Unexpected MessageType: " + myASN1.getMessageType());
+        };
     }
 
     /**
@@ -322,13 +318,9 @@ public abstract class GordianCoreAgreementFactory
         if (pKeyPairSpec.getKeyPairType() == GordianKeyPairType.XDH) {
             final GordianCoreEdwardsSpec myEdwards = myKeySpec.getEdwardsSpec();
             switch (pAgreementSpec.getKDFType()) {
-                case SHA256KDF:
-                case SHA256CKDF:
-                case SHA256HKDF:
+                case SHA256KDF, SHA256CKDF, SHA256HKDF:
                     return myEdwards.is25519();
-                case SHA512KDF:
-                case SHA512CKDF:
-                case SHA512HKDF:
+                case SHA512KDF, SHA512CKDF, SHA512HKDF:
                     return !myEdwards.is25519();
                 default:
                     break;

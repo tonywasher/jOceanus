@@ -73,10 +73,7 @@ public class BouncyAgreementFactory
         switch (pSpec.getKeyPairSpec().getKeyPairType()) {
             case RSA:
                 return new BouncyRSAAgreementEngine(this, mySpec);
-            case EC:
-            case GOST:
-            case DSTU:
-            case SM2:
+            case EC, GOST, DSTU, SM2:
                 return getBCECEngine(mySpec);
             case DH:
                 return getBCDHEngine(mySpec);
@@ -120,23 +117,15 @@ public class BouncyAgreementFactory
      * @throws GordianException on error
      */
     private GordianCoreAgreementEngine getBCECEngine(final GordianCoreAgreementSpec pSpec) throws GordianException {
-        switch (pSpec.getAgreementType()) {
-            case KEM:
-                return new BouncyECIESAgreementEngine(this, pSpec);
-            case ANON:
-                return new BouncyECAnonAgreementEngine(this, pSpec);
-            case SIGNED:
-            case BASIC:
-                return new BouncyECBasicAgreementEngine(this, pSpec);
-            case MQV:
-                return new BouncyECMQVAgreementEngine(this, pSpec);
-            case UNIFIED:
-                return new BouncyECUnifiedAgreementEngine(this, pSpec);
-            case SM2:
-                return new BouncySM2AgreementEngine(this, pSpec);
-            default:
-                throw new GordianDataException(GordianBaseData.getInvalidText(pSpec));
-        }
+        return switch (pSpec.getAgreementType()) {
+            case KEM -> new BouncyECIESAgreementEngine(this, pSpec);
+            case ANON -> new BouncyECAnonAgreementEngine(this, pSpec);
+            case SIGNED, BASIC -> new BouncyECBasicAgreementEngine(this, pSpec);
+            case MQV -> new BouncyECMQVAgreementEngine(this, pSpec);
+            case UNIFIED -> new BouncyECUnifiedAgreementEngine(this, pSpec);
+            case SM2 -> new BouncySM2AgreementEngine(this, pSpec);
+            default -> throw new GordianDataException(GordianBaseData.getInvalidText(pSpec));
+        };
     }
 
     /**
@@ -147,19 +136,13 @@ public class BouncyAgreementFactory
      * @throws GordianException on error
      */
     private GordianCoreAgreementEngine getBCDHEngine(final GordianCoreAgreementSpec pSpec) throws GordianException {
-        switch (pSpec.getAgreementType()) {
-            case ANON:
-                return new BouncyDHAnonAgreementEngine(this, pSpec);
-            case SIGNED:
-            case BASIC:
-                return new BouncyDHBasicAgreementEngine(this, pSpec);
-            case MQV:
-                return new BouncyDHMQVAgreementEngine(this, pSpec);
-            case UNIFIED:
-                return new BouncyDHUnifiedAgreementEngine(this, pSpec);
-            default:
-                throw new GordianDataException(GordianBaseData.getInvalidText(pSpec));
-        }
+        return switch (pSpec.getAgreementType()) {
+            case ANON -> new BouncyDHAnonAgreementEngine(this, pSpec);
+            case SIGNED, BASIC -> new BouncyDHBasicAgreementEngine(this, pSpec);
+            case MQV -> new BouncyDHMQVAgreementEngine(this, pSpec);
+            case UNIFIED -> new BouncyDHUnifiedAgreementEngine(this, pSpec);
+            default -> throw new GordianDataException(GordianBaseData.getInvalidText(pSpec));
+        };
     }
 
     /**
@@ -170,16 +153,11 @@ public class BouncyAgreementFactory
      * @throws GordianException on error
      */
     private GordianCoreAgreementEngine getBCXDHEngine(final GordianCoreAgreementSpec pSpec) throws GordianException {
-        switch (pSpec.getAgreementType()) {
-            case ANON:
-                return new BouncyXDHAnonAgreementEngine(this, pSpec);
-            case SIGNED:
-            case BASIC:
-                return new BouncyXDHBasicAgreementEngine(this, pSpec);
-            case UNIFIED:
-                return new BouncyXDHUnifiedAgreementEngine(this, pSpec);
-            default:
-                throw new GordianDataException(GordianBaseData.getInvalidText(pSpec));
-        }
+        return switch (pSpec.getAgreementType()) {
+            case ANON -> new BouncyXDHAnonAgreementEngine(this, pSpec);
+            case SIGNED, BASIC -> new BouncyXDHBasicAgreementEngine(this, pSpec);
+            case UNIFIED -> new BouncyXDHUnifiedAgreementEngine(this, pSpec);
+            default -> throw new GordianDataException(GordianBaseData.getInvalidText(pSpec));
+        };
     }
 }

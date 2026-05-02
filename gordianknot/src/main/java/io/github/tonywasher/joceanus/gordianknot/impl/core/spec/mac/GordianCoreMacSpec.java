@@ -215,34 +215,17 @@ public class GordianCoreMacSpec
      * @return the Length
      */
     public GordianLength getMacLength() {
-        switch (theMacType.getType()) {
-            case HMAC:
-            case BLAKE2:
-            case BLAKE3:
-            case SKEIN:
-            case KUPYNA:
-            case KMAC:
-                return getDigestLength();
-            case GMAC:
-            case POLY1305:
-                return GordianLength.LEN_128;
-            case CMAC:
-            case KALYNA:
-                return getSymKeyBlockLength();
-            case CBCMAC:
-            case CFBMAC:
-                return getSymKeyHalfBlockLength();
-            case ZUC:
-                return (GordianLength) theSubSpec;
-            case VMPC:
-                return GordianLength.LEN_160;
-            case GOST:
-                return GordianLength.LEN_32;
-            case SIPHASH:
-                return ((GordianCoreSipHashType) theSubSpec).getOutLength();
-            default:
-                return GordianLength.LEN_64;
-        }
+        return switch (theMacType.getType()) {
+            case HMAC, BLAKE2, BLAKE3, SKEIN, KUPYNA, KMAC -> getDigestLength();
+            case GMAC, POLY1305 -> GordianLength.LEN_128;
+            case CMAC, KALYNA -> getSymKeyBlockLength();
+            case CBCMAC, CFBMAC -> getSymKeyHalfBlockLength();
+            case ZUC -> (GordianLength) theSubSpec;
+            case VMPC -> GordianLength.LEN_160;
+            case GOST -> GordianLength.LEN_32;
+            case SIPHASH -> ((GordianCoreSipHashType) theSubSpec).getOutLength();
+            default -> GordianLength.LEN_64;
+        };
     }
 
     /**
@@ -251,32 +234,22 @@ public class GordianCoreMacSpec
      * @return the IV Length
      */
     public int getIVLen() {
-        switch (theMacType.getType()) {
-            case VMPC:
-            case SKEIN:
-                return GordianLength.LEN_128.getByteLength();
-            case POLY1305:
-                return theSubSpec == null
-                        ? 0
-                        : GordianLength.LEN_128.getByteLength();
-            case BLAKE2:
-                return Objects.requireNonNull(getDigestState()).isBlake2bState()
-                        ? GordianLength.LEN_128.getByteLength()
-                        : GordianLength.LEN_64.getByteLength();
-            case GMAC:
-                return GordianLength.LEN_96.getByteLength();
-            case CBCMAC:
-            case CFBMAC:
-                return getSymKeyBlockByteLength();
-            case GOST:
-                return GordianLength.LEN_64.getByteLength();
-            case ZUC:
-                return GordianLength.LEN_128 == theKeyLength
-                        ? GordianLength.LEN_128.getByteLength()
-                        : GordianLength.LEN_200.getByteLength();
-            default:
-                return 0;
-        }
+        return switch (theMacType.getType()) {
+            case VMPC, SKEIN -> GordianLength.LEN_128.getByteLength();
+            case POLY1305 -> theSubSpec == null
+                    ? 0
+                    : GordianLength.LEN_128.getByteLength();
+            case BLAKE2 -> Objects.requireNonNull(getDigestState()).isBlake2bState()
+                    ? GordianLength.LEN_128.getByteLength()
+                    : GordianLength.LEN_64.getByteLength();
+            case GMAC -> GordianLength.LEN_96.getByteLength();
+            case CBCMAC, CFBMAC -> getSymKeyBlockByteLength();
+            case GOST -> GordianLength.LEN_64.getByteLength();
+            case ZUC -> GordianLength.LEN_128 == theKeyLength
+                    ? GordianLength.LEN_128.getByteLength()
+                    : GordianLength.LEN_200.getByteLength();
+            default -> 0;
+        };
     }
 
     /**
@@ -291,41 +264,24 @@ public class GordianCoreMacSpec
         }
 
         /* Switch on MacType */
-        switch (theMacType.getType()) {
-            case HMAC:
-                return checkDigestValidity(null);
-            case KUPYNA:
-                return checkDigestValidity(GordianDigestType.KUPYNA);
-            case SKEIN:
-                return checkDigestValidity(GordianDigestType.SKEIN);
-            case BLAKE2:
-                return checkBlake2Validity();
-            case BLAKE3:
-                return checkDigestValidity(GordianDigestType.BLAKE3);
-            case KALYNA:
-                return checkSymKeyValidity(GordianSymKeyType.KALYNA);
-            case KMAC:
-                return checkKMACValidity();
-            case CMAC:
-            case GMAC:
-            case CBCMAC:
-            case CFBMAC:
-                return checkSymKeyValidity(null);
-            case POLY1305:
-                return checkPoly1305Validity();
-            case ZUC:
-                return checkZucValidity();
-            case SIPHASH:
-                return theSubSpec instanceof GordianCoreSipHashType
-                        && theKeyLength == GordianLength.LEN_128;
-            case GOST:
-                return theSubSpec == null
-                        && theKeyLength == GordianLength.LEN_256;
-            case VMPC:
-                return theSubSpec == null;
-            default:
-                return false;
-        }
+        return switch (theMacType.getType()) {
+            case HMAC -> checkDigestValidity(null);
+            case KUPYNA -> checkDigestValidity(GordianDigestType.KUPYNA);
+            case SKEIN -> checkDigestValidity(GordianDigestType.SKEIN);
+            case BLAKE2 -> checkBlake2Validity();
+            case BLAKE3 -> checkDigestValidity(GordianDigestType.BLAKE3);
+            case KALYNA -> checkSymKeyValidity(GordianSymKeyType.KALYNA);
+            case KMAC -> checkKMACValidity();
+            case CMAC, GMAC, CBCMAC, CFBMAC -> checkSymKeyValidity(null);
+            case POLY1305 -> checkPoly1305Validity();
+            case ZUC -> checkZucValidity();
+            case SIPHASH -> theSubSpec instanceof GordianCoreSipHashType
+                    && theKeyLength == GordianLength.LEN_128;
+            case GOST -> theSubSpec == null
+                    && theKeyLength == GordianLength.LEN_256;
+            case VMPC -> theSubSpec == null;
+            default -> false;
+        };
     }
 
     /**
@@ -447,16 +403,13 @@ public class GordianCoreMacSpec
      * @return valid true/false
      */
     private boolean checkZucValidity() {
-        switch (theKeyLength) {
-            case LEN_128:
-                return GordianLength.LEN_32 == theSubSpec;
-            case LEN_256:
-                return GordianLength.LEN_32 == theSubSpec
-                        || GordianLength.LEN_64 == theSubSpec
-                        || GordianLength.LEN_128 == theSubSpec;
-            default:
-                return false;
-        }
+        return switch (theKeyLength) {
+            case LEN_128 -> GordianLength.LEN_32 == theSubSpec;
+            case LEN_256 -> GordianLength.LEN_32 == theSubSpec
+                    || GordianLength.LEN_64 == theSubSpec
+                    || GordianLength.LEN_128 == theSubSpec;
+            default -> false;
+        };
     }
 
     /**
@@ -465,16 +418,11 @@ public class GordianCoreMacSpec
      * @return true/false
      */
     public boolean isXof() {
-        switch (theMacType.getType()) {
-            case KMAC:
-            case BLAKE3:
-                return true;
-            case BLAKE2:
-            case SKEIN:
-                return Objects.requireNonNull(getDigestSpec()).isXof();
-            default:
-                return false;
-        }
+        return switch (theMacType.getType()) {
+            case KMAC, BLAKE3 -> true;
+            case BLAKE2, SKEIN -> Objects.requireNonNull(getDigestSpec()).isXof();
+            default -> false;
+        };
     }
 
     @Override
@@ -497,10 +445,7 @@ public class GordianCoreMacSpec
                 case POLY1305:
                     theName += theSubSpec == null ? "" : GordianSpecConstants.SEP + getSymKeyType();
                     break;
-                case GMAC:
-                case CMAC:
-                case CFBMAC:
-                case CBCMAC:
+                case GMAC, CMAC, CFBMAC, CBCMAC:
                     theName += GordianSpecConstants.SEP + theSubSpec.toString();
                     break;
                 case KALYNA:
@@ -521,8 +466,7 @@ public class GordianCoreMacSpec
                             + (isSkeinXof ? "" : GordianSpecConstants.SEP + getDigestLength())
                             + GordianSpecConstants.SEP + theKeyLength;
                     break;
-                case HMAC:
-                case ZUC:
+                case HMAC, ZUC:
                     theName += theSubSpec.toString() + GordianSpecConstants.SEP + theKeyLength;
                     break;
                 case BLAKE2:

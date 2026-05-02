@@ -188,18 +188,13 @@ public class GordianCoreXMSSSpec
      */
     public GordianDigestSpec getDigestSpec() {
         final GordianDigestSpecBuilder myBuilder = GordianCoreDigestSpecBuilder.newInstance();
-        switch (theDigestType) {
-            case SHA256:
-                return myBuilder.sha2(GordianLength.LEN_256);
-            case SHA512:
-                return myBuilder.sha2(GordianLength.LEN_512);
-            case SHAKE128:
-                return myBuilder.shake128();
-            case SHAKE256:
-                return myBuilder.shake256();
-            default:
-                throw new IllegalStateException();
-        }
+        return switch (theDigestType) {
+            case SHA256 -> myBuilder.sha2(GordianLength.LEN_256);
+            case SHA512 -> myBuilder.sha2(GordianLength.LEN_512);
+            case SHAKE128 -> myBuilder.shake128();
+            case SHAKE256 -> myBuilder.shake256();
+            default -> throw new IllegalStateException();
+        };
     }
 
     @Override
@@ -350,16 +345,11 @@ public class GordianCoreXMSSSpec
          * @return true/false
          */
         boolean validForKeyType(final GordianXMSSKeyType pKeyType) {
-            switch (theHeight) {
-                case H10:
-                case H16:
-                    return pKeyType == GordianXMSSKeyType.XMSS;
-                case H40:
-                case H60:
-                    return pKeyType == GordianXMSSKeyType.XMSSMT;
-                default:
-                    return true;
-            }
+            return switch (theHeight) {
+                case H10, H16 -> pKeyType == GordianXMSSKeyType.XMSS;
+                case H40, H60 -> pKeyType == GordianXMSSKeyType.XMSSMT;
+                default -> true;
+            };
         }
 
         /**
@@ -386,19 +376,15 @@ public class GordianCoreXMSSSpec
          * @return the height
          */
         private GordianXMSSMTLayers[] getValidLayers() {
-            switch (theHeight) {
-                case H10:
-                case H16:
-                    return new GordianXMSSMTLayers[]{};
-                case H20:
-                    return new GordianXMSSMTLayers[]{GordianXMSSMTLayers.L2, GordianXMSSMTLayers.L4};
-                case H40:
-                    return new GordianXMSSMTLayers[]{GordianXMSSMTLayers.L2, GordianXMSSMTLayers.L4, GordianXMSSMTLayers.L8};
-                case H60:
-                    return new GordianXMSSMTLayers[]{GordianXMSSMTLayers.L3, GordianXMSSMTLayers.L6, GordianXMSSMTLayers.L12};
-                default:
-                    throw new IllegalArgumentException();
-            }
+            return switch (theHeight) {
+                case H10, H16 -> new GordianXMSSMTLayers[]{};
+                case H20 -> new GordianXMSSMTLayers[]{GordianXMSSMTLayers.L2, GordianXMSSMTLayers.L4};
+                case H40 ->
+                        new GordianXMSSMTLayers[]{GordianXMSSMTLayers.L2, GordianXMSSMTLayers.L4, GordianXMSSMTLayers.L8};
+                case H60 ->
+                        new GordianXMSSMTLayers[]{GordianXMSSMTLayers.L3, GordianXMSSMTLayers.L6, GordianXMSSMTLayers.L12};
+                default -> throw new IllegalArgumentException();
+            };
         }
 
         /**
@@ -408,16 +394,11 @@ public class GordianCoreXMSSSpec
          * @return true/false.
          */
         public boolean isHigh(final GordianXMSSKeyType pKeyType) {
-            switch (theHeight) {
-                case H16:
-                case H20:
-                    return pKeyType == GordianXMSSKeyType.XMSS;
-                case H40:
-                case H60:
-                    return true;
-                default:
-                    return false;
-            }
+            return switch (theHeight) {
+                case H16, H20 -> pKeyType == GordianXMSSKeyType.XMSS;
+                case H40, H60 -> true;
+                default -> false;
+            };
         }
 
         @Override

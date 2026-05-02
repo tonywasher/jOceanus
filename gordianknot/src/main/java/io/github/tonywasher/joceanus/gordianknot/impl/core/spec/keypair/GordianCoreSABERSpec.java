@@ -69,28 +69,18 @@ public final class GordianCoreSABERSpec {
      * @return the parameters.
      */
     public SABERParameters getParameters() {
-        switch (theSpec) {
-            case LIGHT128:
-                return SABERParameters.lightsaberkem128r3;
-            case BASE128:
-                return SABERParameters.saberkem128r3;
-            case FIRE128:
-                return SABERParameters.firesaberkem128r3;
-            case LIGHT192:
-                return SABERParameters.lightsaberkem192r3;
-            case BASE192:
-                return SABERParameters.saberkem192r3;
-            case FIRE192:
-                return SABERParameters.firesaberkem192r3;
-            case LIGHT256:
-                return SABERParameters.lightsaberkem256r3;
-            case BASE256:
-                return SABERParameters.saberkem256r3;
-            case FIRE256:
-                return SABERParameters.firesaberkem256r3;
-            default:
-                throw new IllegalArgumentException();
-        }
+        return switch (theSpec) {
+            case LIGHT128 -> SABERParameters.lightsaberkem128r3;
+            case BASE128 -> SABERParameters.saberkem128r3;
+            case FIRE128 -> SABERParameters.firesaberkem128r3;
+            case LIGHT192 -> SABERParameters.lightsaberkem192r3;
+            case BASE192 -> SABERParameters.saberkem192r3;
+            case FIRE192 -> SABERParameters.firesaberkem192r3;
+            case LIGHT256 -> SABERParameters.lightsaberkem256r3;
+            case BASE256 -> SABERParameters.saberkem256r3;
+            case FIRE256 -> SABERParameters.firesaberkem256r3;
+            default -> throw new IllegalArgumentException();
+        };
     }
 
     /**
@@ -99,28 +89,18 @@ public final class GordianCoreSABERSpec {
      * @return the parameters.
      */
     public SABERParameterSpec getParameterSpec() {
-        switch (theSpec) {
-            case LIGHT128:
-                return SABERParameterSpec.lightsaberkem128r3;
-            case BASE128:
-                return SABERParameterSpec.saberkem128r3;
-            case FIRE128:
-                return SABERParameterSpec.firesaberkem128r3;
-            case LIGHT192:
-                return SABERParameterSpec.lightsaberkem192r3;
-            case BASE192:
-                return SABERParameterSpec.saberkem192r3;
-            case FIRE192:
-                return SABERParameterSpec.firesaberkem192r3;
-            case LIGHT256:
-                return SABERParameterSpec.lightsaberkem256r3;
-            case BASE256:
-                return SABERParameterSpec.saberkem256r3;
-            case FIRE256:
-                return SABERParameterSpec.firesaberkem256r3;
-            default:
-                throw new IllegalArgumentException();
-        }
+        return switch (theSpec) {
+            case LIGHT128 -> SABERParameterSpec.lightsaberkem128r3;
+            case BASE128 -> SABERParameterSpec.saberkem128r3;
+            case FIRE128 -> SABERParameterSpec.firesaberkem128r3;
+            case LIGHT192 -> SABERParameterSpec.lightsaberkem192r3;
+            case BASE192 -> SABERParameterSpec.saberkem192r3;
+            case FIRE192 -> SABERParameterSpec.firesaberkem192r3;
+            case LIGHT256 -> SABERParameterSpec.lightsaberkem256r3;
+            case BASE256 -> SABERParameterSpec.saberkem256r3;
+            case FIRE256 -> SABERParameterSpec.firesaberkem256r3;
+            default -> throw new IllegalArgumentException();
+        };
     }
 
     /**
@@ -129,28 +109,18 @@ public final class GordianCoreSABERSpec {
      * @return the identifier.
      */
     public ASN1ObjectIdentifier getIdentifier() {
-        switch (theSpec) {
-            case LIGHT128:
-                return BCObjectIdentifiers.lightsaberkem128r3;
-            case BASE128:
-                return BCObjectIdentifiers.saberkem128r3;
-            case FIRE128:
-                return BCObjectIdentifiers.firesaberkem128r3;
-            case LIGHT192:
-                return BCObjectIdentifiers.lightsaberkem192r3;
-            case BASE192:
-                return BCObjectIdentifiers.saberkem192r3;
-            case FIRE192:
-                return BCObjectIdentifiers.firesaberkem192r3;
-            case LIGHT256:
-                return BCObjectIdentifiers.lightsaberkem256r3;
-            case BASE256:
-                return BCObjectIdentifiers.saberkem256r3;
-            case FIRE256:
-                return BCObjectIdentifiers.firesaberkem256r3;
-            default:
-                throw new IllegalArgumentException();
-        }
+        return switch (theSpec) {
+            case LIGHT128 -> BCObjectIdentifiers.lightsaberkem128r3;
+            case BASE128 -> BCObjectIdentifiers.saberkem128r3;
+            case FIRE128 -> BCObjectIdentifiers.firesaberkem128r3;
+            case LIGHT192 -> BCObjectIdentifiers.lightsaberkem192r3;
+            case BASE192 -> BCObjectIdentifiers.saberkem192r3;
+            case FIRE192 -> BCObjectIdentifiers.firesaberkem192r3;
+            case LIGHT256 -> BCObjectIdentifiers.lightsaberkem256r3;
+            case BASE256 -> BCObjectIdentifiers.saberkem256r3;
+            case FIRE256 -> BCObjectIdentifiers.firesaberkem256r3;
+            default -> throw new IllegalArgumentException();
+        };
     }
 
     @Override

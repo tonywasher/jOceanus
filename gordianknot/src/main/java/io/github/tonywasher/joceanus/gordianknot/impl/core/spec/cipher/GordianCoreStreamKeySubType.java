@@ -52,28 +52,18 @@ public final class GordianCoreStreamKeySubType {
      */
     static GordianStreamKeySubType defaultSubKeyType(final GordianStreamKeyType pKeyType) {
         /* Switch on keyType */
-        switch (pKeyType) {
-            case SALSA20:
-                return GordianSalsa20Key.STD;
-            case CHACHA20:
-                return GordianChaCha20Key.STD;
-            case VMPC:
-                return GordianVMPCKey.STD;
-            case SKEINXOF:
-                return GordianSkeinXofKey.STATE1024;
-            case BLAKE2XOF:
-                return GordianBlakeXofKey.BLAKE2XB;
-            case ELEPHANT:
-                return GordianElephantKey.ELEPHANT160;
-            case ISAP:
-                return GordianISAPKey.ISAPA128;
-            case ROMULUS:
-                return GordianRomulusKey.ROMULUS_M;
-            case SPARKLE:
-                return GordianSparkleKey.SPARKLE128_128;
-            default:
-                return null;
-        }
+        return switch (pKeyType) {
+            case SALSA20 -> GordianSalsa20Key.STD;
+            case CHACHA20 -> GordianChaCha20Key.STD;
+            case VMPC -> GordianVMPCKey.STD;
+            case SKEINXOF -> GordianSkeinXofKey.STATE1024;
+            case BLAKE2XOF -> GordianBlakeXofKey.BLAKE2XB;
+            case ELEPHANT -> GordianElephantKey.ELEPHANT160;
+            case ISAP -> GordianISAPKey.ISAPA128;
+            case ROMULUS -> GordianRomulusKey.ROMULUS_M;
+            case SPARKLE -> GordianSparkleKey.SPARKLE128_128;
+            default -> null;
+        };
     }
 
     /**
@@ -85,20 +75,14 @@ public final class GordianCoreStreamKeySubType {
      */
     static String toSubTypeString(final GordianStreamKeyType pKeyType,
                                   final GordianStreamKeySubType pSubType) {
-        switch (pKeyType) {
-            case BLAKE2XOF:
-                return toBlake2String(pSubType);
-            case ELEPHANT:
-                return toElephantString(pSubType);
-            case ISAP:
-                return toISAPString(pSubType);
-            case ROMULUS:
-                return toRomulusString(pSubType);
-            case SPARKLE:
-                return toSparkleString(pSubType);
-            default:
-                throw new IllegalArgumentException();
-        }
+        return switch (pKeyType) {
+            case BLAKE2XOF -> toBlake2String(pSubType);
+            case ELEPHANT -> toElephantString(pSubType);
+            case ISAP -> toISAPString(pSubType);
+            case ROMULUS -> toRomulusString(pSubType);
+            case SPARKLE -> toSparkleString(pSubType);
+            default -> throw new IllegalArgumentException();
+        };
     }
 
     /**
@@ -108,13 +92,10 @@ public final class GordianCoreStreamKeySubType {
      * @return the ivLength
      */
     static GordianLength requiredSalsaIVLength(final GordianSalsa20Key pType) {
-        switch (pType) {
-            case STD:
-                return GordianLength.LEN_64;
-            case XSALSA:
-            default:
-                return GordianLength.LEN_192;
-        }
+        return switch (pType) {
+            case STD -> GordianLength.LEN_64;
+            default -> GordianLength.LEN_192;
+        };
     }
 
     /**
@@ -124,15 +105,11 @@ public final class GordianCoreStreamKeySubType {
      * @return the ivLength
      */
     static GordianLength requiredChaChaIVLength(final GordianChaCha20Key pType) {
-        switch (pType) {
-            case STD:
-                return GordianLength.LEN_64;
-            case ISO7539:
-                return GordianLength.LEN_96;
-            case XCHACHA:
-            default:
-                return GordianLength.LEN_192;
-        }
+        return switch (pType) {
+            case STD -> GordianLength.LEN_64;
+            case ISO7539 -> GordianLength.LEN_96;
+            default -> GordianLength.LEN_192;
+        };
     }
 
     /**
@@ -142,16 +119,12 @@ public final class GordianCoreStreamKeySubType {
      * @return the length
      */
     public static GordianLength getLengthForSkeinXofKey(final GordianSkeinXofKey pKey) {
-        switch (pKey) {
-            case STATE256:
-                return GordianLength.LEN_256;
-            case STATE512:
-                return GordianLength.LEN_512;
-            case STATE1024:
-                return GordianLength.LEN_1024;
-            default:
-                throw new IllegalArgumentException();
-        }
+        return switch (pKey) {
+            case STATE256 -> GordianLength.LEN_256;
+            case STATE512 -> GordianLength.LEN_512;
+            case STATE1024 -> GordianLength.LEN_1024;
+            default -> throw new IllegalArgumentException();
+        };
     }
 
     /**
@@ -161,16 +134,12 @@ public final class GordianCoreStreamKeySubType {
      * @return the subKeyType
      */
     public static GordianSkeinXofKey getSkeinXofKeyForLength(final GordianLength pLength) {
-        switch (pLength) {
-            case LEN_256:
-                return GordianSkeinXofKey.STATE256;
-            case LEN_512:
-                return GordianSkeinXofKey.STATE512;
-            case LEN_1024:
-                return GordianSkeinXofKey.STATE1024;
-            default:
-                throw new IllegalArgumentException();
-        }
+        return switch (pLength) {
+            case LEN_256 -> GordianSkeinXofKey.STATE256;
+            case LEN_512 -> GordianSkeinXofKey.STATE512;
+            case LEN_1024 -> GordianSkeinXofKey.STATE1024;
+            default -> throw new IllegalArgumentException();
+        };
     }
 
     /**
@@ -190,13 +159,10 @@ public final class GordianCoreStreamKeySubType {
      * @return the ivLength
      */
     static GordianLength requiredBlakeIVLength(final GordianBlakeXofKey pType) {
-        switch (pType) {
-            case BLAKE2XS:
-                return GordianLength.LEN_64;
-            case BLAKE2XB:
-            default:
-                return GordianLength.LEN_128;
-        }
+        return switch (pType) {
+            case BLAKE2XS -> GordianLength.LEN_64;
+            default -> GordianLength.LEN_128;
+        };
     }
 
     /**
@@ -207,15 +173,11 @@ public final class GordianCoreStreamKeySubType {
      */
     private static String toElephantString(final GordianStreamKeySubType pType) {
         final String myBase = GordianStreamKeyType.ELEPHANT.toString();
-        switch ((GordianElephantKey) pType) {
-            case ELEPHANT160:
-                return myBase + "160";
-            case ELEPHANT176:
-                return myBase + "176";
-            case ELEPHANT200:
-            default:
-                return myBase + "200";
-        }
+        return switch ((GordianElephantKey) pType) {
+            case ELEPHANT160 -> myBase + "160";
+            case ELEPHANT176 -> myBase + "176";
+            default -> myBase + "200";
+        };
     }
 
     /**
@@ -225,15 +187,11 @@ public final class GordianCoreStreamKeySubType {
      * @return the parameters
      */
     public static ElephantParameters getParameters(final GordianElephantKey pType) {
-        switch (pType) {
-            case ELEPHANT160:
-                return ElephantParameters.elephant160;
-            case ELEPHANT176:
-                return ElephantParameters.elephant176;
-            case ELEPHANT200:
-            default:
-                return ElephantParameters.elephant200;
-        }
+        return switch (pType) {
+            case ELEPHANT160 -> ElephantParameters.elephant160;
+            case ELEPHANT176 -> ElephantParameters.elephant176;
+            default -> ElephantParameters.elephant200;
+        };
     }
 
     /**
@@ -244,17 +202,12 @@ public final class GordianCoreStreamKeySubType {
      */
     private static String toISAPString(final GordianStreamKeySubType pType) {
         final String myBase = GordianStreamKeyType.ISAP.toString();
-        switch ((GordianISAPKey) pType) {
-            case ISAPA128:
-                return myBase + "A128";
-            case ISAPA128A:
-                return myBase + "A128A";
-            case ISAPK128:
-                return myBase + "K128";
-            case ISAPK128A:
-            default:
-                return myBase + "K128A";
-        }
+        return switch ((GordianISAPKey) pType) {
+            case ISAPA128 -> myBase + "A128";
+            case ISAPA128A -> myBase + "A128A";
+            case ISAPK128 -> myBase + "K128";
+            default -> myBase + "K128A";
+        };
     }
 
     /**
@@ -264,17 +217,12 @@ public final class GordianCoreStreamKeySubType {
      * @return the type
      */
     public static IsapType getISAPType(final GordianISAPKey pType) {
-        switch (pType) {
-            case ISAPA128:
-                return IsapType.ISAP_A_128;
-            case ISAPA128A:
-                return IsapType.ISAP_A_128A;
-            case ISAPK128:
-                return IsapType.ISAP_K_128;
-            case ISAPK128A:
-            default:
-                return IsapType.ISAP_K_128A;
-        }
+        return switch (pType) {
+            case ISAPA128 -> IsapType.ISAP_A_128;
+            case ISAPA128A -> IsapType.ISAP_A_128A;
+            case ISAPK128 -> IsapType.ISAP_K_128;
+            default -> IsapType.ISAP_K_128A;
+        };
     }
 
     /**
@@ -285,15 +233,11 @@ public final class GordianCoreStreamKeySubType {
      */
     private static String toRomulusString(final GordianStreamKeySubType pType) {
         final String myBase = GordianStreamKeyType.ROMULUS.toString();
-        switch ((GordianRomulusKey) pType) {
-            case ROMULUS_M:
-                return myBase + "-M";
-            case ROMULUS_N:
-                return myBase + "-N";
-            case ROMULUS_T:
-            default:
-                return myBase + "-T";
-        }
+        return switch ((GordianRomulusKey) pType) {
+            case ROMULUS_M -> myBase + "-M";
+            case ROMULUS_N -> myBase + "-N";
+            default -> myBase + "-T";
+        };
     }
 
     /**
@@ -303,15 +247,11 @@ public final class GordianCoreStreamKeySubType {
      * @return the parameters
      */
     public static RomulusParameters getParameters(final GordianRomulusKey pType) {
-        switch (pType) {
-            case ROMULUS_M:
-                return RomulusParameters.RomulusM;
-            case ROMULUS_N:
-                return RomulusParameters.RomulusN;
-            case ROMULUS_T:
-            default:
-                return RomulusParameters.RomulusT;
-        }
+        return switch (pType) {
+            case ROMULUS_M -> RomulusParameters.RomulusM;
+            case ROMULUS_N -> RomulusParameters.RomulusN;
+            default -> RomulusParameters.RomulusT;
+        };
     }
 
     /**
@@ -322,17 +262,12 @@ public final class GordianCoreStreamKeySubType {
      */
     private static String toSparkleString(final GordianStreamKeySubType pType) {
         final String myBase = GordianStreamKeyType.SPARKLE.toString();
-        switch ((GordianSparkleKey) pType) {
-            case SPARKLE128_128:
-                return myBase + "128_128";
-            case SPARKLE256_128:
-                return myBase + "256_128";
-            case SPARKLE192_192:
-                return myBase + "192_192";
-            case SPARKLE256_256:
-            default:
-                return myBase + "256_256";
-        }
+        return switch ((GordianSparkleKey) pType) {
+            case SPARKLE128_128 -> myBase + "128_128";
+            case SPARKLE256_128 -> myBase + "256_128";
+            case SPARKLE192_192 -> myBase + "192_192";
+            default -> myBase + "256_256";
+        };
     }
 
     /**
@@ -342,16 +277,11 @@ public final class GordianCoreStreamKeySubType {
      * @return the keyLength
      */
     static GordianLength requiredSparkleKeyLength(final GordianSparkleKey pType) {
-        switch (pType) {
-            case SPARKLE128_128:
-            case SPARKLE256_128:
-                return GordianLength.LEN_128;
-            case SPARKLE192_192:
-                return GordianLength.LEN_192;
-            case SPARKLE256_256:
-            default:
-                return GordianLength.LEN_256;
-        }
+        return switch (pType) {
+            case SPARKLE128_128, SPARKLE256_128 -> GordianLength.LEN_128;
+            case SPARKLE192_192 -> GordianLength.LEN_192;
+            default -> GordianLength.LEN_256;
+        };
     }
 
     /**
@@ -361,16 +291,11 @@ public final class GordianCoreStreamKeySubType {
      * @return the ivLength
      */
     static GordianLength requiredSparkleIVLength(final GordianSparkleKey pType) {
-        switch (pType) {
-            case SPARKLE128_128:
-                return GordianLength.LEN_128;
-            case SPARKLE192_192:
-                return GordianLength.LEN_192;
-            case SPARKLE256_128:
-            case SPARKLE256_256:
-            default:
-                return GordianLength.LEN_256;
-        }
+        return switch (pType) {
+            case SPARKLE128_128 -> GordianLength.LEN_128;
+            case SPARKLE192_192 -> GordianLength.LEN_192;
+            default -> GordianLength.LEN_256;
+        };
     }
 
     /**
@@ -380,16 +305,11 @@ public final class GordianCoreStreamKeySubType {
      * @return the parameters
      */
     public static SparkleParameters getParameters(final GordianSparkleKey pType) {
-        switch (pType) {
-            case SPARKLE128_128:
-                return SparkleParameters.SCHWAEMM128_128;
-            case SPARKLE256_128:
-                return SparkleParameters.SCHWAEMM256_128;
-            case SPARKLE192_192:
-                return SparkleParameters.SCHWAEMM192_192;
-            case SPARKLE256_256:
-            default:
-                return SparkleParameters.SCHWAEMM256_256;
-        }
+        return switch (pType) {
+            case SPARKLE128_128 -> SparkleParameters.SCHWAEMM128_128;
+            case SPARKLE256_128 -> SparkleParameters.SCHWAEMM256_128;
+            case SPARKLE192_192 -> SparkleParameters.SCHWAEMM192_192;
+            default -> SparkleParameters.SCHWAEMM256_256;
+        };
     }
 }

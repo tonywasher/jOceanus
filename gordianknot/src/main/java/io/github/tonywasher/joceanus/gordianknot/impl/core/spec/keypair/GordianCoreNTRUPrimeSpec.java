@@ -212,22 +212,15 @@ public class GordianCoreNTRUPrimeSpec
          * @return the parameters.
          */
         public NTRULPRimeParameters getNTRULParameters() {
-            switch (theParams) {
-                case PR653:
-                    return NTRULPRimeParameters.ntrulpr653;
-                case PR761:
-                    return NTRULPRimeParameters.ntrulpr761;
-                case PR857:
-                    return NTRULPRimeParameters.ntrulpr857;
-                case PR953:
-                    return NTRULPRimeParameters.ntrulpr953;
-                case PR1013:
-                    return NTRULPRimeParameters.ntrulpr1013;
-                case PR1277:
-                    return NTRULPRimeParameters.ntrulpr1277;
-                default:
-                    throw new IllegalArgumentException();
-            }
+            return switch (theParams) {
+                case PR653 -> NTRULPRimeParameters.ntrulpr653;
+                case PR761 -> NTRULPRimeParameters.ntrulpr761;
+                case PR857 -> NTRULPRimeParameters.ntrulpr857;
+                case PR953 -> NTRULPRimeParameters.ntrulpr953;
+                case PR1013 -> NTRULPRimeParameters.ntrulpr1013;
+                case PR1277 -> NTRULPRimeParameters.ntrulpr1277;
+                default -> throw new IllegalArgumentException();
+            };
         }
 
         /**
@@ -236,22 +229,15 @@ public class GordianCoreNTRUPrimeSpec
          * @return the parameters.
          */
         public NTRULPRimeParameterSpec getNTRULParameterSpec() {
-            switch (theParams) {
-                case PR653:
-                    return NTRULPRimeParameterSpec.ntrulpr653;
-                case PR761:
-                    return NTRULPRimeParameterSpec.ntrulpr761;
-                case PR857:
-                    return NTRULPRimeParameterSpec.ntrulpr857;
-                case PR953:
-                    return NTRULPRimeParameterSpec.ntrulpr953;
-                case PR1013:
-                    return NTRULPRimeParameterSpec.ntrulpr1013;
-                case PR1277:
-                    return NTRULPRimeParameterSpec.ntrulpr1277;
-                default:
-                    throw new IllegalArgumentException();
-            }
+            return switch (theParams) {
+                case PR653 -> NTRULPRimeParameterSpec.ntrulpr653;
+                case PR761 -> NTRULPRimeParameterSpec.ntrulpr761;
+                case PR857 -> NTRULPRimeParameterSpec.ntrulpr857;
+                case PR953 -> NTRULPRimeParameterSpec.ntrulpr953;
+                case PR1013 -> NTRULPRimeParameterSpec.ntrulpr1013;
+                case PR1277 -> NTRULPRimeParameterSpec.ntrulpr1277;
+                default -> throw new IllegalArgumentException();
+            };
         }
 
         /**
@@ -260,22 +246,15 @@ public class GordianCoreNTRUPrimeSpec
          * @return the identifier.
          */
         public ASN1ObjectIdentifier getNTRULIdentifier() {
-            switch (theParams) {
-                case PR653:
-                    return BCObjectIdentifiers.ntrulpr653;
-                case PR761:
-                    return BCObjectIdentifiers.ntrulpr761;
-                case PR857:
-                    return BCObjectIdentifiers.ntrulpr857;
-                case PR953:
-                    return BCObjectIdentifiers.ntrulpr953;
-                case PR1013:
-                    return BCObjectIdentifiers.ntrulpr1013;
-                case PR1277:
-                    return BCObjectIdentifiers.ntrulpr1277;
-                default:
-                    throw new IllegalArgumentException();
-            }
+            return switch (theParams) {
+                case PR653 -> BCObjectIdentifiers.ntrulpr653;
+                case PR761 -> BCObjectIdentifiers.ntrulpr761;
+                case PR857 -> BCObjectIdentifiers.ntrulpr857;
+                case PR953 -> BCObjectIdentifiers.ntrulpr953;
+                case PR1013 -> BCObjectIdentifiers.ntrulpr1013;
+                case PR1277 -> BCObjectIdentifiers.ntrulpr1277;
+                default -> throw new IllegalArgumentException();
+            };
         }
 
         /**
@@ -284,22 +263,15 @@ public class GordianCoreNTRUPrimeSpec
          * @return the parameters.
          */
         public SNTRUPrimeParameters getSNTRUParameters() {
-            switch (theParams) {
-                case PR653:
-                    return SNTRUPrimeParameters.sntrup653;
-                case PR761:
-                    return SNTRUPrimeParameters.sntrup761;
-                case PR857:
-                    return SNTRUPrimeParameters.sntrup857;
-                case PR953:
-                    return SNTRUPrimeParameters.sntrup953;
-                case PR1013:
-                    return SNTRUPrimeParameters.sntrup1013;
-                case PR1277:
-                    return SNTRUPrimeParameters.sntrup1277;
-                default:
-                    throw new IllegalArgumentException();
-            }
+            return switch (theParams) {
+                case PR653 -> SNTRUPrimeParameters.sntrup653;
+                case PR761 -> SNTRUPrimeParameters.sntrup761;
+                case PR857 -> SNTRUPrimeParameters.sntrup857;
+                case PR953 -> SNTRUPrimeParameters.sntrup953;
+                case PR1013 -> SNTRUPrimeParameters.sntrup1013;
+                case PR1277 -> SNTRUPrimeParameters.sntrup1277;
+                default -> throw new IllegalArgumentException();
+            };
         }
 
         /**
@@ -308,22 +280,15 @@ public class GordianCoreNTRUPrimeSpec
          * @return the parameters.
          */
         public SNTRUPrimeParameterSpec getSNTRUParameterSpec() {
-            switch (theParams) {
-                case PR653:
-                    return SNTRUPrimeParameterSpec.sntrup653;
-                case PR761:
-                    return SNTRUPrimeParameterSpec.sntrup761;
-                case PR857:
-                    return SNTRUPrimeParameterSpec.sntrup857;
-                case PR953:
-                    return SNTRUPrimeParameterSpec.sntrup953;
-                case PR1013:
-                    return SNTRUPrimeParameterSpec.sntrup1013;
-                case PR1277:
-                    return SNTRUPrimeParameterSpec.sntrup1277;
-                default:
-                    throw new IllegalArgumentException();
-            }
+            return switch (theParams) {
+                case PR653 -> SNTRUPrimeParameterSpec.sntrup653;
+                case PR761 -> SNTRUPrimeParameterSpec.sntrup761;
+                case PR857 -> SNTRUPrimeParameterSpec.sntrup857;
+                case PR953 -> SNTRUPrimeParameterSpec.sntrup953;
+                case PR1013 -> SNTRUPrimeParameterSpec.sntrup1013;
+                case PR1277 -> SNTRUPrimeParameterSpec.sntrup1277;
+                default -> throw new IllegalArgumentException();
+            };
         }
 
         /**
@@ -332,22 +297,15 @@ public class GordianCoreNTRUPrimeSpec
          * @return the identifier.
          */
         public ASN1ObjectIdentifier getSNTRUIdentifier() {
-            switch (theParams) {
-                case PR653:
-                    return BCObjectIdentifiers.sntrup653;
-                case PR761:
-                    return BCObjectIdentifiers.sntrup761;
-                case PR857:
-                    return BCObjectIdentifiers.sntrup857;
-                case PR953:
-                    return BCObjectIdentifiers.sntrup953;
-                case PR1013:
-                    return BCObjectIdentifiers.sntrup1013;
-                case PR1277:
-                    return BCObjectIdentifiers.sntrup1277;
-                default:
-                    throw new IllegalArgumentException();
-            }
+            return switch (theParams) {
+                case PR653 -> BCObjectIdentifiers.sntrup653;
+                case PR761 -> BCObjectIdentifiers.sntrup761;
+                case PR857 -> BCObjectIdentifiers.sntrup857;
+                case PR953 -> BCObjectIdentifiers.sntrup953;
+                case PR1013 -> BCObjectIdentifiers.sntrup1013;
+                case PR1277 -> BCObjectIdentifiers.sntrup1277;
+                default -> throw new IllegalArgumentException();
+            };
         }
 
         @Override

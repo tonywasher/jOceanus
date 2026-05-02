@@ -173,14 +173,10 @@ public final class GordianCoreDigestType {
      * @return true/false
      */
     public boolean isXof() {
-        switch (theType) {
-            case SHAKE:
-            case KANGAROO:
-            case BLAKE3:
-                return true;
-            default:
-                return false;
-        }
+        return switch (theType) {
+            case SHAKE, KANGAROO, BLAKE3 -> true;
+            default -> false;
+        };
     }
 
     /**
@@ -191,66 +187,37 @@ public final class GordianCoreDigestType {
      */
     private static GordianBundleId bundleIdForDigestType(final GordianDigestType pType) {
         /* Create the map and return it */
-        switch (pType) {
-            case SHA2:
-                return GordianDigestResource.DIGEST_SHA2;
-            case TIGER:
-                return GordianDigestResource.DIGEST_TIGER;
-            case WHIRLPOOL:
-                return GordianDigestResource.DIGEST_WHIRLPOOL;
-            case RIPEMD:
-                return GordianDigestResource.DIGEST_RIPEMD;
-            case STREEBOG:
-                return GordianDigestResource.DIGEST_STREEBOG;
-            case GOST:
-                return GordianDigestResource.DIGEST_GOST;
-            case SHA3:
-                return GordianDigestResource.DIGEST_SHA3;
-            case SHAKE:
-                return GordianDigestResource.DIGEST_SHAKE;
-            case SKEIN:
-                return GordianDigestResource.DIGEST_SKEIN;
-            case SM3:
-                return GordianDigestResource.DIGEST_SM3;
-            case BLAKE2:
-                return GordianDigestResource.DIGEST_BLAKE2;
-            case BLAKE3:
-                return GordianDigestResource.DIGEST_BLAKE3;
-            case KUPYNA:
-                return GordianDigestResource.DIGEST_KUPYNA;
-            case SHA1:
-                return GordianDigestResource.DIGEST_SHA1;
-            case MD5:
-                return GordianDigestResource.DIGEST_MD5;
-            case MD4:
-                return GordianDigestResource.DIGEST_MD4;
-            case MD2:
-                return GordianDigestResource.DIGEST_MD2;
-            case JH:
-                return GordianDigestResource.DIGEST_JH;
-            case GROESTL:
-                return GordianDigestResource.DIGEST_GROESTL;
-            case CUBEHASH:
-                return GordianDigestResource.DIGEST_CUBEHASH;
-            case KANGAROO:
-                return GordianDigestResource.DIGEST_KANGAROO;
-            case HARAKA:
-                return GordianDigestResource.DIGEST_HARAKA;
-            case ASCON:
-                return GordianDigestResource.DIGEST_ASCON;
-            case ISAP:
-                return GordianDigestResource.DIGEST_ISAP;
-            case PHOTONBEETLE:
-                return GordianDigestResource.DIGEST_PHOTONBEETLE;
-            case ROMULUS:
-                return GordianDigestResource.DIGEST_ROMULUS;
-            case SPARKLE:
-                return GordianDigestResource.DIGEST_SPARKLE;
-            case XOODYAK:
-                return GordianDigestResource.DIGEST_XOODYAK;
-            default:
-                throw new IllegalArgumentException();
-        }
+        return switch (pType) {
+            case SHA2 -> GordianDigestResource.DIGEST_SHA2;
+            case TIGER -> GordianDigestResource.DIGEST_TIGER;
+            case WHIRLPOOL -> GordianDigestResource.DIGEST_WHIRLPOOL;
+            case RIPEMD -> GordianDigestResource.DIGEST_RIPEMD;
+            case STREEBOG -> GordianDigestResource.DIGEST_STREEBOG;
+            case GOST -> GordianDigestResource.DIGEST_GOST;
+            case SHA3 -> GordianDigestResource.DIGEST_SHA3;
+            case SHAKE -> GordianDigestResource.DIGEST_SHAKE;
+            case SKEIN -> GordianDigestResource.DIGEST_SKEIN;
+            case SM3 -> GordianDigestResource.DIGEST_SM3;
+            case BLAKE2 -> GordianDigestResource.DIGEST_BLAKE2;
+            case BLAKE3 -> GordianDigestResource.DIGEST_BLAKE3;
+            case KUPYNA -> GordianDigestResource.DIGEST_KUPYNA;
+            case SHA1 -> GordianDigestResource.DIGEST_SHA1;
+            case MD5 -> GordianDigestResource.DIGEST_MD5;
+            case MD4 -> GordianDigestResource.DIGEST_MD4;
+            case MD2 -> GordianDigestResource.DIGEST_MD2;
+            case JH -> GordianDigestResource.DIGEST_JH;
+            case GROESTL -> GordianDigestResource.DIGEST_GROESTL;
+            case CUBEHASH -> GordianDigestResource.DIGEST_CUBEHASH;
+            case KANGAROO -> GordianDigestResource.DIGEST_KANGAROO;
+            case HARAKA -> GordianDigestResource.DIGEST_HARAKA;
+            case ASCON -> GordianDigestResource.DIGEST_ASCON;
+            case ISAP -> GordianDigestResource.DIGEST_ISAP;
+            case PHOTONBEETLE -> GordianDigestResource.DIGEST_PHOTONBEETLE;
+            case ROMULUS -> GordianDigestResource.DIGEST_ROMULUS;
+            case SPARKLE -> GordianDigestResource.DIGEST_SPARKLE;
+            case XOODYAK -> GordianDigestResource.DIGEST_XOODYAK;
+            default -> throw new IllegalArgumentException();
+        };
     }
 
     /**
@@ -261,66 +228,38 @@ public final class GordianCoreDigestType {
      */
     private static GordianLength[] lengthsForDigestType(final GordianDigestType pType) {
         /* Create the map and return it */
-        switch (pType) {
-            case SHA2:
-            case SHA3:
-            case JH:
-            case GROESTL:
-            case CUBEHASH:
-                return new GordianLength[]{
-                        GordianLength.LEN_224, GordianLength.LEN_256, GordianLength.LEN_384, GordianLength.LEN_512
-                };
-            case TIGER:
-                return new GordianLength[]{GordianLength.LEN_192};
-            case WHIRLPOOL:
-                return new GordianLength[]{GordianLength.LEN_512};
-            case RIPEMD:
-                return new GordianLength[]{
-                        GordianLength.LEN_128, GordianLength.LEN_160, GordianLength.LEN_256, GordianLength.LEN_320
-                };
-            case STREEBOG:
-            case SHAKE:
-            case KANGAROO:
-                return new GordianLength[]{
-                        GordianLength.LEN_256, GordianLength.LEN_512
-                };
-            case GOST:
-            case SM3:
-            case HARAKA:
-            case BLAKE3:
-            case ASCON:
-            case ISAP:
-            case PHOTONBEETLE:
-            case ROMULUS:
-            case XOODYAK:
-                return new GordianLength[]{GordianLength.LEN_256};
-            case SPARKLE:
-                return new GordianLength[]{
-                        GordianLength.LEN_256, GordianLength.LEN_384
-                };
-            case SKEIN:
-                return new GordianLength[]{
-                        GordianLength.LEN_128, GordianLength.LEN_160, GordianLength.LEN_224, GordianLength.LEN_256,
-                        GordianLength.LEN_384, GordianLength.LEN_512, GordianLength.LEN_1024
-                };
-            case BLAKE2:
-                return new GordianLength[]{
-                        GordianLength.LEN_128, GordianLength.LEN_160, GordianLength.LEN_224,
-                        GordianLength.LEN_256, GordianLength.LEN_384, GordianLength.LEN_512
-                };
-            case KUPYNA:
-                return new GordianLength[]{
-                        GordianLength.LEN_256, GordianLength.LEN_384, GordianLength.LEN_512
-                };
-            case SHA1:
-                return new GordianLength[]{GordianLength.LEN_160};
-            case MD5:
-            case MD4:
-            case MD2:
-                return new GordianLength[]{GordianLength.LEN_128};
-            default:
-                throw new IllegalArgumentException();
-        }
+        return switch (pType) {
+            case SHA2, SHA3, JH, GROESTL, CUBEHASH -> new GordianLength[]{
+                    GordianLength.LEN_224, GordianLength.LEN_256, GordianLength.LEN_384, GordianLength.LEN_512
+            };
+            case TIGER -> new GordianLength[]{GordianLength.LEN_192};
+            case WHIRLPOOL -> new GordianLength[]{GordianLength.LEN_512};
+            case RIPEMD -> new GordianLength[]{
+                    GordianLength.LEN_128, GordianLength.LEN_160, GordianLength.LEN_256, GordianLength.LEN_320
+            };
+            case STREEBOG, SHAKE, KANGAROO -> new GordianLength[]{
+                    GordianLength.LEN_256, GordianLength.LEN_512
+            };
+            case GOST, SM3, HARAKA, BLAKE3, ASCON, ISAP, PHOTONBEETLE, ROMULUS, XOODYAK ->
+                    new GordianLength[]{GordianLength.LEN_256};
+            case SPARKLE -> new GordianLength[]{
+                    GordianLength.LEN_256, GordianLength.LEN_384
+            };
+            case SKEIN -> new GordianLength[]{
+                    GordianLength.LEN_128, GordianLength.LEN_160, GordianLength.LEN_224, GordianLength.LEN_256,
+                    GordianLength.LEN_384, GordianLength.LEN_512, GordianLength.LEN_1024
+            };
+            case BLAKE2 -> new GordianLength[]{
+                    GordianLength.LEN_128, GordianLength.LEN_160, GordianLength.LEN_224,
+                    GordianLength.LEN_256, GordianLength.LEN_384, GordianLength.LEN_512
+            };
+            case KUPYNA -> new GordianLength[]{
+                    GordianLength.LEN_256, GordianLength.LEN_384, GordianLength.LEN_512
+            };
+            case SHA1 -> new GordianLength[]{GordianLength.LEN_160};
+            case MD5, MD4, MD2 -> new GordianLength[]{GordianLength.LEN_128};
+            default -> throw new IllegalArgumentException();
+        };
     }
 
     @Override

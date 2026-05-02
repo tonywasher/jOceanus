@@ -198,45 +198,27 @@ public abstract class GordianCoreCipher<T extends GordianKeySpec>
             final GordianLength myBlkLen = mySymSpec.getBlockLength();
 
             /* Switch on cipher Mode */
-            switch (mySymSpec.getCipherMode()) {
-                case CCM:
-                case EAX:
-                    return myBlkLen.getLength() / 2;
-                case KCCM:
-                case KGCM:
-                case GCM:
-                case OCB:
-                    return myBlkLen.getLength();
-                default:
-                    return 0;
-            }
+            return switch (mySymSpec.getCipherMode()) {
+                case CCM, EAX -> myBlkLen.getLength() / 2;
+                case KCCM, KGCM, GCM, OCB -> myBlkLen.getLength();
+                default -> 0;
+            };
 
             /* Stream Cipher uses Poly1305 */
         } else if (theCipherSpec instanceof GordianStreamCipherSpec myCipherSpec) {
             final GordianStreamKeySpec mySpec = myCipherSpec.getKeySpec();
-            switch (mySpec.getStreamKeyType()) {
-                case SPARKLE:
-                    switch ((GordianSparkleKey) mySpec.getSubKeyType()) {
-                        case SPARKLE256_256:
-                            return GordianLength.LEN_256.getLength();
-                        case SPARKLE192_192:
-                            return GordianLength.LEN_192.getLength();
-                        default:
-                            return GordianLength.LEN_128.getLength();
-                    }
-                case ELEPHANT:
-                    switch ((GordianElephantKey) mySpec.getSubKeyType()) {
-                        case ELEPHANT160:
-                        case ELEPHANT176:
-                            return GordianLength.LEN_64.getLength();
-                        case ELEPHANT200:
-                        default:
-                            return GordianLength.LEN_128.getLength();
-                    }
-                default:
-                    break;
-            }
-            return GordianLength.LEN_128.getLength();
+            return switch (mySpec.getStreamKeyType()) {
+                case SPARKLE -> switch ((GordianSparkleKey) mySpec.getSubKeyType()) {
+                    case SPARKLE256_256 -> GordianLength.LEN_256.getLength();
+                    case SPARKLE192_192 -> GordianLength.LEN_192.getLength();
+                    default -> GordianLength.LEN_128.getLength();
+                };
+                case ELEPHANT -> switch ((GordianElephantKey) mySpec.getSubKeyType()) {
+                    case ELEPHANT160, ELEPHANT176 -> GordianLength.LEN_64.getLength();
+                    default -> GordianLength.LEN_128.getLength();
+                };
+                default -> GordianLength.LEN_128.getLength();
+            };
         }
 
         /* No Mac */
@@ -362,10 +344,9 @@ public abstract class GordianCoreCipher<T extends GordianKeySpec>
         }
 
         /* Make sure that the classes are the same */
-        if (!(pThat instanceof GordianCoreCipher)) {
+        if (!(pThat instanceof GordianCoreCipher<?> myThat)) {
             return false;
         }
-        final GordianCoreCipher<?> myThat = (GordianCoreCipher<?>) pThat;
 
         /* Check that the fields are equal */
         return Objects.equals(theCipherSpec, myThat.getCipherSpec())

@@ -69,18 +69,13 @@ public final class GordianCoreMayoSpec {
      * @return the parameters.
      */
     public MayoParameters getParameters() {
-        switch (theSpec) {
-            case MAYO1:
-                return MayoParameters.mayo1;
-            case MAYO2:
-                return MayoParameters.mayo2;
-            case MAYO3:
-                return MayoParameters.mayo3;
-            case MAYO5:
-                return MayoParameters.mayo5;
-            default:
-                throw new IllegalArgumentException();
-        }
+        return switch (theSpec) {
+            case MAYO1 -> MayoParameters.mayo1;
+            case MAYO2 -> MayoParameters.mayo2;
+            case MAYO3 -> MayoParameters.mayo3;
+            case MAYO5 -> MayoParameters.mayo5;
+            default -> throw new IllegalArgumentException();
+        };
     }
 
     /**
@@ -89,18 +84,13 @@ public final class GordianCoreMayoSpec {
      * @return the parameters.
      */
     public MayoParameterSpec getParameterSpec() {
-        switch (theSpec) {
-            case MAYO1:
-                return MayoParameterSpec.mayo1;
-            case MAYO2:
-                return MayoParameterSpec.mayo2;
-            case MAYO3:
-                return MayoParameterSpec.mayo3;
-            case MAYO5:
-                return MayoParameterSpec.mayo5;
-            default:
-                throw new IllegalArgumentException();
-        }
+        return switch (theSpec) {
+            case MAYO1 -> MayoParameterSpec.mayo1;
+            case MAYO2 -> MayoParameterSpec.mayo2;
+            case MAYO3 -> MayoParameterSpec.mayo3;
+            case MAYO5 -> MayoParameterSpec.mayo5;
+            default -> throw new IllegalArgumentException();
+        };
     }
 
     /**
@@ -109,18 +99,13 @@ public final class GordianCoreMayoSpec {
      * @return the identifier.
      */
     public ASN1ObjectIdentifier getIdentifier() {
-        switch (theSpec) {
-            case MAYO1:
-                return BCObjectIdentifiers.mayo1;
-            case MAYO2:
-                return BCObjectIdentifiers.mayo2;
-            case MAYO3:
-                return BCObjectIdentifiers.mayo3;
-            case MAYO5:
-                return BCObjectIdentifiers.mayo5;
-            default:
-                throw new IllegalArgumentException();
-        }
+        return switch (theSpec) {
+            case MAYO1 -> BCObjectIdentifiers.mayo1;
+            case MAYO2 -> BCObjectIdentifiers.mayo2;
+            case MAYO3 -> BCObjectIdentifiers.mayo3;
+            case MAYO5 -> BCObjectIdentifiers.mayo5;
+            default -> throw new IllegalArgumentException();
+        };
     }
 
     @Override

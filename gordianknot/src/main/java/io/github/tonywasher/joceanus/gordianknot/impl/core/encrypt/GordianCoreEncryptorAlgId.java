@@ -200,7 +200,7 @@ public class GordianCoreEncryptorAlgId {
                 myId = myId.branch("4").branch(Integer.toString(mySpec.getEncryptionType().ordinal() + 1));
                 yield GordianCoreDigestAlgId.appendDigestOID(myId, mySpec.getDigestSpec());
             }
-            default -> myId.branch("1");
+            case null, default -> myId.branch("1");
         };
 
         /* Add the spec to the maps */

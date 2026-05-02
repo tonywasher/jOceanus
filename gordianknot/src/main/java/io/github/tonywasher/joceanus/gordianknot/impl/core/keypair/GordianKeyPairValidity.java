@@ -202,44 +202,17 @@ public final class GordianKeyPairValidity {
         final GordianEncryptorSpecBuilder myEncBuilder = GordianCoreEncryptorSpecBuilder.newInstance();
         final GordianAgreementSpecBuilder myAgreeBuilder = GordianCoreAgreementSpecBuilder.newInstance();
         final GordianCoreKeyPairSpec mySpec = (GordianCoreKeyPairSpec) pKeyPair.getKeyPairSpec();
-        switch (mySpec.getKeyPairType()) {
-            case RSA:
-            case DSA:
-            case EDDSA:
-            case EC:
-            case GOST:
-            case DSTU:
-            case SM2:
-            case SLHDSA:
-            case MLDSA:
-            case FALCON:
-            case MAYO:
-            case SNOVA:
-            case PICNIC:
-            case XMSS:
-            case LMS:
-                return pFactory.getAsyncFactory().getSignatureFactory().defaultForKeyPair(mySpec);
-            case ELGAMAL:
-                return myEncBuilder.elGamal(myBuilder.sha2(GordianLength.LEN_256));
-            case DH:
-                return myAgreeBuilder.anon(mySpec, GordianAgreementKDF.SHA256KDF);
-            case XDH:
-                return mySpec.getEdwardsSpec().is25519()
-                        ? myAgreeBuilder.anon(mySpec, GordianAgreementKDF.SHA256KDF)
-                        : myAgreeBuilder.anon(mySpec, GordianAgreementKDF.SHA512KDF);
-            case CMCE:
-            case FRODO:
-            case SABER:
-            case MLKEM:
-            case HQC:
-            case BIKE:
-            case NTRU:
-            case NTRUPLUS:
-            case NTRUPRIME:
-            case NEWHOPE:
-                return myAgreeBuilder.kem(mySpec, GordianAgreementKDF.NONE);
-            default:
-                throw new GordianDataException("No validity check found for :" + mySpec.getKeyPairType());
-        }
+        return switch (mySpec.getKeyPairType()) {
+            case RSA, DSA, EDDSA, EC, GOST, DSTU, SM2, SLHDSA, MLDSA, FALCON, MAYO, SNOVA, PICNIC, XMSS, LMS ->
+                    pFactory.getAsyncFactory().getSignatureFactory().defaultForKeyPair(mySpec);
+            case ELGAMAL -> myEncBuilder.elGamal(myBuilder.sha2(GordianLength.LEN_256));
+            case DH -> myAgreeBuilder.anon(mySpec, GordianAgreementKDF.SHA256KDF);
+            case XDH -> mySpec.getEdwardsSpec().is25519()
+                    ? myAgreeBuilder.anon(mySpec, GordianAgreementKDF.SHA256KDF)
+                    : myAgreeBuilder.anon(mySpec, GordianAgreementKDF.SHA512KDF);
+            case CMCE, FRODO, SABER, MLKEM, HQC, BIKE, NTRU, NTRUPLUS, NTRUPRIME, NEWHOPE ->
+                    myAgreeBuilder.kem(mySpec, GordianAgreementKDF.NONE);
+            default -> throw new GordianDataException("No validity check found for :" + mySpec.getKeyPairType());
+        };
     }
 }

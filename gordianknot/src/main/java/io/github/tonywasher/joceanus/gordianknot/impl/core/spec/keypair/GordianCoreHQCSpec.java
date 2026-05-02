@@ -69,16 +69,12 @@ public final class GordianCoreHQCSpec {
      * @return the parameters.
      */
     public HQCParameters getParameters() {
-        switch (theSpec) {
-            case HQC128:
-                return HQCParameters.hqc128;
-            case HQC192:
-                return HQCParameters.hqc192;
-            case HQC256:
-                return HQCParameters.hqc256;
-            default:
-                throw new IllegalArgumentException();
-        }
+        return switch (theSpec) {
+            case HQC128 -> HQCParameters.hqc128;
+            case HQC192 -> HQCParameters.hqc192;
+            case HQC256 -> HQCParameters.hqc256;
+            default -> throw new IllegalArgumentException();
+        };
     }
 
     /**
@@ -87,16 +83,12 @@ public final class GordianCoreHQCSpec {
      * @return the parameters.
      */
     public HQCParameterSpec getParameterSpec() {
-        switch (theSpec) {
-            case HQC128:
-                return HQCParameterSpec.hqc128;
-            case HQC192:
-                return HQCParameterSpec.hqc192;
-            case HQC256:
-                return HQCParameterSpec.hqc256;
-            default:
-                throw new IllegalArgumentException();
-        }
+        return switch (theSpec) {
+            case HQC128 -> HQCParameterSpec.hqc128;
+            case HQC192 -> HQCParameterSpec.hqc192;
+            case HQC256 -> HQCParameterSpec.hqc256;
+            default -> throw new IllegalArgumentException();
+        };
     }
 
     /**
@@ -105,16 +97,12 @@ public final class GordianCoreHQCSpec {
      * @return the identifier.
      */
     public ASN1ObjectIdentifier getIdentifier() {
-        switch (theSpec) {
-            case HQC128:
-                return BCObjectIdentifiers.hqc128;
-            case HQC192:
-                return BCObjectIdentifiers.hqc192;
-            case HQC256:
-                return BCObjectIdentifiers.hqc256;
-            default:
-                throw new IllegalArgumentException();
-        }
+        return switch (theSpec) {
+            case HQC128 -> BCObjectIdentifiers.hqc128;
+            case HQC192 -> BCObjectIdentifiers.hqc192;
+            case HQC256 -> BCObjectIdentifiers.hqc256;
+            default -> throw new IllegalArgumentException();
+        };
     }
 
     @Override

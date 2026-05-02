@@ -199,13 +199,10 @@ public class GordianCoreLMSSpec
         if (theDepth < 1 || theDepth > MAX_DEPTH) {
             return false;
         }
-        switch (theLength) {
-            case LEN_192:
-            case LEN_256:
-                return true;
-            default:
-                return false;
-        }
+        return switch (theLength) {
+            case LEN_192, LEN_256 -> true;
+            default -> false;
+        };
     }
 
     @Override
@@ -265,14 +262,10 @@ public class GordianCoreLMSSpec
      * @return true/false.
      */
     private boolean isHigh(final GordianLMSHeight pHeight) {
-        switch (pHeight) {
-            case H15:
-            case H20:
-            case H25:
-                return true;
-            default:
-                return false;
-        }
+        return switch (pHeight) {
+            case H15, H20, H25 -> true;
+            default -> false;
+        };
     }
 
     /**
@@ -281,20 +274,14 @@ public class GordianCoreLMSSpec
      * @return the parameter
      */
     private LMSigParameters getSigParameter() {
-        switch (theHeight) {
-            case H5:
-                return getH5Parameter();
-            case H10:
-                return getH10Parameter();
-            case H15:
-                return getH15Parameter();
-            case H20:
-                return getH20Parameter();
-            case H25:
-                return getH25Parameter();
-            default:
-                throw new IllegalStateException();
-        }
+        return switch (theHeight) {
+            case H5 -> getH5Parameter();
+            case H10 -> getH10Parameter();
+            case H15 -> getH15Parameter();
+            case H20 -> getH20Parameter();
+            case H25 -> getH25Parameter();
+            default -> throw new IllegalStateException();
+        };
     }
 
     /**
@@ -303,14 +290,13 @@ public class GordianCoreLMSSpec
      * @return the parameter
      */
     private LMSigParameters getH5Parameter() {
-        switch (theLength) {
-            case LEN_192:
-                return theHash == GordianLMSHash.SHA256 ? LMSigParameters.lms_sha256_n24_h5 : LMSigParameters.lms_shake256_n24_h5;
-            case LEN_256:
-                return theHash == GordianLMSHash.SHA256 ? LMSigParameters.lms_sha256_n32_h5 : LMSigParameters.lms_shake256_n32_h5;
-            default:
-                throw new IllegalArgumentException(INVALID_LENGTH + theLength);
-        }
+        return switch (theLength) {
+            case LEN_192 ->
+                    theHash == GordianLMSHash.SHA256 ? LMSigParameters.lms_sha256_n24_h5 : LMSigParameters.lms_shake256_n24_h5;
+            case LEN_256 ->
+                    theHash == GordianLMSHash.SHA256 ? LMSigParameters.lms_sha256_n32_h5 : LMSigParameters.lms_shake256_n32_h5;
+            default -> throw new IllegalArgumentException(INVALID_LENGTH + theLength);
+        };
     }
 
     /**
@@ -319,14 +305,13 @@ public class GordianCoreLMSSpec
      * @return the parameter
      */
     private LMSigParameters getH10Parameter() {
-        switch (theLength) {
-            case LEN_192:
-                return theHash == GordianLMSHash.SHA256 ? LMSigParameters.lms_sha256_n24_h10 : LMSigParameters.lms_shake256_n24_h10;
-            case LEN_256:
-                return theHash == GordianLMSHash.SHA256 ? LMSigParameters.lms_sha256_n32_h10 : LMSigParameters.lms_shake256_n32_h10;
-            default:
-                throw new IllegalArgumentException(INVALID_LENGTH + theLength);
-        }
+        return switch (theLength) {
+            case LEN_192 ->
+                    theHash == GordianLMSHash.SHA256 ? LMSigParameters.lms_sha256_n24_h10 : LMSigParameters.lms_shake256_n24_h10;
+            case LEN_256 ->
+                    theHash == GordianLMSHash.SHA256 ? LMSigParameters.lms_sha256_n32_h10 : LMSigParameters.lms_shake256_n32_h10;
+            default -> throw new IllegalArgumentException(INVALID_LENGTH + theLength);
+        };
     }
 
     /**
@@ -335,14 +320,13 @@ public class GordianCoreLMSSpec
      * @return the parameter
      */
     private LMSigParameters getH15Parameter() {
-        switch (theLength) {
-            case LEN_192:
-                return theHash == GordianLMSHash.SHA256 ? LMSigParameters.lms_sha256_n24_h15 : LMSigParameters.lms_shake256_n24_h15;
-            case LEN_256:
-                return theHash == GordianLMSHash.SHA256 ? LMSigParameters.lms_sha256_n32_h15 : LMSigParameters.lms_shake256_n32_h15;
-            default:
-                throw new IllegalArgumentException(INVALID_LENGTH + theLength);
-        }
+        return switch (theLength) {
+            case LEN_192 ->
+                    theHash == GordianLMSHash.SHA256 ? LMSigParameters.lms_sha256_n24_h15 : LMSigParameters.lms_shake256_n24_h15;
+            case LEN_256 ->
+                    theHash == GordianLMSHash.SHA256 ? LMSigParameters.lms_sha256_n32_h15 : LMSigParameters.lms_shake256_n32_h15;
+            default -> throw new IllegalArgumentException(INVALID_LENGTH + theLength);
+        };
     }
 
     /**
@@ -351,14 +335,13 @@ public class GordianCoreLMSSpec
      * @return the parameter
      */
     private LMSigParameters getH20Parameter() {
-        switch (theLength) {
-            case LEN_192:
-                return theHash == GordianLMSHash.SHA256 ? LMSigParameters.lms_sha256_n24_h20 : LMSigParameters.lms_shake256_n24_h20;
-            case LEN_256:
-                return theHash == GordianLMSHash.SHA256 ? LMSigParameters.lms_sha256_n32_h20 : LMSigParameters.lms_shake256_n32_h20;
-            default:
-                throw new IllegalArgumentException(INVALID_LENGTH + theLength);
-        }
+        return switch (theLength) {
+            case LEN_192 ->
+                    theHash == GordianLMSHash.SHA256 ? LMSigParameters.lms_sha256_n24_h20 : LMSigParameters.lms_shake256_n24_h20;
+            case LEN_256 ->
+                    theHash == GordianLMSHash.SHA256 ? LMSigParameters.lms_sha256_n32_h20 : LMSigParameters.lms_shake256_n32_h20;
+            default -> throw new IllegalArgumentException(INVALID_LENGTH + theLength);
+        };
     }
 
     /**
@@ -367,14 +350,13 @@ public class GordianCoreLMSSpec
      * @return the parameter
      */
     private LMSigParameters getH25Parameter() {
-        switch (theLength) {
-            case LEN_192:
-                return theHash == GordianLMSHash.SHA256 ? LMSigParameters.lms_sha256_n24_h25 : LMSigParameters.lms_shake256_n24_h25;
-            case LEN_256:
-                return theHash == GordianLMSHash.SHA256 ? LMSigParameters.lms_sha256_n32_h25 : LMSigParameters.lms_shake256_n32_h25;
-            default:
-                throw new IllegalArgumentException(INVALID_LENGTH + theLength);
-        }
+        return switch (theLength) {
+            case LEN_192 ->
+                    theHash == GordianLMSHash.SHA256 ? LMSigParameters.lms_sha256_n24_h25 : LMSigParameters.lms_shake256_n24_h25;
+            case LEN_256 ->
+                    theHash == GordianLMSHash.SHA256 ? LMSigParameters.lms_sha256_n32_h25 : LMSigParameters.lms_shake256_n32_h25;
+            default -> throw new IllegalArgumentException(INVALID_LENGTH + theLength);
+        };
     }
 
     /**
@@ -383,18 +365,13 @@ public class GordianCoreLMSSpec
      * @return the parameter
      */
     private LMOtsParameters getOtsParameter() {
-        switch (theWidth) {
-            case W1:
-                return getW1Parameter();
-            case W2:
-                return getW2Parameter();
-            case W4:
-                return getW4Parameter();
-            case W8:
-                return getW8Parameter();
-            default:
-                throw new IllegalStateException();
-        }
+        return switch (theWidth) {
+            case W1 -> getW1Parameter();
+            case W2 -> getW2Parameter();
+            case W4 -> getW4Parameter();
+            case W8 -> getW8Parameter();
+            default -> throw new IllegalStateException();
+        };
     }
 
     /**
@@ -403,14 +380,13 @@ public class GordianCoreLMSSpec
      * @return the parameter
      */
     private LMOtsParameters getW1Parameter() {
-        switch (theLength) {
-            case LEN_192:
-                return theHash == GordianLMSHash.SHA256 ? LMOtsParameters.sha256_n24_w1 : LMOtsParameters.shake256_n24_w1;
-            case LEN_256:
-                return theHash == GordianLMSHash.SHA256 ? LMOtsParameters.sha256_n32_w1 : LMOtsParameters.shake256_n32_w1;
-            default:
-                throw new IllegalArgumentException(INVALID_LENGTH + theLength);
-        }
+        return switch (theLength) {
+            case LEN_192 ->
+                    theHash == GordianLMSHash.SHA256 ? LMOtsParameters.sha256_n24_w1 : LMOtsParameters.shake256_n24_w1;
+            case LEN_256 ->
+                    theHash == GordianLMSHash.SHA256 ? LMOtsParameters.sha256_n32_w1 : LMOtsParameters.shake256_n32_w1;
+            default -> throw new IllegalArgumentException(INVALID_LENGTH + theLength);
+        };
     }
 
     /**
@@ -419,14 +395,13 @@ public class GordianCoreLMSSpec
      * @return the parameter
      */
     private LMOtsParameters getW2Parameter() {
-        switch (theLength) {
-            case LEN_192:
-                return theHash == GordianLMSHash.SHA256 ? LMOtsParameters.sha256_n24_w2 : LMOtsParameters.shake256_n24_w2;
-            case LEN_256:
-                return theHash == GordianLMSHash.SHA256 ? LMOtsParameters.sha256_n32_w2 : LMOtsParameters.shake256_n32_w2;
-            default:
-                throw new IllegalArgumentException(INVALID_LENGTH + theLength);
-        }
+        return switch (theLength) {
+            case LEN_192 ->
+                    theHash == GordianLMSHash.SHA256 ? LMOtsParameters.sha256_n24_w2 : LMOtsParameters.shake256_n24_w2;
+            case LEN_256 ->
+                    theHash == GordianLMSHash.SHA256 ? LMOtsParameters.sha256_n32_w2 : LMOtsParameters.shake256_n32_w2;
+            default -> throw new IllegalArgumentException(INVALID_LENGTH + theLength);
+        };
     }
 
     /**
@@ -435,14 +410,13 @@ public class GordianCoreLMSSpec
      * @return the parameter
      */
     private LMOtsParameters getW4Parameter() {
-        switch (theLength) {
-            case LEN_192:
-                return theHash == GordianLMSHash.SHA256 ? LMOtsParameters.sha256_n24_w4 : LMOtsParameters.shake256_n24_w4;
-            case LEN_256:
-                return theHash == GordianLMSHash.SHA256 ? LMOtsParameters.sha256_n32_w4 : LMOtsParameters.shake256_n32_w4;
-            default:
-                throw new IllegalArgumentException(INVALID_LENGTH + theLength);
-        }
+        return switch (theLength) {
+            case LEN_192 ->
+                    theHash == GordianLMSHash.SHA256 ? LMOtsParameters.sha256_n24_w4 : LMOtsParameters.shake256_n24_w4;
+            case LEN_256 ->
+                    theHash == GordianLMSHash.SHA256 ? LMOtsParameters.sha256_n32_w4 : LMOtsParameters.shake256_n32_w4;
+            default -> throw new IllegalArgumentException(INVALID_LENGTH + theLength);
+        };
     }
 
     /**
@@ -451,14 +425,13 @@ public class GordianCoreLMSSpec
      * @return the parameter
      */
     private LMOtsParameters getW8Parameter() {
-        switch (theLength) {
-            case LEN_192:
-                return theHash == GordianLMSHash.SHA256 ? LMOtsParameters.sha256_n24_w8 : LMOtsParameters.shake256_n24_w8;
-            case LEN_256:
-                return theHash == GordianLMSHash.SHA256 ? LMOtsParameters.sha256_n32_w8 : LMOtsParameters.shake256_n32_w8;
-            default:
-                throw new IllegalArgumentException(INVALID_LENGTH + theLength);
-        }
+        return switch (theLength) {
+            case LEN_192 ->
+                    theHash == GordianLMSHash.SHA256 ? LMOtsParameters.sha256_n24_w8 : LMOtsParameters.shake256_n24_w8;
+            case LEN_256 ->
+                    theHash == GordianLMSHash.SHA256 ? LMOtsParameters.sha256_n32_w8 : LMOtsParameters.shake256_n32_w8;
+            default -> throw new IllegalArgumentException(INVALID_LENGTH + theLength);
+        };
     }
 
     /**

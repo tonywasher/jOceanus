@@ -38,14 +38,10 @@ public enum GordianHKDFMode {
      * @return true/false
      */
     public boolean doExtract() {
-        switch (this) {
-            case EXTRACT:
-            case EXTRACTTHENEXPAND:
-                return true;
-            case EXPAND:
-            default:
-                return false;
-        }
+        return switch (this) {
+            case EXTRACT, EXTRACTTHENEXPAND -> true;
+            default -> false;
+        };
     }
 
     /**
@@ -54,13 +50,9 @@ public enum GordianHKDFMode {
      * @return true/false
      */
     public boolean doExpand() {
-        switch (this) {
-            case EXPAND:
-            case EXTRACTTHENEXPAND:
-                return true;
-            case EXTRACT:
-            default:
-                return false;
-        }
+        return switch (this) {
+            case EXPAND, EXTRACTTHENEXPAND -> true;
+            default -> false;
+        };
     }
 }

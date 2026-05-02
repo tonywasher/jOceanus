@@ -148,15 +148,10 @@ public final class GordianCoreSipHashType {
      * @return the outputLength
      */
     private GordianLength determineOutLength() {
-        switch (theType) {
-            case SIPHASH_2_4:
-            case SIPHASH_4_8:
-                return GordianLength.LEN_64;
-            case SIPHASH128_2_4:
-            case SIPHASH128_4_8:
-            default:
-                return GordianLength.LEN_128;
-        }
+        return switch (theType) {
+            case SIPHASH_2_4, SIPHASH_4_8 -> GordianLength.LEN_64;
+            default -> GordianLength.LEN_128;
+        };
     }
 
     /**
@@ -165,15 +160,10 @@ public final class GordianCoreSipHashType {
      * @return the compression
      */
     private int determineCompression() {
-        switch (theType) {
-            case SIPHASH_2_4:
-            case SIPHASH128_2_4:
-                return SMALLCOMPRESSION;
-            case SIPHASH_4_8:
-            case SIPHASH128_4_8:
-            default:
-                return LARGECOMPRESSION;
-        }
+        return switch (theType) {
+            case SIPHASH_2_4, SIPHASH128_2_4 -> SMALLCOMPRESSION;
+            default -> LARGECOMPRESSION;
+        };
     }
 
     @Override

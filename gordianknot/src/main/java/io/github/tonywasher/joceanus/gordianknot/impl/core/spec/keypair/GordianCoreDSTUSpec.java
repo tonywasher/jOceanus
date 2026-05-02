@@ -68,30 +68,22 @@ public final class GordianCoreDSTUSpec
 
     @Override
     public String getCurveName() {
-        switch (theSpec) {
-            case DSTU7:
-                return BASE + "7";
-            case DSTU8:
-                return BASE + "8";
-            case DSTU9:
-                return BASE + "9";
-            default:
-                throw new IllegalArgumentException();
-        }
+        return switch (theSpec) {
+            case DSTU7 -> BASE + "7";
+            case DSTU8 -> BASE + "8";
+            case DSTU9 -> BASE + "9";
+            default -> throw new IllegalArgumentException();
+        };
     }
 
     @Override
     public int getKeySize() {
-        switch (theSpec) {
-            case DSTU9:
-                return GordianLength.LEN_431.getLength();
-            case DSTU8:
-                return GordianLength.LEN_366.getLength();
-            case DSTU7:
-                return GordianLength.LEN_306.getLength();
-            default:
-                throw new IllegalArgumentException();
-        }
+        return switch (theSpec) {
+            case DSTU9 -> GordianLength.LEN_431.getLength();
+            case DSTU8 -> GordianLength.LEN_366.getLength();
+            case DSTU7 -> GordianLength.LEN_306.getLength();
+            default -> throw new IllegalArgumentException();
+        };
     }
 
     /**
