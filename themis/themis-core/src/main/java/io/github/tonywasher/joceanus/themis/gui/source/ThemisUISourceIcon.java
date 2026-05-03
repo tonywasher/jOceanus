@@ -479,22 +479,14 @@ public enum ThemisUISourceIcon
      */
     static TethysUIIconId getElementIcon(final ThemisInstance pElement) {
         /* Switch on the element type */
-        if (pElement instanceof ThemisDeclarationInstance myDecl) {
-            return getDeclarationIcon(myDecl);
-        }
-        if (pElement instanceof ThemisNodeInstance myNode) {
-            return getNodeIcon(myNode);
-        }
-        if (pElement instanceof ThemisExpressionInstance myExpr) {
-            return getExpressionIcon(myExpr);
-        }
-        if (pElement instanceof ThemisStatementInstance myStmt) {
-            return getStatementIcon(myStmt);
-        }
-        if (pElement instanceof ThemisTypeInstance myType) {
-            return getTypeIcon(myType);
-        }
-        throw new IllegalArgumentException("Unknown ThemisInstance");
+        return switch (pElement) {
+            case ThemisDeclarationInstance myDecl -> getDeclarationIcon(myDecl);
+            case ThemisNodeInstance myNode -> getNodeIcon(myNode);
+            case ThemisExpressionInstance myExpr -> getExpressionIcon(myExpr);
+            case ThemisStatementInstance myStmt -> getStatementIcon(myStmt);
+            case ThemisTypeInstance myType -> getTypeIcon(myType);
+            default -> throw new IllegalArgumentException("Unknown ThemisInstance");
+        };
     }
 
     /**
@@ -505,32 +497,20 @@ public enum ThemisUISourceIcon
      */
     private static TethysUIIconId getDeclarationIcon(final ThemisDeclarationInstance pElement) {
         /* Switch on the id */
-        switch ((ThemisDeclaration) pElement.getId()) {
-            case ANNOTATION:
-                return REDUPPERA;
-            case ANNOTATIONMEMBER:
-                return REDLOWERM;
-            case CLASSINTERFACE:
-                return REDUPPERC;
-            case COMPACT:
-                return REDUPPERP;
-            case CONSTRUCTOR:
-                return REDUPPERN;
-            case ENUM:
-                return REDUPPERE;
-            case ENUMVALUE:
-                return REDUPPERV;
-            case FIELD:
-                return REDUPPERF;
-            case INITIALIZER:
-                return REDUPPERI;
-            case METHOD:
-                return REDUPPERM;
-            case RECORD:
-                return REDUPPERR;
-            default:
-                throw new IllegalArgumentException("Unknown ThemisDeclaration");
-        }
+        return switch ((ThemisDeclaration) pElement.getId()) {
+            case ANNOTATION -> REDUPPERA;
+            case ANNOTATIONMEMBER -> REDLOWERM;
+            case CLASSINTERFACE -> REDUPPERC;
+            case COMPACT -> REDUPPERP;
+            case CONSTRUCTOR -> REDUPPERN;
+            case ENUM -> REDUPPERE;
+            case ENUMVALUE -> REDUPPERV;
+            case FIELD -> REDUPPERF;
+            case INITIALIZER -> REDUPPERI;
+            case METHOD -> REDUPPERM;
+            case RECORD -> REDUPPERR;
+            default -> throw new IllegalArgumentException("Unknown ThemisDeclaration");
+        };
     }
 
     /**
@@ -541,36 +521,22 @@ public enum ThemisUISourceIcon
      */
     private static TethysUIIconId getNodeIcon(final ThemisNodeInstance pElement) {
         /* Switch on the id */
-        switch ((ThemisNode) pElement.getId()) {
-            case ARRAYLEVEL:
-                return PINKUPPERA;
-            case CASE:
-                return PINKLOWERC;
-            case CATCH:
-                return PINKUPPERT;
-            case COMMENT:
-                return PINKUPPERC;
-            case COMPILATIONUNIT:
-                return PINKUPPERU;
-            case IMPORT:
-                return PINKUPPERI;
-            case MODIFIER:
-                return PINKUPPERM;
-            case NAME:
-                return PINKUPPERN;
-            case PACKAGE:
-                return PINKUPPERK;
-            case PARAMETER:
-                return PINKUPPERP;
-            case SIMPLENAME:
-                return PINKLOWERN;
-            case VALUEPAIR:
-                return PINKLOWERP;
-            case VARIABLE:
-                return PINKUPPERV;
-            default:
-                throw new IllegalArgumentException("Unknown ThemisNode");
-        }
+        return switch ((ThemisNode) pElement.getId()) {
+            case ARRAYLEVEL -> PINKUPPERA;
+            case CASE -> PINKLOWERC;
+            case CATCH -> PINKUPPERT;
+            case COMMENT -> PINKUPPERC;
+            case COMPILATIONUNIT -> PINKUPPERU;
+            case IMPORT -> PINKUPPERI;
+            case MODIFIER -> PINKUPPERM;
+            case NAME -> PINKUPPERN;
+            case PACKAGE -> PINKUPPERK;
+            case PARAMETER -> PINKUPPERP;
+            case SIMPLENAME -> PINKLOWERN;
+            case VALUEPAIR -> PINKLOWERP;
+            case VARIABLE -> PINKUPPERV;
+            default -> throw new IllegalArgumentException("Unknown ThemisNode");
+        };
     }
 
     /**
@@ -581,71 +547,36 @@ public enum ThemisUISourceIcon
      */
     private static TethysUIIconId getExpressionIcon(final ThemisExpressionInstance pElement) {
         /* Switch on the id */
-        switch ((ThemisExpression) pElement.getId()) {
-            case ARRAYACCESS:
-            case MARKER:
-            case NORMAL:
-            case SINGLEMEMBER:
-                return GREENLOWERA;
-            case ARRAYCREATION:
-            case CAST:
-            case CHAR:
-                return GREENLOWERC;
-            case ARRAYINIT:
-            case INTEGER:
-                return GREENLOWERI;
-            case ASSIGN:
-                return GREENUPPERA;
-            case BINARY:
-                return GREENUPPERB;
-            case BOOLEAN:
-                return GREENLOWERB;
-            case CLASS:
-                return GREENUPPERC;
-            case CONDITIONAL:
-            case NULL:
-                return GREENLOWERN;
-            case DOUBLE:
-                return GREENUPPERD;
-            case ENCLOSED:
-                return GREENUPPERE;
-            case FIELDACCESS:
-                return GREENUPPERF;
-            case INSTANCEOF:
-                return GREENUPPERI;
-            case LAMBDA:
-                return GREENUPPERL;
-            case LONG:
-                return GREENLOWERL;
-            case METHODCALL:
-                return GREENUPPERM;
-            case METHODREFERENCE:
-                return GREENLOWERM;
-            case NAME:
-                return GREENUPPERN;
-            case OBJECTCREATE:
-                return GREENUPPERO;
-            case STRING:
-                return GREENLOWERS;
-            case SUPER:
-                return GREENLOWERP;
-            case SWITCH:
-                return GREENUPPERS;
-            case TEXTBLOCK:
-                return GREENLOWERT;
-            case THIS:
-                return GREENUPPERT;
-            case TYPE:
-                return GREENLOWERY;
-            case TYPEPATTERN:
-                return GREENUPPERP;
-            case UNARY:
-                return GREENUPPERU;
-            case VARIABLE:
-                return GREENUPPERV;
-            default:
-                throw new IllegalArgumentException("Unknown ThemisExpression");
-        }
+        return switch ((ThemisExpression) pElement.getId()) {
+            case ARRAYACCESS, MARKER, NORMAL, SINGLEMEMBER -> GREENLOWERA;
+            case ARRAYCREATION, CAST, CHAR -> GREENLOWERC;
+            case ARRAYINIT, INTEGER -> GREENLOWERI;
+            case ASSIGN -> GREENUPPERA;
+            case BINARY -> GREENUPPERB;
+            case BOOLEAN -> GREENLOWERB;
+            case CLASS -> GREENUPPERC;
+            case CONDITIONAL, NULL -> GREENLOWERN;
+            case DOUBLE -> GREENUPPERD;
+            case ENCLOSED -> GREENUPPERE;
+            case FIELDACCESS -> GREENUPPERF;
+            case INSTANCEOF -> GREENUPPERI;
+            case LAMBDA -> GREENUPPERL;
+            case LONG -> GREENLOWERL;
+            case METHODCALL -> GREENUPPERM;
+            case METHODREFERENCE -> GREENLOWERM;
+            case NAME -> GREENUPPERN;
+            case OBJECTCREATE -> GREENUPPERO;
+            case STRING -> GREENLOWERS;
+            case SUPER -> GREENLOWERP;
+            case SWITCH -> GREENUPPERS;
+            case TEXTBLOCK -> GREENLOWERT;
+            case THIS -> GREENUPPERT;
+            case TYPE -> GREENLOWERY;
+            case TYPEPATTERN -> GREENUPPERP;
+            case UNARY -> GREENUPPERU;
+            case VARIABLE -> GREENUPPERV;
+            default -> throw new IllegalArgumentException("Unknown ThemisExpression");
+        };
     }
 
     /**
@@ -656,52 +587,30 @@ public enum ThemisUISourceIcon
      */
     private static TethysUIIconId getStatementIcon(final ThemisStatementInstance pElement) {
         /* Switch on the id */
-        switch ((ThemisStatement) pElement.getId()) {
-            case ASSERT:
-                return ORANGEUPPERA;
-            case BLOCK:
-                return ORANGEUPPERB;
-            case BREAK:
-                return ORANGELOWERB;
-            case LOCALCLASS:
-                return ORANGEUPPERC;
-            case CONSTRUCTOR:
-                return ORANGEUPPERN;
-            case CONTINUE:
-                return ORANGELOWERC;
-            case DO:
-                return ORANGEUPPERD;
-            case EMPTY:
-                return ORANGEUPPERE;
-            case EXPRESSION:
-                return ORANGEUPPERX;
-            case FOR:
-                return ORANGEUPPERF;
-            case FOREACH:
-                return ORANGELOWERF;
-            case IF:
-                return ORANGEUPPERI;
-            case LABELED:
-                return ORANGEUPPERL;
-            case LOCALRECORD:
-                return ORANGEUPPERR;
-            case RETURN:
-                return ORANGELOWERR;
-            case SWITCH:
-                return ORANGEUPPERS;
-            case SYNCHRONIZED:
-                return ORANGELOWERY;
-            case THROW:
-                return ORANGELOWERT;
-            case TRY:
-                return ORANGEUPPERT;
-            case WHILE:
-                return ORANGEUPPERW;
-            case YIELD:
-                return ORANGEUPPERY;
-            default:
-                throw new IllegalArgumentException("Unknown ThemisStatement");
-        }
+        return switch ((ThemisStatement) pElement.getId()) {
+            case ASSERT -> ORANGEUPPERA;
+            case BLOCK -> ORANGEUPPERB;
+            case BREAK -> ORANGELOWERB;
+            case LOCALCLASS -> ORANGEUPPERC;
+            case CONSTRUCTOR -> ORANGEUPPERN;
+            case CONTINUE -> ORANGELOWERC;
+            case DO -> ORANGEUPPERD;
+            case EMPTY -> ORANGEUPPERE;
+            case EXPRESSION -> ORANGEUPPERX;
+            case FOR -> ORANGEUPPERF;
+            case FOREACH -> ORANGELOWERF;
+            case IF -> ORANGEUPPERI;
+            case LABELED -> ORANGEUPPERL;
+            case LOCALRECORD -> ORANGEUPPERR;
+            case RETURN -> ORANGELOWERR;
+            case SWITCH -> ORANGEUPPERS;
+            case SYNCHRONIZED -> ORANGELOWERY;
+            case THROW -> ORANGELOWERT;
+            case TRY -> ORANGEUPPERT;
+            case WHILE -> ORANGEUPPERW;
+            case YIELD -> ORANGEUPPERY;
+            default -> throw new IllegalArgumentException("Unknown ThemisStatement");
+        };
     }
 
     /**
@@ -712,29 +621,18 @@ public enum ThemisUISourceIcon
      */
     private static TethysUIIconId getTypeIcon(final ThemisTypeInstance pElement) {
         /* Switch on the id */
-        switch ((ThemisType) pElement.getId()) {
-            case ARRAY:
-                return BLUEUPPERA;
-            case CLASSINTERFACE:
-                return BLUEUPPERC;
-            case INTERSECTION:
-                return BLUEUPPERI;
-            case PARAMETER:
-                return BLUEUPPERT;
-            case PRIMITIVE:
-                return BLUEUPPERP;
-            case UNION:
-                return BLUEUPPERU;
-            case UNKNOWN:
-                return BLUELOWERK;
-            case VAR:
-                return BLUEUPPERV;
-            case VOID:
-                return BLUELOWERV;
-            case WILDCARD:
-                return BLUEUPPERW;
-            default:
-                throw new IllegalArgumentException("Unknown ThemisType");
-        }
+        return switch ((ThemisType) pElement.getId()) {
+            case ARRAY -> BLUEUPPERA;
+            case CLASSINTERFACE -> BLUEUPPERC;
+            case INTERSECTION -> BLUEUPPERI;
+            case PARAMETER -> BLUEUPPERT;
+            case PRIMITIVE -> BLUEUPPERP;
+            case UNION -> BLUEUPPERU;
+            case UNKNOWN -> BLUELOWERK;
+            case VAR -> BLUEUPPERV;
+            case VOID -> BLUELOWERV;
+            case WILDCARD -> BLUEUPPERW;
+            default -> throw new IllegalArgumentException("Unknown ThemisType");
+        };
     }
 }

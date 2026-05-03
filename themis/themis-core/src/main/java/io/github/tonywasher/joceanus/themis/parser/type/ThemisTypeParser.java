@@ -47,29 +47,18 @@ public final class ThemisTypeParser {
         }
 
         /* Allocate correct Type */
-        switch (ThemisType.determineType(pParser, pType)) {
-            case ARRAY:
-                return new ThemisTypeArray(pParser, pType.asArrayType());
-            case CLASSINTERFACE:
-                return new ThemisTypeClassInterface(pParser, pType.asClassOrInterfaceType());
-            case INTERSECTION:
-                return new ThemisTypeIntersection(pParser, pType.asIntersectionType());
-            case PARAMETER:
-                return new ThemisTypeParameter(pParser, pType.asTypeParameter());
-            case PRIMITIVE:
-                return new ThemisTypePrimitive(pParser, pType.asPrimitiveType());
-            case UNION:
-                return new ThemisTypeUnion(pParser, pType.asUnionType());
-            case UNKNOWN:
-                return new ThemisTypeUnknown(pParser, pType.asUnknownType());
-            case VAR:
-                return new ThemisTypeVar(pParser, pType.asVarType());
-            case VOID:
-                return new ThemisTypeVoid(pParser, pType.asVoidType());
-            case WILDCARD:
-                return new ThemisTypeWildcard(pParser, pType.asWildcardType());
-            default:
-                throw pParser.buildException("Unsupported Type", pType);
-        }
+        return switch (ThemisType.determineType(pParser, pType)) {
+            case ARRAY -> new ThemisTypeArray(pParser, pType.asArrayType());
+            case CLASSINTERFACE -> new ThemisTypeClassInterface(pParser, pType.asClassOrInterfaceType());
+            case INTERSECTION -> new ThemisTypeIntersection(pParser, pType.asIntersectionType());
+            case PARAMETER -> new ThemisTypeParameter(pParser, pType.asTypeParameter());
+            case PRIMITIVE -> new ThemisTypePrimitive(pParser, pType.asPrimitiveType());
+            case UNION -> new ThemisTypeUnion(pParser, pType.asUnionType());
+            case UNKNOWN -> new ThemisTypeUnknown(pParser, pType.asUnknownType());
+            case VAR -> new ThemisTypeVar(pParser, pType.asVarType());
+            case VOID -> new ThemisTypeVoid(pParser, pType.asVoidType());
+            case WILDCARD -> new ThemisTypeWildcard(pParser, pType.asWildcardType());
+            default -> throw pParser.buildException("Unsupported Type", pType);
+        };
     }
 }

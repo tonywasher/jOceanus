@@ -47,31 +47,19 @@ public final class ThemisDeclParser {
         }
 
         /* Create appropriate declaration */
-        switch (ThemisDeclaration.determineDeclaration(pParser, pDecl)) {
-            case ANNOTATION:
-                return new ThemisDeclAnnotation(pParser, pDecl.asAnnotationDeclaration());
-            case ANNOTATIONMEMBER:
-                return new ThemisDeclAnnotationMember(pParser, pDecl.asAnnotationMemberDeclaration());
-            case CLASSINTERFACE:
-                return new ThemisDeclClassInterface(pParser, pDecl.asClassOrInterfaceDeclaration());
-            case COMPACT:
-                return new ThemisDeclCompact(pParser, pDecl.asCompactConstructorDeclaration());
-            case CONSTRUCTOR:
-                return new ThemisDeclConstructor(pParser, pDecl.asConstructorDeclaration());
-            case ENUM:
-                return new ThemisDeclEnum(pParser, pDecl.asEnumDeclaration());
-            case ENUMVALUE:
-                return new ThemisDeclEnumValue(pParser, pDecl.asEnumConstantDeclaration());
-            case FIELD:
-                return new ThemisDeclField(pParser, pDecl.asFieldDeclaration());
-            case INITIALIZER:
-                return new ThemisDeclInitializer(pParser, pDecl.asInitializerDeclaration());
-            case METHOD:
-                return new ThemisDeclMethod(pParser, pDecl.asMethodDeclaration());
-            case RECORD:
-                return new ThemisDeclRecord(pParser, pDecl.asRecordDeclaration());
-            default:
-                throw pParser.buildException("Unsupported Declaration Type", pDecl);
-        }
+        return switch (ThemisDeclaration.determineDeclaration(pParser, pDecl)) {
+            case ANNOTATION -> new ThemisDeclAnnotation(pParser, pDecl.asAnnotationDeclaration());
+            case ANNOTATIONMEMBER -> new ThemisDeclAnnotationMember(pParser, pDecl.asAnnotationMemberDeclaration());
+            case CLASSINTERFACE -> new ThemisDeclClassInterface(pParser, pDecl.asClassOrInterfaceDeclaration());
+            case COMPACT -> new ThemisDeclCompact(pParser, pDecl.asCompactConstructorDeclaration());
+            case CONSTRUCTOR -> new ThemisDeclConstructor(pParser, pDecl.asConstructorDeclaration());
+            case ENUM -> new ThemisDeclEnum(pParser, pDecl.asEnumDeclaration());
+            case ENUMVALUE -> new ThemisDeclEnumValue(pParser, pDecl.asEnumConstantDeclaration());
+            case FIELD -> new ThemisDeclField(pParser, pDecl.asFieldDeclaration());
+            case INITIALIZER -> new ThemisDeclInitializer(pParser, pDecl.asInitializerDeclaration());
+            case METHOD -> new ThemisDeclMethod(pParser, pDecl.asMethodDeclaration());
+            case RECORD -> new ThemisDeclRecord(pParser, pDecl.asRecordDeclaration());
+            default -> throw pParser.buildException("Unsupported Declaration Type", pDecl);
+        };
     }
 }

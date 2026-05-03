@@ -64,36 +64,22 @@ public final class ThemisNodeParser {
         }
 
         /* Create appropriate node */
-        switch (ThemisNode.determineNode(pParser, pNode)) {
-            case ARRAYLEVEL:
-                return new ThemisNodeArrayLevel(pParser, (ArrayCreationLevel) pNode);
-            case CASE:
-                return new ThemisNodeCase(pParser, (SwitchEntry) pNode);
-            case CATCH:
-                return new ThemisNodeCatch(pParser, (CatchClause) pNode);
-            case COMPILATIONUNIT:
-                return new ThemisNodeCompilationUnit(pParser, (CompilationUnit) pNode);
-            case COMMENT:
-                return new ThemisNodeComment(pParser, (Comment) pNode);
-            case IMPORT:
-                return new ThemisNodeImport(pParser, (ImportDeclaration) pNode);
-            case MODIFIER:
-                return new ThemisNodeModifier(pParser, (Modifier) pNode);
-            case NAME:
-                return new ThemisNodeName(pParser, (Name) pNode);
-            case PACKAGE:
-                return new ThemisNodePackage(pParser, (PackageDeclaration) pNode);
-            case PARAMETER:
-                return new ThemisNodeParameter(pParser, (Parameter) pNode);
-            case SIMPLENAME:
-                return new ThemisNodeSimpleName(pParser, (SimpleName) pNode);
-            case VALUEPAIR:
-                return new ThemisNodeValuePair(pParser, (MemberValuePair) pNode);
-            case VARIABLE:
-                return new ThemisNodeVariable(pParser, (VariableDeclarator) pNode);
-            default:
-                throw pParser.buildException("Unsupported Node Type", pNode);
-        }
+        return switch (ThemisNode.determineNode(pParser, pNode)) {
+            case ARRAYLEVEL -> new ThemisNodeArrayLevel(pParser, (ArrayCreationLevel) pNode);
+            case CASE -> new ThemisNodeCase(pParser, (SwitchEntry) pNode);
+            case CATCH -> new ThemisNodeCatch(pParser, (CatchClause) pNode);
+            case COMPILATIONUNIT -> new ThemisNodeCompilationUnit(pParser, (CompilationUnit) pNode);
+            case COMMENT -> new ThemisNodeComment(pParser, (Comment) pNode);
+            case IMPORT -> new ThemisNodeImport(pParser, (ImportDeclaration) pNode);
+            case MODIFIER -> new ThemisNodeModifier(pParser, (Modifier) pNode);
+            case NAME -> new ThemisNodeName(pParser, (Name) pNode);
+            case PACKAGE -> new ThemisNodePackage(pParser, (PackageDeclaration) pNode);
+            case PARAMETER -> new ThemisNodeParameter(pParser, (Parameter) pNode);
+            case SIMPLENAME -> new ThemisNodeSimpleName(pParser, (SimpleName) pNode);
+            case VALUEPAIR -> new ThemisNodeValuePair(pParser, (MemberValuePair) pNode);
+            case VARIABLE -> new ThemisNodeVariable(pParser, (VariableDeclarator) pNode);
+            default -> throw pParser.buildException("Unsupported Node Type", pNode);
+        };
     }
 
     /**
