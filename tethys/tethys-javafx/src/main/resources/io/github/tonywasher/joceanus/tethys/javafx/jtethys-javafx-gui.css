@@ -11,10 +11,10 @@
   -jtethys-error-color: #DC381F;
   -jtethys-progress-color: limegreen;
 
-  /* Fonts */	
+  /* Fonts */
   -fx-font-family: Arial;
-  -fx-font-size: 12; 
-  -fx-fill: -jtethys-standard-color;    
+  -fx-font-size: 12;
+  -fx-fill: -jtethys-standard-color;
 }
 
 /**
@@ -39,10 +39,10 @@
 }
 
 .-jtethys .-jtethys-table .table-row-cell:selected {
-  -fx-font-size: 1.166667em;  /* 14pt - 2 more than the default font */ 
+  -fx-font-size: 1.166667em;  /* 14pt - 2 more than the default font */
   -fx-font-weight: bold;
-  -fx-text-background-color: -jtethys-standard-color;  
-} 
+  -fx-text-background-color: -jtethys-standard-color;
+}
 
 /**
  * Titled Pane values.
@@ -83,7 +83,7 @@
   -fx-text-fill: -jtethys-changed-color;
 }
 
-.-jtethys .-jtethys-datafield:-jtethys-datafield-error {
+.-jtethys .-jtethys-datafield .-jtethys-datafield-error {
   -fx-focus-color: -jtethys-error-color;
   -fx-text-fill: -jtethys-error-color;
 }

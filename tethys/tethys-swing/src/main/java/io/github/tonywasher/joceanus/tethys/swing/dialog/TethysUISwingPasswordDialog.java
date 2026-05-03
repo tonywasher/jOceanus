@@ -16,8 +16,6 @@
  */
 package io.github.tonywasher.joceanus.tethys.swing.dialog;
 
-import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogManager;
-import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogger;
 import io.github.tonywasher.joceanus.tethys.core.dialog.TethysUICorePasswordDialog;
 import io.github.tonywasher.joceanus.tethys.core.factory.TethysUICoreFactory;
 import io.github.tonywasher.joceanus.tethys.swing.base.TethysUISwingNode;
@@ -26,22 +24,15 @@ import io.github.tonywasher.joceanus.tethys.swing.pane.TethysUISwingBorderPaneMa
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
-import javax.swing.SwingUtilities;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.FocusTraversalPolicy;
-import java.lang.reflect.InvocationTargetException;
 
 /**
  * Dialog to request a password. Will also ask for password confirmation if required.
  */
 public class TethysUISwingPasswordDialog
         extends TethysUICorePasswordDialog {
-    /**
-     * Logger.
-     */
-    private static final OceanusLogger LOGGER = OceanusLogManager.getLogger(TethysUISwingPasswordDialog.class);
-
     /**
      * Dialog.
      */
@@ -110,21 +101,7 @@ public class TethysUISwingPasswordDialog
 
     @Override
     public boolean showDialog() {
-        /* If this is the event dispatcher thread */
-        if (SwingUtilities.isEventDispatchThread()) {
-            /* invoke the dialog directly */
-            showTheDialog();
-
-            /* else we must use invokeAndWait */
-        } else {
-            try {
-                SwingUtilities.invokeAndWait(this::showDialog);
-            } catch (InvocationTargetException e) {
-                LOGGER.error("Failed to display dialog", e);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-            }
-        }
+        TethysUISwingDialog.runInSwingThread(this::showTheDialog);
 
         /* Return to caller */
         return isPasswordSet();

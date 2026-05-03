@@ -16,14 +16,14 @@
  */
 package io.github.tonywasher.joceanus.tethys.javafx.dialog;
 
+import io.github.tonywasher.joceanus.tethys.core.dialog.TethysUICoreBusySpinner;
+import io.github.tonywasher.joceanus.tethys.core.factory.TethysUICoreFactory;
+import io.github.tonywasher.joceanus.tethys.javafx.base.TethysUIFXNode;
 import javafx.scene.Scene;
 import javafx.scene.layout.Region;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import io.github.tonywasher.joceanus.tethys.core.dialog.TethysUICoreBusySpinner;
-import io.github.tonywasher.joceanus.tethys.core.factory.TethysUICoreFactory;
-import io.github.tonywasher.joceanus.tethys.javafx.base.TethysUIFXNode;
 
 /**
  * javaFX About Box.
@@ -77,6 +77,13 @@ public class TethysUIFXBusySpinner
 
     @Override
     public void showDialog() {
+        TethysUIFXDialog.runInFXThread(this::showTheDialog);
+    }
+
+    /**
+     * Show the dialogue.
+     */
+    private void showTheDialog() {
         /* If we have not made the dialog yet */
         if (theDialog == null) {
             makeDialog();
@@ -88,7 +95,7 @@ public class TethysUIFXBusySpinner
         theDialog.setX(theStage.getX() + myX);
         theDialog.setY(theStage.getY() + myY);
 
-        /* Show the dialog */
+        /* Show the dialogue */
         theDialog.show();
     }
 
@@ -96,7 +103,7 @@ public class TethysUIFXBusySpinner
      * Make the dialog.
      */
     private void makeDialog() {
-        /* Create the dialog */
+        /* Create the dialogue */
         theDialog = new Stage(StageStyle.UNDECORATED);
         theDialog.initOwner(theStage);
         theDialog.initModality(Modality.NONE);
@@ -122,6 +129,13 @@ public class TethysUIFXBusySpinner
 
     @Override
     public void closeDialog() {
+        TethysUIFXDialog.runInFXThread(this::closeTheDialog);
+    }
+
+    /**
+     * Close the dialogue.
+     */
+    private void closeTheDialog() {
         if (theDialog != null) {
             theDialog.close();
         }

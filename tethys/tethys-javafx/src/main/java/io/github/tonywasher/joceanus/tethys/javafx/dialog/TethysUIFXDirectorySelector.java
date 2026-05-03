@@ -16,27 +16,17 @@
  */
 package io.github.tonywasher.joceanus.tethys.javafx.dialog;
 
-import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogManager;
-import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogger;
-import javafx.application.Platform;
+import io.github.tonywasher.joceanus.tethys.core.dialog.TethysUICoreDirectorySelector;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
-import io.github.tonywasher.joceanus.tethys.core.dialog.TethysUICoreDirectorySelector;
 
 import java.io.File;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.FutureTask;
 
 /**
  * JavaFX Directory Selector.
  */
 public class TethysUIFXDirectorySelector
         extends TethysUICoreDirectorySelector {
-    /**
-     * Logger.
-     */
-    private static final OceanusLogger LOGGER = OceanusLogManager.getLogger(TethysUIFXDirectorySelector.class);
-
     /**
      * Parent stage.
      */
@@ -82,33 +72,7 @@ public class TethysUIFXDirectorySelector
 
     @Override
     public File selectDirectory() {
-        /* If this is the event dispatcher thread */
-        if (Platform.isFxApplicationThread()) {
-            /* invoke the dialog directly */
-            showDialog();
-
-            /* else we must use invokeAndWait */
-        } else {
-            /* Create a FutureTask so that we will wait */
-            final FutureTask<Void> myTask = new FutureTask<>(() -> {
-                showDialog();
-                return null;
-            });
-
-            /* Protect against exceptions */
-            try {
-                /* Run on Application thread and wait for completion */
-                Platform.runLater(myTask);
-                myTask.get();
-            } catch (IllegalStateException
-                     | ExecutionException e) {
-                LOGGER.error("Failed to display dialog", e);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-            }
-        }
-
-        /* Return to caller */
+        TethysUIFXDialog.runInFXThread(this::showDialog);
         return theSelectedDir;
     }
 }

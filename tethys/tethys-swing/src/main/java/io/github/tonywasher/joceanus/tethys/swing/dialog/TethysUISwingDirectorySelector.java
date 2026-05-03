@@ -21,10 +21,8 @@ import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogger;
 import io.github.tonywasher.joceanus.tethys.core.dialog.TethysUICoreDirectorySelector;
 
 import javax.swing.JFileChooser;
-import javax.swing.SwingUtilities;
 import java.awt.Component;
 import java.io.File;
-import java.lang.reflect.InvocationTargetException;
 
 /**
  * Swing Directory Selector.
@@ -87,23 +85,7 @@ public class TethysUISwingDirectorySelector
 
     @Override
     public File selectDirectory() {
-        /* If this is the event dispatcher thread */
-        if (SwingUtilities.isEventDispatchThread()) {
-            /* invoke the dialog directly */
-            showDialog();
-
-            /* else we must use invokeAndWait */
-        } else {
-            try {
-                SwingUtilities.invokeAndWait(this::showDialog);
-            } catch (InvocationTargetException e) {
-                LOGGER.error("Failed to display dialog", e);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-            }
-        }
-
-        /* Return to caller */
+        TethysUISwingDialog.runInSwingThread(this::showDialog);
         return theSelectedDir;
     }
 }

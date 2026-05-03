@@ -21,11 +21,9 @@ import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogger;
 import io.github.tonywasher.joceanus.tethys.core.dialog.TethysUICoreFileSelector;
 
 import javax.swing.JFileChooser;
-import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.Component;
 import java.io.File;
-import java.lang.reflect.InvocationTargetException;
 
 /**
  * Swing File Selector.
@@ -102,23 +100,7 @@ public class TethysUISwingFileSelector
 
     @Override
     public File selectFile() {
-        /* If this is the event dispatcher thread */
-        if (SwingUtilities.isEventDispatchThread()) {
-            /* invoke the dialog directly */
-            showDialog();
-
-            /* else we must use invokeAndWait */
-        } else {
-            try {
-                SwingUtilities.invokeAndWait(this::showDialog);
-            } catch (InvocationTargetException e) {
-                LOGGER.error("Failed to display dialog", e);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-            }
-        }
-
-        /* Return to caller */
+        TethysUISwingDialog.runInSwingThread(this::showDialog);
         return theSelectedFile;
     }
 }

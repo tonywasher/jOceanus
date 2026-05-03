@@ -194,7 +194,7 @@ public abstract class PrometheusStaticDataItem
             switch (myValue) {
                 case Boolean b -> setValueEnabled(b);
                 case String s -> setValueEnabled(myFormatter.parseValue(s, Boolean.class));
-                default -> setValueEnabled(Boolean.TRUE);
+                case null, default -> setValueEnabled(Boolean.TRUE);
             }
 
             /* Catch Exceptions */

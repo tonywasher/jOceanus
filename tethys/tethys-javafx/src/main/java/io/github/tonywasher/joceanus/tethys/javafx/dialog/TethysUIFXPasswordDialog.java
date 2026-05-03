@@ -18,6 +18,10 @@ package io.github.tonywasher.joceanus.tethys.javafx.dialog;
 
 import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogManager;
 import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogger;
+import io.github.tonywasher.joceanus.tethys.core.dialog.TethysUICorePasswordDialog;
+import io.github.tonywasher.joceanus.tethys.core.factory.TethysUICoreFactory;
+import io.github.tonywasher.joceanus.tethys.javafx.base.TethysUIFXNode;
+import io.github.tonywasher.joceanus.tethys.javafx.pane.TethysUIFXBorderPaneManager;
 import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.layout.Region;
@@ -25,10 +29,6 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.stage.Window;
-import io.github.tonywasher.joceanus.tethys.core.dialog.TethysUICorePasswordDialog;
-import io.github.tonywasher.joceanus.tethys.core.factory.TethysUICoreFactory;
-import io.github.tonywasher.joceanus.tethys.javafx.base.TethysUIFXNode;
-import io.github.tonywasher.joceanus.tethys.javafx.pane.TethysUIFXBorderPaneManager;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
@@ -146,7 +146,7 @@ public class TethysUIFXPasswordDialog
                                                     final boolean pNeedConfirm) {
         /* If this is the event dispatcher thread */
         if (Platform.isFxApplicationThread()) {
-            /* invoke the dialog directly */
+            /* invoke the dialogue directly */
             return new TethysUIFXPasswordDialog(pFactory, pStage, pTitle, pNeedConfirm);
 
             /* else we must use invokeAndWait */
@@ -171,33 +171,7 @@ public class TethysUIFXPasswordDialog
 
     @Override
     public boolean showDialog() {
-        /* If this is the event dispatcher thread */
-        if (Platform.isFxApplicationThread()) {
-            /* invoke the dialog directly */
-            showTheDialog();
-
-            /* else we must use invokeAndWait */
-        } else {
-            /* Create a FutureTask so that we will wait */
-            final FutureTask<Void> myTask = new FutureTask<>(() -> {
-                showTheDialog();
-                return null;
-            });
-
-            /* Protect against exceptions */
-            try {
-                /* Run on Application thread and wait for completion */
-                Platform.runLater(myTask);
-                myTask.get();
-            } catch (IllegalStateException
-                     | ExecutionException e) {
-                LOGGER.error("Failed to display dialog", e);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-            }
-        }
-
-        /* Return to caller */
+        TethysUIFXDialog.runInFXThread(this::showTheDialog);
         return isPasswordSet();
     }
 }
