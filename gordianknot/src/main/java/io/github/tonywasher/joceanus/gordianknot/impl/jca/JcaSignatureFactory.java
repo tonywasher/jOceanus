@@ -74,39 +74,22 @@ public class JcaSignatureFactory
      * @throws GordianException on error
      */
     private GordianSignature getJcaSigner(final GordianSignatureSpec pSignatureSpec) throws GordianException {
-        switch (pSignatureSpec.getKeyPairType()) {
-            case RSA:
-                return new JcaRSASignature(getFactory(), pSignatureSpec);
-            case EC:
-            case SM2:
-            case DSA:
-                return new JcaDSASignature(getFactory(), pSignatureSpec);
-            case EDDSA:
-                return new JcaEdDSASignature(getFactory(), pSignatureSpec);
-            case GOST:
-            case DSTU:
-                return new JcaGOSTSignature(getFactory(), pSignatureSpec);
-            case XMSS:
-                return new JcaXMSSSignature(getFactory(), pSignatureSpec);
-            case SLHDSA:
-                return new JcaSLHDSASignature(getFactory(), pSignatureSpec);
-            case MLDSA:
-                return new JcaMLDSASignature(getFactory(), pSignatureSpec);
-            case FALCON:
-                return new JcaFalconSignature(getFactory(), pSignatureSpec);
-            case MAYO:
-                return new JcaMayoSignature(getFactory(), pSignatureSpec);
-            case SNOVA:
-                return new JcaSnovaSignature(getFactory(), pSignatureSpec);
-            case PICNIC:
-                return new JcaPicnicSignature(getFactory(), pSignatureSpec);
-            case LMS:
-                return new JcaLMSSignature(getFactory(), pSignatureSpec);
-            case COMPOSITE:
-                return new GordianCompositeSigner(getFactory(), pSignatureSpec);
-            default:
-                throw new GordianDataException(GordianBaseData.getInvalidText(pSignatureSpec.getKeyPairType()));
-        }
+        return switch (pSignatureSpec.getKeyPairType()) {
+            case RSA -> new JcaRSASignature(getFactory(), pSignatureSpec);
+            case EC, SM2, DSA -> new JcaDSASignature(getFactory(), pSignatureSpec);
+            case EDDSA -> new JcaEdDSASignature(getFactory(), pSignatureSpec);
+            case GOST, DSTU -> new JcaGOSTSignature(getFactory(), pSignatureSpec);
+            case XMSS -> new JcaXMSSSignature(getFactory(), pSignatureSpec);
+            case SLHDSA -> new JcaSLHDSASignature(getFactory(), pSignatureSpec);
+            case MLDSA -> new JcaMLDSASignature(getFactory(), pSignatureSpec);
+            case FALCON -> new JcaFalconSignature(getFactory(), pSignatureSpec);
+            case MAYO -> new JcaMayoSignature(getFactory(), pSignatureSpec);
+            case SNOVA -> new JcaSnovaSignature(getFactory(), pSignatureSpec);
+            case PICNIC -> new JcaPicnicSignature(getFactory(), pSignatureSpec);
+            case LMS -> new JcaLMSSignature(getFactory(), pSignatureSpec);
+            case COMPOSITE -> new GordianCompositeSigner(getFactory(), pSignatureSpec);
+            default -> throw new GordianDataException(GordianBaseData.getInvalidText(pSignatureSpec.getKeyPairType()));
+        };
     }
 
     @Override
@@ -118,33 +101,13 @@ public class JcaSignatureFactory
 
         /* Switch on KeyType */
         final GordianCoreSignatureSpec mySpec = (GordianCoreSignatureSpec) pSpec;
-        switch (pSpec.getKeyPairType()) {
-            case RSA:
-                return validRSASignature(mySpec);
-            case EC:
-                return validECSignature(mySpec);
-            case DSTU:
-            case GOST:
-            case SM2:
-                return true;
-            case DSA:
-                return validDSASignature(mySpec);
-            case XMSS:
-            case SLHDSA:
-            case MLDSA:
-            case FALCON:
-            case MAYO:
-            case SNOVA:
-            case PICNIC:
-            case EDDSA:
-            case LMS:
-            case COMPOSITE:
-                return true;
-            case DH:
-            case XDH:
-            default:
-                return false;
-        }
+        return switch (pSpec.getKeyPairType()) {
+            case RSA -> validRSASignature(mySpec);
+            case EC -> validECSignature(mySpec);
+            case DSA -> validDSASignature(mySpec);
+            case DSTU, GOST, SM2, XMSS, SLHDSA, MLDSA, FALCON, MAYO, SNOVA, PICNIC, EDDSA, LMS, COMPOSITE -> true;
+            default -> false;
+        };
     }
 
     /**
@@ -156,25 +119,15 @@ public class JcaSignatureFactory
     private static boolean validRSASignature(final GordianCoreSignatureSpec pSpec) {
         /* Switch on DigestType */
         final GordianDigestSpec myDigest = pSpec.getDigestSpec();
-        switch (myDigest.getDigestType()) {
-            case SHA1:
-            case SHA2:
-                return true;
-            case SHA3:
-                return pSpec.getCoreType().isPSS()
-                        || GordianSignatureType.PREHASH.equals(pSpec.getSignatureType());
-            case SHAKE:
-                return validRSASHAKESignature(pSpec);
-            case WHIRLPOOL:
-                return !pSpec.getCoreType().isPSS();
-            case RIPEMD:
-            case MD2:
-            case MD4:
-            case MD5:
-                return GordianSignatureType.PREHASH.equals(pSpec.getSignatureType());
-            default:
-                return false;
-        }
+        return switch (myDigest.getDigestType()) {
+            case SHA1, SHA2 -> true;
+            case SHA3 -> pSpec.getCoreType().isPSS()
+                    || GordianSignatureType.PREHASH.equals(pSpec.getSignatureType());
+            case SHAKE -> validRSASHAKESignature(pSpec);
+            case WHIRLPOOL -> !pSpec.getCoreType().isPSS();
+            case RIPEMD, MD2, MD4, MD5 -> GordianSignatureType.PREHASH.equals(pSpec.getSignatureType());
+            default -> false;
+        };
     }
 
     /**
@@ -191,14 +144,11 @@ public class JcaSignatureFactory
         }
 
         /* Switch on SignatureType */
-        switch (pSpec.getSignatureType()) {
-            case PSS128:
-                return GordianDigestState.STATE128.equals(myDigest.getDigestState());
-            case PSS256:
-                return GordianDigestState.STATE256.equals(myDigest.getDigestState());
-            default:
-                return false;
-        }
+        return switch (pSpec.getSignatureType()) {
+            case PSS128 -> GordianDigestState.STATE128.equals(myDigest.getDigestState());
+            case PSS256 -> GordianDigestState.STATE256.equals(myDigest.getDigestState());
+            default -> false;
+        };
     }
 
     /**
@@ -210,16 +160,12 @@ public class JcaSignatureFactory
     private static boolean validECSignature(final GordianCoreSignatureSpec pSpec) {
         /* Switch on DigestType */
         final GordianCoreDigestSpec myDigest = pSpec.getDigestSpec();
-        switch (myDigest.getDigestType()) {
-            case SHA2:
-                return !myDigest.isSha2Hybrid();
-            case SHA3:
-                return !GordianSignatureType.NR.equals(pSpec.getSignatureType());
-            case SHAKE:
-                return GordianSignatureType.DSA.equals(pSpec.getSignatureType());
-            default:
-                return false;
-        }
+        return switch (myDigest.getDigestType()) {
+            case SHA2 -> !myDigest.isSha2Hybrid();
+            case SHA3 -> !GordianSignatureType.NR.equals(pSpec.getSignatureType());
+            case SHAKE -> GordianSignatureType.DSA.equals(pSpec.getSignatureType());
+            default -> false;
+        };
     }
 
     /**
@@ -231,14 +177,10 @@ public class JcaSignatureFactory
     private static boolean validDSASignature(final GordianCoreSignatureSpec pSpec) {
         /* Switch on DigestType */
         final GordianCoreDigestSpec myDigest = pSpec.getDigestSpec();
-        switch (myDigest.getDigestType()) {
-            case SHA2:
-                return !myDigest.isSha2Hybrid();
-            case SHA1:
-            case SHA3:
-                return true;
-            default:
-                return false;
-        }
+        return switch (myDigest.getDigestType()) {
+            case SHA2 -> !myDigest.isSha2Hybrid();
+            case SHA1, SHA3 -> true;
+            default -> false;
+        };
     }
 }

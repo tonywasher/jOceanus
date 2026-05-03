@@ -138,42 +138,25 @@ public class BouncyMacFactory
      * @throws GordianException on error
      */
     private Mac getBCMac(final GordianCoreMacSpec pMacSpec) throws GordianException {
-        switch (pMacSpec.getMacType()) {
-            case HMAC:
-                return getBCHMac(pMacSpec);
-            case GMAC:
-                return getBCGMac(Objects.requireNonNull(pMacSpec.getSymKeySpec()));
-            case CMAC:
-                return getBCCMac(Objects.requireNonNull(pMacSpec.getSymKeySpec()));
-            case POLY1305:
-                return getBCPoly1305Mac(pMacSpec.getSymKeySpec());
-            case SKEIN:
-                return getBCSkeinMac(Objects.requireNonNull(pMacSpec.getDigestSpec()));
-            case BLAKE2:
-                return getBCBlake2Mac(Objects.requireNonNull(pMacSpec.getDigestSpec()));
-            case BLAKE3:
-                return getBCBlake3Mac(Objects.requireNonNull(pMacSpec.getDigestSpec()));
-            case KMAC:
-                return getBCKMAC(Objects.requireNonNull(pMacSpec.getDigestSpec()));
-            case KALYNA:
-                return getBCKalynaMac(Objects.requireNonNull(pMacSpec.getSymKeySpec()));
-            case KUPYNA:
-                return getBCKupynaMac(Objects.requireNonNull(pMacSpec.getDigestSpec()));
-            case VMPC:
-                return getBCVMPCMac();
-            case CBCMAC:
-                return getBCCBCMac(Objects.requireNonNull(pMacSpec.getSymKeySpec()));
-            case CFBMAC:
-                return getBCCFBMac(Objects.requireNonNull(pMacSpec.getSymKeySpec()));
-            case SIPHASH:
-                return getBCSipHash(Objects.requireNonNull(pMacSpec.getSipHashSpec()));
-            case GOST:
-                return getBCGOSTMac();
-            case ZUC:
-                return getBCZucMac(pMacSpec);
-            default:
-                throw new GordianDataException(GordianBaseData.getInvalidText(pMacSpec));
-        }
+        return switch (pMacSpec.getMacType()) {
+            case HMAC -> getBCHMac(pMacSpec);
+            case GMAC -> getBCGMac(Objects.requireNonNull(pMacSpec.getSymKeySpec()));
+            case CMAC -> getBCCMac(Objects.requireNonNull(pMacSpec.getSymKeySpec()));
+            case POLY1305 -> getBCPoly1305Mac(pMacSpec.getSymKeySpec());
+            case SKEIN -> getBCSkeinMac(Objects.requireNonNull(pMacSpec.getDigestSpec()));
+            case BLAKE2 -> getBCBlake2Mac(Objects.requireNonNull(pMacSpec.getDigestSpec()));
+            case BLAKE3 -> getBCBlake3Mac(Objects.requireNonNull(pMacSpec.getDigestSpec()));
+            case KMAC -> getBCKMAC(Objects.requireNonNull(pMacSpec.getDigestSpec()));
+            case KALYNA -> getBCKalynaMac(Objects.requireNonNull(pMacSpec.getSymKeySpec()));
+            case KUPYNA -> getBCKupynaMac(Objects.requireNonNull(pMacSpec.getDigestSpec()));
+            case VMPC -> getBCVMPCMac();
+            case CBCMAC -> getBCCBCMac(Objects.requireNonNull(pMacSpec.getSymKeySpec()));
+            case CFBMAC -> getBCCFBMac(Objects.requireNonNull(pMacSpec.getSymKeySpec()));
+            case SIPHASH -> getBCSipHash(Objects.requireNonNull(pMacSpec.getSipHashSpec()));
+            case GOST -> getBCGOSTMac();
+            case ZUC -> getBCZucMac(pMacSpec);
+            default -> throw new GordianDataException(GordianBaseData.getInvalidText(pMacSpec));
+        };
     }
 
     /**

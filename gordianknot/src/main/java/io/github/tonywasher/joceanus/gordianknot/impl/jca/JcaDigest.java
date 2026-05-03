@@ -144,13 +144,10 @@ public final class JcaDigest
         /* Access standard name */
         final String myAlgorithm = getAlgorithm(pDigestSpec);
 
-        switch (pDigestSpec.getDigestType()) {
-            case SHAKE:
-            case BLAKE3:
-                return myAlgorithm + "-" + pDigestSpec.getDigestLength();
-            default:
-                return myAlgorithm;
-        }
+        return switch (pDigestSpec.getDigestType()) {
+            case SHAKE, BLAKE3 -> myAlgorithm + "-" + pDigestSpec.getDigestLength();
+            default -> myAlgorithm;
+        };
     }
 
     /**
@@ -166,40 +163,21 @@ public final class JcaDigest
         final GordianLength myLen = pDigestSpec.getDigestLength();
 
         /* Switch on digestType */
-        switch (myType) {
-            case SHA2:
-                return getSHA2Algorithm(pDigestSpec);
-            case STREEBOG:
-                return getStreebogAlgorithm(myLen);
-            case RIPEMD:
-                return getRIPEMDAlgorithm(myLen);
-            case SKEIN:
-                return getSkeinAlgorithm(pDigestSpec);
-            case SHA3:
-                return getSHA3Algorithm(myLen);
-            case BLAKE2:
-                return getBlake2Algorithm(pDigestSpec);
-            case KUPYNA:
-                return getKupynaAlgorithm(myLen);
-            case SHAKE:
-                return getSHAKEAlgorithm(pDigestSpec.getCoreDigestState());
-            case HARAKA:
-                return pDigestSpec.toString();
-            case GOST:
-                return "GOST3411";
-            case WHIRLPOOL:
-            case TIGER:
-            case SHA1:
-            case MD5:
-            case MD4:
-            case MD2:
-            case SM3:
-                return myType.name();
-            case BLAKE3:
-                return pDigestSpec.toString();
-            default:
-                throw new GordianDataException("Invalid DigestSpec :- " + pDigestSpec);
-        }
+        return switch (myType) {
+            case SHA2 -> getSHA2Algorithm(pDigestSpec);
+            case STREEBOG -> getStreebogAlgorithm(myLen);
+            case RIPEMD -> getRIPEMDAlgorithm(myLen);
+            case SKEIN -> getSkeinAlgorithm(pDigestSpec);
+            case SHA3 -> getSHA3Algorithm(myLen);
+            case BLAKE2 -> getBlake2Algorithm(pDigestSpec);
+            case KUPYNA -> getKupynaAlgorithm(myLen);
+            case SHAKE -> getSHAKEAlgorithm(pDigestSpec.getCoreDigestState());
+            case HARAKA -> pDigestSpec.toString();
+            case GOST -> "GOST3411";
+            case WHIRLPOOL, TIGER, SHA1, MD5, MD4, MD2, SM3 -> myType.name();
+            case BLAKE3 -> pDigestSpec.toString();
+            default -> throw new GordianDataException("Invalid DigestSpec :- " + pDigestSpec);
+        };
     }
 
     /**
@@ -209,17 +187,12 @@ public final class JcaDigest
      * @return the name
      */
     private static String getRIPEMDAlgorithm(final GordianLength pLength) {
-        switch (pLength) {
-            case LEN_128:
-                return "RIPEMD128";
-            case LEN_160:
-                return "RIPEMD160";
-            case LEN_256:
-                return "RIPEMD256";
-            case LEN_320:
-            default:
-                return "RIPEMD320";
-        }
+        return switch (pLength) {
+            case LEN_128 -> "RIPEMD128";
+            case LEN_160 -> "RIPEMD160";
+            case LEN_256 -> "RIPEMD256";
+            default -> "RIPEMD320";
+        };
     }
 
     /**
@@ -239,15 +212,11 @@ public final class JcaDigest
      * @return the name
      */
     private static String getKupynaAlgorithm(final GordianLength pLength) {
-        switch (pLength) {
-            case LEN_256:
-                return "DSTU7564-256";
-            case LEN_384:
-                return "DSTU7564-384";
-            case LEN_512:
-            default:
-                return "DSTU7564-512";
-        }
+        return switch (pLength) {
+            case LEN_256 -> "DSTU7564-256";
+            case LEN_384 -> "DSTU7564-384";
+            default -> "DSTU7564-512";
+        };
     }
 
     /**
@@ -262,21 +231,16 @@ public final class JcaDigest
         final GordianLength myLen = pSpec.getDigestLength();
 
         /* Switch on length */
-        switch (myLen) {
-            case LEN_224:
-                return GordianDigestState.STATE256.equals(myState)
-                        ? "SHA224"
-                        : "SHA-512/224";
-            case LEN_256:
-                return GordianDigestState.STATE256.equals(myState)
-                        ? "SHA256"
-                        : "SHA-512/256";
-            case LEN_384:
-                return "SHA384";
-            case LEN_512:
-            default:
-                return "SHA512";
-        }
+        return switch (myLen) {
+            case LEN_224 -> GordianDigestState.STATE256.equals(myState)
+                    ? "SHA224"
+                    : "SHA-512/224";
+            case LEN_256 -> GordianDigestState.STATE256.equals(myState)
+                    ? "SHA256"
+                    : "SHA-512/256";
+            case LEN_384 -> "SHA384";
+            default -> "SHA512";
+        };
     }
 
     /**
@@ -286,17 +250,12 @@ public final class JcaDigest
      * @return the name
      */
     private static String getSHA3Algorithm(final GordianLength pLength) {
-        switch (pLength) {
-            case LEN_224:
-                return "SHA3-224";
-            case LEN_256:
-                return "SHA3-256";
-            case LEN_384:
-                return "SHA3-384";
-            case LEN_512:
-            default:
-                return "SHA3-512";
-        }
+        return switch (pLength) {
+            case LEN_224 -> "SHA3-224";
+            case LEN_256 -> "SHA3-256";
+            case LEN_384 -> "SHA3-384";
+            default -> "SHA3-512";
+        };
     }
 
     /**
@@ -340,14 +299,9 @@ public final class JcaDigest
      * @return true/false
      */
     static boolean isHMacSupported(final GordianDigestType pDigestType) {
-        switch (pDigestType) {
-            case BLAKE2:
-            case BLAKE3:
-            case KUPYNA:
-            case SHAKE:
-                return false;
-            default:
-                return true;
-        }
+        return switch (pDigestType) {
+            case BLAKE2, BLAKE3, KUPYNA, SHAKE -> false;
+            default -> true;
+        };
     }
 }

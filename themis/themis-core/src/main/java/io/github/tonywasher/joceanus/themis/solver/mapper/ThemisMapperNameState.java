@@ -253,16 +253,10 @@ public class ThemisMapperNameState {
      * @return true/false
      */
     private boolean bumpStack(final ThemisDeclaration pDeclType) {
-        switch (pDeclType) {
-            case CLASSINTERFACE:
-            case ENUM:
-            case RECORD:
-            case METHOD:
-            case CONSTRUCTOR:
-                return true;
-            default:
-                return false;
-        }
+        return switch (pDeclType) {
+            case CLASSINTERFACE, ENUM, RECORD, METHOD, CONSTRUCTOR -> true;
+            default -> false;
+        };
     }
 
     /**
@@ -272,15 +266,10 @@ public class ThemisMapperNameState {
      * @return true/false
      */
     private boolean bumpStack(final ThemisStatement pStmtType) {
-        switch (pStmtType) {
-            case BLOCK:
-            case FOR:
-            case FOREACH:
-            case TRY:
-                return true;
-            default:
-                return false;
-        }
+        return switch (pStmtType) {
+            case BLOCK, FOR, FOREACH, TRY -> true;
+            default -> false;
+        };
     }
 
     /**

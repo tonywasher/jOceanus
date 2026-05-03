@@ -162,7 +162,7 @@ public class GordianMiniCertificate
     }
 
     @Override
-    public boolean validateCertificate(final GordianCertificate pSigner) throws GordianException {
+    public boolean validateCertificate(final GordianCertificate pSigner) {
         return true;
     }
 

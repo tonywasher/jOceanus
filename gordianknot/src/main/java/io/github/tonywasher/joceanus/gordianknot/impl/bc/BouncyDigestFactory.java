@@ -116,70 +116,41 @@ public class BouncyDigestFactory
         final GordianLength myLen = pDigestSpec.getDigestLength();
 
         /* Switch on digest type */
-        switch (myType) {
-            case SHA2:
-                return getSHA2Digest(pDigestSpec);
-            case RIPEMD:
-                return getRIPEMDDigest(myLen);
-            case SKEIN:
-                return pDigestSpec.isXofMode()
-                        ? getSkeinXof(pDigestSpec.getCoreDigestState())
-                        : getSkeinDigest(pDigestSpec.getCoreDigestState(), myLen);
-            case SHA3:
-                return getSHA3Digest(myLen);
-            case SHAKE:
-                return new SHAKEDigest(pDigestSpec.getCoreDigestState().getLength().getLength());
-            case KANGAROO:
-                return getKangarooDigest(pDigestSpec);
-            case HARAKA:
-                return getHarakaDigest(pDigestSpec);
-            case BLAKE2:
-                return pDigestSpec.isXofMode()
-                        ? getBlake2Xof(pDigestSpec)
-                        : getBlake2Digest(pDigestSpec);
-            case BLAKE3:
-                return new GordianBlake3Digest(myLen.getByteLength());
-            case STREEBOG:
-                return getStreebogDigest(myLen);
-            case KUPYNA:
-                return getKupynaDigest(myLen);
-            case GROESTL:
-                return new GordianGroestlDigest(myLen.getLength());
-            case JH:
-                return new GordianJHDigest(myLen.getLength());
-            case CUBEHASH:
-                return new GordianCubeHashDigest(myLen.getLength());
-            case GOST:
-                return new GOST3411Digest();
-            case TIGER:
-                return new TigerDigest();
-            case WHIRLPOOL:
-                return new WhirlpoolDigest();
-            case SM3:
-                return new SM3Digest();
-            case SHA1:
-                return new SHA1Digest();
-            case MD5:
-                return new MD5Digest();
-            case MD4:
-                return new MD4Digest();
-            case MD2:
-                return new MD2Digest();
-            case ASCON:
-                return getAsconDigest(pDigestSpec);
-            case ISAP:
-                return new ISAPDigest();
-            case PHOTONBEETLE:
-                return new PhotonBeetleDigest();
-            case ROMULUS:
-                return new RomulusDigest();
-            case SPARKLE:
-                return getSparkleDigest(pDigestSpec);
-            case XOODYAK:
-                return new XoodyakDigest();
-            default:
-                throw new GordianDataException(GordianBaseData.getInvalidText(pDigestSpec.toString()));
-        }
+        return switch (myType) {
+            case SHA2 -> getSHA2Digest(pDigestSpec);
+            case RIPEMD -> getRIPEMDDigest(myLen);
+            case SKEIN -> pDigestSpec.isXofMode()
+                    ? getSkeinXof(pDigestSpec.getCoreDigestState())
+                    : getSkeinDigest(pDigestSpec.getCoreDigestState(), myLen);
+            case SHA3 -> getSHA3Digest(myLen);
+            case SHAKE -> new SHAKEDigest(pDigestSpec.getCoreDigestState().getLength().getLength());
+            case KANGAROO -> getKangarooDigest(pDigestSpec);
+            case HARAKA -> getHarakaDigest(pDigestSpec);
+            case BLAKE2 -> pDigestSpec.isXofMode()
+                    ? getBlake2Xof(pDigestSpec)
+                    : getBlake2Digest(pDigestSpec);
+            case BLAKE3 -> new GordianBlake3Digest(myLen.getByteLength());
+            case STREEBOG -> getStreebogDigest(myLen);
+            case KUPYNA -> getKupynaDigest(myLen);
+            case GROESTL -> new GordianGroestlDigest(myLen.getLength());
+            case JH -> new GordianJHDigest(myLen.getLength());
+            case CUBEHASH -> new GordianCubeHashDigest(myLen.getLength());
+            case GOST -> new GOST3411Digest();
+            case TIGER -> new TigerDigest();
+            case WHIRLPOOL -> new WhirlpoolDigest();
+            case SM3 -> new SM3Digest();
+            case SHA1 -> new SHA1Digest();
+            case MD5 -> new MD5Digest();
+            case MD4 -> new MD4Digest();
+            case MD2 -> new MD2Digest();
+            case ASCON -> getAsconDigest(pDigestSpec);
+            case ISAP -> new ISAPDigest();
+            case PHOTONBEETLE -> new PhotonBeetleDigest();
+            case ROMULUS -> new RomulusDigest();
+            case SPARKLE -> getSparkleDigest(pDigestSpec);
+            case XOODYAK -> new XoodyakDigest();
+            default -> throw new GordianDataException(GordianBaseData.getInvalidText(pDigestSpec.toString()));
+        };
     }
 
     /**
@@ -189,17 +160,12 @@ public class BouncyDigestFactory
      * @return the digest
      */
     private static Digest getRIPEMDDigest(final GordianLength pLength) {
-        switch (pLength) {
-            case LEN_128:
-                return new RIPEMD128Digest();
-            case LEN_160:
-                return new RIPEMD160Digest();
-            case LEN_256:
-                return new RIPEMD256Digest();
-            case LEN_320:
-            default:
-                return new RIPEMD320Digest();
-        }
+        return switch (pLength) {
+            case LEN_128 -> new RIPEMD128Digest();
+            case LEN_160 -> new RIPEMD160Digest();
+            case LEN_256 -> new RIPEMD256Digest();
+            default -> new RIPEMD320Digest();
+        };
     }
 
     /**
@@ -286,21 +252,16 @@ public class BouncyDigestFactory
     private static Digest getSHA2Digest(final GordianCoreDigestSpec pSpec) {
         final GordianLength myLen = pSpec.getDigestLength();
         final GordianDigestState myState = pSpec.getDigestState();
-        switch (myLen) {
-            case LEN_224:
-                return GordianDigestState.STATE256.equals(myState)
-                        ? new SHA224Digest()
-                        : new SHA512tDigest(myLen.getLength());
-            case LEN_256:
-                return GordianDigestState.STATE256.equals(myState)
-                        ? new SHA256Digest()
-                        : new SHA512tDigest(myLen.getLength());
-            case LEN_384:
-                return new SHA384Digest();
-            case LEN_512:
-            default:
-                return new SHA512Digest();
-        }
+        return switch (myLen) {
+            case LEN_224 -> GordianDigestState.STATE256.equals(myState)
+                    ? new SHA224Digest()
+                    : new SHA512tDigest(myLen.getLength());
+            case LEN_256 -> GordianDigestState.STATE256.equals(myState)
+                    ? new SHA256Digest()
+                    : new SHA512tDigest(myLen.getLength());
+            case LEN_384 -> new SHA384Digest();
+            default -> new SHA512Digest();
+        };
     }
 
     /**

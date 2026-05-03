@@ -169,9 +169,8 @@ public class GordianCoreAgreementBuilder {
      * Set the resultType.
      *
      * @param pResultType the resultType
-     * @throws GordianException on error
      */
-    void setResultType(final Object pResultType) throws GordianException {
+    void setResultType(final Object pResultType) {
         theState.setResultType(pResultType);
     }
 

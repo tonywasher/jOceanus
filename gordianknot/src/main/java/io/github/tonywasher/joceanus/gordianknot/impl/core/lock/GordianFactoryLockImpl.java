@@ -189,12 +189,11 @@ public class GordianFactoryLockImpl
         }
 
         /* Make sure that the object is the same class */
-        if (!(pThat instanceof GordianFactoryLockImpl)) {
+        if (!(pThat instanceof GordianFactoryLockImpl myThat)) {
             return false;
         }
 
         /* Access the target field */
-        final GordianFactoryLockImpl myThat = (GordianFactoryLockImpl) pThat;
 
         /* Check differences */
         return theFactory.equals(myThat.getLockedObject())

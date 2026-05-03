@@ -163,16 +163,9 @@ public class GordianCompositeSigner
             final ASN1EncodableVector ks = new ASN1EncodableVector();
 
             /* Loop through the signers */
-            byte[] mySign = null;
             for (GordianSignature mySigner : theSigners) {
-                /* If we have a previous signature */
-                if (mySign != null) {
-                    /* Process previous signature */
-                    mySigner.update(mySign);
-                }
-
                 /* Sign using this signature */
-                mySign = mySigner.sign();
+                final byte[] mySign = mySigner.sign();
 
                 /* Add the signature */
                 ks.add(new DEROctetString(mySign));
@@ -194,18 +187,11 @@ public class GordianCompositeSigner
             final ASN1Sequence mySequence = ASN1Sequence.getInstance(pSignature);
 
             /* Loop through the signers */
-            byte[] mySign = null;
             int numFailed = 0;
             final Enumeration<?> en = mySequence.getObjects();
             for (GordianSignature mySigner : theSigners) {
-                /* If we have a previous signature */
-                if (mySign != null) {
-                    /* Process previous signature */
-                    mySigner.update(mySign);
-                }
-
                 /* Access next signature */
-                mySign = ASN1OctetString.getInstance(en.nextElement()).getOctets();
+                final byte[] mySign = ASN1OctetString.getInstance(en.nextElement()).getOctets();
 
                 /* Verify using this signature */
                 numFailed += mySigner.verify(mySign) ? 0 : 1;

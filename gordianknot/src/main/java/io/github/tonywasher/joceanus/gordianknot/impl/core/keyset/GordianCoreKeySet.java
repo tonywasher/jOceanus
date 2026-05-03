@@ -594,12 +594,9 @@ public final class GordianCoreKeySet
         }
 
         /* Make sure that the object is the same class */
-        if (!(pThat instanceof GordianCoreKeySet)) {
+        if (!(pThat instanceof GordianCoreKeySet myThat)) {
             return false;
         }
-
-        /* Access the target field */
-        final GordianCoreKeySet myThat = (GordianCoreKeySet) pThat;
 
         /* Check differences */
         return theFactory.equals(myThat.getFactory())

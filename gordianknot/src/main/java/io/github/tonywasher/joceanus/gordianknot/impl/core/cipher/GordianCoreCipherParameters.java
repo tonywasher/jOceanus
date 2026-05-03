@@ -208,22 +208,12 @@ public class GordianCoreCipherParameters<T extends GordianKeySpec> {
         thePBESalt = obtainNonceFromParameters(pParams, true);
 
         /* Switch on the PBE type */
-        CipherParameters myParams;
-        switch (thePBESpec.getPBEType()) {
-            case PBKDF2:
-                myParams = derivePBKDF2Parameters(pParams.getPassword());
-                break;
-            case PKCS12:
-                myParams = derivePKCS12Parameters(pParams.getPassword());
-                break;
-            case SCRYPT:
-                myParams = deriveSCRYPTParameters(pParams.getPassword());
-                break;
-            case ARGON2:
-            default:
-                myParams = deriveArgon2Parameters(pParams.getPassword());
-                break;
-        }
+        CipherParameters myParams = switch (thePBESpec.getPBEType()) {
+            case PBKDF2 -> derivePBKDF2Parameters(pParams.getPassword());
+            case PKCS12 -> derivePKCS12Parameters(pParams.getPassword());
+            case SCRYPT -> deriveSCRYPTParameters(pParams.getPassword());
+            default -> deriveArgon2Parameters(pParams.getPassword());
+        };
 
         /* Store details */
         theInitialAEAD = null;

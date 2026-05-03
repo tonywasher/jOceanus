@@ -218,10 +218,9 @@ public class JcaAEADCipher<T extends GordianKeySpec>
         }
 
         /* Make sure that the classes are the same */
-        if (!(pThat instanceof JcaAEADCipher)) {
+        if (!(pThat instanceof JcaAEADCipher<?> myThat)) {
             return false;
         }
-        final JcaAEADCipher<?> myThat = (JcaAEADCipher<?>) pThat;
 
         /* Check that the fields are equal */
         return isEncrypting == myThat.isEncrypting

@@ -191,22 +191,17 @@ public class GordianPEMCoder {
         }
 
         /* Access first element and switch on object type */
-        final GordianPEMObject myFirst = pObjects.get(0);
-        switch (myFirst.getObjectType()) {
+        final GordianPEMObject myFirst = pObjects.getFirst();
+        return switch (myFirst.getObjectType()) {
             /* Decode objects */
-            case PRIVATEKEY:
-                return decodeKeyPair(pObjects);
-            case CERT:
-                return decodeCertificate(pObjects);
-            case KEYSET:
-                return decodeKeySet(pObjects);
-            case KEY:
-                return decodeKey(pObjects);
+            case PRIVATEKEY -> decodeKeyPair(pObjects);
+            case CERT -> decodeCertificate(pObjects);
+            case KEYSET -> decodeKeySet(pObjects);
+            case KEY -> decodeKey(pObjects);
 
             /* Unsupported entry */
-            default:
-                throw new GordianDataException(ERROR_UNSUPPORTED);
-        }
+            default -> throw new GordianDataException(ERROR_UNSUPPORTED);
+        };
     }
 
     /**
@@ -224,7 +219,7 @@ public class GordianPEMCoder {
 
         /* Prepare for loop */
         final List<GordianKeyStoreEntry> myChain = new ArrayList<>();
-        final GordianPEMObjectType myType = pObjects.get(0).getObjectType();
+        final GordianPEMObjectType myType = pObjects.getFirst().getObjectType();
         final LocalDate myDate = LocalDate.now();
 
         /* Loop through the objects */
@@ -402,7 +397,7 @@ public class GordianPEMCoder {
         checkSingletonList(pObjects);
 
         /* parse the certificate */
-        return new GordianCoreKeyStoreCertificate(decodeCertificate(pObjects.get(0)), LocalDate.now());
+        return new GordianCoreKeyStoreCertificate(decodeCertificate(pObjects.getFirst()), LocalDate.now());
     }
 
     /**
@@ -430,7 +425,7 @@ public class GordianPEMCoder {
     static CertReqMsg decodeCertRequest(final List<GordianPEMObject> pObjects) throws GordianException {
         /* Reject if not singleton list */
         checkSingletonList(pObjects);
-        final GordianPEMObject myObject = pObjects.get(0);
+        final GordianPEMObject myObject = pObjects.getFirst();
 
         /* Reject if not certificateRequest */
         checkObjectType(myObject, GordianPEMObjectType.CERTREQ);
@@ -449,7 +444,7 @@ public class GordianPEMCoder {
     static GordianCertResponseASN1 decodeCertResponse(final List<GordianPEMObject> pObjects) throws GordianException {
         /* Reject if not singleton list */
         checkSingletonList(pObjects);
-        final GordianPEMObject myObject = pObjects.get(0);
+        final GordianPEMObject myObject = pObjects.getFirst();
 
         /* Reject if not certificateResponse */
         checkObjectType(myObject, GordianPEMObjectType.CERTRESP);
@@ -468,7 +463,7 @@ public class GordianPEMCoder {
     static GordianCertAckASN1 decodeCertAck(final List<GordianPEMObject> pObjects) throws GordianException {
         /* Reject if not singleton list */
         checkSingletonList(pObjects);
-        final GordianPEMObject myObject = pObjects.get(0);
+        final GordianPEMObject myObject = pObjects.getFirst();
 
         /* Reject if not certificateAck */
         checkObjectType(myObject, GordianPEMObjectType.CERTACK);
@@ -508,7 +503,7 @@ public class GordianPEMCoder {
 
         /* Derive the keyPair */
         final GordianKeySet mySecuringKeySet = deriveSecuringKeySet(myPrivateInfo);
-        final GordianCoreCertificate myCert = (GordianCoreCertificate) myChain.get(0);
+        final GordianCoreCertificate myCert = (GordianCoreCertificate) myChain.getFirst();
         final GordianKeyPair myPair = mySecuringKeySet.deriveKeyPair(myCert.getX509KeySpec(), myPrivateInfo.getEncryptedData());
 
         /* Return the new keyPair */
@@ -524,7 +519,7 @@ public class GordianPEMCoder {
      */
     private GordianKeyStoreSet decodeKeySet(final List<GordianPEMObject> pObjects) throws GordianException {
         checkSingletonList(pObjects);
-        return decodeKeySet(pObjects.get(0));
+        return decodeKeySet(pObjects.getFirst());
     }
 
     /**
@@ -556,7 +551,7 @@ public class GordianPEMCoder {
      */
     private GordianKeyStoreKey<?> decodeKey(final List<GordianPEMObject> pObjects) throws GordianException {
         checkSingletonList(pObjects);
-        return decodeKey(pObjects.get(0));
+        return decodeKey(pObjects.getFirst());
     }
 
     /**

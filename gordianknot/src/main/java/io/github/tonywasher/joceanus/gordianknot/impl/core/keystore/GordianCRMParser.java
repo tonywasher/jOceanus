@@ -172,7 +172,7 @@ public class GordianCRMParser {
         }
 
         /* Check the MACValue */
-        final GordianCoreCertificate myCert = (GordianCoreCertificate) pKeyPair.getCertificateChain().get(0);
+        final GordianCoreCertificate myCert = (GordianCoreCertificate) pKeyPair.getCertificateChain().getFirst();
         final X500Name myName = myCert.getSubjectName();
         final byte[] myMACSecret = theGateway.getMACSecret(myName);
         final ASN1Object myMACData = pResponse.getMACData();
@@ -196,7 +196,7 @@ public class GordianCRMParser {
         }
 
         /* Check that subjectName matches */
-        final GordianCoreCertificate myOldCert = (GordianCoreCertificate) pKeyPair.getCertificateChain().get(0);
+        final GordianCoreCertificate myOldCert = (GordianCoreCertificate) pKeyPair.getCertificateChain().getFirst();
         if (!myNewCert.getSubjectName().equals(myOldCert.getSubjectName())) {
             throw new GordianDataException("Mismatch on subjectName");
         }
@@ -266,7 +266,7 @@ public class GordianCRMParser {
 
         /* Access details */
         final GordianKeyStorePair myIssuer = (GordianKeyStorePair) myIssuerEntry;
-        final GordianCertificate myCert = myIssuer.getCertificateChain().get(0);
+        final GordianCertificate myCert = myIssuer.getCertificateChain().getFirst();
         final GordianCRMEncryptor myEncryptor = theGateway.getEncryptor();
         return myEncryptor.deriveKeySetFromRecInfo(pRecInfo, myCert, myIssuer.getKeyPair());
     }
@@ -286,14 +286,11 @@ public class GordianCRMParser {
                                          final X500Name pSubject,
                                          final SubjectPublicKeyInfo pPublicKey) throws GordianException {
         /* Handle signed keyPair */
-        switch (pProof.getType()) {
-            case ProofOfPossession.TYPE_SIGNING_KEY:
-                return deriveSignedKeyPair(pProof, pCertReq, pPublicKey);
-            case ProofOfPossession.TYPE_KEY_ENCIPHERMENT:
-                return deriveEncryptedKeyPair(pProof, pSubject, pPublicKey);
-            default:
-                throw new GordianDataException("Unsupported proof type");
-        }
+        return switch (pProof.getType()) {
+            case ProofOfPossession.TYPE_SIGNING_KEY -> deriveSignedKeyPair(pProof, pCertReq, pPublicKey);
+            case ProofOfPossession.TYPE_KEY_ENCIPHERMENT -> deriveEncryptedKeyPair(pProof, pSubject, pPublicKey);
+            default -> throw new GordianDataException("Unsupported proof type");
+        };
     }
 
     /**

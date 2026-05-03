@@ -346,9 +346,7 @@ abstract class GordianInputStream
                     - theReadOffset;
 
             /* Determine how much data we can transfer */
-            iNumRead = iNumRead <= pLength
-                    ? iNumRead
-                    : pLength;
+            iNumRead = Math.min(iNumRead, pLength);
 
             /* If we have data to copy */
             if (iNumRead > 0) {

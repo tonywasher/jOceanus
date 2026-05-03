@@ -17,4 +17,4 @@
 /**
  * User interface modules for Themis.
  */
-package io.github.tonywasher.joceanus.moneywise.ui.swing;
+package io.github.tonywasher.joceanus.themis.ui.swing;

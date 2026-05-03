@@ -132,10 +132,9 @@ public final class BouncyNTRULPrimeKeyPair {
          *
          * @param pFactory the Security Factory
          * @param pKeySpec the keySpec
-         * @throws GordianException on error
          */
         BouncyNTRULPrimeKeyPairGenerator(final GordianBaseFactory pFactory,
-                                         final GordianKeyPairSpec pKeySpec) throws GordianException {
+                                         final GordianKeyPairSpec pKeySpec) {
             /* Initialise underlying class */
             super(pFactory, pKeySpec);
 

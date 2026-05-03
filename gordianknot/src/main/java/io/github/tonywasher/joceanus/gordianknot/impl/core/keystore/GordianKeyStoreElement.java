@@ -112,10 +112,9 @@ public interface GordianKeyStoreElement {
             }
 
             /* Ensure object is correct class */
-            if (!(pThat instanceof GordianKeyStoreCertificateElement)) {
+            if (!(pThat instanceof GordianKeyStoreCertificateElement myThat)) {
                 return false;
             }
-            final GordianKeyStoreCertificateElement myThat = (GordianKeyStoreCertificateElement) pThat;
 
             /* Check that the keys match */
             return theKey.equals(myThat.getCertificateKey())
@@ -229,7 +228,7 @@ public interface GordianKeyStoreElement {
 
         @Override
         public GordianKeyStoreCertificateKey getCertificateKey() {
-            return theChain.get(0);
+            return theChain.getFirst();
         }
 
         /**
@@ -300,7 +299,7 @@ public interface GordianKeyStoreElement {
 
             /* derive the keyPair */
             final GordianKeySet myKeySet = myHash.getKeySet();
-            final GordianCoreCertificate myCert = (GordianCoreCertificate) myChain.get(0);
+            final GordianCoreCertificate myCert = (GordianCoreCertificate) myChain.getFirst();
             final GordianKeyPair myPair = myKeySet.deriveKeyPair(myCert.getX509KeySpec(), getSecuredKey());
 
             /* Create the entry */
@@ -318,10 +317,9 @@ public interface GordianKeyStoreElement {
             }
 
             /* Ensure object is correct class */
-            if (!(pThat instanceof GordianKeyStorePairElement)) {
+            if (!(pThat instanceof GordianKeyStorePairElement myThat)) {
                 return false;
             }
-            final GordianKeyStorePairElement myThat = (GordianKeyStorePairElement) pThat;
 
             /* Check that the hashes match */
             return Arrays.equals(theSecuredKey, myThat.getSecuredKey())
@@ -407,10 +405,9 @@ public interface GordianKeyStoreElement {
             }
 
             /* Ensure object is correct class */
-            if (!(pThat instanceof GordianKeyStoreLockElement)) {
+            if (!(pThat instanceof GordianKeyStoreLockElement myThat)) {
                 return false;
             }
-            final GordianKeyStoreLockElement myThat = (GordianKeyStoreLockElement) pThat;
 
             /* Check that the hashes match */
             return Arrays.equals(theLock, myThat.getLock())
@@ -555,10 +552,9 @@ public interface GordianKeyStoreElement {
             }
 
             /* Ensure object is correct class */
-            if (!(pThat instanceof GordianKeyStoreKeyElement)) {
+            if (!(pThat instanceof GordianKeyStoreKeyElement<?> myThat)) {
                 return false;
             }
-            final GordianKeyStoreKeyElement<?> myThat = (GordianKeyStoreKeyElement<?>) pThat;
 
             /* Check that the hashes match */
             return theKeyType.equals(myThat.getKeyType())
@@ -689,10 +685,9 @@ public interface GordianKeyStoreElement {
             }
 
             /* Ensure object is correct class */
-            if (!(pThat instanceof GordianKeyStoreSetElement)) {
+            if (!(pThat instanceof GordianKeyStoreSetElement myThat)) {
                 return false;
             }
-            final GordianKeyStoreSetElement myThat = (GordianKeyStoreSetElement) pThat;
 
             /* Check that the hashes match */
             return Arrays.equals(theSecuredKeySet, myThat.getSecuredKeySet())

@@ -43,15 +43,26 @@ public class GordianCompositeKeyPair
     /**
      * is the keyPair public only?
      */
-    private boolean isPublicOnly;
+    private final boolean isPublicOnly;
 
     /**
      * Constructor.
      *
      * @param pSpec the spec
      */
-    public GordianCompositeKeyPair(final GordianKeyPairSpec pSpec) {
+    GordianCompositeKeyPair(final GordianKeyPairSpec pSpec) {
+        this(pSpec, false);
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param pSpec the spec
+     */
+    GordianCompositeKeyPair(final GordianKeyPairSpec pSpec,
+                            final boolean pPublicOnly) {
         theSpec = pSpec;
+        isPublicOnly = pPublicOnly;
         theKeyPairs = new LinkedHashMap<>();
     }
 
@@ -122,6 +133,11 @@ public class GordianCompositeKeyPair
      * @param pKeyPair the keyPair
      */
     void addKeyPair(final GordianKeyPair pKeyPair) {
+        /* Check publicOnly */
+        if (pKeyPair.isPublicOnly() != isPublicOnly) {
+            throw new IllegalStateException("PublicOnly mismatch");
+        }
+
         /* Add the keyPair */
         theKeyPairs.put(pKeyPair.getKeyPairSpec(), pKeyPair);
     }
@@ -137,10 +153,9 @@ public class GordianCompositeKeyPair
         }
 
         /* Check object is same class */
-        if (!(pThat instanceof GordianCompositeKeyPair)) {
+        if (!(pThat instanceof GordianCompositeKeyPair myThat)) {
             return false;
         }
-        final GordianCompositeKeyPair myThat = (GordianCompositeKeyPair) pThat;
         return Objects.equals(theKeyPairs, myThat.theKeyPairs);
     }
 

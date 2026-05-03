@@ -57,7 +57,7 @@ public final class BouncyKey<T extends GordianKeySpec>
      *
      * @return the key
      */
-    protected byte[] getKey() {
+    byte[] getKey() {
         return theKey;
     }
 
@@ -74,7 +74,7 @@ public final class BouncyKey<T extends GordianKeySpec>
      * @return the converted key
      * @throws GordianException on error
      */
-    protected static <X extends GordianKeySpec> BouncyKey<X> accessKey(final GordianKey<X> pKey) throws GordianException {
+    static <X extends GordianKeySpec> BouncyKey<X> accessKey(final GordianKey<X> pKey) throws GordianException {
         /* Check that it is a BouncyKey */
         if (pKey instanceof BouncyKey) {
             return (BouncyKey<X>) pKey;
@@ -95,12 +95,9 @@ public final class BouncyKey<T extends GordianKeySpec>
         }
 
         /* Make sure that the object is the same class */
-        if (!(pThat instanceof BouncyKey)) {
+        if (!(pThat instanceof BouncyKey<?> myThat)) {
             return false;
         }
-
-        /* Access the target field */
-        final BouncyKey<?> myThat = (BouncyKey<?>) pThat;
 
         /* Check differences */
         if (!getKeyType().equals(myThat.getKeyType())) {

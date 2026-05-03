@@ -46,21 +46,10 @@ public class JcaValidator
         }
 
         /* Disable non-JCE digests */
-        switch (pDigestType) {
-            case JH:
-            case GROESTL:
-            case CUBEHASH:
-            case KANGAROO:
-            case ASCON:
-            case ISAP:
-            case PHOTONBEETLE:
-            case ROMULUS:
-            case SPARKLE:
-            case XOODYAK:
-                return false;
-            default:
-                return true;
-        }
+        return switch (pDigestType) {
+            case JH, GROESTL, CUBEHASH, KANGAROO, ASCON, ISAP, PHOTONBEETLE, ROMULUS, SPARKLE, XOODYAK -> false;
+            default -> true;
+        };
     }
 
     @Override
@@ -68,25 +57,11 @@ public class JcaValidator
         if (pKeyType == null) {
             return false;
         }
-        switch (pKeyType) {
-            case ISAAC:
-            case SOSEMANUK:
-            case RABBIT:
-            case SNOW3G:
-            case SKEINXOF:
-            case BLAKE2XOF:
-            case BLAKE3XOF:
-            case ASCON:
-            case ELEPHANT:
-            case ISAP:
-            case PHOTONBEETLE:
-            case ROMULUS:
-            case SPARKLE:
-            case XOODYAK:
-                return false;
-            default:
-                return super.validStreamKeyType(pKeyType);
-        }
+        return switch (pKeyType) {
+            case ISAAC, SOSEMANUK, RABBIT, SNOW3G, SKEINXOF, BLAKE2XOF, BLAKE3XOF, ASCON, ELEPHANT, ISAP, PHOTONBEETLE,
+                 ROMULUS, SPARKLE, XOODYAK -> false;
+            default -> super.validStreamKeyType(pKeyType);
+        };
     }
 
     /**
@@ -99,16 +74,10 @@ public class JcaValidator
         if (pKeyType == null) {
             return false;
         }
-        switch (pKeyType) {
-            case SPECK:
-            case ANUBIS:
-            case SIMON:
-            case MARS:
-            case LEA:
-                return false;
-            default:
-                return true;
-        }
+        return switch (pKeyType) {
+            case SPECK, ANUBIS, SIMON, MARS, LEA -> false;
+            default -> true;
+        };
     }
 
     @Override

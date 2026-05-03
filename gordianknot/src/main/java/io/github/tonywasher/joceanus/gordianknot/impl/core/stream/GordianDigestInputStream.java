@@ -123,11 +123,8 @@ class GordianDigestInputStream
         @Override
         public int processBytes(final byte[] pBuffer,
                                 final int pLength) throws GordianException {
-            /* Initialise variables */
-            final int iLength = pLength;
-
             /* If we have EOF from the input stream */
-            if (iLength == -1) {
+            if (pLength == -1) {
                 /* Record the fact and reset the read length to zero */
                 setEOFSeen();
                 theStream.checkResult();
@@ -135,11 +132,11 @@ class GordianDigestInputStream
             }
 
             /* Update the digest */
-            theDigest.update(pBuffer, 0, iLength);
+            theDigest.update(pBuffer, 0, pLength);
 
             /* Set up buffer variables */
-            setBuffer(pBuffer, iLength);
-            return iLength;
+            setBuffer(pBuffer, pLength);
+            return pLength;
         }
     }
 }

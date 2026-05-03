@@ -62,19 +62,13 @@ public class BouncyEncryptorFactory
      * @throws GordianException on error
      */
     private GordianEncryptor getBCEncryptor(final GordianCoreEncryptorSpec pSpec) throws GordianException {
-        switch (pSpec.getKeyPairType()) {
-            case RSA:
-                return new BouncyRSAEncryptor(getFactory(), pSpec);
-            case ELGAMAL:
-                return new BouncyElGamalEncryptor(getFactory(), pSpec);
-            case EC:
-                return new BouncyECEncryptor(getFactory(), pSpec);
-            case SM2:
-                return new BouncySM2Encryptor(getFactory(), pSpec);
-            case COMPOSITE:
-                return new GordianCompositeEncryptor(getFactory(), pSpec);
-            default:
-                throw new GordianDataException(GordianBaseData.getInvalidText(pSpec));
-        }
+        return switch (pSpec.getKeyPairType()) {
+            case RSA -> new BouncyRSAEncryptor(getFactory(), pSpec);
+            case ELGAMAL -> new BouncyElGamalEncryptor(getFactory(), pSpec);
+            case EC -> new BouncyECEncryptor(getFactory(), pSpec);
+            case SM2 -> new BouncySM2Encryptor(getFactory(), pSpec);
+            case COMPOSITE -> new GordianCompositeEncryptor(getFactory(), pSpec);
+            default -> throw new GordianDataException(GordianBaseData.getInvalidText(pSpec));
+        };
     }
 }

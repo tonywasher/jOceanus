@@ -23,6 +23,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamCipher;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymCipher;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianWrapper;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianCipherMode;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianPadding;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamCipherSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySubType.GordianBlakeXofKey;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySubType.GordianChaCha20Key;
@@ -37,7 +38,6 @@ import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymCiphe
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymCipherSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeyType;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianPadding;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKey;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseData;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
@@ -265,57 +265,43 @@ public class BouncyCipherFactory
      */
     private static StreamCipher getBCStreamCipher(final GordianCoreStreamCipherSpec pCipherSpec) throws GordianException {
         final GordianCoreStreamKeySpec mySpec = pCipherSpec.getCoreKeySpec();
-        switch (mySpec.getStreamKeyType()) {
-            case HC:
-                return GordianLength.LEN_128 == mySpec.getKeyLength()
-                        ? new HC128Engine()
-                        : new HC256Engine();
-            case CHACHA20:
-                switch ((GordianChaCha20Key) mySpec.getSubKeyType()) {
-                    case XCHACHA:
-                        return new GordianXChaCha20Engine();
-                    case ISO7539:
-                        return new ChaCha7539Engine();
-                    default:
-                        return new ChaChaEngine();
-                }
-            case SALSA20:
-                return mySpec.getSubKeyType() == GordianSalsa20Key.STD
-                        ? new Salsa20Engine()
-                        : new XSalsa20Engine();
-            case VMPC:
-                return mySpec.getSubKeyType() == GordianVMPCKey.STD
-                        ? new VMPCEngine()
-                        : new VMPCKSA3Engine();
-            case GRAIN:
-                return new Grain128Engine();
-            case ISAAC:
-                return new ISAACEngine();
-            case RC4:
-                return new RC4Engine();
-            case SOSEMANUK:
-                return new GordianSosemanukEngine();
-            case RABBIT:
-                return new GordianRabbitEngine();
-            case SNOW3G:
-                return new GordianSnow3GEngine();
-            case ZUC:
-                return GordianLength.LEN_128 == mySpec.getKeyLength()
-                        ? new GordianZuc128Engine()
-                        : new GordianZuc256Engine();
-            case SKEINXOF:
+        return switch (mySpec.getStreamKeyType()) {
+            case HC -> GordianLength.LEN_128 == mySpec.getKeyLength()
+                    ? new HC128Engine()
+                    : new HC256Engine();
+            case CHACHA20 -> switch ((GordianChaCha20Key) mySpec.getSubKeyType()) {
+                case XCHACHA -> new GordianXChaCha20Engine();
+                case ISO7539 -> new ChaCha7539Engine();
+                default -> new ChaChaEngine();
+            };
+            case SALSA20 -> mySpec.getSubKeyType() == GordianSalsa20Key.STD
+                    ? new Salsa20Engine()
+                    : new XSalsa20Engine();
+            case VMPC -> mySpec.getSubKeyType() == GordianVMPCKey.STD
+                    ? new VMPCEngine()
+                    : new VMPCKSA3Engine();
+            case GRAIN -> new Grain128Engine();
+            case ISAAC -> new ISAACEngine();
+            case RC4 -> new RC4Engine();
+            case SOSEMANUK -> new GordianSosemanukEngine();
+            case RABBIT -> new GordianRabbitEngine();
+            case SNOW3G -> new GordianSnow3GEngine();
+            case ZUC -> GordianLength.LEN_128 == mySpec.getKeyLength()
+                    ? new GordianZuc128Engine()
+                    : new GordianZuc256Engine();
+            case SKEINXOF -> {
                 final GordianSkeinXofKey mySkeinKeyType = (GordianSkeinXofKey) mySpec.getSubKeyType();
-                return new GordianSkeinXofEngine(GordianCoreStreamKeySubType.getLengthForSkeinXofKey(mySkeinKeyType).getLength());
-            case BLAKE2XOF:
+                yield new GordianSkeinXofEngine(GordianCoreStreamKeySubType.getLengthForSkeinXofKey(mySkeinKeyType).getLength());
+            }
+            case BLAKE2XOF -> {
                 final GordianBlakeXofKey myBlakeKeyType = (GordianBlakeXofKey) mySpec.getSubKeyType();
-                return new GordianBlake2XEngine(GordianBlakeXofKey.BLAKE2XB == myBlakeKeyType
+                yield new GordianBlake2XEngine(GordianBlakeXofKey.BLAKE2XB == myBlakeKeyType
                         ? new GordianBlake2bDigest()
                         : new GordianBlake2sDigest());
-            case BLAKE3XOF:
-                return new GordianBlake3Engine();
-            default:
-                throw new GordianDataException(GordianBaseData.getInvalidText(pCipherSpec));
-        }
+            }
+            case BLAKE3XOF -> new GordianBlake3Engine();
+            default -> throw new GordianDataException(GordianBaseData.getInvalidText(pCipherSpec));
+        };
     }
 
     /**
@@ -327,32 +313,24 @@ public class BouncyCipherFactory
      */
     private static AEADCipher getBCAEADStreamCipher(final GordianCoreStreamCipherSpec pCipherSpec) throws GordianException {
         final GordianCoreStreamKeySpec mySpec = pCipherSpec.getCoreKeySpec();
-        switch (mySpec.getStreamKeyType()) {
-            case CHACHA20:
-                switch ((GordianChaCha20Key) mySpec.getSubKeyType()) {
-                    case XCHACHA:
-                        return new GordianChaChaPoly1305(new GordianXChaCha20Engine());
-                    case ISO7539:
-                    default:
-                        return new GordianChaChaPoly1305(new ChaCha7539Engine());
-                }
-            case ASCON:
-                return new AsconAEAD128();
-            case ELEPHANT:
-                return new ElephantEngine(GordianCoreStreamKeySubType.getParameters((GordianElephantKey) mySpec.getSubKeyType()));
-            case ISAP:
-                return new ISAPEngine(GordianCoreStreamKeySubType.getISAPType((GordianISAPKey) mySpec.getSubKeyType()));
-            case PHOTONBEETLE:
-                return new PhotonBeetleEngine(PhotonBeetleParameters.pb128);
-            case ROMULUS:
-                return new RomulusEngine(GordianCoreStreamKeySubType.getParameters((GordianRomulusKey) mySpec.getSubKeyType()));
-            case SPARKLE:
-                return new SparkleEngine(GordianCoreStreamKeySubType.getParameters((GordianSparkleKey) mySpec.getSubKeyType()));
-            case XOODYAK:
-                return new XoodyakEngine();
-            default:
-                throw new GordianDataException(GordianBaseData.getInvalidText(pCipherSpec));
-        }
+        return switch (mySpec.getStreamKeyType()) {
+            case CHACHA20 -> switch ((GordianChaCha20Key) mySpec.getSubKeyType()) {
+                case XCHACHA -> new GordianChaChaPoly1305(new GordianXChaCha20Engine());
+                default -> new GordianChaChaPoly1305(new ChaCha7539Engine());
+            };
+            case ASCON -> new AsconAEAD128();
+            case ELEPHANT ->
+                    new ElephantEngine(GordianCoreStreamKeySubType.getParameters((GordianElephantKey) mySpec.getSubKeyType()));
+            case ISAP ->
+                    new ISAPEngine(GordianCoreStreamKeySubType.getISAPType((GordianISAPKey) mySpec.getSubKeyType()));
+            case PHOTONBEETLE -> new PhotonBeetleEngine(PhotonBeetleParameters.pb128);
+            case ROMULUS ->
+                    new RomulusEngine(GordianCoreStreamKeySubType.getParameters((GordianRomulusKey) mySpec.getSubKeyType()));
+            case SPARKLE ->
+                    new SparkleEngine(GordianCoreStreamKeySubType.getParameters((GordianSparkleKey) mySpec.getSubKeyType()));
+            case XOODYAK -> new XoodyakEngine();
+            default -> throw new GordianDataException(GordianBaseData.getInvalidText(pCipherSpec));
+        };
     }
 
     /**
@@ -363,70 +341,40 @@ public class BouncyCipherFactory
      * @throws GordianException on error
      */
     static BlockCipher getBCSymEngine(final GordianCoreSymKeySpec pKeySpec) throws GordianException {
-        switch (pKeySpec.getSymKeyType()) {
-            case AES:
-                return AESEngine.newInstance();
-            case SERPENT:
-                return new SerpentEngine();
-            case TWOFISH:
-                return new TwofishEngine();
-            case CAMELLIA:
-                return new CamelliaEngine();
-            case RC6:
-                return new RC6Engine();
-            case CAST6:
-                return new CAST6Engine();
-            case ARIA:
-                return new ARIAEngine();
-            case THREEFISH:
-                return new ThreefishEngine(pKeySpec.getBlockLength().getLength());
-            case KALYNA:
-                return new DSTU7624Engine(pKeySpec.getBlockLength().getLength());
-            case SM4:
-                return new SM4Engine();
-            case NOEKEON:
-                return new NoekeonEngine();
-            case SEED:
-                return new SEEDEngine();
-            case BLOWFISH:
-                return new BlowfishEngine();
-            case SKIPJACK:
-                return new SkipjackEngine();
-            case IDEA:
-                return new IDEAEngine();
-            case TEA:
-                return new TEAEngine();
-            case XTEA:
-                return new XTEAEngine();
-            case RC2:
-                return new RC2Engine();
-            case RC5:
-                return GordianLength.LEN_128.equals(pKeySpec.getBlockLength())
-                        ? new RC564Engine()
-                        : new RC532Engine();
-            case CAST5:
-                return new CAST5Engine();
-            case DESEDE:
-                return new DESedeEngine();
-            case GOST:
-                return new GOST28147Engine();
-            case KUZNYECHIK:
-                return new GOST3412_2015Engine();
-            case SHACAL2:
-                return new Shacal2Engine();
-            case SPECK:
-                return new GordianSpeckEngine();
-            case ANUBIS:
-                return new GordianAnubisEngine();
-            case SIMON:
-                return new GordianSimonEngine();
-            case MARS:
-                return new GordianMARSEngine();
-            case LEA:
-                return new GordianLeaEngine();
-            default:
-                throw new GordianDataException(GordianBaseData.getInvalidText(pKeySpec));
-        }
+        return switch (pKeySpec.getSymKeyType()) {
+            case AES -> AESEngine.newInstance();
+            case SERPENT -> new SerpentEngine();
+            case TWOFISH -> new TwofishEngine();
+            case CAMELLIA -> new CamelliaEngine();
+            case RC6 -> new RC6Engine();
+            case CAST6 -> new CAST6Engine();
+            case ARIA -> new ARIAEngine();
+            case THREEFISH -> new ThreefishEngine(pKeySpec.getBlockLength().getLength());
+            case KALYNA -> new DSTU7624Engine(pKeySpec.getBlockLength().getLength());
+            case SM4 -> new SM4Engine();
+            case NOEKEON -> new NoekeonEngine();
+            case SEED -> new SEEDEngine();
+            case BLOWFISH -> new BlowfishEngine();
+            case SKIPJACK -> new SkipjackEngine();
+            case IDEA -> new IDEAEngine();
+            case TEA -> new TEAEngine();
+            case XTEA -> new XTEAEngine();
+            case RC2 -> new RC2Engine();
+            case RC5 -> GordianLength.LEN_128.equals(pKeySpec.getBlockLength())
+                    ? new RC564Engine()
+                    : new RC532Engine();
+            case CAST5 -> new CAST5Engine();
+            case DESEDE -> new DESedeEngine();
+            case GOST -> new GOST28147Engine();
+            case KUZNYECHIK -> new GOST3412_2015Engine();
+            case SHACAL2 -> new Shacal2Engine();
+            case SPECK -> new GordianSpeckEngine();
+            case ANUBIS -> new GordianAnubisEngine();
+            case SIMON -> new GordianSimonEngine();
+            case MARS -> new GordianMARSEngine();
+            case LEA -> new GordianLeaEngine();
+            default -> throw new GordianDataException(GordianBaseData.getInvalidText(pKeySpec));
+        };
     }
 
     /**
@@ -439,38 +387,23 @@ public class BouncyCipherFactory
      */
     private static BlockCipher getBCSymModeCipher(final BlockCipher pEngine,
                                                   final GordianCipherMode pMode) throws GordianException {
-        switch (pMode) {
-            case ECB:
-                return pEngine;
-            case CBC:
-                return CBCBlockCipher.newInstance(pEngine);
-            case SIC:
-                return SICBlockCipher.newInstance(pEngine);
-            case KCTR:
-                return new KCTRBlockCipher(pEngine);
-            case CFB:
-                return CFBBlockCipher.newInstance(pEngine, Byte.SIZE * pEngine.getBlockSize());
-            case CFB8:
-                return CFBBlockCipher.newInstance(pEngine, Byte.SIZE);
-            case GCFB:
-                return new GCFBBlockCipher(pEngine);
-            case OFB:
-                return new OFBBlockCipher(pEngine, Byte.SIZE * pEngine.getBlockSize());
-            case OFB8:
-                return new OFBBlockCipher(pEngine, Byte.SIZE);
-            case GOFB:
-                return new GOFBBlockCipher(pEngine);
-            case G3413CBC:
-                return new G3413CBCBlockCipher(pEngine);
-            case G3413CTR:
-                return new G3413CTRBlockCipher(pEngine);
-            case G3413CFB:
-                return new G3413CFBBlockCipher(pEngine, Byte.SIZE * pEngine.getBlockSize());
-            case G3413OFB:
-                return new G3413OFBBlockCipher(pEngine);
-            default:
-                throw new GordianDataException(GordianBaseData.getInvalidText(pMode));
-        }
+        return switch (pMode) {
+            case ECB -> pEngine;
+            case CBC -> CBCBlockCipher.newInstance(pEngine);
+            case SIC -> SICBlockCipher.newInstance(pEngine);
+            case KCTR -> new KCTRBlockCipher(pEngine);
+            case CFB -> CFBBlockCipher.newInstance(pEngine, Byte.SIZE * pEngine.getBlockSize());
+            case CFB8 -> CFBBlockCipher.newInstance(pEngine, Byte.SIZE);
+            case GCFB -> new GCFBBlockCipher(pEngine);
+            case OFB -> new OFBBlockCipher(pEngine, Byte.SIZE * pEngine.getBlockSize());
+            case OFB8 -> new OFBBlockCipher(pEngine, Byte.SIZE);
+            case GOFB -> new GOFBBlockCipher(pEngine);
+            case G3413CBC -> new G3413CBCBlockCipher(pEngine);
+            case G3413CTR -> new G3413CTRBlockCipher(pEngine);
+            case G3413CFB -> new G3413CFBBlockCipher(pEngine, Byte.SIZE * pEngine.getBlockSize());
+            case G3413OFB -> new G3413OFBBlockCipher(pEngine);
+            default -> throw new GordianDataException(GordianBaseData.getInvalidText(pMode));
+        };
     }
 
     /**
@@ -482,24 +415,16 @@ public class BouncyCipherFactory
      */
     private static AEADBlockCipher getBCAADCipher(final GordianCoreSymCipherSpec pCipherSpec) throws GordianException {
         final GordianCoreSymKeySpec mySpec = pCipherSpec.getCoreKeySpec();
-        switch (pCipherSpec.getCipherMode()) {
-            case EAX:
-                return new EAXBlockCipher(getBCSymEngine(mySpec));
-            case CCM:
-                return CCMBlockCipher.newInstance(getBCSymEngine(mySpec));
-            case KCCM:
-                return new GordianKCCMBlockCipher(getBCSymEngine(mySpec));
-            case GCM:
-                return GCMBlockCipher.newInstance(getBCSymEngine(mySpec));
-            case GCMSIV:
-                return new GordianGCMSIVBlockCipher(getBCSymEngine(mySpec));
-            case KGCM:
-                return new GordianKGCMBlockCipher(getBCSymEngine(mySpec));
-            case OCB:
-                return new OCBBlockCipher(getBCSymEngine(mySpec), getBCSymEngine(mySpec));
-            default:
-                throw new GordianDataException(GordianBaseData.getInvalidText(pCipherSpec));
-        }
+        return switch (pCipherSpec.getCipherMode()) {
+            case EAX -> new EAXBlockCipher(getBCSymEngine(mySpec));
+            case CCM -> CCMBlockCipher.newInstance(getBCSymEngine(mySpec));
+            case KCCM -> new GordianKCCMBlockCipher(getBCSymEngine(mySpec));
+            case GCM -> GCMBlockCipher.newInstance(getBCSymEngine(mySpec));
+            case GCMSIV -> new GordianGCMSIVBlockCipher(getBCSymEngine(mySpec));
+            case KGCM -> new GordianKGCMBlockCipher(getBCSymEngine(mySpec));
+            case OCB -> new OCBBlockCipher(getBCSymEngine(mySpec), getBCSymEngine(mySpec));
+            default -> throw new GordianDataException(GordianBaseData.getInvalidText(pCipherSpec));
+        };
     }
 
     /**
@@ -511,20 +436,13 @@ public class BouncyCipherFactory
      */
     private static BufferedBlockCipher getBCSymBufferedCipher(final BlockCipher pEngine,
                                                               final GordianPadding pPadding) {
-        switch (pPadding) {
-            case CTS:
-                return new CTSBlockCipher(pEngine);
-            case X923:
-                return new PaddedBufferedBlockCipher(pEngine, new X923Padding());
-            case PKCS7:
-                return new PaddedBufferedBlockCipher(pEngine, new PKCS7Padding());
-            case ISO7816D4:
-                return new PaddedBufferedBlockCipher(pEngine, new ISO7816d4Padding());
-            case TBC:
-                return new PaddedBufferedBlockCipher(pEngine, new TBCPadding());
-            case NONE:
-            default:
-                return new DefaultBufferedBlockCipher(pEngine);
-        }
+        return switch (pPadding) {
+            case CTS -> new CTSBlockCipher(pEngine);
+            case X923 -> new PaddedBufferedBlockCipher(pEngine, new X923Padding());
+            case PKCS7 -> new PaddedBufferedBlockCipher(pEngine, new PKCS7Padding());
+            case ISO7816D4 -> new PaddedBufferedBlockCipher(pEngine, new ISO7816d4Padding());
+            case TBC -> new PaddedBufferedBlockCipher(pEngine, new TBCPadding());
+            default -> new DefaultBufferedBlockCipher(pEngine);
+        };
     }
 }

@@ -285,7 +285,9 @@ public final class GordianStreamManager {
      */
     public static void cleanUpInputStream(final InputStream pStream) {
         try {
-            pStream.close();
+            if (pStream != null) {
+                pStream.close();
+            }
         } catch (IOException e) {
             /* NoOp */
         }

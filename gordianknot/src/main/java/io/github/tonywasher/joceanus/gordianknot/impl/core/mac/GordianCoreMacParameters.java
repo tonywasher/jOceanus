@@ -95,9 +95,8 @@ public class GordianCoreMacParameters {
      * Process macParameters.
      *
      * @param pParams the mac parameters
-     * @throws GordianException on error
      */
-    void processParameters(final GordianMacParams pParams) throws GordianException {
+    void processParameters(final GordianMacParams pParams) {
         /* Access the key details */
         theKey = pParams.getKey();
         theInitVector = obtainNonceFromParameters(pParams);

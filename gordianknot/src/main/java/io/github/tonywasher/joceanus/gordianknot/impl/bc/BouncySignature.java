@@ -142,11 +142,6 @@ public final class BouncySignature {
         protected BouncyKeyPair getKeyPair() {
             return (BouncyKeyPair) super.getKeyPair();
         }
-
-        @Override
-        public GordianBaseFactory getFactory() {
-            return (GordianBaseFactory) super.getFactory();
-        }
     }
 
     /**

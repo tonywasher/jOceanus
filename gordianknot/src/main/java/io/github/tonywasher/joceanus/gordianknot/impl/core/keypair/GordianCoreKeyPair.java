@@ -124,12 +124,9 @@ public abstract class GordianCoreKeyPair
         }
 
         /* Make sure that the object is the same class */
-        if (!(pThat instanceof GordianCoreKeyPair)) {
+        if (!(pThat instanceof GordianCoreKeyPair myThat)) {
             return false;
         }
-
-        /* Access the target field */
-        final GordianCoreKeyPair myThat = (GordianCoreKeyPair) pThat;
 
         /* Check key Spec */
         if (!theKeySpec.equals(myThat.getKeyPairSpec())) {

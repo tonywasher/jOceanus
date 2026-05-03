@@ -388,10 +388,9 @@ public class GordianCoreZipLock
         }
 
         /* Make sure that the classes are the same */
-        if (!(pThat instanceof GordianCoreZipLock)) {
+        if (!(pThat instanceof GordianCoreZipLock myThat)) {
             return false;
         }
-        final GordianCoreZipLock myThat = (GordianCoreZipLock) pThat;
 
         /* Check that the fields are equal */
         return Objects.equals(theZipLock, myThat.theZipLock);

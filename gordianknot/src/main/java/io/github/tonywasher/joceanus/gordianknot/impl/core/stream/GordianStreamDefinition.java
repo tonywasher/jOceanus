@@ -280,19 +280,13 @@ public final class GordianStreamDefinition {
     InputStream buildInputStream(final GordianCoreKeySet pKeySet,
                                  final InputStream pCurrent,
                                  final GordianMacInputStream pMacStream) throws GordianException {
-        switch (theType) {
-            case DIGEST:
-                return buildDigestInputStream(pKeySet, pCurrent, pMacStream);
-            case MAC:
-                return buildMacInputStream(pKeySet, pCurrent);
-            case SYMMETRIC:
-                return buildSymKeyInputStream(pKeySet, pCurrent);
-            case STREAM:
-                return buildStreamKeyInputStream(pKeySet, pCurrent);
-            case LZMA:
-            default:
-                return buildLZMAInputStream(pCurrent);
-        }
+        return switch (theType) {
+            case DIGEST -> buildDigestInputStream(pKeySet, pCurrent, pMacStream);
+            case MAC -> buildMacInputStream(pKeySet, pCurrent);
+            case SYMMETRIC -> buildSymKeyInputStream(pKeySet, pCurrent);
+            case STREAM -> buildStreamKeyInputStream(pKeySet, pCurrent);
+            default -> buildLZMAInputStream(pCurrent);
+        };
     }
 
     /**

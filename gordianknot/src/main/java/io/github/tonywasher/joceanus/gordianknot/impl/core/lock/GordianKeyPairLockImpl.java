@@ -277,12 +277,11 @@ public class GordianKeyPairLockImpl
         }
 
         /* Make sure that the object is the same class */
-        if (!(pThat instanceof GordianKeyPairLockImpl)) {
+        if (!(pThat instanceof GordianKeyPairLockImpl myThat)) {
             return false;
         }
 
         /* Access the target field */
-        final GordianKeyPairLockImpl myThat = (GordianKeyPairLockImpl) pThat;
 
         /* Check differences */
         return theKeySet.equals(myThat.getLockedObject())

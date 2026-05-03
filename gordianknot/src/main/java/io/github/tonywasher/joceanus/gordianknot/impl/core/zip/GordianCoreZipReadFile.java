@@ -296,7 +296,7 @@ public class GordianCoreZipReadFile
 
         } finally {
             /* Close the ZipFile on error */
-            if (myZipFile != null && myResult == null) {
+            if (myResult == null) {
                 GordianStreamManager.cleanUpInputStream(myZipFile);
             }
         }

@@ -94,10 +94,9 @@ class GordianCipherInputStream<T extends GordianKeySpec>
                                 final int pLength) throws GordianException {
             /* Initialise variables */
             int iNumBytes;
-            final int iLength = pLength;
 
             /* If we have EOF from the input stream */
-            if (iLength == -1) {
+            if (pLength == -1) {
                 /* If we have already seen EOF */
                 if (hasEOFbeenSeen()) {
                     /* signal true EOF */
@@ -118,7 +117,7 @@ class GordianCipherInputStream<T extends GordianKeySpec>
                 /* else we have bytes to process */
             } else {
                 /* Make sure the buffer is large enough */
-                checkBufferLength(iLength);
+                checkBufferLength(pLength);
 
                 /* Decrypt the data */
                 iNumBytes = theCipher.update(pBuffer, 0, pLength, theBuffer, 0);

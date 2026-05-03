@@ -20,6 +20,7 @@ import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianSeededRan
 import org.bouncycastle.crypto.prng.EntropySource;
 import org.bouncycastle.crypto.prng.EntropyUtil;
 
+import java.io.Serial;
 import java.security.SecureRandom;
 
 /**
@@ -31,6 +32,7 @@ public class GordianSecureRandom
     /**
      * Serial Id.
      */
+    @Serial
     private static final long serialVersionUID = -6422187120154720941L;
 
     /**
