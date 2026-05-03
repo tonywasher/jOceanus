@@ -219,7 +219,7 @@ public class GordianCompositeKeyPairGenerator
             final ASN1Sequence myKeys = ASN1Sequence.getInstance(myInfo.getPublicKeyData().getBytes());
 
             /* Create the keySet */
-            final GordianCompositeKeyPair myPair = new GordianCompositeKeyPair(theSpec);
+            final GordianCompositeKeyPair myPair = new GordianCompositeKeyPair(theSpec, true);
 
             /* Build the list from the keys sequence */
             final Enumeration<?> en = myKeys.getObjects();

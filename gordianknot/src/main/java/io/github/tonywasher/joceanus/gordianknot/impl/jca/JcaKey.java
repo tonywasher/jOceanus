@@ -44,8 +44,8 @@ public final class JcaKey<T extends GordianKeySpec>
      * @param pKeyType the keyType
      * @param pKey     the key
      */
-    protected JcaKey(final T pKeyType,
-                     final SecretKey pKey) {
+    JcaKey(final T pKeyType,
+           final SecretKey pKey) {
         /* Initialise underlying class */
         super(pKeyType);
 
@@ -58,7 +58,7 @@ public final class JcaKey<T extends GordianKeySpec>
      *
      * @return the key
      */
-    protected SecretKey getKey() {
+    SecretKey getKey() {
         return theKey;
     }
 
@@ -75,7 +75,7 @@ public final class JcaKey<T extends GordianKeySpec>
      * @return the converted key
      * @throws GordianException on error
      */
-    protected static <X extends GordianKeySpec> JcaKey<X> accessKey(final GordianKey<X> pKey) throws GordianException {
+    static <X extends GordianKeySpec> JcaKey<X> accessKey(final GordianKey<X> pKey) throws GordianException {
         /* Check that it is a JcaKey */
         if (pKey instanceof JcaKey) {
             return (JcaKey<X>) pKey;
@@ -96,12 +96,9 @@ public final class JcaKey<T extends GordianKeySpec>
         }
 
         /* Make sure that the object is the same class */
-        if (!(pThat instanceof JcaKey)) {
+        if (!(pThat instanceof JcaKey<?> myThat)) {
             return false;
         }
-
-        /* Access the target field */
-        final JcaKey<?> myThat = (JcaKey<?>) pThat;
 
         /* Check differences */
         if (!getKeyType().equals(myThat.getKeyType())) {

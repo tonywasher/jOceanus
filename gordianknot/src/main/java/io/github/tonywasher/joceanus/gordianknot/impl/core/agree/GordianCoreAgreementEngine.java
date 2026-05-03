@@ -336,18 +336,12 @@ public abstract class GordianCoreAgreementEngine {
      */
     public DerivationFunction newDerivationFunction() {
         final GordianCoreAgreementSpec mySpec = theState.getSpec();
-        switch (mySpec.getKDFType()) {
-            case SHA256KDF:
-                return new KDF2BytesGenerator(new SHA256Digest());
-            case SHA512KDF:
-                return new KDF2BytesGenerator(new SHA512Digest());
-            case SHA256CKDF:
-                return new ConcatenationKDFGenerator(new SHA256Digest());
-            case SHA512CKDF:
-                return new ConcatenationKDFGenerator(new SHA512Digest());
-            case NONE:
-            default:
-                return new GordianCoreNullKeyDerivation();
-        }
+        return switch (mySpec.getKDFType()) {
+            case SHA256KDF -> new KDF2BytesGenerator(new SHA256Digest());
+            case SHA512KDF -> new KDF2BytesGenerator(new SHA512Digest());
+            case SHA256CKDF -> new ConcatenationKDFGenerator(new SHA256Digest());
+            case SHA512CKDF -> new ConcatenationKDFGenerator(new SHA512Digest());
+            default -> new GordianCoreNullKeyDerivation();
+        };
     }
 }

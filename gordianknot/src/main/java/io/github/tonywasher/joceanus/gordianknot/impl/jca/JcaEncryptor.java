@@ -206,17 +206,12 @@ public final class JcaEncryptor {
             final String myBase = pSpec.getKeyPairType().name();
 
             /* Switch on encryptor type */
-            switch (pSpec.getDigestSpec().getDigestLength()) {
-                case LEN_224:
-                    return myBase + "/ECB/OAEPWITHSHA224ANDMGF1PADDING";
-                case LEN_256:
-                    return myBase + "/ECB/OAEPWITHSHA256ANDMGF1PADDING";
-                case LEN_384:
-                    return myBase + "/ECB/OAEPWITHSHA384ANDMGF1PADDING";
-                case LEN_512:
-                default:
-                    return myBase + "/ECB/OAEPWITHSHA512ANDMGF1PADDING";
-            }
+            return switch (pSpec.getDigestSpec().getDigestLength()) {
+                case LEN_224 -> myBase + "/ECB/OAEPWITHSHA224ANDMGF1PADDING";
+                case LEN_256 -> myBase + "/ECB/OAEPWITHSHA256ANDMGF1PADDING";
+                case LEN_384 -> myBase + "/ECB/OAEPWITHSHA384ANDMGF1PADDING";
+                default -> myBase + "/ECB/OAEPWITHSHA512ANDMGF1PADDING";
+            };
         }
     }
 
@@ -327,16 +322,12 @@ public final class JcaEncryptor {
             final GordianCoreSM2EncryptionSpec mySpec = pSpec.getSM2EncryptionSpec();
             final GordianDigestSpec myDigestSpec = mySpec.getDigestSpec();
             final GordianDigestType myDigestType = myDigestSpec.getDigestType();
-            switch (myDigestType) {
-                case SHA2:
-                    return "SM2withSHA" + myDigestSpec.getDigestLength();
-                case BLAKE2:
-                    return "SM2withBlake2" + (GordianLength.LEN_512.equals(myDigestSpec.getDigestLength()) ? "b" : "s");
-                case WHIRLPOOL:
-                case SM3:
-                default:
-                    return "SM2with" + myDigestType;
-            }
+            return switch (myDigestType) {
+                case SHA2 -> "SM2withSHA" + myDigestSpec.getDigestLength();
+                case BLAKE2 ->
+                        "SM2withBlake2" + (GordianLength.LEN_512.equals(myDigestSpec.getDigestLength()) ? "b" : "s");
+                default -> "SM2with" + myDigestType;
+            };
         }
     }
 

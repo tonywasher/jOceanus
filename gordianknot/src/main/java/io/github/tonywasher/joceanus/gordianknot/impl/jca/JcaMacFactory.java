@@ -109,16 +109,10 @@ public class JcaMacFactory
 
     @Override
     protected boolean validMacType(final GordianMacType pMacType) {
-        switch (pMacType) {
-            case BLAKE2:
-            case BLAKE3:
-            case KALYNA:
-            case CBCMAC:
-            case CFBMAC:
-                return false;
-            default:
-                return super.validMacType(pMacType);
-        }
+        return switch (pMacType) {
+            case BLAKE2, BLAKE3, KALYNA, CBCMAC, CFBMAC -> false;
+            default -> super.validMacType(pMacType);
+        };
     }
 
     /**
@@ -129,23 +123,12 @@ public class JcaMacFactory
      * @throws GordianException on error
      */
     private Mac getJavaMac(final GordianCoreMacSpec pMacSpec) throws GordianException {
-        switch (pMacSpec.getMacType()) {
-            case HMAC:
-            case GMAC:
-            case CMAC:
-            case POLY1305:
-            case SKEIN:
-            case KUPYNA:
-            case SIPHASH:
-            case GOST:
-            case ZUC:
-            case KMAC:
-                return getJavaMac(getMacSpecAlgorithm(pMacSpec));
-            case VMPC:
-                return getJavaMac("VMPC-MAC");
-            default:
-                throw new GordianDataException(GordianBaseData.getInvalidText(pMacSpec));
-        }
+        return switch (pMacSpec.getMacType()) {
+            case HMAC, GMAC, CMAC, POLY1305, SKEIN, KUPYNA, SIPHASH, GOST, ZUC, KMAC ->
+                    getJavaMac(getMacSpecAlgorithm(pMacSpec));
+            case VMPC -> getJavaMac("VMPC-MAC");
+            default -> throw new GordianDataException(GordianBaseData.getInvalidText(pMacSpec));
+        };
     }
 
     /**
@@ -214,32 +197,20 @@ public class JcaMacFactory
      * @throws GordianException on error
      */
     private static String getMacSpecAlgorithm(final GordianCoreMacSpec pMacSpec) throws GordianException {
-        switch (pMacSpec.getMacType()) {
-            case HMAC:
-                return getHMacAlgorithm(pMacSpec.getDigestSpec());
-            case GMAC:
-                return getGMacAlgorithm(pMacSpec.getSymKeySpec());
-            case CMAC:
-                return getCMacAlgorithm(pMacSpec.getSymKeySpec());
-            case POLY1305:
-                return getPoly1305Algorithm(pMacSpec.getSymKeySpec());
-            case SKEIN:
-                return getSkeinMacAlgorithm(pMacSpec.getDigestSpec());
-            case KUPYNA:
-                return getKupynaMacAlgorithm(pMacSpec.getDigestSpec());
-            case ZUC:
-                return getZucMacAlgorithm(pMacSpec);
-            case SIPHASH:
-                return pMacSpec.toString();
-            case KMAC:
-                return pMacSpec.getMacType().toString() + ((GordianCoreDigestSpec) pMacSpec.getDigestSpec()).getCoreDigestState();
-            case GOST:
-                return "GOST28147MAC";
-            case VMPC:
-                return "VMPC-KSA3";
-            default:
-                throw new GordianDataException(GordianBaseData.getInvalidText(pMacSpec));
-        }
+        return switch (pMacSpec.getMacType()) {
+            case HMAC -> getHMacAlgorithm(pMacSpec.getDigestSpec());
+            case GMAC -> getGMacAlgorithm(pMacSpec.getSymKeySpec());
+            case CMAC -> getCMacAlgorithm(pMacSpec.getSymKeySpec());
+            case POLY1305 -> getPoly1305Algorithm(pMacSpec.getSymKeySpec());
+            case SKEIN -> getSkeinMacAlgorithm(pMacSpec.getDigestSpec());
+            case KUPYNA -> getKupynaMacAlgorithm(pMacSpec.getDigestSpec());
+            case ZUC -> getZucMacAlgorithm(pMacSpec);
+            case SIPHASH -> pMacSpec.toString();
+            case KMAC -> pMacSpec.getMacType().toString() + pMacSpec.getDigestSpec().getCoreDigestState();
+            case GOST -> "GOST28147MAC";
+            case VMPC -> "VMPC-KSA3";
+            default -> throw new GordianDataException(GordianBaseData.getInvalidText(pMacSpec));
+        };
     }
 
     /**
@@ -337,29 +308,18 @@ public class JcaMacFactory
 
     @Override
     protected boolean validCMacSymKeySpec(final GordianSymKeySpec pKeySpec) {
-        switch (pKeySpec.getSymKeyType()) {
-            case AES:
-            case DESEDE:
-            case BLOWFISH:
-            case SHACAL2:
-            case THREEFISH:
-            case SEED:
-            case SM4:
-                return super.validCMacSymKeySpec(pKeySpec);
-            default:
-                return false;
-        }
+        return switch (pKeySpec.getSymKeyType()) {
+            case AES, DESEDE, BLOWFISH, SHACAL2, THREEFISH, SEED, SM4 -> super.validCMacSymKeySpec(pKeySpec);
+            default -> false;
+        };
     }
 
     @Override
     protected boolean validGMacSymKeySpec(final GordianSymKeySpec pKeySpec) {
-        switch (pKeySpec.getSymKeyType()) {
-            case KUZNYECHIK:
-            case KALYNA:
-                return false;
-            default:
-                return super.validGMacSymKeySpec(pKeySpec);
-        }
+        return switch (pKeySpec.getSymKeyType()) {
+            case KUZNYECHIK, KALYNA -> false;
+            default -> super.validGMacSymKeySpec(pKeySpec);
+        };
     }
 
     @Override

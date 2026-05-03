@@ -400,23 +400,18 @@ public final class BouncyRSAKeyPair {
             final int mySaltLength = myDigestSpec.getDigestLength().getByteLength();
 
             /* Access the signature type */
-            switch (pSpec.getSignatureType()) {
-                case ISO9796D2:
-                    return new ISO9796d2Signer(new RSABlindedEngine(), myDigest.getDigest(), ISOTrailers.noTrailerAvailable(myDigest.getDigest()));
-                case X931:
-                    return new X931Signer(new RSABlindedEngine(), myDigest.getDigest(), ISOTrailers.noTrailerAvailable(myDigest.getDigest()));
-                case PREHASH:
-                    return new RSADigestSigner(myDigest.getDigest());
-                case PSS128:
-                    return new PSSSigner(new RSABlindedEngine(), myDigest.getDigest(),
-                            ((BouncyDigest) pFactory.getDigestFactory().createDigest(myBuilder.shake128())).getDigest(), mySaltLength);
-                case PSS256:
-                    return new PSSSigner(new RSABlindedEngine(), myDigest.getDigest(),
-                            ((BouncyDigest) pFactory.getDigestFactory().createDigest(myBuilder.shake256())).getDigest(), mySaltLength);
-                case PSSMGF1:
-                default:
-                    return new PSSSigner(new RSABlindedEngine(), myDigest.getDigest(), mySaltLength);
-            }
+            return switch (pSpec.getSignatureType()) {
+                case ISO9796D2 ->
+                        new ISO9796d2Signer(new RSABlindedEngine(), myDigest.getDigest(), ISOTrailers.noTrailerAvailable(myDigest.getDigest()));
+                case X931 ->
+                        new X931Signer(new RSABlindedEngine(), myDigest.getDigest(), ISOTrailers.noTrailerAvailable(myDigest.getDigest()));
+                case PREHASH -> new RSADigestSigner(myDigest.getDigest());
+                case PSS128 -> new PSSSigner(new RSABlindedEngine(), myDigest.getDigest(),
+                        ((BouncyDigest) pFactory.getDigestFactory().createDigest(myBuilder.shake128())).getDigest(), mySaltLength);
+                case PSS256 -> new PSSSigner(new RSABlindedEngine(), myDigest.getDigest(),
+                        ((BouncyDigest) pFactory.getDigestFactory().createDigest(myBuilder.shake256())).getDigest(), mySaltLength);
+                default -> new PSSSigner(new RSABlindedEngine(), myDigest.getDigest(), mySaltLength);
+            };
         }
     }
 

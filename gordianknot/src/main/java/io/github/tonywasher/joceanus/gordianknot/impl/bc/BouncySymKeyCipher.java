@@ -173,10 +173,9 @@ public final class BouncySymKeyCipher
         }
 
         /* Make sure that the classes are the same */
-        if (!(pThat instanceof BouncySymKeyCipher)) {
+        if (!(pThat instanceof BouncySymKeyCipher myThat)) {
             return false;
         }
-        final BouncySymKeyCipher myThat = (BouncySymKeyCipher) pThat;
 
         /* Check that the fields are equal */
         return isEncrypting == myThat.isEncrypting

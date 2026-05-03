@@ -62,17 +62,12 @@ public class JcaEncryptorFactory
      * @throws GordianException on error
      */
     private GordianEncryptor getJcaEncryptor(final GordianCoreEncryptorSpec pEncryptorSpec) throws GordianException {
-        switch (pEncryptorSpec.getKeyPairType()) {
-            case RSA:
-            case ELGAMAL:
-                return new JcaBlockEncryptor(getFactory(), pEncryptorSpec);
-            case SM2:
-                return new JcaHybridEncryptor(getFactory(), pEncryptorSpec);
-            case COMPOSITE:
-                return new GordianCompositeEncryptor(getFactory(), pEncryptorSpec);
-            default:
-                throw new GordianDataException(GordianBaseData.getInvalidText(pEncryptorSpec.getKeyPairType()));
-        }
+        return switch (pEncryptorSpec.getKeyPairType()) {
+            case RSA, ELGAMAL -> new JcaBlockEncryptor(getFactory(), pEncryptorSpec);
+            case SM2 -> new JcaHybridEncryptor(getFactory(), pEncryptorSpec);
+            case COMPOSITE -> new GordianCompositeEncryptor(getFactory(), pEncryptorSpec);
+            default -> throw new GordianDataException(GordianBaseData.getInvalidText(pEncryptorSpec.getKeyPairType()));
+        };
     }
 
     @Override
@@ -84,16 +79,13 @@ public class JcaEncryptorFactory
 
         /* Switch on KeyType */
         final GordianCoreEncryptorSpec myEncSpec = (GordianCoreEncryptorSpec) pSpec;
-        switch (pSpec.getKeyPairType()) {
-            case RSA:
-            case ELGAMAL:
-            case COMPOSITE:
-                return true;
-            case SM2:
+        return switch (pSpec.getKeyPairType()) {
+            case RSA, ELGAMAL, COMPOSITE -> true;
+            case SM2 -> {
                 final GordianSM2EncryptionSpec mySpec = myEncSpec.getSM2EncryptionSpec();
-                return mySpec != null && mySpec.getEncryptionType() == GordianSM2EncryptionType.C1C2C3;
-            default:
-                return false;
-        }
+                yield mySpec != null && mySpec.getEncryptionType() == GordianSM2EncryptionType.C1C2C3;
+            }
+            default -> false;
+        };
     }
 }

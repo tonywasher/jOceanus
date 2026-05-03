@@ -429,24 +429,16 @@ public class GordianCoreAgreementCalculator {
              * Assign a different digestType to each Id.
              * Note that each type must be available as an HMAC in JCA.
              */
-            switch (this) {
-                case FACTORY:
-                    return GordianDigestType.SHA3;
-                case KEYSET:
-                    return GordianDigestType.SHA2;
-                case KEY:
-                    return GordianDigestType.SKEIN;
-                case IV:
-                    return GordianDigestType.RIPEMD;
-                case BYTES:
-                    return GordianDigestType.STREEBOG;
-                case TAGS:
-                    return GordianDigestType.WHIRLPOOL;
-                case COMPOSITE:
-                    return GordianDigestType.SM3;
-                default:
-                    throw new IllegalArgumentException("Invalid ID");
-            }
+            return switch (this) {
+                case FACTORY -> GordianDigestType.SHA3;
+                case KEYSET -> GordianDigestType.SHA2;
+                case KEY -> GordianDigestType.SKEIN;
+                case IV -> GordianDigestType.RIPEMD;
+                case BYTES -> GordianDigestType.STREEBOG;
+                case TAGS -> GordianDigestType.WHIRLPOOL;
+                case COMPOSITE -> GordianDigestType.SM3;
+                default -> throw new IllegalArgumentException("Invalid ID");
+            };
         }
     }
 }

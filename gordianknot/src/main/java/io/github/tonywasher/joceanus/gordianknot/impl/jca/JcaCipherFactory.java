@@ -23,6 +23,7 @@ import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianStreamCipher;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianSymCipher;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.GordianWrapper;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianCipherMode;
+import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianPadding;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamCipherSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySpec;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKeySubType.GordianChaCha20Key;
@@ -32,7 +33,6 @@ import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianStreamKe
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymCipherSpec;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymCipherSpecBuilder;
 import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianSymKeySpec;
-import io.github.tonywasher.joceanus.gordianknot.api.cipher.spec.GordianPadding;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKey;
 import io.github.tonywasher.joceanus.gordianknot.api.key.GordianKeyGenerator;
 import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseData;
@@ -259,45 +259,21 @@ public class JcaCipherFactory
      * @throws GordianException on error
      */
     static String getSymKeyAlgorithm(final GordianSymKeySpec pKeySpec) throws GordianException {
-        switch (pKeySpec.getSymKeyType()) {
-            case TWOFISH:
-                return "TwoFish";
-            case SERPENT:
-                return "Serpent";
-            case THREEFISH:
-                return "ThreeFish-" + pKeySpec.getBlockLength().getLength();
-            case GOST:
-                return "GOST28147";
-            case SHACAL2:
-                return "Shacal-2";
-            case KUZNYECHIK:
-                return "GOST3412-2015";
-            case KALYNA:
-                return KALYNA_ALGORITHM + "-" + pKeySpec.getBlockLength().getLength();
-            case RC5:
-                return GordianLength.LEN_128.equals(pKeySpec.getBlockLength())
-                        ? "RC5-64"
-                        : "RC5";
-            case AES:
-            case CAMELLIA:
-            case CAST6:
-            case RC6:
-            case ARIA:
-            case NOEKEON:
-            case SM4:
-            case SEED:
-            case SKIPJACK:
-            case TEA:
-            case XTEA:
-            case IDEA:
-            case RC2:
-            case CAST5:
-            case BLOWFISH:
-            case DESEDE:
-                return pKeySpec.getSymKeyType().name();
-            default:
-                throw new GordianDataException(GordianBaseData.getInvalidText(pKeySpec));
-        }
+        return switch (pKeySpec.getSymKeyType()) {
+            case TWOFISH -> "TwoFish";
+            case SERPENT -> "Serpent";
+            case THREEFISH -> "ThreeFish-" + pKeySpec.getBlockLength().getLength();
+            case GOST -> "GOST28147";
+            case SHACAL2 -> "Shacal-2";
+            case KUZNYECHIK -> "GOST3412-2015";
+            case KALYNA -> KALYNA_ALGORITHM + "-" + pKeySpec.getBlockLength().getLength();
+            case RC5 -> GordianLength.LEN_128.equals(pKeySpec.getBlockLength())
+                    ? "RC5-64"
+                    : "RC5";
+            case AES, CAMELLIA, CAST6, RC6, ARIA, NOEKEON, SM4, SEED, SKIPJACK, TEA, XTEA, IDEA, RC2, CAST5, BLOWFISH,
+                 DESEDE -> pKeySpec.getSymKeyType().name();
+            default -> throw new GordianDataException(GordianBaseData.getInvalidText(pKeySpec));
+        };
     }
 
     /**
@@ -309,37 +285,16 @@ public class JcaCipherFactory
      */
     private static String getCipherModeAlgorithm(final GordianSymCipherSpec pSpec) throws GordianException {
         final GordianCipherMode myMode = pSpec.getCipherMode();
-        switch (pSpec.getCipherMode()) {
-            case ECB:
-            case SIC:
-            case EAX:
-            case CCM:
-            case GCM:
-            case OCB:
-            case GOFB:
-            case GCFB:
-            case CFB8:
-            case OFB8:
-                return myMode.name();
-            case CBC:
-            case G3413CBC:
-                return GordianCipherMode.CBC.name();
-            case CFB:
-            case G3413CFB:
-                return "CFB";
-            case OFB:
-            case G3413OFB:
-                return GordianCipherMode.OFB.name();
-            case KCTR:
-            case G3413CTR:
-                return "CTR";
-            case KCCM:
-                return GordianCipherMode.CCM.name();
-            case KGCM:
-                return GordianCipherMode.GCM.name();
-            default:
-                throw new GordianDataException(GordianBaseData.getInvalidText(myMode));
-        }
+        return switch (pSpec.getCipherMode()) {
+            case ECB, SIC, EAX, CCM, GCM, OCB, GOFB, GCFB, CFB8, OFB8 -> myMode.name();
+            case CBC, G3413CBC -> GordianCipherMode.CBC.name();
+            case CFB, G3413CFB -> "CFB";
+            case OFB, G3413OFB -> GordianCipherMode.OFB.name();
+            case KCTR, G3413CTR -> "CTR";
+            case KCCM -> GordianCipherMode.CCM.name();
+            case KGCM -> GordianCipherMode.GCM.name();
+            default -> throw new GordianDataException(GordianBaseData.getInvalidText(myMode));
+        };
     }
 
     /**
@@ -349,21 +304,14 @@ public class JcaCipherFactory
      * @return the Algorithm
      */
     private static String getPaddingAlgorithm(final GordianPadding pPadding) {
-        switch (pPadding) {
-            case CTS:
-                return "withCTS";
-            case X923:
-                return "X923Padding";
-            case PKCS7:
-                return "PKCS7Padding";
-            case ISO7816D4:
-                return "ISO7816-4Padding";
-            case TBC:
-                return "TBCPadding";
-            case NONE:
-            default:
-                return "NoPadding";
-        }
+        return switch (pPadding) {
+            case CTS -> "withCTS";
+            case X923 -> "X923Padding";
+            case PKCS7 -> "PKCS7Padding";
+            case ISO7816D4 -> "ISO7816-4Padding";
+            case TBC -> "TBCPadding";
+            default -> "NoPadding";
+        };
     }
 
     /**
@@ -374,35 +322,26 @@ public class JcaCipherFactory
      * @throws GordianException on error
      */
     private static String getStreamKeyAlgorithm(final GordianStreamKeySpec pKeySpec) throws GordianException {
-        switch (pKeySpec.getStreamKeyType()) {
-            case HC:
-                return GordianLength.LEN_128 == pKeySpec.getKeyLength()
-                        ? "HC128"
-                        : "HC256";
-            case ZUC:
-                return GordianLength.LEN_128 == pKeySpec.getKeyLength()
-                        ? "ZUC-128"
-                        : "ZUC-256";
-            case CHACHA20:
-                return pKeySpec.getSubKeyType() == GordianChaCha20Key.STD
-                        ? "CHACHA"
-                        : "CHACHA7539";
-            case SALSA20:
-                return pKeySpec.getSubKeyType() == GordianSalsa20Key.STD
-                        ? pKeySpec.getStreamKeyType().name()
-                        : "XSALSA20";
-            case VMPC:
-                return pKeySpec.getSubKeyType() == GordianVMPCKey.STD
-                        ? pKeySpec.getStreamKeyType().name()
-                        : "VMPC-KSA3";
-            case GRAIN:
-                return "Grain128";
-            case ISAAC:
-            case RC4:
-                return pKeySpec.getStreamKeyType().name();
-            default:
-                throw new GordianDataException(GordianBaseData.getInvalidText(pKeySpec));
-        }
+        return switch (pKeySpec.getStreamKeyType()) {
+            case HC -> GordianLength.LEN_128 == pKeySpec.getKeyLength()
+                    ? "HC128"
+                    : "HC256";
+            case ZUC -> GordianLength.LEN_128 == pKeySpec.getKeyLength()
+                    ? "ZUC-128"
+                    : "ZUC-256";
+            case CHACHA20 -> pKeySpec.getSubKeyType() == GordianChaCha20Key.STD
+                    ? "CHACHA"
+                    : "CHACHA7539";
+            case SALSA20 -> pKeySpec.getSubKeyType() == GordianSalsa20Key.STD
+                    ? pKeySpec.getStreamKeyType().name()
+                    : "XSALSA20";
+            case VMPC -> pKeySpec.getSubKeyType() == GordianVMPCKey.STD
+                    ? pKeySpec.getStreamKeyType().name()
+                    : "VMPC-KSA3";
+            case GRAIN -> "Grain128";
+            case ISAAC, RC4 -> pKeySpec.getStreamKeyType().name();
+            default -> throw new GordianDataException(GordianBaseData.getInvalidText(pKeySpec));
+        };
     }
 
     @Override
@@ -431,26 +370,25 @@ public class JcaCipherFactory
         }
 
         /* Additional Checks */
-        switch (pCipherSpec.getKeySpec().getSymKeyType()) {
-            case KALYNA:
+        return switch (pCipherSpec.getKeySpec().getSymKeyType()) {
+            case KALYNA ->
                 /* Disallow OCB, CCM and GCM */
-                return !GordianCipherMode.OCB.equals(myMode)
-                        && !GordianCipherMode.KCCM.equals(myMode)
-                        && !GordianCipherMode.KGCM.equals(myMode)
-                        && !GordianCipherMode.CCM.equals(myMode)
-                        && !GordianCipherMode.GCM.equals(myMode);
-            case GOST:
+                    !GordianCipherMode.OCB.equals(myMode)
+                            && !GordianCipherMode.KCCM.equals(myMode)
+                            && !GordianCipherMode.KGCM.equals(myMode)
+                            && !GordianCipherMode.CCM.equals(myMode)
+                            && !GordianCipherMode.GCM.equals(myMode);
+            case GOST ->
                 /* Disallow OFB and CFB */
-                return !GordianCipherMode.OFB.equals(myMode)
-                        && !GordianCipherMode.CFB.equals(myMode);
-            case KUZNYECHIK:
+                    !GordianCipherMode.OFB.equals(myMode)
+                            && !GordianCipherMode.CFB.equals(myMode);
+            case KUZNYECHIK ->
                 /* Disallow OCB, OFB, CFB and CBC */
-                return !GordianCipherMode.OCB.equals(myMode)
-                        && !GordianCipherMode.OFB.equals(myMode)
-                        && !GordianCipherMode.CFB.equals(myMode)
-                        && !GordianCipherMode.CBC.equals(myMode);
-            default:
-                return true;
-        }
+                    !GordianCipherMode.OCB.equals(myMode)
+                            && !GordianCipherMode.OFB.equals(myMode)
+                            && !GordianCipherMode.CFB.equals(myMode)
+                            && !GordianCipherMode.CBC.equals(myMode);
+            default -> true;
+        };
     }
 }

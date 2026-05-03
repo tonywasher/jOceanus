@@ -86,7 +86,7 @@ public class GordianPBECipherSpec<T extends GordianKeySpec> {
 
     @Override
     public String toString() {
-        return "" + theCipherSpec + ":" + thePBESpec;
+        return theCipherSpec + ":" + thePBESpec;
     }
 
     @Override
@@ -100,10 +100,9 @@ public class GordianPBECipherSpec<T extends GordianKeySpec> {
         }
 
         /* Make sure that the classes are the same */
-        if (!(pThat instanceof GordianPBECipherSpec)) {
+        if (!(pThat instanceof GordianPBECipherSpec<?> myThat)) {
             return false;
         }
-        final GordianPBECipherSpec<?> myThat = (GordianPBECipherSpec<?>) pThat;
 
         /* Check that the fields are equal */
         return Objects.equals(theCipherSpec, myThat.getCipherSpec())

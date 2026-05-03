@@ -332,17 +332,12 @@ public final class BouncyXMSSKeyPair {
      * @return the digest
      */
     static Digest createDigest(final GordianXMSSDigestType pKeyType) {
-        switch (pKeyType) {
-            case SHAKE128:
-                return new SHAKEDigest(GordianLength.LEN_128.getLength());
-            case SHAKE256:
-                return new SHAKEDigest(GordianLength.LEN_256.getLength());
-            case SHA256:
-                return new SHA256Digest();
-            case SHA512:
-            default:
-                return new SHA512Digest();
-        }
+        return switch (pKeyType) {
+            case SHAKE128 -> new SHAKEDigest(GordianLength.LEN_128.getLength());
+            case SHAKE256 -> new SHAKEDigest(GordianLength.LEN_256.getLength());
+            case SHA256 -> new SHA256Digest();
+            default -> new SHA512Digest();
+        };
     }
 
     /**

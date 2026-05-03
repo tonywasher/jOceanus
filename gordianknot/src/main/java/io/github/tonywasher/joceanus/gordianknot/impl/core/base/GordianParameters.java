@@ -267,12 +267,9 @@ public class GordianParameters {
         }
 
         /* Make sure that the object is the same class */
-        if (!(pThat instanceof GordianParameters)) {
+        if (!(pThat instanceof GordianParameters myThat)) {
             return false;
         }
-
-        /* Access the target field */
-        final GordianParameters myThat = (GordianParameters) pThat;
 
         /* Check Differences */
         if (theFactoryType != myThat.getFactoryType()

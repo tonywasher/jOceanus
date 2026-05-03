@@ -298,7 +298,7 @@ public abstract class JcaSignature
 
             /* Create the signature class */
             final GordianCoreSignatureSpec mySpec = (GordianCoreSignatureSpec) pSignatureSpec;
-            final String myDigest = JcaDigest.getSignAlgorithm((GordianCoreDigestSpec) mySpec.getDigestSpec());
+            final String myDigest = JcaDigest.getSignAlgorithm(mySpec.getDigestSpec());
             setSigner(getJavaSignature(myDigest + getSignatureBase(pSignatureSpec), false));
         }
     }
@@ -321,32 +321,22 @@ public abstract class JcaSignature
         final boolean isSHAKE = GordianDigestType.SHAKE.equals(mySpec.getDigestSpec().getDigestType());
 
         /* Switch on signature type */
-        switch (pSignatureSpec.getSignatureType()) {
-            case PSSMGF1:
-                return RSA_PSSMGF1_ALGOBASE;
-            case PSS128:
-                return isSHAKE ? RSA_PSSSHAKE_ALGOBASE : RSA_PSS128_ALGOBASE;
-            case PSS256:
-                return isSHAKE ? RSA_PSSSHAKE_ALGOBASE : RSA_PSS256_ALGOBASE;
-            case X931:
-                return RSA_X931_ALGOBASE;
-            case ISO9796D2:
-                return RSA_ISO9796D2_ALGOBASE;
-            case PREHASH:
-                return RSA_PREHASH_ALGOBASE;
-            case DSA:
-                return isDSA
-                        ? DSA_ALGOBASE
-                        : EC_DSA_ALGOBASE;
-            case DDSA:
-                return isDSA
-                        ? DDSA_ALGOBASE
-                        : EC_DDSA_ALGOBASE;
-            case NR:
-                return EC_NR_ALGOBASE;
-            default:
-                return null;
-        }
+        return switch (pSignatureSpec.getSignatureType()) {
+            case PSSMGF1 -> RSA_PSSMGF1_ALGOBASE;
+            case PSS128 -> isSHAKE ? RSA_PSSSHAKE_ALGOBASE : RSA_PSS128_ALGOBASE;
+            case PSS256 -> isSHAKE ? RSA_PSSSHAKE_ALGOBASE : RSA_PSS256_ALGOBASE;
+            case X931 -> RSA_X931_ALGOBASE;
+            case ISO9796D2 -> RSA_ISO9796D2_ALGOBASE;
+            case PREHASH -> RSA_PREHASH_ALGOBASE;
+            case DSA -> isDSA
+                    ? DSA_ALGOBASE
+                    : EC_DSA_ALGOBASE;
+            case DDSA -> isDSA
+                    ? DDSA_ALGOBASE
+                    : EC_DDSA_ALGOBASE;
+            case NR -> EC_NR_ALGOBASE;
+            default -> null;
+        };
     }
 
     /**
@@ -368,7 +358,7 @@ public abstract class JcaSignature
 
             /* Create the signature class */
             final GordianCoreSignatureSpec mySpec = (GordianCoreSignatureSpec) pSignatureSpec;
-            final String myDigest = JcaDigest.getSignAlgorithm((GordianCoreDigestSpec) mySpec.getDigestSpec());
+            final String myDigest = JcaDigest.getSignAlgorithm(mySpec.getDigestSpec());
             setSigner(getJavaSignature(myDigest + getSignatureBase(pSignatureSpec), false));
         }
     }
@@ -645,16 +635,12 @@ public abstract class JcaSignature
 
             /* Switch on digest Type */
             final GordianCoreSignatureSpec mySpec = (GordianCoreSignatureSpec) pSignatureSpec;
-            switch (mySpec.getDigestSpec().getDigestType()) {
-                case SHA2:
-                    return "SHA512With" + BASE_NAME;
-                case SHA3:
-                    return "SHA3-512With" + BASE_NAME;
-                case SHAKE:
-                    return "SHAKE256With" + BASE_NAME;
-                default:
-                    throw new IllegalArgumentException("Bad SignatureSpec");
-            }
+            return switch (mySpec.getDigestSpec().getDigestType()) {
+                case SHA2 -> "SHA512With" + BASE_NAME;
+                case SHA3 -> "SHA3-512With" + BASE_NAME;
+                case SHAKE -> "SHAKE256With" + BASE_NAME;
+                default -> throw new IllegalArgumentException("Bad SignatureSpec");
+            };
         }
 
     }

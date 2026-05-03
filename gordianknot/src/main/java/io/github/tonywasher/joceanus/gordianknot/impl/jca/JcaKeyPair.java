@@ -152,12 +152,9 @@ public class JcaKeyPair
             }
 
             /* Make sure that the object is the same class */
-            if (!(pThat instanceof JcaPublicKey)) {
+            if (!(pThat instanceof JcaPublicKey myThat)) {
                 return false;
             }
-
-            /* Access the target field */
-            final JcaPublicKey myThat = (JcaPublicKey) pThat;
 
             /* Check differences */
             return getKeySpec().equals(myThat.getKeySpec())
@@ -212,12 +209,9 @@ public class JcaKeyPair
             }
 
             /* Make sure that the object is the same class */
-            if (!(pThat instanceof JcaPrivateKey)) {
+            if (!(pThat instanceof JcaPrivateKey myThat)) {
                 return false;
             }
-
-            /* Access the target field */
-            final JcaPrivateKey myThat = (JcaPrivateKey) pThat;
 
             /* Check differences */
             return getKeySpec().equals(myThat.getKeySpec())
@@ -295,12 +289,9 @@ public class JcaKeyPair
             }
 
             /* Make sure that the object is the same class */
-            if (!(pThat instanceof JcaStateAwarePrivateKey)) {
+            if (!(pThat instanceof JcaStateAwarePrivateKey myThat)) {
                 return false;
             }
-
-            /* Access the target field */
-            final JcaStateAwarePrivateKey myThat = (JcaStateAwarePrivateKey) pThat;
 
             /* Check differences */
             return getKeySpec().equals(myThat.getKeySpec())
@@ -351,12 +342,9 @@ public class JcaKeyPair
             }
 
             /* Make sure that the object is the same class */
-            if (!(pThat instanceof JcaDHPublicKey)) {
+            if (!(pThat instanceof JcaDHPublicKey myThat)) {
                 return false;
             }
-
-            /* Access the target field */
-            final JcaDHPublicKey myThat = (JcaDHPublicKey) pThat;
 
             /* Check differences */
             return getKeySpec().equals(myThat.getKeySpec())
@@ -424,12 +412,9 @@ public class JcaKeyPair
             }
 
             /* Make sure that the object is the same class */
-            if (!(pThat instanceof JcaDHPrivateKey)) {
+            if (!(pThat instanceof JcaDHPrivateKey myThat)) {
                 return false;
             }
-
-            /* Access the target field */
-            final JcaDHPrivateKey myThat = (JcaDHPrivateKey) pThat;
 
             /* Check differences */
             return getKeySpec().equals(myThat.getKeySpec())

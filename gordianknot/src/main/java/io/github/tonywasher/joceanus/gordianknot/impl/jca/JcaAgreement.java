@@ -503,7 +503,7 @@ public final class JcaAgreement {
         /**
          * Key Agreement.
          */
-        private KeyAgreement theAgreement;
+        private final KeyAgreement theAgreement;
 
         /**
          * Constructor.
@@ -685,29 +685,22 @@ public final class JcaAgreement {
          */
         AlgorithmIdentifier derivationAlgorithmId() {
             final GordianCoreAgreementSpec mySpec = getSpec();
-            switch (mySpec.getKDFType()) {
-                case SHA256KDF:
-                    return new AlgorithmIdentifier(X9ObjectIdentifiers.id_kdf_kdf2, new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha256));
-                case SHA512KDF:
-                    return new AlgorithmIdentifier(X9ObjectIdentifiers.id_kdf_kdf2, new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha512));
-                case SHA256CKDF:
-                    return new AlgorithmIdentifier(X9ObjectIdentifiers.id_kdf_kdf3, new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha256));
-                case SHA512CKDF:
-                    return new AlgorithmIdentifier(X9ObjectIdentifiers.id_kdf_kdf3, new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha512));
-                case SHA256HKDF:
-                    return new AlgorithmIdentifier(PKCSObjectIdentifiers.id_alg_hkdf_with_sha256, null);
-                case SHA512HKDF:
-                    return new AlgorithmIdentifier(PKCSObjectIdentifiers.id_alg_hkdf_with_sha512, null);
-                case KMAC128:
-                    return new AlgorithmIdentifier(NISTObjectIdentifiers.id_Kmac128, null);
-                case KMAC256:
-                    return new AlgorithmIdentifier(NISTObjectIdentifiers.id_Kmac256, null);
-                case SHAKE256:
-                    return new AlgorithmIdentifier(NISTObjectIdentifiers.id_shake256, null);
-                case NONE:
-                default:
-                    return null;
-            }
+            return switch (mySpec.getKDFType()) {
+                case SHA256KDF ->
+                        new AlgorithmIdentifier(X9ObjectIdentifiers.id_kdf_kdf2, new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha256));
+                case SHA512KDF ->
+                        new AlgorithmIdentifier(X9ObjectIdentifiers.id_kdf_kdf2, new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha512));
+                case SHA256CKDF ->
+                        new AlgorithmIdentifier(X9ObjectIdentifiers.id_kdf_kdf3, new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha256));
+                case SHA512CKDF ->
+                        new AlgorithmIdentifier(X9ObjectIdentifiers.id_kdf_kdf3, new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha512));
+                case SHA256HKDF -> new AlgorithmIdentifier(PKCSObjectIdentifiers.id_alg_hkdf_with_sha256, null);
+                case SHA512HKDF -> new AlgorithmIdentifier(PKCSObjectIdentifiers.id_alg_hkdf_with_sha512, null);
+                case KMAC128 -> new AlgorithmIdentifier(NISTObjectIdentifiers.id_Kmac128, null);
+                case KMAC256 -> new AlgorithmIdentifier(NISTObjectIdentifiers.id_Kmac256, null);
+                case SHAKE256 -> new AlgorithmIdentifier(NISTObjectIdentifiers.id_shake256, null);
+                default -> null;
+            };
         }
     }
 
@@ -783,23 +776,15 @@ public final class JcaAgreement {
      */
     static String getFullAgreementName(final String pBase,
                                        final GordianCoreAgreementSpec pAgreementSpec) throws GordianException {
-        switch (pAgreementSpec.getKDFType()) {
-            case NONE:
-                return pBase;
-            case SHA256KDF:
-                return pBase + "withSHA256KDF";
-            case SHA512KDF:
-                return pBase + "withSHA512KDF";
-            case SHA256CKDF:
-                return pBase + "withSHA256CKDF";
-            case SHA512CKDF:
-                return pBase + "withSHA512CKDF";
-            case SHA256HKDF:
-                return pBase + "withSHA256HKDF";
-            case SHA512HKDF:
-                return pBase + "withSHA512HKDF";
-            default:
-                throw new GordianDataException(GordianBaseData.getInvalidText(pAgreementSpec));
-        }
+        return switch (pAgreementSpec.getKDFType()) {
+            case NONE -> pBase;
+            case SHA256KDF -> pBase + "withSHA256KDF";
+            case SHA512KDF -> pBase + "withSHA512KDF";
+            case SHA256CKDF -> pBase + "withSHA256CKDF";
+            case SHA512CKDF -> pBase + "withSHA512CKDF";
+            case SHA256HKDF -> pBase + "withSHA256HKDF";
+            case SHA512HKDF -> pBase + "withSHA512HKDF";
+            default -> throw new GordianDataException(GordianBaseData.getInvalidText(pAgreementSpec));
+        };
     }
 }

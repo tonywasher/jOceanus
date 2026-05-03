@@ -154,12 +154,9 @@ public class BouncyKeyPair
             }
 
             /* Make sure that the object is the same class */
-            if (!(pThat instanceof BouncyPublicKey)) {
+            if (!(pThat instanceof BouncyPublicKey<?> myThat)) {
                 return false;
             }
-
-            /* Access the target field */
-            final BouncyPublicKey<?> myThat = (BouncyPublicKey<?>) pThat;
 
             /* Check differences */
             return getKeySpec().equals(myThat.getKeySpec())
@@ -224,12 +221,9 @@ public class BouncyKeyPair
             }
 
             /* Make sure that the object is the same class */
-            if (!(pThat instanceof BouncyPrivateKey)) {
+            if (!(pThat instanceof BouncyPrivateKey<?> myThat)) {
                 return false;
             }
-
-            /* Access the target field */
-            final BouncyPrivateKey<?> myThat = (BouncyPrivateKey<?>) pThat;
 
             /* Check differences */
             return getKeySpec().equals(myThat.getKeySpec())
@@ -286,12 +280,9 @@ public class BouncyKeyPair
             }
 
             /* Make sure that the object is the same class */
-            if (!(pThat instanceof BouncyStateAwarePrivateKey)) {
+            if (!(pThat instanceof BouncyStateAwarePrivateKey<?> myThat)) {
                 return false;
             }
-
-            /* Access the target field */
-            final BouncyStateAwarePrivateKey<?> myThat = (BouncyStateAwarePrivateKey<?>) pThat;
 
             /* Check differences */
             return getKeySpec().equals(myThat.getKeySpec())

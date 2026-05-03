@@ -372,14 +372,11 @@ public abstract class JcaKeyPairGenerator
          * @return the algorithm
          */
         private String getAlgorithm() {
-            switch (this.getKeySpec().getKeyPairType()) {
-                case DSTU:
-                    return "DSTU4145";
-                case GOST:
-                    return "ECGOST3410-2012";
-                default:
-                    return "EC";
-            }
+            return switch (this.getKeySpec().getKeyPairType()) {
+                case DSTU -> "DSTU4145";
+                case GOST -> "ECGOST3410-2012";
+                default -> "EC";
+            };
         }
     }
 
@@ -1478,20 +1475,15 @@ public abstract class JcaKeyPairGenerator
                 final AlgorithmParameterSpec myAlgo;
                 final GordianCoreKeyPairSpec myKeySpec = (GordianCoreKeyPairSpec) pKeySpec;
                 final boolean is25519 = myKeySpec.getEdwardsSpec().is25519();
-                switch (pKeySpec.getKeyPairType()) {
-                    case XDH:
-                        myAlgo = is25519
-                                ? new XDHParameterSpec(XDHParameterSpec.X25519)
-                                : new XDHParameterSpec(XDHParameterSpec.X448);
-                        break;
-                    case EDDSA:
-                        myAlgo = is25519
-                                ? new EdDSAParameterSpec(EdDSAParameterSpec.Ed25519)
-                                : new EdDSAParameterSpec(EdDSAParameterSpec.Ed448);
-                        break;
-                    default:
-                        throw new GordianLogicException("Invalid KeySpec" + pKeySpec);
-                }
+                myAlgo = switch (pKeySpec.getKeyPairType()) {
+                    case XDH -> is25519
+                            ? new XDHParameterSpec(XDHParameterSpec.X25519)
+                            : new XDHParameterSpec(XDHParameterSpec.X448);
+                    case EDDSA -> is25519
+                            ? new EdDSAParameterSpec(EdDSAParameterSpec.Ed25519)
+                            : new EdDSAParameterSpec(EdDSAParameterSpec.Ed448);
+                    default -> throw new GordianLogicException("Invalid KeySpec" + pKeySpec);
+                };
 
                 /* Create and initialize the generator */
                 final String myJavaType = pKeySpec.toString();

@@ -121,7 +121,7 @@ public class GordianCRMBuilder {
     public CertReqMsg createCertificateRequest(final GordianKeyStorePair pKeyPair,
                                                final int pRequestId) throws GordianException {
         /* Access the certificate */
-        final GordianCoreCertificate myCert = (GordianCoreCertificate) pKeyPair.getCertificateChain().get(0);
+        final GordianCoreCertificate myCert = (GordianCoreCertificate) pKeyPair.getCertificateChain().getFirst();
 
         /* Create the Certificate request */
         final CertRequest myCertReq = createCertRequest(myCert, pRequestId);

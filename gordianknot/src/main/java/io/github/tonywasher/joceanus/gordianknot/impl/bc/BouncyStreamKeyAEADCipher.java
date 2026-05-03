@@ -137,10 +137,9 @@ public class BouncyStreamKeyAEADCipher
         }
 
         /* Make sure that the classes are the same */
-        if (!(pThat instanceof BouncyStreamKeyAEADCipher)) {
+        if (!(pThat instanceof BouncyStreamKeyAEADCipher myThat)) {
             return false;
         }
-        final BouncyStreamKeyAEADCipher myThat = (BouncyStreamKeyAEADCipher) pThat;
 
         /* Check that the fields are equal */
         return isEncrypting == myThat.isEncrypting

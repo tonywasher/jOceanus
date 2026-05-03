@@ -132,10 +132,9 @@ public final class BouncySABERKeyPair {
          *
          * @param pFactory the Security Factory
          * @param pKeySpec the keySpec
-         * @throws GordianException on error
          */
         BouncySABERKeyPairGenerator(final GordianBaseFactory pFactory,
-                                    final GordianKeyPairSpec pKeySpec) throws GordianException {
+                                    final GordianKeyPairSpec pKeySpec) {
             /* Initialise underlying class */
             super(pFactory, pKeySpec);
 

@@ -79,41 +79,24 @@ public class BouncySignatureFactory
      * @throws GordianException on error
      */
     private GordianSignature getBCSigner(final GordianSignatureSpec pSignatureSpec) throws GordianException {
-        switch (pSignatureSpec.getKeyPairType()) {
-            case RSA:
-                return new BouncyRSASignature(getFactory(), pSignatureSpec);
-            case EC:
-                return new BouncyECSignature(getFactory(), pSignatureSpec);
-            case DSTU:
-                return new BouncyDSTUSignature(getFactory(), pSignatureSpec);
-            case GOST:
-                return new BouncyGOSTSignature(getFactory(), pSignatureSpec);
-            case SM2:
-                return new BouncySM2Signature(getFactory(), pSignatureSpec);
-            case EDDSA:
-                return new BouncyEdDSASignature(getFactory(), pSignatureSpec);
-            case DSA:
-                return new BouncyDSASignature(getFactory(), pSignatureSpec);
-            case SLHDSA:
-                return new BouncySLHDSASignature(getFactory(), pSignatureSpec);
-            case MLDSA:
-                return new BouncyMLDSASignature(getFactory(), pSignatureSpec);
-            case FALCON:
-                return new BouncyFalconSignature(getFactory(), pSignatureSpec);
-            case MAYO:
-                return new BouncyMayoSignature(getFactory(), pSignatureSpec);
-            case SNOVA:
-                return new BouncySnovaSignature(getFactory(), pSignatureSpec);
-            case PICNIC:
-                return new BouncyPicnicSignature(getFactory(), pSignatureSpec);
-            case XMSS:
-                return new BouncyXMSSSignature(getFactory(), pSignatureSpec);
-            case LMS:
-                return new BouncyLMSSignature(getFactory(), pSignatureSpec);
-            case COMPOSITE:
-                return new GordianCompositeSigner(getFactory(), pSignatureSpec);
-            default:
-                throw new GordianDataException(GordianBaseData.getInvalidText(pSignatureSpec.getKeyPairType()));
-        }
+        return switch (pSignatureSpec.getKeyPairType()) {
+            case RSA -> new BouncyRSASignature(getFactory(), pSignatureSpec);
+            case EC -> new BouncyECSignature(getFactory(), pSignatureSpec);
+            case DSTU -> new BouncyDSTUSignature(getFactory(), pSignatureSpec);
+            case GOST -> new BouncyGOSTSignature(getFactory(), pSignatureSpec);
+            case SM2 -> new BouncySM2Signature(getFactory(), pSignatureSpec);
+            case EDDSA -> new BouncyEdDSASignature(getFactory(), pSignatureSpec);
+            case DSA -> new BouncyDSASignature(getFactory(), pSignatureSpec);
+            case SLHDSA -> new BouncySLHDSASignature(getFactory(), pSignatureSpec);
+            case MLDSA -> new BouncyMLDSASignature(getFactory(), pSignatureSpec);
+            case FALCON -> new BouncyFalconSignature(getFactory(), pSignatureSpec);
+            case MAYO -> new BouncyMayoSignature(getFactory(), pSignatureSpec);
+            case SNOVA -> new BouncySnovaSignature(getFactory(), pSignatureSpec);
+            case PICNIC -> new BouncyPicnicSignature(getFactory(), pSignatureSpec);
+            case XMSS -> new BouncyXMSSSignature(getFactory(), pSignatureSpec);
+            case LMS -> new BouncyLMSSignature(getFactory(), pSignatureSpec);
+            case COMPOSITE -> new GordianCompositeSigner(getFactory(), pSignatureSpec);
+            default -> throw new GordianDataException(GordianBaseData.getInvalidText(pSignatureSpec.getKeyPairType()));
+        };
     }
 }

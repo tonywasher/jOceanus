@@ -239,10 +239,9 @@ public abstract class JcaCipher<T extends GordianKeySpec>
         }
 
         /* Make sure that the classes are the same */
-        if (!(pThat instanceof JcaCipher)) {
+        if (!(pThat instanceof JcaCipher<?> myThat)) {
             return false;
         }
-        final JcaCipher<?> myThat = (JcaCipher<?>) pThat;
 
         /* Check that the fields are equal */
         return isEncrypting == myThat.isEncrypting

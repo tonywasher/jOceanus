@@ -62,34 +62,16 @@ public class JcaAgreementFactory
     @Override
     public GordianCoreAgreementEngine createEngine(final GordianAgreementSpec pSpec) throws GordianException {
         final GordianCoreAgreementSpec mySpec = (GordianCoreAgreementSpec) pSpec;
-        switch (pSpec.getKeyPairSpec().getKeyPairType()) {
-            case EC:
-            case GOST:
-            case DSTU:
-                return getECEngine(mySpec);
-            case SM2:
-                return mySpec.getAgreementType() == GordianAgreementType.SM2
-                        ? getSM2Engine(mySpec) : getECEngine(mySpec);
-            case DH:
-                return getDHEngine(mySpec);
-            case NEWHOPE:
-                return getNHEngine(mySpec);
-            case CMCE:
-            case FRODO:
-            case SABER:
-            case MLKEM:
-            case HQC:
-            case BIKE:
-            case NTRU:
-            case NTRUPLUS:
-            case NTRUPRIME:
-                return getPostQuantumEngine(mySpec);
-            case XDH:
-                return getXDHEngine(mySpec);
-            case COMPOSITE:
-            default:
-                return super.createEngine(pSpec);
-        }
+        return switch (pSpec.getKeyPairSpec().getKeyPairType()) {
+            case EC, GOST, DSTU -> getECEngine(mySpec);
+            case SM2 -> mySpec.getAgreementType() == GordianAgreementType.SM2
+                    ? getSM2Engine(mySpec) : getECEngine(mySpec);
+            case DH -> getDHEngine(mySpec);
+            case NEWHOPE -> getNHEngine(mySpec);
+            case CMCE, FRODO, SABER, MLKEM, HQC, BIKE, NTRU, NTRUPLUS, NTRUPRIME -> getPostQuantumEngine(mySpec);
+            case XDH -> getXDHEngine(mySpec);
+            default -> super.createEngine(pSpec);
+        };
     }
 
     /**
@@ -133,23 +115,17 @@ public class JcaAgreementFactory
      * @throws GordianException on error
      */
     private GordianCoreAgreementEngine getDHEngine(final GordianCoreAgreementSpec pAgreementSpec) throws GordianException {
-        switch (pAgreementSpec.getAgreementType()) {
-            case ANON:
-                return new JcaAnonEngine(this, pAgreementSpec,
-                        JcaAgreement.getJavaKeyAgreement(JcaAgreement.getFullAgreementName(DH_ALGO, pAgreementSpec), false));
-            case SIGNED:
-            case BASIC:
-                return new JcaBasicEngine(this, pAgreementSpec,
-                        JcaAgreement.getJavaKeyAgreement(JcaAgreement.getFullAgreementName(DH_ALGO, pAgreementSpec), false));
-            case UNIFIED:
-                return new JcaUnifiedEngine(this, pAgreementSpec,
-                        JcaAgreement.getJavaKeyAgreement(JcaAgreement.getFullAgreementName(DH_ALGO + "U", pAgreementSpec), false));
-            case MQV:
-                return new JcaMQVEngine(this, pAgreementSpec,
-                        JcaAgreement.getJavaKeyAgreement(JcaAgreement.getFullAgreementName("MQV", pAgreementSpec), false));
-            default:
-                throw new GordianDataException(GordianBaseData.getInvalidText(pAgreementSpec));
-        }
+        return switch (pAgreementSpec.getAgreementType()) {
+            case ANON -> new JcaAnonEngine(this, pAgreementSpec,
+                    JcaAgreement.getJavaKeyAgreement(JcaAgreement.getFullAgreementName(DH_ALGO, pAgreementSpec), false));
+            case SIGNED, BASIC -> new JcaBasicEngine(this, pAgreementSpec,
+                    JcaAgreement.getJavaKeyAgreement(JcaAgreement.getFullAgreementName(DH_ALGO, pAgreementSpec), false));
+            case UNIFIED -> new JcaUnifiedEngine(this, pAgreementSpec,
+                    JcaAgreement.getJavaKeyAgreement(JcaAgreement.getFullAgreementName(DH_ALGO + "U", pAgreementSpec), false));
+            case MQV -> new JcaMQVEngine(this, pAgreementSpec,
+                    JcaAgreement.getJavaKeyAgreement(JcaAgreement.getFullAgreementName("MQV", pAgreementSpec), false));
+            default -> throw new GordianDataException(GordianBaseData.getInvalidText(pAgreementSpec));
+        };
     }
 
     /**
@@ -160,25 +136,18 @@ public class JcaAgreementFactory
      * @throws GordianException on error
      */
     private GordianCoreAgreementEngine getECEngine(final GordianCoreAgreementSpec pAgreementSpec) throws GordianException {
-        switch (pAgreementSpec.getAgreementType()) {
-            case ANON:
-                return new JcaAnonEngine(this, pAgreementSpec,
-                        JcaAgreement.getJavaKeyAgreement(JcaAgreement.getFullAgreementName(ECCDH_ALGO, pAgreementSpec), false));
-            case SIGNED:
-            case BASIC:
-                return new JcaBasicEngine(this, pAgreementSpec,
-                        JcaAgreement.getJavaKeyAgreement(JcaAgreement.getFullAgreementName(ECCDH_ALGO, pAgreementSpec), false));
-            case UNIFIED:
-                return new JcaUnifiedEngine(this, pAgreementSpec,
-                        JcaAgreement.getJavaKeyAgreement(JcaAgreement.getFullAgreementName(ECCDH_ALGO + "U", pAgreementSpec), false));
-            case MQV:
-                return new JcaMQVEngine(this, pAgreementSpec,
-                        JcaAgreement.getJavaKeyAgreement(JcaAgreement.getFullAgreementName("ECMQV", pAgreementSpec), false));
-            case SM2:
-                return getSM2Engine(pAgreementSpec);
-            default:
-                throw new GordianDataException(GordianBaseData.getInvalidText(pAgreementSpec));
-        }
+        return switch (pAgreementSpec.getAgreementType()) {
+            case ANON -> new JcaAnonEngine(this, pAgreementSpec,
+                    JcaAgreement.getJavaKeyAgreement(JcaAgreement.getFullAgreementName(ECCDH_ALGO, pAgreementSpec), false));
+            case SIGNED, BASIC -> new JcaBasicEngine(this, pAgreementSpec,
+                    JcaAgreement.getJavaKeyAgreement(JcaAgreement.getFullAgreementName(ECCDH_ALGO, pAgreementSpec), false));
+            case UNIFIED -> new JcaUnifiedEngine(this, pAgreementSpec,
+                    JcaAgreement.getJavaKeyAgreement(JcaAgreement.getFullAgreementName(ECCDH_ALGO + "U", pAgreementSpec), false));
+            case MQV -> new JcaMQVEngine(this, pAgreementSpec,
+                    JcaAgreement.getJavaKeyAgreement(JcaAgreement.getFullAgreementName("ECMQV", pAgreementSpec), false));
+            case SM2 -> getSM2Engine(pAgreementSpec);
+            default -> throw new GordianDataException(GordianBaseData.getInvalidText(pAgreementSpec));
+        };
     }
 
     /**
@@ -189,17 +158,12 @@ public class JcaAgreementFactory
      * @throws GordianException on error
      */
     private GordianCoreAgreementEngine getXDHEngine(final GordianCoreAgreementSpec pAgreementSpec) throws GordianException {
-        switch (pAgreementSpec.getAgreementType()) {
-            case ANON:
-                return new JcaAnonEngine(this, pAgreementSpec, null);
-            case SIGNED:
-            case BASIC:
-                return new JcaBasicEngine(this, pAgreementSpec, null);
-            case UNIFIED:
-                return new JcaUnifiedEngine(this, pAgreementSpec, null);
-            default:
-                throw new GordianDataException(GordianBaseData.getInvalidText(pAgreementSpec));
-        }
+        return switch (pAgreementSpec.getAgreementType()) {
+            case ANON -> new JcaAnonEngine(this, pAgreementSpec, null);
+            case SIGNED, BASIC -> new JcaBasicEngine(this, pAgreementSpec, null);
+            case UNIFIED -> new JcaUnifiedEngine(this, pAgreementSpec, null);
+            default -> throw new GordianDataException(GordianBaseData.getInvalidText(pAgreementSpec));
+        };
     }
 
     @Override
@@ -218,31 +182,12 @@ public class JcaAgreementFactory
         }
 
         /* Switch on KeyType */
-        switch (pSpec.getKeyPairSpec().getKeyPairType()) {
-            case NEWHOPE:
-            case CMCE:
-            case FRODO:
-            case SABER:
-            case MLKEM:
-            case HQC:
-            case BIKE:
-            case NTRU:
-            case NTRUPLUS:
-            case NTRUPRIME:
-            case COMPOSITE:
-                return true;
-            case EC:
-            case GOST:
-            case DSTU:
-            case SM2:
-            case DH:
-                return !GordianAgreementType.KEM.equals(myType);
-            case XDH:
-                return !GordianAgreementType.KEM.equals(myType)
-                        && !GordianAgreementType.MQV.equals(myType);
-            case RSA:
-            default:
-                return false;
-        }
+        return switch (pSpec.getKeyPairSpec().getKeyPairType()) {
+            case NEWHOPE, CMCE, FRODO, SABER, MLKEM, HQC, BIKE, NTRU, NTRUPLUS, NTRUPRIME, COMPOSITE -> true;
+            case EC, GOST, DSTU, SM2, DH -> !GordianAgreementType.KEM.equals(myType);
+            case XDH -> !GordianAgreementType.KEM.equals(myType)
+                    && !GordianAgreementType.MQV.equals(myType);
+            default -> false;
+        };
     }
 }
