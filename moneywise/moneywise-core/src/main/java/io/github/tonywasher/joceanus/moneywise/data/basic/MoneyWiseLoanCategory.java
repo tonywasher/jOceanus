@@ -16,7 +16,6 @@
  */
 package io.github.tonywasher.joceanus.moneywise.data.basic;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.metis.data.MetisDataDifference;
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import io.github.tonywasher.joceanus.metis.data.MetisDataResource;
@@ -28,6 +27,7 @@ import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseLoanCategor
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseLoanCategoryType.MoneyWiseLoanCategoryTypeList;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
 import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataResource;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValues;
@@ -230,10 +230,9 @@ public final class MoneyWiseLoanCategory
     @Override
     public boolean applyChanges(final PrometheusDataItem pCategory) {
         /* Can only update from a loan category */
-        if (!(pCategory instanceof MoneyWiseLoanCategory)) {
+        if (!(pCategory instanceof MoneyWiseLoanCategory myCategory)) {
             return false;
         }
-        final MoneyWiseLoanCategory myCategory = (MoneyWiseLoanCategory) pCategory;
 
         /* Store the current detail into history */
         pushHistory();

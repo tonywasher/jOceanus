@@ -16,10 +16,10 @@
  */
 package io.github.tonywasher.joceanus.moneywise.data.statics;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import io.github.tonywasher.joceanus.metis.data.MetisDataType;
 import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataInfoClass;
 
 /**
@@ -169,14 +169,10 @@ public enum MoneyWiseTransInfoClass
 
     @Override
     public boolean isLink() {
-        switch (theDataType) {
-            case LINK:
-            case LINKPAIR:
-            case LINKSET:
-                return true;
-            default:
-                return false;
-        }
+        return switch (theDataType) {
+            case LINK, LINKPAIR, LINKSET -> true;
+            default -> false;
+        };
     }
 
     @Override
@@ -218,14 +214,11 @@ public enum MoneyWiseTransInfoClass
      * @return the maximum length
      */
     public int getMaximumLength() {
-        switch (this) {
-            case REFERENCE:
-                return MoneyWiseTransInfoType.DATA_LEN;
-            case COMMENTS:
-                return MoneyWiseTransInfoType.COMMENT_LEN;
-            default:
-                return 0;
-        }
+        return switch (this) {
+            case REFERENCE -> MoneyWiseTransInfoType.DATA_LEN;
+            case COMMENTS -> MoneyWiseTransInfoType.COMMENT_LEN;
+            default -> 0;
+        };
     }
 
     @Override

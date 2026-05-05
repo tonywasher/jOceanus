@@ -16,8 +16,8 @@
  */
 package io.github.tonywasher.joceanus.moneywise.data.basic;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 
 /**
  * Enumeration of Asset Types.
@@ -244,19 +244,10 @@ public enum MoneyWiseAssetType {
      * @return true/false
      */
     public boolean isValued() {
-        switch (this) {
-            case DEPOSIT:
-            case CASH:
-            case LOAN:
-            case PORTFOLIO:
-                return true;
-            case AUTOEXPENSE:
-            case SECURITY:
-            case PAYEE:
-            case SECURITYHOLDING:
-            default:
-                return false;
-        }
+        return switch (this) {
+            case DEPOSIT, CASH, LOAN, PORTFOLIO -> true;
+            default -> false;
+        };
     }
 
     /**
@@ -265,19 +256,10 @@ public enum MoneyWiseAssetType {
      * @return true/false
      */
     public boolean isBaseAccount() {
-        switch (this) {
-            case DEPOSIT:
-            case AUTOEXPENSE:
-            case CASH:
-            case LOAN:
-            case PORTFOLIO:
-            case SECURITYHOLDING:
-                return true;
-            case SECURITY:
-            case PAYEE:
-            default:
-                return false;
-        }
+        return switch (this) {
+            case DEPOSIT, AUTOEXPENSE, CASH, LOAN, PORTFOLIO, SECURITYHOLDING -> true;
+            default -> false;
+        };
     }
 
     /**
@@ -286,19 +268,10 @@ public enum MoneyWiseAssetType {
      * @return true/false
      */
     public boolean isAsset() {
-        switch (this) {
-            case DEPOSIT:
-            case AUTOEXPENSE:
-            case SECURITY:
-            case CASH:
-            case LOAN:
-            case SECURITYHOLDING:
-            case PORTFOLIO:
-                return true;
-            case PAYEE:
-            default:
-                return false;
-        }
+        return switch (this) {
+            case DEPOSIT, AUTOEXPENSE, SECURITY, CASH, LOAN, SECURITYHOLDING, PORTFOLIO -> true;
+            default -> false;
+        };
     }
 
     /**

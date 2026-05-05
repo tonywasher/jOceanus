@@ -16,8 +16,6 @@
  */
 package io.github.tonywasher.joceanus.moneywise.data.validate;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldRequired;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseCash;
@@ -32,6 +30,8 @@ import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransCategory
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseAccountInfoClass;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseCurrency;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTransCategoryClass;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataInfoClass;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
 import io.github.tonywasher.joceanus.prometheus.validate.PrometheusValidateInfoSet;
@@ -71,38 +71,19 @@ public class MoneyWiseValidateCashInfoSet
         }
 
         /* Switch on class */
-        switch ((MoneyWiseAccountInfoClass) pClass) {
+        return switch ((MoneyWiseAccountInfoClass) pClass) {
             /* Allowed set */
-            case NOTES:
-                return MetisFieldRequired.CANEXIST;
-
-            case OPENINGBALANCE:
-                return myCash.isAutoExpense()
-                        ? MetisFieldRequired.NOTALLOWED
-                        : MetisFieldRequired.CANEXIST;
-
-            case AUTOPAYEE:
-            case AUTOEXPENSE:
-                return myCash.isAutoExpense()
-                        ? MetisFieldRequired.MUSTEXIST
-                        : MetisFieldRequired.NOTALLOWED;
+            case NOTES -> MetisFieldRequired.CANEXIST;
+            case OPENINGBALANCE -> myCash.isAutoExpense()
+                    ? MetisFieldRequired.NOTALLOWED
+                    : MetisFieldRequired.CANEXIST;
+            case AUTOPAYEE, AUTOEXPENSE -> myCash.isAutoExpense()
+                    ? MetisFieldRequired.MUSTEXIST
+                    : MetisFieldRequired.NOTALLOWED;
 
             /* Disallowed Set */
-            case SORTCODE:
-            case ACCOUNT:
-            case REFERENCE:
-            case WEBSITE:
-            case CUSTOMERNO:
-            case USERID:
-            case PASSWORD:
-            case MATURITY:
-            case SYMBOL:
-            case REGION:
-            case UNDERLYINGSTOCK:
-            case OPTIONPRICE:
-            default:
-                return MetisFieldRequired.NOTALLOWED;
-        }
+            default -> MetisFieldRequired.NOTALLOWED;
+        };
     }
 
     @Override

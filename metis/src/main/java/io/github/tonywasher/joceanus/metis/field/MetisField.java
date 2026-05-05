@@ -16,13 +16,13 @@
  */
 package io.github.tonywasher.joceanus.metis.field;
 
-import java.util.Objects;
-import java.util.function.BiFunction;
-import java.util.function.Function;
-
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import io.github.tonywasher.joceanus.metis.data.MetisDataType;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldItem.MetisFieldDef;
+
+import java.util.Objects;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 
 /**
  * Metis Data Field.
@@ -175,9 +175,7 @@ public class MetisField<T extends MetisFieldItem>
     protected void checkValidity() {
         /* Check whether length is valid */
         switch (theDataType) {
-            case STRING:
-            case BYTEARRAY:
-            case CHARARRAY:
+            case STRING, BYTEARRAY, CHARARRAY:
                 if (theMaxLength < 0) {
                     throw new IllegalArgumentException("Length required for String/Array");
                 }

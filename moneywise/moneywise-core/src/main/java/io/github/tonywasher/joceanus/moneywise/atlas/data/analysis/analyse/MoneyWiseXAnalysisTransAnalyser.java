@@ -16,9 +16,6 @@
  */
 package io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.analyse;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.base.MoneyWiseXAnalysisEvent;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysis;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisAccountBucket;
@@ -40,6 +37,9 @@ import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransaction;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseCurrency;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTransCategoryClass;
 import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseLogicException;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
 
 import java.util.List;
 
@@ -541,18 +541,13 @@ public class MoneyWiseXAnalysisTransAnalyser {
      * @return the bucket
      */
     MoneyWiseXAnalysisAccountBucket<?> getAccountBucket(final MoneyWiseAssetBase pAsset) {
-        switch (pAsset.getAssetType()) {
-            case DEPOSIT:
-                return theAnalysis.getDeposits().getBucket((MoneyWiseDeposit) pAsset);
-            case CASH:
-                return theAnalysis.getCash().getBucket((MoneyWiseCash) pAsset);
-            case LOAN:
-                return theAnalysis.getLoans().getBucket((MoneyWiseLoan) pAsset);
-            case PORTFOLIO:
-                return theAnalysis.getPortfolios().getCashBucket((MoneyWisePortfolio) pAsset);
-            default:
-                throw new IllegalArgumentException();
-        }
+        return switch (pAsset.getAssetType()) {
+            case DEPOSIT -> theAnalysis.getDeposits().getBucket((MoneyWiseDeposit) pAsset);
+            case CASH -> theAnalysis.getCash().getBucket((MoneyWiseCash) pAsset);
+            case LOAN -> theAnalysis.getLoans().getBucket((MoneyWiseLoan) pAsset);
+            case PORTFOLIO -> theAnalysis.getPortfolios().getCashBucket((MoneyWisePortfolio) pAsset);
+            default -> throw new IllegalArgumentException();
+        };
     }
 
     /**
@@ -562,19 +557,10 @@ public class MoneyWiseXAnalysisTransAnalyser {
      * @return true/false
      */
     boolean isAsset(final MoneyWiseAssetBase pAccount) {
-        switch (pAccount.getAssetType()) {
-            case DEPOSIT:
-            case LOAN:
-            case CASH:
-            case PORTFOLIO:
-                return true;
-            case SECURITY:
-            case PAYEE:
-            case SECURITYHOLDING:
-            case AUTOEXPENSE:
-            default:
-                return false;
-        }
+        return switch (pAccount.getAssetType()) {
+            case DEPOSIT, LOAN, CASH, PORTFOLIO -> true;
+            default -> false;
+        };
     }
 
     /**

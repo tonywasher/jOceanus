@@ -51,12 +51,9 @@ public enum MetisListEvent {
      * @return true/false
      */
     public boolean hasContent() {
-        switch (this) {
-            case INCREMENT:
-            case VERSION:
-                return true;
-            default:
-                return false;
-        }
+        return switch (this) {
+            case INCREMENT, VERSION -> true;
+            default -> false;
+        };
     }
 }

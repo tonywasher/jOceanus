@@ -16,10 +16,6 @@
  */
 package io.github.tonywasher.joceanus.moneywise.data.basic;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
-import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.metis.data.MetisDataDifference;
 import io.github.tonywasher.joceanus.metis.data.MetisDataEditState;
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
@@ -42,6 +38,10 @@ import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseStaticDataT
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTransCategoryClass;
 import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
 import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseLogicException;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataMapItem;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataResource;
@@ -115,8 +115,7 @@ public class MoneyWiseDeposit
                 hasInfoSet = true;
                 useInfoSet = true;
                 break;
-            case CLONE:
-            case CORE:
+            case CLONE, CORE:
                 theInfoSet = new MoneyWiseDepositInfoSet(this, pList.getActInfoTypes(), pList.getDepositInfo());
                 hasInfoSet = true;
                 useInfoSet = false;
@@ -668,10 +667,9 @@ public class MoneyWiseDeposit
     @Override
     public boolean applyChanges(final PrometheusDataItem pDeposit) {
         /* Can only update from a deposit */
-        if (!(pDeposit instanceof MoneyWiseDeposit)) {
+        if (!(pDeposit instanceof MoneyWiseDeposit myDeposit)) {
             return false;
         }
-        final MoneyWiseDeposit myDeposit = (MoneyWiseDeposit) pDeposit;
 
         /* Store the current detail into history */
         pushHistory();

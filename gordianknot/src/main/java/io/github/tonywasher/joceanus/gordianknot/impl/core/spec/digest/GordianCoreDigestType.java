@@ -85,20 +85,13 @@ public final class GordianCoreDigestType {
      * @return the default length
      */
     public static GordianLength getDefaultLength(final GordianDigestType pType) {
-        switch (pType) {
-            case MD2:
-            case MD4:
-            case MD5:
-                return GordianLength.LEN_128;
-            case SHA1:
-                return GordianLength.LEN_160;
-            case TIGER:
-                return GordianLength.LEN_192;
-            case WHIRLPOOL:
-                return GordianLength.LEN_512;
-            default:
-                return GordianLength.LEN_256;
-        }
+        return switch (pType) {
+            case MD2, MD4, MD5 -> GordianLength.LEN_128;
+            case SHA1 -> GordianLength.LEN_160;
+            case TIGER -> GordianLength.LEN_192;
+            case WHIRLPOOL -> GordianLength.LEN_512;
+            default -> GordianLength.LEN_256;
+        };
     }
 
     /**

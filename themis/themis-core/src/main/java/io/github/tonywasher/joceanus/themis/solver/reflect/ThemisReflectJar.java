@@ -44,6 +44,16 @@ import java.util.Map;
 public class ThemisReflectJar
         implements AutoCloseable {
     /**
+     * The URL Jar prefix.
+     */
+    private static final String URLJAR_PREFIX = "jar:file:/";
+
+    /**
+     * The URL Jar prefix.
+     */
+    private static final String URLJAR_SUFFIX = "!/";
+
+    /**
      * The Project parser.
      */
     private final ThemisParser theProjectParser;
@@ -262,7 +272,8 @@ public class ThemisReflectJar
             try {
                 final File myJar = myId.getMavenJarPath();
                 final String myName = myJar.toString().replace("\\", "/");
-                final URL myUrl = (new URI("jar:file:/" + myName + "!/")).toURL();
+                final String myPrefix = myName.startsWith("/") ? URLJAR_PREFIX + ThemisChar.COMMENT : URLJAR_PREFIX;
+                final URL myUrl = (new URI(myPrefix + myName + URLJAR_SUFFIX)).toURL();
                 myList.add(myUrl);
 
                 /* Handle exceptions */

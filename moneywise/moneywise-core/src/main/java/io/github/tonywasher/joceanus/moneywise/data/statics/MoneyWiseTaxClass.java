@@ -16,8 +16,8 @@
  */
 package io.github.tonywasher.joceanus.moneywise.data.statics;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusStaticDataClass;
 
 /**
@@ -187,25 +187,12 @@ public enum MoneyWiseTaxClass
      * @return true/false
      */
     public boolean analyseAccounts() {
-        switch (this) {
-            case SALARY:
-            case ROOMRENTAL:
-            case RENTALINCOME:
-            case OTHERINCOME:
-            case TAXEDINTEREST:
-            case UNTAXEDINTEREST:
-            case DIVIDEND:
-            case UNITTRUSTDIVIDEND:
-            case FOREIGNDIVIDEND:
-            case CHARGEABLEGAINS:
-            case CAPITALGAINS:
-            case RESIDENTIALGAINS:
-            case TAXFREE:
-            case PEER2PEERINTEREST:
-                return true;
-            default:
-                return false;
-        }
+        return switch (this) {
+            case SALARY, ROOMRENTAL, RENTALINCOME, OTHERINCOME, TAXEDINTEREST, UNTAXEDINTEREST, DIVIDEND,
+                 UNITTRUSTDIVIDEND, FOREIGNDIVIDEND, CHARGEABLEGAINS, CAPITALGAINS, RESIDENTIALGAINS, TAXFREE,
+                 PEER2PEERINTEREST -> true;
+            default -> false;
+        };
     }
 
     /**
@@ -214,13 +201,9 @@ public enum MoneyWiseTaxClass
      * @return true/false
      */
     public boolean isExpense() {
-        switch (this) {
-            case EXPENSE:
-            case TAXPAID:
-            case VIRTUAL:
-                return true;
-            default:
-                return false;
-        }
+        return switch (this) {
+            case EXPENSE, TAXPAID, VIRTUAL -> true;
+            default -> false;
+        };
     }
 }

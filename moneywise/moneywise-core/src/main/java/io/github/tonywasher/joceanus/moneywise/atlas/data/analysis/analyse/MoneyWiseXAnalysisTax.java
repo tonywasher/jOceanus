@@ -16,9 +16,6 @@
  */
 package io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.analyse;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysis;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisInterfaces.MoneyWiseXAnalysisCursor;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisPayeeBucket;
@@ -34,6 +31,9 @@ import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTaxClass;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTransCategoryClass;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTransInfoClass;
 import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseLogicException;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
 
 /**
  * Tax Analysis.
@@ -695,70 +695,27 @@ public class MoneyWiseXAnalysisTax {
      */
     private MoneyWiseTaxClass determineTaxClass(final MoneyWiseXAnalysisTransaction pTrans) throws OceanusException {
         /* Switch on the category type */
-        switch (pTrans.getCategoryClass()) {
-            case TAXEDINCOME:
-            case GROSSINCOME:
-                return MoneyWiseTaxClass.SALARY;
-            case OTHERINCOME:
-                return MoneyWiseTaxClass.OTHERINCOME;
-            case INTEREST:
-            case TAXEDINTEREST:
-            case TAXEDLOYALTYBONUS:
-                return MoneyWiseTaxClass.TAXEDINTEREST;
-            case GROSSINTEREST:
-            case GROSSLOYALTYBONUS:
-                return MoneyWiseTaxClass.UNTAXEDINTEREST;
-            case PEER2PEERINTEREST:
-                return MoneyWiseTaxClass.PEER2PEERINTEREST;
-            case DIVIDEND:
-            case SHAREDIVIDEND:
-                return MoneyWiseTaxClass.DIVIDEND;
-            case UNITTRUSTDIVIDEND:
-                return MoneyWiseTaxClass.UNITTRUSTDIVIDEND;
-            case FOREIGNDIVIDEND:
-                return MoneyWiseTaxClass.FOREIGNDIVIDEND;
-            case RENTALINCOME:
-                return MoneyWiseTaxClass.RENTALINCOME;
-            case ROOMRENTALINCOME:
-                return MoneyWiseTaxClass.ROOMRENTAL;
-            case INCOMETAX:
-                return MoneyWiseTaxClass.TAXPAID;
-            case TAXFREEINTEREST:
-            case TAXFREEDIVIDEND:
-            case LOANINTERESTEARNED:
-            case INHERITED:
-            case CASHBACK:
-            case LOYALTYBONUS:
-            case TAXFREELOYALTYBONUS:
-            case GIFTEDINCOME:
-                return MoneyWiseTaxClass.TAXFREE;
-            case PENSIONCONTRIB:
-                return MoneyWiseTaxClass.TAXFREE;
-            case BADDEBTCAPITAL:
-                return MoneyWiseTaxClass.CAPITALGAINS;
-            case BADDEBTINTEREST:
-                return MoneyWiseTaxClass.PEER2PEERINTEREST;
-            case EXPENSE:
-            case LOCALTAXES:
-            case WRITEOFF:
-            case LOANINTERESTCHARGED:
-            case TAXRELIEF:
-            case RECOVEREDEXPENSES:
-                return MoneyWiseTaxClass.EXPENSE;
-            case RENTALEXPENSE:
-                return MoneyWiseTaxClass.RENTALINCOME;
-            case UNITSADJUST:
-            case SECURITYREPLACE:
-            case SECURITYCLOSURE:
-            case STOCKTAKEOVER:
-            case STOCKSPLIT:
-            case STOCKDEMERGER:
-            case STOCKRIGHTSISSUE:
-            case PORTFOLIOXFER:
-            case TRANSFER:
-                return null;
-            default:
-                throw new MoneyWiseLogicException("Unexpected Category: " + pTrans.getCategoryClass());
-        }
+        return switch (pTrans.getCategoryClass()) {
+            case TAXEDINCOME, GROSSINCOME -> MoneyWiseTaxClass.SALARY;
+            case OTHERINCOME -> MoneyWiseTaxClass.OTHERINCOME;
+            case INTEREST, TAXEDINTEREST, TAXEDLOYALTYBONUS -> MoneyWiseTaxClass.TAXEDINTEREST;
+            case GROSSINTEREST, GROSSLOYALTYBONUS -> MoneyWiseTaxClass.UNTAXEDINTEREST;
+            case PEER2PEERINTEREST, BADDEBTINTEREST -> MoneyWiseTaxClass.PEER2PEERINTEREST;
+            case DIVIDEND, SHAREDIVIDEND -> MoneyWiseTaxClass.DIVIDEND;
+            case UNITTRUSTDIVIDEND -> MoneyWiseTaxClass.UNITTRUSTDIVIDEND;
+            case FOREIGNDIVIDEND -> MoneyWiseTaxClass.FOREIGNDIVIDEND;
+            case RENTALINCOME -> MoneyWiseTaxClass.RENTALINCOME;
+            case ROOMRENTALINCOME -> MoneyWiseTaxClass.ROOMRENTAL;
+            case INCOMETAX -> MoneyWiseTaxClass.TAXPAID;
+            case TAXFREEINTEREST, TAXFREEDIVIDEND, LOANINTERESTEARNED, INHERITED, CASHBACK, LOYALTYBONUS,
+                 TAXFREELOYALTYBONUS, GIFTEDINCOME, PENSIONCONTRIB -> MoneyWiseTaxClass.TAXFREE;
+            case BADDEBTCAPITAL -> MoneyWiseTaxClass.CAPITALGAINS;
+            case EXPENSE, LOCALTAXES, WRITEOFF, LOANINTERESTCHARGED, TAXRELIEF, RECOVEREDEXPENSES ->
+                    MoneyWiseTaxClass.EXPENSE;
+            case RENTALEXPENSE -> MoneyWiseTaxClass.RENTALINCOME;
+            case UNITSADJUST, SECURITYREPLACE, SECURITYCLOSURE, STOCKTAKEOVER, STOCKSPLIT, STOCKDEMERGER,
+                 STOCKRIGHTSISSUE, PORTFOLIOXFER, TRANSFER -> null;
+            default -> throw new MoneyWiseLogicException("Unexpected Category: " + pTrans.getCategoryClass());
+        };
     }
 }

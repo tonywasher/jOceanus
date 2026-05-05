@@ -64,45 +64,28 @@ public class MoneyWiseValidateSecurityInfoSet
             return MetisFieldRequired.NOTALLOWED;
         }
         /* Switch on class */
-        switch ((MoneyWiseAccountInfoClass) pClass) {
+        return switch ((MoneyWiseAccountInfoClass) pClass) {
             /* Allowed set */
-            case NOTES:
-                return MetisFieldRequired.CANEXIST;
+            case NOTES -> MetisFieldRequired.CANEXIST;
 
             /* Symbol */
-            case SYMBOL:
-                return myType.needsSymbol()
-                        ? MetisFieldRequired.MUSTEXIST
-                        : MetisFieldRequired.NOTALLOWED;
+            case SYMBOL -> myType.needsSymbol()
+                    ? MetisFieldRequired.MUSTEXIST
+                    : MetisFieldRequired.NOTALLOWED;
 
             /* Region */
-            case REGION:
-                return myType.needsRegion()
-                        ? MetisFieldRequired.MUSTEXIST
-                        : MetisFieldRequired.NOTALLOWED;
+            case REGION -> myType.needsRegion()
+                    ? MetisFieldRequired.MUSTEXIST
+                    : MetisFieldRequired.NOTALLOWED;
 
             /* Options */
-            case UNDERLYINGSTOCK:
-            case OPTIONPRICE:
-                return myType.isOption()
-                        ? MetisFieldRequired.MUSTEXIST
-                        : MetisFieldRequired.NOTALLOWED;
+            case UNDERLYINGSTOCK, OPTIONPRICE -> myType.isOption()
+                    ? MetisFieldRequired.MUSTEXIST
+                    : MetisFieldRequired.NOTALLOWED;
 
             /* Not Allowed */
-            case SORTCODE:
-            case ACCOUNT:
-            case REFERENCE:
-            case WEBSITE:
-            case CUSTOMERNO:
-            case USERID:
-            case PASSWORD:
-            case MATURITY:
-            case OPENINGBALANCE:
-            case AUTOEXPENSE:
-            case AUTOPAYEE:
-            default:
-                return MetisFieldRequired.NOTALLOWED;
-        }
+            default -> MetisFieldRequired.NOTALLOWED;
+        };
     }
 
     @Override

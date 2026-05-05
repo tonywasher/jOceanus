@@ -16,8 +16,6 @@
  */
 package io.github.tonywasher.joceanus.moneywise.data.validate;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldRequired;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDepositInfoSet;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseLoan;
@@ -26,6 +24,8 @@ import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseLoanInfo;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseLoanInfoSet;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseAccountInfoClass;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseCurrency;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataInfoClass;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
 import io.github.tonywasher.joceanus.prometheus.validate.PrometheusValidateInfoSet;
@@ -59,30 +59,13 @@ public class MoneyWiseValidateLoanInfoSet
         }
 
         /* Switch on class */
-        switch ((MoneyWiseAccountInfoClass) pClass) {
+        return switch ((MoneyWiseAccountInfoClass) pClass) {
             /* Allowed set */
-            case NOTES:
-            case SORTCODE:
-            case ACCOUNT:
-            case REFERENCE:
-            case OPENINGBALANCE:
-                return MetisFieldRequired.CANEXIST;
+            case NOTES, SORTCODE, ACCOUNT, REFERENCE, OPENINGBALANCE -> MetisFieldRequired.CANEXIST;
 
             /* Not allowed */
-            case WEBSITE:
-            case CUSTOMERNO:
-            case USERID:
-            case PASSWORD:
-            case MATURITY:
-            case AUTOEXPENSE:
-            case AUTOPAYEE:
-            case SYMBOL:
-            case REGION:
-            case UNDERLYINGSTOCK:
-            case OPTIONPRICE:
-            default:
-                return MetisFieldRequired.NOTALLOWED;
-        }
+            default -> MetisFieldRequired.NOTALLOWED;
+        };
     }
 
     @Override
@@ -93,10 +76,7 @@ public class MoneyWiseValidateLoanInfoSet
             case OPENINGBALANCE:
                 validateOpeningBalance(pInfo);
                 break;
-            case SORTCODE:
-            case ACCOUNT:
-            case NOTES:
-            case REFERENCE:
+            case SORTCODE, ACCOUNT, NOTES, REFERENCE:
                 validateInfoLength(pInfo);
                 break;
             default:

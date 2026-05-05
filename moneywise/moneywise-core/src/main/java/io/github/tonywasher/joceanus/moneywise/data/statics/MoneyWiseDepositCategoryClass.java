@@ -16,8 +16,8 @@
  */
 package io.github.tonywasher.joceanus.moneywise.data.statics;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 
 /**
  * Enumeration of DepositCategory Type Classes.
@@ -152,17 +152,10 @@ public enum MoneyWiseDepositCategoryClass
      * otherwise.
      */
     public boolean isChild() {
-        switch (this) {
-            case CHECKING:
-            case SAVINGS:
-            case TAXFREESAVINGS:
-            case PEER2PEER:
-            case BOND:
-            case TAXFREEBOND:
-                return true;
-            default:
-                return false;
-        }
+        return switch (this) {
+            case CHECKING, SAVINGS, TAXFREESAVINGS, PEER2PEER, BOND, TAXFREEBOND -> true;
+            default -> false;
+        };
     }
 
     /**
@@ -172,13 +165,10 @@ public enum MoneyWiseDepositCategoryClass
      * otherwise.
      */
     public boolean isTaxFree() {
-        switch (this) {
-            case TAXFREESAVINGS:
-            case TAXFREEBOND:
-                return true;
-            default:
-                return false;
-        }
+        return switch (this) {
+            case TAXFREESAVINGS, TAXFREEBOND -> true;
+            default -> false;
+        };
     }
 
     /**
@@ -188,13 +178,10 @@ public enum MoneyWiseDepositCategoryClass
      * otherwise.
      */
     public boolean hasMaturity() {
-        switch (this) {
-            case BOND:
-            case TAXFREEBOND:
-                return true;
-            default:
-                return false;
-        }
+        return switch (this) {
+            case BOND, TAXFREEBOND -> true;
+            default -> false;
+        };
     }
 
     /**
@@ -214,13 +201,10 @@ public enum MoneyWiseDepositCategoryClass
      * <code>false</code> otherwise.
      */
     public boolean canCashBack() {
-        switch (this) {
-            case CHECKING:
-            case PEER2PEER:
-                return true;
-            default:
-                return false;
-        }
+        return switch (this) {
+            case CHECKING, PEER2PEER -> true;
+            default -> false;
+        };
     }
 
     /**

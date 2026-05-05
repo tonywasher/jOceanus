@@ -16,7 +16,6 @@
  */
 package io.github.tonywasher.joceanus.moneywise.data.basic;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.metis.data.MetisDataFieldValue;
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldRequired;
@@ -25,6 +24,7 @@ import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransInfo.Mon
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTransCategoryClass;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTransInfoClass;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTransInfoType.MoneyWiseTransInfoTypeList;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataInfoClass;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataInfoSet;
 import io.github.tonywasher.joceanus.prometheus.views.PrometheusEditSet;
@@ -103,22 +103,17 @@ public class MoneyWiseTransInfoSet
      * @return the value to set
      */
     private Object getInfoSetValue(final MoneyWiseTransInfoClass pInfoClass) {
-        final Object myValue;
-
-        switch (pInfoClass) {
-            case RETURNEDCASHACCOUNT:
+        final Object myValue = switch (pInfoClass) {
+            case RETURNEDCASHACCOUNT ->
                 /* Access deposit of object */
-                myValue = getTransAsset(pInfoClass);
-                break;
-            case TRANSTAG:
+                    getTransAsset(pInfoClass);
+            case TRANSTAG ->
                 /* Access InfoSetList */
-                myValue = getListValue(pInfoClass);
-                break;
-            default:
+                    getListValue(pInfoClass);
+            default ->
                 /* Access value of object */
-                myValue = getField(pInfoClass);
-                break;
-        }
+                    getField(pInfoClass);
+        };
 
         /* Return the value */
         return myValue != null
@@ -209,17 +204,13 @@ public class MoneyWiseTransInfoSet
      */
     public boolean isMetaData(final MoneyWiseTransInfoClass pClass) {
         /* Switch on class */
-        switch (pClass) {
+        return switch (pClass) {
             /* Can always change reference/comments/tags */
-            case REFERENCE:
-            case COMMENTS:
-            case TRANSTAG:
-                return true;
+            case REFERENCE, COMMENTS, TRANSTAG -> true;
 
             /* All others are locked */
-            default:
-                return false;
-        }
+            default -> false;
+        };
     }
 
     /**
@@ -231,22 +222,14 @@ public class MoneyWiseTransInfoSet
      */
     public static MetisFieldRequired isAccountUnitsPositive(final MoneyWiseAssetDirection pDir,
                                                             final MoneyWiseTransCategoryClass pClass) {
-        switch (pClass) {
-            case TRANSFER:
-                return pDir.isFrom()
-                        ? MetisFieldRequired.MUSTEXIST
-                        : MetisFieldRequired.NOTALLOWED;
-            case UNITSADJUST:
-            case STOCKSPLIT:
-                return MetisFieldRequired.CANEXIST;
-            case INHERITED:
-            case DIVIDEND:
-            case STOCKRIGHTSISSUE:
-                return MetisFieldRequired.MUSTEXIST;
-            case STOCKDEMERGER:
-            default:
-                return MetisFieldRequired.NOTALLOWED;
-        }
+        return switch (pClass) {
+            case TRANSFER -> pDir.isFrom()
+                    ? MetisFieldRequired.MUSTEXIST
+                    : MetisFieldRequired.NOTALLOWED;
+            case UNITSADJUST, STOCKSPLIT -> MetisFieldRequired.CANEXIST;
+            case INHERITED, DIVIDEND, STOCKRIGHTSISSUE -> MetisFieldRequired.MUSTEXIST;
+            default -> MetisFieldRequired.NOTALLOWED;
+        };
     }
 
     /**
@@ -258,18 +241,12 @@ public class MoneyWiseTransInfoSet
      */
     public static MetisFieldRequired isPartnerUnitsPositive(final MoneyWiseAssetDirection pDir,
                                                             final MoneyWiseTransCategoryClass pClass) {
-        switch (pClass) {
-            case TRANSFER:
-                return pDir.isTo()
-                        ? MetisFieldRequired.MUSTEXIST
-                        : MetisFieldRequired.NOTALLOWED;
-            case STOCKDEMERGER:
-            case SECURITYREPLACE:
-            case STOCKTAKEOVER:
-            case STOCKRIGHTSISSUE:
-                return MetisFieldRequired.MUSTEXIST;
-            default:
-                return MetisFieldRequired.NOTALLOWED;
-        }
+        return switch (pClass) {
+            case TRANSFER -> pDir.isTo()
+                    ? MetisFieldRequired.MUSTEXIST
+                    : MetisFieldRequired.NOTALLOWED;
+            case STOCKDEMERGER, SECURITYREPLACE, STOCKTAKEOVER, STOCKRIGHTSISSUE -> MetisFieldRequired.MUSTEXIST;
+            default -> MetisFieldRequired.NOTALLOWED;
+        };
     }
 }

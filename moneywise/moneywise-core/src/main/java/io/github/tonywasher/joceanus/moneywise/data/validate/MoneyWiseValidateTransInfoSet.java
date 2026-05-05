@@ -16,11 +16,6 @@
  */
 package io.github.tonywasher.joceanus.moneywise.data.validate;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
 import io.github.tonywasher.joceanus.metis.data.MetisDataDifference;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldRequired;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseAssetDirection;
@@ -42,6 +37,11 @@ import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseCurrency;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseSecurityClass;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTransCategoryClass;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTransInfoClass;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataInfoClass;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
 import io.github.tonywasher.joceanus.prometheus.validate.PrometheusValidateInfoSet;
@@ -90,71 +90,47 @@ public class MoneyWiseValidateTransInfoSet
         }
 
         /* Switch on class */
-        switch ((MoneyWiseTransInfoClass) pClass) {
+        return switch ((MoneyWiseTransInfoClass) pClass) {
             /* Reference and comments are always available */
-            case REFERENCE:
-            case COMMENTS:
-            case TRANSTAG:
-                return MetisFieldRequired.CANEXIST;
+            case REFERENCE, COMMENTS, TRANSTAG -> MetisFieldRequired.CANEXIST;
 
             /* NatInsurance and benefit can only occur on salary/pensionContribution */
-            case EMPLOYERNATINS:
-            case EMPLOYEENATINS:
-                return myClass.isNatInsurance()
-                        ? MetisFieldRequired.CANEXIST
-                        : MetisFieldRequired.NOTALLOWED;
+            case EMPLOYERNATINS, EMPLOYEENATINS -> myClass.isNatInsurance()
+                    ? MetisFieldRequired.CANEXIST
+                    : MetisFieldRequired.NOTALLOWED;
 
             /* Benefit can only occur on salary */
-            case DEEMEDBENEFIT:
-                return myClass == MoneyWiseTransCategoryClass.TAXEDINCOME
-                        ? MetisFieldRequired.CANEXIST
-                        : MetisFieldRequired.NOTALLOWED;
+            case DEEMEDBENEFIT -> myClass == MoneyWiseTransCategoryClass.TAXEDINCOME
+                    ? MetisFieldRequired.CANEXIST
+                    : MetisFieldRequired.NOTALLOWED;
 
             /* Handle Withheld separately */
-            case WITHHELD:
-                return isWithheldAmountRequired(myClass);
+            case WITHHELD -> isWithheldAmountRequired(myClass);
 
             /* Handle Tax Credit */
-            case TAXCREDIT:
-                return isTaxCreditClassRequired(myClass);
+            case TAXCREDIT -> isTaxCreditClassRequired(myClass);
 
             /* Handle AccountUnits */
-            case ACCOUNTDELTAUNITS:
-                return isAccountUnitsDeltaRequired(myClass);
+            case ACCOUNTDELTAUNITS -> isAccountUnitsDeltaRequired(myClass);
 
             /* Handle PartnerUnits */
-            case PARTNERDELTAUNITS:
-                return isPartnerUnitsDeltaRequired(myClass);
+            case PARTNERDELTAUNITS -> isPartnerUnitsDeltaRequired(myClass);
 
             /* Handle Dilution separately */
-            case DILUTION:
-                return isDilutionClassRequired(myClass);
+            case DILUTION -> isDilutionClassRequired(myClass);
 
             /* Qualify Years is needed only for Taxable Gain */
-            case QUALIFYYEARS:
-                return isQualifyingYearsClassRequired(myClass);
+            case QUALIFYYEARS -> isQualifyingYearsClassRequired(myClass);
 
             /* Handle ThirdParty separately */
-            case RETURNEDCASHACCOUNT:
-                return isReturnedCashAccountRequired(myClass);
-            case RETURNEDCASH:
-                return isReturnedCashRequired(myTransaction);
-
-            case PARTNERAMOUNT:
-                return isPartnerAmountClassRequired(myClass);
-
-            case XCHANGERATE:
-                return isXchangeRateClassRequired(myClass);
-
-            case PRICE:
-                return isPriceClassRequired(myClass);
-
-            case COMMISSION:
-                return isCommissionClassRequired(myClass);
-
-            default:
-                return MetisFieldRequired.NOTALLOWED;
-        }
+            case RETURNEDCASHACCOUNT -> isReturnedCashAccountRequired(myClass);
+            case RETURNEDCASH -> isReturnedCashRequired(myTransaction);
+            case PARTNERAMOUNT -> isPartnerAmountClassRequired(myClass);
+            case XCHANGERATE -> isXchangeRateClassRequired(myClass);
+            case PRICE -> isPriceClassRequired(myClass);
+            case COMMISSION -> isCommissionClassRequired(myClass);
+            default -> MetisFieldRequired.NOTALLOWED;
+        };
     }
 
     /**
@@ -165,17 +141,13 @@ public class MoneyWiseValidateTransInfoSet
      */
     public boolean isMetaData(final MoneyWiseTransInfoClass pClass) {
         /* Switch on class */
-        switch (pClass) {
+        return switch (pClass) {
             /* Can always change reference/comments/tags */
-            case REFERENCE:
-            case COMMENTS:
-            case TRANSTAG:
-                return true;
+            case REFERENCE, COMMENTS, TRANSTAG -> true;
 
             /* All others are locked */
-            default:
-                return false;
-        }
+            default -> false;
+        };
     }
 
     /**
@@ -190,31 +162,24 @@ public class MoneyWiseValidateTransInfoSet
         final MoneyWiseTransAsset myAccount = myTrans.getAccount();
 
         /* Switch on class */
-        switch (pClass) {
-            case TAXEDINCOME:
-                return MetisFieldRequired.MUSTEXIST;
-            case LOANINTERESTCHARGED:
-                return MetisFieldRequired.CANEXIST;
-            case LOYALTYBONUS:
-            case INTEREST:
-                return myAccount.isTaxFree()
-                        || myAccount.isGross()
-                        || !myYear.isTaxCreditRequired()
-                        ? MetisFieldRequired.NOTALLOWED
-                        : MetisFieldRequired.MUSTEXIST;
-            case DIVIDEND:
-                return !myAccount.isTaxFree()
-                        && (myYear.isTaxCreditRequired() || myAccount.isForeign())
-                        ? MetisFieldRequired.MUSTEXIST
-                        : MetisFieldRequired.NOTALLOWED;
-            case TRANSFER:
-                return myAccount instanceof MoneyWiseSecurityHolding myHolding
-                        && myHolding.getSecurity().isSecurityClass(MoneyWiseSecurityClass.LIFEBOND)
-                        ? MetisFieldRequired.MUSTEXIST
-                        : MetisFieldRequired.NOTALLOWED;
-            default:
-                return MetisFieldRequired.NOTALLOWED;
-        }
+        return switch (pClass) {
+            case TAXEDINCOME -> MetisFieldRequired.MUSTEXIST;
+            case LOANINTERESTCHARGED -> MetisFieldRequired.CANEXIST;
+            case LOYALTYBONUS, INTEREST -> myAccount.isTaxFree()
+                    || myAccount.isGross()
+                    || !myYear.isTaxCreditRequired()
+                    ? MetisFieldRequired.NOTALLOWED
+                    : MetisFieldRequired.MUSTEXIST;
+            case DIVIDEND -> !myAccount.isTaxFree()
+                    && (myYear.isTaxCreditRequired() || myAccount.isForeign())
+                    ? MetisFieldRequired.MUSTEXIST
+                    : MetisFieldRequired.NOTALLOWED;
+            case TRANSFER -> myAccount instanceof MoneyWiseSecurityHolding myHolding
+                    && myHolding.getSecurity().isSecurityClass(MoneyWiseSecurityClass.LIFEBOND)
+                    ? MetisFieldRequired.MUSTEXIST
+                    : MetisFieldRequired.NOTALLOWED;
+            default -> MetisFieldRequired.NOTALLOWED;
+        };
     }
 
     /**
@@ -225,13 +190,10 @@ public class MoneyWiseValidateTransInfoSet
      */
     private static MetisFieldRequired isWithheldAmountRequired(final MoneyWiseTransCategoryClass pClass) {
         /* Withheld is only available for salary and interest */
-        switch (pClass) {
-            case TAXEDINCOME:
-            case INTEREST:
-                return MetisFieldRequired.CANEXIST;
-            default:
-                return MetisFieldRequired.NOTALLOWED;
-        }
+        return switch (pClass) {
+            case TAXEDINCOME, INTEREST -> MetisFieldRequired.CANEXIST;
+            default -> MetisFieldRequired.NOTALLOWED;
+        };
     }
 
     /**
@@ -258,25 +220,17 @@ public class MoneyWiseValidateTransInfoSet
         }
 
         /* Handle different transaction types */
-        switch (pClass) {
-            case TRANSFER:
-            case STOCKDEMERGER:
-                return MetisFieldRequired.CANEXIST;
-            case UNITSADJUST:
-            case STOCKSPLIT:
-            case INHERITED:
-                return MetisFieldRequired.MUSTEXIST;
-            case DIVIDEND:
-                return myAccount.equals(myPartner)
-                        ? MetisFieldRequired.CANEXIST
-                        : MetisFieldRequired.NOTALLOWED;
-            case STOCKRIGHTSISSUE:
-                return myDir.isFrom()
-                        ? MetisFieldRequired.MUSTEXIST
-                        : MetisFieldRequired.NOTALLOWED;
-            default:
-                return MetisFieldRequired.NOTALLOWED;
-        }
+        return switch (pClass) {
+            case TRANSFER, STOCKDEMERGER -> MetisFieldRequired.CANEXIST;
+            case UNITSADJUST, STOCKSPLIT, INHERITED -> MetisFieldRequired.MUSTEXIST;
+            case DIVIDEND -> myAccount.equals(myPartner)
+                    ? MetisFieldRequired.CANEXIST
+                    : MetisFieldRequired.NOTALLOWED;
+            case STOCKRIGHTSISSUE -> myDir.isFrom()
+                    ? MetisFieldRequired.MUSTEXIST
+                    : MetisFieldRequired.NOTALLOWED;
+            default -> MetisFieldRequired.NOTALLOWED;
+        };
     }
 
     /**
@@ -302,20 +256,14 @@ public class MoneyWiseValidateTransInfoSet
         }
 
         /* Handle different transaction types */
-        switch (pClass) {
-            case TRANSFER:
-                return MetisFieldRequired.CANEXIST;
-            case STOCKDEMERGER:
-            case SECURITYREPLACE:
-            case STOCKTAKEOVER:
-                return MetisFieldRequired.MUSTEXIST;
-            case STOCKRIGHTSISSUE:
-                return myDir.isTo()
-                        ? MetisFieldRequired.MUSTEXIST
-                        : MetisFieldRequired.NOTALLOWED;
-            default:
-                return MetisFieldRequired.NOTALLOWED;
-        }
+        return switch (pClass) {
+            case TRANSFER -> MetisFieldRequired.CANEXIST;
+            case STOCKDEMERGER, SECURITYREPLACE, STOCKTAKEOVER -> MetisFieldRequired.MUSTEXIST;
+            case STOCKRIGHTSISSUE -> myDir.isTo()
+                    ? MetisFieldRequired.MUSTEXIST
+                    : MetisFieldRequired.NOTALLOWED;
+            default -> MetisFieldRequired.NOTALLOWED;
+        };
     }
 
     /**
@@ -326,15 +274,11 @@ public class MoneyWiseValidateTransInfoSet
      */
     private static MetisFieldRequired isDilutionClassRequired(final MoneyWiseTransCategoryClass pClass) {
         /* Dilution is only required for stock split/deMerger */
-        switch (pClass) {
-            case STOCKSPLIT:
-            case UNITSADJUST:
-                return MetisFieldRequired.CANEXIST;
-            case STOCKDEMERGER:
-                return MetisFieldRequired.MUSTEXIST;
-            default:
-                return MetisFieldRequired.NOTALLOWED;
-        }
+        return switch (pClass) {
+            case STOCKSPLIT, UNITSADJUST -> MetisFieldRequired.CANEXIST;
+            case STOCKDEMERGER -> MetisFieldRequired.MUSTEXIST;
+            default -> MetisFieldRequired.NOTALLOWED;
+        };
     }
 
     /**
@@ -435,13 +379,10 @@ public class MoneyWiseValidateTransInfoSet
      */
     private static MetisFieldRequired isPriceClassRequired(final MoneyWiseTransCategoryClass pCategory) {
         /* Only allowed for stockSplit and UnitsAdjust */
-        switch (pCategory) {
-            case STOCKSPLIT:
-            case UNITSADJUST:
-                return MetisFieldRequired.CANEXIST;
-            default:
-                return MetisFieldRequired.NOTALLOWED;
-        }
+        return switch (pCategory) {
+            case STOCKSPLIT, UNITSADJUST -> MetisFieldRequired.CANEXIST;
+            default -> MetisFieldRequired.NOTALLOWED;
+        };
     }
 
     /**
@@ -481,10 +422,7 @@ public class MoneyWiseValidateTransInfoSet
             case TAXCREDIT:
                 validateTaxCredit(pInfo);
                 break;
-            case EMPLOYEENATINS:
-            case EMPLOYERNATINS:
-            case DEEMEDBENEFIT:
-            case WITHHELD:
+            case EMPLOYEENATINS, EMPLOYERNATINS, DEEMEDBENEFIT, WITHHELD:
                 validateOptionalTaxCredit(pInfo);
                 break;
             case PARTNERAMOUNT:
@@ -496,19 +434,16 @@ public class MoneyWiseValidateTransInfoSet
             case RETURNEDCASH:
                 validateReturnedCash(pInfo);
                 break;
-            case ACCOUNTDELTAUNITS:
-            case PARTNERDELTAUNITS:
+            case ACCOUNTDELTAUNITS, PARTNERDELTAUNITS:
                 validateDeltaUnits(pInfo);
                 break;
-            case REFERENCE:
-            case COMMENTS:
+            case REFERENCE, COMMENTS:
                 validateInfoLength(pInfo);
                 break;
             case PRICE:
                 validatePrice(pInfo);
                 break;
-            case TRANSTAG:
-            case DILUTION:
+            case TRANSTAG, DILUTION:
             default:
                 break;
         }

@@ -64,14 +64,10 @@ public final class GordianCoreCipherMode {
      * @return true/false
      */
     public boolean hasPadding() {
-        switch (theMode) {
-            case ECB:
-            case CBC:
-            case G3413CBC:
-                return true;
-            default:
-                return false;
-        }
+        return switch (theMode) {
+            case ECB, CBC, G3413CBC -> true;
+            default -> false;
+        };
     }
 
     /**
@@ -80,18 +76,10 @@ public final class GordianCoreCipherMode {
      * @return true/false
      */
     public boolean isAAD() {
-        switch (theMode) {
-            case CCM:
-            case GCM:
-            case EAX:
-            case OCB:
-            case KCCM:
-            case KGCM:
-            case GCMSIV:
-                return true;
-            default:
-                return false;
-        }
+        return switch (theMode) {
+            case CCM, GCM, EAX, OCB, KCCM, KGCM, GCMSIV -> true;
+            default -> false;
+        };
     }
 
     /**
@@ -100,15 +88,10 @@ public final class GordianCoreCipherMode {
      * @return true/false
      */
     public boolean allowShortBlock() {
-        switch (theMode) {
-            case CCM:
-            case GCM:
-            case OCB:
-            case SIC:
-                return false;
-            default:
-                return true;
-        }
+        return switch (theMode) {
+            case CCM, GCM, OCB, SIC -> false;
+            default -> true;
+        };
     }
 
     /**
@@ -117,15 +100,10 @@ public final class GordianCoreCipherMode {
      * @return true/false
      */
     public boolean needsStdBlock() {
-        switch (theMode) {
-            case CCM:
-            case GCM:
-            case GCMSIV:
-            case OCB:
-                return true;
-            default:
-                return false;
-        }
+        return switch (theMode) {
+            case CCM, GCM, GCMSIV, OCB -> true;
+            default -> false;
+        };
     }
 
     /**
@@ -137,25 +115,14 @@ public final class GordianCoreCipherMode {
     public boolean validForSymKey(final GordianSymKeySpec pKeySpec) {
         final GordianSymKeyType myKeyType = pKeySpec.getSymKeyType();
         final GordianLength myKeyLen = pKeySpec.getKeyLength();
-        switch (theMode) {
-            case G3413OFB:
-            case G3413CFB:
-            case G3413CBC:
-            case G3413CTR:
-                return GordianSymKeyType.KUZNYECHIK.equals(myKeyType);
-            case GOFB:
-            case GCFB:
-                return GordianSymKeyType.GOST.equals(myKeyType);
-            case KCTR:
-            case KGCM:
-            case KCCM:
-                return GordianSymKeyType.KALYNA.equals(myKeyType);
-            case GCMSIV:
-                return GordianLength.LEN_128.equals(myKeyLen)
-                        || GordianLength.LEN_256.equals(myKeyLen);
-            default:
-                return true;
-        }
+        return switch (theMode) {
+            case G3413OFB, G3413CFB, G3413CBC, G3413CTR -> GordianSymKeyType.KUZNYECHIK.equals(myKeyType);
+            case GOFB, GCFB -> GordianSymKeyType.GOST.equals(myKeyType);
+            case KCTR, KGCM, KCCM -> GordianSymKeyType.KALYNA.equals(myKeyType);
+            case GCMSIV -> GordianLength.LEN_128.equals(myKeyLen)
+                    || GordianLength.LEN_256.equals(myKeyLen);
+            default -> true;
+        };
     }
 
     /**

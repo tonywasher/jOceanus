@@ -16,9 +16,6 @@
  */
 package io.github.tonywasher.joceanus.moneywise.data.basic;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
-import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.metis.data.MetisDataDifference;
 import io.github.tonywasher.joceanus.metis.data.MetisDataEditState;
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
@@ -43,6 +40,9 @@ import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseStaticDataT
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTransCategoryClass;
 import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
 import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseLogicException;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataInstanceMap;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataResource;
@@ -118,8 +118,7 @@ public class MoneyWiseSecurity
                 hasInfoSet = true;
                 useInfoSet = true;
                 break;
-            case CLONE:
-            case CORE:
+            case CLONE, CORE:
                 theInfoSet = new MoneyWiseSecurityInfoSet(this, pList.getActInfoTypes(), pList.getSecurityInfo());
                 hasInfoSet = true;
                 useInfoSet = false;
@@ -446,15 +445,10 @@ public class MoneyWiseSecurity
 
     @Override
     public boolean isCapital() {
-        switch (getCategoryClass()) {
-            case INCOMEUNITTRUST:
-            case GROWTHUNITTRUST:
-            case LIFEBOND:
-            case SHARES:
-                return true;
-            default:
-                return false;
-        }
+        return switch (getCategoryClass()) {
+            case INCOMEUNITTRUST, GROWTHUNITTRUST, LIFEBOND, SHARES -> true;
+            default -> false;
+        };
     }
 
     @Override
@@ -639,10 +633,9 @@ public class MoneyWiseSecurity
     @Override
     public boolean applyChanges(final PrometheusDataItem pSecurity) {
         /* Can only update from a security */
-        if (!(pSecurity instanceof MoneyWiseSecurity)) {
+        if (!(pSecurity instanceof MoneyWiseSecurity mySecurity)) {
             return false;
         }
-        final MoneyWiseSecurity mySecurity = (MoneyWiseSecurity) pSecurity;
 
         /* Store the current detail into history */
         pushHistory();

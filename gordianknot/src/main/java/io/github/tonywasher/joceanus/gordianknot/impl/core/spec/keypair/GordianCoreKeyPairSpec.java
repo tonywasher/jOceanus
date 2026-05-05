@@ -516,15 +516,11 @@ public class GordianCoreKeyPairSpec
      * @return true/false
      */
     public boolean isStateAware() {
-        switch (theKeyPairType.getType()) {
-            case XMSS:
-            case LMS:
-                return true;
-            case COMPOSITE:
-                return ((GordianCoreKeyPairSpec) keySpecIterator().next()).isStateAware();
-            default:
-                return false;
-        }
+        return switch (theKeyPairType.getType()) {
+            case XMSS, LMS -> true;
+            case COMPOSITE -> ((GordianCoreKeyPairSpec) keySpecIterator().next()).isStateAware();
+            default -> false;
+        };
     }
 
     /**

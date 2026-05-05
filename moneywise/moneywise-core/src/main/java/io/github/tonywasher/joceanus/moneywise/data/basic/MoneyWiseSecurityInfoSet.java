@@ -16,13 +16,13 @@
  */
 package io.github.tonywasher.joceanus.moneywise.data.basic;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.metis.data.MetisDataFieldValue;
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseSecurityInfo.MoneyWiseSecurityInfoList;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseAccountInfoClass;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseAccountInfoType.MoneyWiseAccountInfoTypeList;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataInfoClass;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataInfoSet;
 import io.github.tonywasher.joceanus.prometheus.views.PrometheusEditSet;
@@ -101,22 +101,17 @@ public class MoneyWiseSecurityInfoSet
      * @return the value to set
      */
     private Object getInfoSetValue(final MoneyWiseAccountInfoClass pInfoClass) {
-        final Object myValue;
-
-        switch (pInfoClass) {
-            case REGION:
+        final Object myValue = switch (pInfoClass) {
+            case REGION ->
                 /* Access region of object */
-                myValue = getRegion(pInfoClass);
-                break;
-            case UNDERLYINGSTOCK:
+                    getRegion(pInfoClass);
+            case UNDERLYINGSTOCK ->
                 /* Access underlying Stock of object */
-                myValue = getSecurity(pInfoClass);
-                break;
-            default:
+                    getSecurity(pInfoClass);
+            default ->
                 /* Access value of object */
-                myValue = getField(pInfoClass);
-                break;
-        }
+                    getField(pInfoClass);
+        };
 
         /* Return the value */
         return myValue != null

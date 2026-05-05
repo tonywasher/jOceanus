@@ -16,10 +16,10 @@
  */
 package io.github.tonywasher.joceanus.moneywise.data.statics;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import io.github.tonywasher.joceanus.metis.data.MetisDataType;
 import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataInfoClass;
 
 /**
@@ -201,23 +201,13 @@ public enum MoneyWiseAccountInfoClass
      * @return the maximum length
      */
     public int getMaximumLength() {
-        switch (this) {
-            case WEBSITE:
-                return MoneyWiseAccountInfoType.WEBSITE_LEN;
-            case CUSTOMERNO:
-            case USERID:
-            case PASSWORD:
-            case SORTCODE:
-            case ACCOUNT:
-            case REFERENCE:
-                return MoneyWiseAccountInfoType.DATA_LEN;
-            case NOTES:
-                return MoneyWiseAccountInfoType.NOTES_LEN;
-            case SYMBOL:
-                return MoneyWiseSecurityType.SYMBOL_LEN;
-            default:
-                return 0;
-        }
+        return switch (this) {
+            case WEBSITE -> MoneyWiseAccountInfoType.WEBSITE_LEN;
+            case CUSTOMERNO, USERID, PASSWORD, SORTCODE, ACCOUNT, REFERENCE -> MoneyWiseAccountInfoType.DATA_LEN;
+            case NOTES -> MoneyWiseAccountInfoType.NOTES_LEN;
+            case SYMBOL -> MoneyWiseSecurityType.SYMBOL_LEN;
+            default -> 0;
+        };
     }
 
     @Override

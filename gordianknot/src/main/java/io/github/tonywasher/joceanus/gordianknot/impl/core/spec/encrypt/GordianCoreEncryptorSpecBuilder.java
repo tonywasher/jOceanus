@@ -138,9 +138,7 @@ public final class GordianCoreEncryptorSpecBuilder
                 myEncryptors.add(myBuilder.elGamal(myDigestBuilder.sha2(GordianLength.LEN_384)));
                 myEncryptors.add(myBuilder.elGamal(myDigestBuilder.sha2(GordianLength.LEN_512)));
                 break;
-            case EC:
-            case SM2:
-            case GOST:
+            case EC, SM2, GOST:
                 /* Add EC-ElGamal */
                 myEncryptors.add(myBuilder.ec());
 

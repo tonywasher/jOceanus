@@ -16,10 +16,6 @@
  */
 package io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.analyse;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysis;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisPortfolioBucket.MoneyWiseXAnalysisPortfolioBucketList;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisSecurityBucket;
@@ -34,6 +30,10 @@ import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseSecurityCla
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTaxClass;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTransCategoryClass;
 import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseLogicException;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
 
 /**
  * Security analysis.
@@ -215,12 +215,7 @@ public class MoneyWiseXAnalysisSecurity {
                 theDividend.processDividend(theTransaction);
                 break;
             /* Process standard transfer in/out */
-            case TRANSFER:
-            case SECURITYCLOSURE:
-            case EXPENSE:
-            case INHERITED:
-            case OTHERINCOME:
-            case STOCKRIGHTSISSUE:
+            case TRANSFER, SECURITYCLOSURE, EXPENSE, INHERITED, OTHERINCOME, STOCKRIGHTSISSUE:
                 theXferOut.processTransferOut(theTransaction);
                 break;
             /* Throw an Exception */
@@ -244,12 +239,7 @@ public class MoneyWiseXAnalysisSecurity {
         final MoneyWiseTransCategoryClass myCatClass = theTransaction.getCategoryClass();
         switch (myCatClass) {
             /* Process standard transfer in/out */
-            case STOCKRIGHTSISSUE:
-            case TRANSFER:
-            case EXPENSE:
-            case INHERITED:
-            case OTHERINCOME:
-            case PENSIONCONTRIB:
+            case STOCKRIGHTSISSUE, TRANSFER, EXPENSE, INHERITED, OTHERINCOME, PENSIONCONTRIB:
                 theXferIn.processTransferIn(theTransaction);
                 break;
             /* Throw an Exception */
@@ -269,8 +259,7 @@ public class MoneyWiseXAnalysisSecurity {
         final MoneyWiseTransCategoryClass myCatClass = theTransaction.getCategoryClass();
         switch (myCatClass) {
             /* Process a stock split */
-            case STOCKSPLIT:
-            case UNITSADJUST:
+            case STOCKSPLIT, UNITSADJUST:
                 processUnitsAdjust();
                 break;
             /* Process a stock DeMerger */
@@ -278,8 +267,7 @@ public class MoneyWiseXAnalysisSecurity {
                 theDeMerger.processStockDeMerger(theTransaction);
                 break;
             /* Process a Stock TakeOver */
-            case SECURITYREPLACE:
-            case STOCKTAKEOVER:
+            case SECURITYREPLACE, STOCKTAKEOVER:
                 theTakeover.processStockTakeover(theTransaction);
                 break;
             /* Process a dividend */

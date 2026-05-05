@@ -16,9 +16,6 @@
  */
 package io.github.tonywasher.joceanus.moneywise.data.validate;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldRequired;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDeposit;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDepositCategory;
@@ -27,6 +24,9 @@ import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseDepositInfoSe
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseAccountInfoClass;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseCurrency;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseDepositCategoryClass;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataInfoClass;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
 import io.github.tonywasher.joceanus.prometheus.validate.PrometheusValidateInfoSet;
@@ -61,35 +61,18 @@ public class MoneyWiseValidateDepositInfoSet
         final MoneyWiseDepositCategoryClass myClass = myCategory.getCategoryTypeClass();
 
         /* Switch on class */
-        switch ((MoneyWiseAccountInfoClass) pClass) {
+        return switch ((MoneyWiseAccountInfoClass) pClass) {
             /* Allowed set */
-            case NOTES:
-            case SORTCODE:
-            case ACCOUNT:
-            case REFERENCE:
-            case OPENINGBALANCE:
-                return MetisFieldRequired.CANEXIST;
+            case NOTES, SORTCODE, ACCOUNT, REFERENCE, OPENINGBALANCE -> MetisFieldRequired.CANEXIST;
 
             /* Handle Maturity */
-            case MATURITY:
-                return myClass.hasMaturity()
-                        ? MetisFieldRequired.MUSTEXIST
-                        : MetisFieldRequired.NOTALLOWED;
+            case MATURITY -> myClass.hasMaturity()
+                    ? MetisFieldRequired.MUSTEXIST
+                    : MetisFieldRequired.NOTALLOWED;
 
             /* Not allowed */
-            case AUTOEXPENSE:
-            case AUTOPAYEE:
-            case WEBSITE:
-            case CUSTOMERNO:
-            case USERID:
-            case PASSWORD:
-            case SYMBOL:
-            case REGION:
-            case UNDERLYINGSTOCK:
-            case OPTIONPRICE:
-            default:
-                return MetisFieldRequired.NOTALLOWED;
-        }
+            default -> MetisFieldRequired.NOTALLOWED;
+        };
     }
 
     @Override
@@ -100,10 +83,7 @@ public class MoneyWiseValidateDepositInfoSet
             case OPENINGBALANCE:
                 validateOpeningBalance(pInfo);
                 break;
-            case SORTCODE:
-            case ACCOUNT:
-            case NOTES:
-            case REFERENCE:
+            case SORTCODE, ACCOUNT, NOTES, REFERENCE:
                 validateInfoLength(pInfo);
                 break;
             default:

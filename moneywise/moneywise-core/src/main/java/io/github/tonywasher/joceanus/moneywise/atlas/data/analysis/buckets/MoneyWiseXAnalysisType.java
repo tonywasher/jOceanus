@@ -112,21 +112,10 @@ public enum MoneyWiseXAnalysisType {
      * @return true/false
      */
     public boolean hasBalances() {
-        switch (this) {
-            case DEPOSIT:
-            case CASH:
-            case LOAN:
-            case PAYEE:
-            case PORTFOLIO:
-            case SECURITY:
-            case CATEGORY:
-            case TAXBASIS:
-                return true;
-            case TRANSTAG:
-            case ALL:
-            default:
-                return false;
-        }
+        return switch (this) {
+            case DEPOSIT, CASH, LOAN, PAYEE, PORTFOLIO, SECURITY, CATEGORY, TAXBASIS -> true;
+            default -> false;
+        };
     }
 
     /**
@@ -135,24 +124,13 @@ public enum MoneyWiseXAnalysisType {
      * @return values
      */
     public MoneyWiseXAnalysisAttribute[] getValues() {
-        switch (this) {
-            case DEPOSIT:
-            case CASH:
-            case LOAN:
-            case PORTFOLIO:
-            case TRANSTAG:
-            case ALL:
-                return MoneyWiseXAnalysisAccountAttr.values();
-            case SECURITY:
-                return MoneyWiseXAnalysisSecurityAttr.values();
-            case PAYEE:
-                return MoneyWiseXAnalysisPayeeAttr.values();
-            case CATEGORY:
-                return MoneyWiseXAnalysisTransAttr.values();
-            case TAXBASIS:
-                return MoneyWiseXAnalysisTaxBasisAttr.values();
-            default:
-                throw new IllegalArgumentException("Invalid Attribute type " + toString());
-        }
+        return switch (this) {
+            case DEPOSIT, CASH, LOAN, PORTFOLIO, TRANSTAG, ALL -> MoneyWiseXAnalysisAccountAttr.values();
+            case SECURITY -> MoneyWiseXAnalysisSecurityAttr.values();
+            case PAYEE -> MoneyWiseXAnalysisPayeeAttr.values();
+            case CATEGORY -> MoneyWiseXAnalysisTransAttr.values();
+            case TAXBASIS -> MoneyWiseXAnalysisTaxBasisAttr.values();
+            default -> throw new IllegalArgumentException("Invalid Attribute type " + toString());
+        };
     }
 }

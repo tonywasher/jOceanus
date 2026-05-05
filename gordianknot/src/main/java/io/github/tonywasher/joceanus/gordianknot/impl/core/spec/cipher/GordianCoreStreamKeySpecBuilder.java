@@ -125,34 +125,13 @@ public final class GordianCoreStreamKeySpecBuilder
      */
     private GordianLength defaultKeyLength() {
         /* Switch on keyType */
-        switch (theType) {
-            case GRAIN:
-            case HC:
-            case RABBIT:
-            case SNOW3G:
-            case SALSA20:
-            case CHACHA20:
-            case ZUC:
-            case SOSEMANUK:
-            case RC4:
-            case VMPC:
-            case ASCON:
-            case ELEPHANT:
-            case ISAP:
-            case PHOTONBEETLE:
-            case ROMULUS:
-            case XOODYAK:
-                return GordianLength.LEN_128;
-            case ISAAC:
-            case SKEINXOF:
-            case BLAKE2XOF:
-            case BLAKE3XOF:
-                return GordianLength.LEN_256;
-            case SPARKLE:
-                return GordianCoreStreamKeySubType.requiredSparkleKeyLength((GordianSparkleKey) theSubType);
-            default:
-                throw new IllegalArgumentException();
-        }
+        return switch (theType) {
+            case GRAIN, HC, RABBIT, SNOW3G, SALSA20, CHACHA20, ZUC, SOSEMANUK, RC4, VMPC, ASCON, ELEPHANT, ISAP,
+                 PHOTONBEETLE, ROMULUS, XOODYAK -> GordianLength.LEN_128;
+            case ISAAC, SKEINXOF, BLAKE2XOF, BLAKE3XOF -> GordianLength.LEN_256;
+            case SPARKLE -> GordianCoreStreamKeySubType.requiredSparkleKeyLength((GordianSparkleKey) theSubType);
+            default -> throw new IllegalArgumentException();
+        };
     }
 
     /**
@@ -223,27 +202,17 @@ public final class GordianCoreStreamKeySpecBuilder
      */
     private static List<GordianStreamKeySubType> listStreamSubKeys(final GordianCoreStreamKeyType pKeyType) {
         /* Switch on keyType */
-        switch (pKeyType.getType()) {
-            case SALSA20:
-                return Arrays.asList(GordianSalsa20Key.values());
-            case CHACHA20:
-                return Arrays.asList(GordianChaCha20Key.values());
-            case VMPC:
-                return Arrays.asList(GordianVMPCKey.values());
-            case SKEINXOF:
-                return Arrays.asList(GordianSkeinXofKey.values());
-            case BLAKE2XOF:
-                return Arrays.asList(GordianBlakeXofKey.values());
-            case ELEPHANT:
-                return Arrays.asList(GordianElephantKey.values());
-            case ISAP:
-                return Arrays.asList(GordianISAPKey.values());
-            case ROMULUS:
-                return Arrays.asList(GordianRomulusKey.values());
-            case SPARKLE:
-                return Arrays.asList(GordianSparkleKey.values());
-            default:
-                return Collections.emptyList();
-        }
+        return switch (pKeyType.getType()) {
+            case SALSA20 -> Arrays.asList(GordianSalsa20Key.values());
+            case CHACHA20 -> Arrays.asList(GordianChaCha20Key.values());
+            case VMPC -> Arrays.asList(GordianVMPCKey.values());
+            case SKEINXOF -> Arrays.asList(GordianSkeinXofKey.values());
+            case BLAKE2XOF -> Arrays.asList(GordianBlakeXofKey.values());
+            case ELEPHANT -> Arrays.asList(GordianElephantKey.values());
+            case ISAP -> Arrays.asList(GordianISAPKey.values());
+            case ROMULUS -> Arrays.asList(GordianRomulusKey.values());
+            case SPARKLE -> Arrays.asList(GordianSparkleKey.values());
+            default -> Collections.emptyList();
+        };
     }
 }

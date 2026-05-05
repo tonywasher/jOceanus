@@ -16,8 +16,8 @@
  */
 package io.github.tonywasher.joceanus.moneywise.data.statics;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 
 /**
  * Enumeration of LoanCategory Type Classes.
@@ -128,14 +128,10 @@ public enum MoneyWiseLoanCategoryClass
      * otherwise.
      */
     public boolean isChild() {
-        switch (this) {
-            case LOAN:
-            case PRIVATELOAN:
-            case CREDITCARD:
-                return true;
-            default:
-                return false;
-        }
+        return switch (this) {
+            case LOAN, PRIVATELOAN, CREDITCARD -> true;
+            default -> false;
+        };
     }
 
     /**
@@ -145,12 +141,7 @@ public enum MoneyWiseLoanCategoryClass
      * otherwise.
      */
     public boolean canCashBack() {
-        switch (this) {
-            case CREDITCARD:
-                return true;
-            default:
-                return false;
-        }
+        return this == MoneyWiseLoanCategoryClass.CREDITCARD;
     }
 
     /**
@@ -160,12 +151,7 @@ public enum MoneyWiseLoanCategoryClass
      * otherwise.
      */
     public boolean isParentCategory() {
-        switch (this) {
-            case PARENT:
-                return true;
-            default:
-                return false;
-        }
+        return this == PARENT;
     }
 
     @Override
