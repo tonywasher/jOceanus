@@ -173,71 +173,22 @@ public enum MoneyWiseXAnalysisSecurityAttr
 
     @Override
     public boolean isPreserved() {
-        switch (this) {
-            case UNITS:
-            case DIVIDEND:
-            case RESIDUALCOST:
-            case VALUATION:
-            case EXCHANGERATE:
-            case VALUE:
-            case PRICE:
-            case REALISEDGAINS:
-            case UNREALISEDGAINS:
-            case GAINSADJUST:
-            case FUNDED:
-            case STARTDATE:
-                return true;
-            case PROFIT:
-            case MARKETPROFIT:
-            case VALUEDELTA:
-            case XFERREDCOST:
-            case RETURNEDCASH:
-            case XFERREDVALUE:
-            case CASHINVESTED:
-            case CAPITALGAIN:
-            case ALLOWEDCOST:
-            case CONSIDERATION:
-            case COSTDILUTION:
-            case CASHTYPE:
-            default:
-                return false;
-        }
+        return switch (this) {
+            case UNITS, DIVIDEND, RESIDUALCOST, VALUATION, EXCHANGERATE, VALUE, PRICE, REALISEDGAINS, UNREALISEDGAINS,
+                 GAINSADJUST, FUNDED, STARTDATE -> true;
+            default -> false;
+        };
     }
 
     @Override
     public MetisDataType getDataType() {
-        switch (this) {
-            case UNITS:
-                return MetisDataType.UNITS;
-            case PRICE:
-                return MetisDataType.PRICE;
-            case EXCHANGERATE:
-            case COSTDILUTION:
-                return MetisDataType.RATIO;
-            case CASHTYPE:
-                return MetisDataType.ENUM;
-            case STARTDATE:
-                return MetisDataType.DATE;
-            case VALUE:
-            case VALUATION:
-            case VALUEDELTA:
-            case RESIDUALCOST:
-            case REALISEDGAINS:
-            case UNREALISEDGAINS:
-            case GAINSADJUST:
-            case DIVIDEND:
-            case MARKETPROFIT:
-            case PROFIT:
-            case RETURNEDCASH:
-            case XFERREDVALUE:
-            case XFERREDCOST:
-            case ALLOWEDCOST:
-            case CASHINVESTED:
-            case CAPITALGAIN:
-            case CONSIDERATION:
-            case FUNDED:
-            default:
-                return MetisDataType.MONEY;
-        }
+        return switch (this) {
+            case UNITS -> MetisDataType.UNITS;
+            case PRICE -> MetisDataType.PRICE;
+            case EXCHANGERATE, COSTDILUTION -> MetisDataType.RATIO;
+            case CASHTYPE -> MetisDataType.ENUM;
+            case STARTDATE -> MetisDataType.DATE;
+            default -> MetisDataType.MONEY;
+        };
     }
 }

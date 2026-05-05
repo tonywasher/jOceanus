@@ -16,9 +16,6 @@
  */
 package io.github.tonywasher.joceanus.moneywise.data.basic;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
-import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.metis.data.MetisDataDifference;
 import io.github.tonywasher.joceanus.metis.data.MetisDataEditState;
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
@@ -38,6 +35,9 @@ import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseLoanCategor
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
 import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
 import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseLogicException;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataMapItem;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataResource;
@@ -111,8 +111,7 @@ public class MoneyWiseLoan
                 hasInfoSet = true;
                 useInfoSet = true;
                 break;
-            case CLONE:
-            case CORE:
+            case CLONE, CORE:
                 theInfoSet = new MoneyWiseLoanInfoSet(this, pList.getActInfoTypes(), pList.getLoanInfo());
                 hasInfoSet = true;
                 useInfoSet = false;
@@ -583,11 +582,10 @@ public class MoneyWiseLoan
     @Override
     public boolean applyChanges(final PrometheusDataItem pLoan) {
         /* Can only update from a loan */
-        if (!(pLoan instanceof MoneyWiseLoan)) {
+        if (!(pLoan instanceof MoneyWiseLoan myLoan)) {
             return false;
         }
-        final MoneyWiseLoan myLoan = (MoneyWiseLoan) pLoan;
-
+        
         /* Store the current detail into history */
         pushHistory();
 

@@ -16,8 +16,6 @@
  */
 package io.github.tonywasher.joceanus.moneywise.archive;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseAssetBase;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseAssetDirection;
@@ -36,6 +34,8 @@ import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransaction;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransaction.MoneyWiseTransactionList;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTransCategoryClass;
 import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValues;
 
@@ -318,15 +318,10 @@ public final class MoneyWiseArchiveCache {
     private boolean filterAsset(final PrometheusDataValues pTrans,
                                 final MetisDataFieldId pAsset) {
         final MoneyWiseTransAsset myAsset = pTrans.getValue(pAsset, MoneyWiseTransAsset.class);
-        switch (myAsset.getAssetType()) {
-            case DEPOSIT:
-            case CASH:
-            case PAYEE:
-            case LOAN:
-                return false;
-            default:
-                return true;
-        }
+        return switch (myAsset.getAssetType()) {
+            case DEPOSIT, CASH, PAYEE, LOAN -> false;
+            default -> true;
+        };
     }
 
     /**
@@ -464,8 +459,7 @@ public final class MoneyWiseArchiveCache {
                     /* Use credit as account */
                     isDebitReversed = !theData.newValidityChecks();
                     break;
-                case LOANINTERESTCHARGED:
-                case WRITEOFF:
+                case LOANINTERESTCHARGED, WRITEOFF:
                     /* Use credit as account */
                     isDebitReversed = theData.newValidityChecks();
                     break;
@@ -682,15 +676,13 @@ public final class MoneyWiseArchiveCache {
         for (Entry<String, Object> myEntry : theNameMap.entrySet()) {
             /* If this is a security holding definition */
             final Object myValue = myEntry.getValue();
-            if (myValue instanceof MoneyWiseSecurityHolding myHolding) {
-                /* If this holding needs updating */
-                if (pSource.equals(myHolding) || pSource.equals(myHolding.getPortfolio())) {
-                    /* Change the holding */
-                    myHolding = myMap.declareHolding(myPortfolio, myHolding.getSecurity());
+            if (myValue instanceof MoneyWiseSecurityHolding myHolding
+                    && (pSource.equals(myHolding) || pSource.equals(myHolding.getPortfolio()))) {
+                /* Change the holding */
+                myHolding = myMap.declareHolding(myPortfolio, myHolding.getSecurity());
 
-                    /* Replace definition in map */
-                    myEntry.setValue(myHolding);
-                }
+                /* Replace definition in map */
+                myEntry.setValue(myHolding);
             }
         }
     }

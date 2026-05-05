@@ -16,14 +16,13 @@
  */
 package io.github.tonywasher.joceanus.prometheus.service.sheet.odf;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import io.github.tonywasher.joceanus.prometheus.service.sheet.odf.PrometheusOdfNameSpace.PrometheusOdfItem;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-import io.github.tonywasher.joceanus.prometheus.service.sheet.odf.PrometheusOdfNameSpace.PrometheusOdfItem;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Parser for Document.
@@ -139,7 +138,7 @@ class PrometheusOdfParser {
 
         /* Return the element */
         final String myAttr = pElement.getAttribute(myName);
-        return myAttr.length() == 0
+        return myAttr.isEmpty()
                 ? null
                 : myAttr;
     }

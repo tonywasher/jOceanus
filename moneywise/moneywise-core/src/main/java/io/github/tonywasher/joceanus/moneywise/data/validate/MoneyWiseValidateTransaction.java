@@ -16,11 +16,6 @@
  */
 package io.github.tonywasher.joceanus.moneywise.data.validate;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
 import io.github.tonywasher.joceanus.metis.data.MetisDataDifference;
 import io.github.tonywasher.joceanus.metis.field.MetisFieldRequired;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseAssetDirection;
@@ -45,6 +40,11 @@ import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWisePortfolioCl
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseSecurityClass;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTransCategoryClass;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTransInfoClass;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
 import io.github.tonywasher.joceanus.prometheus.views.PrometheusEditSet;
 
@@ -294,90 +294,51 @@ public class MoneyWiseValidateTransaction
         }
 
         /* Switch on the CategoryClass */
-        switch (myCatClass) {
-            case TAXEDINCOME:
-            case GROSSINCOME:
-            case RECOVEREDEXPENSES:
-            case OTHERINCOME:
+        return switch (myCatClass) {
+            case TAXEDINCOME, GROSSINCOME, RECOVEREDEXPENSES, OTHERINCOME ->
                 /* Taxed/Other income must be to deposit/cash/loan */
-                return myType.isValued();
-
-            case PENSIONCONTRIB:
+                    myType.isValued();
+            case PENSIONCONTRIB ->
                 /* Pension contribution must be to a Pension holding or to a SIPP */
-                return (pAccount instanceof MoneyWiseSecurityHolding myHolding
-                        && myHolding.getSecurity().getCategoryClass().isPension())
-                        || (pAccount instanceof MoneyWisePortfolio myPortfolio
-                        && myPortfolio.isPortfolioClass(MoneyWisePortfolioClass.SIPP));
-
-            case GIFTEDINCOME:
-            case INHERITED:
+                    (pAccount instanceof MoneyWiseSecurityHolding myHolding
+                            && myHolding.getSecurity().getCategoryClass().isPension())
+                            || (pAccount instanceof MoneyWisePortfolio myPortfolio
+                            && myPortfolio.isPortfolioClass(MoneyWisePortfolioClass.SIPP));
+            case GIFTEDINCOME, INHERITED ->
                 /* Inheritance/Gifted must be to asset */
-                return myType.isAsset();
-
-            case INTEREST:
+                    myType.isAsset();
+            case INTEREST ->
                 /* Account must be deposit or portfolio */
-                return myType.isDeposit() || myType.isPortfolio();
-
-            case DIVIDEND:
-            case SECURITYCLOSURE:
+                    myType.isDeposit() || myType.isPortfolio();
+            case DIVIDEND, SECURITYCLOSURE ->
                 /* Account must be SecurityHolding */
-                return myType.isSecurityHolding();
-
-            case BADDEBTCAPITAL:
-            case BADDEBTINTEREST:
+                    myType.isSecurityHolding();
+            case BADDEBTCAPITAL, BADDEBTINTEREST ->
                 /* Account must be peer2Peer */
-                return pAccount instanceof MoneyWiseDeposit myDeposit
-                        && myDeposit.isDepositClass(MoneyWiseDepositCategoryClass.PEER2PEER);
-
-            case CASHBACK:
-                return checkCashBack(pAccount);
-
-            case LOYALTYBONUS:
-                return checkLoyaltyBonus(pAccount);
-
-            case RENTALINCOME:
-            case RENTALEXPENSE:
-            case ROOMRENTALINCOME:
+                    pAccount instanceof MoneyWiseDeposit myDeposit
+                            && myDeposit.isDepositClass(MoneyWiseDepositCategoryClass.PEER2PEER);
+            case CASHBACK -> checkCashBack(pAccount);
+            case LOYALTYBONUS -> checkLoyaltyBonus(pAccount);
+            case RENTALINCOME, RENTALEXPENSE, ROOMRENTALINCOME ->
                 /* Account must be property */
-                return pAccount instanceof MoneyWiseSecurityHolding myHolding
-                        && myHolding.getSecurity().isSecurityClass(MoneyWiseSecurityClass.PROPERTY);
-
-            case UNITSADJUST:
-            case SECURITYREPLACE:
+                    pAccount instanceof MoneyWiseSecurityHolding myHolding
+                            && myHolding.getSecurity().isSecurityClass(MoneyWiseSecurityClass.PROPERTY);
+            case UNITSADJUST, SECURITYREPLACE ->
                 /* Account must be capital */
-                return pAccount.isCapital();
-
-            case STOCKSPLIT:
-            case STOCKTAKEOVER:
-            case STOCKDEMERGER:
-            case STOCKRIGHTSISSUE:
+                    pAccount.isCapital();
+            case STOCKSPLIT, STOCKTAKEOVER, STOCKDEMERGER, STOCKRIGHTSISSUE ->
                 /* Account must be shares */
-                return pAccount.isShares();
-
-            case WRITEOFF:
-            case LOANINTERESTEARNED:
-            case LOANINTERESTCHARGED:
-            case TAXRELIEF:
-                return myType.isLoan();
-
-            case LOCALTAXES:
-            case INCOMETAX:
-                return myType.isValued();
-
-            case EXPENSE:
-                return myType.isValued() || myType.isAutoExpense();
-
-            case PORTFOLIOXFER:
-                return pAccount instanceof MoneyWiseSecurityHolding
-                        || pAccount instanceof MoneyWisePortfolio;
-
-            case TRANSFER:
-                return true;
+                    pAccount.isShares();
+            case WRITEOFF, LOANINTERESTEARNED, LOANINTERESTCHARGED, TAXRELIEF -> myType.isLoan();
+            case LOCALTAXES, INCOMETAX -> myType.isValued();
+            case EXPENSE -> myType.isValued() || myType.isAutoExpense();
+            case PORTFOLIOXFER -> pAccount instanceof MoneyWiseSecurityHolding
+                    || pAccount instanceof MoneyWisePortfolio;
+            case TRANSFER -> true;
 
             /* Reject other categories */
-            default:
-                return false;
-        }
+            default -> false;
+        };
     }
 
     @Override
@@ -390,64 +351,42 @@ public class MoneyWiseValidateTransaction
         final MoneyWiseTransCategoryClass myCatClass = pCategory.getCategoryTypeClass();
 
         /* Switch on the CategoryClass */
-        switch (myCatClass) {
-            case TAXEDINCOME:
-            case GROSSINCOME:
+        return switch (myCatClass) {
+            case TAXEDINCOME, GROSSINCOME ->
                 /* Cannot refund Taxed Income yet */
-                return newValidation || pDirection.isFrom();
-
-            case PENSIONCONTRIB:
+                    newValidation || pDirection.isFrom();
+            case PENSIONCONTRIB ->
                 /* Cannot refund Pension Contribution */
-                return pDirection.isFrom();
-
-            case GIFTEDINCOME:
-            case INHERITED:
+                    pDirection.isFrom();
+            case GIFTEDINCOME, INHERITED ->
                 /* Cannot refund Gifted/Inherited Income yet */
-                return newValidation || pDirection.isFrom();
-
-            case RENTALINCOME:
-            case ROOMRENTALINCOME:
+                    newValidation || pDirection.isFrom();
+            case RENTALINCOME, ROOMRENTALINCOME ->
                 /* Cannot refund Rental Income */
-                return pDirection.isTo();
-
-            case RENTALEXPENSE:
+                    pDirection.isTo();
+            case RENTALEXPENSE ->
                 /* Cannot refund Rental Expense */
-                return pDirection.isFrom();
-
-            case INTEREST:
+                    pDirection.isFrom();
+            case INTEREST ->
                 /* Cannot refund Interest yet */
-                return newValidation || pDirection.isTo();
-
-            case DIVIDEND:
-            case SECURITYCLOSURE:
+                    newValidation || pDirection.isTo();
+            case DIVIDEND, SECURITYCLOSURE ->
                 /* Cannot refund Dividend yet */
-                return pDirection.isTo();
-
-            case LOYALTYBONUS:
+                    pDirection.isTo();
+            case LOYALTYBONUS ->
                 /* Cannot refund loyaltyBonus yet */
-                return newValidation || pDirection.isTo();
-
-            case WRITEOFF:
-            case LOANINTERESTCHARGED:
+                    newValidation || pDirection.isTo();
+            case WRITEOFF, LOANINTERESTCHARGED ->
                 /* All need to be TO */
-                return newValidation || pDirection.isTo();
-
-            case LOANINTERESTEARNED:
+                    newValidation || pDirection.isTo();
+            case LOANINTERESTEARNED ->
                 /* All need to be FROM */
-                return newValidation || pDirection.isFrom();
-
-            case UNITSADJUST:
-            case STOCKSPLIT:
-            case STOCKDEMERGER:
-            case STOCKTAKEOVER:
-            case SECURITYREPLACE:
-            case PORTFOLIOXFER:
+                    newValidation || pDirection.isFrom();
+            case UNITSADJUST, STOCKSPLIT, STOCKDEMERGER, STOCKTAKEOVER, SECURITYREPLACE, PORTFOLIOXFER ->
                 /* All need to be To */
-                return pDirection.isTo();
-
-            default:
-                return true;
-        }
+                    pDirection.isTo();
+            case null, default -> true;
+        };
     }
 
     @Override
@@ -483,114 +422,70 @@ public class MoneyWiseValidateTransaction
             final MoneyWiseAssetType myAccountType = pAccount.getAssetType();
 
             /* Special processing */
-            switch (myCatClass) {
-                case TRANSFER:
+            return switch (myCatClass) {
+                case TRANSFER ->
                     /* Transfer must be to/from deposit/cash/loan */
-                    return myPartnerType.isAutoExpense()
-                            ? myAccountType.isValued()
-                            : myPartnerType.isValued();
-
-                case EXPENSE:
+                        myPartnerType.isAutoExpense()
+                                ? myAccountType.isValued()
+                                : myPartnerType.isValued();
+                case EXPENSE ->
                     /* Transfer must be to/from payee */
-                    return pPartner instanceof MoneyWisePayee;
+                        pPartner instanceof MoneyWisePayee;
 
                 /* Auto Expense cannot be used for other categories */
-                default:
-                    return false;
-            }
+                default -> false;
+            };
         }
 
         /* Switch on the CategoryClass */
-        switch (myCatClass) {
-            case TAXEDINCOME:
-            case GROSSINCOME:
+        return switch (myCatClass) {
+            case TAXEDINCOME, GROSSINCOME ->
                 /* Taxed Income must have a Payee that can provide income */
-                return pPartner instanceof MoneyWisePayee myPayee
-                        && myPayee.getCategoryClass().canProvideTaxedIncome();
-
-            case PENSIONCONTRIB:
+                    pPartner instanceof MoneyWisePayee myPayee
+                            && myPayee.getCategoryClass().canProvideTaxedIncome();
+            case PENSIONCONTRIB ->
                 /* Pension Contribution must be a payee that can parent */
-                return pPartner instanceof MoneyWisePayee myPayee
-                        && myPayee.getCategoryClass().canContribPension();
-
-            case OTHERINCOME:
-            case RECOVEREDEXPENSES:
+                    pPartner instanceof MoneyWisePayee myPayee
+                            && myPayee.getCategoryClass().canContribPension();
+            case OTHERINCOME, RECOVEREDEXPENSES ->
                 /* Other Income must have a Payee partner */
-                return pPartner instanceof MoneyWisePayee;
-
-            case LOCALTAXES:
+                    pPartner instanceof MoneyWisePayee;
+            case LOCALTAXES ->
                 /* LocalTaxes must have a Government Payee partner */
-                return pPartner instanceof MoneyWisePayee myPayee
-                        && myPayee.isPayeeClass(MoneyWisePayeeClass.GOVERNMENT);
-
-            case GIFTEDINCOME:
-            case INHERITED:
+                    pPartner instanceof MoneyWisePayee myPayee
+                            && myPayee.isPayeeClass(MoneyWisePayeeClass.GOVERNMENT);
+            case GIFTEDINCOME, INHERITED ->
                 /* Gifted/Inherited Income must have an Individual Payee partner */
-                return pPartner instanceof MoneyWisePayee myPayee
-                        && myPayee.isPayeeClass(MoneyWisePayeeClass.INDIVIDUAL);
-
-            case RENTALINCOME:
-            case RENTALEXPENSE:
-            case ROOMRENTALINCOME:
+                    pPartner instanceof MoneyWisePayee myPayee
+                            && myPayee.isPayeeClass(MoneyWisePayeeClass.INDIVIDUAL);
+            case RENTALINCOME, RENTALEXPENSE, ROOMRENTALINCOME ->
                 /* RentalIncome/Expense must have a loan partner */
-                return myPartnerType.isLoan();
-
-            case WRITEOFF:
-            case LOANINTERESTEARNED:
-            case LOANINTERESTCHARGED:
+                    myPartnerType.isLoan();
+            case WRITEOFF, LOANINTERESTEARNED, LOANINTERESTCHARGED ->
                 /* WriteOff/LoanInterestEarned/Charged must be recursive */
-                return isRecursive;
-
-            case INTEREST:
-            case CASHBACK:
+                    isRecursive;
+            case INTEREST, CASHBACK ->
                 /* Interest/CashBack is to a valued account */
-                return myPartnerType.isValued();
-
-            case DIVIDEND:
-                return checkDividend(pAccount, pPartner);
-
-            case LOYALTYBONUS:
-                return checkLoyaltyBonus(pAccount, pPartner);
-
-            case BADDEBTCAPITAL:
-            case BADDEBTINTEREST:
-                return pPartner instanceof MoneyWisePayee
-                        && MetisDataDifference.isEqual(pPartner, pAccount.getParent());
-
-            case UNITSADJUST:
-            case STOCKSPLIT:
+                    myPartnerType.isValued();
+            case DIVIDEND -> checkDividend(pAccount, pPartner);
+            case LOYALTYBONUS -> checkLoyaltyBonus(pAccount, pPartner);
+            case BADDEBTCAPITAL, BADDEBTINTEREST -> pPartner instanceof MoneyWisePayee
+                    && MetisDataDifference.isEqual(pPartner, pAccount.getParent());
+            case UNITSADJUST, STOCKSPLIT ->
                 /* Must be recursive */
-                return isRecursive;
-
-            case SECURITYREPLACE:
-            case STOCKTAKEOVER:
-            case STOCKDEMERGER:
-                return checkTakeOver(pAccount, pPartner);
-
-            case STOCKRIGHTSISSUE:
-                return checkStockRights(pAccount, pPartner);
-
-            case TRANSFER:
-                return checkTransfer(pAccount, pPartner);
-
-            case SECURITYCLOSURE:
-                return checkSecurityClosure(pAccount, pPartner);
-
-            case EXPENSE:
+                    isRecursive;
+            case SECURITYREPLACE, STOCKTAKEOVER, STOCKDEMERGER -> checkTakeOver(pAccount, pPartner);
+            case STOCKRIGHTSISSUE -> checkStockRights(pAccount, pPartner);
+            case TRANSFER -> checkTransfer(pAccount, pPartner);
+            case SECURITYCLOSURE -> checkSecurityClosure(pAccount, pPartner);
+            case EXPENSE ->
                 /* Expense must have a Payee partner */
-                return pPartner instanceof MoneyWisePayee;
-
-            case INCOMETAX:
-            case TAXRELIEF:
-                return pPartner instanceof MoneyWisePayee myPayee
-                        && myPayee.isPayeeClass(MoneyWisePayeeClass.TAXMAN);
-
-            case PORTFOLIOXFER:
-                return checkPortfolioXfer(pAccount, pPartner);
-
-            default:
-                return false;
-        }
+                    pPartner instanceof MoneyWisePayee;
+            case INCOMETAX, TAXRELIEF -> pPartner instanceof MoneyWisePayee myPayee
+                    && myPayee.isPayeeClass(MoneyWisePayeeClass.TAXMAN);
+            case PORTFOLIOXFER -> checkPortfolioXfer(pAccount, pPartner);
+            default -> false;
+        };
     }
 
     /**
@@ -642,8 +537,8 @@ public class MoneyWiseValidateTransaction
     private static boolean checkTakeOver(final MoneyWiseTransAsset pAccount,
                                          final MoneyWiseTransAsset pPartner) {
         /* Must be holding <-> holding */
-        if (!(pAccount instanceof MoneyWiseSecurityHolding)
-                || !(pPartner instanceof MoneyWiseSecurityHolding)) {
+        if (!(pAccount instanceof MoneyWiseSecurityHolding myAccount)
+                || !(pPartner instanceof MoneyWiseSecurityHolding myPartner)) {
             return false;
         }
 
@@ -651,10 +546,6 @@ public class MoneyWiseValidateTransaction
         if (MetisDataDifference.isEqual(pAccount, pPartner)) {
             return false;
         }
-
-        /* Access holdings */
-        final MoneyWiseSecurityHolding myAccount = (MoneyWiseSecurityHolding) pAccount;
-        final MoneyWiseSecurityHolding myPartner = (MoneyWiseSecurityHolding) pPartner;
 
         /* Portfolios must be the same */
         if (!MetisDataDifference.isEqual(myAccount.getPortfolio(), myPartner.getPortfolio())) {

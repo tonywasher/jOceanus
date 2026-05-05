@@ -16,8 +16,6 @@
  */
 package io.github.tonywasher.joceanus.moneywise.data.basic;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
-import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.metis.data.MetisDataDifference;
 import io.github.tonywasher.joceanus.metis.data.MetisDataEditState;
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
@@ -35,6 +33,8 @@ import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWisePayeeType.M
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
 import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
 import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseLogicException;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataInstanceMap;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataMapItem;
@@ -111,8 +111,7 @@ public class MoneyWisePayee
                 hasInfoSet = true;
                 useInfoSet = true;
                 break;
-            case CLONE:
-            case CORE:
+            case CLONE, CORE:
                 theInfoSet = new MoneyWisePayeeInfoSet(this, pList.getActInfoTypes(), pList.getPayeeInfo());
                 hasInfoSet = true;
                 useInfoSet = false;
@@ -635,11 +634,10 @@ public class MoneyWisePayee
     @Override
     public boolean applyChanges(final PrometheusDataItem pPayee) {
         /* Can only update from a payee */
-        if (!(pPayee instanceof MoneyWisePayee)) {
+        if (!(pPayee instanceof MoneyWisePayee myPayee)) {
             return false;
         }
-        final MoneyWisePayee myPayee = (MoneyWisePayee) pPayee;
-
+        
         /* Store the current detail into history */
         pushHistory();
 

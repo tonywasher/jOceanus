@@ -16,8 +16,8 @@
  */
 package io.github.tonywasher.joceanus.moneywise.data.statics;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusStaticDataClass;
 
 /**
@@ -133,13 +133,10 @@ public enum MoneyWisePortfolioClass
      * @return <code>true</code> if the PortfolioType is pension, <code>false</code> otherwise.
      */
     public boolean isPension() {
-        switch (this) {
-            case PENSION:
-            case SIPP:
-                return true;
-            default:
-                return false;
-        }
+        return switch (this) {
+            case PENSION, SIPP -> true;
+            default -> false;
+        };
     }
 
     /**
@@ -148,14 +145,10 @@ public enum MoneyWisePortfolioClass
      * @return <code>true</code> if the PortfolioType owns securities, <code>false</code> otherwise.
      */
     public boolean holdsSecurities() {
-        switch (this) {
-            case STANDARD:
-            case TAXFREE:
-            case SIPP:
-                return true;
-            default:
-                return false;
-        }
+        return switch (this) {
+            case STANDARD, TAXFREE, SIPP -> true;
+            default -> false;
+        };
     }
 
     /**

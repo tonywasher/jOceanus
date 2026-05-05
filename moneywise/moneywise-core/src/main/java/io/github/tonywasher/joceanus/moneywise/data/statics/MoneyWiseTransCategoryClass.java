@@ -16,8 +16,8 @@
  */
 package io.github.tonywasher.joceanus.moneywise.data.statics;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 
 /**
  * Enumeration of TransactionCategory Classes.
@@ -441,35 +441,13 @@ public enum MoneyWiseTransCategoryClass
      * @return <code>true</code> if the category is hidden, <code>false</code> otherwise.
      */
     public boolean isHiddenType() {
-        switch (this) {
-            case SHAREDIVIDEND:
-            case UNITTRUSTDIVIDEND:
-            case FOREIGNDIVIDEND:
-            case TAXFREEDIVIDEND:
-            case TAXEDINTEREST:
-            case GROSSINTEREST:
-            case TAXFREEINTEREST:
-            case PEER2PEERINTEREST:
-            case TAXEDLOYALTYBONUS:
-            case GROSSLOYALTYBONUS:
-            case TAXFREELOYALTYBONUS:
-            case MARKETGROWTH:
-            case CURRENCYFLUCTUATION:
-            case WITHHELD:
-            case TAXRELIEF:
-            case CHARGEABLEGAIN:
-            case RESIDENTIALGAIN:
-            case CAPITALGAIN:
-            case TAXFREEGAIN:
-            case VIRTUALINCOME:
-            case EMPLOYEENATINS:
-            case EMPLOYERNATINS:
-            case OPENINGBALANCE:
-            case TOTALS:
-                return true;
-            default:
-                return false;
-        }
+        return switch (this) {
+            case SHAREDIVIDEND, UNITTRUSTDIVIDEND, FOREIGNDIVIDEND, TAXFREEDIVIDEND, TAXEDINTEREST, GROSSINTEREST,
+                 TAXFREEINTEREST, PEER2PEERINTEREST, TAXEDLOYALTYBONUS, GROSSLOYALTYBONUS, TAXFREELOYALTYBONUS,
+                 MARKETGROWTH, CURRENCYFLUCTUATION, WITHHELD, TAXRELIEF, CHARGEABLEGAIN, RESIDENTIALGAIN, CAPITALGAIN,
+                 TAXFREEGAIN, VIRTUALINCOME, EMPLOYEENATINS, EMPLOYERNATINS, OPENINGBALANCE, TOTALS -> true;
+            default -> false;
+        };
     }
 
     /**
@@ -478,21 +456,11 @@ public enum MoneyWiseTransCategoryClass
      * @return <code>true</code> if the category uses parent payee, <code>false</code> otherwise.
      */
     public boolean isSecretPayee() {
-        switch (this) {
-            case INTEREST:
-            case DIVIDEND:
-            case CASHBACK:
-            case LOYALTYBONUS:
-            case LOANINTERESTEARNED:
-            case RENTALINCOME:
-            case ROOMRENTALINCOME:
-            case WRITEOFF:
-            case LOANINTERESTCHARGED:
-            case OPTIONSEXERCISE:
-                return true;
-            default:
-                return false;
-        }
+        return switch (this) {
+            case INTEREST, DIVIDEND, CASHBACK, LOYALTYBONUS, LOANINTERESTEARNED, RENTALINCOME, ROOMRENTALINCOME,
+                 WRITEOFF, LOANINTERESTCHARGED, OPTIONSEXERCISE -> true;
+            default -> false;
+        };
     }
 
     /**
@@ -501,20 +469,11 @@ public enum MoneyWiseTransCategoryClass
      * @return <code>true</code> if the category uses parent payee, <code>false</code> otherwise.
      */
     public boolean isSwitchDirection() {
-        switch (this) {
-            case INTEREST:
-            case DIVIDEND:
-            case CASHBACK:
-            case LOYALTYBONUS:
-            case RENTALINCOME:
-            case ROOMRENTALINCOME:
-            case WRITEOFF:
-            case LOANINTERESTCHARGED:
-            case TRANSFER:
-                return true;
-            default:
-                return false;
-        }
+        return switch (this) {
+            case INTEREST, DIVIDEND, CASHBACK, LOYALTYBONUS, RENTALINCOME, ROOMRENTALINCOME, WRITEOFF,
+                 LOANINTERESTCHARGED, TRANSFER -> true;
+            default -> false;
+        };
     }
 
     /**
@@ -533,42 +492,15 @@ public enum MoneyWiseTransCategoryClass
      * @return <code>true</code> if the category is income, <code>false</code> otherwise.
      */
     public boolean isIncome() {
-        switch (this) {
-            case TAXEDINCOME:
-            case VIRTUALINCOME:
-            case GROSSINCOME:
-            case PENSIONCONTRIB:
-            case LOYALTYBONUS:
-            case CASHBACK:
-            case OTHERINCOME:
-            case RECOVEREDEXPENSES:
-            case GIFTEDINCOME:
-            case INTEREST:
-            case TAXEDINTEREST:
-            case GROSSINTEREST:
-            case TAXFREEINTEREST:
-            case PEER2PEERINTEREST:
-            case DIVIDEND:
-            case SHAREDIVIDEND:
-            case UNITTRUSTDIVIDEND:
-            case FOREIGNDIVIDEND:
-            case TAXFREEDIVIDEND:
-            case TAXEDLOYALTYBONUS:
-            case GROSSLOYALTYBONUS:
-            case TAXFREELOYALTYBONUS:
-            case INHERITED:
-            case LOANINTERESTEARNED:
-            case RENTALINCOME:
-            case ROOMRENTALINCOME:
-            case OPTIONSEXERCISE:
-            case EMPLOYEENATINS:
-            case EMPLOYERNATINS:
-            case OPENINGBALANCE:
-            case INCOMETOTALS:
-                return true;
-            default:
-                return false;
-        }
+        return switch (this) {
+            case TAXEDINCOME, VIRTUALINCOME, GROSSINCOME, PENSIONCONTRIB, LOYALTYBONUS, CASHBACK, OTHERINCOME,
+                 RECOVEREDEXPENSES, GIFTEDINCOME, INTEREST, TAXEDINTEREST, GROSSINTEREST, TAXFREEINTEREST,
+                 PEER2PEERINTEREST, DIVIDEND, SHAREDIVIDEND, UNITTRUSTDIVIDEND, FOREIGNDIVIDEND, TAXFREEDIVIDEND,
+                 TAXEDLOYALTYBONUS, GROSSLOYALTYBONUS, TAXFREELOYALTYBONUS, INHERITED, LOANINTERESTEARNED, RENTALINCOME,
+                 ROOMRENTALINCOME, OPTIONSEXERCISE, EMPLOYEENATINS, EMPLOYERNATINS, OPENINGBALANCE, INCOMETOTALS ->
+                    true;
+            default -> false;
+        };
     }
 
     /**
@@ -586,13 +518,10 @@ public enum MoneyWiseTransCategoryClass
      * @return <code>true</code> if the category is dilutable, <code>false</code> otherwise.
      */
     public boolean isDilutable() {
-        switch (this) {
-            case STOCKSPLIT:
-            case STOCKDEMERGER:
-                return true;
-            default:
-                return false;
-        }
+        return switch (this) {
+            case STOCKSPLIT, STOCKDEMERGER -> true;
+            default -> false;
+        };
     }
 
     /**
@@ -601,16 +530,10 @@ public enum MoneyWiseTransCategoryClass
      * @return <code>true</code> if the category is dividend, <code>false</code> otherwise.
      */
     public boolean isDividend() {
-        switch (this) {
-            case DIVIDEND:
-            case SHAREDIVIDEND:
-            case UNITTRUSTDIVIDEND:
-            case FOREIGNDIVIDEND:
-            case TAXFREEDIVIDEND:
-                return true;
-            default:
-                return false;
-        }
+        return switch (this) {
+            case DIVIDEND, SHAREDIVIDEND, UNITTRUSTDIVIDEND, FOREIGNDIVIDEND, TAXFREEDIVIDEND -> true;
+            default -> false;
+        };
     }
 
     /**
@@ -619,16 +542,10 @@ public enum MoneyWiseTransCategoryClass
      * @return <code>true</code> if the category is interest, <code>false</code> otherwise.
      */
     public boolean isInterest() {
-        switch (this) {
-            case INTEREST:
-            case TAXEDINTEREST:
-            case GROSSINTEREST:
-            case TAXFREEINTEREST:
-            case PEER2PEERINTEREST:
-                return true;
-            default:
-                return false;
-        }
+        return switch (this) {
+            case INTEREST, TAXEDINTEREST, GROSSINTEREST, TAXFREEINTEREST, PEER2PEERINTEREST -> true;
+            default -> false;
+        };
     }
 
     /**
@@ -637,20 +554,11 @@ public enum MoneyWiseTransCategoryClass
      * @return <code>true</code> if the category needs dual units, <code>false</code> otherwise.
      */
     public boolean isStockAdjustment() {
-        switch (this) {
-            case STOCKSPLIT:
-            case UNITSADJUST:
-            case STOCKDEMERGER:
-            case SECURITYREPLACE:
-            case STOCKTAKEOVER:
-            case PORTFOLIOXFER:
-            case OPTIONSGRANT:
-            case OPTIONSVEST:
-            case OPTIONSEXPIRE:
-                return true;
-            default:
-                return false;
-        }
+        return switch (this) {
+            case STOCKSPLIT, UNITSADJUST, STOCKDEMERGER, SECURITYREPLACE, STOCKTAKEOVER, PORTFOLIOXFER, OPTIONSGRANT,
+                 OPTIONSVEST, OPTIONSEXPIRE -> true;
+            default -> false;
+        };
     }
 
     /**
@@ -659,20 +567,11 @@ public enum MoneyWiseTransCategoryClass
      * @return <code>true</code> if the category needs null amount, <code>false</code> otherwise.
      */
     public boolean needsNullAmount() {
-        switch (this) {
-            case STOCKSPLIT:
-            case UNITSADJUST:
-            case STOCKDEMERGER:
-            case STOCKTAKEOVER:
-            case PORTFOLIOXFER:
-            case OPTIONSGRANT:
-            case OPTIONSVEST:
-            case OPTIONSEXPIRE:
-            case SECURITYREPLACE:
-                return true;
-            default:
-                return false;
-        }
+        return switch (this) {
+            case STOCKSPLIT, UNITSADJUST, STOCKDEMERGER, STOCKTAKEOVER, PORTFOLIOXFER, OPTIONSGRANT, OPTIONSVEST,
+                 OPTIONSEXPIRE, SECURITYREPLACE -> true;
+            default -> false;
+        };
     }
 
     /**
@@ -682,15 +581,10 @@ public enum MoneyWiseTransCategoryClass
      * <code>false</code> otherwise.
      */
     public boolean canParentCategory() {
-        switch (this) {
-            case INCOMETOTALS:
-            case EXPENSETOTALS:
-            case SECURITYPARENT:
-            case TOTALS:
-                return true;
-            default:
-                return false;
-        }
+        return switch (this) {
+            case INCOMETOTALS, EXPENSETOTALS, SECURITYPARENT, TOTALS -> true;
+            default -> false;
+        };
     }
 
     /**
@@ -700,14 +594,10 @@ public enum MoneyWiseTransCategoryClass
      * otherwise.
      */
     public boolean isSubTotal() {
-        switch (this) {
-            case INCOMETOTALS:
-            case EXPENSETOTALS:
-            case SECURITYPARENT:
-                return true;
-            default:
-                return false;
-        }
+        return switch (this) {
+            case INCOMETOTALS, EXPENSETOTALS, SECURITYPARENT -> true;
+            default -> false;
+        };
     }
 
     /**
@@ -725,13 +615,10 @@ public enum MoneyWiseTransCategoryClass
      * @return true/false
      */
     public boolean isNatInsurance() {
-        switch (this) {
-            case TAXEDINCOME:
-            case PENSIONCONTRIB:
-                return true;
-            default:
-                return false;
-        }
+        return switch (this) {
+            case TAXEDINCOME, PENSIONCONTRIB -> true;
+            default -> false;
+        };
     }
 
     /**
@@ -740,25 +627,12 @@ public enum MoneyWiseTransCategoryClass
      * @return true/false
      */
     public boolean isSecurityTransfer() {
-        switch (this) {
-            case UNITSADJUST:
-            case STOCKSPLIT:
-            case STOCKDEMERGER:
-            case SECURITYREPLACE:
-            case STOCKTAKEOVER:
-            case STOCKRIGHTSISSUE:
-            case PORTFOLIOXFER:
-            case OPTIONSGRANT:
-            case OPTIONSVEST:
-            case OPTIONSEXPIRE:
-            case SECURITYCLOSURE:
-            case SECURITYPARENT:
-            case PENSIONDRAWDOWN:
-            case PENSIONTAXFREE:
-                return true;
-            default:
-                return false;
-        }
+        return switch (this) {
+            case UNITSADJUST, STOCKSPLIT, STOCKDEMERGER, SECURITYREPLACE, STOCKTAKEOVER, STOCKRIGHTSISSUE,
+                 PORTFOLIOXFER, OPTIONSGRANT, OPTIONSVEST, OPTIONSEXPIRE, SECURITYCLOSURE, SECURITYPARENT,
+                 PENSIONDRAWDOWN, PENSIONTAXFREE -> true;
+            default -> false;
+        };
     }
 
     /**

@@ -16,13 +16,13 @@
  */
 package io.github.tonywasher.joceanus.metis.data;
 
+import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataIndexedItem;
 import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
 import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
 import io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
 import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRate;
 import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
 import io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
-import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataIndexedItem;
 
 import java.util.List;
 
@@ -131,19 +131,10 @@ public enum MetisDataType {
      * @return true/false
      */
     public boolean isNumeric() {
-        switch (this) {
-            case SHORT:
-            case INTEGER:
-            case LONG:
-            case MONEY:
-            case PRICE:
-            case RATE:
-            case UNITS:
-            case RATIO:
-                return true;
-            default:
-                return false;
-        }
+        return switch (this) {
+            case SHORT, INTEGER, LONG, MONEY, PRICE, RATE, UNITS, RATIO -> true;
+            default -> false;
+        };
     }
 
     /**
@@ -152,42 +143,24 @@ public enum MetisDataType {
      * @return the class (or null if indeterminate)
      */
     public Class<?> getDataTypeClass() {
-        switch (this) {
-            case STRING:
-                return String.class;
-            case BYTEARRAY:
-                return byte[].class;
-            case CHARARRAY:
-                return char[].class;
-            case ENUM:
-                return Enum.class;
-            case BOOLEAN:
-                return Boolean.class;
-            case SHORT:
-                return Short.class;
-            case INTEGER:
-                return Integer.class;
-            case LONG:
-                return Long.class;
-            case DATE:
-                return OceanusDate.class;
-            case MONEY:
-                return OceanusMoney.class;
-            case PRICE:
-                return OceanusPrice.class;
-            case UNITS:
-                return OceanusUnits.class;
-            case RATE:
-                return OceanusRate.class;
-            case RATIO:
-                return OceanusRatio.class;
-            case LINK:
-            case LINKPAIR:
-                return MetisDataIndexedItem.class;
-            case LINKSET:
-                return List.class;
-            default:
-                return null;
-        }
+        return switch (this) {
+            case STRING -> String.class;
+            case BYTEARRAY -> byte[].class;
+            case CHARARRAY -> char[].class;
+            case ENUM -> Enum.class;
+            case BOOLEAN -> Boolean.class;
+            case SHORT -> Short.class;
+            case INTEGER -> Integer.class;
+            case LONG -> Long.class;
+            case DATE -> OceanusDate.class;
+            case MONEY -> OceanusMoney.class;
+            case PRICE -> OceanusPrice.class;
+            case UNITS -> OceanusUnits.class;
+            case RATE -> OceanusRate.class;
+            case RATIO -> OceanusRatio.class;
+            case LINK, LINKPAIR -> MetisDataIndexedItem.class;
+            case LINKSET -> List.class;
+            default -> null;
+        };
     }
 }

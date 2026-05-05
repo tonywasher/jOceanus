@@ -43,30 +43,14 @@ public class MoneyWiseValidatePortfolioInfoSet
     @Override
     public MetisFieldRequired isClassRequired(final PrometheusDataInfoClass pClass) {
         /* Switch on class */
-        switch ((MoneyWiseAccountInfoClass) pClass) {
+        return switch ((MoneyWiseAccountInfoClass) pClass) {
             /* Allowed set */
-            case NOTES:
-            case SORTCODE:
-            case ACCOUNT:
-            case REFERENCE:
-            case WEBSITE:
-            case CUSTOMERNO:
-            case USERID:
-            case PASSWORD:
-                return MetisFieldRequired.CANEXIST;
+            case NOTES, SORTCODE, ACCOUNT, REFERENCE, WEBSITE, CUSTOMERNO, USERID, PASSWORD ->
+                    MetisFieldRequired.CANEXIST;
 
             /* Not Allowed */
-            case MATURITY:
-            case OPENINGBALANCE:
-            case AUTOEXPENSE:
-            case AUTOPAYEE:
-            case SYMBOL:
-            case REGION:
-            case UNDERLYINGSTOCK:
-            case OPTIONPRICE:
-            default:
-                return MetisFieldRequired.NOTALLOWED;
-        }
+            default -> MetisFieldRequired.NOTALLOWED;
+        };
     }
 
     @Override
@@ -74,14 +58,7 @@ public class MoneyWiseValidatePortfolioInfoSet
                               final PrometheusDataInfoClass pClass) {
         /* Switch on class */
         switch ((MoneyWiseAccountInfoClass) pClass) {
-            case WEBSITE:
-            case CUSTOMERNO:
-            case USERID:
-            case PASSWORD:
-            case SORTCODE:
-            case ACCOUNT:
-            case NOTES:
-            case REFERENCE:
+            case WEBSITE, CUSTOMERNO, USERID, PASSWORD, SORTCODE, ACCOUNT, NOTES, REFERENCE:
                 validateInfoLength(pInfo);
                 break;
             default:

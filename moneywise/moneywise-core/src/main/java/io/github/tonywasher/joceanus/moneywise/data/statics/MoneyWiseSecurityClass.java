@@ -16,8 +16,8 @@
  */
 package io.github.tonywasher.joceanus.moneywise.data.statics;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusStaticDataClass;
 
 /**
@@ -199,14 +199,10 @@ public enum MoneyWiseSecurityClass
      * @return <code>true</code> if the security type is a pension, <code>false</code> otherwise.
      */
     public boolean isPension() {
-        switch (this) {
-            case DEFINEDBENEFIT:
-            case DEFINEDCONTRIBUTION:
-            case STATEPENSION:
-                return true;
-            default:
-                return false;
-        }
+        return switch (this) {
+            case DEFINEDBENEFIT, DEFINEDCONTRIBUTION, STATEPENSION -> true;
+            default -> false;
+        };
     }
 
     /**
@@ -216,14 +212,10 @@ public enum MoneyWiseSecurityClass
      * otherwise.
      */
     public boolean isDividend() {
-        switch (this) {
-            case SHARES:
-            case INCOMEUNITTRUST:
-            case GROWTHUNITTRUST:
-                return true;
-            default:
-                return false;
-        }
+        return switch (this) {
+            case SHARES, INCOMEUNITTRUST, GROWTHUNITTRUST -> true;
+            default -> false;
+        };
     }
 
     /**
@@ -250,15 +242,10 @@ public enum MoneyWiseSecurityClass
      * @return <code>true</code> if the security type needs a symbol, <code>false</code> otherwise.
      */
     public boolean needsSymbol() {
-        switch (this) {
-            case SHARES:
-            case GROWTHUNITTRUST:
-            case INCOMEUNITTRUST:
-            case LIFEBOND:
-                return true;
-            default:
-                return false;
-        }
+        return switch (this) {
+            case SHARES, GROWTHUNITTRUST, INCOMEUNITTRUST, LIFEBOND -> true;
+            default -> false;
+        };
     }
 
     /**
@@ -267,14 +254,10 @@ public enum MoneyWiseSecurityClass
      * @return <code>true</code> if the security type needs a region, <code>false</code> otherwise.
      */
     public boolean needsRegion() {
-        switch (this) {
-            case INCOMEUNITTRUST:
-            case GROWTHUNITTRUST:
-            case LIFEBOND:
-                return true;
-            default:
-                return false;
-        }
+        return switch (this) {
+            case INCOMEUNITTRUST, GROWTHUNITTRUST, LIFEBOND -> true;
+            default -> false;
+        };
     }
 
     /**
@@ -284,15 +267,10 @@ public enum MoneyWiseSecurityClass
      * otherwise.
      */
     public boolean needsMarketParent() {
-        switch (this) {
-            case ASSET:
-            case PROPERTY:
-            case VEHICLE:
-            case ENDOWMENT:
-                return true;
-            default:
-                return false;
-        }
+        return switch (this) {
+            case ASSET, PROPERTY, VEHICLE, ENDOWMENT -> true;
+            default -> false;
+        };
     }
 
     /**
@@ -301,15 +279,10 @@ public enum MoneyWiseSecurityClass
      * @return <code>true</code> if the security type can be tax free, <code>false</code> otherwise.
      */
     public boolean canTaxFree() {
-        switch (this) {
-            case SHARES:
-            case INCOMEUNITTRUST:
-            case GROWTHUNITTRUST:
-            case PROPERTY:
-                return true;
-            default:
-                return false;
-        }
+        return switch (this) {
+            case SHARES, INCOMEUNITTRUST, GROWTHUNITTRUST, PROPERTY -> true;
+            default -> false;
+        };
     }
 
     /**
@@ -319,15 +292,10 @@ public enum MoneyWiseSecurityClass
      * <code>false</code> otherwise.
      */
     public boolean isCapitalGains() {
-        switch (this) {
-            case SHARES:
-            case INCOMEUNITTRUST:
-            case GROWTHUNITTRUST:
-            case PROPERTY:
-                return true;
-            default:
-                return false;
-        }
+        return switch (this) {
+            case SHARES, INCOMEUNITTRUST, GROWTHUNITTRUST, PROPERTY -> true;
+            default -> false;
+        };
     }
 
     /**
@@ -356,15 +324,10 @@ public enum MoneyWiseSecurityClass
      * @return <code>true</code> if the security type is Capital, <code>false</code> otherwise.
      */
     public boolean isCapital() {
-        switch (this) {
-            case SHARES:
-            case LIFEBOND:
-            case INCOMEUNITTRUST:
-            case GROWTHUNITTRUST:
-                return true;
-            default:
-                return false;
-        }
+        return switch (this) {
+            case SHARES, LIFEBOND, INCOMEUNITTRUST, GROWTHUNITTRUST -> true;
+            default -> false;
+        };
     }
 
     /**
@@ -373,13 +336,10 @@ public enum MoneyWiseSecurityClass
      * @return <code>true</code> if the security type is Capital, <code>false</code> otherwise.
      */
     public boolean isUnitTrust() {
-        switch (this) {
-            case INCOMEUNITTRUST:
-            case GROWTHUNITTRUST:
-                return true;
-            default:
-                return false;
-        }
+        return switch (this) {
+            case INCOMEUNITTRUST, GROWTHUNITTRUST -> true;
+            default -> false;
+        };
     }
 
     /**
@@ -406,15 +366,10 @@ public enum MoneyWiseSecurityClass
      * @return <code>true</code> if the SecurityType is an autoUnits, <code>false</code> otherwise.
      */
     public boolean isAutoUnits() {
-        switch (this) {
-            case ENDOWMENT:
-            case STATEPENSION:
-            case DEFINEDCONTRIBUTION:
-            case DEFINEDBENEFIT:
-                return true;
-            default:
-                return false;
-        }
+        return switch (this) {
+            case ENDOWMENT, STATEPENSION, DEFINEDCONTRIBUTION, DEFINEDBENEFIT -> true;
+            default -> false;
+        };
     }
 
     /**
@@ -423,16 +378,11 @@ public enum MoneyWiseSecurityClass
      * @return the number of units for this security if active.
      */
     public int getAutoUnits() {
-        switch (this) {
-            case ENDOWMENT:
-            case DEFINEDCONTRIBUTION:
-                return 1;
-            case STATEPENSION:
-                return PENSION_YEARS * PENSION_WEEKS;
-            case DEFINEDBENEFIT:
-                return PENSION_YEARS;
-            default:
-                return 0;
-        }
+        return switch (this) {
+            case ENDOWMENT, DEFINEDCONTRIBUTION -> 1;
+            case STATEPENSION -> PENSION_YEARS * PENSION_WEEKS;
+            case DEFINEDBENEFIT -> PENSION_YEARS;
+            default -> 0;
+        };
     }
 }

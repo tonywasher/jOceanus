@@ -16,10 +16,10 @@
  */
 package io.github.tonywasher.joceanus.metis.report;
 
+import io.github.tonywasher.joceanus.metis.exc.MetisIOException;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimal;
 import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
-import io.github.tonywasher.joceanus.metis.exc.MetisIOException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -1039,16 +1039,12 @@ public class MetisReportHTMLBuilder {
          * @return the class name
          */
         private String getOddClass() {
-            switch (this) {
-                case SUMMARY:
-                    return CLASS_SUMMROW;
-                case DETAILEDSUMMARY:
-                    return CLASS_DTLSUMMROW;
-                case DETAIL:
-                    return CLASS_DTLROW;
-                default:
-                    return null;
-            }
+            return switch (this) {
+                case SUMMARY -> CLASS_SUMMROW;
+                case DETAILEDSUMMARY -> CLASS_DTLSUMMROW;
+                case DETAIL -> CLASS_DTLROW;
+                default -> null;
+            };
         }
 
         /**
@@ -1057,16 +1053,12 @@ public class MetisReportHTMLBuilder {
          * @return the class name
          */
         private String getEvenClass() {
-            switch (this) {
-                case SUMMARY:
-                    return CLASS_ALTSUMMROW;
-                case DETAILEDSUMMARY:
-                    return CLASS_ALTDTLSUMMROW;
-                case DETAIL:
-                    return CLASS_ALTDTLROW;
-                default:
-                    return null;
-            }
+            return switch (this) {
+                case SUMMARY -> CLASS_ALTSUMMROW;
+                case DETAILEDSUMMARY -> CLASS_ALTDTLSUMMROW;
+                case DETAIL -> CLASS_ALTDTLROW;
+                default -> null;
+            };
         }
 
         /**
@@ -1075,15 +1067,11 @@ public class MetisReportHTMLBuilder {
          * @return the class name
          */
         private TableClass getNextClass() {
-            switch (this) {
-                case SUMMARY:
-                    return DETAILEDSUMMARY;
-                case DETAILEDSUMMARY:
-                case DETAIL:
-                    return DETAIL;
-                default:
-                    return null;
-            }
+            return switch (this) {
+                case SUMMARY -> DETAILEDSUMMARY;
+                case DETAILEDSUMMARY, DETAIL -> DETAIL;
+                default -> null;
+            };
         }
     }
 }

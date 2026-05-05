@@ -16,13 +16,6 @@
  */
 package io.github.tonywasher.joceanus.moneywise.atlas.reports;
 
-import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimal;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
-import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.metis.report.MetisReportBase;
 import io.github.tonywasher.joceanus.metis.report.MetisReportHTMLBuilder;
 import io.github.tonywasher.joceanus.metis.report.MetisReportHTMLBuilder.MetisHTMLTable;
@@ -40,6 +33,13 @@ import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseBasicResource
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransAsset;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransaction;
 import io.github.tonywasher.joceanus.moneywise.tax.MoneyWiseCashType;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimal;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -184,20 +184,16 @@ public class MoneyWiseXReportCapitalGains
         /* Switch on the class */
         final MoneyWiseTransaction myTrans = pEvent.getTransaction();
         switch (myTrans.getCategoryClass()) {
-            case TRANSFER:
-            case STOCKRIGHTSISSUE:
-            case INHERITED:
+            case TRANSFER, STOCKRIGHTSISSUE, INHERITED:
                 formatTransfer(pEvent, pValues);
                 break;
-            case SECURITYREPLACE:
-            case STOCKTAKEOVER:
+            case SECURITYREPLACE, STOCKTAKEOVER:
                 formatStockTakeOver(pEvent, pValues);
                 break;
             case STOCKDEMERGER:
                 formatStockDeMerger(pEvent, pValues);
                 break;
-            case STOCKSPLIT:
-            case UNITSADJUST:
+            case STOCKSPLIT, UNITSADJUST:
                 formatUnitsAdjust(pEvent, pValues);
                 break;
             case DIVIDEND:

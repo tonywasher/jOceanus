@@ -16,8 +16,8 @@
  */
 package io.github.tonywasher.joceanus.moneywise.data.statics;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusStaticDataClass;
 
 /**
@@ -177,14 +177,10 @@ public enum MoneyWisePayeeClass
      * @return <code>true</code> if the payee type is singular, <code>false</code> otherwise.
      */
     public boolean isSingular() {
-        switch (this) {
-            case TAXMAN:
-            case GOVERNMENT:
-            case MARKET:
-                return true;
-            default:
-                return false;
-        }
+        return switch (this) {
+            case TAXMAN, GOVERNMENT, MARKET -> true;
+            default -> false;
+        };
     }
 
     /**
@@ -195,20 +191,11 @@ public enum MoneyWisePayeeClass
      * otherwise.
      */
     public boolean canParentDeposit(final MoneyWiseDepositCategoryClass pClass) {
-        switch (this) {
-            case GOVERNMENT:
-                return !MoneyWiseDepositCategoryClass.CHECKING.equals(pClass);
-            case INSTITUTION:
-            case EMPLOYER:
-                return true;
-            case PAYEE:
-            case INDIVIDUAL:
-            case MARKET:
-            case TAXMAN:
-            case ANNUITY:
-            default:
-                return false;
-        }
+        return switch (this) {
+            case GOVERNMENT -> !MoneyWiseDepositCategoryClass.CHECKING.equals(pClass);
+            case INSTITUTION, EMPLOYER -> true;
+            default -> false;
+        };
     }
 
     /**
@@ -218,20 +205,11 @@ public enum MoneyWisePayeeClass
      * @return <code>true</code> if the payee type can the loan type, <code>false</code> otherwise.
      */
     public boolean canParentLoan(final MoneyWiseLoanCategoryClass pClass) {
-        switch (this) {
-            case TAXMAN:
-            case GOVERNMENT:
-            case INSTITUTION:
-            case EMPLOYER:
-                return !MoneyWiseLoanCategoryClass.PRIVATELOAN.equals(pClass);
-            case INDIVIDUAL:
-                return MoneyWiseLoanCategoryClass.PRIVATELOAN.equals(pClass);
-            case MARKET:
-            case PAYEE:
-            case ANNUITY:
-            default:
-                return false;
-        }
+        return switch (this) {
+            case TAXMAN, GOVERNMENT, INSTITUTION, EMPLOYER -> !MoneyWiseLoanCategoryClass.PRIVATELOAN.equals(pClass);
+            case INDIVIDUAL -> MoneyWiseLoanCategoryClass.PRIVATELOAN.equals(pClass);
+            default -> false;
+        };
     }
 
     /**
@@ -242,21 +220,12 @@ public enum MoneyWisePayeeClass
      * otherwise.
      */
     public boolean canParentSecurity(final MoneyWiseSecurityClass pClass) {
-        switch (this) {
-            case MARKET:
-                return pClass.needsMarketParent();
-            case INSTITUTION:
-            case EMPLOYER:
-                return !pClass.needsMarketParent();
-            case GOVERNMENT:
-                return pClass.isStatePension();
-            case TAXMAN:
-            case INDIVIDUAL:
-            case PAYEE:
-            case ANNUITY:
-            default:
-                return false;
-        }
+        return switch (this) {
+            case MARKET -> pClass.needsMarketParent();
+            case INSTITUTION, EMPLOYER -> !pClass.needsMarketParent();
+            case GOVERNMENT -> pClass.isStatePension();
+            default -> false;
+        };
     }
 
     /**
@@ -266,19 +235,10 @@ public enum MoneyWisePayeeClass
      * otherwise.
      */
     public boolean canParentPortfolio() {
-        switch (this) {
-            case MARKET:
-            case INSTITUTION:
-            case EMPLOYER:
-            case GOVERNMENT:
-                return true;
-            case TAXMAN:
-            case INDIVIDUAL:
-            case PAYEE:
-            case ANNUITY:
-            default:
-                return false;
-        }
+        return switch (this) {
+            case MARKET, INSTITUTION, EMPLOYER, GOVERNMENT -> true;
+            default -> false;
+        };
     }
 
     /**
@@ -288,19 +248,10 @@ public enum MoneyWisePayeeClass
      * otherwise.
      */
     public boolean canContribPension() {
-        switch (this) {
-            case INSTITUTION:
-            case EMPLOYER:
-            case GOVERNMENT:
-            case TAXMAN:
-                return true;
-            case MARKET:
-            case INDIVIDUAL:
-            case PAYEE:
-            case ANNUITY:
-            default:
-                return false;
-        }
+        return switch (this) {
+            case INSTITUTION, EMPLOYER, GOVERNMENT, TAXMAN -> true;
+            default -> false;
+        };
     }
 
     /**
@@ -310,17 +261,9 @@ public enum MoneyWisePayeeClass
      * otherwise.
      */
     public boolean canProvideTaxedIncome() {
-        switch (this) {
-            case GOVERNMENT:
-            case EMPLOYER:
-            case INDIVIDUAL:
-            case ANNUITY:
-                return true;
-            case MARKET:
-            case TAXMAN:
-            case PAYEE:
-            default:
-                return false;
-        }
+        return switch (this) {
+            case GOVERNMENT, EMPLOYER, INDIVIDUAL, ANNUITY -> true;
+            default -> false;
+        };
     }
 }

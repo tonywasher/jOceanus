@@ -93,15 +93,10 @@ public enum MoneyWiseXReportType {
      * @return true/false
      */
     public boolean isPointInTime() {
-        switch (this) {
-            case NETWORTH:
-            case PORTFOLIO:
-            case ASSETGAINS:
-            case CAPITALGAINS:
-                return true;
-            default:
-                return false;
-        }
+        return switch (this) {
+            case NETWORTH, PORTFOLIO, ASSETGAINS, CAPITALGAINS -> true;
+            default -> false;
+        };
     }
 
     /**
@@ -110,15 +105,10 @@ public enum MoneyWiseXReportType {
      * @return true/false
      */
     public boolean needSecurities() {
-        switch (this) {
-            case MARKETGROWTH:
-            case PORTFOLIO:
-            case ASSETGAINS:
-            case CAPITALGAINS:
-                return true;
-            default:
-                return false;
-        }
+        return switch (this) {
+            case MARKETGROWTH, PORTFOLIO, ASSETGAINS, CAPITALGAINS -> true;
+            default -> false;
+        };
     }
 
     /**

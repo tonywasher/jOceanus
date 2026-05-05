@@ -16,8 +16,6 @@
  */
 package io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.analyse;
 
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
-import io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
 import io.github.tonywasher.joceanus.moneywise.atlas.data.analysis.base.MoneyWiseXAnalysisEvent;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseAssetBase;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseAssetDirection;
@@ -28,6 +26,8 @@ import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransAsset;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransCategory;
 import io.github.tonywasher.joceanus.moneywise.data.basic.MoneyWiseTransaction;
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTransCategoryClass;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
 
 /**
  * Transaction details.
@@ -306,8 +306,7 @@ public class MoneyWiseXAnalysisTransaction {
     void adjustParent() {
         /* Switch on category class */
         switch (getCategoryClass()) {
-            case INTEREST:
-            case LOYALTYBONUS:
+            case INTEREST, LOYALTYBONUS:
                 /* Obtain detailed category */
                 theCategory = ((MoneyWiseAssetBase) theDebit).getDetailedCategory(theCategory, theTrans.getTaxYear());
 
@@ -338,10 +337,7 @@ public class MoneyWiseXAnalysisTransaction {
                 }
                 isTo = !isTo;
                 break;
-            case LOANINTERESTEARNED:
-            case CASHBACK:
-            case WRITEOFF:
-            case LOANINTERESTCHARGED:
+            case LOANINTERESTEARNED, CASHBACK, WRITEOFF, LOANINTERESTCHARGED:
                 /* True debit account is the parent of the asset */
                 /* Note that debit and credit must be identical */
                 if (isTo) {
@@ -351,8 +347,7 @@ public class MoneyWiseXAnalysisTransaction {
                 }
                 isTo = !isTo;
                 break;
-            case RENTALINCOME:
-            case ROOMRENTALINCOME:
+            case RENTALINCOME, ROOMRENTALINCOME:
                 /* True debit account is the parent of the security */
                 theChild = theDebit.equals(theCredit)
                         ? null

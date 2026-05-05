@@ -923,11 +923,10 @@ public class MoneyWiseTransaction
     @Override
     public boolean applyChanges(final PrometheusDataItem pTrans) {
         /* Can only update from a transaction */
-        if (!(pTrans instanceof MoneyWiseTransaction)) {
+        if (!(pTrans instanceof MoneyWiseTransaction myTrans)) {
             return false;
         }
-        final MoneyWiseTransaction myTrans = (MoneyWiseTransaction) pTrans;
-
+        
         /* Store the current detail into history */
         pushHistory();
 

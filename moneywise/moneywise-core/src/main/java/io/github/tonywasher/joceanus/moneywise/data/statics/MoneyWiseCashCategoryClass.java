@@ -16,8 +16,8 @@
  */
 package io.github.tonywasher.joceanus.moneywise.data.statics;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 
 /**
  * Enumeration of CashCategory Type Classes.
@@ -119,12 +119,7 @@ public enum MoneyWiseCashCategoryClass
      * otherwise.
      */
     public boolean isParentCategory() {
-        switch (this) {
-            case PARENT:
-                return true;
-            default:
-                return false;
-        }
+        return this == MoneyWiseCashCategoryClass.PARENT;
     }
 
     @Override

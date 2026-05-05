@@ -19,7 +19,6 @@ package io.github.tonywasher.joceanus.tethys.javafx.thread;
 import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadManager;
 import io.github.tonywasher.joceanus.tethys.core.factory.TethysUICoreFactory;
 import io.github.tonywasher.joceanus.tethys.core.thread.TethysUICoreThreadFactory;
-import io.github.tonywasher.joceanus.tethys.core.thread.TethysUICoreThreadManager;
 
 /**
  * javaFX Thread Factory.
@@ -55,11 +54,11 @@ public class TethysUIFXThreadFactory
 
     @Override
     public TethysUIFXThreadProgressStatus newThreadSliderStatus(final TethysUIThreadManager pManager) {
-        return new TethysUIFXThreadProgressStatus((TethysUICoreThreadManager) pManager, theFactory);
+        return new TethysUIFXThreadProgressStatus(pManager, theFactory);
     }
 
     @Override
     public TethysUIFXThreadTextAreaStatus newThreadTextAreaStatus(final TethysUIThreadManager pManager) {
-        return new TethysUIFXThreadTextAreaStatus((TethysUICoreThreadManager) pManager, theFactory);
+        return new TethysUIFXThreadTextAreaStatus(pManager, theFactory);
     }
 }

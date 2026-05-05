@@ -86,37 +86,28 @@ public final class GordianStreamManager {
         OutputStream myStream = pStream;
         while (true) {
             /* If this is a Digest Output Stream */
-            if (myStream instanceof GordianDigestOutputStream myDigest) {
-                /* Process stream */
-                myStreams.addFirst(new GordianStreamDefinition(theKeySet, myDigest));
-                myStream = myDigest.getNextStream();
-
-                /* If this is a MAC Output Stream */
-            } else if (myStream instanceof GordianMacOutputStream myMac) {
-                /* Process stream */
-                myStreams.addFirst(new GordianStreamDefinition(theKeySet, myMac));
-                myStream = myMac.getNextStream();
-
-                /* If this is a LZMA Output Stream */
-            } else if (myStream instanceof GordianLZMAOutputStream myLZMA) {
-                /* Process stream */
-                myStreams.addFirst(new GordianStreamDefinition(GordianStreamType.LZMA));
-                myStream = myLZMA.getNextStream();
-
-                /* If this is a Encryption Output Stream */
-            } else if (myStream instanceof GordianCipherOutputStream<?> myEnc) {
-                /* Process stream */
-                myStreams.addFirst(new GordianStreamDefinition(theKeySet, myEnc));
-                myStream = myEnc.getNextStream();
-
-                /* Else stop loop */
-            } else {
-                break;
+            switch (myStream) {
+                case GordianDigestOutputStream myDigest -> {
+                    myStreams.addFirst(new GordianStreamDefinition(theKeySet, myDigest));
+                    myStream = myDigest.getNextStream();
+                }
+                case GordianMacOutputStream myMac -> {
+                    myStreams.addFirst(new GordianStreamDefinition(theKeySet, myMac));
+                    myStream = myMac.getNextStream();
+                }
+                case GordianLZMAOutputStream myLZMA -> {
+                    myStreams.addFirst(new GordianStreamDefinition(GordianStreamType.LZMA));
+                    myStream = myLZMA.getNextStream();
+                }
+                case GordianCipherOutputStream<?> myEnc -> {
+                    myStreams.addFirst(new GordianStreamDefinition(theKeySet, myEnc));
+                    myStream = myEnc.getNextStream();
+                }
+                default -> {
+                    return myStreams;
+                }
             }
         }
-
-        /* Return the list */
-        return myStreams;
     }
 
     /**

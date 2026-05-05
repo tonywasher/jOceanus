@@ -73,33 +73,19 @@ public enum MoneyWiseXAnalysisAccountAttr
 
     @Override
     public boolean isPreserved() {
-        switch (this) {
-            case BALANCE:
-            case MATURITY:
-            case DEPOSITRATE:
-            case EXCHANGERATE:
-            case VALUATION:
-                return true;
-            case VALUEDELTA:
-            default:
-                return false;
-        }
+        return switch (this) {
+            case BALANCE, MATURITY, DEPOSITRATE, EXCHANGERATE, VALUATION -> true;
+            default -> false;
+        };
     }
 
     @Override
     public MetisDataType getDataType() {
-        switch (this) {
-            case DEPOSITRATE:
-                return MetisDataType.RATE;
-            case EXCHANGERATE:
-                return MetisDataType.RATIO;
-            case MATURITY:
-                return MetisDataType.DATE;
-            case BALANCE:
-            case VALUATION:
-            case VALUEDELTA:
-            default:
-                return MetisDataType.MONEY;
-        }
+        return switch (this) {
+            case DEPOSITRATE -> MetisDataType.RATE;
+            case EXCHANGERATE -> MetisDataType.RATIO;
+            case MATURITY -> MetisDataType.DATE;
+            default -> MetisDataType.MONEY;
+        };
     }
 }

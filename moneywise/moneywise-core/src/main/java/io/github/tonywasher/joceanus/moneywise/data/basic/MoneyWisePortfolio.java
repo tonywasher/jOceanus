@@ -16,8 +16,6 @@
  */
 package io.github.tonywasher.joceanus.moneywise.data.basic;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
-import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.metis.data.MetisDataDifference;
 import io.github.tonywasher.joceanus.metis.data.MetisDataEditState;
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
@@ -42,6 +40,8 @@ import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseStaticDataT
 import io.github.tonywasher.joceanus.moneywise.data.statics.MoneyWiseTransCategoryClass;
 import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseDataException;
 import io.github.tonywasher.joceanus.moneywise.exc.MoneyWiseLogicException;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataInstanceMap;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataMapItem;
@@ -118,8 +118,7 @@ public class MoneyWisePortfolio
                 hasInfoSet = true;
                 useInfoSet = true;
                 break;
-            case CLONE:
-            case CORE:
+            case CLONE, CORE:
                 theInfoSet = new MoneyWisePortfolioInfoSet(this, pList.getActInfoTypes(), pList.getPortfolioInfo());
                 hasInfoSet = true;
                 useInfoSet = false;
@@ -697,11 +696,10 @@ public class MoneyWisePortfolio
     @Override
     public boolean applyChanges(final PrometheusDataItem pPortfolio) {
         /* Can only update from a portfolio */
-        if (!(pPortfolio instanceof MoneyWisePortfolio)) {
+        if (!(pPortfolio instanceof MoneyWisePortfolio myPortfolio)) {
             return false;
         }
-        final MoneyWisePortfolio myPortfolio = (MoneyWisePortfolio) pPortfolio;
-
+        
         /* Store the current detail into history */
         pushHistory();
 
